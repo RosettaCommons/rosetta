@@ -84,8 +84,8 @@ parse_residue_selectors( std::string const & selector_name_str, basic::datacache
 void
 AlignResiduesMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	id_ = tag->getOption< std::string >( "name" );
 

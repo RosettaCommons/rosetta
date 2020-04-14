@@ -53,9 +53,8 @@ ReportFilter::~ReportFilter() = default;
 void
 ReportFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	report_filter_name_ = tag->getOption< std::string >( "name" );
 	if ( tag->hasOption( "report_string" ) ) {
 		report_string_ = data.get_ptr< basic::datacache::DataMapObj< std::string > >( "report_string", tag->getOption< std::string >( "report_string" )  );

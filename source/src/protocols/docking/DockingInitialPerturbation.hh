@@ -117,8 +117,7 @@ public:
 	/// zhe for rosetta_scripts
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 	protocols::moves::MoverOP clone() const override; //zhe for scripts
 
@@ -193,8 +192,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	static
 	std::string

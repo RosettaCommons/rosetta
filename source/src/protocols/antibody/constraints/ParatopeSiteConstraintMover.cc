@@ -122,8 +122,7 @@ ParatopeSiteConstraintMover::set_defaults() {
 void
 ParatopeSiteConstraintMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 ){
 	//Paratope Constraint options
 	if ( tag->hasOption("paratope_cdrs") ) {

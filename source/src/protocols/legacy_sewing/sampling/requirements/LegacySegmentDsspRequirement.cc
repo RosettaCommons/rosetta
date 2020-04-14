@@ -74,8 +74,7 @@ LegacySegmentDsspRequirement::violates(
 void
 LegacySegmentDsspRequirement::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	if ( !tag->hasOption("dssp") ) {
 		utility_exit_with_message("LegacySegmentDsspRequiremnt must be given a whitespace delimited 'dssp' option");

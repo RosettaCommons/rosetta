@@ -138,7 +138,7 @@ public: // test functions
 		core::pose::Pose pose;
 
 		SpinAroundPartnerMoverOP xspin( new SpinAroundPartnerMover() );
-		xspin->parse_my_tag( tag, dm, pose );
+		xspin->parse_my_tag( tag, dm );
 
 		TS_ASSERT_EQUALS(xspin->get_jump(), 3);
 		TS_ASSERT_EQUALS(xspin->get_rand_range(), true);

@@ -284,8 +284,7 @@ void FitSimpleHelix::get_crick_parameters (
 void
 FitSimpleHelix::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
-	core::pose::Pose const & //pose
+	basic::datacache::DataMap & /*data_map*/
 ) {
 	set_initial_guesses(
 		tag->getOption<core::Real>("r1_initial", 1.0 ),

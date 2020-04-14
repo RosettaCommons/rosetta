@@ -344,10 +344,9 @@ AppendAssemblyMover::set_extend_mode( bool new_mode){
 void
 AppendAssemblyMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & pose)
-{
-	AssemblyMover::parse_my_tag(tag, datamap, pose);
+	basic::datacache::DataMap& datamap
+) {
+	AssemblyMover::parse_my_tag(tag, datamap);
 
 	//get alignment settings
 	if ( get_hashed() ) {

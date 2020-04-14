@@ -105,8 +105,7 @@ PerturbRotamerSidechainMover::set_defaults() {
 void
 PerturbRotamerSidechainMover::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 
 }

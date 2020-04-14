@@ -146,8 +146,8 @@ SmotifFeatures::features_reporter_dependencies() const
 void
 SmotifFeatures::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap & /*data*/
+)
 {
 }
 

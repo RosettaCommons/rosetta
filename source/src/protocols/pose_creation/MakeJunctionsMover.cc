@@ -458,8 +458,8 @@ core::pose::PoseOP MakeJunctionsMover::get_additional_output(){
 
 void MakeJunctionsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap & datamap
+){
 	designs_fn_ = tag->getOption< std::string >( "designs" ,"designs.txt" );
 	pdb_cache_bool_ = tag->getOption< bool >( "pdb_cache" ,true);
 	pdb_cache_max_size_ = tag->getOption< core::Size> ("pdb_size_size",2000);

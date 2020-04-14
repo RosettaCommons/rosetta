@@ -143,8 +143,7 @@ protocols::moves::MoverOP HighResEnsemble::fresh_instance() const {
 void
 HighResEnsemble::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->getName() != "HighResEnsemble" ) {

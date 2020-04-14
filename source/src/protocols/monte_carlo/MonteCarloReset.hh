@@ -75,8 +75,7 @@ public: // constructor/destructor
 
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	std::string

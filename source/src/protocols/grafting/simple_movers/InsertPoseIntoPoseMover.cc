@@ -95,8 +95,8 @@ InsertPoseIntoPoseMover::clone() const {
 void
 InsertPoseIntoPoseMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap& data_map,
-	const Pose& )
+	basic::datacache::DataMap& data_map
+)
 {
 	start_ = tag->getOption<std::string>("start");
 	end_ = tag->getOption<std::string>("end");

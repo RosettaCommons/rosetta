@@ -336,8 +336,8 @@ bool SheetTopologyFilter::apply( Pose const & pose ) const
 void
 SheetTopologyFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	if ( tag->hasOption( "ignore_register_shift" ) ) {
 		ignore_register_shift_ = tag->getOption< bool >( "ignore_register_shift" );

@@ -158,8 +158,8 @@ protected:
 	// for rosetta_scripts
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	//foreward
 	Real cholesky_fw(Matrix &, core::Size, Vector &, Vector &, core::Size from=1, core::Size to=0, Real scale=1.0);

@@ -68,8 +68,8 @@ TimeFilter::report( std::ostream &out, core::pose::Pose const & ) const
 }
 
 void TimeFilter::parse_my_tag( utility::tag::TagCOP const,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &)
+	basic::datacache::DataMap &
+)
 {
 }
 

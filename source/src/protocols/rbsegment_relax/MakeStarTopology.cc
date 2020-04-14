@@ -87,8 +87,8 @@ void MakeStarTopologyMover::apply( core::pose::Pose & pose ) {
 
 void MakeStarTopologyMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	mode_ = tag->getOption<std::string>("mode", "default");
 

@@ -321,8 +321,8 @@ core::Real RmsdSimpleFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void RmsdSimpleFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data_map
+)
 {
 	/// @brief
 	target_chain_ = 0;

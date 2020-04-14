@@ -192,8 +192,7 @@ AddLoopResidues::dump_loops_file(
 void
 AddLoopResidues::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	if ( tag->hasOption("asym_size") ) {
 		asym_size_ = tag->getOption<core::Size>("asym_size");

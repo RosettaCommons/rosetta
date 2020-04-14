@@ -77,9 +77,8 @@ void WriteSSEMover::apply( core::pose::Pose &pose ) {
 
 void WriteSSEMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	cmd( tag->getOption< std::string >( "cmd", "" ) );
 	dssp( tag->getOption< bool >( "dssp", false ) );
 	write_phipsi( tag->getOption< bool >( "write_phipsi", false ) );

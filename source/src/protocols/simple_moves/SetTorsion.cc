@@ -266,8 +266,7 @@ void SetTorsion::apply( Pose & pose ) {
 
 
 void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & //pose
+	basic::datacache::DataMap &
 )
 {
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );

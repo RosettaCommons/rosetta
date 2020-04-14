@@ -488,8 +488,8 @@ SymDofMover::apply(Pose & pose) {
 // Parse info from xml //
 void
 SymDofMover::parse_my_tag( TagCOP tag,
-	DataMap &,
-	Pose const & ) {
+	DataMap &
+) {
 
 	// Turn symmetry hacks on
 	if ( !basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() ) {

@@ -160,8 +160,8 @@ SetAACompositionPotential::apply( Pose & )
 void
 SetAACompositionPotential::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 
 	std::string const file( tag->getOption<String>( "file", "" ) );

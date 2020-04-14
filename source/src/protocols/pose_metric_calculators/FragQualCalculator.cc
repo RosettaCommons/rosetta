@@ -259,8 +259,8 @@ FragQualCalculator::recompute( Pose const & pose )
 void
 FragQualCalculator::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	rmsd_cutoff_goodfrag_ = tag->getOption<Real>( "rmsd_cutoff", 1.0 );
 	ratio_cutoff_goodfrag_ = tag->getOption<Real>( "ratio_cutoff", 0.3 );

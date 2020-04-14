@@ -95,11 +95,11 @@ LoopProtocol::~LoopProtocol() = default;
 
 void LoopProtocol::parse_my_tag(
 	TagCOP tag,
-	DataMap & data,
-	Pose const & pose) {
+	DataMap & data
+) {
 
 
-	LoopMover::parse_my_tag(tag, data, pose);
+	LoopMover::parse_my_tag(tag, data);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 
 	sfxn_cycles_ = tag->getOption<core::Size>("sfxn_cycles", sfxn_cycles_);
@@ -169,7 +169,7 @@ void LoopProtocol::parse_my_tag(
 			add_acceptance_check(name);
 		} else {
 			// Parse LoopMover subtags.
-			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data, pose);
+			LoopMoverOP loop_mover = utilities::loop_mover_from_tag(subtag, data);
 			add_mover(loop_mover);
 		}
 	}

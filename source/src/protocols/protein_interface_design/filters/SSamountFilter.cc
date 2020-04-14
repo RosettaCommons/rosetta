@@ -184,8 +184,8 @@ core::Real SSamountFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void SSamountFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & data_map
+)
 {
 	if ( tag->hasOption("reference_name") ) {
 		TR.Warning << "reference_name not implemented yet for SSamountFilter, FixMe if you can!" << std::endl;

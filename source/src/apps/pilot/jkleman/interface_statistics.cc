@@ -120,7 +120,6 @@ public:
 	// void parse_my_tag(
 	//       utility::tag::TagCOP tag,
 	//       basic::datacache::DataMap &,
-	//       core::pose::Pose const &
 	//       );
 
 private: // methods
@@ -461,7 +460,6 @@ utility::vector1< bool > MPInterfaceStatistics::get_chains_from_cmd( Pose & pose
 //MPInterfaceStatistics::parse_my_tag(
 //            utility::tag::TagCOP tag,
 //            basic::datacache::DataMap &,
-//            core::pose::Pose const &
 //            ) {
 //  // TODO
 //

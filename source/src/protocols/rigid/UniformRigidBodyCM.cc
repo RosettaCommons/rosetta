@@ -120,15 +120,15 @@ void UniformRigidBodyCM::apply( core::pose::Pose& pose ){
 }
 
 void UniformRigidBodyCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const& pose ) {
+	basic::datacache::DataMap& data
+) {
 
 	mobile_label_ = LocalPosition( tag->getOption< std::string >( "mobile" ) );
 	stationary_label_ = LocalPosition( tag->getOption< std::string >( "stationary" ) );
 
 	name_ = tag->getOption< std::string >( "name" );
 
-	mover_->parse_my_tag( tag, data, pose );
+	mover_->parse_my_tag( tag, data );
 }
 
 claims::EnvClaims UniformRigidBodyCM::yield_claims( core::pose::Pose const&,

@@ -96,9 +96,8 @@ RunSimpleMetricsMover::provide_authorship_info_for_unpublished() const {
 void
 RunSimpleMetricsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	//We should also accept a comma-separated list of previously defined simple metrics
 	// Full name of simple_metrics as this is exactly what they are.
 	utility::vector1< SimpleMetricCOP > metrics = get_metrics_from_datamap_and_subtags(tag, data);

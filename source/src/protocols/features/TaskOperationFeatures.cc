@@ -170,8 +170,7 @@ TaskOperationFeatures::features_reporter_dependencies() const {
 void
 TaskOperationFeatures::parse_my_tag(
 	TagCOP tag,
-	DataMap & data,
-	Pose const & /*pose*/
+	DataMap & data
 ) {
 	if ( ! tag->hasOption("task_operations") ) {
 		stringstream error_msg;

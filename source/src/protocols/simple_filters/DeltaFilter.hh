@@ -44,8 +44,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~DeltaFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	void ref_baseline( core::Real const rb );
 	core::Real baseline() const;
 	void baseline( core::Real const b );

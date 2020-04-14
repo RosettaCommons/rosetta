@@ -65,8 +65,8 @@ public:// constructor/destructor
 public:// parser
 
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
-		Pose const & );
+		basic::datacache::DataMap &
+	);
 
 	static void provide_attributes_and_subelements( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl );
 

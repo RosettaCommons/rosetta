@@ -127,8 +127,7 @@ void AtomicContactCountFilter::initialize_cross_chain( core::pack::task::TaskFac
 
 void AtomicContactCountFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data
 )
 {
 	distance_cutoff_ = tag->getOption< core::Real >( "distance", 4.5 );

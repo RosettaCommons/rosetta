@@ -115,7 +115,6 @@ public:
 	// void parse_my_tag(
 	//       utility::tag::TagCOP tag,
 	//       basic::datacache::DataMap &,
-	//       core::pose::Pose const &
 	//       );
 
 	/////////////////////
@@ -297,7 +296,6 @@ TestQuickRelaxMover::~TestQuickRelaxMover() = default;
 //TestQuickRelaxMover::parse_my_tag(
 //        utility::tag::TagCOP /*tag*/,
 //        basic::datacache::DataMap &,
-//        core::pose::Pose const &
 //        ) {
 //
 //  // TODO: implement this

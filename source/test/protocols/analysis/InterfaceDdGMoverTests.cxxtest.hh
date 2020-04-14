@@ -202,7 +202,7 @@ public:
 	void test_parse_my_tag() {
 		// Test that emptiest tag possible works and defaults to move jump 1
 		TagCOP empty_tag = tagptr_from_string( "<InterfaceDdGMover name=test_interface_ddg_filter/>\n" );
-		test_instantiation_->parse_my_tag( empty_tag, data_, *test_8mer_pose_ );
+		test_instantiation_->parse_my_tag( empty_tag, data_ );
 		//TS_ASSERT( test_instantiation_->get_chain_ids().size() == 1 );
 		//TS_ASSERT( test_instantiation_->get_chain_ids()[1] == 1 );
 
@@ -216,7 +216,7 @@ public:
 			};
 		for ( auto tag_str : good_tags ) {
 			TagCOP tag = tagptr_from_string(tag_str);
-			test_instantiation_->parse_my_tag(tag, data_, *test_dimer_pose_);
+			test_instantiation_->parse_my_tag(tag, data_);
 		}
 
 		// Test failure for conflicting tag options
@@ -229,7 +229,7 @@ public:
 			};
 		for ( auto tag_str : bad_tags ) {
 			TagCOP tag = tagptr_from_string(tag_str);
-			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_, *test_dimer_pose_), utility::excn::RosettaScriptsOptionError & );
+			TS_ASSERT_THROWS( test_instantiation_->parse_my_tag(tag, data_), utility::excn::RosettaScriptsOptionError & );
 		}
 	}
 

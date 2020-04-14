@@ -248,8 +248,7 @@ void BiasEnergy::write_to_string( std::string& str ) const{
 void
 BiasEnergy::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	stride_ = tag->getOption< core::Size >( "wte_stride", 10 );
 	omega_ = tag->getOption< core::Real >( "wte_omega", 1.0 );

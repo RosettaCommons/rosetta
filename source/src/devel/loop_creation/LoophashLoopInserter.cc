@@ -426,8 +426,7 @@ LoophashLoopInserter::build_loop(
 
 void
 LoophashLoopInserter::parse_my_tag(
-	utility::tag::TagCOP tag, basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	utility::tag::TagCOP tag, basic::datacache::DataMap & datamap
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

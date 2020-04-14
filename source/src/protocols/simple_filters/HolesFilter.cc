@@ -164,8 +164,8 @@ bool HolesFilter::apply( Pose const & pose ) const
 void
 HolesFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	// set filtered type
 	cmd_ = tag->getOption<String>( "cmd", "" );

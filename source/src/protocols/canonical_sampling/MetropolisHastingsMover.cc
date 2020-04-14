@@ -431,8 +431,7 @@ MetropolisHastingsMover::reinitialize_for_new_input() const { return false; }
 void
 MetropolisHastingsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 	///ntrials
 	ntrials_ = tag->getOption< core::Size >( "trials", ntrials_ );
@@ -451,7 +450,7 @@ MetropolisHastingsMover::parse_my_tag(
 	bool wte_sampling( tag->getOption< bool >( "wte", false ) );
 	if ( wte_sampling ) {
 		BiasEnergyOP bias_energy( new WTEBiasEnergy() ); // stride, omega, gamma );
-		bias_energy->parse_my_tag( tag, data, pose );
+		bias_energy->parse_my_tag( tag, data );
 		add_observer( bias_energy );
 		monte_carlo_ = utility::pointer::make_shared< BiasedMonteCarlo >( *score_fxn, temperature, bias_energy );
 	} else {
@@ -474,7 +473,7 @@ MetropolisHastingsMover::parse_my_tag(
 			}
 			tag_containing_mover = sub_subtags[0];
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());
-			mover = mover_factory->newMover( tag_containing_mover, data, pose);
+			mover = mover_factory->newMover( tag_containing_mover, data );
 		} else {
 			// Error case
 			protocols::moves::MoverFactory * mover_factory(protocols::moves::MoverFactory::get_instance());

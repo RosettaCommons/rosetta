@@ -144,8 +144,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP

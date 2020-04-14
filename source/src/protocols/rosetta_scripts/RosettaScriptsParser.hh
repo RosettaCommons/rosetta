@@ -67,14 +67,9 @@ namespace rosetta_scripts {
 /// in the previous two sections. The order in which the protocols are specified
 /// by the user will be maintained by the DockDesign mover.
 ///
-/// APPLY_TO_POSE This section allows for certain movers to be applied to the
-/// pose prior to starting the DockDesign protocol. For instance, these movers
-/// could set constraints, such as favor_native_residue. In this case, for
-/// example, the weights of res_type_constraint in all of the scorefunctions
-/// that are defined in SCOREFXNS or by default are set to 1.0, but can be
-/// changed by the user globally (in the definition of the weight on the
-/// constraint), or in particular for each of the scorefunctions by changing
-/// the relevant term (which is set by default to the global value).
+/// APPLY_TO_POSE -- DEPRECATED/Removed. This section used to allow for applying certain
+/// movers to the pose prior to protocol start. This functionality has been removed.
+/// Anything other than an empty APPLY_TO_POSE section will raise an error.
 ///
 /// xi:include statements can be placed anywhere to trigger read-in of another
 /// RosettaScripts XML file.  Contents of the file replace the xi:include
@@ -93,38 +88,22 @@ public:
 	~RosettaScriptsParser() override;
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
+	generate_mover(
 		std::string const & xml_fname,
 		std::string const & current_input_name = "",
 		std::string const & current_output_name = ""
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
-		bool & modified_pose,
-		std::string const & xml_fname,
-		std::string const & current_input_name = "",
-		std::string const & current_output_name = ""
-	);
-
-	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-	///   See also protocols::rosetta_scripts::XmlObjects
-	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
-		bool & modified_pose,
+	generate_mover(
 		std::string const & xml_fname,
 		utility::vector1< std::string > const & script_vars,
 		std::string const & current_input_name = "",
@@ -132,30 +111,26 @@ public:
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects.
 	///   Any Resources requested in the RESOURCES block will be
 	///   retrieved from the ResourceManager and placed in the DataMap.
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
+	generate_mover(
 		utility::options::OptionCollection const & options,
-		bool & modified_pose,
 		std::string const & current_input_name,
 		std::string const & current_output_name,
 		basic::resource_manager::ResourceManagerOP resource_manager
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
+	generate_mover(
 		utility::options::OptionCollection const & options,
-		bool & modified_pose,
 		std::string const & xml_fname,
 		std::string const & current_input_name = "",
 		std::string const & current_output_name = "",
@@ -164,14 +139,12 @@ public:
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a string
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose_xml_string(
-		core::pose::Pose & pose,
+	generate_mover_xml_string(
 		utility::options::OptionCollection const & options,
-		bool & modified_pose,
 		std::string const & xml_text,
 		std::string const & current_input_name,
 		std::string const & current_output_name,
@@ -183,8 +156,8 @@ public:
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects.
 	///   Any Resources requested in the RESOURCES block will be
 	///   retrieved from the ResourceManager and placed in the DataMap.
@@ -192,27 +165,23 @@ public:
 	/// Places an OptionCollectionCOP into the datamap for local option parsing.
 	///
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
+	generate_mover(
 		utility::options::OptionCollectionCOP options,
-		bool & modified_pose,
 		std::string const & current_input_name,
 		std::string const & current_output_name,
 		basic::resource_manager::ResourceManagerOP resource_manager
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a file
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	///
 	/// Places an OptionCollectionCOP into the datamap for local option parsing.
 	///
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose(
-		core::pose::Pose & pose,
+	generate_mover(
 		utility::options::OptionCollectionCOP options,
-		bool & modified_pose,
 		std::string const & xml_fname,
 		std::string const & current_input_name = "",
 		std::string const & current_output_name = "",
@@ -221,17 +190,15 @@ public:
 	);
 
 	/// @brief Convenience function to construct a ParsedProtocol from a string
-	/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-	///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
+	/// @details Reads in an RosettaScript from file, replaces script_vars if present,
+	///   Then returns the full ParsedProtocol
 	///   See also protocols::rosetta_scripts::XmlObjects
 	///
 	/// Places an OptionCollectionCOP into the datamap for local option parsing.
 	///
 	ParsedProtocolOP
-	generate_mover_and_apply_to_pose_xml_string(
-		core::pose::Pose & pose,
+	generate_mover_xml_string(
 		utility::options::OptionCollectionCOP options,
-		bool & modified_pose,
 		std::string const & xml_text,
 		std::string const & current_input_name,
 		std::string const & current_output_name,
@@ -269,9 +236,8 @@ public:
 	///
 	///@details
 	///
-	/// Creates mover via standard parsing machinery. Raises error if
-	/// APPLY_TO_POSE operations modify input pose.
-	ParsedProtocolOP parse_protocol_tag( core::pose::Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
+	/// Creates mover via standard parsing machinery
+	ParsedProtocolOP parse_protocol_tag( utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
 
 	///@brief
 	///
@@ -279,25 +245,11 @@ public:
 	///
 	///@details
 	///
-	/// Creates mover via standard parsing machinery on dummy, empty / pose.
-	/// Raises error if / APPLY_TO_POSE operations modify input pose.
-	ParsedProtocolOP parse_protocol_tag( utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options );
-
-	///@brief
-	///
-	/// Create the ParsedProtocolMover for the protocol using a tag.  Set modified pose variable.
-	/// Apply to pose if needed.
-	///
-	///@details
-	///
-	/// Go through tags, apply to pose, generate DataMap and ParsedProtocol Mover.
-	/// This funciton does the heavy lifting.
+	/// Load the datamap with the predefined object,
+	/// then go through tags, generating object and the ParsedProtocol Mover.
 	/// READS from LOCAL OptionCollection.
-	///
 	ParsedProtocolOP
 	generate_mover_for_protocol(
-		core::pose::Pose & pose,
-		bool & modified_pose,
 		utility::tag::TagCOP protocol_tag,
 		utility::options::OptionCollection const & options,
 		std::string const & current_input_name = "",
@@ -306,18 +258,46 @@ public:
 		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
 	);
 
+	///@brief
+	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.
+	///
+	///@details
+	///
+	/// Uses the passed DataMap for passing to parse_my_tag.
+	/// This function does the heavy lifting.
+	///
+	/// Does not add any predefined objects to the data map (though in-tag defined objects will be added.)
 	ParsedProtocolOP
 	generate_mover_for_protocol(
 		utility::tag::TagCOP protocol_tag,
 		basic::datacache::DataMap & data,
-		core::pose::Pose & pose,
-		bool & modified_pose,
 		utility::options::OptionCollection const & options,
 		XmlObjectsOP xml_objects = nullptr,
 		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
 	);
 
-	/// @brief Initialize the passed datamap with the standard set of default RosettaScripts objects
+	///@brief
+	///
+	/// Create the ParsedProtocolMover for the protocol using a tag.
+	///
+	///@details
+	///
+	/// This interface is preserved for (PyRosetta) backwards compatibility only.
+	/// The Pose and bool (modified_pose) parameters are now unused.
+	ParsedProtocolOP
+	generate_mover_for_protocol(
+		core::pose::Pose &,
+		bool &,
+		utility::tag::TagCOP protocol_tag,
+		utility::options::OptionCollection const & options,
+		std::string const & current_input_name = "",
+		std::string const & current_output_name = "",
+		XmlObjectsOP xml_objects = nullptr,
+		basic::resource_manager::ResourceManagerOP resource_manager = nullptr
+	) { return generate_mover_for_protocol(protocol_tag, options, current_input_name, current_output_name, xml_objects, resource_manager ); }
+
+	/// @brief Initialize the passed datamap with the standard set of pre-defined RosettaScripts objects
 	void
 	initialize_data_map(
 		basic::datacache::DataMap & data,
@@ -360,38 +340,32 @@ public:
 		basic::resource_manager::ResourceManagerOP resource_manager
 	) const;
 
-	// @details Will return true if the pose was modified.
-	bool
+	void
 	parse_apply_to_pose_tag(
 		utility::tag::TagCOP apply_tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	void instantiate_filter(
 		utility::tag::TagCOP const & tag_ptr,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	void instantiate_mover(
 		utility::tag::TagCOP const & tag_ptr,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	/// @brief Instantiate a PackerPalette object.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void instantiate_packer_palette(
 		utility::tag::TagCOP const & tag_ptr,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	void instantiate_taskoperation(
 		utility::tag::TagCOP const & tag_ptr,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	utility::tag::TagCOP
@@ -405,15 +379,13 @@ public:
 	void
 	parse_import_tag(
 		utility::tag::TagCOP import_tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	void import_tags(
 		std::set< ImportTagName > & import_tag_names,
 		utility::tag::TagCOP my_tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose & pose
+		basic::datacache::DataMap & data
 	) const;
 
 	void
@@ -445,23 +417,16 @@ public:
 	///
 	///@detals
 	/// NOT accessible in PyRosetta.
-	/// For general use and PyRosetta, use generate_mover_and_apply_to_pose functions.
+	/// For general use and PyRosetta, use mover-returning generate_mover() functions.
 	/// READS FROM GLOBAL OPTIONS.
-	bool
-	generate_mover_from_pose(
-		core::pose::Pose & pose,
+	void
+	generate_mover(
 		MoverOP & mover,
 		bool new_input,
 		std::string const & xml_file,
 		std::string const & current_input_name = "",
 		std::string const & current_output_name = "",
 		bool guarantee_new_mover = false
-	);
-
-	protocols::moves::MoverOP
-	generate_mover_from_pose(
-		core::pose::Pose const & pose,
-		std::string const & xml_file
 	);
 
 	///@brief Checks the LOCAL options collection to see if a protocol has been set.

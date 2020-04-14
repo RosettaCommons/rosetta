@@ -137,8 +137,8 @@ public: //parser
 
 	/// @brief parse xml file
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	get_name() const override;

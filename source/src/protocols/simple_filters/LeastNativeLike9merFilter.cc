@@ -173,8 +173,8 @@ bool LeastNativeLike9merFilter::apply(const Pose & pose ) const
 void
 LeastNativeLike9merFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using namespace protocols::indexed_structure_store;
 	// set threshold

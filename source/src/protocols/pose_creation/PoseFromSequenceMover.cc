@@ -146,9 +146,8 @@ PoseFromSequenceMover::show(std::ostream & output) const
 void
 PoseFromSequenceMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap&,
-	core::pose::Pose const &)
-{
+	basic::datacache::DataMap&
+) {
 	std::string sequence("");
 	if ( tag->hasOption( "fasta" ) && tag->hasOption( "sequence" ) ) {
 		throw CREATE_EXCEPTION(

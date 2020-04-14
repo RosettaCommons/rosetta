@@ -442,9 +442,8 @@ void MergePDBatOverlapMover::apply( Pose & pose )
 
 void MergePDBatOverlapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & datamap
+) {
 	attachment_termini_ = tag->getOption< std::string >( "attachment_termini" ,"n_term" );
 	overlap_length_ = tag->getOption< core::Size >( "overlap_length", 40);
 	max_overlap_rmsd_ = tag->getOption<Real>("max_overlap_rmsd", 4.0);

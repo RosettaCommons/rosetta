@@ -252,9 +252,8 @@ UpdateCrystInfo::apply( core::pose::Pose & pose ) {
 void
 UpdateCrystInfo::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ )
-{
+	basic::datacache::DataMap & /*data*/
+) {
 
 }
 
@@ -344,8 +343,8 @@ CrystRMS::apply( core::pose::Pose & pose ) {
 void
 CrystRMS::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/ ) {
+	basic::datacache::DataMap & data
+) {
 
 	if ( tag->hasOption( "scorefxn" ) ) {
 		sf_ = protocols::rosetta_scripts::parse_score_function( tag, data );
@@ -912,8 +911,8 @@ DockLatticeMover::apply( core::pose::Pose & pose ) {
 void
 DockLatticeMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
 		sf_ = protocols::rosetta_scripts::parse_score_function( tag, data );
@@ -1577,8 +1576,8 @@ MakeLatticeMover::setup_xtal_symminfo(
 void
 MakeLatticeMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	if ( tag->hasOption( "contact_dist" ) ) {
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );

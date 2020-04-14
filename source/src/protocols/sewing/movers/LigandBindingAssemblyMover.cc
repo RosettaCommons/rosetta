@@ -574,10 +574,9 @@ LigandBindingAssemblyMover::set_build_site_only( bool build_only ){
 void
 LigandBindingAssemblyMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose )
-{
-	AppendAssemblyMover::parse_my_tag( tag, data, pose );
+	basic::datacache::DataMap & data
+) {
+	AppendAssemblyMover::parse_my_tag( tag, data );
 
 	//Parse the extra attributes
 	set_distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 10.0 ) );

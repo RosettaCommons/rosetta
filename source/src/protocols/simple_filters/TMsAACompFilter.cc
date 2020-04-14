@@ -82,9 +82,8 @@ TMsAACompFilter::~TMsAACompFilter(){}
 void
 TMsAACompFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.5 );
 }
 

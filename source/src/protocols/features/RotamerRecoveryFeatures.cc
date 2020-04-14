@@ -137,8 +137,7 @@ RotamerRecoveryFeatures::initialize_task_factory(
 void
 RotamerRecoveryFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & data
 ) {
 
 	scfxn_ = parse_score_function( tag, data );

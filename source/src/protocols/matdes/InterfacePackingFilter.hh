@@ -48,8 +48,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~InterfacePackingFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	core::Real distance_cutoff() const;
 	core::Real contact_dist() const;

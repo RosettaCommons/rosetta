@@ -164,7 +164,7 @@ LoopLengthChange::get_name() const {
 }
 
 void
-LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
+LoopLengthChange::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
 	loop_start( core::pose::parse_resnum( tag->getOption< std::string >( "loop_start" ) ) );
 	loop_end( core::pose::parse_resnum( tag->getOption< std::string >( "loop_end" ) ) );

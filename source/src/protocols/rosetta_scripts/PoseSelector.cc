@@ -19,8 +19,6 @@
 #include <protocols/rosetta_scripts/PoseSelector.fwd.hh>
 
 // Package headers
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 
 // Project headers
 #include <protocols/rosetta_scripts/PosePropertyReporter.hh>
@@ -43,8 +41,7 @@ PoseSelector::~PoseSelector() = default;
 
 void PoseSelector::parse_my_tag(
 	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 )
 {
 	TR << "***WARNING!!!! WARNING!!!*** parse_my_tag has been invoked for this PoseSelector but it hasn't been defined. Are you sure this is appropriate?" << std::endl;

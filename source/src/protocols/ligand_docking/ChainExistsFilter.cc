@@ -51,7 +51,7 @@ ChainExistsFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+ChainExistsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 
 	if ( ! tag->hasOption("chain") ) {

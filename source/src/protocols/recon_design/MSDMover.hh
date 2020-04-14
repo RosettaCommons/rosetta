@@ -57,8 +57,8 @@ public:
 	/// @brief Read options from RosettaScripts
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief Specify XML schema
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

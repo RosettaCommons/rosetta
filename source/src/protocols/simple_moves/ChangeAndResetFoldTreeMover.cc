@@ -96,8 +96,8 @@ ChangeAndResetFoldTreeMover::fresh_instance() const {
 //void
 //ChangeAndResetFoldTreeMover::parse_my_tag(
 //  TagCOP tag,
-//  basic::datacache::DataMap&,
-//  const Pose&) {
+//  basic::datacache::DataMap&
+//) {
 //
 //}
 

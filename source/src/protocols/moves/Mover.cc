@@ -97,8 +97,7 @@ MoverOP Mover::create() {
 /// However, we should be chatty about the fact that someone is using a RosettaScripts interface to a mover which didn't define parse_my_tag()
 void Mover::parse_my_tag(
 	TagCOP,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 ) {
 	TR.Warning << "The parse_my_tag() for mover " << name() << " has been invoked, but it hasn't been overridden. Are you sure this is appropriate?" << std::endl;
 }

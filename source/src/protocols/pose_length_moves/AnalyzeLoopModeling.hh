@@ -51,7 +51,7 @@ public:
 	core::Real generate_lookback_rmsd(core::pose::Pose pose, core::Size position);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< AnalyzeLoopModeling >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 
 	std::string
 	get_name() const override;

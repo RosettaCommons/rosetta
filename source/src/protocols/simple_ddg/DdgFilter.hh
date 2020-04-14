@@ -62,7 +62,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~DdgFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	void relax_mover( protocols::moves::MoverOP m );
 	protocols::moves::MoverOP relax_mover() const;
 	void filter( protocols::filters::FilterOP m );

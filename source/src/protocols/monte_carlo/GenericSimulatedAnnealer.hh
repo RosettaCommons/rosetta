@@ -96,8 +96,8 @@ public:
 	/// @brief XML interface to this mover
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	/// @brief Clears accepted data and initialize with new pose
 	virtual void reset( Pose & pose );

@@ -24,31 +24,30 @@ class FrozenSidechainsMover : public protocols::moves::Mover {
 
 public:
 
-  FrozenSidechainsMover();
+	FrozenSidechainsMover();
 
-  //  virtual ~AddEncounterConstraintMover();
+	//  virtual ~AddEncounterConstraintMover();
 
-  protocols::moves::MoverOP clone() const override;
+	protocols::moves::MoverOP clone() const override;
 
-  void apply( core::pose::Pose & pose ) override;
-  void compute_interface( core::pose::Pose & pose ) const;
+	void apply( core::pose::Pose & pose ) override;
+	void compute_interface( core::pose::Pose & pose ) const;
 
-  protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
-  protocols::scoring::InterfaceInfo & nonconst_interface_from_pose( core::pose::Pose & ) const;
+	protocols::scoring::InterfaceInfo const & interface_from_pose( core::pose::Pose const & ) const;
+	protocols::scoring::InterfaceInfo & nonconst_interface_from_pose( core::pose::Pose & ) const;
 
-  std::string get_name() const override;
+	std::string get_name() const override;
 
-  void parse_my_tag(
-		    utility::tag::TagCOP tag,
-		    basic::datacache::DataMap &,
-		    core::pose::Pose const &
-  ) override;
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap &
+	) override;
 
 private:
 
-  utility::vector1<bool> allow_copy_chi_;
-  protocols::simple_moves::ReturnSidechainMoverOP frozen_sidechains_;
-  core::pose::Pose recover_sidechains_pose_;
+	utility::vector1<bool> allow_copy_chi_;
+	protocols::simple_moves::ReturnSidechainMoverOP frozen_sidechains_;
+	core::pose::Pose recover_sidechains_pose_;
 
 };
 

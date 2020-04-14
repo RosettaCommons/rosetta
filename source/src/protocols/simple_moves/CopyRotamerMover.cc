@@ -141,8 +141,8 @@ CopyRotamerMover::show(std::ostream & output) const
 void
 CopyRotamerMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	TR << "Parsing options for CopyRotamerMover:" << std::endl;
 

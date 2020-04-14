@@ -207,8 +207,8 @@ public:
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	// setters
 	void set_report_crd( bool const value ){ RDC_.report_crd( value ); }

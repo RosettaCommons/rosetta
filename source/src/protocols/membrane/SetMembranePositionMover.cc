@@ -153,8 +153,7 @@ SetMembranePositionMover::fresh_instance() const {
 void
 SetMembranePositionMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	read_center_normal_from_tag( center_, normal_, tag );
@@ -288,8 +287,7 @@ SetMembraneNormalMover::fresh_instance() const {
 void
 SetMembraneNormalMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	core::Vector center_dummy(0,0,0);
@@ -410,8 +408,7 @@ SetMembraneCenterMover::fresh_instance() const {
 void
 SetMembraneCenterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	core::Vector normal_dummy(0,0,0);

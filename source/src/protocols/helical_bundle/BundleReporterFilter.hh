@@ -146,7 +146,7 @@ public:
 
 	/// @brief Parse XML (RosettaScripts) setup.
 	///
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Set whether we report sequences.
 	///

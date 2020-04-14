@@ -142,8 +142,8 @@ protocols::moves::MoverOP SingleFragmentMover::fresh_instance() const {
 }
 
 void SingleFragmentMover::parse_my_tag(const utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	const core::pose::Pose& ) {
+	basic::datacache::DataMap& data
+) {
 	using core::fragment::FragmentIO;
 	using core::fragment::FragSetOP;
 	using core::kinematics::MoveMap;

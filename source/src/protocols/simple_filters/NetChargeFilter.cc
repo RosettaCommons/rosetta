@@ -64,9 +64,8 @@ NetChargeFilter::~NetChargeFilter()= default;
 void
 NetChargeFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &data
+) {
 	chain_ = tag->getOption<core::Size>( "chain", 0 );
 	net_charge_max_ = tag->getOption<signed int>( "max", 100 );
 	net_charge_min_ = tag->getOption<signed int>( "min", -100 );

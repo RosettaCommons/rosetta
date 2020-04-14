@@ -239,7 +239,7 @@ void JSON_RPC::run(){
 			provider->add_input_file( "script.xml", xmlscript_ );
 			protocols::rosetta_scripts::RosettaScriptsParser rsp;
 			protocols::moves::MoverOP protocol;
-			rsp.generate_mover_from_pose( outputpose_ , protocol, true, "script.xml" );
+			rsp.generate_mover( protocol, true, "script.xml" );
 			protocol->apply( outputpose_ );
 		}
 

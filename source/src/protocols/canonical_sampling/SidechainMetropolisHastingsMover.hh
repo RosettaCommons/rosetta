@@ -88,8 +88,7 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief Return true if a move should be accepted, given @a delta_energy

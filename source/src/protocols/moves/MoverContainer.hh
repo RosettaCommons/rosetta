@@ -200,8 +200,8 @@ public:
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	get_name() const override;
@@ -272,8 +272,8 @@ public:
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	get_name() const override;

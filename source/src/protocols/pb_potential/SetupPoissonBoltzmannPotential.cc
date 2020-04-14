@@ -99,8 +99,8 @@ SetupPoissonBoltzmannPotential::clone() const {
 
 void
 SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & pose ) {
+	basic::datacache::DataMap & data_map
+) {
 	// This param is required when the app is NOT linked against the apbs libraries.
 	// Validate only when it is a requirement, but register in any way.
 	std::string apbs_path;  // path to the apbs executable.
@@ -191,7 +191,7 @@ SetupPoissonBoltzmannPotential::parse_my_tag( utility::tag::TagCOP tag,
 			utility_exit_with_message( "PB_elec term is required." );
 		}
 	}
-	ddg_->parse_my_tag( tag, data_map, pose );
+	ddg_->parse_my_tag( tag, data_map );
 
 }
 protocols::moves::MoverOP

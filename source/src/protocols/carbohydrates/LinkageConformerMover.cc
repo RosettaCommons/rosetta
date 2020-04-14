@@ -146,8 +146,8 @@ LinkageConformerMover::set_single_resnum( core::pose::Pose const & pose, core::S
 void
 LinkageConformerMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
+	basic::datacache::DataMap& datamap
+)
 {
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );

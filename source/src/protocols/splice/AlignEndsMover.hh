@@ -36,8 +36,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	core::Real distance_threshold() const{ return distance_threshold_; }
 	void distance_threshold( core::Real const r ){ distance_threshold_ = r;}

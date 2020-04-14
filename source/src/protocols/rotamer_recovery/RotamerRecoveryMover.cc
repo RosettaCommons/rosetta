@@ -190,8 +190,8 @@ RotamerRecoveryMover::clone() const {
 void
 RotamerRecoveryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & /*pose*/ )
+	basic::datacache::DataMap & datamap
+)
 {
 	score_function( parse_score_function( tag, datamap ) );
 

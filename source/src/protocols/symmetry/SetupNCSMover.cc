@@ -319,8 +319,8 @@ void SetupNCSMover::apply( core::pose::Pose & pose ) {
 
 void SetupNCSMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ ) {
+	basic::datacache::DataMap & /*data*/
+) {
 	if ( tag->hasOption( "bb" ) ) bb_ = tag->getOption< bool >( "bb" );
 	if ( tag->hasOption( "chi" ) ) chi_ = tag->getOption< bool >( "chi" );
 	if ( tag->hasOption( "wt" ) ) wt_ = tag->getOption< core::Real >( "wt" );

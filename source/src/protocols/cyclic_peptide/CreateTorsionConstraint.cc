@@ -110,8 +110,7 @@ void CreateTorsionConstraint::apply( core::pose::Pose & pose )
 void
 CreateTorsionConstraint::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );

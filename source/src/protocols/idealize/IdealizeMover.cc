@@ -286,8 +286,7 @@ IdealizeMover::apply( pose::Pose & pose ) {
 void
 IdealizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ){
 	atom_pair_constraint_weight( tag->getOption< core::Real >( "atom_pair_constraint_weight", 0.0 ) );
 	coordinate_constraint_weight( tag->getOption< core::Real >( "coordinate_constraint_weight", 0.01 ) );

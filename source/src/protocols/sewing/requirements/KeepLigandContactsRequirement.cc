@@ -83,9 +83,8 @@ KeepLigandContactsRequirement::test(data_storage::SmartAssemblyOP assembly) {
 void
 KeepLigandContactsRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up KeepLigandContactsRequirement" << std::endl;
 	//maximum_contacts_to_lose_ = requirement_tag->getOption< core::Size >( "maximum_contacts_to_lose", 0 );
 	//TR << "Number of lost contacts allowed: " << maximum_contacts_to_lose_ << std::endl;

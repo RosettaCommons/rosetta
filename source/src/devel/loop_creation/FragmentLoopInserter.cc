@@ -389,8 +389,7 @@ FragmentLoopInserter::get_pose_coords_to_match(
 void
 FragmentLoopInserter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const &
+	basic::datacache::DataMap & /*data*/
 ){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

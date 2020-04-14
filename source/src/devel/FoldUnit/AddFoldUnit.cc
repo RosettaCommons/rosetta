@@ -427,8 +427,8 @@ AddFoldUnitMover::fresh_instance() const
 void
 AddFoldUnitMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	fragment_dbase( tag->getOption< string >( "fragment_dbase", "in/fold_from_frags.db" ));
 	pair_dbase( tag->getOption< string >( "pair_dbase", "in/junctions.db" ));
@@ -554,8 +554,8 @@ StartFreshMover::apply( core::pose::Pose & pose ){
 void
 StartFreshMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap &
+){
 	residue_type_set_ = tag->getOption< string >( "residue_type_set", "centroid" );
 	TR<<"residue_type_set: "<<residue_type_set()<<std::endl;
 }

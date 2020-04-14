@@ -242,8 +242,8 @@ CCDLoopClosureMover::apply( pose::Pose & pose )
 
 void CCDLoopClosureMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	// max_torsion_delta_per_move: This is split into three tags.
 	if ( tag->hasOption( "max_torsion_delta_per_move_H" ) ) {

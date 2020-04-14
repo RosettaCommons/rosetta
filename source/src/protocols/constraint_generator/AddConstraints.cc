@@ -54,8 +54,8 @@ AddConstraints::~AddConstraints()= default;
 void
 AddConstraints::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	//We should also accept a comma-separated list of previously defined constraint generators
 	if ( tag->hasOption( "constraint_generators" ) ) {

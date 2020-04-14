@@ -89,8 +89,8 @@ ReplaceRegionMover::~ReplaceRegionMover()= default;
 void
 ReplaceRegionMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap& data_map,
-	const Pose& )
+	basic::datacache::DataMap& data_map
+)
 {
 
 	src_pose_ = protocols::rosetta_scripts::saved_reference_pose(tag, data_map, "spm_reference_name");

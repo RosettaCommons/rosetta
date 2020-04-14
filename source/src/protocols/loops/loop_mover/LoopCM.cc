@@ -74,8 +74,8 @@ LoopCM::LoopCM() :
 {}
 
 void LoopCM::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap& datamap,
-	Pose const& ){
+	basic::datacache::DataMap& datamap
+){
 	using core::select::residue_selector::ResidueSelector;
 
 	std::string const algorithm = tag->getOption< std::string >( "algorithm" );

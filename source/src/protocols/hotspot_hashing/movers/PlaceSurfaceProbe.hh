@@ -69,8 +69,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &) override;
+		basic::datacache::DataMap &
+	) override;
 
 	bool reinitialize_for_new_input() const override { return false; }
 

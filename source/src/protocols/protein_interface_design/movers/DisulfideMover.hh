@@ -66,8 +66,9 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 public:
 	/// @brief Find all residues which could disulfide bond to a target
 	/// @return pairs of residues (target, host) from the target protein and the

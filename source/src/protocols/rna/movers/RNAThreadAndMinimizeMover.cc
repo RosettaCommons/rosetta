@@ -566,8 +566,8 @@ RNAThreadAndMinimizeMover::mm_from_residues( core::pose::Pose const & pose, util
 void
 RNAThreadAndMinimizeMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 
 }

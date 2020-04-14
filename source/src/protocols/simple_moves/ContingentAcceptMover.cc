@@ -101,8 +101,8 @@ void ContingentAcceptMover::mover( protocols::moves::MoverOP m ){
 void
 ContingentAcceptMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 	mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "mover" ), data ) );

@@ -67,9 +67,8 @@ DsspSpecificLengthRequirement::test(data_storage::SmartAssemblyOP assembly){
 void
 DsspSpecificLengthRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up DsspSpecificLengthRequirement" << std::endl;
 	dssp_code_ = requirement_tag->getOption< char >( "dssp_code", 'X' );
 	TR << "DSSP code: " << dssp_code_ << std::endl;

@@ -92,8 +92,8 @@ void ScriptCM::apply( core::pose::Pose& pose ){
 }
 
 void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const& pose ) {
+	basic::datacache::DataMap& datamap
+) {
 	name_ = tag->getOption< std::string >( "name" );
 
 	for ( auto tag_it = tag->getTags().begin();
@@ -115,7 +115,7 @@ void ScriptCM::parse_my_tag( utility::tag::TagCOP tag,
 		} else {
 			tr.Debug << " Interpreting tag with name " << subtag->getName() << " as a new mover." << std::endl;
 
-			set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap, pose ) );
+			set_client( moves::MoverFactory::get_instance()->newMover( subtag, datamap ) );
 
 			if ( subtag->hasOption( "name" ) ) {
 				tr.Warning << "Mover " << subtag->getOption< std::string >( "name" ) << " will not be availiable to"

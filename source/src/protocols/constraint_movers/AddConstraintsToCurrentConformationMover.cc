@@ -304,8 +304,7 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 void
 AddConstraintsToCurrentConformationMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 ) {
 	use_distance_cst_ = tag->getOption< bool >( "use_distance_cst", use_distance_cst_ );
 	max_distance_ = tag->getOption< core::Real >( "max_distance", max_distance_ );
@@ -327,7 +326,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		TR.Warning << "task_operations only active for proteins" << std::endl;
-		parse_task_operations( tag, datamap, pose );
+		parse_task_operations( tag, datamap );
 	}
 
 	core::select::residue_selector::ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
@@ -343,8 +342,7 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 void
 AddConstraintsToCurrentConformationMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 ) {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );
 	if ( new_task_factory == nullptr ) return;

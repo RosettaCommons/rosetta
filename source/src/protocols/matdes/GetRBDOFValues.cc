@@ -57,7 +57,6 @@ static basic::Tracer TR( "protocols.matdes.GetRBDOFValues" );
 namespace protocols {
 namespace matdes {
 
-using core::pose::Pose;
 
 // @brief default constructor
 GetRBDOFValues::GetRBDOFValues():
@@ -217,8 +216,8 @@ bool GetRBDOFValues::apply( Pose const & pose ) const
 void
 GetRBDOFValues::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	jump_id( tag->getOption< int >( "jump", 1 ) );
 	sym_dof_name( tag->getOption< std::string >( "sym_dof_name" , "" ) );

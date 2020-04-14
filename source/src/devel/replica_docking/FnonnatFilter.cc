@@ -132,8 +132,7 @@ FnonnatFilter::fresh_instance() const{
 void
 FnonnatFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	std::string const scorefxn_name(

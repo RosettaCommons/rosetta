@@ -95,8 +95,7 @@ AddCompositionConstraintMover::apply( Pose &pose )
 void
 AddCompositionConstraintMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("filename") ) {

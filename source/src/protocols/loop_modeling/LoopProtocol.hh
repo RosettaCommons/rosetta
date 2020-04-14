@@ -82,8 +82,8 @@ public:
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose) override;
+		basic::datacache::DataMap & data
+	) override;
 
 private:
 

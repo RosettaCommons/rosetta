@@ -17,7 +17,6 @@
 // Package headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.fwd.hh>
 #include <protocols/rosetta_scripts/PosePropertyReporter.hh>
@@ -61,8 +60,7 @@ public:
 	virtual
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	);
 
 	/// @brief Select poses from provided vector by applying the selection criteria parsed from Tag

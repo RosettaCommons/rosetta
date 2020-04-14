@@ -1756,8 +1756,7 @@ FlexPepDockingProtocol::storeJobStatistics
 
 void FlexPepDockingProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );

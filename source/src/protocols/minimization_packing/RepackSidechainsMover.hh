@@ -63,14 +63,14 @@ public:
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 	virtual void parse_score_function(
 		TagCOP,
-		basic::datacache::DataMap const &,
-		Pose const & );
+		basic::datacache::DataMap const &
+	);
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP fresh_instance() const override;

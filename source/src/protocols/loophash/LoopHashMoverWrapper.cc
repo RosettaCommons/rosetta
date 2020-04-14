@@ -289,8 +289,8 @@ LoopHashMoverWrapper::get_additional_output() {
 
 void
 LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0 );
 	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000 );

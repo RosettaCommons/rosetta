@@ -60,8 +60,7 @@ public:
 	/// @brief Parse RosettaScripts options for this mover
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

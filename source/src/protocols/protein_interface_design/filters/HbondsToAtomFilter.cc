@@ -101,7 +101,7 @@ HbondsToAtomFilter::apply( Pose const & pose ) const {
 }
 
 void
-HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+HbondsToAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	partners_ = tag->getOption<core::Size>( "partners" );
 	energy_cutoff_ = tag->getOption<core::Real>( "energy_cutoff", -0.5 );

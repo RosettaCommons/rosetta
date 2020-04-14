@@ -213,8 +213,8 @@ InterlockAroma::apply( Pose & pose )
 void
 InterlockAroma::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	String const sfxn ( tag->getOption<String>( "scorefxn", "soft_rep" ));
 	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", sfxn );

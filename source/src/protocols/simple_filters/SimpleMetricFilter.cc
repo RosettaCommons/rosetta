@@ -183,9 +183,8 @@ SimpleMetricFilter::set_fail_on_missing_cache(bool fail){
 void
 SimpleMetricFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	//We should also accept a comma-separated list of previously defined simple metrics
 	// Full name of simple_metrics as this is exactly what they are.
 

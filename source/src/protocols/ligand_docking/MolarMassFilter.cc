@@ -59,7 +59,7 @@ MolarMassFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+MolarMassFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("mass_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "MolarMass filter needs a 'chain' and an 'mass_limit' option");

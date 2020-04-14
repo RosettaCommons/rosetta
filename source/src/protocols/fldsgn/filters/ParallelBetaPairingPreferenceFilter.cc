@@ -207,8 +207,8 @@ ParallelBetaPairingPreferenceFilter::compute( Pose const & pose ) const
 void
 ParallelBetaPairingPreferenceFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// set threshold
 	filter_value( tag->getOption<Real>( "threshold", 0 ) );

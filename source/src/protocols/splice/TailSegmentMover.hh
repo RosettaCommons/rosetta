@@ -72,7 +72,7 @@ public:
 
 	void set_task_factory( core::pack::task::TaskFactoryCOP task_factory_in );
 	void fullatom_scorefunction( core::scoring::ScoreFunctionOP SF_in ){fullatom_scorefunction_=SF_in;}
-	void parse_my_tag(TagCOP tag, basic::datacache::DataMap & data, core::pose::Pose const & ) override;
+	void parse_my_tag(TagCOP tag, basic::datacache::DataMap & data ) override;
 	core::scoring::ScoreFunctionOP get_scorefunction() { return fullatom_scorefunction_; }
 
 	static

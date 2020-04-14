@@ -77,12 +77,12 @@ public:
 
 		StoreResidueSubsetMoverOP rs( new StoreResidueSubsetMover );
 		set_throw_on_next_assertion_failure();
-		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_ANYTHING( rs->parse_my_tag( tag, dm ) );
 
 		std::stringstream ssgood;
 		ssgood << "<StoreResidueSubset name=\"good_ss\" subset_name=\"stored_subset\" />";
 		tag->read( ssgood );
-		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rs->parse_my_tag( tag, dm ) );
 	}
 
 	void test_store_and_retrieve_subset() {

@@ -90,8 +90,7 @@ TrajectoryRecorder::get_name() const
 void
 TrajectoryRecorder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /* data */,
-	core::pose::Pose const & /* pose */
+	basic::datacache::DataMap & /* data */
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );

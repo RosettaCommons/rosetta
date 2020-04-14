@@ -86,7 +86,7 @@ public:
 
 		protocols::simple_ddg::DdgFilter testfilter;
 		TagCOP tag = tagptr_from_string("<Ddg name=test filter=sfT99 />\n");
-		testfilter.parse_my_tag( tag, data, *testpose_ );
+		testfilter.parse_my_tag( tag, data );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm(*testpose_), 99 );
 	}

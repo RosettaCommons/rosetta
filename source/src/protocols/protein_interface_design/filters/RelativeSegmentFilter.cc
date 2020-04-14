@@ -36,6 +36,8 @@ using core::pose::Pose;
 
 bool
 RelativeSegmentFilter::apply( Pose const & pose ) const {
+	runtime_assert( stop_res() <= pose.size() );
+
 	core::pose::Pose source_pose;
 	core::import_pose::pose_from_file( source_pose, source_pose_ , core::import_pose::PDB_file);
 
@@ -56,14 +58,13 @@ RelativeSegmentFilter::apply( Pose const & pose ) const {
 }
 
 void
-RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & pose )
+RelativeSegmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	source_pose( tag->getOption< std::string >( "source_pose" ) );
 	start_res( tag->getOption< core::Size >( "start_res" ) );
 	stop_res( tag->getOption< core::Size >( "stop_res" ));
 	runtime_assert( stop_res() > start_res() );
 	runtime_assert( start_res() > 0 );
-	runtime_assert( stop_res() <= pose.size() );
 	TR<<"source_pose: "<<source_pose()<<" start_res: "<<start_res()<<" stop res: "<<stop_res()<<std::endl;
 }
 

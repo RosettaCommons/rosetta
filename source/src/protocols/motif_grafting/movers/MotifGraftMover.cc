@@ -1920,8 +1920,8 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 /**@brief Fuction to parse RosettaScripts XML options**/
 void MotifGraftMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &)
+	basic::datacache::DataMap & data
+)
 {
 	//Generate some temporary variables to store the XML parsed arguments
 	std::string s_contextStructure;

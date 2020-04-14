@@ -169,12 +169,11 @@ MinPackMover::task_is_valid( Pose const & pose ) const
 void
 MinPackMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 
 	if ( tag->hasOption( "nonideal" ) ) {
 		nonideal_ = tag->getOption<bool>( "nonideal" );
@@ -191,8 +190,7 @@ MinPackMover::parse_my_tag(
 void
 MinPackMover::parse_score_function(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
@@ -204,8 +202,7 @@ MinPackMover::parse_score_function(
 void
 MinPackMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );

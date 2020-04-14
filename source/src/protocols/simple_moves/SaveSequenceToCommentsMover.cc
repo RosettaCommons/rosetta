@@ -44,8 +44,7 @@ void SaveSequenceToCommentsMover::apply( core::pose::Pose & pose )
 void
 SaveSequenceToCommentsMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	save_seq_name( tag->getOption< std::string >( "save_seq_name", "" ) );

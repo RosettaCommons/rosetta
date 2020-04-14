@@ -284,8 +284,8 @@ StoreCompoundTaskMover::apply( core::pose::Pose & pose )
 void
 StoreCompoundTaskMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & data_map
+)
 {
 
 	using StringVec = utility::vector1<std::string>;

@@ -146,8 +146,7 @@ DnaInterfaceMinMover::apply( pose::Pose & pose )
 void
 DnaInterfaceMinMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("scorefxn") ) {

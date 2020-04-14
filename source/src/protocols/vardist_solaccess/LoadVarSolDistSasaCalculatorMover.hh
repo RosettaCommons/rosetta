@@ -48,8 +48,8 @@ public:
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 private:
 	// KAB - below line commented out by warnings removal script (-Wunused-private-field) on 2014-09-11

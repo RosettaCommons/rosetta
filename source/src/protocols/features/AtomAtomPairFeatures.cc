@@ -186,8 +186,7 @@ AtomAtomPairFeatures::features_reporter_dependencies() const {
 void
 AtomAtomPairFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	min_dist_ = tag->getOption<Real>("min_dist", 0.0);
 	max_dist_ = tag->getOption<Real>("max_dist", 10.0);

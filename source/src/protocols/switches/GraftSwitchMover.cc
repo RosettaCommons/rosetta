@@ -418,8 +418,7 @@ GraftSwitchMover::mover_name() {
 void
 GraftSwitchMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("selector") ) {
@@ -466,16 +465,15 @@ GraftSwitchMover::parse_my_tag(
 		important_residues_.push_back( subsplit_Size );
 	}
 
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 GraftSwitchMover::parse_score_function(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
@@ -487,8 +485,7 @@ GraftSwitchMover::parse_score_function(
 void
 GraftSwitchMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );

@@ -107,8 +107,8 @@ protocols::moves::MoverOP ExtendedPoseMover::fresh_instance() const {
 }
 
 void ExtendedPoseMover::parse_my_tag(const utility::tag::TagCOP tag,
-	basic::datacache::DataMap&,
-	const core::pose::Pose&) {
+	basic::datacache::DataMap&
+) {
 	using namespace core::sequence;
 
 	// required options

@@ -63,8 +63,7 @@ protocols::moves::MoverOP SlideTogether::fresh_instance() const {
 void
 SlideTogether::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
-	core::pose::Pose const &
+	basic::datacache::DataMap & /*datamap*/
 )
 {
 	if ( tag->getName() != "SlideTogether" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");

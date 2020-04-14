@@ -59,8 +59,8 @@ RemoveConstraints::~RemoveConstraints() = default;
 void
 RemoveConstraints::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	std::string const generators_str = tag->getOption< std::string >( "constraint_generators", "" );
 	ConstraintGeneratorCOPs generators = parse_constraint_generators( tag, data );

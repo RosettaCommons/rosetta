@@ -269,8 +269,8 @@ MatcherMover::set_match_positions(
 void
 MatcherMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	incorporate_matches_into_pose_ = tag->getOption<bool>( "incorporate_matches_into_pose", true );
 	if ( tag->hasOption( "residues_for_geomcsts" ) ) {

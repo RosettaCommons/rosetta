@@ -104,9 +104,8 @@ Sigmoid::reset_baseline( core::pose::Pose const & pose, bool const attempt_read_
 void
 Sigmoid::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	steepness( tag->getOption< core::Real >( "steepness", 1.0 ) );
 	offset( tag->getOption< core::Real >( "offset", 0 ));
 	negate( tag->getOption< bool >( "negate", false ) );

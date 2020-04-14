@@ -102,8 +102,7 @@ core::Real EnergyReporter::report_property( core::pose::Pose & p ) const
 
 void EnergyReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 )
 {
 	scorefxn_ = tag->hasOption("scorefunction") ?
@@ -177,8 +176,7 @@ FilterReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 void FilterReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 )
 {
 	using namespace utility::tag;
@@ -211,7 +209,7 @@ void FilterReporter::parse_my_tag(
 	}
 
 	if ( filter_tag ) {
-		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, pose );
+		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data );
 	}
 
 	if ( !filter_ ) {
@@ -309,8 +307,7 @@ RMSDReporter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 void RMSDReporter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /* data */,
-	core::pose::Pose const &
+	basic::datacache::DataMap & /* data */
 )
 {
 	using namespace utility::tag;

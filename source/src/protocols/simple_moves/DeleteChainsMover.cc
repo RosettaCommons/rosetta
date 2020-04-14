@@ -107,9 +107,8 @@ DeleteChainsMover::detect_pseudobonds() const {
 void
 DeleteChainsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &  )
-{
+	basic::datacache::DataMap &
+) {
 	set_defaults();
 	if ( ! tag->hasOption( "chains") ) {
 		utility_exit_with_message("Must pass chains tag to DeleteChainsMover...");

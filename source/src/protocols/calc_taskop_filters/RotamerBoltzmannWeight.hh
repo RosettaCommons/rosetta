@@ -52,8 +52,8 @@ public:
 	core::pack::task::TaskFactoryOP task_factory() const;
 	void task_factory( core::pack::task::TaskFactoryOP task_factory );
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	utility::vector1< core::Size > first_pass_ala_scan( core::pose::Pose const & pose ) const; // return a list of residues that pass the ddG threshold
 	core::Real compute_Boltzmann_weight( core::pose::Pose const & pose, core::Size const resi ) const;

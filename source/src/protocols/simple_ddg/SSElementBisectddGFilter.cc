@@ -308,8 +308,8 @@ bool SSElementBisectddGFilter::apply(const Pose & pose ) const
 void
 SSElementBisectddGFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	// set threshold
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();

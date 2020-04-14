@@ -107,8 +107,7 @@ core::Real MotifScoreFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void MotifScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & //pose
+	basic::datacache::DataMap &
 ){
 	if ( ! tag->hasOption( "threshold" ) ) {
 		score_threshold_ = -999;

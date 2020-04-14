@@ -41,7 +41,6 @@ InterfaceBuilderLoader::InterfaceBuilderLoader() = default;
 InterfaceBuilderLoader::~InterfaceBuilderLoader() = default;
 
 void InterfaceBuilderLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
@@ -110,7 +109,6 @@ MoveMapBuilderLoader::MoveMapBuilderLoader() = default;
 MoveMapBuilderLoader::~MoveMapBuilderLoader() = default;
 
 void MoveMapBuilderLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const
@@ -176,7 +174,6 @@ LigandAreaLoader::LigandAreaLoader() = default;
 LigandAreaLoader::~LigandAreaLoader() = default;
 
 void LigandAreaLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const

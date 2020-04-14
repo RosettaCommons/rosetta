@@ -139,8 +139,7 @@ SimpleMetricFeatures::features_reporter_dependencies() const {
 void
 SimpleMetricFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 ) {
 	runtime_assert(tag->getName() == type_name());
 

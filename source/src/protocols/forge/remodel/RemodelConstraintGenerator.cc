@@ -63,8 +63,8 @@ RemodelConstraintGenerator::apply( core::pose::Pose & pose )
 /// @brief This is called if this mover is instantiated from XML
 void
 RemodelConstraintGenerator::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// if there are any options that we might want, they will go here...
 	id_ = tag->getOption<std::string>( "name", id_ );

@@ -93,8 +93,7 @@ AddMHCEpitopeConstraintMover::apply( Pose &pose )
 void
 AddMHCEpitopeConstraintMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &datamap,
-	Pose const &
+	basic::datacache::DataMap &datamap
 )
 {
 	runtime_assert_string_msg( tag->hasOption("filename"), "Error in protocols::aa_composition::AddMHCEpitopeConstraintMover::parse_my_tag(): A \"filename\" option MUST be provided." );

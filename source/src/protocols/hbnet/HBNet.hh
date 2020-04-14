@@ -391,7 +391,7 @@ public:
 	//virtuals derived from Mover class
 	moves::MoverOP clone() const override;
 	moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	void apply( core::pose::Pose & pose ) override;
 
 	//optional virtuals that can be derived from HBNet to control behavior

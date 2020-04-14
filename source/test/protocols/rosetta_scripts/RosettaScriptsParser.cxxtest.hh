@@ -186,7 +186,6 @@ public:
 			auto protocoltag = parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>());
 
 			auto parsed_mover = parser.parse_protocol_tag(
-				test_pose,
 				parser.create_tag_from_xml_string(report_at_end_protocol, utility::vector1<std::string>()),
 				basic::options::option);
 
@@ -269,14 +268,11 @@ public:
 			protocols::rosetta_scripts::RosettaScriptsParser parser;
 
 			//Test NO output.  Scorefunction in the ParsedProtocol mover should be null.
-			bool modified_pose;
 			std::string input_name = "test_pose_in";
 			std::string output_name = "test_pose_out";
 
-			auto parsed_mover = parser.generate_mover_and_apply_to_pose_xml_string(
-				test_pose,
+			auto parsed_mover = parser.generate_mover_xml_string(
 				basic::options::option,
-				modified_pose,
 				output_false_xml,
 				input_name,
 				output_name,
@@ -286,10 +282,8 @@ public:
 
 			//Test WITH scoring output
 
-			parsed_mover = parser.generate_mover_and_apply_to_pose_xml_string(
-				test_pose,
+			parsed_mover = parser.generate_mover_xml_string(
 				basic::options::option,
-				modified_pose,
 				output_true_xml,
 				input_name,
 				output_name,

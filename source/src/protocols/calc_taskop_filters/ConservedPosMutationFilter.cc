@@ -103,9 +103,8 @@ ConservedPosMutationFilter::apply( core::pose::Pose const & pose ) const {
 void
 ConservedPosMutationFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &  )
-{
+	basic::datacache::DataMap & datamap
+) {
 	conserved_pos_taskop_->parse_tag( tag, datamap );
 
 	if ( tag->hasOption("max_conserved_pos_mutations") ) {

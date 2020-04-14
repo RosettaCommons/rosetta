@@ -127,6 +127,7 @@ public:
 	protocols::rigid::RigidBodyPerturbMoverOP get_rigid_body_mover() const;
 	core::scoring::ScoreFunctionOP get_score_fxn() const;
 	core::pack::task::PackerTaskOP get_packer_task() const;
+
 	core::Size get_loop_size() const;
 	kinematic_closure::perturbers::PerturberOP get_perturber() const;
 	const std::string & get_backbone_mover() const;

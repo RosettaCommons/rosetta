@@ -93,8 +93,8 @@ RNAIdealizeMover::~RNAIdealizeMover()= default;
 void
 RNAIdealizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	iterations_ = tag->getOption< core::Size >( "iterations", iterations_ );
 	noise_ = tag->getOption< bool >( "noise", noise_ );

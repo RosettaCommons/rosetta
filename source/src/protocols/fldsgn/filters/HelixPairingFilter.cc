@@ -303,8 +303,8 @@ HelixPairingFilter::compute( Pose const & pose ) const
 void
 HelixPairingFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	using protocols::parser::BluePrint;
 

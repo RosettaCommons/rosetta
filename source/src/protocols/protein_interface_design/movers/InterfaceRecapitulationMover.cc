@@ -142,7 +142,7 @@ InterfaceRecapitulationMover::apply( core::pose::Pose & pose ){
 
 
 void
-InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pose::Pose const & ){
+InterfaceRecapitulationMover::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data ){
 	set_reference_pose( protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data, mover_name(), /*use_native*/ false ) );
 	std::string const mover_name( tag->getOption<std::string>( "mover_name" ) );
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mover_name, data );

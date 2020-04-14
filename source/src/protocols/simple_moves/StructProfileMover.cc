@@ -509,9 +509,8 @@ void StructProfileMover::apply(core::pose::Pose & pose) {
 void
 StructProfileMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ){
-	using namespace protocols::indexed_structure_store;
+	basic::datacache::DataMap & data
+){
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.40 );
 	burialWt_ =tag->getOption< Real > ("burialWt", 0.8); //other weight is toward RMSD
 	consider_topN_frags_ =tag->getOption< core::Size > ("consider_topN_frags", 50);

@@ -243,8 +243,7 @@ SetupForSymmetryMover::apply( core::pose::Pose & pose )
 
 void SetupForSymmetryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 ) {
 
 	using namespace basic::options;
@@ -402,8 +401,8 @@ ExtractAsymmetricUnitMover::apply( core::pose::Pose & pose )
 
 void ExtractAsymmetricUnitMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	set_keep_virtual_residues( tag->getOption< bool >( "keep_virtual", keep_virtual_residues_ ) );
 	if ( tag->hasOption( "keep_unknown_aas") ) {
@@ -481,8 +480,8 @@ ExtractAsymmetricPoseMover::apply( core::pose::Pose & pose )
 
 void ExtractAsymmetricPoseMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	clear_sym_def( tag->getOption< bool >( "clear_sym_def", clear_sym_def_ ) );
 }

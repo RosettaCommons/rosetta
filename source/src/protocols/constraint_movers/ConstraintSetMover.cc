@@ -236,8 +236,7 @@ ConstraintSetMover::register_options()
 void
 ConstraintSetMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	if ( tag->hasOption("cst_file") ) cst_file_ = tag->getOption<std::string>("cst_file");

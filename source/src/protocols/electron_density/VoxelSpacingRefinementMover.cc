@@ -319,9 +319,8 @@ void VoxelSpacingRefinementMover::apply(core::pose::Pose & pose) {
 void
 VoxelSpacingRefinementMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &)
-{
+	basic::datacache::DataMap &
+) {
 	if ( tag->hasOption("aniso") ) {
 		aniso_ = tag->getOption<bool>("aniso");
 	}

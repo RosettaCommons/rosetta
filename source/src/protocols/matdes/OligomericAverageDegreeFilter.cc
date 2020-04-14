@@ -250,8 +250,8 @@ bool OligomericAverageDegreeFilter::apply( Pose const & pose ) const
 void
 OligomericAverageDegreeFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "OligomericAverageDegreeFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

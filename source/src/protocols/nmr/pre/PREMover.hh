@@ -201,8 +201,7 @@ public: // Methods
 	/// @brief Parse tags of XML script
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & datamap
 	) override;
 
 	/// @brief Create XML schema definition for PREMover

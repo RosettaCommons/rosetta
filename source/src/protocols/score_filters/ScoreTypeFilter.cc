@@ -91,9 +91,8 @@ ScoreTypeFilter::~ScoreTypeFilter() = default;
 void
 ScoreTypeFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace core::scoring;
 
 	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );

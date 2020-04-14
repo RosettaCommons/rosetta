@@ -124,19 +124,16 @@ public:
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &,
-		core::pose::Pose const &,
 		std::map< std::string, utility::tag::TagCOP > const & mover_tags_by_name,
 		std::map< std::string, utility::tag::TagCOP > const & filter_tags_by_name );
 
 	inline void parse_my_tag(
 		utility::tag::TagCOP tag,
-		core::pose::Pose const & pose,
 		ParsedTagCacheOP cache
 	){
 		parse_my_tag(
 			tag,
 			* cache->data_map,
-			pose,
 			* cache->mover_tags,
 			* cache->filter_tags
 		);

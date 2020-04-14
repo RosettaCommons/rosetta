@@ -73,10 +73,10 @@ InverseRotamersRCG::~InverseRotamersRCG()= default;
 
 void
 InverseRotamersRCG::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap & data
+)
 {
-	RemodelConstraintGenerator::parse_my_tag( tag, data, pose );
+	RemodelConstraintGenerator::parse_my_tag( tag, data );
 	//nothing here right now
 }
 

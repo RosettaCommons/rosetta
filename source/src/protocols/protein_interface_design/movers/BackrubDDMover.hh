@@ -69,7 +69,7 @@ protected:
 	/// @brief Adds the given ResidueSelector to the selection. (As in all residues in both selections.)
 	void add_selector( core::select::residue_selector::ResidueSelectorOP const & sele  );
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 private:
 	bool backrub_partner1_;

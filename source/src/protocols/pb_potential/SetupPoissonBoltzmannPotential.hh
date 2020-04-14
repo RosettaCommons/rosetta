@@ -56,8 +56,8 @@ public:
 	~SetupPoissonBoltzmannPotential() override;
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag( utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &) override;
+		basic::datacache::DataMap &
+	) override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	protocols::moves::MoverOP clone() const override;
 

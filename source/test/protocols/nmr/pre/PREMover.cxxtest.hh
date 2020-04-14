@@ -151,20 +151,20 @@ public:
 		TagOP tag5 = Tag::create(xml5);
 
 		// Has scorefunction been parsed?
-		pm_op->parse_my_tag(tag1, data, gb1_);
+		pm_op->parse_my_tag(tag1, data);
 		TS_ASSERT_EQUALS(pm_op->get_scorefunction(), sfxn);
 
 		// Have PRE data been parsed?
-		pm_op->parse_my_tag(tag2, data, gb1_);
+		pm_op->parse_my_tag(tag2, data);
 		TS_ASSERT_EQUALS(pm_op->get_pre_data_file(), "protocols/nmr/pre/pre_data_input.txt");
 
 		// Have boolean options been parsed?
-		pm_op->parse_my_tag(tag3, data, gb1_);
+		pm_op->parse_my_tag(tag3, data);
 		TS_ASSERT(pm_op->minimize_w_pre_csts());
-		pm_op->parse_my_tag(tag4, data, gb1_);
+		pm_op->parse_my_tag(tag4, data);
 		TS_ASSERT(pm_op->weighted_average());
 
-		pm_op->parse_my_tag(tag5, data, gb1_);
+		pm_op->parse_my_tag(tag5, data);
 
 		//pm_op->show(TR.Debug);
 	}

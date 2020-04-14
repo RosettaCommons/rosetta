@@ -144,8 +144,8 @@ operator<<( std::ostream & os, DeclareStructureDataCovalentBondMover const & mov
 void
 DeclareStructureDataCovalentBondMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	atom1_ = tag->getOption< std::string >( "atom1", atom1_ );
 	atom2_ = tag->getOption< std::string >( "atom2", atom2_ );

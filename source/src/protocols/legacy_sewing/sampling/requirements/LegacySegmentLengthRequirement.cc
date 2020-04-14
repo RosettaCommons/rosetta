@@ -83,8 +83,7 @@ LegacySegmentLengthRequirement::violates(
 void
 LegacySegmentLengthRequirement::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	if ( !tag->hasOption("min_length") && !tag->hasOption("max_length") ) {
 		utility_exit_with_message("You must provide either max_length, min_length, or both to the LegacySegmentLengthRequirement tag!");

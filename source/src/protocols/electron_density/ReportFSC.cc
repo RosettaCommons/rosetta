@@ -172,8 +172,8 @@ void ReportFSC::apply(core::pose::Pose & pose) {
 void
 ReportFSC::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &)
+	basic::datacache::DataMap &
+)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

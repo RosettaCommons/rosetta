@@ -44,7 +44,7 @@ public:
 	void apply( Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	void set_kinematic_defaults();
 	bool minimize_toward_stub( core::pose::Pose & pose ) const;
 	void add_bb_csts_to_loop( core::pose::Pose & pose ) const;

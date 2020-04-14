@@ -160,9 +160,8 @@ LigandClashRequirement::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 void
 LigandClashRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up LigandClashRequirement" << std::endl;
 	maximum_clashes_allowed_ = requirement_tag->getOption< core::Size >( "maximum_clashes_allowed", 0 );
 	TR << "Number of ligand clashes allowed: " << maximum_clashes_allowed_ << std::endl;

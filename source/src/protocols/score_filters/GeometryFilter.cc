@@ -89,9 +89,8 @@ GeometryFilter::~GeometryFilter() = default;
 void
 GeometryFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	omega_cutoff_ = tag->getOption<core::Real>( "omega", omega_cutoff_ );
 	cart_bonded_cutoff_ = tag->getOption<core::Real>( "cart_bonded", cart_bonded_cutoff_ );
 	filename_ = tag->getOption< std::string >( "cstfile", filename_ );

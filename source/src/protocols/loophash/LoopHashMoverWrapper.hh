@@ -50,8 +50,8 @@ public:
 	core::pose::PoseOP get_additional_output() override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< LoopHashMoverWrapper >( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< LoopHashMoverWrapper >(); }
 	~LoopHashMoverWrapper() override;

@@ -86,9 +86,8 @@ TotalSasaFilter::task_factory(core::pack::task::TaskFactoryOP task_factory) {
 void
 TotalSasaFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
 

@@ -82,8 +82,8 @@ public: // Methods
 	virtual void
 	set_options_from_tag(
 		utility::tag::TagCOP requirement_tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose)=0;
+		basic::datacache::DataMap& datamap
+	)=0;
 
 	virtual std::string
 	get_name()=0;

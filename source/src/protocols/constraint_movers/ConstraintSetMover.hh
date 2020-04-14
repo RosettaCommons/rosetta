@@ -57,7 +57,7 @@ public:
 	static void register_options();
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 	void add_constraints( bool const a ){ add_constraints_ = a; }
 	bool add_constraints() const { return add_constraints_; }

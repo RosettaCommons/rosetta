@@ -52,7 +52,7 @@ public:
 
 	void initialize_cross_chain( core::pack::task::TaskFactoryOP task_factoryA = nullptr, bool normalize_by_sasa = false, bool detect_chains_for_interface_by_task = false, bool individual_tasks = false, core::pack::task::TaskFactoryOP task_factoryB = nullptr, bool normalize_by_carbon_count = false, bool non_local = false, bool res_contact = false, bool count_SD_NE1 = false);
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.
 	bool apply( core::pose::Pose const & /*pose*/ ) const override{ return true; }

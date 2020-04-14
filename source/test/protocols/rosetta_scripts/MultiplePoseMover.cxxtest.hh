@@ -59,7 +59,7 @@ public:
 		return utility::pointer::make_shared< DummyMultipleOutputMover >(*this);
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) {
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) {
 		if ( tag->hasOption("pos") ) {
 			pos_ = tag->getOption<int>("pos");
 		}
@@ -367,7 +367,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones)
@@ -406,7 +406,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones)
@@ -456,7 +456,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
@@ -512,7 +512,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 3 poses (1 + 2 additional ones) due to n=3 above
@@ -573,7 +573,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 2 additional ones) due to (n=7 && n=3) || n=5 above
@@ -627,7 +627,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to TopNByProperty n=10 above
@@ -679,7 +679,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (1 + 4 additional ones) due to max_poses=10
@@ -896,7 +896,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 5 poses (see comment above)
@@ -990,7 +990,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 50 poses (see comment above)
@@ -1074,7 +1074,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 30 poses (see comment above)
@@ -1139,7 +1139,7 @@ public:
 			RosettaScriptsParser parser;
 			core::pose::Pose pose( create_trpcage_ideal_pose() );
 
-			MoverOP mover = parser.parse_protocol_tag( pose, script_tags, basic::options::option );
+			MoverOP mover = parser.parse_protocol_tag( script_tags, basic::options::option );
 			mover->apply(pose);
 
 			// Expecting 10 poses, and all should be identical here since a fresh instance of

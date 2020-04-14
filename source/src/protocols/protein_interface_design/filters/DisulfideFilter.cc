@@ -134,8 +134,8 @@ Real DisulfideFilter::report_sm( Pose const & pose ) const
 *  - targets. A list of possible target residues, seperated by commas.
 */
 void DisulfideFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num"

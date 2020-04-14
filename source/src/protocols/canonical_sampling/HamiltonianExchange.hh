@@ -65,8 +65,7 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief not possible for HamExchange -- exit with ERROR if called

@@ -797,8 +797,8 @@ GreedyOptMutationMover::add_filter( protocols::filters::FilterOP filter, std::st
 //parse rosetta scripts tags
 void
 GreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "GreedyOptMutationMover"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

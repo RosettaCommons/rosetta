@@ -117,7 +117,7 @@ public:
 		utility::tag::TagCOP symtag = utility::tag::Tag::create( stream );
 		basic::datacache::DataMap data;
 		protocols::matdes::SymDofMover sym;
-		sym.parse_my_tag( symtag, data, input_pose );
+		sym.parse_my_tag( symtag, data );
 		sym.apply( input_pose );
 		TS_ASSERT( core::pose::symmetry::is_symmetric(input_pose) );
 

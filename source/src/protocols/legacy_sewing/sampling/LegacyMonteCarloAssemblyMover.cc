@@ -467,11 +467,10 @@ LegacyMonteCarloAssemblyMover::boltzman(
 void
 LegacyMonteCarloAssemblyMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 
-	parent::parse_my_tag(tag, data, pose);
+	parent::parse_my_tag(tag, data);
 
 	/////////Monte-carlo cycles////////////
 	if ( tag->hasOption("cycles") ) {

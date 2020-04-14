@@ -955,9 +955,8 @@ GenericMonteCarloMover::generate_random() const {
 void
 GenericMonteCarloMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	//using core::pack::task::operation::TaskOperation;
 	//using core::pack::task::TaskFactoryOP;
 	//using core::pack::task::TaskFactory;

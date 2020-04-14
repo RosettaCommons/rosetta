@@ -484,8 +484,8 @@ RotamerBoltzmannWeight::report( std::ostream & out, core::pose::Pose const & pos
 
 void
 RotamerBoltzmannWeight::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using namespace utility::tag;
 

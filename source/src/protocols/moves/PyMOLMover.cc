@@ -1116,8 +1116,7 @@ PyMOLObserverOP AddPyMOLObserver_to_conformation(core::pose::Pose &p, bool keep_
 void
 PyMOLMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	keep_history(tag->getOption<bool>( "keep_history", keep_history_ ) );
 

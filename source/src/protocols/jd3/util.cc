@@ -71,7 +71,6 @@ append_single_scorefxn_subelement(
 ///@brief Add all residue selectors to a given datamap from a tag.
 void
 add_residue_selectors_to_datamap(
-	core::pose::Pose const & pose,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap)
 {
@@ -83,7 +82,7 @@ add_residue_selectors_to_datamap(
 	for ( auto iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
 		if ( (*iter)->getName() == ResidueSelectorLoader::loader_name() ) {
 			ResidueSelectorLoader selector_loader;
-			selector_loader.load_data( pose, *iter, datamap );
+			selector_loader.load_data( *iter, datamap );
 		}
 	}
 }
@@ -91,12 +90,11 @@ add_residue_selectors_to_datamap(
 ///@brief Return a single residue selector from tag.
 core::select::residue_selector::ResidueSelectorCOP
 parse_single_residue_selector(
-	core::pose::Pose const & pose,
 	utility::tag::TagCOP tag,
 	std::string const & selector_name )
 {
 	basic::datacache::DataMap datamap;
-	add_residue_selectors_to_datamap(pose, tag, datamap);
+	add_residue_selectors_to_datamap(tag, datamap);
 	return core::select::residue_selector::get_residue_selector( selector_name, datamap );
 }
 

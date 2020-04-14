@@ -101,8 +101,8 @@ MutateFrameworkForCluster::get_name() const {
 void
 MutateFrameworkForCluster::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap& data,
-	const Pose&)
+	basic::datacache::DataMap& data
+)
 {
 	regenerate_abinfo_ = true;
 	cdrs_ = get_cdr_bool_from_tag(tag, "cdrs");

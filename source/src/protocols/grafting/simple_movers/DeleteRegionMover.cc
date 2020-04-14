@@ -140,8 +140,8 @@ DeleteRegionMover::fresh_instance() const {
 void
 DeleteRegionMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap& data,
-	const Pose& )
+	basic::datacache::DataMap& data
+)
 {
 	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
 	rechain_ = tag->getOption< bool >( "rechain", rechain_ );

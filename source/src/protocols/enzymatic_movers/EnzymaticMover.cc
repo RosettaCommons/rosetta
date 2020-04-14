@@ -110,9 +110,8 @@ EnzymaticMover::show( std::ostream & output ) const
 void
 EnzymaticMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/ )
-{
+	basic::datacache::DataMap & /*data*/
+) {
 	set_species( tag->getOption< std::string >( "species", "h_sapiens" ) );
 	set_enzyme( tag->getOption< std::string >( "enzyme_name", "generic" ) );
 	set_efficiency( tag->getOption< core::Real >( "efficiency", 1.00 ) );

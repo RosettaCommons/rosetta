@@ -41,9 +41,8 @@ ResidueDistanceFilter::~ResidueDistanceFilter()= default;
 void
 ResidueDistanceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	res1_ = core::pose::get_resnum_string( tag, "res1_" );
 	res2_ = core::pose::get_resnum_string( tag, "res2_" );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );

@@ -65,8 +65,7 @@ qsarMover::qsarMover():
 void
 qsarMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 	grid_set_prototype_ = scoring_grid::parse_grid_set_from_tag( tag, datamap );

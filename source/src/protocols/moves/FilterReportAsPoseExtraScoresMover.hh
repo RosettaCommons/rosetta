@@ -65,8 +65,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	//not defined, which means filter_ will do shallow copies, change that if you need it.
 	//FilterReportAsPoseExtraScoresMover & operator=( FilterReportAsPoseExtraScoresMover const & src );

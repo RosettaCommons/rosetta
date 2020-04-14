@@ -23,7 +23,6 @@
 #include <protocols/features/FeaturesReporterCreator.fwd.hh>
 
 // Platform Headers
-#include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
@@ -65,8 +64,8 @@ public:
 	FeaturesReporterOP
 	get_features_reporter(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose);
+		basic::datacache::DataMap & data
+	);
 
 	void define_features_reporter_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const;
 

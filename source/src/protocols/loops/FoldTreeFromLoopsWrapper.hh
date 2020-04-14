@@ -36,8 +36,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap &,
-		Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 	/// @brief Manually set the loops to be used.

@@ -240,8 +240,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief apply function will calculate data about the input pose.  It is not intended to modify the pose itself (conformation and energies objects).
 	/// It will add data to the pose for output into a scorefile.

@@ -54,8 +54,8 @@ public:
 	void
 	set_options_from_tag(
 		utility::tag::TagCOP requirement_tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose) override;
+		basic::datacache::DataMap& datamap
+	) override;
 
 
 	core::Real

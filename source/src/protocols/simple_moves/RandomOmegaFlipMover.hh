@@ -49,7 +49,7 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	void movemap_factory(core::select::movemap::MoveMapFactoryCOP new_movemap_factory) { movemap_factory_= new_movemap_factory; }
 

@@ -58,7 +58,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOut >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & /* pose*/ ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~SpliceOut() override;
 	std::string source_pdb() const { return source_pdb_; }
 	void source_pdb( std::string const & s ){ source_pdb_ = s; }

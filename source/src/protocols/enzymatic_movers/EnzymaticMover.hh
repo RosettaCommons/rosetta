@@ -70,8 +70,8 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP xml_schema_complex_type_generator();
 

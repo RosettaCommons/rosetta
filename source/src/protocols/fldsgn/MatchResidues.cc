@@ -177,8 +177,8 @@ MatchResidues::provide_attributes_and_subelements( utility::tag::AttributeList &
 void
 MatchResidues::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	const std::string reference = tag->getOption< std::string >("reference");
 	core::import_pose::pose_from_file( reference_pose_, reference , core::import_pose::PDB_file);

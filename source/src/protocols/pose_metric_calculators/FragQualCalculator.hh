@@ -107,10 +107,11 @@ public:// mutator
 
 public:
 
-
+	// Note that this isn't used in a general Factory system
+	// but is instead called directly from FragQualFilter
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose );
+		basic::datacache::DataMap & data
+	);
 
 
 protected:

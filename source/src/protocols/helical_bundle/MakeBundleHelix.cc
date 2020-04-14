@@ -198,8 +198,7 @@ MakeBundleHelix::apply (
 /*void
 MakeBundleHelix::parse_my_tag(
 utility::tag::TagCOP tag,
-basic::datacache::DataMap & data_map,
-core::pose::Pose const & pose
+basic::datacache::DataMap & data_map
 ) {
 
 

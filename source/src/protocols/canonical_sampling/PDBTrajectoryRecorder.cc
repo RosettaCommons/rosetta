@@ -75,11 +75,10 @@ PDBTrajectoryRecorder::fresh_instance() const
 void
 PDBTrajectoryRecorder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const& pose
+	basic::datacache::DataMap & data
 )
 {
-	Parent::parse_my_tag( tag, data, pose );
+	Parent::parse_my_tag( tag, data );
 }
 
 void

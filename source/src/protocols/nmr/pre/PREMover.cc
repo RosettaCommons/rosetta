@@ -577,8 +577,7 @@ PREMover::show(std::ostream& tracer) const {
 void
 PREMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	try {

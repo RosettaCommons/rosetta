@@ -126,7 +126,7 @@ RemoveLigandFilter::apply(Pose const & pose) const
 }
 
 void
-RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, Pose const &)
+RemoveLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	threshold_ = tag->getOption< Real >( "threshold", 3.0 );
 	const std::string mover_name = tag->getOption< std::string >( "mover", "");

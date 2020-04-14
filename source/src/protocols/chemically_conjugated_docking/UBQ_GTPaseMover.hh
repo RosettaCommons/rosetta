@@ -77,8 +77,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	//UBQ_GTPaseMover & operator=( UBQ_GTPaseMover const & src );
 

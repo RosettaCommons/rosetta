@@ -74,7 +74,7 @@ public:
 	get_name() const override;
 
 	//virtual moves::MoverOP
-	//clone() const;
+	//clone() const override;
 
 	moves::MoverOP
 	fresh_instance() const override;
@@ -82,8 +82,7 @@ public:
 	void
 	parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	void

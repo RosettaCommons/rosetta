@@ -61,7 +61,7 @@ public:
 		return utility::pointer::make_shared< AtomCountFilter >();
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & reference_pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;

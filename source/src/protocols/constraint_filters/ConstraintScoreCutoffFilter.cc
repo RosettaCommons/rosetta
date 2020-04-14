@@ -105,8 +105,8 @@ ConstraintScoreCutoffFilter::get_score( core::pose::Pose const & pose_in, core::
 void
 ConstraintScoreCutoffFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const &  ) {
+	basic::datacache::DataMap &
+) {
 	if ( tag->hasOption("cutoff") ) {
 		cutoff_ = tag->getOption<core::Real>("cutoff", 10000.0 );
 	}

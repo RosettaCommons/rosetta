@@ -207,8 +207,7 @@ public:
 	virtual
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose
+		basic::datacache::DataMap & data
 	);
 
 	/// @brief Each derived class must specify its name.  The class name.

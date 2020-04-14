@@ -114,7 +114,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );
@@ -175,7 +175,7 @@ public:
 		tag->read( ss_1 );
 
 		RigidChunkCMOP rigid_chunk_1( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk_1->parse_my_tag( tag , datamap, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk_1->parse_my_tag( tag , datamap ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		std::string const SELECTOR_NAME_2 = "sele2";
@@ -191,7 +191,7 @@ public:
 		tag->read( ss_2 );
 
 		RigidChunkCMOP rigid_chunk_2( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk_2->parse_my_tag( tag , datamap, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk_2->parse_my_tag( tag , datamap ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 
@@ -270,7 +270,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );
@@ -335,7 +335,7 @@ public:
 		tag->read( ss );
 
 		RigidChunkCMOP rigid_chunk( new RigidChunkCM() );
-		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap, core::pose::Pose() ) );
+		TS_ASSERT_THROWS_NOTHING( rigid_chunk->parse_my_tag( tag , datamap ) );
 		TS_ASSERT_THROWS_NOTHING( tag->die_for_unaccessed_options() );
 
 		EnvironmentOP env( new Environment( "env" ) );

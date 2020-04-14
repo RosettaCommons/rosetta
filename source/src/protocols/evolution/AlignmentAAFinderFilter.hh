@@ -49,7 +49,7 @@ public:
 
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data ) override;
 
 	core::Real exclude_AA_threshold() const { return exclude_AA_threshold_; }
 	void exclude_AA_threshold( core::Real const & t ) { exclude_AA_threshold_ = t; }

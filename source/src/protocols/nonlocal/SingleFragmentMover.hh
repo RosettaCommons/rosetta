@@ -102,8 +102,8 @@ public:
 
 	/// @brief Mover-specific parsing required by RosettaScripts
 	void parse_my_tag(utility::tag::TagCOP tag,
-		basic::datacache::DataMap& data,
-		const Pose& pose) override;
+		basic::datacache::DataMap& data
+	) override;
 
 	/// @brief Returns true if this instance is in a usable state, false otherwise
 	bool valid() const;

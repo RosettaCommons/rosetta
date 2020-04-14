@@ -310,8 +310,8 @@ protocols::moves::MoverOP ParsedProtocol::clone() const
 
 std::pair< moves::MoverOP, std::string >
 parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const& pose ) {
+	basic::datacache::DataMap& data
+) {
 	using namespace protocols::moves;
 
 	MoverOP mover_to_add = nullptr;
@@ -331,7 +331,7 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + mover_name + " not found in map");
 		}
 	} else if ( tag_ptr->getName() != "Add" ) {
-		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, pose ) );
+		MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data ) );
 		debug_assert( new_mover );
 
 		if ( tag_ptr->hasOption("name") ) {
@@ -363,8 +363,8 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 void
 ParsedProtocol::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap &data
+)
 {
 	using namespace protocols::moves;
 	using namespace utility::tag;
@@ -382,7 +382,7 @@ ParsedProtocol::parse_my_tag(
 	for ( auto dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
 		TagCOP const tag_ptr( *dd_it );
 
-		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data, pose );
+		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data );
 		std::string const& mover_name( mover_add_pair.second );
 		MoverOP mover_to_add( mover_add_pair.first );
 

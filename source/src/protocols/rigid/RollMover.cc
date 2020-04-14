@@ -138,8 +138,8 @@ RollMover::set_min_max_angles( core::Real min_angle, core::Real max_angle ) {
 void
 RollMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
-	Pose const & )
+	basic::datacache::DataMap & /*datamap*/
+)
 {
 
 	if ( tag->hasOption("start_res") ) {

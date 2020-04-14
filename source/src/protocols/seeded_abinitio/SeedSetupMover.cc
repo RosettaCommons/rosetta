@@ -374,8 +374,8 @@ SeedSetupMover::apply( core::pose::Pose & pose ){
 
 void
 SeedSetupMover::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose:: Pose const & ){
+	basic::datacache::DataMap & data
+){
 
 	TR<<"SeedSetupMover has been invoked"<<std::endl;
 

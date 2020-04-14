@@ -911,8 +911,8 @@ MatDesGreedyOptMutationMover::reset_delta_filter_baselines( core::pose::Pose & p
 //parse rosetta scripts tags
 void
 MatDesGreedyOptMutationMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "MatDesGreedyOptMutationMover"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

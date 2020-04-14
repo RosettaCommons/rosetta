@@ -63,8 +63,8 @@ public:
 	virtual void apply_to_rotpack( Pose & pose,  utility::vector0< int > rot_to_pack);
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 private:
 

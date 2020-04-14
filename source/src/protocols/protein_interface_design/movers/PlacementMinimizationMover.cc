@@ -205,8 +205,8 @@ PlacementMinimizationMover::set_reference_pose( core::pose::PoseCOP reference_po
 
 void
 PlacementMinimizationMover::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &data
+)
 {
 	host_chain( tag->getOption<core::Size>( "host_chain", 2 ) );
 	cb_force( tag->getOption< core::Real >( "cb_force", 0.5 ) );

@@ -326,9 +326,8 @@ JacobiLoopClosureMover::show(std::ostream & output) const
 void
 JacobiLoopClosureMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	max_cycles_ = tag->getOption< core::Size >( "max_cycles" );
 	err_rot_allowed_ = tag->getOption< core::Real >( "err_rot_allowed" ) * numeric::constants::d::degrees_to_radians;
 	err_lin_allowed_ = tag->getOption< core::Real >( "err_lin_allowed" );

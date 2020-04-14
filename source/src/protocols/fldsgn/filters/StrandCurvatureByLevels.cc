@@ -352,8 +352,8 @@ bool StrandCurvatureByLevels::apply( Pose const & pose ) const
 void
 StrandCurvatureByLevels::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// Blueprint is for giving secondary structure information, otherwise dssp will run for ss definition
 	// SSPAIR line is read for the topology of strand pairings

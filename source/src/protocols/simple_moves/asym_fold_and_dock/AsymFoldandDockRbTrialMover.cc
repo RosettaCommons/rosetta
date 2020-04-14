@@ -161,8 +161,7 @@ AsymFoldandDockRbTrialMover::fresh_instance() const
 void
 AsymFoldandDockRbTrialMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 )
 {
 	rot_mag_ = tag->getOption< core::Real >( "rot_mag", 8.0 );

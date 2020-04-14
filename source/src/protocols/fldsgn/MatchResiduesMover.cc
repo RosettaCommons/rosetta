@@ -97,10 +97,10 @@ MatchResiduesMover::apply( core::pose::Pose & pose )
 void
 MatchResiduesMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap & data
+)
 {
-	MatchResidues::parse_my_tag(tag, data, pose);
+	MatchResidues::parse_my_tag(tag, data );
 	superimpose_ = tag->getOption< bool >("superimpose", false);
 }
 

@@ -547,8 +547,7 @@ void CoupledMovesProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDef
 void
 CoupledMovesProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data_map
 )
 {
 	using namespace core::pack::task;

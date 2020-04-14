@@ -296,8 +296,8 @@ RandomMover::fresh_instance() const {
 
 void
 RandomMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 	using namespace protocols::filters;
 
 	utility::vector1<std::string> mover_names( utility::string_split( tag->getOption< std::string >("movers"), ',') );
@@ -463,8 +463,8 @@ SwitchMover::fresh_instance() const {
 
 void
 SwitchMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 	available_ = true;
 	using namespace protocols::filters;
 

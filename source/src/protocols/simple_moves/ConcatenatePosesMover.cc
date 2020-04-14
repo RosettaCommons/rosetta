@@ -237,9 +237,8 @@ ConcatenatePosesMover::show(std::ostream & output) const
 void
 ConcatenatePosesMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	if ( tag->hasOption( "component_file" ) ) {
 		component_file_ = tag->getOption< std::string >( "component_file") ;
 	}

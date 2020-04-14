@@ -195,8 +195,8 @@ bool SaveResfileToDiskFilter::apply( Pose const & pose ) const
 void
 SaveResfileToDiskFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );

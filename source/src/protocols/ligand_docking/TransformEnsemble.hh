@@ -69,8 +69,7 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data_map
 	) override;
 	core::Vector weighted_center(utility::vector1<core::conformation::UltraLightResidue> & residues);
 	void apply(core::pose::Pose & pose) override;

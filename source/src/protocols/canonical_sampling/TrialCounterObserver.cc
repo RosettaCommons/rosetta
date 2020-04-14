@@ -64,8 +64,7 @@ TrialCounterObserver::clone() const {
 void
 TrialCounterObserver::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) { //no options ...
 	file_ = tag->getOption< std::string >("file","trial.stats");
 	io_stride_ = tag->getOption< core::Size >("stride", 10000 );

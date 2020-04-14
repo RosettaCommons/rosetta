@@ -114,8 +114,7 @@ void IdealizeAnomericHydrogens::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 void IdealizeAnomericHydrogens::parse_my_tag(
 	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {} // No configuration needed.
 
 std::string IdealizeAnomericHydrogensCreator::keyname() const {

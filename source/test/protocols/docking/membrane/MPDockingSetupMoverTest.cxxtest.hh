@@ -94,7 +94,7 @@ public: // test functions
 		core::pose::Pose pose;
 
 		protocols::docking::membrane::MPDockingSetupMoverOP xmpd(new protocols::docking::membrane::MPDockingSetupMover());
-		xmpd->parse_my_tag( tag, dm, pose );
+		xmpd->parse_my_tag( tag, dm );
 
 		TS_ASSERT_EQUALS(xmpd->get_optimize1(), true);
 		TS_ASSERT_EQUALS(xmpd->get_optimize2(), false);

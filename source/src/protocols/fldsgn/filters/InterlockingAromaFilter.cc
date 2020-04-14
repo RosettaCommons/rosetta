@@ -247,8 +247,8 @@ bool InterlockingAromaFilter::apply( Pose const & pose ) const
 void
 InterlockingAromaFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	String const blueprint = tag->getOption<String>( "blueprint", "" );
 	if ( blueprint != "" ) {

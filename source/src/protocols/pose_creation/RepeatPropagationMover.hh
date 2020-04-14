@@ -42,10 +42,19 @@ public:
 	RepeatPropagationMover(core::Size numb_repeats);
 	void apply( core::pose::Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< RepeatPropagationMover >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
-	std::string get_name() const override;
-	static std::string mover_name();
-	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 private:
 	void initialize_repeat_pose( core::pose::Pose & pose, core::pose::Pose & repeat_pose);
 	void duplicate_residues_by_type(core::pose::Pose & pose, core::pose::Pose & repeat_pose);

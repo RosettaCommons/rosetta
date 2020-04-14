@@ -127,9 +127,8 @@ TautomerizeAnomerMover::fresh_instance() const
 void
 TautomerizeAnomerMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	// Parse the ResidueSelector tag.
 	if ( tag->hasOption( "residue_selector" ) ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );

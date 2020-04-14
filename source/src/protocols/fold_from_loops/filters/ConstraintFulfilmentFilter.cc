@@ -125,7 +125,7 @@ ConstraintFulfilmentFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-ConstraintFulfilmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &  )
+ConstraintFulfilmentFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	distance( tag->getOption< bool >( "distance", default_distance() ) );
 	angle( tag->getOption< bool >( "angle", default_angle() ) );

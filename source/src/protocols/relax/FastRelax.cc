@@ -341,8 +341,7 @@ FastRelax::set_movemap_disables_packing_of_fixed_chi_positions(
 void
 FastRelax::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	using namespace basic::options;
 	using core::pack::task::operation::TaskOperationCOP;

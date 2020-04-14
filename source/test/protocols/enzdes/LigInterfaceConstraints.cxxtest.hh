@@ -209,7 +209,7 @@ public:
 		for ( utility::vector0< utility::tag::TagCOP >::const_iterator tp( TO_tags.begin() ), tp_e( TO_tags.end() ); tp != tp_e; ++tp ) {
 
 			std::string const user_defined_name( (*tp)->getOption<std::string>("name") );
-			protocols::moves::MoverOP new_mover(  protocols::moves::MoverFactory::get_instance()->newMover( *tp, parser_datamap, parser_pose ) );
+			protocols::moves::MoverOP new_mover(  protocols::moves::MoverFactory::get_instance()->newMover( *tp, parser_datamap ) );
 			parser_datamap.add( "movers", user_defined_name, new_mover );
 		}
 

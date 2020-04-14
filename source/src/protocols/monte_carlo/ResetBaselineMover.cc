@@ -79,8 +79,8 @@ ResetBaselineMover::fresh_instance() const
 void
 ResetBaselineMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	std::string const filter_name( tag->getOption< std::string >("filter" ) );
 	filter( protocols::rosetta_scripts::parse_filter( filter_name, data ) );

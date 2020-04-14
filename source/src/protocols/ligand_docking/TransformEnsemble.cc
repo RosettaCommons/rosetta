@@ -138,8 +138,7 @@ protocols::moves::MoverOP TransformEnsemble::fresh_instance() const
 void TransformEnsemble::parse_my_tag
 (
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	if ( tag->getName() != "TransformEnsemble" ) {

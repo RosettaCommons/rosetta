@@ -246,9 +246,8 @@ void SSPredictionFilter::set_scratch_dir() {
 //parse the rosetta scripts xml
 void SSPredictionFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
-) {
+	basic::datacache::DataMap &
+){
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
 	mismatch_probability_ = tag->getOption< bool >( "mismatch_probability", mismatch_probability_ );

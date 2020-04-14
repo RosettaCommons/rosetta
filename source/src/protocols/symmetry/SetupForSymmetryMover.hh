@@ -60,8 +60,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap &data
+	) override;
 
 
 	// setter
@@ -138,8 +138,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap &data
+	) override;
 
 
 public:
@@ -181,8 +181,8 @@ public:
 	void apply( core::pose::Pose & pose ) override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap &data
+	) override;
 
 
 public:

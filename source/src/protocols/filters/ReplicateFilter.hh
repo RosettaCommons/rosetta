@@ -46,8 +46,9 @@ public:
 
 	~ReplicateFilter() override= default;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	void subfilter(protocols::filters::FilterOP subfilter) { subfilter_ = subfilter; }
 	void median(bool median) { median_ = median; }
 	void threshold( core::Real threshold) { threshold_ = threshold; }

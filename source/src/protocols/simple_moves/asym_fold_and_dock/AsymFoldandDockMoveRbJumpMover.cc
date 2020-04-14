@@ -180,8 +180,7 @@ AsymFoldandDockMoveRbJumpMover::fresh_instance() const
 void
 AsymFoldandDockMoveRbJumpMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 )
 {
 	chain_start_ = tag->getOption< core::Size >( "chain_start", 0 ) ;

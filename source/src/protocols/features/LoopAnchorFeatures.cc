@@ -181,8 +181,7 @@ LoopAnchorFeatures::features_reporter_dependencies() const {
 void
 LoopAnchorFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	min_loop_length_ = tag->getOption<core::Size>("min_loop_length", 5);
 	max_loop_length_ = tag->getOption<core::Size>("max_loop_length", 30);

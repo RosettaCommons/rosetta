@@ -67,8 +67,7 @@ public:
 	/// @brief Configure this mover from a RosettaScripts tag.
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	static

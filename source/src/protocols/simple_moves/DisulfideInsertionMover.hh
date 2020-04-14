@@ -66,8 +66,8 @@ public:
 
 	// RosettaScripts implementation
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	void set_scorefxn ( core::scoring::ScoreFunctionOP const score_function) { scorefxn_ = score_function; }
 	core::scoring::ScoreFunctionOP get_scorefxn() const { return scorefxn_;}

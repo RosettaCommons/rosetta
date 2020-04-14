@@ -118,8 +118,7 @@ BackrubSidechainMover::fresh_instance() const
 void
 BackrubSidechainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	if ( tag->hasOption("pivot_residues") ) {

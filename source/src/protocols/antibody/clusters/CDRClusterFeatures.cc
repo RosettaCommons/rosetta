@@ -114,7 +114,7 @@ CDRClusterFeatures::features_reporter_dependencies() const {
 }
 
 void
-CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&, core::pose::Pose const &) {
+CDRClusterFeatures::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap&) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 

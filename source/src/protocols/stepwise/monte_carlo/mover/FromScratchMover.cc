@@ -75,8 +75,8 @@ FromScratchMover::apply( core::pose::Pose & pose )
 
 void FromScratchMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 
 	auto options( utility::pointer::make_shared< protocols::stepwise::monte_carlo::options::StepWiseMonteCarloOptions >() );
 	auto scorefxn  = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();

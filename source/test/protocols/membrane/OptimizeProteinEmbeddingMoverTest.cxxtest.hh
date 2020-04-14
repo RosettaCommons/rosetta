@@ -91,7 +91,7 @@ public:
 		core::pose::Pose pose;
 
 		OptimizeProteinEmbeddingMoverOP xpro( new OptimizeProteinEmbeddingMover() );
-		xpro->parse_my_tag( tag, dm, pose );
+		xpro->parse_my_tag( tag, dm );
 
 		TS_ASSERT(true);
 	}

@@ -91,7 +91,7 @@ public:
 		basic::datacache::DataMap dm;
 		core::pose::Pose pose;
 
-		xmprr->parse_my_tag( tag, dm, pose );
+		xmprr->parse_my_tag( tag, dm );
 
 		TS_ASSERT(xmprr->get_native() != nullptr);
 		TS_ASSERT(xmprr->get_sfxn() != nullptr);

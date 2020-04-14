@@ -47,7 +47,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 
 	bool       & use_distance_cst() { return use_distance_cst_; }
@@ -92,8 +92,8 @@ private:
 	/// @brief parse "task_operations" XML option (can be employed virtually by derived movers)
 	virtual void parse_task_operations(
 		TagCOP,
-		basic::datacache::DataMap const &,
-		Pose const & );
+		basic::datacache::DataMap const &
+	);
 
 	core::scoring::constraints::ConstraintCOPs
 	generate_coordinate_constraints(

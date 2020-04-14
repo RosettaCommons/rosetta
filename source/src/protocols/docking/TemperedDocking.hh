@@ -125,7 +125,7 @@ public:
 	friend std::ostream & operator<<(std::ostream& out, const TemperedDocking & dp );
 
 	// function for the parser with lots of accessors
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 protected:
 	/// @brief Assigns user specified values to primitive members using command line options

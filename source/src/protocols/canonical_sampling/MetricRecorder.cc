@@ -105,8 +105,7 @@ MetricRecorder::fresh_instance() const
 void
 MetricRecorder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /* data */,
-	core::pose::Pose const &
+	basic::datacache::DataMap & /* data */
 )
 {
 	stride_ = tag->getOption< core::Size >( "stride", 100 );

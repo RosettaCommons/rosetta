@@ -140,8 +140,7 @@ TiltMover::fresh_instance() const {
 void
 TiltMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	if ( tag->hasOption( "jump_num" ) ) {

@@ -49,8 +49,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 	//virtual std::string get_name() const override;
 	std::string get_name() const override;

@@ -66,8 +66,8 @@ public:
 	/// @brief parse XML tag (to use this Filter in Rosetta Scripts)
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	/// @brief Sets the repeats in the symmetry that we're looking for
 	/// (e.g. 2 for c2 or s2 symmetry, 3 for c3, etc.).

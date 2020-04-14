@@ -80,9 +80,8 @@ ExternalPackerResultLoader::show(std::ostream & output) const
 void
 ExternalPackerResultLoader::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Parsing options for ExternalPackerResultLoader." << std::endl;
 	TR.Warning << TR.Red << "Warning!  The ExternalPackerResultLoader discards the input pose, and builds a new pose based on the description in the packer problem definition file." << TR.Reset << std::endl;
 	std::string const problem_file( tag->getOption<std::string>("packer_problem_definition_file") );

@@ -106,8 +106,7 @@ ClusterPoseSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 
 void ClusterPoseSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 )
 {
 	// Cluster radius -- required (no sane default)
@@ -140,7 +139,7 @@ void ClusterPoseSelector::parse_my_tag(
 	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
-			newPosePropertyReporter( curr_tag, data, pose )
+			newPosePropertyReporter( curr_tag, data )
 		);
 		runtime_assert( new_reporter != nullptr );
 		reporter_ = new_reporter;

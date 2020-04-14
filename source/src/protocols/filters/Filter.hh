@@ -72,8 +72,7 @@ public:
 	virtual
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	);
 
 	virtual FilterOP clone() const = 0;

@@ -83,9 +83,8 @@ MembAccesResidueLipophilicityFilter::~MembAccesResidueLipophilicityFilter(){}
 void
 MembAccesResidueLipophilicityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.0 );
 	verbose_ = tag->getOption< bool >( "verbose", false );

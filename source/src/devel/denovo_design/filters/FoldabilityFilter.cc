@@ -120,8 +120,8 @@ FoldabilityFilter::fresh_instance() const
 void
 FoldabilityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	tries_ = tag->getOption< core::Size >( "tries", tries_ );
 	if ( tag->hasOption("selector") ) {

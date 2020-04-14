@@ -78,9 +78,8 @@ ReportXYZ::fresh_instance() const
 void
 ReportXYZ::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	resnum_ =999999;
 	term_ = "none";
 	chain_ = tag->getOption<std::string>( "chain", "A" );

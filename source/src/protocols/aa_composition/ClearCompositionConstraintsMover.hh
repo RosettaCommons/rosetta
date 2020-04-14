@@ -68,7 +68,7 @@ public:
 	/// @brief Parse RosettaScripts XML tag to set up the mover.
 	///
 	void
-	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map, Pose const &pose ) override;
+	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map ) override;
 
 	std::string
 	get_name() const override;

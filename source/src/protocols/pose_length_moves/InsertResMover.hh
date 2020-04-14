@@ -50,7 +50,7 @@ public:
 	void extendRegion(core::pose::PoseOP poseOP, core::Size chain_id, core::Size length);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< InsertResMover >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 	core::pose::PoseOP get_additional_output() override;
 
 	std::string

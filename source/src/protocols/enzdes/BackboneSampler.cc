@@ -177,8 +177,8 @@ BackboneSampler::apply( Pose & pose )
 
 void BackboneSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	bb_moves_ = tag->getOption<core::Size>( "moves", 1000 );
 	mc_kt_ = tag->getOption< core::Real>( "kT", 0.6 );

@@ -53,8 +53,9 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & ,
-		core::pose::Pose const &  ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	void find_matching_res( core::pose::Pose & pose, core::pose::Pose & hit_pose);
 	void print();
 	void print_lib_to_file();

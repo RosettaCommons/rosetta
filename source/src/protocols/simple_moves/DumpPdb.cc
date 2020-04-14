@@ -88,9 +88,8 @@ void DumpPdb::set_scorefxn( core::scoring::ScoreFunctionOP scorefxn) {
 void
 DumpPdb::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	fname_ = tag->getOption<std::string>( "fname", "dump.pdb" );
 
 	//JAB - XRW - bfactors are automatically output now.

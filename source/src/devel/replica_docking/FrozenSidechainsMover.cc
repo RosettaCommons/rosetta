@@ -166,8 +166,7 @@ FrozenSidechainsMover::get_name() const {
 void
 FrozenSidechainsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	pose::Pose const& pose
+	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption("recover_sidechains_pdb") ) {
 		std::string pdbfile = tag->getOption< std::string > ( "recover_sidechains_pdb" );

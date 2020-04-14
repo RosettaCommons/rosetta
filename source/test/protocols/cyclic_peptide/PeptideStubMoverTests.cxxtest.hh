@@ -526,7 +526,7 @@ public:
 		TagCOP tag = tagptr_from_string("<PeptideStubMover name=\"psm\" reset=\"false\">\n<Append resname=\"ALA\" anchor_rsd=\"72\"/>\n <Prepend resname=\"ALA\" anchor_rsd=\"1\" repeat=\"3\"/></PeptideStubMover>\n");
 
 		protocols::cyclic_peptide::PeptideStubMover stubmover;
-		stubmover.parse_my_tag( tag, data, pose );
+		stubmover.parse_my_tag( tag, data );
 		stubmover.apply(pose);
 		TS_ASSERT_EQUALS( pose.total_residue(), original_pose_size + 4 );
 		TS_ASSERT_EQUALS( pose.residue_type( 1 ).name3(), "ALA" );

@@ -244,8 +244,8 @@ void CoMTrackerCM::apply( core::pose::Pose& pose ){
 }
 
 void CoMTrackerCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const& ) {
+	basic::datacache::DataMap& datamap
+) {
 
 	//  mobile_label_ = tag->getOption< std::string >( "mobile_label" );
 	stationary_label_ = tag->getOption< std::string >( "stationary_label", GENERATE_STATIONARY_ATTACHMENT_POINT );

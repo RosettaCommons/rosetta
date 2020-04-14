@@ -1855,8 +1855,8 @@ protocols::moves::MoverOP HybridizeProtocol::fresh_instance() const { return uti
 void
 HybridizeProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	// basic options
 	stage1_increase_cycles_ = tag->getOption< core::Real >( "stage1_increase_cycles", 1. );

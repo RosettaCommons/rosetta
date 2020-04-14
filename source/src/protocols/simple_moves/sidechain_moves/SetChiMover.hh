@@ -49,8 +49,9 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	core::Real angle() const { return angle_; }
 	core::Size resnum( core::pose::Pose const & pose ) const;
 	core::Size chinum() const { return chinum_; }

@@ -55,7 +55,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceInAntibody >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~SpliceInAntibody() override;
 	core::Size find_dbase_entry(core::pose::Pose const & pose) override;
 	core::Size database_entry()const {return database_entry_; }

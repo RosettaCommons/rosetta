@@ -260,8 +260,7 @@ void GeneralizedKIC::apply ( core::pose::Pose & pose )
 void
 GeneralizedKIC::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data_map
 ) {
 	using namespace core::id;
 	using namespace protocols::filters;

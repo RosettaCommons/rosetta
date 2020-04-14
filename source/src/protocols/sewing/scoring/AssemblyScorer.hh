@@ -88,8 +88,8 @@ public: // Methods
 	virtual void
 	set_options_from_tag(
 		utility::tag::TagCOP scorer_tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose)=0;
+		basic::datacache::DataMap& datamap
+	)=0;
 	/*
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & );

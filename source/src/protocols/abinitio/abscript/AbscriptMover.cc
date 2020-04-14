@@ -303,8 +303,8 @@ void AbscriptMover::yield_submovers( MoverSet& movers_out ) const {
 void
 AbscriptMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap& datamap
+) {
 
 	using namespace basic::options;
 

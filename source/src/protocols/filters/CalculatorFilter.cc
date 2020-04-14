@@ -123,8 +123,8 @@ CalculatorFilter::compute(core::pose::Pose const & pose) const {
 
 void
 CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &)
+	basic::datacache::DataMap & data
+)
 {
 	std::string equation = tag_ptr->getOption< std::string >( "equation" );
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );

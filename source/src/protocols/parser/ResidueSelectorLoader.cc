@@ -41,7 +41,6 @@ ResidueSelectorLoader::ResidueSelectorLoader() = default;
 ResidueSelectorLoader::~ResidueSelectorLoader() = default;
 
 void ResidueSelectorLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap
 ) const

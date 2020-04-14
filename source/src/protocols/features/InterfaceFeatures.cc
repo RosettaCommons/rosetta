@@ -118,8 +118,8 @@ InterfaceFeatures::~InterfaceFeatures()= default;
 void
 InterfaceFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap& data
+)
 {
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);
 	pack_together_ = tag->getOption<bool>("pack_together", false);

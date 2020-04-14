@@ -113,8 +113,7 @@ ResidueSelectionDistanceFilter::compute( core::pose::Pose const & pose ) const {
 void
 ResidueSelectionDistanceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	atom_to_measure_ = "nbr";
 	if ( tag->hasOption("atom") ) {

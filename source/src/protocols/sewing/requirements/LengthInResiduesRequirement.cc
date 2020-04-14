@@ -98,9 +98,8 @@ LengthInResiduesRequirement::set_maximum_length( core::Size setting ){
 void
 LengthInResiduesRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up LengthInResiduesRequirement" << std::endl;
 	maximum_length_ = requirement_tag->getOption< core::Size >( "maximum_length", 10000 );
 	TR << "Maximum length: " << maximum_length_ << std::endl;

@@ -99,8 +99,7 @@ HBondParameterFeatures::features_reporter_dependencies() const {
 void
 HBondParameterFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & data
 ) {
 	if ( tag->hasOption("scorefxn") ) {
 		string scorefxn_name = tag->getOption<string>("scorefxn");

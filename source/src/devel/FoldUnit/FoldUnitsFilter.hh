@@ -45,7 +45,7 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	~FoldUnitsFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	void write_to_file( std::string const & pdb, core::Size const from_res, core::Size const to_res, std::string const & dssp, std::string const & sequence, core::pose::Pose const & pose ) const;
 

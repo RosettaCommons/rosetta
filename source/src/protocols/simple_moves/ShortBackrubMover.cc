@@ -239,8 +239,8 @@ protocols::backrub::BackrubMoverOP ShortBackrubMover::get_backrubmover() const{
 void
 ShortBackrubMover::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	backrubmover_->branchopt().read_database();
 }

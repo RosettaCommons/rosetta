@@ -48,9 +48,8 @@ SequenceDistance::~SequenceDistance() = default;
 void
 SequenceDistance::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold( tag->getOption< core::Size >( "threshold", 8000 ) );
 
 	runtime_assert_string_msg( !(tag->hasOption("sequence_comment_id") && tag->hasOption("native_sequence")), "You can only compare to one sequence: Do you want to load a sequence from comments (save_sequence_name) OR specify the sequence directly in your XML script (native_sequence)" );

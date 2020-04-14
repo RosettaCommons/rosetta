@@ -155,7 +155,7 @@ ClashWithTargetFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+ClashWithTargetFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	/// @details
 	///if the save pose mover has been instantiated, this filter can calculate the rms

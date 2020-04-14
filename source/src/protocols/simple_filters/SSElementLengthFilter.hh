@@ -98,8 +98,8 @@ public:// virtual main operation
 public:// parser
 
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string
 	name() const override;

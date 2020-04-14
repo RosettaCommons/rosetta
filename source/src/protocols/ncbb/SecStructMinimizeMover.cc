@@ -200,8 +200,7 @@ SecStructMinimizeMover::add_dihedral_constraints_to_pose(
 void
 SecStructMinimizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	alpha_beta_pattern_ = tag->getOption<std::string>("alpha_beta_pattern", "A" );
 	constrain_ = tag->getOption<bool>("constrain", false );

@@ -150,8 +150,7 @@ ScoreFunctionFeatures::features_reporter_dependencies() const {
 void
 ScoreFunctionFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & data
 ) {
 	if ( tag->hasOption("scorefxn") ) {
 		scfxn_name_ = tag->getOption<string>("scorefxn");

@@ -204,8 +204,7 @@ void TryDisulfPermutations::apply (
 void
 TryDisulfPermutations::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap &datamap
 ) {
 
 	if ( tag->getName() != "TryDisulfPermutations" ) {

@@ -35,8 +35,7 @@ public:
 	//void set_chain(std::string chain);
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 	void apply(core::pose::Pose & pose) override;

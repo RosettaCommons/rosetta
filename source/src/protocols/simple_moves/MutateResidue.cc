@@ -122,8 +122,8 @@ MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const 
 *  - target_pdb_nums or target_res_nums. A list of possible target residues
 */
 void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & /*pose*/)
+	basic::datacache::DataMap & data
+)
 {
 
 	// Set target to the residue specified by "target_pdb_num" or "target_res_num":

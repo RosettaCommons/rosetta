@@ -64,8 +64,8 @@ RemoveRemodelCsts::~RemoveRemodelCsts() = default;
 
 void
 RemoveRemodelCsts::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	generator_id_ = tag->getOption< std::string >( "generator", generator_id_ );
 	if ( generator_id_ == "" ) {

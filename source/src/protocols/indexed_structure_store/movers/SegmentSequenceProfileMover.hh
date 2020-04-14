@@ -98,7 +98,7 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void
-	parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 
 private:
 	void init_structure_store();

@@ -208,8 +208,8 @@ SearchPatternOP PlaceSurfaceProbe::initialize_refinement_pattern()
 
 void
 PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &)
+	basic::datacache::DataMap & data
+)
 {
 	parse_place_probe_tag(
 		tag,

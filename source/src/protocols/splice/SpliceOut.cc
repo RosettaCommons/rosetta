@@ -430,7 +430,7 @@ void SpliceOut::abstract_parse_tag(TagCOP const tag){
 }
 
 
-void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
+void SpliceOut::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 
 	parse_SpliceOut_tags(tag,data);

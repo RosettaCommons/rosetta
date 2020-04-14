@@ -68,8 +68,7 @@ ModulatedMover::fresh_instance() const
 void
 ModulatedMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data_map
 ) {
 	using namespace utility::tag;
 
@@ -155,7 +154,7 @@ ModulatedMover::parse_my_tag(
 		utility::tag::TagCOP mover_tag = generate_mover_tag( temp_level, our_name, initial_mover_tag );
 		using namespace protocols::moves;
 		using namespace protocols::canonical_sampling;
-		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map, pose ) );
+		MoverOP new_mover( MoverFactory::get_instance()->newMover( mover_tag, data_map ) );
 		if ( !new_mover ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Failed to instantiate a Mover with name \"" + mover_name_ + "\" from the ModulatedMover" );
 		}

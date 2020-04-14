@@ -243,8 +243,7 @@ core::pack::task::TaskFactoryCOP LoopMover_Refine_CCD::get_task_factory() const 
 void
 LoopMover_Refine_CCD::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ){
 	using namespace basic::options;
 	packing_isolated_to_active_loops_ = false;

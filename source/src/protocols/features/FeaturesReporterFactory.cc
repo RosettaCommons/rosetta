@@ -43,7 +43,6 @@ namespace features {
 using std::endl;
 using std::string;
 using std::stringstream;
-using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using basic::datacache::DataMap;
 using utility::tag::TagCOP;
@@ -101,8 +100,7 @@ utility::vector1<std::string> FeaturesReporterFactory::get_all_features_names()
 FeaturesReporterOP
 FeaturesReporterFactory::get_features_reporter(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 	//debug_assert(tag->getName() == "feature");
 
@@ -116,7 +114,7 @@ FeaturesReporterFactory::get_features_reporter(
 	*/
 	FeaturesReporterOP features_reporter(get_features_reporter(type_name));
 
-	features_reporter->parse_my_tag(tag, data, pose);
+	features_reporter->parse_my_tag(tag, data);
 	return features_reporter;
 }
 void

@@ -61,7 +61,7 @@ CompleteConnectionsFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+CompleteConnectionsFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( ! tag->hasOption("chain") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "CompleteConnections filter needs a 'chain' option");

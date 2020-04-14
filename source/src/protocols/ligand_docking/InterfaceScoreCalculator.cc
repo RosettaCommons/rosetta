@@ -102,8 +102,7 @@ void InterfaceScoreCalculator::grid_set_prototype(protocols::qsar::scoring_grid:
 void
 InterfaceScoreCalculator::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( ! tag->hasOption("chains") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'InterfaceScoreCalculator' requires 'chains' tag (comma separated chains to dock)");

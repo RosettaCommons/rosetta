@@ -53,7 +53,7 @@ public:
 	// core::Real compute_residue( core::pose::Pose const & pose, core::Size const seqpos, core::Real &, utility::vector1< core::Real > & ) const;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	~NMerSVMEnergyFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;

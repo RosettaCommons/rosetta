@@ -102,8 +102,8 @@ BuildDeNovoBackboneMover::~BuildDeNovoBackboneMover() = default;
 void
 BuildDeNovoBackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	set_id( tag->getOption< std::string >( "name" ) );
 

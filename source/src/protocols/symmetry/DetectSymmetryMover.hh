@@ -41,7 +41,7 @@ public:
 	moves::MoverOP clone() const override { return( utility::pointer::make_shared< DetectSymmetry >( *this ) ); }
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

@@ -136,8 +136,7 @@ RotamerTrialsMinMover::task( core::pose::Pose const & pose ) const
 void
 RotamerTrialsMinMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	debug_assert( tag->getName() == "RotamerTrialsMinMover" );

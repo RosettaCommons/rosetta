@@ -118,8 +118,7 @@ protocols::moves::MoverOP Transform::fresh_instance() const
 void Transform::parse_my_tag
 (
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data
 )
 {
 	if ( tag->getName() != "Transform" ) {

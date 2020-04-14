@@ -531,8 +531,8 @@ SegmentHybridizer::apply( core::pose::Pose & pose ){
 
 void
 SegmentHybridizer::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & /*pose*/ ){
+	basic::datacache::DataMap &data
+){
 
 	TR << "initialized SegmentHybridizer mover " << std::endl;
 

@@ -65,14 +65,14 @@ public:
 	/// @brief parse XML (specifically in the context of the parser/scripting scheme)
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief parse "task_operations" XML option
 	virtual void parse_task_operations(
 		TagCOP,
-		basic::datacache::DataMap const &,
-		Pose const & );
+		basic::datacache::DataMap const &
+	);
 
 	void chi( bool val ) { chi_ = val; }
 	void bb( bool val ) { bb_ = val; }

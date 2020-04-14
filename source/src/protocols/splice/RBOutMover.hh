@@ -41,8 +41,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string template_pdb_fname() const {return template_pdb_fname_; }
 	void template_pdb_fname( std::string const & s ){ template_pdb_fname_ = s; }

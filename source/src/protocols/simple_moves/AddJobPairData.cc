@@ -92,8 +92,8 @@ moves::MoverOP AddJobPairData::fresh_instance() const
 
 void AddJobPairData::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	if ( !tag->hasOption("value_type") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'AddJobPairData' mover requires option 'value_type'");

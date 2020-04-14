@@ -221,8 +221,8 @@ void ReportEffectivePKA::apply(core::pose::Pose & pose) {
 void
 ReportEffectivePKA::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &)
+	basic::datacache::DataMap & datamap
+)
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

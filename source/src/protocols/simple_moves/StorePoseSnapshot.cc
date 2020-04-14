@@ -98,8 +98,7 @@ void StorePoseSnapshot::apply( Pose & pose ) {
 /// @details This is called at script initialization, long before the apply()
 /// function is called.
 void StorePoseSnapshot::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & //pose
+	basic::datacache::DataMap &
 )
 {
 	runtime_assert_string_msg( tag->hasOption("reference_pose_name"), "Error in protocols::simple_moves::StorePoseSnapshot::parse_my_tag():  When parsing options for the StorePoseSnapshot mover, no \"reference_pose_name\" option was found.  This is required." );

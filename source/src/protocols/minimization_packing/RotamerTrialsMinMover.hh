@@ -92,8 +92,8 @@ public:
 	/// @brief Parse XML for RosettaScripts
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief Return a new mover instance (for RosettaScripts)
 	protocols::moves::MoverOP fresh_instance() const override;

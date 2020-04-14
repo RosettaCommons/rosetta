@@ -124,8 +124,7 @@ void ConstraintPreparer::prepare( core::pose::Pose& pose, core::Real ){
 }
 
 void ConstraintPreparer::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap&,
-	core::pose::Pose const&
+	basic::datacache::DataMap&
 ) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

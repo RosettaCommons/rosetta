@@ -89,8 +89,7 @@ VirtualRootMover::apply( core::pose::Pose & pose ) {
 
 void VirtualRootMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 ) {
 	set_remove( tag->getOption<bool>( "remove",  remove_ ) );
 	set_removable( tag->getOption<bool>( "removable", removable_ ) );

@@ -181,8 +181,8 @@ bool TaskAwareSASAFilter::apply( Pose const & pose ) const
 void
 TaskAwareSASAFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	threshold( tag->getOption< core::Real >( "threshold", 0 ) );

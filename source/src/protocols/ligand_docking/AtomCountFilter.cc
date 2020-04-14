@@ -56,7 +56,7 @@ AtomCountFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+AtomCountFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("atom_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "AtomCount filter needs a 'chain' and an 'atom_limit' option");

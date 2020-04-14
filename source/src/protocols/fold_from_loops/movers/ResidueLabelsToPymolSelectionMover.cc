@@ -47,9 +47,8 @@ ResidueLabelsToPymolSelectionMover::~ResidueLabelsToPymolSelectionMover() = defa
 void
 ResidueLabelsToPymolSelectionMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	pdb_count( tag->getOption( "pdb_count" , default_pdb_count() ) );
 }
 

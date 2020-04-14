@@ -333,9 +333,8 @@ InstallFarnesylMover::show(std::ostream & output) const
 void
 InstallFarnesylMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& datamap
+) {
 	core::select::residue_selector::ResidueSelectorCOP selector = protocols::rosetta_scripts::parse_residue_selector( tag, datamap );
 	if ( selector ) {
 		TR << "Setting selector " << selector->get_name() << std::endl;

@@ -65,83 +65,56 @@ using namespace core;
 
 XmlObjects::XmlObjects()= default;
 
-
 XmlObjects::~XmlObjects()= default;
 
-XmlObjects::XmlObjects( XmlObjects const & src ) :
-	VirtualBase( src )
-{
-	*this = src;
-}
+XmlObjects::XmlObjects( XmlObjects const & ) = default;
 
 XmlObjects&
-XmlObjects::operator=( XmlObjects const & src ) {
-
-	if ( this != & src ) {
-
-		score_functions_ = src.score_functions_;
-		residue_selectors_ = src.residue_selectors_;
-		simple_metrics_ = src.simple_metrics_;
-		filters_ = src.filters_;
-		movers_ = src.movers_;
-		task_operations_ = src.task_operations_;
-
-	}
-
-	return *this;
-}
+XmlObjects::operator=( XmlObjects const & ) = default;
 
 /// @brief Parses an xml-formatted string and returns an XmlObjects
 /// @details This function will wrap your script with <ROSETTASCRIPTS>
 ///   if needed and will add a <PROTOCOLS> section if needed. The
 ///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 XmlObjectsCOP
 XmlObjects::create_from_string(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return create_from_string( xml_text, pose, basic::options::option );
+	return create_from_string( xml_text, basic::options::option );
 }
 
 /// @brief Parses an xml-formatted string and returns an XmlObjects
 /// @details This function will wrap your script with <ROSETTASCRIPTS>
 ///   if needed and will add a <PROTOCOLS> section if needed. The
 ///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
+///   The pose parameter is ignored, and exists only for backwards compatibility.
 XmlObjectsCOP
 XmlObjects::create_from_string(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return create_from_string( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return create_from_string( xml_text, basic::options::option );
 }
 
 /// @brief Parses an xml-formatted string and returns an XmlObjects
 /// @details This function will wrap your script with <ROSETTASCRIPTS>
 ///   if needed and will add a <PROTOCOLS> section if needed. The
 ///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 XmlObjectsCOP
 XmlObjects::create_from_string(
 	std::string const & xml_text,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string prepared_text = xml_text;
 	prepare_xml_text( prepared_text );
 
 	RosettaScriptsParser parser;
-	bool modified_pose = false;
 
 	XmlObjectsOP objs( new XmlObjects() );
 
 	ParsedProtocolOP parsed_protocol;
 	// This try catch block should be removed once PyRosetta can correctly output the error
 	try {
-		parsed_protocol = parser.generate_mover_and_apply_to_pose_xml_string(
-			pose, options, modified_pose, prepared_text, "", "", objs );
+		parsed_protocol = parser.generate_mover_xml_string(
+			options, prepared_text, "", "", objs );
 	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;
@@ -154,48 +127,52 @@ XmlObjects::create_from_string(
 
 }
 
+/// @brief Parses an xml-formatted string and returns an XmlObjects
+/// @details This function will wrap your script with <ROSETTASCRIPTS>
+///   if needed and will add a <PROTOCOLS> section if needed. The
+///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
+///   The pose parameter is ignored, and exists only for backwards compatibility.
+XmlObjectsCOP
+XmlObjects::create_from_string(
+	std::string const & xml_text,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return create_from_string( xml_text, options );
+}
+
 /// @brief Parses an xml file and returns an XmlObjects
 /// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 XmlObjectsCOP
 XmlObjects::create_from_file(
 	std::string const & filename ) {
-	pose::Pose pose;
-	return create_from_file( filename, pose, basic::options::option );
+	return create_from_file( filename, basic::options::option );
 }
 
 /// @brief Parses an xml file and returns an XmlObjects
 /// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
+///   The pose parameter is ignored, and exists only for backwards compatibility.
 XmlObjectsCOP
 XmlObjects::create_from_file(
 	std::string const & filename,
-	core::pose::Pose & pose ) {
-	return create_from_file( filename, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return create_from_file( filename, basic::options::option );
 }
 
 /// @brief Parses an xml file and returns an XmlObjects
 /// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 XmlObjectsCOP
 XmlObjects::create_from_file(
 	std::string const & filename,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	RosettaScriptsParser parser;
-
-	bool modified_pose = false;
 
 	XmlObjectsOP objs( new XmlObjects() );
 	ParsedProtocolOP parsed_protocol;
 	// This try catch block should be removed once PyRosetta can correctly output the error
 	try {
-		parsed_protocol = parser.generate_mover_and_apply_to_pose(
-			pose, options, modified_pose, filename, "", "", objs );
+		parsed_protocol = parser.generate_mover(
+			options, filename, "", "", objs );
 	} catch ( utility::excn::Exception const & e ) {
 		TR << e.msg() << std::endl;
 		TR << "Error creating parsed protocol." << std::endl;
@@ -206,6 +183,17 @@ XmlObjects::create_from_file(
 
 	return objs;
 
+}
+
+/// @brief Parses an xml file and returns an XmlObjects
+/// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
+///   The pose parameter is ignored, and exists only for backwards compatibility.
+XmlObjectsCOP
+XmlObjects::create_from_file(
+	std::string const & filename,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return create_from_file( filename, options );
 }
 
 /// @brief Wraps an xml script with <ROSETTASCRIPTS> and adds a <PROTOCOLS>
@@ -279,36 +267,25 @@ XmlObjects::init_from_maps(
 /// @brief Constructs a single ScoreFunction from xml
 /// @details Pass this function a single <ScoreFunction /> tag and it will
 ///   return to you that ScoreFunction
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 core::scoring::ScoreFunctionOP
 XmlObjects::static_get_score_function(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_score_function( xml_text, pose, basic::options::option );
+	return static_get_score_function( xml_text, basic::options::option );
 }
 
-/// @brief Constructs a single ScoreFunction from xml
-/// @details Pass this function a single <ScoreFunction /> tag and it will
-///   return to you that ScoreFunction
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::scoring::ScoreFunctionOP
 XmlObjects::static_get_score_function(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_score_function( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_score_function( xml_text, basic::options::option );
 }
 
 /// @brief Constructs a single ScoreFunction from xml
 /// @details Pass this function a single <ScoreFunction /> tag and it will
 ///   return to you that ScoreFunction
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::scoring::ScoreFunctionOP
 XmlObjects::static_get_score_function(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -322,47 +299,43 @@ XmlObjects::static_get_score_function(
 	}
 
 	std::string wrapped_text = "<SCOREFXNS>" + xml_text + "</SCOREFXNS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_score_function( name );
 }
 
+core::scoring::ScoreFunctionOP
+XmlObjects::static_get_score_function(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_score_function( xml_text_in, options );
+}
+
 /// @brief Constructs a single ResidueSelector from xml
 /// @details Pass this function a single ResidueSelector tag and it will
 ///   return to you that ResidueSelector. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 core::select::residue_selector::ResidueSelectorOP
 XmlObjects::static_get_residue_selector(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_residue_selector( xml_text, pose, basic::options::option );
+	return static_get_residue_selector( xml_text, basic::options::option );
 }
 
-/// @brief Constructs a single ResidueSelector from xml
-/// @details Pass this function a single ResidueSelector tag and it will
-///   return to you that ResidueSelector. For C++ users, you may need
-///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::select::residue_selector::ResidueSelectorOP
 XmlObjects::static_get_residue_selector(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_residue_selector( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_residue_selector( xml_text, basic::options::option );
 }
 
 /// @brief Constructs a single ResidueSelector from xml
 /// @details Pass this function a single ResidueSelector tag and it will
 ///   return to you that ResidueSelector. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::select::residue_selector::ResidueSelectorOP
 XmlObjects::static_get_residue_selector(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -376,29 +349,35 @@ XmlObjects::static_get_residue_selector(
 	}
 
 	std::string wrapped_text = "<RESIDUE_SELECTORS>" + xml_text + "</RESIDUE_SELECTORS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_residue_selector( name );
+}
+
+core::select::residue_selector::ResidueSelectorOP
+XmlObjects::static_get_residue_selector(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_residue_selector( xml_text_in, options );
 }
 
 core::simple_metrics::SimpleMetricOP
 XmlObjects::static_get_simple_metric(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_simple_metric( xml_text, pose, basic::options::option );
+	return static_get_simple_metric( xml_text, basic::options::option );
 }
 
 core::simple_metrics::SimpleMetricOP
 XmlObjects::static_get_simple_metric(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_simple_metric( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_simple_metric( xml_text, basic::options::option );
 }
 
 core::simple_metrics::SimpleMetricOP
 XmlObjects::static_get_simple_metric(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -412,47 +391,43 @@ XmlObjects::static_get_simple_metric(
 	}
 
 	std::string wrapped_text = "<SIMPLE_METRICS>" + xml_text + "</SIMPLE_METRICS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_simple_metric( name );
 }
 
+core::simple_metrics::SimpleMetricOP
+XmlObjects::static_get_simple_metric(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_simple_metric( xml_text_in, options );
+}
+
 /// @brief Constructs a single Filter from xml
 /// @details Pass this function a single Filter tag and it will
 ///   return to you that Filter. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 protocols::filters::FilterOP
 XmlObjects::static_get_filter(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_filter( xml_text, pose, basic::options::option );
+	return static_get_filter( xml_text, basic::options::option );
 }
 
-/// @brief Constructs a single Filter from xml
-/// @details Pass this function a single Filter tag and it will
-///   return to you that Filter. For C++ users, you may need
-///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 protocols::filters::FilterOP
 XmlObjects::static_get_filter(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_filter( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_filter( xml_text, basic::options::option );
 }
 
 /// @brief Constructs a single Filter from xml
 /// @details Pass this function a single Filter tag and it will
 ///   return to you that Filter. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 protocols::filters::FilterOP
 XmlObjects::static_get_filter(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -466,47 +441,43 @@ XmlObjects::static_get_filter(
 	}
 
 	std::string wrapped_text = "<FILTERS>" + xml_text + "</FILTERS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_filter( name );
 }
 
+protocols::filters::FilterOP
+XmlObjects::static_get_filter(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_filter( xml_text_in, options );
+}
+
 /// @brief Constructs a single Mover from xml
 /// @details Pass this function a single Mover tag and it will
 ///   return to you that Mover. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 protocols::moves::MoverOP
 XmlObjects::static_get_mover(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_mover( xml_text, pose, basic::options::option );
+	return static_get_mover( xml_text, basic::options::option );
 }
 
-/// @brief Constructs a single Mover from xml
-/// @details Pass this function a single Mover tag and it will
-///   return to you that Mover. For C++ users, you may need
-///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 protocols::moves::MoverOP
 XmlObjects::static_get_mover(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_mover( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_mover( xml_text, basic::options::option );
 }
 
 /// @brief Constructs a single Mover from xml
 /// @details Pass this function a single Mover tag and it will
 ///   return to you that Mover. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 protocols::moves::MoverOP
 XmlObjects::static_get_mover(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -520,47 +491,43 @@ XmlObjects::static_get_mover(
 	}
 
 	std::string wrapped_text = "<MOVERS>" + xml_text + "</MOVERS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_mover( name );
 }
 
+protocols::moves::MoverOP
+XmlObjects::static_get_mover(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_mover( xml_text_in, options );
+}
+
 /// @brief Constructs a single TaskOperation from xml
 /// @details Pass this function a single TaskOperation tag and it will
 ///   return to you that TaskOperation. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   A pose is needed for the initialization of some Movers and may
-///   be required if this functions throws an error.
 core::pack::task::operation::TaskOperationOP
 XmlObjects::static_get_task_operation(
 	std::string const & xml_text ) {
-	pose::Pose pose;
-	return static_get_task_operation( xml_text, pose, basic::options::option );
+	return static_get_task_operation( xml_text, basic::options::option );
 }
 
-/// @brief Constructs a single TaskOperation from xml
-/// @details Pass this function a single TaskOperation tag and it will
-///   return to you that TaskOperation. For C++ users, you may need
-///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::pack::task::operation::TaskOperationOP
 XmlObjects::static_get_task_operation(
 	std::string const & xml_text,
-	core::pose::Pose & pose ) {
-	return static_get_task_operation( xml_text, pose, basic::options::option );
+	core::pose::Pose & ) {
+	return static_get_task_operation( xml_text, basic::options::option );
 }
 
 /// @brief Constructs a single TaskOperation from xml
 /// @details Pass this function a single TaskOperation tag and it will
 ///   return to you that TaskOperation. For C++ users, you may need
 ///   to use std::dynamic_pointer_cast<   > after this call.
-///   The pose is needed for the initialization of some Movers and may
-///   be modified if an APPLY_TO_POSE section is present.
 core::pack::task::operation::TaskOperationOP
 XmlObjects::static_get_task_operation(
 	std::string const & xml_text_in,
-	core::pose::Pose & pose,
 	utility::options::OptionCollection const & options ) {
 
 	std::string xml_text = xml_text_in;
@@ -574,9 +541,17 @@ XmlObjects::static_get_task_operation(
 	}
 
 	std::string wrapped_text = "<TASKOPERATIONS>" + xml_text + "</TASKOPERATIONS>";
-	XmlObjectsCOP objs = create_from_string( wrapped_text, pose, options );
+	XmlObjectsCOP objs = create_from_string( wrapped_text, options );
 
 	return objs->get_task_operation( name );
+}
+
+core::pack::task::operation::TaskOperationOP
+XmlObjects::static_get_task_operation(
+	std::string const & xml_text_in,
+	core::pose::Pose &,
+	utility::options::OptionCollection const & options ) {
+	return static_get_task_operation( xml_text_in, options );
 }
 
 /// @brief List all the ScoreFunctions contained by name

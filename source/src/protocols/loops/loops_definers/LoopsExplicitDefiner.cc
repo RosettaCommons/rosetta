@@ -113,8 +113,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 void
 LoopsExplicitDefiner::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap const &,
-	Pose const &
+	basic::datacache::DataMap const &
 ) {
 
 	if ( !tag->hasOption("name") ) {

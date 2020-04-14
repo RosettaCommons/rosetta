@@ -112,8 +112,7 @@ SidechainMoverBase::~SidechainMoverBase() = default;
 void
 SidechainMoverBase::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data
 )
 {
 	using core::pack::task::operation::TaskOperationCOP;

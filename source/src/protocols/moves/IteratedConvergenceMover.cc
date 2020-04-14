@@ -93,8 +93,7 @@ IteratedConvergenceMover::apply( Pose & pose )
 void
 IteratedConvergenceMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	delta( tag->getOption< core::Real >( "delta", 0.1 ) );

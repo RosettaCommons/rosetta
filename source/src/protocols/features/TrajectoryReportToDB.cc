@@ -136,12 +136,9 @@ TrajectoryReportToDB::initialize_trajectory_reporter()
 void
 TrajectoryReportToDB::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & pose )
-{
-	ReportToDB::parse_my_tag(
-		tag, data, pose
-	);
+	basic::datacache::DataMap & data
+) {
+	ReportToDB::parse_my_tag( tag, data );
 
 	parse_stride_tag_item(tag);
 }

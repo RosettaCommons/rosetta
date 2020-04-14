@@ -47,8 +47,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap const &,
-		core::pose::Pose const &) = 0;
+		basic::datacache::DataMap const &
+	) = 0;
 
 	virtual
 	SerializedLoopList

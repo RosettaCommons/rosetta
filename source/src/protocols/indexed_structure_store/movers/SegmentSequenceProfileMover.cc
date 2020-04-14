@@ -249,8 +249,7 @@ SegmentSequenceProfileMover::init_structure_store() {
 void
 SegmentSequenceProfileMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	structure_store_path( tag->getOption< std::string >( "structure_store" ) );
 	if ( tag->hasOption("residue_selector") ) {

@@ -776,8 +776,7 @@ LegacyLoophashAssemblyMover::build_loop_pose(
 void
 LegacyLoophashAssemblyMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 	using namespace basic::options;
 

@@ -157,7 +157,7 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
+LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
 	lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1 );
@@ -241,7 +241,7 @@ DiffAtomSasaFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const & )
+DiffAtomSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
 	resid1_ = core::pose::get_resnum_string(tag, "res1_", "");
 	resid2_ = core::pose::get_resnum_string(tag, "res2_", "");
@@ -299,7 +299,7 @@ LigBurialFilter::compute( core::pose::Pose const & pose ) const {
 /// @details: this filter basically works exactly as ResidueBurialFilter, but with the advantage that it has the capability to
 /// @details: figure out resid of the ligand
 void
-LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &, core::pose::Pose const &)
+LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
 	lig_id_ =  tag->getOption<core::Size>( "lig_id", 0 );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
@@ -450,7 +450,7 @@ LigInterfaceEnergyFilter::constraint_energy( core::pose::Pose const & in_pose , 
 
 }
 void
-LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace core::scoring;
 
@@ -570,7 +570,7 @@ EnzScoreFilter::compute( core::pose::Pose const & pose ) const {
 }
 
 void
-EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+EnzScoreFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace core::scoring;
 	is_cstE_ = default_value_for_is_cstE();
@@ -718,7 +718,7 @@ RepackWithoutLigandFilter::compute( core::pose::Pose const & pose ) const
 }
 
 void
-RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+RepackWithoutLigandFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	TR<<" Defining RepackWithoutLigandFilter "<< std::endl;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
@@ -851,7 +851,7 @@ EnzdesScorefileFilter::apply( core::pose::Pose const & pose ) const{
 
 /// @details not implemented yet
 void
-EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+EnzdesScorefileFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( tag->hasOption("requirements") ) reqfile_name_ =  tag->getOption<std::string>( "requirements","" );
 	else throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "For EnzdesScorefileFilter, a requirements file needs to be specified in the tag.");
@@ -1355,7 +1355,7 @@ ResidueConformerFilter::report_sm( core::pose::Pose const & pose ) const
 }
 
 void
-ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	relevant_atom_indices_.clear();
 

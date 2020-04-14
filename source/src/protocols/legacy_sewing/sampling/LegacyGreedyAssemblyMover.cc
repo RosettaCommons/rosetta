@@ -158,11 +158,10 @@ LegacyGreedyAssemblyMover::generate_assembly(){
 void
 LegacyGreedyAssemblyMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 
-	parent::parse_my_tag(tag, data, pose);
+	parent::parse_my_tag(tag, data);
 
 	if ( tag->hasOption("cycles") ) {
 		cycles_ = tag->getOption<core::Size>("cycles");

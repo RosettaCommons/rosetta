@@ -189,7 +189,7 @@ void PrepackMover::apply( pose::Pose & pose )
 
 
 void
-PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+PrepackMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	jump_num_ = tag->getOption<core::Size>("jump_number", 1 );

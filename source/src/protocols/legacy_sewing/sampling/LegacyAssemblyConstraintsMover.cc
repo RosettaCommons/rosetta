@@ -388,8 +388,7 @@ LegacyAssemblyConstraintsMover::apply_repeat(
 void
 LegacyAssemblyConstraintsMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	/////////Segments////////////
 	if ( tag->hasOption("native_rotamers_file") ) {

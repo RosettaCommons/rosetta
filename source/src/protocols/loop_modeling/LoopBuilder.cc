@@ -105,10 +105,10 @@ LoopBuilder::~LoopBuilder() = default;
 
 void LoopBuilder::parse_my_tag(
 	TagCOP tag,
-	DataMap & data,
-	Pose const & pose) {
+	DataMap & data
+) {
 
-	LoopMover::parse_my_tag(tag, data, pose);
+	LoopMover::parse_my_tag(tag, data);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 	max_attempts_ = tag->getOption<core::Size>("max_attempts", max_attempts_);
 }

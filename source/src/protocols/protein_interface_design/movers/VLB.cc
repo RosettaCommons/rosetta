@@ -116,8 +116,7 @@ protocols::moves::MoverOP VLB::fresh_instance() const {
 void
 VLB::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	using namespace protocols::rosetta_scripts;

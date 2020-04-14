@@ -137,9 +137,8 @@ StartingNodeMotifScorer::full_motif_score(
 void
 StartingNodeMotifScorer::set_options_from_tag(
 	utility::tag::TagCOP scorer,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	//Data members? It can figure out starting node from is_vital
 	if ( !scorer->hasOption( "weight" ) ) {
 		TR << "No weight provided for scorer " << scorer->getName() << " Using default value" << std::endl;

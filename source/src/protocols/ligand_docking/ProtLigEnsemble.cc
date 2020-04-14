@@ -144,8 +144,7 @@ protocols::moves::MoverOP ProtLigEnsemble::fresh_instance() const {
 void
 ProtLigEnsemble::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->getName() != "ProtLigEnsemble" ) {

@@ -43,8 +43,8 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag(     utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	// Undefined, commenting out to fix PyRosetta build   void add_chainbreakterm( bool ac );
 

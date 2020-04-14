@@ -56,8 +56,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~SSamountFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map,
-		core::pose::Pose const & reference_pose ) override;
+		basic::datacache::DataMap & data_map
+	) override;
 
 	std::string
 	name() const override;

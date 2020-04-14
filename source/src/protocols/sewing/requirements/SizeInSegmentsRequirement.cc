@@ -99,9 +99,8 @@ SizeInSegmentsRequirement::set_maximum_size( core::Size setting ){
 void
 SizeInSegmentsRequirement::set_options_from_tag(
 	utility::tag::TagCOP requirement_tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up SizeInSegmentsRequirement" << std::endl;
 	maximum_size_ = requirement_tag->getOption< core::Size >( "maximum_size", 10000 );
 	TR << "Maximum size: " << maximum_size_ << std::endl;

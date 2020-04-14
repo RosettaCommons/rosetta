@@ -61,16 +61,15 @@ PackRotamersMoverLazy::~PackRotamersMoverLazy()= default;
 void
 PackRotamersMoverLazy::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("nloop") ) {
 		nloop(tag->getOption<core::Size>("nloop",1));
 		runtime_assert( nloop() > 0 );
 	}
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 }
 
 /// PackRotamersMoverLazy

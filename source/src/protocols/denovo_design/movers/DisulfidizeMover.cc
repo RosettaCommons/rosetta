@@ -240,8 +240,8 @@ DisulfidizeMover::prune_symmetric_disulfides (
 void
 DisulfidizeMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );

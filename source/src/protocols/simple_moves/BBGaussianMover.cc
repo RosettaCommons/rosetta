@@ -616,9 +616,8 @@ void BBGaussianMover::init_kic_loop(core::Size looplength, core::kinematics::Mov
 
 void BBGaussianMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	factorA_ = tag->getOption< Real >("factorA", 1.0);
 	factorB_ = tag->getOption< Real >("factorB", 10.0);
 

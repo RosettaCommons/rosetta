@@ -171,8 +171,7 @@ CartminLoopCloser::check_closure(core::pose::Pose & pose){
 void
 CartminLoopCloser::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	using namespace core;
 

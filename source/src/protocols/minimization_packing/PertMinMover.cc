@@ -80,9 +80,8 @@ void PertMinMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 void
 PertMinMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& data
+) {
 	pert_size( tag->getOption< core::Real >( "pert_size", pert_size() ) );
 	uniform( tag->getOption< bool >( "uniform", uniform() ) );
 	sc_only( tag->getOption< bool >( "sc_only", sc_only() ) );

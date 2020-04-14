@@ -132,8 +132,7 @@ void PerturbByBins::apply( core::pose::Pose & pose ) {
 /// @brief Parse XML for RosettaScripts.
 ///
 void PerturbByBins::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &//pose
+	basic::datacache::DataMap &
 )
 {
 	if ( tag->getName() != "PerturbByBins" ) {

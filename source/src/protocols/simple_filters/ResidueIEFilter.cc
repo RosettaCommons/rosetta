@@ -158,9 +158,8 @@ ResidueIEFilter::~ResidueIEFilter() = default;
 void
 ResidueIEFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace core::scoring;
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 	score_type_ = core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) );

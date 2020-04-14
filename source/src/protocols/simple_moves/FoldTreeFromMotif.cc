@@ -95,8 +95,7 @@ FoldTreeFromMotif::residue_selector(
 void
 FoldTreeFromMotif::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );

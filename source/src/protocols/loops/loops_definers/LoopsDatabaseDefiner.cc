@@ -74,9 +74,8 @@ LoopsDatabaseDefiner::clone(
 /// @brief Used to parse an xml-like tag to load parameters and properties.
 void
 LoopsDatabaseDefiner::parse_my_tag(
-	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	TagCOP tag,
+	basic::datacache::DataMap const & datamap
 ) {
 
 	db_session_ = protocols::rosetta_scripts::parse_database_session(tag,datamap);

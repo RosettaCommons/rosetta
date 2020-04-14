@@ -95,8 +95,7 @@ AddEncounterConstraintMover::apply(pose::Pose& pose){
 void
 AddEncounterConstraintMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	pose::Pose const &
+	basic::datacache::DataMap &
 ){
 	gap_ = tag->getOption< Real > ( "gap", 10.0 );
 }

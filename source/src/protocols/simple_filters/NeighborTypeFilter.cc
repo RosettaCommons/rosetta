@@ -38,9 +38,8 @@ NeighborTypeFilter::~NeighborTypeFilter() = default;
 void
 NeighborTypeFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	residue_types_.assign( core::chemical::num_canonical_aas, false );
 	utility::vector0< utility::tag::TagCOP > const neighbor_type_tags( tag->getTags() );
 	for ( auto nt_tag_ptr : neighbor_type_tags ) {

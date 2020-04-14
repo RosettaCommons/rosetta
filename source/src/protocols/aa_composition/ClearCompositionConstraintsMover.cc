@@ -96,8 +96,7 @@ ClearCompositionConstraintsMover::apply( Pose &pose )
 void
 ClearCompositionConstraintsMover::parse_my_tag(
 	TagCOP const /*tag*/,
-	basic::datacache::DataMap &/*datamap*/,
-	Pose const &
+	basic::datacache::DataMap &/*datamap*/
 )
 {
 	//This mover takes no options.

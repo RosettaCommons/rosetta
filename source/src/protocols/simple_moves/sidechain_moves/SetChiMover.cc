@@ -90,8 +90,8 @@ void SetChiMover::apply( Pose & pose ) {
 
 
 void SetChiMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	angle( tag->getOption< core::Real >( "angle" ) );
 	resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ) ) );

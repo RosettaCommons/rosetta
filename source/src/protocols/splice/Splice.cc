@@ -1867,7 +1867,7 @@ std::string Splice::get_name() const {
 	return SpliceCreator::mover_name();
 }
 
-void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & ) {
+void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data ) {
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	enzdes_ =tag->getOption<bool>("enzdes",false);//Add enzdes constraints
 	mover_name_=tag->getOption<std::string>("name");//for debugging purposes

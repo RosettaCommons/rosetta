@@ -186,10 +186,8 @@ BackboneMover::set_residue_selector( core::select::residue_selector::ResidueSele
 void
 BackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
-)
-{
+	basic::datacache::DataMap & data
+) {
 	if ( tag->hasOption( "residue_selector" ) ) {
 		core::select::residue_selector::ResidueSelectorCOP res_selector =
 			protocols::rosetta_scripts::parse_residue_selector( tag, data );

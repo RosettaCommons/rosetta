@@ -59,8 +59,8 @@ LoopMover::LoopMover()  // {{{1
 
 void LoopMover::parse_my_tag( // {{{1
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &) {
+	basic::datacache::DataMap &
+) {
 
 	//SML Jul 11 2016, moved this function to a utilities section for sharing
 	LoopsOP parsed_loops(protocols::loop_modeling::utilities::parse_loops_from_tag(tag));

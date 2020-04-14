@@ -50,14 +50,12 @@ append_single_scorefxn_subelement(
 ///@brief Add all residue selectors to a given datamap from a tag.
 void
 add_residue_selectors_to_datamap(
-	core::pose::Pose const & pose,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap);
 
 ///@brief Return a single residue selector from tag.
 core::select::residue_selector::ResidueSelectorCOP
 parse_single_residue_selector(
-	core::pose::Pose const & pose,
 	utility::tag::TagCOP tag,
 	std::string const & selector_name );
 

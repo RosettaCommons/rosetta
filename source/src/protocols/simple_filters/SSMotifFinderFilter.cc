@@ -67,9 +67,8 @@ SSMotifFinder::~SSMotifFinder() = default;
 void
 SSMotifFinder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	from_res( tag->getOption< core::Size >( "from_res" ) );
 	to_res( tag->getOption< core::Size >( "to_res" ) );
 	rmsd( tag->getOption< core::Real >( "rmsd" ) );

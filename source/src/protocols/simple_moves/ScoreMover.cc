@@ -178,8 +178,7 @@ ScoreMover::apply( Pose & pose ) {
 
 void ScoreMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 ) {
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );

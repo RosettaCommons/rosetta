@@ -57,7 +57,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceInTail >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~SpliceInTail() override;
 	utility::vector1<core::Size>::const_iterator dbase_begin() const {return tail_dbase_subset_.begin();}
 	utility::vector1<core::Size>::const_iterator dbase_end() const {return tail_dbase_subset_.end();}

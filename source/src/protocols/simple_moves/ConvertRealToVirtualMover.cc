@@ -121,8 +121,8 @@ ConvertRealToVirtualMover::provide_citation_info() const {
 void
 ConvertRealToVirtualMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption( "residue_selector" ) ) {
 		// set the selector_ private variable

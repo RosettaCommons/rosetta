@@ -347,8 +347,7 @@ void BackboneTorsionPerturbation::task_factory( core::pack::task::TaskFactoryCOP
 void
 BackboneTorsionPerturbation::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 ) {
 	if ( tag->hasOption( "start_res" ) ) {
 		TR.Warning << "The 'start_res' option of BackboneTorsionPerturbation doesn't actually do anything." << std::endl;

@@ -69,8 +69,8 @@ filters::FilterOP FitnessFilter::fresh_instance() const {
 
 void
 FitnessFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & datamap
+) {
 
 	if ( tag->hasOption("scorefxn") ) {
 		std::string const scorefxn_key( tag->getOption<std::string>("scorefxn") );

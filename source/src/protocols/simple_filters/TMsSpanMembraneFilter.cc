@@ -77,9 +77,8 @@ TMsSpanMembraneFilter::~TMsSpanMembraneFilter(){}
 void
 TMsSpanMembraneFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold_ = tag->getOption< core::Real >( "threshold", 0.5 );
 	output_ = tag->getOption< std::string >( "output_file", "" );
 	min_distance_ = tag->getOption< core::Real >( "min_distance", 20.0 );

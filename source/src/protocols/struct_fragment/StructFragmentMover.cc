@@ -464,8 +464,7 @@ StructFragmentMover::get_secstruct( core::pose::Pose const & pose ) const
 void
 StructFragmentMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	// -- Attributes with default values -- //

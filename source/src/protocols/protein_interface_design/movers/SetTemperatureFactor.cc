@@ -76,7 +76,7 @@ SetTemperatureFactor::apply( core::pose::Pose & pose )
 
 
 void
-SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+SetTemperatureFactor::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	std::string const filter_name( tag->getOption<std::string>( "filter" ) );
 	protocols::filters::FilterOP filter_ptr = protocols::rosetta_scripts::parse_filter( filter_name, data );

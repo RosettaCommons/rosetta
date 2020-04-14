@@ -20,7 +20,6 @@
 #include <protocols/rosetta_scripts/PoseSelector.hh>
 #include <protocols/rosetta_scripts/PoseSelectorCreator.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
@@ -60,7 +59,6 @@ public:
 	typedef std::map< std::string, PoseSelectorCreatorOP > PoseSelectorMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
-	typedef core::pose::Pose Pose;
 
 public:
 	virtual ~PoseSelectorFactory();
@@ -74,8 +72,7 @@ public:
 	PoseSelectorOP
 	newPoseSelector(
 		TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	);
 
 	void define_pose_selector_group( utility::tag::XMLSchemaDefinition & xsd ) const;

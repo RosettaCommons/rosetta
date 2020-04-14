@@ -51,8 +51,7 @@ public:
 	void
 	parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief Add AmbiguousSiteConstraints to specified paratope residues, or each CDR set.  Default is all of them.

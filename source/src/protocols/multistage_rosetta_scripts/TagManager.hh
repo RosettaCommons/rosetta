@@ -117,13 +117,8 @@ public:
 	);
 
 	ParsedTagCacheOP generate_data_for_input_pose_id(
-		jd3::PrelimJobNodeID input_pose_id,
-		core::pose::Pose const &
+		jd3::PrelimJobNodeID input_pose_id
 	);
-
-	ParsedTagCacheOP generate_data_for_input_pose_id( jd3::PrelimJobNodeID input_pose_id ){
-		return generate_data_for_input_pose_id( input_pose_id, dummy_pose_ );
-	}
 
 	std::vector< TagListOP > const & tag_list_for_input_pose_id() const {
 		return tag_list_for_input_pose_id_;
@@ -140,7 +135,6 @@ private:
 	///@brief cache the most recent request because it may get called again soon
 	ParsedTagCacheOP most_recent_request_;
 
-	core::pose::Pose dummy_pose_;
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

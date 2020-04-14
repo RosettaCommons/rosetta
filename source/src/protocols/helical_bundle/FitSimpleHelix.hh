@@ -56,8 +56,7 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	void set_initial_guesses (core::Real const &r1_initial, core::Real const &omega1_initial, core::Real const &dz1_initial) {

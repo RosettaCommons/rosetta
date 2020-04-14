@@ -315,8 +315,7 @@ class LigChiMover : public protocols::moves::Mover {
 	void
 	parse_my_tag(
 		utility::tag::TagCOP const,
-		basic::datacache::DataMap &,
-		Pose const &
+		basic::datacache::DataMap &
 	) {}
 };
 

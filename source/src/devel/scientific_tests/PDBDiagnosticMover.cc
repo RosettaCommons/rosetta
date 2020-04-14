@@ -166,9 +166,8 @@ PDBDiagnosticMover::show(std::ostream & output) const
 void
 PDBDiagnosticMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 
 }
 void PDBDiagnosticMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

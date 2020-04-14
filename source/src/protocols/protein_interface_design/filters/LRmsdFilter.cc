@@ -96,7 +96,7 @@ LRmsdFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
+LRmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map )
 {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, class_name() );
 

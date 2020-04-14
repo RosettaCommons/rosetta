@@ -54,9 +54,8 @@ AngleToVector::~AngleToVector() = default;
 void
 AngleToVector::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	min_angle( tag->getOption< Real >( "min_angle", 0.0 ) );
 	max_angle( tag->getOption< Real >( "max_angle", 90.0 ) );
 	atm1( tag->getOption< string >( "atm1" ) );

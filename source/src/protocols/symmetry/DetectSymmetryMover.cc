@@ -171,8 +171,7 @@ DetectSymmetry::apply(Pose & pose) {
 void
 DetectSymmetry::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	subunit_tolerance_ = tag->getOption< core::Real >("subunit_tolerance", 0.01);

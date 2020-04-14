@@ -279,8 +279,8 @@ LoopHashLoopClosureMover::make_blueprint( const core::pose::Pose& pose,
 }
 
 void LoopHashLoopClosureMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap &
+) {
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;

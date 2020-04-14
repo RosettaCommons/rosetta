@@ -709,8 +709,7 @@ ParaNMRScoreMover::add_pre_scores_to_scorefile(
 void
 ParaNMRScoreMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & //pose//
+	basic::datacache::DataMap & datamap
 )
 {
 	try {

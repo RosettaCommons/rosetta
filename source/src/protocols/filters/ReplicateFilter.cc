@@ -114,8 +114,8 @@ ReplicateFilter::compute(core::pose::Pose const & pose) const {
 
 void
 ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &)
+	basic::datacache::DataMap & data
+)
 {
 	subfilter_ = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "filter_name" ) , data );
 	replicates_ = tag_ptr->getOption<core::Size>( "replicates", 1 );

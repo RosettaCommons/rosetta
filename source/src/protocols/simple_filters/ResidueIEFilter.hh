@@ -61,7 +61,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~ResidueIEFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	std::string const & resnums() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;

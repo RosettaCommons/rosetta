@@ -92,8 +92,8 @@ public:
 	void
 	set_options_from_tag(
 		utility::tag::TagCOP scorer_tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose) override;
+		basic::datacache::DataMap& datamap
+	) override;
 
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & );

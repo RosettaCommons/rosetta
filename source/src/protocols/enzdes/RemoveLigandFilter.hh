@@ -59,7 +59,7 @@ public:
 
 	core::Real report_sm( Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	FilterOP clone() const override { return utility::pointer::make_shared< RemoveLigandFilter >( *this ); }
 	FilterOP fresh_instance() const override { return utility::pointer::make_shared< RemoveLigandFilter >(); }

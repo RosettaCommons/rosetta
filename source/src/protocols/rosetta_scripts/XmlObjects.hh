@@ -73,8 +73,6 @@ public:
 	/// @details This function will wrap your script with <ROSETTASCRIPTS>
 	///   if needed and will add a <PROTOCOLS> section if needed. The
 	///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	XmlObjectsCOP
 	create_from_string(
@@ -84,33 +82,37 @@ public:
 	/// @details This function will wrap your script with <ROSETTASCRIPTS>
 	///   if needed and will add a <PROTOCOLS> section if needed. The
 	///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and provided only for backwards compatibility.
 	static
 	XmlObjectsCOP
 	create_from_string(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Parses an xml-formatted string and returns an XmlObjects
 	/// @details This function will wrap your script with <ROSETTASCRIPTS>
 	///   if needed and will add a <PROTOCOLS> section if needed. The
 	///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	XmlObjectsCOP
 	create_from_string(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
+		utility::options::OptionCollection const & options );
+
+	/// @brief Parses an xml-formatted string and returns an XmlObjects
+	/// @details This function will wrap your script with <ROSETTASCRIPTS>
+	///   if needed and will add a <PROTOCOLS> section if needed. The
+	///   ParsedProtocol (xml script mover) is available as "ParsedProtocol".
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	XmlObjectsCOP
+	create_from_string(
+		std::string const & xml_text,
+		core::pose::Pose &,
 		utility::options::OptionCollection const & options );
 
 	/// @brief Parses an xml file and returns an XmlObjects
 	/// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	XmlObjectsCOP
 	create_from_file(
@@ -118,23 +120,29 @@ public:
 
 	/// @brief Parses an xml file and returns an XmlObjects
 	/// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists oly for backwards compatibility.
 	static
 	XmlObjectsCOP
 	create_from_file(
 		std::string const & filename,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Parses an xml file and returns an XmlObjects
 	/// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	XmlObjectsCOP
 	create_from_file(
 		std::string const & filename,
-		core::pose::Pose & pose,
+		utility::options::OptionCollection const & options );
+
+	/// @brief Parses an xml file and returns an XmlObjects
+	/// @details The ParsedProtocol (xml script mover) is available as "ParsedProtocol"
+	///   The pose parameter is ignored, and exists oly for backwards compatibility.
+	static
+	XmlObjectsCOP
+	create_from_file(
+		std::string const & filename,
+		core::pose::Pose &,
 		utility::options::OptionCollection const & options );
 
 	/// @brief Initialization function from the DataMaps
@@ -144,7 +152,6 @@ public:
 	);
 
 
-
 	/////////////////////////////////////////////
 	/////           ScoreFunction           /////
 	/////////////////////////////////////////////
@@ -152,8 +159,6 @@ public:
 	/// @brief Constructs a single ScoreFunction from xml
 	/// @details Pass this function a single <ScoreFunction /> tag and it will
 	///   return to you that ScoreFunction
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	core::scoring::ScoreFunctionOP
 	static_get_score_function(
@@ -162,26 +167,32 @@ public:
 	/// @brief Constructs a single ScoreFunction from xml
 	/// @details Pass this function a single <ScoreFunction /> tag and it will
 	///   return to you that ScoreFunction
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	core::scoring::ScoreFunctionOP
 	static_get_score_function(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single ScoreFunction from xml
 	/// @details Pass this function a single <ScoreFunction /> tag and it will
 	///   return to you that ScoreFunction
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	core::scoring::ScoreFunctionOP
 	static_get_score_function(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+	/// @brief Constructs a single ScoreFunction from xml
+	/// @details Pass this function a single <ScoreFunction /> tag and it will
+	///   return to you that ScoreFunction
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	core::scoring::ScoreFunctionOP
+	static_get_score_function(
+		std::string const & xml_text,
+		core::pose::Pose &,
+		utility::options::OptionCollection const & options );
 
 
 	/////////////////////////////////////////////
@@ -192,8 +203,6 @@ public:
 	/// @details Pass this function a single ResidueSelector tag and it will
 	///   return to you that ResidueSelector. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	core::select::residue_selector::ResidueSelectorOP
 	static_get_residue_selector(
@@ -203,25 +212,33 @@ public:
 	/// @details Pass this function a single ResidueSelector tag and it will
 	///   return to you that ResidueSelector. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	core::select::residue_selector::ResidueSelectorOP
 	static_get_residue_selector(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single ResidueSelector from xml
 	/// @details Pass this function a single ResidueSelector tag and it will
 	///   return to you that ResidueSelector. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	core::select::residue_selector::ResidueSelectorOP
 	static_get_residue_selector(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
+		utility::options::OptionCollection const & options );
+
+	/// @brief Constructs a single ResidueSelector from xml
+	/// @details Pass this function a single ResidueSelector tag and it will
+	///   return to you that ResidueSelector. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	core::select::residue_selector::ResidueSelectorOP
+	static_get_residue_selector(
+		std::string const & xml_text,
+		core::pose::Pose &,
 		utility::options::OptionCollection const & options );
 
 
@@ -234,8 +251,6 @@ public:
 	/// @details Pass this function a single SimpleMetric tag and it will
 	///   return to you that SimpleMetric. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	core::simple_metrics::SimpleMetricOP
 	static_get_simple_metric(
@@ -244,28 +259,34 @@ public:
 	/// @brief Constructs a single SimpleMetric from xml
 	/// @details Pass this function a single SimpleMetric tag and it will
 	///   return to you that SimpleMetric. For C++ users, you may need
-	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	core::simple_metrics::SimpleMetricOP
 	static_get_simple_metric(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single SimpleMetric from xml
 	/// @details Pass this function a single SimpleMetric tag and it will
 	///   return to you that SimpleMetric. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	core::simple_metrics::SimpleMetricOP
 	static_get_simple_metric(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+	/// @brief Constructs a single SimpleMetric from xml
+	/// @details Pass this function a single SimpleMetric tag and it will
+	///   return to you that SimpleMetric. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	core::simple_metrics::SimpleMetricOP
+	static_get_simple_metric(
+		std::string const & xml_text,
+		core::pose::Pose &,
+		utility::options::OptionCollection const & options );
 
 	/////////////////////////////////////////////
 	/////               Filter              /////
@@ -275,8 +296,6 @@ public:
 	/// @details Pass this function a single Filter tag and it will
 	///   return to you that Filter. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	protocols::filters::FilterOP
 	static_get_filter(
@@ -286,27 +305,34 @@ public:
 	/// @details Pass this function a single Filter tag and it will
 	///   return to you that Filter. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	protocols::filters::FilterOP
 	static_get_filter(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single Filter from xml
 	/// @details Pass this function a single Filter tag and it will
 	///   return to you that Filter. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	static
+	protocols::filters::FilterOP
+	static_get_filter(
+		std::string const & xml_text,
+		utility::options::OptionCollection const & options );
+
+	/// @brief Constructs a single Filter from xml
+	/// @details Pass this function a single Filter tag and it will
+	///   return to you that Filter. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	protocols::filters::FilterOP
 	static_get_filter(
 		std::string const & xml_text,
 		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
-
 
 
 	/////////////////////////////////////////////
@@ -317,8 +343,6 @@ public:
 	/// @details Pass this function a single Mover tag and it will
 	///   return to you that Mover. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	protocols::moves::MoverOP
 	static_get_mover(
@@ -328,27 +352,34 @@ public:
 	/// @details Pass this function a single Mover tag and it will
 	///   return to you that Mover. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	protocols::moves::MoverOP
 	static_get_mover(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single Mover from xml
 	/// @details Pass this function a single Mover tag and it will
 	///   return to you that Mover. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	protocols::moves::MoverOP
 	static_get_mover(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+	/// @brief Constructs a single Mover from xml
+	/// @details Pass this function a single Mover tag and it will
+	///   return to you that Mover. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	protocols::moves::MoverOP
+	static_get_mover(
+		std::string const & xml_text,
+		core::pose::Pose &,
+		utility::options::OptionCollection const & options );
 
 
 	/////////////////////////////////////////////
@@ -359,8 +390,6 @@ public:
 	/// @details Pass this function a single TaskOperation tag and it will
 	///   return to you that TaskOperation. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   A pose is needed for the initialization of some Movers and may
-	///   be required if this functions throws an error.
 	static
 	core::pack::task::operation::TaskOperationOP
 	static_get_task_operation(
@@ -370,27 +399,34 @@ public:
 	/// @details Pass this function a single TaskOperation tag and it will
 	///   return to you that TaskOperation. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
 	static
 	core::pack::task::operation::TaskOperationOP
 	static_get_task_operation(
 		std::string const & xml_text,
-		core::pose::Pose & pose );
+		core::pose::Pose & );
 
 	/// @brief Constructs a single TaskOperation from xml
 	/// @details Pass this function a single TaskOperation tag and it will
 	///   return to you that TaskOperation. For C++ users, you may need
 	///   to use std::dynamic_pointer_cast<   > after this call.
-	///   The pose is needed for the initialization of some Movers and may
-	///   be modified if an APPLY_TO_POSE section is present.
 	static
 	core::pack::task::operation::TaskOperationOP
 	static_get_task_operation(
 		std::string const & xml_text,
-		core::pose::Pose & pose,
 		utility::options::OptionCollection const & options );
 
+	/// @brief Constructs a single TaskOperation from xml
+	/// @details Pass this function a single TaskOperation tag and it will
+	///   return to you that TaskOperation. For C++ users, you may need
+	///   to use std::dynamic_pointer_cast<   > after this call.
+	///   The pose parameter is ignored, and exists only for backwards compatibility.
+	static
+	core::pack::task::operation::TaskOperationOP
+	static_get_task_operation(
+		std::string const & xml_text,
+		core::pose::Pose &,
+		utility::options::OptionCollection const & options );
 
 	/// @brief List all the ScoreFunctions contained by name
 	utility::vector1< std::string >

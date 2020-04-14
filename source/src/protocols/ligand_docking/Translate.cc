@@ -119,8 +119,7 @@ protocols::moves::MoverOP Translate::fresh_instance() const {
 void
 Translate::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data_map
 )
 {
 	if ( ! tag->hasOption("chain") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'Translate' mover requires chain tag");

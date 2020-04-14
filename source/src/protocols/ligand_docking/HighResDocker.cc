@@ -139,8 +139,7 @@ protocols::moves::MoverOP HighResDocker::fresh_instance() const {
 void
 HighResDocker::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->getName() != "HighResDocker" ) {

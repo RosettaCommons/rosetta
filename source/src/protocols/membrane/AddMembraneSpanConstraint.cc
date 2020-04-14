@@ -97,8 +97,7 @@ AddMembraneSpanConstraint::fresh_instance() const {
 void
 AddMembraneSpanConstraint::parse_my_tag(
 	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 }
 

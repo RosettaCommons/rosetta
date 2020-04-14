@@ -118,8 +118,8 @@ bool PackStatFilter::apply( Pose const & pose ) const
 void
 PackStatFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing
 	tr << "Structures with packstat score " << filtered_score_ << " will be filtred." << std::endl;

@@ -584,8 +584,8 @@ SymmetricMotifFilter::process_motifs() {
 void
 SymmetricMotifFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
-	core::pose::Pose const & /*reference_pose*/ ) {
+	basic::datacache::DataMap & /*data_map*/
+) {
 	symm_type_ = tag->getOption<std::string>( "symm_type", "D2" );
 
 	utility::vector1<std::string> motif_files( utility::string_split( tag->getOption< std::string >("motifs"), ',') );

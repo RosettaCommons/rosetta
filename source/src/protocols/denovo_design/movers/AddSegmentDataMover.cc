@@ -50,8 +50,8 @@ AddSegmentDataMover::~AddSegmentDataMover()= default;
 void
 AddSegmentDataMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	segment_name_ = tag->getOption< std::string >( "segment_name", segment_name_ );
 	abego_ = tag->getOption< std::string >( "abego", abego_ );

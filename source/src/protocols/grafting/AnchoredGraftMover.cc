@@ -197,9 +197,8 @@ AnchoredGraftMover::provide_authorship_info_for_unpublished() const {
 void
 AnchoredGraftMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap& data,
-	const Pose& )
-{
+	basic::datacache::DataMap& data
+) {
 
 	set_cycles(tag->getOption<core::Size>("cycles", cycles_));
 	final_repack(tag->getOption<bool>("final_repack", final_repack_));

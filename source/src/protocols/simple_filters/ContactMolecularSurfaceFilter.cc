@@ -165,9 +165,8 @@ bool ContactMolecularSurfaceFilter::apply( Pose const & pose ) const
 void
 ContactMolecularSurfaceFilter::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	filtered_area_ = tag->getOption<Real>( "min_interface", 1.0 );
 	distance_weight_ = tag->getOption<Real>( "distance_weight", 1.0 );
 	verbose_ = tag->getOption<core::Size>( "verbose", false );

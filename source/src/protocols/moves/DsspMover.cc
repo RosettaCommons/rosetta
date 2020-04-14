@@ -75,8 +75,8 @@ void DsspMover::apply( Pose & pose )
 void
 DsspMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , false );
 	TR << "DsspMover loaded." << std::endl;

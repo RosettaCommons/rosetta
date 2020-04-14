@@ -89,8 +89,8 @@ DeleteMover::clone() const {
 
 void DeleteMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,// data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & // data
+) {
 
 	minimize_after_delete_ = tag->getOption< bool >( "minimize_after_delete", minimize_after_delete_ );
 

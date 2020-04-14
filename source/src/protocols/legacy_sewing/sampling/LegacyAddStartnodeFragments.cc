@@ -113,8 +113,7 @@ LegacyAddStartnodeFragments::apply(
 void
 LegacyAddStartnodeFragments::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	using namespace basic::options;
 

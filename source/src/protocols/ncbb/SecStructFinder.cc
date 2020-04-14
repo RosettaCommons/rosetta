@@ -575,8 +575,8 @@ protocols::moves::MoverOP SecStructFinder::clone() const {
 
 void SecStructFinder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap &
+) {
 
 	residue_ = tag->getOption<std::string>("residue", "ALA" );
 	min_length_ = tag->getOption<core::Size>("min_length", 5 );

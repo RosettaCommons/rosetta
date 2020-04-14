@@ -57,8 +57,9 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	std::string span_file() const { return span_file_; }
 	void span_file( std::string const & s ){ span_file_ = s; }
 

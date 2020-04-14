@@ -69,8 +69,8 @@ public:
 	void reference_pose( core::pose::PoseCOP reference_pose );
 	void reference_pose( core::pose::Pose const & pose );
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;

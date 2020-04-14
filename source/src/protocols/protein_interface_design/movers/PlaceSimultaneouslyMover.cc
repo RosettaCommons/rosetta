@@ -737,8 +737,8 @@ PlaceSimultaneouslyMover::final_cleanup( core::pose::Pose & pose )
 
 void
 PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap &data
+)
 {
 	using namespace protocols::hotspot_hashing;
 	using namespace protocols::filters;
@@ -747,9 +747,9 @@ PlaceSimultaneouslyMover::parse_my_tag( TagCOP const tag,
 	TR<<"Parsing PlaceSimultaneouslyMover----"<<std::endl;
 	/// auction, rbstub_minimization, and stub_score_filter are different, private
 	/// instantiations and should parse the stubset, chain, etc. information
-	auction_->parse_my_tag( tag, data, pose );
-	rbstub_minimization_->parse_my_tag( tag, data, pose );
-	stub_score_filter_->parse_my_tag( tag, data, pose );
+	auction_->parse_my_tag( tag, data );
+	rbstub_minimization_->parse_my_tag( tag, data );
+	stub_score_filter_->parse_my_tag( tag, data );
 
 	if ( tag->hasOption( "task_operations" ) ) {
 		if ( task_factory() ) {

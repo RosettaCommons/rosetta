@@ -90,8 +90,7 @@ InterfaceBindingEnergyDensityFilter::fresh_instance() const{
 void
 InterfaceBindingEnergyDensityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	if ( ! tag->hasOption("sasa_filter") ) {

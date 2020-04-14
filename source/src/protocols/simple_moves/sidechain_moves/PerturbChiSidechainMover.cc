@@ -104,8 +104,7 @@ PerturbChiSidechainMover::set_defaults() {
 void
 PerturbChiSidechainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	magnitude_ = tag->getOption<Real>( "magnitude", magnitude_ );
 	gaussian_ = tag->getOption<bool>( "gaussian", gaussian_ );

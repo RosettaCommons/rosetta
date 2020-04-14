@@ -290,8 +290,8 @@ bool ShapeComplementarityFilter::apply( Pose const & pose ) const
 void
 ShapeComplementarityFilter::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );
 	filtered_area_ = tag->getOption<Real>( "min_interface", 0 );

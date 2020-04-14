@@ -2276,8 +2276,7 @@ public:
 	void
 	parse_my_tag(
 		utility::Tag::TagCOP const,
-		basic::datacache::DataMap &,
-		Pose const &
+		basic::datacache::DataMap &
 	) {}
 };
 

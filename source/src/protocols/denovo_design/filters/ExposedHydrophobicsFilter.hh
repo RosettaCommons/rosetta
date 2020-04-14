@@ -52,8 +52,7 @@ public:
 	/// @brief Parses the ExposedHydrophobicsFilter tags
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief Return the name of this mover.

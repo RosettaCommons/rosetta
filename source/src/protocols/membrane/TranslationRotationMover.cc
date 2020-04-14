@@ -129,8 +129,7 @@ TranslationMover::fresh_instance() const {
 void
 TranslationMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	// Read in membrane center
@@ -342,8 +341,7 @@ RotationMover::fresh_instance() const {
 void
 RotationMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	// read center and normal tag
@@ -536,8 +534,7 @@ TranslationRotationMover::fresh_instance() const {
 void
 TranslationRotationMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	// read center and normal tag

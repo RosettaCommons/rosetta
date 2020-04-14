@@ -89,8 +89,7 @@ public:
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 	std::string
@@ -167,8 +166,7 @@ public:
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 private:
@@ -231,8 +229,7 @@ public:
 	/// @brief Pase Rosetta Scripts Options for this Mover
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 private:

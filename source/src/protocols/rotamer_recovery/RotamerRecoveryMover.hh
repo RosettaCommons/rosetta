@@ -76,8 +76,8 @@ public: // functional interface
 	void
 	parse_my_tag(
 		TagCOP /*tag*/,
-		basic::datacache::DataMap & /*data*/,
-		Pose const &) override;
+		basic::datacache::DataMap & /*data*/
+	) override;
 
 	/// @brief this function informs the job distributor (august 08
 	///vintage) whether this object needs to be freshly regenerated on

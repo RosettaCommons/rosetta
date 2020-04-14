@@ -1167,7 +1167,7 @@ SymDockProtocol::score_only( core::pose::Pose & pose )
 }
 
 void
-SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+SymDockProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace core::scoring;
 

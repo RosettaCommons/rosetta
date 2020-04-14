@@ -51,8 +51,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & reference_pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	void add_labels_as_remark( core::pose::Pose & pose ) const;
 

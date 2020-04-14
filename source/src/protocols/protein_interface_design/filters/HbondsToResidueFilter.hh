@@ -87,7 +87,7 @@ public :
 	///
 	core::Size compute( core::pose::Pose const & pose, core::Size const resnum_rosetta ) const;
 	~HbondsToResidueFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Set the minimum number of H-bond partners that this residue must have for the filter to pass.
 	///

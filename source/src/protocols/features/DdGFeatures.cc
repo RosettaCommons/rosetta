@@ -144,8 +144,7 @@ DdGFeatures::features_reporter_dependencies() const {
 void
 DdGFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & /* pose */
+	basic::datacache::DataMap & data
 ) {
 	if ( tag->hasOption("ddG_scan_mover") ) {
 		filters::FilterOP filter = protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "ddG_scan_mover" ), data );

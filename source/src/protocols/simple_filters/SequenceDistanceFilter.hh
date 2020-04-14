@@ -40,7 +40,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & pose) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	core::Size compute( core::pose::Pose const & pose ) const;
 
 	std::string const & sequence_comment_id() const { return sequence_comment_id_; }

@@ -138,58 +138,27 @@ RosettaScriptsParser::set_recursion_limit(const utility::options::OptionCollecti
 }
 
 
-/// @brief Convenience function to construct a ParsedProtocol from a file
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover(
 	std::string const & xml_fname,
 	std::string const & current_input_name,
 	std::string const & current_output_name
 ){
-	bool modified_pose;
-	return generate_mover_and_apply_to_pose( pose, basic::options::option, modified_pose, xml_fname, current_input_name, current_output_name );
-}
-
-
-/// @brief Convenience function to construct a ParsedProtocol from a file
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
-ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
-	bool & modified_pose,
-	std::string const & xml_fname,
-	std::string const & current_input_name,
-	std::string const & current_output_name
-){
-	modified_pose = false ;
-	utility::vector1< std::string > empty_vector;
-	TagCOP tag = create_tag_from_xml( xml_fname, empty_vector);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
+	TagCOP tag = create_tag_from_xml( xml_fname, basic::options::option );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( tag, basic::options::option, current_input_name, current_output_name );
 	return in_mover;
 }
 
 
-/// @brief Convenience function to construct a ParsedProtocol from a file
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
-	bool & modified_pose,
+RosettaScriptsParser::generate_mover(
 	std::string const & xml_fname,
 	utility::vector1< std::string > const & script_vars,
 	std::string const & current_input_name,
 	std::string const & current_output_name
 ){
-	modified_pose = false;
 	TagCOP tag = create_tag_from_xml( xml_fname, script_vars);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( tag, basic::options::option, current_input_name, current_output_name );
 	return in_mover;
 }
 
@@ -198,24 +167,20 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover(
 	utility::options::OptionCollectionCOP options,
-	bool & modified_pose,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
 	basic::resource_manager::ResourceManagerOP resource_manager
 ){
 	local_options_ = options;
-	return generate_mover_and_apply_to_pose(pose, *options, modified_pose, \
+	return generate_mover(*options,
 		current_input_name, current_output_name, resource_manager);
 }
 
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover(
 	utility::options::OptionCollectionCOP options,
-	bool & modified_pose,
 	std::string const & xml_fname,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
@@ -223,91 +188,65 @@ RosettaScriptsParser::generate_mover_and_apply_to_pose(
 	basic::resource_manager::ResourceManagerOP resource_manager
 ) {
 	local_options_ = options;
-	return generate_mover_and_apply_to_pose(pose, *options, modified_pose, \
+	return generate_mover(*options,
 		xml_fname,current_input_name, current_output_name, xml_objects, resource_manager);
 }
 
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover_xml_string(
 	utility::options::OptionCollectionCOP options,
-	bool & modified_pose,
 	std::string const & xml_text,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
 	XmlObjectsOP xml_objects /* = nullptr */
 ) {
 	local_options_ = options;
-	return generate_mover_and_apply_to_pose(pose, *options, modified_pose,\
-		xml_text, current_input_name, current_output_name, xml_objects);
+	return generate_mover_xml_string( *options, xml_text, current_input_name, current_output_name, xml_objects );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/// @brief Convenience function to construct a ParsedProtocol from a file
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover(
 	utility::options::OptionCollection const & options,
-	bool & modified_pose,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
 	basic::resource_manager::ResourceManagerOP resource_manager
 ){
 	debug_assert(options[ OptionKeys::parser::protocol ].user());
 
-	return generate_mover_and_apply_to_pose( pose, options, modified_pose, options[ OptionKeys::parser::protocol ](), current_input_name, current_output_name, nullptr, resource_manager );
+	return generate_mover( options, options[ OptionKeys::parser::protocol ](), current_input_name, current_output_name, nullptr, resource_manager );
 }
 
-/// @brief Convenience function to construct a ParsedProtocol from a file
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover(
 	utility::options::OptionCollection const & options,
-	bool & modified_pose,
 	std::string const & xml_fname,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
 	XmlObjectsOP xml_objects,
 	basic::resource_manager::ResourceManagerOP resource_manager
 ) {
-	modified_pose = false;
 	TagCOP tag = create_tag_from_xml( xml_fname, options);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, current_input_name, current_output_name, xml_objects, resource_manager );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( tag, options, current_input_name, current_output_name, xml_objects, resource_manager );
 	return in_mover;
-
 }
 
 
-/// @brief Convenience function to construct a ParsedProtocol from a string
-/// @details Reads in an RosettaScript from file, replaces script_vars if present, applies operations
-///   in APPLY_TO_POSE to pose. Then returns the full ParsedProtocol
-///   See also protocols::rosetta_scripts::XmlObjects
 ParsedProtocolOP
-RosettaScriptsParser::generate_mover_and_apply_to_pose_xml_string(
-	core::pose::Pose & pose,
+RosettaScriptsParser::generate_mover_xml_string(
 	utility::options::OptionCollection const & options,
-	bool & modified_pose,
 	std::string const & xml_text,
 	std::string const & current_input_name,
 	std::string const & current_output_name,
 	XmlObjectsOP xml_objects /* = nullptr */
 ) {
 
-
-	modified_pose = false;
 	TagCOP tag = create_tag_from_xml_string( xml_text, options);
-	ParsedProtocolOP in_mover = generate_mover_for_protocol( pose, modified_pose, tag, options, current_input_name, current_output_name, xml_objects );
+	ParsedProtocolOP in_mover = generate_mover_for_protocol( tag, options, current_input_name, current_output_name, xml_objects );
 	return in_mover;
-
 }
 
 TagCOP
@@ -477,14 +416,9 @@ RosettaScriptsParser::initialize_data_map(
 /// in the previous two sections. The order in which the protocols are specified
 /// by the user will be maintained by the DockDesign mover.
 ///
-/// APPLY_TO_POSE This section allows for certain movers to be applied to the
-/// pose prior to starting the DockDesign protocol. For instance, these movers
-/// could set constraints, such as favor_native_residue. In this case, for
-/// example, the weights of res_type_constraint in all of the scorefunctions
-/// that are defined in SCOREFXNS or by default are set to 1.0, but can be
-/// changed by the user globally (in the definition of the weight on the
-/// constraint), or in particular for each of the scorefunctions by changing
-/// the relevant term (which is set by default to the global value).
+/// APPLY_TO_POSE -- DEPRECATED/Removed. This section used to allow for applying certain
+/// movers to the pose prior to protocol start. This functionality has been removed.
+/// Anything other than an empty APPLY_TO_POSE section will raise an error.
 ///
 /// OUTPUT is a section which allows the XML control of how things are output.
 /// Notice that the order of the sections by which the protocol is written
@@ -494,9 +428,8 @@ RosettaScriptsParser::initialize_data_map(
 /// xi:include statements can be placed anywhere to trigger read-in of another
 /// RosettaScripts XML file.  Contents of the file replace the xi:include
 /// statement.
-bool
-RosettaScriptsParser::generate_mover_from_pose(
-	Pose & pose,
+void
+RosettaScriptsParser::generate_mover(
 	moves::MoverOP & in_mover,
 	bool new_input,
 	std::string const & xml_fname,
@@ -506,40 +439,19 @@ RosettaScriptsParser::generate_mover_from_pose(
 )
 {
 
-	bool modified_pose( false );
-	if ( !new_input && !guarantee_new_mover ) return modified_pose;
+	if ( !new_input && !guarantee_new_mover ) return;
 
 	std::string const dock_design_filename( xml_fname == "" ? option[ OptionKeys::parser::protocol ] : xml_fname );
 	TR << "dock_design_filename=" << dock_design_filename << std::endl;
 
 	TagCOP tag = create_tag_from_xml( dock_design_filename, basic::options::option);
 
-	in_mover = generate_mover_for_protocol( pose, modified_pose, tag, basic::options::option, current_input_name, current_output_name );
-
-	return modified_pose;
-}
-
-protocols::moves::MoverOP
-RosettaScriptsParser::generate_mover_from_pose(
-	core::pose::Pose const & pose,
-	std::string const & xml_file
-) {
-	core::pose::Pose nonconst_pose(pose);
-
-	bool modified_pose = false;
-	basic::datacache::DataMap new_data;
-
-	// Is referencing the global options really what we want here?
-	initialize_data_map( new_data, basic::options::option );
-	TagCOP new_tag = create_tag_from_xml( xml_file, basic::options::option);
-	return generate_mover_for_protocol( new_tag, new_data, nonconst_pose, modified_pose, basic::options::option );
+	in_mover =  generate_mover_for_protocol( tag, basic::options::option, current_input_name, current_output_name );
 
 }
 
 ParsedProtocolOP
 RosettaScriptsParser::generate_mover_for_protocol(
-	Pose & pose,
-	bool & modified_pose,
 	TagCOP tag,
 	utility::options::OptionCollection const & options,
 	std::string const & current_input_name /* = "" */,
@@ -566,15 +478,13 @@ RosettaScriptsParser::generate_mover_for_protocol(
 		}
 	}
 
-	return generate_mover_for_protocol(tag, data, pose, modified_pose, options, xml_objects, resource_manager);
+	return generate_mover_for_protocol(tag, data, options, xml_objects, resource_manager);
 }
 
 ParsedProtocolOP
 RosettaScriptsParser::generate_mover_for_protocol(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data,
-	core::pose::Pose & pose,
-	bool & modified_pose,
 	utility::options::OptionCollection const &,
 	XmlObjectsOP xml_objects,
 	basic::resource_manager::ResourceManagerOP resource_manager
@@ -602,22 +512,21 @@ RosettaScriptsParser::generate_mover_for_protocol(
 			parse_resources_tag( curr_tag, data, resource_manager);
 		} else if ( curr_tag->getName() == "FILTERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
-				instantiate_filter(tag_ptr, data, pose);
+				instantiate_filter(tag_ptr, data);
 			}
 		} else if ( curr_tag->getName() == "MOVERS" ) {
 			for ( TagCOP tag_ptr : curr_tag->getTags() ) {
-				instantiate_mover(tag_ptr, data, pose);
+				instantiate_mover(tag_ptr, data);
 			}
 		} else if ( curr_tag->getName() == "APPLY_TO_POSE" ) {
-			// Don't short-circuit the evaluation (but *do* use or-combining).
-			modified_pose |= parse_apply_to_pose_tag( curr_tag, data, pose );
+			parse_apply_to_pose_tag( curr_tag, data );
 		} else if ( curr_tag->getName() == "IMPORT" ) {
-			parse_import_tag( curr_tag, data, pose );
+			parse_import_tag( curr_tag, data );
 		} else {
 			// All other tags are considered DataLoader tags.
 			using namespace protocols::parser;
 			DataLoaderOP loader = DataLoaderFactory::get_instance()->newDataLoader( curr_tag->getName() );
-			loader->load_data( pose, curr_tag, data );
+			loader->load_data( curr_tag, data );
 		}
 		TR.flush();
 	}
@@ -625,7 +534,7 @@ RosettaScriptsParser::generate_mover_for_protocol(
 	////// Setup the actual main protocol block.
 	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
 	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
-	protocol->parse_my_tag( protocols_tag, data, pose );
+	protocol->parse_my_tag( protocols_tag, data );
 	TR.flush();
 
 	////// Set Output options
@@ -736,24 +645,7 @@ RosettaScriptsParser::read_in_and_recursively_replace_includes(
 ParsedProtocolOP
 RosettaScriptsParser::parse_protocol_tag( TagCOP protocol_tag, utility::options::OptionCollection const & options)
 {
-	Pose temp_pose;
-	//bool modified_pose = false;
-
-	return parse_protocol_tag(temp_pose, protocol_tag, options);
-}
-
-ParsedProtocolOP
-RosettaScriptsParser::parse_protocol_tag( Pose & pose, utility::tag::TagCOP protocol_tag, utility::options::OptionCollection const & options )
-{
-	bool modified_pose = false;
-
-	ParsedProtocolOP mover = generate_mover_for_protocol(pose, modified_pose, protocol_tag, options, "", "" );
-
-	if ( modified_pose ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "RosettaScriptsParser::parse_protocol_tag resulted in modified_pose");
-	}
-
-	return mover;
+	return generate_mover_for_protocol( protocol_tag, options);
 }
 
 void
@@ -789,49 +681,34 @@ RosettaScriptsParser::parse_resources_tag(
 	}
 }
 
-bool
+void
 RosettaScriptsParser::parse_apply_to_pose_tag(
 	utility::tag::TagCOP apply_tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & pose
+	basic::datacache::DataMap &
 ) const
 {
-	bool modified_pose = false;
-
 	// An empty APPLY_TO_POSE tag is fine (and common) - it's only when there's content in it that we have concerns.
-	// Only warn if we're actually going to try to modify the pose.
 	for ( TagCOP apply_tag_ptr : apply_tag->getTags() ) {
-		std::string const mover_type( apply_tag_ptr->getName() );
-		TR.Warning << "==================================================================================" << std::endl;
-		TR.Warning << std::endl;
-		TR.Warning << "The APPLY_TO_POSE section is deprecated. Please edit your XML to remove it." <<  std::endl;
-		TR.Warning << std::endl;
-		TR.Warning << "You should be able to get effectively the same results by moving" <<  std::endl;
-		TR.Warning << "the definitions in the APPLY_TO_POSE section to the MOVERS section, adding a name," << std::endl;
-		TR.Warning << "and then calling those movers at the very start of the PROTOCOLS section." << std::endl;
-		TR.Warning << std::endl;
-		TR.Warning << "==================================================================================" << std::endl;
+		TR.Error << "==================================================================================" << std::endl;
+		TR.Error << std::endl;
+		TR.Error << "The APPLY_TO_POSE section is no longer valid. Please edit your XML to remove it." <<  std::endl;
+		TR.Error << std::endl;
+		TR.Error << "You should be able to get effectively the same results by moving" <<  std::endl;
+		TR.Error << "the definitions in the APPLY_TO_POSE section to the MOVERS section, adding a name," << std::endl;
+		TR.Error << "and then calling those movers at the very start of the PROTOCOLS section." << std::endl;
+		TR.Error << std::endl;
+		TR.Error << "==================================================================================" << std::endl;
 
-		protocols::moves::MoverOP new_mover( MoverFactory::get_instance()->newMover( apply_tag_ptr, data, pose ) );
-		runtime_assert( new_mover != nullptr );
-		new_mover->apply( pose );
-		modified_pose = true;
-		TR << "Defined and applied mover of type " << mover_type << std::endl;
-		if ( data.has( "movers", mover_type ) ) {
-			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Can't apply_to_pose the same mover twice for " + mover_type);
-		}
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The APPLY_TO_POSE section is no longer valid. Please remove it from your XML.");
 
 	} // done apply_tag_ptr
-
-	return modified_pose;
 }
 
 /// @brief Instantiate a new filter and add it to the list of defined filters for this ROSETTASCRIPTS block
 void
 RosettaScriptsParser::instantiate_filter(
 	TagCOP const & tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & pose
+	basic::datacache::DataMap & data
 ) const {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
@@ -843,7 +720,7 @@ RosettaScriptsParser::instantiate_filter(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
-	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data, pose ) );
+	protocols::filters::FilterOP new_filter( protocols::filters::FilterFactory::get_instance()->newFilter( tag_ptr, data ) );
 	runtime_assert( new_filter != nullptr );
 	data.add("filters", user_defined_name, new_filter );
 	TR << "Defined filter named \"" << user_defined_name << "\" of type " << type << std::endl;
@@ -853,8 +730,7 @@ RosettaScriptsParser::instantiate_filter(
 void
 RosettaScriptsParser::instantiate_mover(
 	TagCOP const & tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & pose
+	basic::datacache::DataMap & data
 ) const {
 	std::string const type( tag_ptr->getName() );
 	if ( ! tag_ptr->hasOption("name") ) {
@@ -866,7 +742,7 @@ RosettaScriptsParser::instantiate_mover(
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover of name \"" + user_defined_name + "\" (of type " + type + ") already exists.");
 	}
 
-	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data, pose ) );
+	MoverOP new_mover( MoverFactory::get_instance()->newMover( tag_ptr, data ) );
 	runtime_assert( new_mover != nullptr );
 	data.add("movers", user_defined_name, new_mover );
 	TR << "Defined mover named \"" << user_defined_name << "\" of type " << type << std::endl;
@@ -876,8 +752,7 @@ RosettaScriptsParser::instantiate_mover(
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 void RosettaScriptsParser::instantiate_packer_palette(
 	TagCOP const & tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & /*pose*/
+	basic::datacache::DataMap & data
 ) const {
 	using namespace core::pack::palette;
 
@@ -902,8 +777,7 @@ void RosettaScriptsParser::instantiate_packer_palette(
 void
 RosettaScriptsParser::instantiate_taskoperation(
 	TagCOP const & tag_ptr,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & /*pose*/
+	basic::datacache::DataMap & data
 ) const {
 	using namespace core::pack::task::operation;
 
@@ -970,8 +844,7 @@ RosettaScriptsParser::find_rosettascript_tag(
 void
 RosettaScriptsParser::parse_import_tag(
 	utility::tag::TagCOP import_tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & pose
+	basic::datacache::DataMap & data
 ) const {
 	std::set< ImportTagName > import_tag_names;
 
@@ -1017,7 +890,7 @@ RosettaScriptsParser::parse_import_tag(
 
 	// Attempt to find and import requested objects; throws exception on failure
 	if ( import_tag_names.size() > 0 ) {
-		import_tags(import_tag_names, import_tag->getParent().lock(), data, pose);
+		import_tags(import_tag_names, import_tag->getParent().lock(), data);
 	}
 }
 
@@ -1027,8 +900,7 @@ void
 RosettaScriptsParser::import_tags(
 	std::set< ImportTagName > & import_tag_names,
 	utility::tag::TagCOP my_tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose & pose
+	basic::datacache::DataMap & data
 ) const {
 	// Process all parent ROSETTASCRIPTS tags, one at a time
 	TagCAP curr_level_tag_ap(my_tag);
@@ -1057,7 +929,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), packer_palette_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_packer_palette(packer_palette_tag, data, pose);
+						instantiate_packer_palette(packer_palette_tag, data);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1068,7 +940,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), taskoperation_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_taskoperation(taskoperation_tag, data, pose);
+						instantiate_taskoperation(taskoperation_tag, data);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1079,7 +951,7 @@ RosettaScriptsParser::import_tags(
 					ImportTagName key( std::make_pair( tag->getName(), filter_name ) );
 					bool const need_import( import_tag_names.find( key ) != import_tag_names.end() );
 					if ( need_import ) {
-						instantiate_filter(filter_tag, data, pose);
+						instantiate_filter(filter_tag, data);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1096,7 +968,7 @@ RosettaScriptsParser::import_tags(
 							// Current mover_tag is our parent, i.e. same ROSETTASCRIPTS tag
 							throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Cannot import mover " + mover_name + " into itself; recursion detected");
 						}
-						instantiate_mover(mover_tag, data, pose);
+						instantiate_mover(mover_tag, data);
 						import_tag_names.erase(key);
 					}
 				}
@@ -1312,7 +1184,7 @@ RosettaScriptsParser::validate_input_script_against_xsd( std::string const & fna
 		" the rosetta scripts schema. Use the option -parser::output_schema <output filename> to output"
 		" the schema to a file to see all valid options.\n";
 
-	std::string const long_error_string("Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:\n\n1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction), then you need to fix your XML file.\n2) If you haven’t run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/xsd_xrw/rewrite_rosetta_script.py) on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction=\"talaris2014\") is a good indicator that this is your problem.\n3) If you are a developer and neither 1 nor 2 worked - email the developer’s mailing list or try Slack.\n4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum\n");
+	std::string const long_error_string("Your XML has failed validation.  The error message below will tell you where in your XML file the error occurred.  Here's how to fix it:\n\n1) If the validation fails on something obvious, like an illegal attribute due to a spelling error (perhaps you used scorefnction instead of scorefunction), then you need to fix your XML file.\n2) If you haven't run the XML rewriter script and this might be pre-2017 Rosetta XML, run the rewriter script (tools/xsd_xrw/rewrite_rosetta_script.py) on your input XML first.  The attribute values not being in quotes (scorefunction=talaris2014 instead of scorefunction=\"talaris2014\") is a good indicator that this is your problem.\n3) If you are a developer and neither 1 nor 2 worked - email the developer's mailing list or try Slack.\n4) If you are an academic or commercial user - try the Rosetta Forums https://www.rosettacommons.org/forum\n");
 
 	oss << long_error_string << "\n\n";
 
@@ -1513,20 +1385,17 @@ RosettaScriptsParser::write_ROSETTASCRIPTS_complex_type( utility::tag::XMLSchema
 		.write_complex_type_to_schema( xsd );
 
 	// APPLY_TO_POSE
-	// This section is just a bunch of movers
 	XMLSchemaSimpleSubelementList apply_to_pose_subelements;
 	apply_to_pose_subelements.add_group_subelement( & moves::MoverFactory::mover_xml_schema_group_name );
 	XMLSchemaComplexTypeGenerator apply_to_pose_ct;
 	apply_to_pose_ct.element_name( "APPLY_TO_POSE" )
 		.complex_type_naming_func( & rosetta_scripts_complex_type_naming_func )
-		.description( "The APPLY_TO_POSE block is an odd duck, and is deprecated, and you should not use it. What it allows you to do is"
-		" define a set of movers, which the MOVERS block also allows you to do, and then to have the apply() method for these movers"
-		" called immediately. As the Pose is handed to Movers and Filters in their parse_my_tag() methods, the Movers in this block"
-		" have the ability to change the Pose before it is handed to the the parse_my_tag() methods of other objects. The upshot,"
-		" however, is that the movers in the APPLY_TO_POSE block are going to run in the master thread, and will represent a bottleneck"
-		" in multithreaded protocols. It also is just weird that the APPLY_TO_POSE block is taking over some of the functionality of"
-		" the PROTOCOLS block. The original justification for why the APPLY_TO_POSE block is needed was so that you could add constraints"
-		" to a Pose or change data in the DataMap, but both of these things are possible by adding Movers to the PROTOCOLS block." )
+		.description( "The APPLY_TO_POSE block is deprecated and should not be used."
+		" Any non-empty APPLY_TO_POSE block will now raise an error."
+		" Move any movers from the APPLY_TO_POSE section into the PROTOCOLS block."
+		" You may need to adjust some movers and filters to use reference poses and add a "
+		" SavePoseMover to the PROTOCOLS block, right after the moved movers."
+		)
 		.set_subelements_repeatable( apply_to_pose_subelements )
 		.write_complex_type_to_schema( xsd );
 

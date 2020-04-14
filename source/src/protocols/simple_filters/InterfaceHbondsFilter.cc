@@ -243,8 +243,7 @@ core::Size InterfaceHbondsFilter::compute( core::pose::Pose const & pose ) const
 void
 InterfaceHbondsFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	if ( tag->hasOption( "threshold" ) ) {

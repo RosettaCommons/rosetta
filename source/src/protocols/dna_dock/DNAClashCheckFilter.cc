@@ -166,9 +166,8 @@ bool DNAClashCheckFilter::apply( Pose const & pose ) const
 void
 DNAClashCheckFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	dna_a_path_ = tag->getOption< std::string >( "dna_a_path", "" );
 	dna_b_path_ = tag->getOption< std::string >( "dna_b_path", "" );
 	fa_rep_thresh_ = tag->getOption< core::Real >( "fa_rep_thresh", 50.0);

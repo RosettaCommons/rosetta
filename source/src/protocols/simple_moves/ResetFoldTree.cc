@@ -61,8 +61,8 @@ ResetFoldTree::fresh_instance() const
 void
 ResetFoldTree::parse_my_tag(
 	utility::tag::TagCOP,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	TR << "nothing to parse";
 }

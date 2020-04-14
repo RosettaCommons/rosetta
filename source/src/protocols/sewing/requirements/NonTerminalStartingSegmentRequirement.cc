@@ -64,9 +64,8 @@ NonTerminalStartingSegmentRequirement::test(data_storage::SmartAssemblyOP assemb
 void
 NonTerminalStartingSegmentRequirement::set_options_from_tag(
 	utility::tag::TagCOP,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 	TR << "Setting up NonTerminalStartingSegmentRequirement" << std::endl;
 }
 

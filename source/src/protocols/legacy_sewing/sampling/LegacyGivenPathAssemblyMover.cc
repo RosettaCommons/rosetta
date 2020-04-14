@@ -128,10 +128,9 @@ LegacyGivenPathAssemblyMover::generate_assembly(){
 void
 LegacyGivenPathAssemblyMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
-	parent::parse_my_tag(tag, data, pose);
+	parent::parse_my_tag(tag, data);
 
 	if ( tag->hasOption("path") ) {
 		std::string const path_list( tag->getOption< std::string >( "path" ) );

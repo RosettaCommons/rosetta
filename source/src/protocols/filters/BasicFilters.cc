@@ -59,16 +59,14 @@ using Pose = core::pose::Pose;
 void
 TrueFilter::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const & )
-{} // No configuration needed
+	basic::datacache::DataMap &
+) {} // No configuration needed
 
 void
 FalseFilter::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const & )
-{} // No configuration needed
+	basic::datacache::DataMap &
+) {} // No configuration needed
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -138,8 +136,8 @@ StochasticFilter::report( std::ostream & ostream, core::pose::Pose const & pose)
 void
 StochasticFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	confidence_ = tag->getOption< core::Real >( "confidence", 1.0 );
 	TR<<"stochastic filter with confidence "<<confidence_<<std::endl;
@@ -340,8 +338,8 @@ CompoundFilter::set_resid( core::pose::ResidueIndexDescriptionCOP r )
 void
 CompoundFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR<<"CompoundStatement"<<std::endl;
 	invert_ = tag->getOption<bool>( "invert", false );
@@ -457,8 +455,8 @@ CombinedFilter::clear_reset_filters()
 void
 CombinedFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	set_threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	utility::vector1< TagCOP > const sub_tags( tag->getTags() );
@@ -526,8 +524,8 @@ MoveBeforeFilter::report_sm( core::pose::Pose const & pose ) const
 void
 MoveBeforeFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	std::string mover_name("");
 	std::string filter_name("");
@@ -660,8 +658,8 @@ IfThenFilter::compute( core::pose::Pose const & pose ) const
 void
 IfThenFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	threshold( tag->getOption<core::Real>( "threshold", 0.0 ) );
 	set_lower_threshold( tag->getOption<bool>( "lower_threshold", false ) );

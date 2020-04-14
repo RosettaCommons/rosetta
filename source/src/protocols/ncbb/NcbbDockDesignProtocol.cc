@@ -482,8 +482,7 @@ NcbbDockDesignProtocol::clone() const
 void
 NcbbDockDesignProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const &
+	basic::datacache::DataMap &data
 ) {
 
 	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_,

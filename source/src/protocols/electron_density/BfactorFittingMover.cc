@@ -529,9 +529,8 @@ void BfactorFittingMover::apply(core::pose::Pose & pose) {
 void
 BfactorFittingMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &)
-{
+	basic::datacache::DataMap &
+) {
 	if ( tag->hasOption("wt_adp") ) {
 		wt_adp_ = tag->getOption<core::Real>("wt_adp");
 	}

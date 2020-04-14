@@ -1478,8 +1478,7 @@ InterfaceAnalyzerMover::setup_task( core::pose::Pose & pose ) {
 void
 InterfaceAnalyzerMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	sf_ = protocols::rosetta_scripts::parse_score_function( tag, datamap )->clone();

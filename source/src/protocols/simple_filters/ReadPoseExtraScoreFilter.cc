@@ -56,8 +56,7 @@ ReadPoseExtraScoreFilter::~ReadPoseExtraScoreFilter(){}
 void
 ReadPoseExtraScoreFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	term_name_ = tag->getOption< std::string >( "term_name" );
 	threshold_ = tag->getOption< core::Real >( "threshold" );

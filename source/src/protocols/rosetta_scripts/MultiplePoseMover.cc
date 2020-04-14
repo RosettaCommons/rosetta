@@ -277,7 +277,7 @@ bool MultiplePoseMover::process_pose( core::pose::Pose & pose, utility::vector1 
 	protocols::moves::MoverOP mover;
 	try {
 		rosetta_scripts_tag_->reset_accessed_options();
-		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_, basic::options::option );
+		mover = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
 		if ( !mover ) {
 			TR << "Failed to parse protocol? This should not happen. Not applying protocol to pose." << std::endl;
 			return false;
@@ -329,8 +329,7 @@ recursively_access_all_attributes( utility::tag::TagCOP tag )
 /// @brief Parse settings in tag
 void MultiplePoseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 
 	if ( tag->hasOption("max_input_poses") ) {
@@ -364,7 +363,7 @@ void MultiplePoseMover::parse_my_tag(
 				// I'm not sure why this might be necessary.
 				PoseSelectorOP new_selector(
 					PoseSelectorFactory::get_instance()->
-					newPoseSelector( curr_tag, data, pose )
+					newPoseSelector( curr_tag, data )
 				);
 				runtime_assert( new_selector != nullptr );
 				selectors_.push_back( new_selector );

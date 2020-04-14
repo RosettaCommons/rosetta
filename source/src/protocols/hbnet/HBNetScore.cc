@@ -113,9 +113,8 @@ HBNetScore::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 }
 
 void HBNetScore::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
 	hbond_threshold_ = tag->getOption<core::Real>( "hbond_threshold", 0.0 );
 }

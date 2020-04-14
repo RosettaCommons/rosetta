@@ -2385,8 +2385,8 @@ utility::vector1< bool > const & RemodelMover::allowed_surface_aa() {
 void
 RemodelMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 
 {
 	//note that we are being invoked from rosetta scripts

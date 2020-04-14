@@ -47,9 +47,8 @@ PoseComment::~PoseComment() = default;
 void
 PoseComment::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	comment_name( tag->getOption< std::string >( "comment_name","" ) );
 	comment_value( tag->getOption< std::string >( "comment_value", "" ) );
 	comment_exists( tag->getOption< bool > ( "comment_exists", false ) );

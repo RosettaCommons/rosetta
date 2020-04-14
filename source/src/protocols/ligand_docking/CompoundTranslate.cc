@@ -69,8 +69,7 @@ protocols::moves::MoverOP CompoundTranslate::fresh_instance() const {
 void
 CompoundTranslate::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 )
 {
 	if ( tag->getName() != "CompoundTranslate" ) {

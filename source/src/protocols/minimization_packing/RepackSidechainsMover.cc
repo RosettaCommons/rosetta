@@ -123,20 +123,17 @@ RepackSidechainsMover::get_name() const {
 void
 RepackSidechainsMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
-	parse_score_function( tag, datamap, pose );
-	// parse_task_operations( tag, datamap, filters, movers, pose );
+	parse_score_function( tag, datamap );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 RepackSidechainsMover::parse_score_function(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	core::scoring::ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );

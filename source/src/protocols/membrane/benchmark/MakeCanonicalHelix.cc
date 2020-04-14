@@ -61,8 +61,8 @@ MakeCanonicalHelix::MakeCanonicalHelix( MakeCanonicalHelix const & /*src*/ ) = d
 void
 MakeCanonicalHelix::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	// Read in helix start position
 	if ( tag->hasOption( "helix_start" ) ) {

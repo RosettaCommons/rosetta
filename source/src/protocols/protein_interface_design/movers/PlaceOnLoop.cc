@@ -258,7 +258,7 @@ PlaceOnLoop::apply( Pose & pose )
 
 
 void
-PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+PlaceOnLoop::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	host_chain_ = tag->getOption< core::Size >( "host_chain", 2 );
 	loop_begin_ = tag->getOption< core::Size >( "loop_begin" );

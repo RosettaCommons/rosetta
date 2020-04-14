@@ -1298,7 +1298,7 @@ DockingProtocol::show( std::ostream & out ) const {
 }
 
 void
-DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+DockingProtocol::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace core::scoring;
 

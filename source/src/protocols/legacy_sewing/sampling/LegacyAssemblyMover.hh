@@ -110,32 +110,28 @@ public:
 	void
 	parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	virtual
 	void
 	parse_requirements(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	);
 
 	virtual
 	void
 	parse_global_requirements(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	);
 
 	virtual
 	void
 	parse_intra_segment_requirements(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	);
 	static std::string
 	mover_name();

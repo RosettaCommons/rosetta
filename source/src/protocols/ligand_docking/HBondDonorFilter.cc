@@ -56,7 +56,7 @@ HBondDonorFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+HBondDonorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_donor_limit") ) ) {

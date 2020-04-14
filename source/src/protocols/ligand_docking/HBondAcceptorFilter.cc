@@ -56,7 +56,7 @@ HBondAcceptorFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-HBondAcceptorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+HBondAcceptorFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("hbond_acceptor_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HBondAcceptor filter needs a 'chain' and an 'hbond_acceptor_limit' option");

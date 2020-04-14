@@ -720,9 +720,8 @@ UBQ_GTPaseMover::show(std::ostream & output) const
 void
 UBQ_GTPaseMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &)
-{
+	basic::datacache::DataMap & data
+) {
 
 	// simple tags
 	set_UBQpdb(tag -> getOption < std::string > ("UBQpdb",""));

@@ -61,8 +61,8 @@ ReleaseConstraintFromResidueMover::~ReleaseConstraintFromResidueMover()= default
 void
 ReleaseConstraintFromResidueMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) set_residue_selector( *selector );

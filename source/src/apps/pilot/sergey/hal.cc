@@ -384,7 +384,7 @@ protocols::moves::MoverOP construct_mover_from_command(json const &j)
 
 	basic::datacache::DataMap data_map;
 
-	auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map, core::pose::Pose() );
+	auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map );
 	TR << TR.Blue;  mover->show(TR);  TR << TR.Reset << std::endl;
 
 	return mover;
@@ -399,7 +399,7 @@ protocols::moves::MoverOP construct_mover_from_command(json const &j)
 	//  //TR << "Tag:" << TR.Blue << *tag << TR.Reset << std::endl;
 	//  basic::datacache::DataMap data_map;
 	//  // core::pose::Pose pose;
-	//  auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map, core::pose::Pose() );
+	//  auto mover = protocols::moves::MoverFactory::get_instance()->newMover(tag, data_map );
 	//  TR << TR.Blue;  mover->show(TR);  TR << TR.Reset << std::endl;
 	// }
 }

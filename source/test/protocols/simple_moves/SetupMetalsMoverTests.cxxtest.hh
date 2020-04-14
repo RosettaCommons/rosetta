@@ -100,7 +100,7 @@ public:
 		tag->read( ss );
 		TR << "Tag with no selector or resnums" << std::endl;
 		basic::datacache::DataMap dm;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), false );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
@@ -150,7 +150,7 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_string_and_selector );
 		TR << "Tag with embedded selector and resnums" << std::endl;
-		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm ) );
 		*/
 		/*
 		//Try to provide two embedded selectors
@@ -159,7 +159,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_two_embedded );
 		TR << "Tag with two embedded selectors" << std::endl;
-		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm ) );
 		*/
 		//Provide a selector that isn't in the data map
 		std::stringstream ss_bad_selector;
@@ -167,7 +167,7 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_bad_selector );
 		TR << "Tag with undefined residue selector" << std::endl;
-		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm ) );
 
 		//Add selector to the data map
 		core::select::residue_selector::ResidueIndexSelectorOP dummy( new core::select::residue_selector::ResidueIndexSelector );
@@ -179,7 +179,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_good_selector );
 		TR << "Tag with defined residue selector" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		/*
 		//Try to provide a selector string and an embedded selector
 		std::stringstream ss_selector_two_ways;
@@ -187,7 +187,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_selector_two_ways );
 		TR << "Tag with selector two ways" << std::endl;
-		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm, *pose_ ) );
+		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, fm, mm ) );
 		*/
 		//Try to provide a selector string and a resnum string
 		std::stringstream ss_select_string_and_resnum_string;
@@ -195,7 +195,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_select_string_and_resnum_string );
 		TR << "Tag with selector string and resnum string" << std::endl;
-		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_ANYTHING( new_mover.parse_my_tag( tag, dm ) );
 	}
 
 	void test_parse_tag_named_selector(){
@@ -227,7 +227,7 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
 		TR << "Tag with selector to select all metals" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
@@ -270,7 +270,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with selector to select chain A" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
@@ -312,7 +312,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with selector to select zinc ions" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
@@ -355,7 +355,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with selector that should not include any of the metal ions" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "" );
@@ -400,7 +400,7 @@ public:
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
 		TR << "Tag with resnums to select all metals" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_selector(), nullptr );
@@ -443,7 +443,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_a );
 		TR << "Tag with resnums to select chain A" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_resnums_string(), "1-155" );
@@ -485,7 +485,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_zn );
 		TR << "Tag with resnums to select zinc ions" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_selector(), nullptr );
@@ -528,7 +528,7 @@ public:
 		tag = utility::pointer::make_shared< utility::tag::Tag >();
 		tag->read( ss_none );
 		TR << "Tag with selection that should not include any of the metal ions" << std::endl;
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 		//Check all default values
 		TS_ASSERT_EQUALS( new_mover.get_remove_hydrogens(), true );
 		TS_ASSERT_EQUALS( new_mover.get_metal_selector(), nullptr );
@@ -574,7 +574,7 @@ public:
 		ss_all << "<SetupMetalsMover name=\"metal\" metal_resnums=\"154,155,309,310\" metals_detection_LJ_multiplier=\"1.0\" add_constraints=\"false\" contact_resnums=\"46,71,218\" />" << std::endl;
 		utility::tag::TagOP tag( new utility::tag::Tag() );
 		tag->read( ss_all );
-		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm, *pose_ ) );
+		TS_ASSERT_THROWS_NOTHING( new_mover.parse_my_tag( tag, dm ) );
 
 		//Apply the mover
 		new_mover.apply( *pose_ );

@@ -76,8 +76,8 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 private:
 	core::Real threshold_;

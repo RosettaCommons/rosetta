@@ -65,7 +65,7 @@ public:
 	/// @brief Parse RosettaScripts XML tag to set up the mover.
 	/// @details Can trigger a read from disk.
 	void
-	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map, Pose const &pose ) override;
+	parse_my_tag( TagCOP tag, basic::datacache::DataMap &data_map ) override;
 
 	/// @brief Get an owning pointer to the MHCEpitopeConstraint object created by this mover.
 	/// @details NULL unless the create_constraint_from_file() function has been called.

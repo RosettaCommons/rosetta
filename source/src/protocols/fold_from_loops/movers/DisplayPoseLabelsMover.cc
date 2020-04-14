@@ -69,9 +69,8 @@ DisplayPoseLabelsMover::~DisplayPoseLabelsMover()= default;
 void
 DisplayPoseLabelsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	title_width( tag->getOption< core::Size >( "title_width", default_title_width() ) );
 	use_dssp( tag->getOption< bool >( "use_dssp", default_use_dssp() ) );
 	write( tag->getOption< bool >( "write", default_write() ) );

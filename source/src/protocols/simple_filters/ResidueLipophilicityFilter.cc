@@ -76,9 +76,8 @@ ResidueLipophilicityFilter::~ResidueLipophilicityFilter(){}
 void
 ResidueLipophilicityFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold_ = tag->getOption< core::Real >( "threshold", -10.0 );
 	output_ = tag->getOption< std::string >( "output_file", "TR" );
 	print_splines_ = tag->getOption< bool >( "print_splines", false );

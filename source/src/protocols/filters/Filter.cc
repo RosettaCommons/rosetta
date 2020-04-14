@@ -88,8 +88,7 @@ Filter::~Filter() = default;
 void
 Filter::parse_my_tag(
 	TagCOP,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	TR.Warning << "The parse_my_tag method has been invoked for filter " << name() << " but it hasn't been defined. Are you sure this is appropriate?" << std::endl;
 }

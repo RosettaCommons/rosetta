@@ -1026,8 +1026,7 @@ core::pose::PoseOP PeptideDeriverFilter::build_receptor_peptide_pose(core::pose:
 
 void
 PeptideDeriverFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & // pose - unused
+	basic::datacache::DataMap & data
 ) {
 
 	// NOTE : we rely on the fact that all the options already have values

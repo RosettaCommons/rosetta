@@ -62,8 +62,7 @@ LoopsFileDefiner::clone(
 void
 LoopsFileDefiner::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap const &,
-	Pose const &
+	basic::datacache::DataMap const &
 ) {
 
 	if ( !tag->hasOption("name") ) {

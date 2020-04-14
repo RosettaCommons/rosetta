@@ -80,8 +80,8 @@ public: // Methods
 	void
 	set_options_from_tag(
 		utility::tag::TagCOP requirement_tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose) override =0;
+		basic::datacache::DataMap& datamap
+	) override =0;
 
 	std::string
 	get_name() override =0;

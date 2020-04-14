@@ -43,7 +43,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	virtual void set_bond(core::Size, std::string, core::Size, std::string, bool, bool);
 

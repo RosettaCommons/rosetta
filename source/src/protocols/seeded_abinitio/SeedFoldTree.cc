@@ -702,8 +702,8 @@ SeedFoldTree::get_folding_vertices(){ return folding_vertices_;}
 
 void
 SeedFoldTree::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & /*input_pose*/){
+	basic::datacache::DataMap & data
+){
 
 	TR<<"SeedFoldTree has been invoked"<<std::endl;
 

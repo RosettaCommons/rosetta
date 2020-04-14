@@ -233,11 +233,10 @@ SidechainMetropolisHastingsMover::fresh_instance() const
 void
 SidechainMetropolisHastingsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 	stride_ = tag->getOption< core::Size >( "stride", stride_ );
-	Parent::parse_my_tag( tag, data, pose );
+	Parent::parse_my_tag( tag, data );
 }
 
 

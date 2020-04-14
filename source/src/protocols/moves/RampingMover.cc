@@ -208,8 +208,7 @@ MoverOP RampingMover::clone() const
 void
 RampingMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 

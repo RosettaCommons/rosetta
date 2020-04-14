@@ -86,9 +86,8 @@ ResetFullModelInfoMover::show(std::ostream & output) const
 void
 ResetFullModelInfoMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 
 }
 void ResetFullModelInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

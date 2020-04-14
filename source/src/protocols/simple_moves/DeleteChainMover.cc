@@ -88,8 +88,8 @@ DeleteChainMover::apply( Pose & pose )
 void
 DeleteChainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	if ( tag->hasOption("chain") ) {
 		chain_num_ = tag->getOption< core::Size >( "chain");

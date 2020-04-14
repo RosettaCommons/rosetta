@@ -472,8 +472,8 @@ FilterScanFilter::report( std::ostream &, core::pose::Pose const & ) const
 
 void
 FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "FilterScanFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "filter" ) || tag->hasOption( "delta_filters" ));

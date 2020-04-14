@@ -48,9 +48,8 @@ NonSequentialNeighborsFilter::~NonSequentialNeighborsFilter() = default;
 void
 NonSequentialNeighborsFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 8.0 ) );
 	neighbor_cutoff( tag->getOption< core::Size >( "neighbor_cutoff", 10 ));
 	bound( tag->getOption< bool >( "bound", false ) );

@@ -91,8 +91,7 @@ LegacyGlobalLengthRequirement::violates(
 void
 LegacyGlobalLengthRequirement::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	if ( tag->hasOption("dssp") ) {
 		dssp_codes_ = utility::split_to_set(tag->getOption<std::string>("dssp"));

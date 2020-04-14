@@ -107,9 +107,8 @@ LocalBackboneMover::show(std::ostream & output) const
 void
 LocalBackboneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	using namespace free_peptide_movers;
 
 	// Set the pivots

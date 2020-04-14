@@ -155,8 +155,8 @@ void FixAllLoopsMover::apply(core::pose::Pose & pose) {
 void
 FixAllLoopsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap &
+){
 	//start_time_ = time(NULL);
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "1,4") );
 	refix_loops_ = tag->getOption< bool >( "refix_loops", false);

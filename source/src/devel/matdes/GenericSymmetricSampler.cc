@@ -163,8 +163,8 @@ GenericSymmetricSampler::apply(Pose & pose) {
 
 void
 GenericSymmetricSampler::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 	dof_id_ = tag->getOption<std::string>("dof_id", "");
 	angle_min_ = tag->getOption<Real>("angle_min", -1.0);
 	angle_max_ = tag->getOption<Real>("angle_max",  1.0);

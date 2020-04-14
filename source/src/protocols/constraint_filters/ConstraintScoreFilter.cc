@@ -49,8 +49,8 @@ ConstraintScoreFilter::~ConstraintScoreFilter() = default;
 void
 ConstraintScoreFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
 

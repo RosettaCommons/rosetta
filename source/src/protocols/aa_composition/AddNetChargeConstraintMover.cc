@@ -87,9 +87,8 @@ AddNetChargeConstraintMover::apply( Pose &pose )
 ///
 void
 AddNetChargeConstraintMover::parse_my_tag(
-	TagCOP const tag,
-	basic::datacache::DataMap &datamap,
-	Pose const &
+	TagCOP tag,
+	basic::datacache::DataMap &datamap
 )
 {
 	runtime_assert_string_msg( tag->hasOption("filename"), "Error in protocols::aa_composition::AddNetChargeConstraintMover::parse_my_tag(): A \"filename\" option MUST be provided." );

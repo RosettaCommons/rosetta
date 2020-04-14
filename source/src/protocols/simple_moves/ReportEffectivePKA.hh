@@ -87,7 +87,7 @@ public:
 	core::pack::task::TaskFactoryOP task_factory() const { return task_factory_; }
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

@@ -338,8 +338,7 @@ LoopHashDiversifier::apply( Pose & pose )
 void
 LoopHashDiversifier::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 ){
 	num_iterations_ = tag->getOption< core::Size >( "num_iterations", 100 );
 	num_try_div_ = tag->getOption< core::Size >( "num_try_div", 100 );

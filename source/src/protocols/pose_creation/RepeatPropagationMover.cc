@@ -865,8 +865,7 @@ void RepeatPropagationMover::trim_back_repeat_to_repair_scar(Pose & pose){
 std::string RepeatPropagationMover::get_name() const { return "RepeatPropagationMover"; }
 
 void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & //pose
+	basic::datacache::DataMap &
 )
 {
 	first_res_ = tag->getOption<core::Size>("first_template_res",9999);

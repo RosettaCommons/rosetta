@@ -161,10 +161,9 @@ void VectorPoseJobDistributor::go_mpi( protocols::moves::MoverOP mover ) {
 
 			RosettaScriptsParser parser;
 
-			parser.generate_mover_from_pose(
-				*this_nodes_pose,
+			parser.generate_mover(
 				mover,
-				1,
+				true,
 				option[ parser::protocol ]()
 			);
 
@@ -276,10 +275,9 @@ VectorPoseJobDistributor::go_serial( protocols::moves::MoverOP mover ) {
 			for ( core::Size ii = 1; ii <= working_poses.size(); ++ii ) {
 				current_pose_ = ii;
 
-				parser.generate_mover_from_pose(
-					*working_poses[ ii ],
+				parser.generate_mover(
 					mover,
-					1,
+					true,
 					option[ parser::protocol ]()
 				);
 

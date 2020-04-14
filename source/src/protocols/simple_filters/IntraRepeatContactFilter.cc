@@ -114,8 +114,8 @@ bool IntraRepeatContactFilter::apply( Pose const & pose ) const
 void
 IntraRepeatContactFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// set threshold
 	filtered_value_ = tag->getOption<Real>( "threshold", 0.0 );

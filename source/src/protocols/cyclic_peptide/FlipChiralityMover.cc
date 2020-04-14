@@ -148,8 +148,7 @@ void FlipChiralityMover::apply( core::pose::Pose & pose )
 void
 FlipChiralityMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	std::string const name( tag->getOption<std::string>( "name" ));

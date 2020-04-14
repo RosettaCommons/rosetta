@@ -266,8 +266,7 @@ public: // mutators
 
 	void parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	//static void modify_attlist_and_ssl_for_children( utility::tag::AttributeList & attlist, utility::tag::XMLSchemaSimpleSubelementList & ssl, utility::tag::XMLSchemaDefinition & xsd );

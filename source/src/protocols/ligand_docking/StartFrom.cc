@@ -97,8 +97,7 @@ protocols::moves::MoverOP StartFrom::fresh_instance() const {
 void
 StartFrom::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*datamap*/
 )
 {
 	if ( tag->getName() != "StartFrom" ) {

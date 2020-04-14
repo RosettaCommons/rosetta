@@ -233,9 +233,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 
 void ddG::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap  & data,
-	core::pose::Pose const& )
-{
+	basic::datacache::DataMap  & data
+) {
 	rb_jump_ = tag->getOption<core::Size>("jump", 1);
 	if ( tag->hasOption("symmetry") ) {
 		TR << "Option 'symmetry' for ddG mover has no effect - symmetry is autodetected from pose." << std::endl;

@@ -196,9 +196,8 @@ RBOutMover::fresh_instance() const
 void
 RBOutMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	template_pdb_fname( tag->getOption< std::string >( "template_fname" ) );
 	jump_dbase_fname( tag->getOption< std::string >( "jump_dbase_fname" ));
 	jump_from_foldtree( tag->getOption< bool >( "jump_from_foldtree", false ) );

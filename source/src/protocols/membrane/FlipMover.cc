@@ -162,8 +162,7 @@ FlipMover::fresh_instance() const {
 void
 FlipMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption( "jump_num" ) ) {
 		jump_num_ = tag->getOption< core::Size >("jump_num", 1);

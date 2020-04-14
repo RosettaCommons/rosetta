@@ -33,7 +33,6 @@ namespace loop_modeling {
 namespace refiners {
 
 using namespace std;
-using core::pose::Pose;
 using core::pack::task::TaskFactoryOP;
 using core::scoring::ScoreFunctionOP;
 
@@ -45,10 +44,10 @@ RepackingRefiner::RepackingRefiner(core::Size repack_period)
 
 void RepackingRefiner::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose) {
+	basic::datacache::DataMap & data
+) {
 
-	LoopMover::parse_my_tag(tag, data, pose);
+	LoopMover::parse_my_tag(tag, data);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 	utilities::set_task_factory_from_tag(*this, tag, data);
 	repack_period_ = tag->getOption<core::Size>("once_every", repack_period_);

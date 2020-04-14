@@ -58,8 +58,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	// @brief Set the name of the constraint file. Overwrites the file name that might be read in during parse_my_tag.
 	void cstfile( std::string const & setting );

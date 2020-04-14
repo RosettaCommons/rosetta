@@ -39,7 +39,6 @@ ResLvlTaskOperationLoader::ResLvlTaskOperationLoader() = default;
 ResLvlTaskOperationLoader::~ResLvlTaskOperationLoader() = default;
 
 void ResLvlTaskOperationLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const

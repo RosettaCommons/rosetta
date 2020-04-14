@@ -76,9 +76,9 @@ public:
 			core::pose::Pose testpose;
 
 			protocols::helical_bundle::MakeBundle makebundle;
-			makebundle.parse_my_tag(maketag, dummy_data, testpose );
+			makebundle.parse_my_tag(maketag, dummy_data );
 			protocols::helical_bundle::PerturbBundle pertbundle;
-			pertbundle.parse_my_tag(perttag, dummy_data, testpose );
+			pertbundle.parse_my_tag(perttag, dummy_data );
 			makebundle.apply(testpose);
 
 			{

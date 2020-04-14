@@ -53,7 +53,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceOutAntibody >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~SpliceOutAntibody() override;
 	void find_disulfide_postions(core::pose::Pose const & pose, utility::vector1<core::Size> & cys_pos);
 	void antibody_DB(std::string const & s){ antibody_DB_ = s; }

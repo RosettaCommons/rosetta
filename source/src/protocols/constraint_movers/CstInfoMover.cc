@@ -53,8 +53,8 @@ CstInfoMover::CstInfoMover( CstInfoMover const & /*src*/ ) = default;
 void
 CstInfoMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	cst_file( tag->getOption< std::string >( "cst_file", std::string() ) );
 	dump_cst_file( tag->getOption< std::string >( "dump_cst_file", std::string() ) );

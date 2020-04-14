@@ -146,8 +146,8 @@ SwitchChainOrderMover::fresh_instance() const
 void
 SwitchChainOrderMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption("chain_order") && (tag->hasOption("chain_name") || tag->hasOption("chain_num")) )  {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "You can specify a chain_order string or the comma separated chain names or numbers, but not both");

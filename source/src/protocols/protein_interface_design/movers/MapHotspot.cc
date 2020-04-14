@@ -274,8 +274,8 @@ MapHotspot::apply( core::pose::Pose & pose ){
 
 void
 MapHotspot::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using namespace utility::tag;
 

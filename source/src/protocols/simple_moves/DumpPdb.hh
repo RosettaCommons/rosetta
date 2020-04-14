@@ -45,7 +45,7 @@ public:
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
 	void tag_time(bool setting) { addtime_ = setting; }
 	bool tag_time() const { return addtime_; }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Set the filename for writing.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).

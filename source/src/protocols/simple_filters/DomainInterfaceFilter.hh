@@ -75,8 +75,7 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	) override;
 
 	filters::FilterOP clone() const override;

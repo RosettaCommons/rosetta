@@ -86,15 +86,14 @@ protocols::rosetta_scripts::PoseSelectorFlags LogicalSelector::get_flags() const
 
 void LogicalSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 )
 {
 	// Children of tag are selectors
 	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PoseSelectorOP new_selector(
 			protocols::rosetta_scripts::PoseSelectorFactory::get_instance()->
-			newPoseSelector( curr_tag, data, pose )
+			newPoseSelector( curr_tag, data )
 		);
 		runtime_assert( new_selector != nullptr );
 		selectors_.push_back( new_selector );
@@ -249,8 +248,7 @@ TopNByProperty::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 void TopNByProperty::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 )
 {
 	// n = selection limit
@@ -271,7 +269,7 @@ void TopNByProperty::parse_my_tag(
 	for ( utility::tag::TagCOP curr_tag : tag->getTags() ) {
 		protocols::rosetta_scripts::PosePropertyReporterOP new_reporter(
 			protocols::rosetta_scripts::PosePropertyReporterFactory::get_instance()->
-			newPosePropertyReporter( curr_tag, data, pose )
+			newPosePropertyReporter( curr_tag, data )
 		);
 		runtime_assert( new_reporter != nullptr );
 		reporter_ = new_reporter;
@@ -373,8 +371,7 @@ Filter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 
 void Filter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 )
 {
 	using namespace utility::tag;
@@ -411,7 +408,7 @@ void Filter::parse_my_tag(
 		if ( filter_name.empty() && filter_tag->hasOption("name") ) {
 			filter_name = filter_tag->getOption<std::string>("name");
 		}
-		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data, pose );
+		filter_  = protocols::filters::FilterFactory::get_instance()->newFilter( filter_tag, data );
 	}
 
 	if ( !filter_ ) {

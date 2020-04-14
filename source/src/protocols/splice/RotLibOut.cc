@@ -283,9 +283,8 @@ RotLibOut::fresh_instance() const
 void
 RotLibOut::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	set_min_dist(tag->getOption< core::Real >( "min_dist", 2.0 ));
 	Rotamer_db_file(tag->getOption< std::string >( "rotamer_db_filename", "Rotamer_db.dat" ));
 	seq_aln_file(tag->getOption< std::string >( "sequence_alignment_filename", "seqeunce_aln.fa" ));

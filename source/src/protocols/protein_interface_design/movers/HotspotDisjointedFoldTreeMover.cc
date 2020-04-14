@@ -173,7 +173,7 @@ HotspotDisjointedFoldTreeMover::apply( core::pose::Pose & pose )
 }
 
 void
-HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+HotspotDisjointedFoldTreeMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	ddG_threshold( tag->getOption< core::Real >( "ddG_threshold", 1.0 ) );
 	if ( ddG_threshold() >= 100.0 ) {

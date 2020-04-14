@@ -212,8 +212,7 @@ void ErraserMinimizerMover::initialize_from_options( utility::options::OptionCol
 }
 
 void ErraserMinimizerMover::parse_my_tag( TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	vary_bond_geometry_ = tag->getOption< bool >( "vary_bond_geometry", vary_bond_geometry_ );
 	constrain_phosphate_ = tag->getOption< bool >( "constrain_phosphate", constrain_phosphate_ );

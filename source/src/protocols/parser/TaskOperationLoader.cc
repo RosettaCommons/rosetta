@@ -38,7 +38,6 @@ TaskOperationLoader::TaskOperationLoader() = default;
 TaskOperationLoader::~TaskOperationLoader() = default;
 
 void TaskOperationLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const

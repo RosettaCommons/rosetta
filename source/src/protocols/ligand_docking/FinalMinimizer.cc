@@ -91,8 +91,7 @@ protocols::moves::MoverOP FinalMinimizer::fresh_instance() const {
 void
 FinalMinimizer::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->getName() != "FinalMinimizer" ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This should be impossible");

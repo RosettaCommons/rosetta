@@ -79,12 +79,11 @@ PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_s
 PosePropertyReporterOP
 PosePropertyReporterFactory::newPosePropertyReporter(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 	PosePropertyReporterOP selector( newPosePropertyReporter( tag->getName() ) );
 	runtime_assert( selector != nullptr );
-	selector->parse_my_tag( tag, data, pose );
+	selector->parse_my_tag( tag, data );
 	return selector;
 }
 

@@ -20,8 +20,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
-
 // Utility Headers
 #include <utility/SingletonBase.hh>
 #include <utility/vector1.hh>
@@ -60,7 +58,6 @@ public:
 	typedef std::map< std::string, MoverCreatorOP > MoverMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
-	typedef core::pose::Pose Pose;
 
 public:
 	virtual ~MoverFactory();
@@ -83,8 +80,7 @@ public:
 	MoverOP
 	newMover(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const &
+		basic::datacache::DataMap &
 	) const;
 
 	/// @brief Read access to the set of all MoverCreators; for unit testing purposes

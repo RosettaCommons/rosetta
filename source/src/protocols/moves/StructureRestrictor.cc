@@ -81,8 +81,8 @@ MoverOP StructureRestrictor::clone() const
 void
 StructureRestrictor::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	if ( tag->hasOption("relevant_chains") ) {
 		relevant_chains_fname_ = tag->getOption<string>("relevant_chains");

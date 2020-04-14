@@ -206,9 +206,8 @@ bool SSElementLengthFilter::apply(const Pose & pose ) const
 void
 SSElementLengthFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data ,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	// set threshold
 	threshold_ = tag->getOption<Real>("threshold",-999999);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );

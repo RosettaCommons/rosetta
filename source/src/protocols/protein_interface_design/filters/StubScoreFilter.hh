@@ -53,8 +53,8 @@ public:
 	~StubScoreFilter() override;
 	void stub_sets( utility::vector1< StubSetStubPos > const & stub_sets );
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;

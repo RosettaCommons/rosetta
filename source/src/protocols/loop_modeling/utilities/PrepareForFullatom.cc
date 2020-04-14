@@ -55,7 +55,6 @@ using namespace std;
 
 using core::Size;
 using core::optimization::AtomTreeMinimizerOP;
-using core::pose::Pose;
 using core::scoring::ScoreFunctionOP;
 using core::scoring::ScoreFunctionCOP;
 using core::util::switch_to_residue_type_set;
@@ -76,10 +75,10 @@ PrepareForFullatom::PrepareForFullatom() // {{{1
 
 void PrepareForFullatom::parse_my_tag( // {{{1
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose) {
+	basic::datacache::DataMap & data
+) {
 
-	LoopMover::parse_my_tag(tag, data, pose);
+	LoopMover::parse_my_tag(tag, data);
 	utilities::set_scorefxn_from_tag(*this, tag, data);
 
 	force_repack_ = tag->getOption<bool>("force_repack", force_repack_);

@@ -34,7 +34,6 @@ public:
 
 	/// @brief The TaskOperationLoader will load named task operations into the basic::datacache::DataMap
 	void load_data(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const override;

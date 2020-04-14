@@ -365,9 +365,8 @@ protocols::moves::MoverOP MinMover::fresh_instance() const { return utility::poi
 
 void MinMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	parse_opts( tag, data );
 	parse_movemap_factory( tag, data );
 	parse_dof_tasks( tag, data );

@@ -80,12 +80,11 @@ PoseSelectorFactory::newPoseSelector( std::string const & pose_selector_type )
 PoseSelectorOP
 PoseSelectorFactory::newPoseSelector(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 	PoseSelectorOP selector( newPoseSelector( tag->getName() ) );
 	runtime_assert( selector != nullptr );
-	selector->parse_my_tag( tag, data, pose );
+	selector->parse_my_tag( tag, data );
 	return selector;
 }
 

@@ -649,8 +649,8 @@ bool BluePrintBDR::centroid_build(
 void
 BluePrintBDR::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	String const blueprint( tag->getOption<std::string>( "blueprint", "" ) );
 	if ( blueprint == "" ) {

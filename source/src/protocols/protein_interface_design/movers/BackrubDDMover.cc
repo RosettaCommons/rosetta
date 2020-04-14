@@ -393,8 +393,8 @@ BackrubDDMover::add_selector( core::select::residue_selector::ResidueSelectorOP 
 
 void BackrubDDMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ));
 	backrub_partner1_ = tag->getOption<bool>( "partner1", false );

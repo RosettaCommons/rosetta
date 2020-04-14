@@ -86,8 +86,8 @@ SwitchResidueTypeSetMover::fresh_instance() const
 void
 SwitchResidueTypeSetMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	if ( tag->hasOption("set") ) type_set_tag_ = tag->getOption<std::string>("set");
 }

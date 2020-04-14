@@ -95,8 +95,7 @@ PackRotamersMoverPartGreedy::~PackRotamersMoverPartGreedy()= default;
 void
 PackRotamersMoverPartGreedy::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	//task operations

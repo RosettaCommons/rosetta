@@ -68,8 +68,8 @@ bool SecondaryStructureHasResidueFilter::apply( core::pose::Pose const & pose ) 
 void
 SecondaryStructureHasResidueFilter::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using protocols::parser::BluePrint;
 	min_helix_length_ = tag->getOption<core::Size>( "min_helix_length", 4 );

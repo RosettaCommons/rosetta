@@ -266,8 +266,7 @@ AcceptToBestMover::apply( core::pose::Pose & pose ) {
 void
 AcceptToBestMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	sfxn_ = rosetta_scripts::parse_score_function( tag, data );
 	runtime_assert( sfxn_ != nullptr );

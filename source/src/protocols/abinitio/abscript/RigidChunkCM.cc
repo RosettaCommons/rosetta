@@ -168,8 +168,7 @@ loops::Loops read_rigid_core( std::string const& file){
 }
 
 void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const&
+	basic::datacache::DataMap& datamap
 ){
 
 	using namespace basic::options;

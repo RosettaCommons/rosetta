@@ -49,8 +49,8 @@ public:
 	/// @brief minimizes rb and sc dofs for all of the hotspots
 	void MinimizeHotspots( core::pose::Pose & pose );
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	protocols::moves::MoverOP clone() const override { return( utility::pointer::make_shared< MapHotspot >( *this ) ); }
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< MapHotspot >(); }
 	void output_pose( core::pose::Pose const & pose ) const;

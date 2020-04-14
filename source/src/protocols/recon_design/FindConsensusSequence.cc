@@ -90,8 +90,7 @@ moves::MoverOP FindConsensusSequence::fresh_instance() const {
 
 void FindConsensusSequence::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )  {
 
 	sfxn_ = core::scoring::parse_score_function( tag, "scorefxn", datamap );

@@ -37,8 +37,7 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & datamap
 	) override;
 
 	void apply(core::pose::Pose & pose) override;

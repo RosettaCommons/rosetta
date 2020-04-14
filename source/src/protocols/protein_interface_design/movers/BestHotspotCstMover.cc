@@ -122,11 +122,9 @@ BestHotspotCstMover::apply( pose::Pose & pose )
 }
 
 
-void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & pose )
+void BestHotspotCstMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace protocols::hotspot_hashing;
-
-	core::pose::PDBPoseMap const pose_map( pose.pdb_info()->pdb2pose() );
 
 	host_chain_ = tag->getOption<core::Size>( "chain_to_design", 2 );
 	n_resi_ = tag->getOption<core::Size>( "best_n", 3 );

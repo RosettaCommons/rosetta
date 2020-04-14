@@ -139,11 +139,9 @@ RosettaScriptsJobQueen::complete_larval_job_maturation(
 		utility::pointer::make_shared< CacheableString > ( larval_job->job_tag_with_index_suffix( index )));
 	mature_job->pose( pose );
 
-	bool modified_pose;
-
 	parser_->set_recursion_limit( *job_options );
-	protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover_and_apply_to_pose(
-		*pose, job_options, modified_pose,
+	protocols::rosetta_scripts::ParsedProtocolOP mover_protocol = parser_->generate_mover(
+		job_options,
 		larval_job->input_tag(),
 		larval_job->job_tag_with_index_suffix( index ),
 		resource_manager_ );

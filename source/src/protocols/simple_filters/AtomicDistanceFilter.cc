@@ -135,8 +135,8 @@ void AtomicDistanceFilter::report( std::ostream & out, core::pose::Pose const & 
 }
 
 void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
 

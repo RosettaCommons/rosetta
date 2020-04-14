@@ -66,9 +66,8 @@ void AddPDBInfoMover::apply( core::pose::Pose & pose ) {
 void
 AddPDBInfoMover::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 }
 
 protocols::moves::MoverOP

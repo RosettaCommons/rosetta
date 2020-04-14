@@ -122,8 +122,8 @@ SecondaryStructureSegmentFeatures::features_reporter_dependencies() const
 void
 SecondaryStructureSegmentFeatures::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap & /*data*/
+)
 {}
 
 /// @brief Return true if the dssp code is irregular (blank), hydrogen

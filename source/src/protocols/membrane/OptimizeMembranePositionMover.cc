@@ -118,8 +118,7 @@ OptimizeMembranePositionMover::fresh_instance() const {
 void
 OptimizeMembranePositionMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	using namespace core::scoring;
 	if ( tag->hasOption( "sfxn") ) {

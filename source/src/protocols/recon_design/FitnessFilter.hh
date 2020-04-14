@@ -53,8 +53,8 @@ public:
 	filters::FilterOP fresh_instance() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief Internal functions to get the fitness over all poses
 	core::Real calculate_fitness( core::pose::Pose const & ) const;

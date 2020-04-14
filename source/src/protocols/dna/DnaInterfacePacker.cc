@@ -457,8 +457,7 @@ DnaInterfacePacker::clear_initialization()
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void DnaInterfacePacker::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("binding") ) binding_E_ = tag->getOption<bool>("binding");
@@ -479,8 +478,8 @@ void DnaInterfacePacker::parse_my_tag(
 	if ( protein_scan_ ) runtime_assert( !allowed_types_.empty() );
 
 	// the following are calls to PackRotamersMover methods
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

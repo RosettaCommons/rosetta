@@ -75,8 +75,8 @@ KeepRegionMover::fresh_instance() const {
 void
 KeepRegionMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap&,
-	const Pose& )
+	basic::datacache::DataMap&
+)
 {
 	start_ = tag->getOption<std::string>("start");
 	end_ = tag->getOption<std::string>("end");

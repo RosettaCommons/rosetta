@@ -155,8 +155,7 @@ SidechainMover::clone() const
 void
 SidechainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data
 )
 {
 	core::pack::task::TaskFactoryOP new_task_factory( new core::pack::task::TaskFactory );

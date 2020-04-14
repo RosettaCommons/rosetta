@@ -15,6 +15,7 @@
 #include <protocols/protein_interface_design/movers/SubroutineMover.hh>
 #include <protocols/protein_interface_design/movers/SubroutineMoverCreator.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh> // needed for ParsedProtocolOP -> MoverOP conversion
 
 // Project headers
 #include <core/types.hh>
@@ -62,8 +63,8 @@ SubroutineMover::apply( core::pose::Pose & pose )
 
 void
 SubroutineMover::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap &
+)
 {
 	std::string const xml_fname( tag->getOption< std::string >( "xml_fname" ) );
 
@@ -71,7 +72,7 @@ SubroutineMover::parse_my_tag( TagCOP const tag,
 	TR<<"Parsing a subroutine xml_file"<<std::endl;
 	TR<<"*************WARNING: AT THIS POINT, CONSTRAINTS ADDED TO THE POSE IN A SUBROUTINE WILL BE IGNORED***********"<<std::endl;
 
-	mover_ = rsparser->generate_mover_from_pose(pose, xml_fname);
+	mover_ = rsparser->generate_mover(xml_fname);
 
 }
 

@@ -22,7 +22,11 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/ResidueIndexDescription.hh> // hh needed for PyRosetta
+#ifdef PYROSETTA
+#include <core/pose/ResidueIndexDescription.hh>
+#else
+#include <core/pose/ResidueIndexDescription.fwd.hh>
+#endif
 #include <utility/vector1.hh>
 
 namespace protocols {
@@ -45,8 +49,8 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 
 	~SwapSegment() override;

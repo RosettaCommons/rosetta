@@ -206,8 +206,8 @@ TryRotamers::apply ( pose::Pose & pose )
 
 void
 TryRotamers::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	resnum_ = core::pose::get_resnum_string( tag );
 	automatic_connection_ = tag->getOption< bool >( "automatic_connection", true );

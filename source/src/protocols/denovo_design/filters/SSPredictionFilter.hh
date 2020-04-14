@@ -52,8 +52,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data_map,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data_map
+	) override;
 
 	std::string
 	name() const override;

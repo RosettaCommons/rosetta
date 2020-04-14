@@ -132,8 +132,8 @@ public:// parser
 
 
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 
 public:// virtual main operation

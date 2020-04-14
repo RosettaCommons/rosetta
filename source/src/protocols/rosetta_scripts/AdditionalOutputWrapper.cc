@@ -119,11 +119,11 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 
 	if ( !mover && rosetta_scripts_tag_ ) {
 		protocols::rosetta_scripts::RosettaScriptsParser parser;
-		mover = parser.parse_protocol_tag( pose, rosetta_scripts_tag_, basic::options::option );
+		mover = parser.parse_protocol_tag( rosetta_scripts_tag_, basic::options::option );
 	}
 
 	if ( !mover && mover_tag_ ) {
-		mover = MoverFactory::get_instance()->newMover(mover_tag_, data, pose );
+		mover = MoverFactory::get_instance()->newMover(mover_tag_, data);
 	}
 
 	runtime_assert( mover != nullptr );
@@ -145,8 +145,7 @@ void AdditionalOutputWrapper::generate_pose(core::pose::Pose & pose)
 
 void AdditionalOutputWrapper::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
 
 	if ( tag->hasOption("name") ) {
@@ -172,7 +171,7 @@ void AdditionalOutputWrapper::parse_my_tag(
 				std::string name = curr_tag->getOption<std::string>("name");
 				protocols::moves::MoverOP new_mover(
 					protocols::moves::MoverFactory::get_instance()->
-					newMover(curr_tag, data, pose)
+					newMover(curr_tag, data)
 				);
 				mover_tag_ = curr_tag;
 			}

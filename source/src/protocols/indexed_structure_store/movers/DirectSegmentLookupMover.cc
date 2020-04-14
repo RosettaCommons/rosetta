@@ -221,8 +221,7 @@ DirectSegmentLookupMover::init_structure_store() {
 void
 DirectSegmentLookupMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	structure_store_path( tag->getOption< std::string >( "structure_store" ) );
 

@@ -81,8 +81,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	core::pack::task::PackerTaskCOP
 	make_insert_task(

@@ -129,7 +129,7 @@ SetupHotspotConstraintsMover::apply( core::pose::Pose & pose ) {
 
 /// This needs to be parsed before all other movers b/c it changes scorefxns
 void
-SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using core::Real;
 	chain_to_design_ = tag->getOption<core::Size>( "redesign_chain", 2 );

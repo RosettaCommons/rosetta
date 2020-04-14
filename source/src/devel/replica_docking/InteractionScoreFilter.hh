@@ -43,7 +43,7 @@ public:
 	~InteractionScoreFilter() override;
 	void jump( core::Size const jump );
 	core::Size jump() const;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;

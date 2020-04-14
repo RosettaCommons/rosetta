@@ -212,10 +212,9 @@ SimulatedTempering::fresh_instance() const
 void
 SimulatedTempering::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	pose::Pose const & pose
+	basic::datacache::DataMap & data
 ) {
-	Parent::parse_my_tag( tag, data, pose );
+	Parent::parse_my_tag( tag, data );
 	//simple options
 	score_offset_ = tag->getOption< Real >( "score_offset", 40.0 );
 	temperature_jumps_ = tag->getOption< bool >( "temperature_jumps", false );

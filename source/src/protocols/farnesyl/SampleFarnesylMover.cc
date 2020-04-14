@@ -219,9 +219,8 @@ SampleFarnesylMover::show(std::ostream & output) const
 void
 SampleFarnesylMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& data
+) {
 	set_score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	set_enumerate( tag->getOption< bool >( "enumerate", true ) );
 }

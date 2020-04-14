@@ -317,8 +317,8 @@ void IdealizeHelicesMover::apply( core::pose::Pose & pose ) {
 
 void IdealizeHelicesMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );

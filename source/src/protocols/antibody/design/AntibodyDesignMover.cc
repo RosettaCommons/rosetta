@@ -369,8 +369,7 @@ AntibodyDesignMover::provide_authorship_info_for_unpublished() const {
 void
 AntibodyDesignMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 ){
 	using namespace core::scoring;
 	AntibodyEnumManager manager = AntibodyEnumManager();

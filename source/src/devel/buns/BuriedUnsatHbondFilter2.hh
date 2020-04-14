@@ -52,7 +52,7 @@ public:
 	core::Size compute( core::pose::Pose const & pose ) const;
 
 	~BuriedUnsatHbondFilter2() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	void task_factory( core::pack::task::TaskFactoryOP tf );
 	core::pack::task::TaskFactoryOP task_factory() const;
 

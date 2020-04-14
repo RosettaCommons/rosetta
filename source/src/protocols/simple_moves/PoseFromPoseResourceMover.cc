@@ -80,9 +80,8 @@ PoseFromPoseResourceMover::show(std::ostream & output) const
 void
 PoseFromPoseResourceMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data_map
+) {
 	std::string pose_resource_name = tag->getOption< std::string >( "pose_resource_name" );
 	core::import_pose::PoseResourceCOP resource;
 	try {

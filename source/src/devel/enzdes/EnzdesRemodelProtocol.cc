@@ -411,8 +411,7 @@ EnzdesRemodelMover::apply(
 void
 EnzdesRemodelMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,// datamap,
-	Pose const & //pose
+	basic::datacache::DataMap & // datamap
 )
 {
 	if ( tag->hasOption("remodel_secmatch") ) {

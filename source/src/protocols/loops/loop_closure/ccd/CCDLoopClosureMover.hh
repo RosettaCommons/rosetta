@@ -108,8 +108,7 @@ public:  // Standard Rosetta methods //////////////////////////////////////////
 	void apply( core::pose::Pose & pose ) override;
 
 	/// @brief Called by MoverFactory when constructing new Movers
-	void parse_my_tag( TagCOP tag, basic::datacache::DataMap &,
-		Pose const & ) override;
+	void parse_my_tag( TagCOP tag, basic::datacache::DataMap & ) override;
 
 
 public:  // Accessors/Mutators ////////////////////////////////////////////////

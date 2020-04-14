@@ -82,8 +82,7 @@ claims::EnvClaims StructPerturberCM::yield_claims( core::pose::Pose const& in_po
 }
 
 void StructPerturberCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap&,
-	core::pose::Pose const&
+	basic::datacache::DataMap&
 ){
 	magnitude( tag->getOption< core::Real >( "magnitude", 2.0 ) );
 	label( tag->getOption< std::string >( "label", "BASE" ) );

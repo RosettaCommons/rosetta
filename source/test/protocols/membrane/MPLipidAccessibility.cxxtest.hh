@@ -160,7 +160,7 @@ public: // test functions
 		core::pose::Pose pose;
 
 		MPLipidAccessibilityOP xlip( new MPLipidAccessibility() );
-		xlip->parse_my_tag( tag, dm, pose );
+		xlip->parse_my_tag( tag, dm );
 
 		TS_ASSERT_EQUALS(xlip->get_angle_cutoff(), 64.0);
 		TS_ASSERT_EQUALS(xlip->get_slice_width(), 9.0);

@@ -65,7 +65,7 @@ public:
 	}
 
 	~LigDSasaFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;
@@ -105,7 +105,7 @@ public:
 	}
 
 	~LigBurialFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;
@@ -155,7 +155,7 @@ public:
 
 	~LigInterfaceEnergyFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;
@@ -207,7 +207,7 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	//core::Size get_resid_from_cstid( core::pose::Pose const & pose, core::Size const & cstid) const;
 	~EnzScoreFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;
@@ -296,7 +296,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	bool compute( core::pose::Pose const & pose ) const;
 	~DiffAtomSasaFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;
@@ -337,7 +337,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~RepackWithoutLigandFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn){ scorefxn_ = scorefxn; }
 	void set_cstid_list( std::string setting){ cstid_list_ = setting; }
 
@@ -410,7 +410,7 @@ public:
 		return utility::pointer::make_shared< EnzdesScorefileFilter >();
 	}
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	// specific stuff
 public:
@@ -517,7 +517,7 @@ public:
 
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	core::Size
 	get_current_conformer( core::pose::Pose const & pose ) const;

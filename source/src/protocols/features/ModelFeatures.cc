@@ -398,8 +398,7 @@ ModelFeatures::trim_pose(
 void
 ModelFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ){
 	runtime_assert(tag->getOption<std::string>("name") == type_name());
 

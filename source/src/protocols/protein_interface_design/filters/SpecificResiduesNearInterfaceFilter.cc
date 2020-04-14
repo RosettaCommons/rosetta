@@ -100,8 +100,8 @@ SpecificResiduesNearInterfaceFilter::task_factory(
 void
 SpecificResiduesNearInterfaceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( !tag->hasOption("task_operations" ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,

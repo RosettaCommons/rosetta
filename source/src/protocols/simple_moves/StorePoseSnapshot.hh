@@ -82,8 +82,8 @@ public:
 	/// @details This is called at script initialization, long before the apply()
 	/// function is called.
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief Set the name of the reference pose object that will be created and stored in the pose.
 	///

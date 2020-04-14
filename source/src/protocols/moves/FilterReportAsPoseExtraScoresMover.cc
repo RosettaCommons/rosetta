@@ -57,8 +57,8 @@ FilterReportAsPoseExtraScoresMover::~FilterReportAsPoseExtraScoresMover()= defau
 void
 FilterReportAsPoseExtraScoresMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	//borrowed from GenericMonteCarloMover.cc:parse_my_tag
 	std::string const filter_name( tag->getOption< std::string >( "filter_name", "true_filter" ) );

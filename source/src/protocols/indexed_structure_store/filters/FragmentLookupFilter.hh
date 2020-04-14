@@ -128,8 +128,8 @@ public:
 
 	// @brief Parse arguments from rosettascripts XML
 	void parse_my_tag( utility::tag::TagCOP tag,
-		DataMap &,
-		Pose const & ) override;
+		DataMap &
+	) override;
 
 	//Main Filter computation routine
 	core::Size compute( core::pose::Pose const & pose ) const;

@@ -109,8 +109,7 @@ MPDockingSetupMover::fresh_instance() const {
 void
 MPDockingSetupMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption( "optimize1" ) ) {
 		optimize1_ = tag->getOption< bool >("optimize1", false);

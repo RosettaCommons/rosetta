@@ -321,8 +321,8 @@ SidechainMCMover::pass_metropolis(core::Real delta_energy , core::Real last_prop
 void
 SidechainMCMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 
 	// code duplication: should really call SidechainMover::parse_my_tag() instead of having most of the code below
 	if ( tag->hasOption("task_operations") ) {

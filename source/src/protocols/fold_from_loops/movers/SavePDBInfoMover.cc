@@ -48,9 +48,8 @@ SavePDBInfoMover::~SavePDBInfoMover()= default;
 void
 SavePDBInfoMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	core::pose::PDBInfoOP refinfo(nullptr);
 	std::string refinfo_name(tag->getOption<std::string>( "reference_info_name" ) );
 

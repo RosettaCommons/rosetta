@@ -126,9 +126,8 @@ Operator::modify_relative_filters_pdb_names(){
 void
 Operator::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	std::string const op( tag->getOption< std::string >( "operation" ) );
 	if ( op=="SUM" ) {
 		operation( SUM );

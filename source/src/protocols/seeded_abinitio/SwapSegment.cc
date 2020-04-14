@@ -213,8 +213,8 @@ SwapSegment::apply( core::pose::Pose & pose )
 void
 SwapSegment::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data ,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap & data
+){
 
 	segment_specs_.clear();//just in case
 

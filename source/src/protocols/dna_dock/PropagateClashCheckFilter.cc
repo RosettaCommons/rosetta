@@ -229,9 +229,8 @@ bool PropagateClashCheckFilter::apply( Pose const & pose ) const
 void
 PropagateClashCheckFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	fa_rep_thresh_ = tag->getOption< core::Real >( "fa_rep_thresh", 10.0 );
 	default_bridge_type_ = tag->getOption< std::string >( "default_bridge_type", "VAL" );
 	omega_ = tag->getOption< core::Real >( "omega", 36.0 );

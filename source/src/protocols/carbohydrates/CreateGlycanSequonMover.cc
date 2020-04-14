@@ -176,9 +176,8 @@ CreateGlycanSequonMover::show(std::ostream & output) const
 void
 CreateGlycanSequonMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& data
+) {
 
 	if ( tag->hasOption("residue_selector") ) {
 		set_residue_selector(parse_residue_selector(tag, data));

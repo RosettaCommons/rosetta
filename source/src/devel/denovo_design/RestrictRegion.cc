@@ -137,8 +137,8 @@ RestrictRegion::clone() const {
 void
 RestrictRegion::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	type_ = tag->getOption< std::string >( "type", type_ );
 	initialize_resfile( tag->getOption< std::string >( "resfile", "" ) );

@@ -195,9 +195,8 @@ MotifScorer::get_score(
 void
 MotifScorer::set_options_from_tag(
 	utility::tag::TagCOP scorer,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const &)
-{
+	basic::datacache::DataMap&
+) {
 	//No data members to set!
 
 	if ( !scorer->hasOption( "weight" ) ) {

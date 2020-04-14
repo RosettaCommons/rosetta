@@ -107,8 +107,8 @@ StubScoreFilter::stub_sets( utility::vector1<  std::pair< protocols::hotspot_has
 
 void
 StubScoreFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &data
+)
 {
 	TR.Info << "StubScoreFilter"<<std::endl;
 	host_chain_ = tag->getOption< core::Size >( "chain_to_design", 2 );

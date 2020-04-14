@@ -142,7 +142,7 @@ public: // test functions
 		tag->read( ss );
 
 		TiltMoverOP xtilt( new TiltMover() );
-		xtilt->parse_my_tag( tag, dm, pose );
+		xtilt->parse_my_tag( tag, dm );
 
 		TS_ASSERT(xtilt->get_jump_num() == 3);
 		TS_ASSERT(xtilt->get_random_angle() == true);

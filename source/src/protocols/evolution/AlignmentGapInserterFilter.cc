@@ -91,9 +91,8 @@ AlignmentGapInserter::~AlignmentGapInserter() = default;
 void
 AlignmentGapInserter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const &  )
-{
+	basic::datacache::DataMap &data
+) {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 
 	max_score_diffs( utility::string_split( tag->getOption< std::string >( "max_score_diffs" ), ',', core::Real() ) );

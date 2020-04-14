@@ -57,7 +57,7 @@ public:
 
 	~RepeatParameterFilter() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;

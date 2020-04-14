@@ -333,7 +333,7 @@ public: // test functions
 		core::pose::Pose pose;
 
 		FlipMoverOP xflip( new FlipMover() );
-		xflip->parse_my_tag( tag, dm, pose );
+		xflip->parse_my_tag( tag, dm );
 
 		TS_ASSERT(xflip->get_jump_num() == 3);
 

@@ -151,8 +151,8 @@ void DockWithHotspotMover::apply( Pose & pose ) {
 *  - target_pdb_nums or target_res_nums. A list of possible target residues
 */
 void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & /*pose*/)
+	basic::datacache::DataMap &
+)
 {
 	hotspot_score_weight_=tag->getOption<core::Real>( "hotspot_score_weight", 10 );
 	centroidscore_filter_=tag->getOption<core::Real>( "centroidscore_filter", 0 );

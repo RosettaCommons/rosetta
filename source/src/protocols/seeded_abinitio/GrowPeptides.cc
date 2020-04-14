@@ -343,8 +343,8 @@ GrowPeptides::setup_cached_observers( core::pose::Pose & pose ){
 void
 GrowPeptides::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR<<"GrowPeptides mover has been initiated" <<std::endl;
 	//default

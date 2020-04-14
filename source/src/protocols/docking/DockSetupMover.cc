@@ -160,8 +160,7 @@ DockSetupMover::set_defaults()
 void
 DockSetupMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap& data_map,
-	core::pose::Pose const&
+	basic::datacache::DataMap& data_map
 ) {
 	using namespace core::scoring;
 	//get through partners

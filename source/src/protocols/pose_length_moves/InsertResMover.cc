@@ -207,8 +207,8 @@ void InsertResMover::apply(core::pose::Pose & pose) {
 void
 InsertResMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap &
+){
 	chain_ = ( tag->getOption< std::string >( "chain", "999") );
 	resType_ = ( tag->getOption< std::string >( "resType", "H") );
 	steal_angles_from_res_= (tag->getOption<core::Size>("steal_angles_from_res",0));

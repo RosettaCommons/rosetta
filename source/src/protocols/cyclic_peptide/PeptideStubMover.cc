@@ -229,8 +229,7 @@ void PeptideStubMover::apply( core::pose::Pose & pose )
 void
 PeptideStubMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	using namespace core;

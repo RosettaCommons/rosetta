@@ -128,8 +128,8 @@ HelixCapFeatures::features_reporter_dependencies() const
 void
 HelixCapFeatures::parse_my_tag(
 	utility::tag::TagCOP /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/)
+	basic::datacache::DataMap & /*data*/
+)
 {}
 
 /// @brief Return true if the dssp code is irregular (blank), hydrogen

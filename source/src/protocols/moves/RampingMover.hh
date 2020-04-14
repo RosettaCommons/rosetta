@@ -167,8 +167,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tags,
-		basic::datacache::DataMap & datamap,
-		core::pose::Pose const & pose) override;
+		basic::datacache::DataMap & datamap
+	) override;
 
 	void sfxn( core::scoring::ScoreFunctionOP );
 	void start_weight( core::Real start_weight_in );

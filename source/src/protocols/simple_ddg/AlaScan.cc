@@ -110,9 +110,8 @@ AlaScan::repack( bool const repack )
 void
 AlaScan::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	distance_threshold_ = tag->getOption<core::Real>( "interface_distance_cutoff", distance_threshold_ );
 	chain1_ = tag->getOption< bool >( "partner1", chain1_ );
 	chain2_ = tag->getOption< bool >( "partner2", chain2_ );

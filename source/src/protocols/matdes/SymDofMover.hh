@@ -71,8 +71,8 @@ public:
 
 	void parse_my_tag(
 		TagCOP tag,
-		DataMap &,
-		Pose const & ) override;
+		DataMap &
+	) override;
 
 	void add_components_to_pose_if_necessary(Pose & pose);
 

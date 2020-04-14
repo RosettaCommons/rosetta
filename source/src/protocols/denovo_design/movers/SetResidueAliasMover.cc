@@ -50,8 +50,8 @@ SetResidueAliasMover::~SetResidueAliasMover()= default;
 void
 SetResidueAliasMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	alias_name_ = tag->getOption< std::string >( "alias_name", alias_name_ );
 	segment_name_ = tag->getOption< std::string >( "segment_name", segment_name_ );

@@ -399,8 +399,8 @@ BoltzmannRotamerMover::task( core::pose::Pose const & pose ) const
 void
 BoltzmannRotamerMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using core::scoring::ScoreFunction;
 	using core::pack::task::operation::TaskOperation;

@@ -268,7 +268,7 @@ std::string SpliceOutAntibody::get_name() const {
 
 
 
-void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
+void SpliceOutAntibody::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data ) {
 	if ( tag->hasOption("segment") ) {
 		splicemanager.segment_type(tag->getOption<std::string>("segment"));
 	} else {

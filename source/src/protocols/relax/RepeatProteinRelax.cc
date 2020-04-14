@@ -428,8 +428,7 @@ std::string RepeatProteinRelax::get_name() const { return "RepeatProteinRelax"; 
 
 
 void RepeatProteinRelax::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	numb_repeats_ = tag->getOption<core::Size>("numb_repeats");

@@ -63,8 +63,8 @@ FoldTreeFromFoldGraphMover::~FoldTreeFromFoldGraphMover()= default;
 void
 FoldTreeFromFoldGraphMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 }
 

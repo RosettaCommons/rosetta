@@ -47,8 +47,8 @@ public:
 	void apply( core::pose::Pose& pose ) override;
 
 	void parse_my_tag( TagCOP,
-		basic::datacache::DataMap&,
-		Pose const& ) override;
+		basic::datacache::DataMap&
+	) override;
 
 	EnvClaims yield_claims( core::pose::Pose const&,
 		basic::datacache::WriteableCacheableMapOP ) override;

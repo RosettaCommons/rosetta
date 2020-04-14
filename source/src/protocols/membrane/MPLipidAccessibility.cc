@@ -85,8 +85,7 @@ MPLipidAccessibility::show(std::ostream & output) const
 void
 MPLipidAccessibility::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption( "angle_cutoff" ) ) {
 		angle_cutoff_ = tag->getOption< core::Real >("angle_cutoff", 65.0);

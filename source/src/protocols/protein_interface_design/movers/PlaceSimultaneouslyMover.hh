@@ -81,8 +81,9 @@ public:
 	/// @brief will be removed
 	bool place_stubs( core::pose::Pose & pose ) const;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	void final_cleanup( core::pose::Pose & pose );
 	/// @brief removes and reinstates coordinate constraints for all placed hotspots according to coord_sdev
 	void refresh_coordinate_constraints( core::pose::Pose & pose, core::Real const coord_sdev );

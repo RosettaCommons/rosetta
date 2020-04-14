@@ -77,8 +77,8 @@ public:
 	) const;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string torsion_name(core::Size const iset) {
 		return torsion_name_[iset];

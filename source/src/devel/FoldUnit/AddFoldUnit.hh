@@ -112,8 +112,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string fragment_dbase() const{ return fragment_dbase_; }
 	void fragment_dbase( std::string const & s ){ fragment_dbase_ = s; }
@@ -165,8 +165,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string residue_type_set() const{ return residue_type_set_; }
 	void residue_type_set( std::string const & s ){ residue_type_set_ = s; }

@@ -163,8 +163,7 @@ CDRDihedralConstraintMover::provide_citation_info() const {
 void
 CDRDihedralConstraintMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & ,
-	Pose const &
+	basic::datacache::DataMap &
 ){
 	AntibodyEnumManager ab_manager = AntibodyEnumManager();
 	clusters::CDRClusterEnumManager cluster_manager = clusters::CDRClusterEnumManager();
@@ -257,7 +256,7 @@ CDRDihedralConstraintMover::set_ignore_pose_datacache(bool ignore_pose_datacache
 //CDRDihedralConstraintMover::parse_my_tag(
 //  TagCOP tag,
 //  basic::datacache::DataMap&,
-//  const Pose&)
+//)
 //{
 //
 //}

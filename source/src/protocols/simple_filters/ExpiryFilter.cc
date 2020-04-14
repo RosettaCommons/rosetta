@@ -45,9 +45,8 @@ ExpiryFilter::~ExpiryFilter() = default;
 void
 ExpiryFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	seconds( tag->getOption< core::Size >( "seconds" ) );
 }
 

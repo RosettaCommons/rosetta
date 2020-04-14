@@ -84,7 +84,7 @@ InteractionScoreFilter::fresh_instance() const{
 }
 
 void
-InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & pose )
+InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	std::string const scorefxn_name(
 		protocols::rosetta_scripts::get_score_function_name(tag) );
@@ -96,10 +96,6 @@ InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", -30 );
 	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 0);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
-
-	if ( !pose.is_fullatom() ) {
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ERROR: it doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant.\n It is totally a waste of time" );
-	}
 
 	TR<<"InterfaceScoreFilter with lower threshold of "<<lower_threshold_<<" and jump "<<jump()<<'\n';
 	TR.flush();
@@ -145,6 +141,10 @@ InteractionScoreFilter::jump() const
 
 core::Real
 InteractionScoreFilter::compute( core::pose::Pose const & pose ) const {
+
+	if ( ! pose.is_fullatom() ) {
+		TR.Warning << "It doesn't make sense to calculate the interaction score on low-res pose since in I_sc=bound-A-B, A&B are constant. -- It is totally a waste of time." << std::endl;
+	}
 
 	core::pose::Pose split_pose( pose );
 	scorefxn_->set_weight( core::scoring::atom_pair_constraint, 0.0 );

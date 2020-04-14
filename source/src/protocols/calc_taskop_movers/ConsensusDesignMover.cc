@@ -211,9 +211,8 @@ ConsensusDesignMover::create_sequence_profile_constraints(
 void
 ConsensusDesignMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data_map
+) {
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
 	if ( tag->hasOption("invert_task") ) invert_task_ = tag->getOption< bool >("invert_task", true);
 	if ( tag->hasOption("use_seqprof_constraints") ) use_seqprof_constraints_ = tag->getOption< bool >("use_seqprof_constraints", true);

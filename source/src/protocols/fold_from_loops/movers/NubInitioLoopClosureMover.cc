@@ -110,9 +110,8 @@ NubInitioLoopClosureMover::~NubInitioLoopClosureMover()= default;
 void
 NubInitioLoopClosureMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	if ( tag->hasOption( "centroid_scorefxn" ) ) {
 		centroid_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "centroid_scorefxn", data ) );
 	}

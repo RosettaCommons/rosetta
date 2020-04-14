@@ -43,8 +43,8 @@ public:
 	/// @copydoc LoopMover::parse_my_tag
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	/// @brief Get the score function to be used on the next call to apply().
 	core::scoring::ScoreFunctionOP get_score_function();

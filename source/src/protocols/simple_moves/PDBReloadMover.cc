@@ -77,8 +77,8 @@ PDBReloadMover::apply( Pose & pose ) {
 
 void
 PDBReloadMover::parse_my_tag( utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data_map*/,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & /*data_map*/
+)
 {
 }
 

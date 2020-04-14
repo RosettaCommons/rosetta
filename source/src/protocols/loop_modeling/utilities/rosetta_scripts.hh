@@ -20,7 +20,6 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -33,8 +32,8 @@ namespace utilities {
 /// thrown.
 LoopMoverOP loop_mover_from_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose);
+	basic::datacache::DataMap & data
+);
 
 /// @brief Parse the "scorefxn" rosetta-scripts tag for the given mover. Has a compaion function: "attributes_for_set_scorefxn_from_tag" to generate the XSD
 /// @details The given mover must implement a set_score_function() method.

@@ -59,7 +59,7 @@ SavePoseMover::apply( core::pose::Pose & pose )
 }
 
 void
-SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
+SavePoseMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data_map )
 {
 	if ( tag->hasOption("reference_name") ) {
 		reference_pose_ = saved_reference_pose( tag, data_map );

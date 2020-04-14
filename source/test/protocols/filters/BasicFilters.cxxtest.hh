@@ -258,7 +258,7 @@ public:
 			"    <ELSE valuefilter=sfT99 />\n"
 			" </IfThenFilter>\n");
 
-		testfilter.parse_my_tag( tag, data, *testpose_ );
+		testfilter.parse_my_tag( tag, data );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 3 );
 	}
@@ -338,7 +338,7 @@ public:
 			"    <ELSE valuefilter=sfT99 weight=5/>\n"
 			" </IfThenFilter>\n");
 
-		testfilter.parse_my_tag( tag, data, *testpose_ );
+		testfilter.parse_my_tag( tag, data );
 
 		TS_ASSERT_EQUALS( testfilter.report_sm( *testpose_), 6 );
 		TS_ASSERT( testfilter.apply(*testpose_) );

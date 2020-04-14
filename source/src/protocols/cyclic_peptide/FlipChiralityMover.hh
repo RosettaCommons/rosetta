@@ -49,7 +49,7 @@ public:
 	moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, Pose const & ) override;
+	parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	numeric::xyzVector <core::Real> const & get_normal();
 	numeric::xyzVector <core::Real> const & get_center(core::select::residue_selector::ResidueSubset, core::pose::Pose const &);

@@ -109,7 +109,7 @@ LoopOver::apply( core::pose::Pose & pose )
 
 
 void
-LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+LoopOver::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	using namespace filters;
 

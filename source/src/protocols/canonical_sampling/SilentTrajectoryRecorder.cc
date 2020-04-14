@@ -107,10 +107,9 @@ SilentTrajectoryRecorder::fresh_instance() const
 void
 SilentTrajectoryRecorder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data /* data */,
-	core::pose::Pose const& pose /* pose */
+	basic::datacache::DataMap& data /* data */
 ) {
-	Parent::parse_my_tag( tag, data, pose );
+	Parent::parse_my_tag( tag, data );
 	score_stride_ = tag->getOption< core::Size >( "score_stride", 100 );
 
 	std::string silent_struct_type = tag->getOption< std::string >( "silent_struct_type", "any" );

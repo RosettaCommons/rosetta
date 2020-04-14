@@ -123,8 +123,8 @@ SetupMetalsMover::fresh_instance() const{
 void
 SetupMetalsMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	//Tag should be able to take either a named selector or resnum string for metal or contact
 	if ( tag->hasOption("metal_residue_selector" ) ) {

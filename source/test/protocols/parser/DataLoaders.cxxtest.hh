@@ -16,7 +16,6 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
-#include <test/util/pose_funcs.hh>
 // Package headers
 #include <protocols/parser/DataLoaderFactory.hh>
 #include <protocols/parser/ScoreFunctionLoader.hh>
@@ -49,12 +48,9 @@ static basic::Tracer TR("protocols.jd2.parser.DataLoaders.cxxtest");
 
 class DataLoaderTests : public CxxTest::TestSuite {
 
-private:
-	core::pose::PoseOP pose_;
 public:
 	void setUp() {
 		protocols_init();
-		pose_ = fullatom_poseop_from_string( test_in_pdb_string() );
 	}
 	void tearDown() {
 
@@ -122,7 +118,7 @@ public:
 
 		protocols::parser::ConstraintGeneratorLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "ConstraintGenerators" ) );
 		TS_ASSERT( data.has( "ConstraintGenerators", "dummy" ) );
@@ -139,7 +135,7 @@ public:
 
 		protocols::parser::ResidueSelectorLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "ResidueSelector" ) );
 		TS_ASSERT( data.has( "ResidueSelector", "dummy" ) );
@@ -156,7 +152,7 @@ public:
 
 		protocols::parser::ScoreFunctionLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "scorefxns" ) );
 		TS_ASSERT( data.has( "scorefxns", "dummy" ) );
@@ -173,7 +169,7 @@ public:
 
 		protocols::parser::TaskOperationLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "task_operations" ) );
 		TS_ASSERT( data.has( "task_operations", "dummy" ) );
@@ -190,7 +186,7 @@ public:
 
 		protocols::parser::JumpSelectorLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "JumpSelector" ) );
 		TS_ASSERT( data.has( "JumpSelector", "dummy" ) );
@@ -211,7 +207,7 @@ public:
 
 		protocols::parser::MonteCarloLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "montecarlos" ) );
 		TS_ASSERT( data.has( "montecarlos", "dummy" ) );
@@ -228,7 +224,7 @@ public:
 
 		protocols::parser::MoveMapFactoryLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "MoveMapFactory" ) );
 		TS_ASSERT( data.has( "MoveMapFactory", "dummy" ) );
@@ -246,7 +242,7 @@ public:
 
 		protocols::ligand_docking::MoveMapBuilderLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "movemap_builders" ) );
 		TS_ASSERT( data.has( "movemap_builders", "dummy" ) );
@@ -263,7 +259,7 @@ public:
 
 		protocols::loops::loops_definers::LoopsDefinerLoader loader;
 		//Check that the loader can load the tag
-		TS_ASSERT_THROWS_NOTHING( loader.load_data( *pose_, tag, data ) );
+		TS_ASSERT_THROWS_NOTHING( loader.load_data( tag, data ) );
 		//Check that the tag's contents are found in the DataMap
 		TS_ASSERT( data.has_type( "loops_definers" ) );
 		TS_ASSERT( data.has( "loops_definers", "dummy" ) );

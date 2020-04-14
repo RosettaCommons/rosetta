@@ -548,8 +548,8 @@ MakeLayerMover::setup_xtal_symminfo(
 void
 MakeLayerMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	if ( tag->hasOption( "contact_dist" ) ) {
 		contact_dist_ = tag->getOption<core::Real>( "contact_dist" );

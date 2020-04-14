@@ -60,9 +60,8 @@ StemFinder::~StemFinder() = default;
 void
 StemFinder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	from_res( core::pose::parse_resnum( tag->getOption< std::string >( "from_res", "1" ) ) );
 	if ( tag->hasOption( "to_res" ) ) {
 		to_res( core::pose::parse_resnum( tag->getOption< std::string >( "to_res" ) ) );

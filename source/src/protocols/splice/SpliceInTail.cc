@@ -339,7 +339,7 @@ std::string SpliceInTail::get_name() const {
 	return SpliceInTailCreator::mover_name();
 }
 
-void SpliceInTail::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & /*pose*/) {
+void SpliceInTail::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data) {
 	typedef utility::vector1<std::string> StringVec;
 	utility::vector1<TagCOP> const sub_tags(tag->getTags());
 	splicemanager.parse_tags(tag,data);

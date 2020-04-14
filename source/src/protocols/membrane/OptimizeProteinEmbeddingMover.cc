@@ -94,8 +94,7 @@ OptimizeProteinEmbeddingMover::fresh_instance() const {
 void
 OptimizeProteinEmbeddingMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 	//TODO: Implement this for options that may be added in the future
 	if ( tag->hasOption( "option" ) ) {

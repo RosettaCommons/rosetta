@@ -110,8 +110,8 @@ void EnvMover::apply( Pose& pose ) {
 }
 
 void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const& pose ) {
+	basic::datacache::DataMap & data
+) {
 	using TagCOPs = utility::vector0<TagCOP>;
 
 	env_ = utility::pointer::make_shared< Environment >( tag->getOption<std::string>( "name" ) );
@@ -122,7 +122,7 @@ void EnvMover::parse_my_tag( utility::tag::TagCOP tag,
 
 	TagCOPs const& subtags = tag->getTags();
 	for ( auto const & subtag : subtags ) {
-		parse_subtag( subtag, data, pose );
+		parse_subtag( subtag, data );
 	}
 }
 
@@ -148,8 +148,8 @@ moves::MoverOP find_mover( utility::tag::TagCOP tag,
 }
 
 void EnvMover::parse_subtag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const& ) {
+	basic::datacache::DataMap & data
+) {
 	try {
 		if ( tag->getName() == "Apply" ) {
 			moves::MoverOP mover = find_mover( tag, data );

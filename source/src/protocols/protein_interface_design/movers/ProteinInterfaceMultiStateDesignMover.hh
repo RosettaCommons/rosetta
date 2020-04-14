@@ -50,8 +50,8 @@ public:
 
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	moves::MoverOP fresh_instance() const override;
 	moves::MoverOP clone() const override;
 	void restrict_sequence_profile( core::pose::Pose const & pose, core::pack::task::PackerTaskOP const ptask ) const;

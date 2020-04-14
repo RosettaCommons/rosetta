@@ -98,8 +98,8 @@ AddSidechainConstraintsToHotspots::apply( Pose & pose )
 
 void
 AddSidechainConstraintsToHotspots::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	chain( tag->getOption< core::Size >( "chain", 2 ) );
 	coord_sdev( tag->getOption< core::Real >( "coord_sdev", 1.0 ) );

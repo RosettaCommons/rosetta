@@ -29,6 +29,7 @@
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 #include <queue>
 
@@ -164,8 +165,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string
 	get_name() const override;
@@ -306,7 +307,7 @@ private:
 
 	//  ... define the "movable" parts
 	std::string ligid_, sidechains_;
-	std::set<core::Size> frozen_residues_;
+	core::select::residue_selector::ResidueSelectorCOP frozen_residues_;
 	core::Real sc_edge_buffer_;
 	bool move_water_;
 

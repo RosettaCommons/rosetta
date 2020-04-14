@@ -498,8 +498,7 @@ LegacyAssemblyMover::append_movie_frame(
 void
 LegacyAssemblyMover::parse_requirements(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 	auto begin=tag->getTags().begin();
 	auto end=tag->getTags().end();
@@ -507,9 +506,9 @@ LegacyAssemblyMover::parse_requirements(
 		TagCOP requirement_tag= *begin;
 
 		if ( requirement_tag->getName() == "GlobalRequirements" ) {
-			parse_global_requirements(requirement_tag, data, pose);
+			parse_global_requirements(requirement_tag, data);
 		} else if ( requirement_tag->getName() == "IntraSegmentRequirements" ) {
-			parse_intra_segment_requirements(requirement_tag, data, pose);
+			parse_intra_segment_requirements(requirement_tag, data);
 		} else {
 			TR.Error << "Only allowed sub-tags of LegacyAssemblyMover are GlobalRequirements" << std::endl;
 			TR.Error << "and IntraSegmentRequirements. Please see the LEGACY_SEWING protocol documentation" << std::endl;
@@ -522,8 +521,7 @@ LegacyAssemblyMover::parse_requirements(
 void
 LegacyAssemblyMover::parse_global_requirements(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 	auto begin=tag->getTags().begin();
 	auto end=tag->getTags().end();
@@ -531,7 +529,7 @@ LegacyAssemblyMover::parse_global_requirements(
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyGlobalRequirementOP requirement =
 			requirement_factory_->get_global_requirement(requirement_tag->getName());
-		requirement->parse_my_tag(requirement_tag, data, pose);
+		requirement->parse_my_tag(requirement_tag, data);
 		requirement_set_->add_requirement(requirement);
 	}
 }
@@ -539,8 +537,7 @@ LegacyAssemblyMover::parse_global_requirements(
 void
 LegacyAssemblyMover::parse_intra_segment_requirements(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 	if ( !tag->hasOption("index") ) {
 		utility_exit_with_message("You must give an 'index' attribute to the IntraSegmentRequirements tag!");
@@ -553,7 +550,7 @@ LegacyAssemblyMover::parse_intra_segment_requirements(
 		TagCOP requirement_tag= *begin;
 		sampling::requirements::LegacyIntraSegmentRequirementOP requirement =
 			requirement_factory_->get_intra_segment_requirement(requirement_tag->getName());
-		requirement->parse_my_tag(requirement_tag, data, pose);
+		requirement->parse_my_tag(requirement_tag, data);
 		requirement_set_->add_requirement(index, requirement);
 	}
 }
@@ -561,12 +558,11 @@ LegacyAssemblyMover::parse_intra_segment_requirements(
 void
 LegacyAssemblyMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
 	using namespace basic::options;
 
-	parse_requirements(tag, data, pose);
+	parse_requirements(tag, data);
 
 	utility::vector1<BasisPair> alignment_pairs;
 	std::map< int, Model > models;

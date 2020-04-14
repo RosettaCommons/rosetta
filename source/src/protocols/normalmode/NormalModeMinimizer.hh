@@ -70,8 +70,8 @@ public:
 
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 
 	protocols::moves::MoverOP clone() const override { return utility::pointer::make_shared< NormalModeMinimizer >( *this ); }

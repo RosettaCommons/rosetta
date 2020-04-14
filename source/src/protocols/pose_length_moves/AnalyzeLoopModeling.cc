@@ -230,8 +230,8 @@ void AnalyzeLoopModeling::apply(core::pose::Pose & pose) {
 void
 AnalyzeLoopModeling::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ){
+	basic::datacache::DataMap &
+){
 	//start_time_ = time(NULL);
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "2,5") );
 	utility::vector1< std::string > loopLengthRange_split( utility::string_split( loopLengthRange , ',' ) );

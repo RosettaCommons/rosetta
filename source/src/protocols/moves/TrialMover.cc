@@ -68,8 +68,8 @@ void MonteCarloUtil::apply(Pose & pose)
 
 void MonteCarloUtil::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /* pose */)
+	basic::datacache::DataMap & data
+)
 {
 	if ( !tag->hasOption("mode") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "you must specify option mode in MonteCarloUtil");
@@ -246,8 +246,7 @@ void TrialMover::set_native_pose( PoseCOP pose )
 
 void TrialMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	// 1. MonteCarlo object's name

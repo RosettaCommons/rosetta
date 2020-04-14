@@ -103,8 +103,7 @@ JumpRotamerSidechainMover::set_defaults() {
 void
 JumpRotamerSidechainMover::parse_my_tag(
 	utility::tag::TagCOP const /*tag*/,
-	basic::datacache::DataMap & /*data*/,
-	pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 
 }

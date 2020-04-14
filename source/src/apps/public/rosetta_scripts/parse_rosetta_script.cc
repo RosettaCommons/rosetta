@@ -60,7 +60,7 @@ main( int argc, char * argv [] )
 		using namespace core::pose;
 
 		protocols::rosetta_scripts::RosettaScriptsParser rs;
-		rs.generate_mover_and_apply_to_pose( *utility::pointer::make_shared< Pose >(), option[ parser::protocol ].value());
+		rs.generate_mover( option[ parser::protocol ].value() );
 		TR << "Successfully constructed and initialized all objects specified in the " << option[ parser::protocol ]() << " script" << std::endl;
 
 	} catch (utility::excn::Exception& excn ) {

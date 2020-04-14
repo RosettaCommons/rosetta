@@ -146,7 +146,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void
-	parse_my_tag( TagCOP, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 	// set options
 	void set_batch_relax( core::Size newval ) { batch_relax_ = newval; }

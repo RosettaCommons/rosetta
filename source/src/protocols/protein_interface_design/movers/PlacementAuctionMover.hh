@@ -65,8 +65,8 @@ public:
 	const_iterator begin() const;
 	const_iterator end() const;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	//// mutators for Placement movers to copy their internals onto auctionMover
 	void host_chain( core::Size const hc );
 	void max_cb_cb_dist( core::Real const mccd );

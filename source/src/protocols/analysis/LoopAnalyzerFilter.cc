@@ -64,8 +64,8 @@ LoopAnalyzerFilter::LoopAnalyzerFilter( LoopAnalyzerFilter const & rhs ) :
 void
 LoopAnalyzerFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	set_use_tracer(tag->getOption< bool >( "use_tracer", false ) );
 	set_loops(protocols::loop_modeling::utilities::parse_loops_from_tag(tag));

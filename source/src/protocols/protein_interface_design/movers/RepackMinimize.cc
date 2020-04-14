@@ -126,10 +126,10 @@ RepackMinimize::apply( pose::Pose & pose )
 
 
 void
-RepackMinimize::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & pose )
+RepackMinimize::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	TR<<"repack minimize mover with the following parameters:"<<std::endl;
-	calc_taskop_movers::DesignRepackMover::parse_my_tag( tag, data, pose );
+	calc_taskop_movers::DesignRepackMover::parse_my_tag( tag, data );
 }
 
 std::string RepackMinimize::get_name() const {

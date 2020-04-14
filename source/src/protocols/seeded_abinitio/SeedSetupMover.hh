@@ -40,8 +40,8 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override;
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	void clear_task_factory();
 	void task_factory( core::pack::task::TaskFactoryOP tf );

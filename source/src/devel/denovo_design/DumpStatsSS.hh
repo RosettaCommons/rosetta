@@ -52,7 +52,7 @@ public:
 	core::Real compute_svm_prob(std::string sequence, std::string wanted_ss);
 	core::Real compute_psipred_prob(core::pose::Pose & pose , std::string wanted_ss);
 	void set_scorefxn( core::scoring::ScoreFunctionOP scorefxn);
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

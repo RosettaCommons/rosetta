@@ -399,8 +399,7 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 void
 DockingInitialPerturbation::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data_map
 ) {
 	if ( !data_map.has( "RigidBodyInfo", "docking_setup" ) ) {
 		TR << "RigidBodyInfo not found in basic::datacache::DataMap" << std::endl;
@@ -727,9 +726,8 @@ DockingSlideIntoContact::fresh_instance() const {
 void
 DockingSlideIntoContact::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	rb_jump_ = tag->getOption< core::Size >( "rb_jump", 1 );
 	slide_axis_ = tag->getOption< core::Size >( "slide_axis", 1 );
 }

@@ -441,9 +441,8 @@ NucleotideMutation::apply( core::pose::Pose & pose )
 void
 NucleotideMutation::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &data
+) {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	init_sequence( tag->getOption< std::string >( "init_sequence", "" ) );

@@ -255,7 +255,7 @@ DesignMinimizeHbonds::apply( pose::Pose & pose )
 
 
 void
-DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & pose )
+DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	auto const hbond_weight( tag->getOption<core::Real>( "hbond_weight", 3.0 ) );
 	TR<<"DesignMinimizeHbonds with the following parameters: "<<std::endl;
@@ -266,7 +266,7 @@ DesignMinimizeHbonds::parse_my_tag( TagCOP const tag, basic::datacache::DataMap 
 	hbond_energy_threshold_ = tag->getOption<core::Real>( "hbond_energy", -0.5 );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_cutoff_distance", 8.0 );
 
-	calc_taskop_movers::DesignRepackMover::parse_my_tag( tag, data, pose );
+	calc_taskop_movers::DesignRepackMover::parse_my_tag( tag, data );
 	using namespace core::scoring;
 
 	// change the weights on the hbonding terms

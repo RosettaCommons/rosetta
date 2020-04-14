@@ -41,7 +41,7 @@ public:
 	virtual core::Real compute( core::pose::Pose const & pose ) const;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	core::Size chain() const{ return chain_; }
 	void chain( core::Size const r ){ chain_ = r; }

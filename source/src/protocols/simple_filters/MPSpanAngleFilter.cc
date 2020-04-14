@@ -77,7 +77,7 @@ MPSpanAngleFilterCreator::keyname() const { return "MPSpanAngle"; }
 MPSpanAngleFilter::~MPSpanAngleFilter(){}
 
 void
-MPSpanAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+MPSpanAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", -10.0 );
 	output_ = tag->getOption< std::string >( "output_file", "TR" );

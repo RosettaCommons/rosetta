@@ -81,9 +81,8 @@ AlignByResidueSelectorMover::reference_pose( core::pose::Pose const & ref ) {
 void
 AlignByResidueSelectorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data_map
+) {
 	reference_pose_ = protocols::rosetta_scripts::legacy_saved_pose_or_input( tag, data_map, mover_name() );
 	reference_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "reference_selector" ), data_map ) );
 	query_selector( core::select::residue_selector::get_residue_selector( tag->getOption< std::string >( "query_selector" ), data_map ) );

@@ -50,8 +50,9 @@ public:
 	core::Real compute( core::pose::Pose const & pose, bool const & write ) const;
 	~TaskAwareScoreTypeFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	core::pack::task::TaskFactoryOP task_factory() const;
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	core::scoring::ScoreType score_type() const;

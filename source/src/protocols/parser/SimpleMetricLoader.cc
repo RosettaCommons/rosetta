@@ -47,7 +47,6 @@ SimpleMetricLoader::SimpleMetricLoader() = default;
 SimpleMetricLoader::~SimpleMetricLoader() = default;
 
 void SimpleMetricLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap
 ) const

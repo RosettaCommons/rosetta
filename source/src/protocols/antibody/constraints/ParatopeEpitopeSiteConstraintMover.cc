@@ -173,8 +173,7 @@ ParatopeEpitopeSiteConstraintMover::get_paratope_residues( core::pose::Pose cons
 void
 ParatopeEpitopeSiteConstraintMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & ,
-	Pose const &
+	basic::datacache::DataMap &
 ){
 	//Paratope Constraint options
 	if ( tag->hasOption("paratope_cdrs") ) {

@@ -107,8 +107,8 @@ bool FragQualFilter::apply( Pose const & pose ) const
 void
 FragQualFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & pose )
+	basic::datacache::DataMap & data
+)
 {
 	using core::pose::metrics::CalculatorFactory;
 	using protocols::pose_metric_calculators::FragQualCalculator;
@@ -127,7 +127,7 @@ FragQualFilter::parse_my_tag(
 	// set FragQual
 	CalculatorFactory::Instance().remove_calculator( "FragQual" );
 	FragQualCalculator calculator;
-	calculator.parse_my_tag( tag, data, pose );
+	calculator.parse_my_tag( tag, data );
 	CalculatorFactory::Instance().register_calculator( "FragQual", calculator.clone() );
 
 	//calculator.begin( tag->getOption<core::Size>( "begin", 1 ) );

@@ -40,7 +40,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	void apply( core::pose::Pose & pose ) override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< PeptideStapleDesignMover >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

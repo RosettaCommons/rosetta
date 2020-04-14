@@ -48,8 +48,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;
@@ -76,8 +76,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	static
 	std::string
@@ -110,8 +110,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief The confidence is the fraction of the time the Filter will return *true*
 	core::Real confidence() const { return confidence_; }
@@ -168,8 +168,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;
@@ -233,8 +233,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;
@@ -271,8 +271,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;
@@ -321,8 +321,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;

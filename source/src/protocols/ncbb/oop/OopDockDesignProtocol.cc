@@ -553,8 +553,7 @@ void
 OopDockDesignProtocol::parse_my_tag
 (
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const &
+	basic::datacache::DataMap &data
 ) {
 	init_common_options( tag, data, score_fxn_, mc_temp_, pert_mc_temp_, pert_dock_rot_mag_, pert_dock_trans_mag_, pert_pep_small_temp_, pert_pep_small_H_, pert_pep_small_L_, pert_pep_small_E_, pert_pep_shear_temp_,pert_pep_shear_H_, pert_pep_shear_L_, pert_pep_shear_E_,pert_pep_num_rep_, pert_num_, dock_design_loop_num_, no_design_, final_design_min_, use_soft_rep_, mc_initial_pose_, pymol_, keep_history_ );
 

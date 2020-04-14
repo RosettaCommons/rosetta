@@ -40,7 +40,6 @@ public:
 
 	/// @brief The DatabaseSessionLoader will create named DatabaseSessions and load them into the basic::datacache::DataMap
 	void load_data(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const override;

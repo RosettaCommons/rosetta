@@ -328,8 +328,8 @@ void PredesignPerturbMover::set_ligand(core::Size res_no)
 void
 PredesignPerturbMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & datamap
+)
 {
 	trans_magnitude( tag -> getOption< core::Real >( "trans_magnitude", 0.1 ) );
 	rot_magnitude( tag -> getOption< core::Real >( "rot_magnitude", 2.0 ) );

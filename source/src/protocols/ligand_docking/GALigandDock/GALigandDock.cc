@@ -28,6 +28,8 @@
 #include <core/conformation/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/select/util.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
 #include <core/pose/symmetry/util.hh>
@@ -470,6 +472,10 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 	core::Size const lig_resno ) const
 {
 	utility::vector1< core::Size > movable_scs;
+	std::set< core::Size > frozen_residues;
+	if ( frozen_residues_ != nullptr ) {
+		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+	}
 
 	if ( sidechains_.length() == 0 || sidechains_ == "none" || sidechains_ == "NONE" ) {
 		; // do nothing
@@ -482,7 +488,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
-			if ( frozen_residues_.find(i) != frozen_residues_.end() ) continue;
+			if ( frozen_residues.count(i) ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), 75.0, sc_edge_buffer_ ) ) { // 75 degree "angle buffer" check
 				movable_scs.push_back( i );
@@ -540,7 +546,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
-			if ( frozen_residues_.find(i) != frozen_residues_.end() ) continue;
+			if ( frozen_residues.count(i) ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), sc_edge_buffer_, eigvalS, eigvecS) ) {
 				movable_scs.push_back( i );
@@ -554,7 +560,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			if ( pose.residue(*res_i).aa() == core::chemical::aa_ala
 					|| pose.residue(*res_i).aa() == core::chemical::aa_gly ) continue; // don't warn
 			if ( pose.residue(*res_i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue; // don't warn
-			if ( frozen_residues_.find(*res_i) != frozen_residues_.end() ) {
+			if ( frozen_residues.count(*res_i) ) {
 				TR.Warning << "Residue " << *res_i << " is declared as both moving and frozen! Treating as frozen" << std::endl;
 				continue;
 			}
@@ -900,11 +906,15 @@ GALigandDock::final_exact_cartmin(
 
 	core::kinematics::MoveMapOP mm2 = mm->clone(); // for torsion space
 
+	std::set< core::Size > frozen_residues;
+	if ( frozen_residues_ != nullptr ) {
+		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+	}
 	// waters, hetmol
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 		if ( (pose.residue_type(j).is_water() && move_water_)
 				|| !pose.residue(j).is_protein() ) {
-			if ( frozen_residues_.find(j) == frozen_residues_.end() ) {
+			if ( frozen_residues.count(j) == 0 ) {
 				core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
 				mm->set_jump( wjump, true );
 				mm2->set_jump( wjump, true ); // mm2 only jump
@@ -1024,11 +1034,15 @@ GALigandDock::final_exact_scmin(
 		}
 	}
 
+	std::set< core::Size > frozen_residues;
+	if ( frozen_residues_ != nullptr ) {
+		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+	}
 	// waters, hetmol
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 		if ( (pose.residue_type(j).is_water() && move_water_)
 				|| !pose.residue(j).is_protein() ) {
-			if ( frozen_residues_.find(j) == frozen_residues_.end() ) {
+			if ( frozen_residues.count(j) == 0 ) {
 				mm->set_chi( j, true );
 			}
 		}
@@ -1492,8 +1506,7 @@ GALigandDock::generate_perturbed_structures(
 void
 GALigandDock::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & datamap
 ) {
 
 	scfxn_ = protocols::rosetta_scripts::parse_score_function( tag, datamap );
@@ -1543,7 +1556,7 @@ GALigandDock::parse_my_tag(
 		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
 		if ( frozen_scs != "none" ) {
 			// parse as residue numbers
-			frozen_residues_ = core::pose::get_resnum_list( frozen_scs, pose );
+			frozen_residues_ = core::pose::get_resnum_selector( tag, "frozen_scs" );
 		}
 	}
 

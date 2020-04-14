@@ -111,9 +111,8 @@ AlignmentFileGeneratorMover::AlignmentFileGeneratorMover( AlignmentFileGenerator
 void
 AlignmentFileGeneratorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& datamap
+) {
 	//NOTE this currently allows users to specify options either in tag or on command line, but we may remove the command-line options at some point
 	//model file
 	if ( tag->hasOption( "model_file_name" ) ) {

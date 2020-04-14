@@ -148,8 +148,8 @@ GlycanTreeModeler::show(std::ostream & output) const
 void
 GlycanTreeModeler::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
+	basic::datacache::DataMap& datamap
+)
 {
 
 	layer_size_ = tag->getOption< core::Size >( "layer_size", layer_size_);

@@ -69,8 +69,9 @@ public:
 	core::scoring::ScoreFunctionOP scorefxn() const;
 	void scorefxn( core::scoring::ScoreFunctionOP scorefxn );
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	bool unbound() const;
 	void unbound( bool const u );
 	core::Size jump() const;

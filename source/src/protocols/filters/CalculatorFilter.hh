@@ -55,8 +55,9 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	void threshold( core::Real threshold) { threshold_ = threshold; }
 
 	void add_filter( std::string name, protocols::filters::FilterOP filter );

@@ -190,7 +190,7 @@ void HotspotHasherMover::apply( core::pose::Pose & pose ) {
 
 
 void
-HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+HotspotHasherMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();

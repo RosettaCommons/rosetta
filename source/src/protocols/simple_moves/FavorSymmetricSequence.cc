@@ -68,8 +68,8 @@ void FavorSymmetricSequence::apply(core::pose::Pose & pose)
 
 void FavorSymmetricSequence::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	if ( ! tag->hasOption("penalty") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' mover requires penalty tag");
 	if ( ! tag->hasOption("symmetric_units") ) throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "'FavorSymmetricSequence' mover requires symmetric_units tag");

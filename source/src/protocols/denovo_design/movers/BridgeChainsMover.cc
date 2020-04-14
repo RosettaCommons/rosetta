@@ -69,8 +69,8 @@ BridgeChainsMover::~BridgeChainsMover()= default;
 void
 BridgeChainsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	// Build architect from tag data
 	architect_->set_bridge( true );

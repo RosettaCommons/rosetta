@@ -49,8 +49,9 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~BindingStrainFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	core::Size jump() const;
 	void jump( core::Size const j );
 	protocols::moves::MoverOP relax_mover() const;

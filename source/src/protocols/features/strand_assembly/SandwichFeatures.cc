@@ -678,8 +678,7 @@ SandwichFeatures::generate_scorefxn( bool fullatom ) {
 void
 SandwichFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 )
 {
 	if ( tag->hasOption( "min_num_strands_to_deal" ) ) {

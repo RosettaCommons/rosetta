@@ -79,8 +79,8 @@ public:// virtual constructor
 	Real compute( const Pose & pose ) const;
 	bool apply(const Pose & pose ) const override;
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	std::string
 	name() const override;

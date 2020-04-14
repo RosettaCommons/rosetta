@@ -23,7 +23,6 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/factory/WidgetRegistrator.hh>
@@ -68,7 +67,6 @@ public:
 	typedef std::map< std::string, FilterCreatorOP > FilterMap;
 	typedef utility::tag::Tag Tag;
 	typedef utility::tag::TagCOP TagCOP;
-	typedef core::pose::Pose Pose;
 
 public:
 	virtual ~FilterFactory();
@@ -92,7 +90,6 @@ public:
 	newFilter(
 		TagCOP,
 		basic::datacache::DataMap &,
-		Pose const &,
 		std::string user_defined_name = ""
 	) const;
 

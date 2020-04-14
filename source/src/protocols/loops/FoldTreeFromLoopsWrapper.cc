@@ -76,8 +76,7 @@ FoldTreeFromLoops::apply( core::pose::Pose & pose )
 void
 FoldTreeFromLoops::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	loop_definer_ = loops_definers::load_loop_definitions(tag, data);

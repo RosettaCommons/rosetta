@@ -191,8 +191,8 @@ void ScaleMapIntensities::apply(core::pose::Pose & pose) {
 void
 ScaleMapIntensities::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &)
+	basic::datacache::DataMap &
+)
 {
 	if ( tag->hasOption("res_low") ) {
 		res_low_ = tag->getOption<core::Real>("res_low");

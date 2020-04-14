@@ -92,8 +92,8 @@ ExposedHydrophobicsFilter::fresh_instance() const
 void
 ExposedHydrophobicsFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	sasa_cutoff_ = tag->getOption< core::Real >( "sasa_cutoff", sasa_cutoff_ );
 	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );

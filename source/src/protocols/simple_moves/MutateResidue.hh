@@ -61,8 +61,8 @@ public:
 	}
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/// @brief Set this mover's target residue index.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

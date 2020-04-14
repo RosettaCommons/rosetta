@@ -152,8 +152,7 @@ public:
 
 		// to assign initial values
 		SandwichFeatures_reporters_OP->parse_my_tag(
-			tag, data,
-			*pose_3B83_OP // core::pose::Pose const & /*pose*/);
+			tag, data
 		);
 
 		returned_from_report_features = SandwichFeatures_reporters_OP->report_features(

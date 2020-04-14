@@ -717,8 +717,7 @@ PCSLigandTransformMover::optimize_ligand_pose_with_nls(
 void
 PCSLigandTransformMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	try {

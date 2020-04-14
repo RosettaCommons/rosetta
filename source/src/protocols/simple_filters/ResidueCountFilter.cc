@@ -88,8 +88,7 @@ ResidueCountFilter::round_to_Real(
 void
 ResidueCountFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 	if ( tag->hasOption("max_residue_count") ) {
 		enable_max_residue_count(true);

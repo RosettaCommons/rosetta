@@ -140,9 +140,8 @@ RingPlaneFlipMover::fresh_instance() const
 void
 RingPlaneFlipMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace core::select::movemap;
 	using namespace rosetta_scripts;
 

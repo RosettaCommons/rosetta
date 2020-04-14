@@ -379,7 +379,7 @@ HBNet::fresh_instance() const {
 HBNet::~HBNet()= default;
 
 void
-HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	hydrogen_bond_threshold_ = tag->getOption<core::Real>( "hb_threshold" ,-0.5);
 	//bw_cutoff_ = tag->getOption<core::PackerEnergy>("bw_cutoff",-0.5);

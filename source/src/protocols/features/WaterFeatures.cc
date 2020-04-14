@@ -177,8 +177,7 @@ WaterFeatures::features_reporter_dependencies() const {
 void
 WaterFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & /*pose*/
+	basic::datacache::DataMap &
 ) {
 
 	// TODO add logic to parse targets=name3:atom_name,... tag option

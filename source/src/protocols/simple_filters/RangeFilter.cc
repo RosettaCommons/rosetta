@@ -79,8 +79,8 @@ bool RangeFilter::apply( Pose const & pose ) const
 void
 RangeFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	std::string const filter_name( tag->getOption< std::string >( "filter") );
 	filter_ = protocols::rosetta_scripts::parse_filter( filter_name, data );

@@ -198,8 +198,8 @@ bool CoreDunbrackFilter::apply( Pose const & pose ) const
 void
 CoreDunbrackFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// set filter type
 	type_ = tag->getOption<String>( "type", "average" );

@@ -99,8 +99,7 @@ FragmentJumpCM::FragmentJumpCM( std::string const& topol_filename,
 }
 
 void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const&
+	basic::datacache::DataMap& datamap
 ) {
 	if ( tag->hasOption( "topol_file" ) ) {
 		std::string const& topol_filename = tag->getOption< std::string >( "topol_file",

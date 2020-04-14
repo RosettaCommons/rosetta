@@ -376,9 +376,8 @@ AssemblyMover::get_name() const{
 void
 AssemblyMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & pose)
-{
+	basic::datacache::DataMap& datamap
+) {
 	//get the model file name
 	min_cycles_ = tag->getOption<core::Size>("minimum_cycles",10000);
 	max_cycles_ = tag->getOption<core::Size>("maximum_cycles",100000);
@@ -415,14 +414,14 @@ AssemblyMover::parse_my_tag(
 	//Check for AssemblyScorers subtag and Requirements subtag
 	//If we have an AssemblyScorers subtag, parse scorers
 	if ( tag->hasTag( "AssemblyScorers" ) ) {
-		parse_assembly_scorers( tag->getTag( "AssemblyScorers" ), datamap, pose );
+		parse_assembly_scorers( tag->getTag( "AssemblyScorers" ), datamap );
 	} else {
 		//Otherwise set to default score function
 		set_default_assembly_scorers();
 	}
 	//If we have a Requirements tag, parse requirements
 	if ( tag->hasTag( "AssemblyRequirements" ) ) {
-		parse_requirements( tag->getTag( "AssemblyRequirements" ), datamap, pose ) ;
+		parse_requirements( tag->getTag( "AssemblyRequirements" ), datamap ) ;
 	} else {
 		//Otherwise set to default requirements
 		set_default_requirements();
@@ -436,14 +435,14 @@ AssemblyMover::parse_my_tag(
 void
 AssemblyMover::parse_requirements(
 	utility::tag::TagCOP requirements_tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & pose)
+	basic::datacache::DataMap& datamap
+)
 {
 	//Each requirement will need to have its own parse_tag function that returns an instance of that requirement with the appropriate options set
 	requirements::AssemblyRequirementOP current_requirement;
 	for ( utility::tag::TagCOP requirement: requirements_tag->getTags() ) {
 		current_requirement = requirements::AssemblyRequirementFactory::get_instance()->get_requirement( requirement->getName() );
-		current_requirement->set_options_from_tag( requirement, datamap, pose );
+		current_requirement->set_options_from_tag( requirement, datamap );
 		add_requirement( current_requirement );
 	}
 }
@@ -453,8 +452,8 @@ AssemblyMover::parse_requirements(
 void
 AssemblyMover::parse_assembly_scorers(
 	utility::tag::TagCOP scorers_tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & pose)
+	basic::datacache::DataMap& datamap
+)
 {
 	//Loop through all of the subtags
 	scoring::AssemblyScorerOP current_scorer;
@@ -462,7 +461,7 @@ AssemblyMover::parse_assembly_scorers(
 		//Create the scorer
 		//  core::Real weight = scorer->getOption<core::Real>( "weight" );
 		current_scorer = scoring::AssemblyScorerFactory::get_instance()->get_assembly_scorer( scorer->getName() );
-		current_scorer->set_options_from_tag( scorer, datamap, pose );
+		current_scorer->set_options_from_tag( scorer, datamap );
 		// *****Later scorers may have additional functionality besides just a weight--give them functions to parse themselves to accommodate this!!******
 		/*  //Get the weight--if none is provided, will get exception
 		if( !scorer->hasOption( "weight" )){

@@ -40,7 +40,6 @@ PackerPaletteLoader::PackerPaletteLoader() {}
 PackerPaletteLoader::~PackerPaletteLoader() {}
 
 void PackerPaletteLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap
 ) const

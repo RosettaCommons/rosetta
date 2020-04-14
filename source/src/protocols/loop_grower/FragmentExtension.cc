@@ -590,8 +590,8 @@ FragmentExtension::get_unaligned( core::id::SequenceMapping const & sequencemap 
 void
 FragmentExtension::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & data
+)
 {
 	std::string fastaname = tag->getOption<std::string>("fasta");
 	utility::vector1<std::string> seq = core::sequence::read_fasta_file_str(fastaname);

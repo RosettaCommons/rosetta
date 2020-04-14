@@ -52,8 +52,8 @@ StubScoreLoopsFilter::~StubScoreLoopsFilter() = default;
 
 void
 StubScoreLoopsFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	tr.Info << "StubScoreLoopsFilter"<<std::endl;
 	cb_force_ = tag->getOption< core::Real >( "cb_force", 0.5 );

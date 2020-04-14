@@ -176,8 +176,8 @@ DesignableResiduesFilter::report( std::ostream & , core::pose::Pose const & ) co
 
 void
 DesignableResiduesFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "DesignableResiduesFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

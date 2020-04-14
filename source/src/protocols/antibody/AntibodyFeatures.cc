@@ -672,8 +672,8 @@ using namespace basic::database::schema_generator;
 void
 AntibodyFeatures::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap& data
+)
 {
 
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);

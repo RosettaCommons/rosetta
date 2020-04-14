@@ -52,9 +52,8 @@ MoveMapFactoryToNamedMoveMapMover::~MoveMapFactoryToNamedMoveMapMover()= default
 void
 MoveMapFactoryToNamedMoveMapMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	movemapfactory_ = core::select::movemap::parse_movemap_factory( tag, data );
 	std::string const movemapname( tag->getOption< std::string >( "movemap" ) );
 	if ( !data.has("movemaps", movemapname) ) {

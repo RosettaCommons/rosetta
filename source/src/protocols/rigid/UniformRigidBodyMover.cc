@@ -105,8 +105,8 @@ UniformRigidBodyMover::JumpNumber UniformRigidBodyMover::jump_number() const {
 }
 
 void UniformRigidBodyMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap&,
-	core::pose::Pose const& ) {
+	basic::datacache::DataMap&
+) {
 	rotation_mag_ = tag->getOption< core::Real >( "rotation_magnitude", 8.0 );
 	translation_mag_ = tag->getOption< core::Real >( "translation_magnitude", 3.0 );
 	target_jump_ = tag->getOption< JumpNumber >("target_jump", NO_JUMP );

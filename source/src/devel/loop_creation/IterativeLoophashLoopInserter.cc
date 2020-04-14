@@ -191,10 +191,9 @@ IterativeLoophashLoopInserter::apply(
 void
 IterativeLoophashLoopInserter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose
+	basic::datacache::DataMap & data
 ){
-	LoophashLoopInserter::parse_my_tag(tag, data, pose);
+	LoophashLoopInserter::parse_my_tag(tag, data);
 
 	if ( tag->hasOption("max_closure_deviation") ) {
 		max_closure_deviation_ = tag->getOption<core::Real>("max_closure_deviation");

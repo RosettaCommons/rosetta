@@ -45,8 +45,8 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void parse_my_tag(  utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	void init();
 	void set_scorefunction(core::scoring::ScoreFunctionOP scorefxn_in);
 	void hybridize( core::pose::Pose & pose , core::Size insert_pos_start, core::Size insert_pos_stop);

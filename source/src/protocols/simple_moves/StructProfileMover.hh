@@ -57,7 +57,7 @@ public:
 	utility::vector1< core::Real> calc_cenlist(core::pose::Pose const & pose);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< StructProfileMover >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 	void set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 
 	std::string

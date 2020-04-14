@@ -109,8 +109,7 @@ MSDMover::get_name() const {
 
 void MSDMover::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	if ( tag->hasOption("design_mover") ) {

@@ -94,8 +94,8 @@ ResampleMover::clone() const {
 void
 ResampleMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/ ) {
+	basic::datacache::DataMap & data
+) {
 
 	// WARNING: don't use this with RNA scorefunctions; something goes wrong?
 	// EnergyMethodOptions, suite bonus directories...

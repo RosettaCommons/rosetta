@@ -35,7 +35,6 @@ public:
 	/// @brief The ResLvlTaskOperationLoader will load named residue-level-task operations
 	/// into the basic::datacache::DataMap
 	void load_data(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const override;

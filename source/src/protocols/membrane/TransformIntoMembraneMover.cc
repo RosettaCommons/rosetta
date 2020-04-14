@@ -186,8 +186,7 @@ TransformIntoMembraneMover::fresh_instance() const {
 void
 TransformIntoMembraneMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const &
+	basic::datacache::DataMap &
 ) {
 
 	// Read in jump option

@@ -139,8 +139,7 @@ public:
 	/// @brief Parses the FastRelaxTags
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief Initializes class using option system. This is called by the constructors

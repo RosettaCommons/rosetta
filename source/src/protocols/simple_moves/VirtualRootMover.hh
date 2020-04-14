@@ -36,8 +36,8 @@ public:
 
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	void set_remove( bool const remove );
 	void set_removable( bool const removable );

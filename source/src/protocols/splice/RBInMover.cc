@@ -231,8 +231,8 @@ RBInMover::fresh_instance() const
 void
 RBInMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	RB_dbase( tag->getOption< std::string >( "rigid_body_dbase", "" ) );
 	from_entry( tag->getOption< core::Size >( "from_entry", 1 ) );

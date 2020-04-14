@@ -270,9 +270,8 @@ RelativePoseFilter::pdb_name( std::string const & pdb_name ){
 /// Feb2012 added option to align entire chains: A:B,D:C. Notice that no testing is made to ensure correct lengths etc., simply aligns from the start to end of the chains sequentially.
 void
 RelativePoseFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace protocols::rosetta_scripts;
 
 	TR << "RelativePoseFilter"<<std::endl;

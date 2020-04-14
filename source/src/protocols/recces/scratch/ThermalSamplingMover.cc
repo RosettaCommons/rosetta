@@ -628,8 +628,8 @@ ThermalSamplingMover::set_residue_sampling_from_pose_and_movemap(
 void
 ThermalSamplingMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 
 }

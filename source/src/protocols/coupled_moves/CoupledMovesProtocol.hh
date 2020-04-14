@@ -82,8 +82,8 @@ public:
 	///@brief parse_my_tag
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override /*override*/;
+		basic::datacache::DataMap &
+	) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	// setters

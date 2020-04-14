@@ -122,8 +122,8 @@ SymmetricCycpepAlign::show(std::ostream & output) const
 void
 SymmetricCycpepAlign::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	bool auto_detect( tag->getOption<bool>("auto_detect_symmetry", "false") );
 	runtime_assert_string_msg(

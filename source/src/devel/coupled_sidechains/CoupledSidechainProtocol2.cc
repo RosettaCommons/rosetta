@@ -229,7 +229,7 @@ CoupledSidechainProtocol::get_name() const {
 }
 
 void
-CoupledSidechainProtocol::parse_my_tag( utility::tag::TagCOP const /*tag*/, basic::datacache::DataMap & /*data*/, core::pose::Pose const & /*pose*/) {
+CoupledSidechainProtocol::parse_my_tag( utility::tag::TagCOP const /*tag*/, basic::datacache::DataMap & /*data*/ ) {
 	/* ntrials_ = tag->getOption<core::Size>( "ntrials", 10000 );
 	set_prob_uniform( tag->getOption<core::Real>( "prob_uniform", 0.0 ) );
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", 0.0 ) );

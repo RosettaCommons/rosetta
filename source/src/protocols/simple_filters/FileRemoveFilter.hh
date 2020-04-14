@@ -45,7 +45,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	~FileRemoveFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	utility::vector1< std::string > file_names() const;
 	void file_names( utility::vector1< std::string > const & f );
 	bool delete_content_only() const{ return delete_content_only_; }

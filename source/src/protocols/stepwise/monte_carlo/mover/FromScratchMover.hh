@@ -50,7 +50,7 @@ public:
 	void apply( core::pose::Pose & pose_to_visualize ) override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< FromScratchMover >(); }
 	protocols::moves::MoverOP clone() const override;
-	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

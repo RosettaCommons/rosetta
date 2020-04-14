@@ -140,7 +140,7 @@ Nub::apply(
 // -- ROSETTASCRIPTS -- //
 
 void
-Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & )
+Nub::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data )
 {
 
 	TR.Trace << TR.Green << "Parsing Nub data" << TR.Reset << std::endl;

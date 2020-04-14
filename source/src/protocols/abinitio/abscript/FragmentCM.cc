@@ -128,8 +128,7 @@ core::Size determine_frag_size( std::string const& file ) {
 }
 
 void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const&
+	basic::datacache::DataMap& datamap
 ) {
 	using namespace core::fragment;
 	using namespace basic::options;

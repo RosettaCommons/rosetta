@@ -156,8 +156,8 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 
 void
 TaskAwareSymMinMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 
 	scorefxn_name_ = tag->getOption< std::string >( "scorefxn", "score12_symm" );
 	min_chi_ = tag->getOption< bool >( "chi", true );

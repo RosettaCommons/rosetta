@@ -117,8 +117,8 @@ void MakePolyXMover::apply( Pose & pose )
 void
 MakePolyXMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	aa_ = tag->getOption<std::string>( "aa", "ALA" );
 	keep_pro_  = tag->getOption<bool>( "keep_pro", false );

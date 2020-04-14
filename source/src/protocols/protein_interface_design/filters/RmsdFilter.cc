@@ -397,7 +397,7 @@ RmsdFilter::add_selector( core::select::residue_selector::ResidueSelectorOP cons
 }
 
 void
-RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & )
+RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map )
 {
 	using namespace core::select::residue_selector;
 

@@ -47,8 +47,8 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~RelativePoseFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 	void filter( protocols::filters::FilterOP filter );
 	protocols::filters::FilterOP filter() const;
 	protocols::moves::MoverOP relax_mover() const;

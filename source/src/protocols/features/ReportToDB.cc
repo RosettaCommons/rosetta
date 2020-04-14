@@ -474,8 +474,8 @@ ReportToDB::parse_relevant_residues_mode_tag_item(
 void
 ReportToDB::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & pose )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption("db") ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "The 'db' tag has been deprecated. Please use 'database_name' instead.");
@@ -579,7 +579,7 @@ ReportToDB::parse_my_tag(
 		try{
 			FeaturesReporterOP features_reporter(
 				features_reporter_factory_->get_features_reporter(
-				feature_tag, data, pose));
+				feature_tag, data));
 			features_reporter->set_relevant_residues_mode(relevant_residues_mode_);
 			add_features_reporter(features_reporter);
 		} catch (utility::excn::Exception const & e ){

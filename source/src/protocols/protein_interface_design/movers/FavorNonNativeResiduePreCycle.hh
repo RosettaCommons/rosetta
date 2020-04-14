@@ -40,7 +40,7 @@ public:
 		return( utility::pointer::make_shared< FavorNonNativeResiduePreCycle >( bonus_ ) );
 	}
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< FavorNonNativeResiduePreCycle >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~FavorNonNativeResiduePreCycle() override;
 
 	std::string

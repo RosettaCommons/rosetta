@@ -72,8 +72,8 @@ RotamerBoltzmannWeight2::RotamerBoltzmannWeight2( RotamerBoltzmannWeight2 const 
 void
 RotamerBoltzmannWeight2::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	core::Real temperature = default_temperature_ ;
 	if ( tag->hasOption( "temperature" ) ) {

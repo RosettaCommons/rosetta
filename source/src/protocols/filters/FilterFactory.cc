@@ -123,9 +123,8 @@ const
 /*FilterOP
 FilterFactory::newFilter(
 TagCOP const tag,
-basic::datacache::DataMap & data,
-Pose const & pose )
-{
+basic::datacache::DataMap & data
+) {
 FilterOP filter( newFilter( tag->getName() ) );
 runtime_assert( filter );
 filter->parse_my_tag( tag, data, filters, movers, pose );
@@ -137,10 +136,8 @@ FilterOP
 FilterFactory::newFilter(
 	TagCOP const tag,
 	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose,
-	std::string user_defined_name )
-const
-{
+	std::string user_defined_name
+) const {
 	FilterOP filter( newFilter( tag->getName() ) );
 	runtime_assert( filter != nullptr );
 	std::string filter_name;
@@ -152,7 +149,7 @@ const
 		utility_exit_with_message("Can't define unnamed Filter");
 	}
 	filter->set_user_defined_name( filter_name );
-	filter->parse_my_tag( tag, data, pose );
+	filter->parse_my_tag( tag, data );
 
 	//Register with the citation manager:
 	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );

@@ -136,12 +136,11 @@ MoverFactory::newMover( std::string const & mover_type ) const
 MoverOP
 MoverFactory::newMover(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & pose ) const
-{
+	basic::datacache::DataMap & data
+) const {
 	MoverOP mover( newMover( tag->getName() ) );
 	runtime_assert( mover != nullptr );
-	mover->parse_my_tag( tag, data, pose );
+	mover->parse_my_tag( tag, data );
 
 	//Register the new mover with the citation manager:
 	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );

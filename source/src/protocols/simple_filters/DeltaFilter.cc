@@ -206,8 +206,8 @@ DeltaFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 
 void
 DeltaFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "DeltaFilter"<<std::endl;
 	range( tag->getOption< core::Real >( "range", 0.0 ) );

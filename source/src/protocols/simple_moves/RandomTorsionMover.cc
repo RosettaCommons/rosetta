@@ -317,9 +317,8 @@ RandomTorsionMover::fresh_instance() const
 void
 RandomTorsionMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	max_angle_ = tag->getOption< core::Real >( "max_angle", max_angle_ );
 	num_moves_ = tag->getOption< core::Size >( "num_moves", num_moves_ );
 

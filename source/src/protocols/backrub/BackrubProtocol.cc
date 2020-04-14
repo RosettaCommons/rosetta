@@ -378,8 +378,7 @@ BackrubProtocol::finalize_setup(core::pose::Pose & pose){
 void
 BackrubProtocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap  & data,
-	core::pose::Pose const&
+	basic::datacache::DataMap  & data
 ) {
 
 	utility::vector1<std::string> pivot_atoms = utility::vector1<std::string>(1, "CA");

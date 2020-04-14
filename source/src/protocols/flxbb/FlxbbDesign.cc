@@ -593,9 +593,8 @@ void FlxbbDesign::apply( pose::Pose & pose )
 void
 FlxbbDesign::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	scorefxn_design_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_design", data );
 	scorefxn_relax_ = protocols::rosetta_scripts::parse_score_function( tag, "sfxn_relax", data );
 

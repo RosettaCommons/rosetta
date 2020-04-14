@@ -75,8 +75,8 @@ core::pose::PoseOP IfMover::get_additional_output() {
 
 
 void IfMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 	using namespace protocols::filters;
 
 	TR<<"If mover\n";

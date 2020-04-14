@@ -46,7 +46,7 @@ public:
 	FixAllLoopsMover();
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< FixAllLoopsMover >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 
 	std::string
 	get_name() const override;

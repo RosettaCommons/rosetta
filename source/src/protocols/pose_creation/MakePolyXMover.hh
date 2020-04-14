@@ -62,7 +62,7 @@ public:
 	// @brief virtual main operation
 	void apply( core::pose::Pose & pose ) override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	get_name() const override;

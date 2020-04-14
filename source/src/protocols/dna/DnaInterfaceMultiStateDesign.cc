@@ -341,8 +341,7 @@ DnaInterfaceMultiStateDesign::output_results( Pose & pose )
 /// @brief parse "XML" Tag (specifically in the context of the parser/scripting scheme)
 void DnaInterfaceMultiStateDesign::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	// flags/parameters (override options settings)
@@ -370,8 +369,8 @@ void DnaInterfaceMultiStateDesign::parse_my_tag(
 	}
 
 	// calls to PackRotamersMover base class methods
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 }
 
 /// @brief required in the context of the parser/scripting scheme

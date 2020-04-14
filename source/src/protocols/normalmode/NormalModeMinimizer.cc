@@ -164,9 +164,8 @@ NormalModeMinimizer::apply( pose::Pose & pose ) {
 
 void NormalModeMinimizer::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 
 	std::string const scorefxn_name( tag->getOption< std::string >( "scorefxn", "score12" ) );
 	scorefxn_ = data.get_ptr<ScoreFunction>( "scorefxns", scorefxn_name );

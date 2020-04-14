@@ -46,8 +46,9 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~BoltzmannFilter() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	void add_positive_filter( protocols::filters::FilterOP f );
 	void add_negative_filter( protocols::filters::FilterOP f );
 	void anchors( utility::vector1< core::Real > const & anchors );

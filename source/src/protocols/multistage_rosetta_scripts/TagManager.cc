@@ -119,8 +119,7 @@ TagManager::register_data_tags_for_input_pose_id(
 
 ParsedTagCacheOP
 TagManager::generate_data_for_input_pose_id(
-	PrelimJobNodeID input_pose_id,
-	core::pose::Pose const & pose
+	PrelimJobNodeID input_pose_id
 ){
 	NoFailDataMapOP data_map( pointer::make_shared< NoFailDataMap >() );
 
@@ -145,7 +144,7 @@ TagManager::generate_data_for_input_pose_id(
 				( * mover_tags )[ mover_name ] = mover_tag;
 
 				data_map->add( "movers",  mover_name,
-					mover_factory->newMover( mover_tag, * data_map, pose )
+					mover_factory->newMover( mover_tag, * data_map )
 				);
 			}
 		} else if ( tag->getName() == "FILTERS" ) {
@@ -154,13 +153,13 @@ TagManager::generate_data_for_input_pose_id(
 				( * filter_tags )[ filter_name ] = filter_tag;
 
 				data_map->add( "filters", filter_name,
-					filter_factory->newFilter( filter_tag, * data_map, pose )
+					filter_factory->newFilter( filter_tag, * data_map )
 				);
 			}
 
 		} else {
 			parser::DataLoaderOP loader = parser::DataLoaderFactory::get_instance()->newDataLoader( tag->getName() );
-			loader->load_data( pose, tag, * data_map );
+			loader->load_data( tag, * data_map );
 		}
 	}
 
@@ -181,7 +180,6 @@ protocols::multistage_rosetta_scripts::TagManager::save( Archive & arc ) const {
 	arc( CEREAL_NVP( tag_list_for_input_pose_id_ ) ); // std::vector<TagListOP>
 	//arc( CEREAL_NVP( most_recent_request_ ) ); // ParsedTagCacheOP
 	// EXEMPT most_recent_request_
-	arc( CEREAL_NVP( dummy_pose_ ) ); // core::pose::Pose
 }
 
 /// @brief Automatically generated deserialization method
@@ -204,7 +202,6 @@ protocols::multistage_rosetta_scripts::TagManager::load( Archive & arc ) {
 
 	//arc( most_recent_request_ ); // ParsedTagCacheOP
 	// EXEMPT most_recent_request_
-	arc( dummy_pose_ ); // core::pose::Pose
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::multistage_rosetta_scripts::TagManager );

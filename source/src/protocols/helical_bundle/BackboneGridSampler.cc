@@ -408,8 +408,7 @@ void BackboneGridSampler::apply (core::pose::Pose & pose)
 void
 BackboneGridSampler::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data_map
 ) {
 	try {
 

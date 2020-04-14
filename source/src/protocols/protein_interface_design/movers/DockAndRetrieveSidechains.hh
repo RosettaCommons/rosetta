@@ -36,7 +36,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< DockAndRetrieveSidechains >(); }
 	void apply( core::pose::Pose & pose ) override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~DockAndRetrieveSidechains() override;
 
 	std::string

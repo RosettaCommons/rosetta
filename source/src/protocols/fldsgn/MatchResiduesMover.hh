@@ -70,8 +70,8 @@ public:// constructor/destructor
 
 
 	void parse_my_tag( TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	void  apply( core::pose::Pose & pose ) override;
 

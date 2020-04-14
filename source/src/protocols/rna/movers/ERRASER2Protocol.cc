@@ -456,9 +456,8 @@ ERRASER2Protocol::show(std::ostream & output) const
 void
 ERRASER2Protocol::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if ( !scorefxn_ && basic::options::option[ basic::options::OptionKeys::score::weights ].user() ) {
 		score_function( core::scoring::get_score_function() );

@@ -80,7 +80,7 @@ public:
 			"<VAR name=e reported=ten />\n"
 			"</CalculatorFilter>\n" );
 
-		testfilter.parse_my_tag( tag, data, *testpose_ );
+		testfilter.parse_my_tag( tag, data );
 		setPoseExtraScore(*testpose_, "ten", 10.0);
 
 

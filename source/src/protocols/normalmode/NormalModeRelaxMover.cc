@@ -565,9 +565,8 @@ NormalModeRelaxMover::extrapolate_mode_on_pose( pose::Pose const &pose ) const
 // currently, its simply returning randomized structure
 void NormalModeRelaxMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	cartesian_ = tag->getOption< bool >( "cartesian", true );
 	centroid_ = tag->getOption< bool >( "centroid", false );
 	nmodes_       = tag->getOption< core::Size >( "nmodes", 5 );

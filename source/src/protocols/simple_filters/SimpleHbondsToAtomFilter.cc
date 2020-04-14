@@ -108,8 +108,8 @@ SimpleHbondsToAtomFilter::set_hb_e_cutoff( core::Real hb_e_cutoff ){
 void
 SimpleHbondsToAtomFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "SimpleHbondsToAtomFilter"<<std::endl;
 	set_target_residue(core::pose::get_resnum_string( tag ));

@@ -200,8 +200,8 @@ public:
 			datamap.add( "options", "job_options", local_job_options );
 
 			TagCOP common_tag = common_block_tags();
-			parse_sfxns_and_taskops( *pose, common_tag, datamap );
-			parse_sfxns_and_taskops( *pose,    job_tag, datamap );
+			parse_sfxns_and_taskops( common_tag, datamap );
+			parse_sfxns_and_taskops(    job_tag, datamap );
 
 			MoverOP pack_mover;
 			if ( job_tag->hasTag( PackRotamersMoverCreator::mover_name() ) ) {
@@ -209,8 +209,8 @@ public:
 				TR << "Calling PRM::parse_my_tag" << std::endl;
 				pack_mover->parse_my_tag(
 					job_tag->getTag( PackRotamersMoverCreator::mover_name() ),
-					datamap,
-					*pose );
+					datamap
+				);
 			} else {
 				using namespace core::pack::task::operation;
 				// read the score function from the job options object; create a task operation to initialize
@@ -230,8 +230,8 @@ public:
 				min_mover = utility::pointer::make_shared< MinMover >();
 				min_mover->parse_my_tag(
 					job_tag->getTag( MinMoverCreator::mover_name()),
-					datamap,
-					*pose );
+					datamap
+				);
 			} else if ( (*job_options)[ basic::options::OptionKeys::minimize_sidechains ] ) {
 				core::scoring::ScoreFunctionOP score_fxn = core::scoring::get_score_function( *job_options );
 				core::kinematics::MoveMapOP movemap( new core::kinematics::MoveMap );
@@ -299,7 +299,6 @@ public:
 
 	void
 	parse_sfxns_and_taskops(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & datamap
 	) const
@@ -312,10 +311,10 @@ public:
 		for ( auto iter = tag->getTags().begin(); iter != tag->getTags().end(); ++iter ) {
 			if ( (*iter)->getName() == ScoreFunctionLoader::loader_name() ) {
 				ScoreFunctionLoader sfxn_loader;
-				sfxn_loader.load_data( pose, *iter, datamap );
+				sfxn_loader.load_data( *iter, datamap );
 			} else if ( (*iter)->getName() == TaskOperationLoader::loader_name() ) {
 				TaskOperationLoader taskop_loader;
-				taskop_loader.load_data( pose, *iter, datamap );
+				taskop_loader.load_data( *iter, datamap );
 			}
 		}
 

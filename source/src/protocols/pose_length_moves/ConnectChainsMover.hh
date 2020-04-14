@@ -63,7 +63,7 @@ public:
 	void generate_best_final_pose(core::pose::Pose & pose,utility::vector1< utility::vector1 <std::string> > chains_in_poses,std::map<std::string, Chain> connected_chains);
 	void apply( Pose & pose ) override;
 	moves::MoverOP clone() const override { return utility::pointer::make_shared< ConnectChainsMover >( *this ); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & datamap ) override;
 
 	std::string
 	get_name() const override;

@@ -51,7 +51,7 @@ public:
 	//@brief computes L_rmsd by calling protocols::docking::metrics.cc
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~LRmsdFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & reference_pose ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map ) override;
 
 	std::string
 	name() const override;

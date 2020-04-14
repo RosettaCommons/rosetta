@@ -110,8 +110,8 @@ AddMover::clone() const {
 void
 AddMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & data
+) {
 
 	// We have to define the swa_move here, in addition to possibly setting the members
 	// that are by default set in the ctor

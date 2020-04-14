@@ -41,7 +41,6 @@ public:
 	/// object using this interface.
 	virtual
 	void load_data(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const = 0;

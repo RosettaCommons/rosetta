@@ -75,9 +75,8 @@ FragmentScoreFilter::~FragmentScoreFilter() = default;
 void
 FragmentScoreFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	threshold_ = tag->getOption< core::Real >("threshold",1);
 	direction_ = tag->getOption< std::string >("direction","-");
 	score_type_ = tag->getOption< std::string >("scoretype","FragmentCrmsd");

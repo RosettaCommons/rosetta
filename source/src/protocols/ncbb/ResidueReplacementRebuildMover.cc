@@ -234,9 +234,8 @@ ResidueReplacementRebuildMover::show(std::ostream & output) const
 void
 ResidueReplacementRebuildMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& data
+) {
 	if ( tag->hasOption("scorefxn") ) {
 		score_function( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}

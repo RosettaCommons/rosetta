@@ -85,8 +85,7 @@ MonteCarloReset::set_MC( GenericMonteCarloMoverOP mc ){
 void
 MonteCarloReset::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 ){
 	std::string const mc_name( tag->getOption< std::string >( "MC_name" ) );
 	protocols::moves::MoverOP mover = protocols::rosetta_scripts::parse_mover_or_null( mc_name, data );

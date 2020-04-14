@@ -223,24 +223,22 @@ PackRotamersMover::task_is_valid( Pose const & pose ) const
 void
 PackRotamersMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("nloop") ) {
 		nloop_ = tag->getOption<core::Size>("nloop",1);
 		runtime_assert( nloop_ > 0 );
 	}
-	parse_score_function( tag, datamap, pose );
-	parse_task_operations( tag, datamap, pose );
+	parse_score_function( tag, datamap );
+	parse_task_operations( tag, datamap );
 }
 
 /// @brief parse "scorefxn" XML option (can be employed virtually by derived Packing movers)
 void
 PackRotamersMover::parse_score_function(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	ScoreFunctionOP new_score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap ) );
@@ -252,8 +250,7 @@ PackRotamersMover::parse_score_function(
 void
 PackRotamersMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	TaskFactoryOP new_task_factory( protocols::rosetta_scripts::parse_task_operations( tag, datamap ) );

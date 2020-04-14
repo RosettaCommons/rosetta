@@ -114,8 +114,8 @@ AlignChainMover::fresh_instance() const
 void
 AlignChainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	source_chain( tag->getOption< core::Size >( "source_chain", 0 ) );
 	target_chain( tag->getOption< core::Size >( "target_chain", 0 ) );

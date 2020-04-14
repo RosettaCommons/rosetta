@@ -80,9 +80,8 @@ HelixHelixAngleFilter::~HelixHelixAngleFilter(){}
 void
 HelixHelixAngleFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	start_helix_1_ = tag->getOption< core::Size >( "start_helix_1", 0 );
 	start_helix_2_ = tag->getOption< core::Size >( "start_helix_2", 0  );
 	end_helix_1_ = tag->getOption< core::Size >( "end_helix_1", 0  );

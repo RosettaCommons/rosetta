@@ -135,7 +135,7 @@ RandomMutation::apply( core::pose::Pose & pose )
 
 
 void
-RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+RandomMutation::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();

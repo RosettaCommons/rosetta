@@ -358,7 +358,7 @@ SymUnsatHbondFilter::apply( core::pose::Pose const & pose ) const
 
 // @brief parse xml
 void
-SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data, core::pose::Pose const & )
+SymUnsatHbondFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	upper_threshold( tag->getOption<core::Size>( "cutoff", 20 ) );
 	jump_num( tag->getOption<core::Size>( "jump", 1 ) );

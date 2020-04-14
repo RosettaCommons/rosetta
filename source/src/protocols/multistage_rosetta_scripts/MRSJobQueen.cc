@@ -283,10 +283,9 @@ MRSJobQueen::complete_larval_job_maturation(
 	msp_job->set_pose( pose );
 	msp_job->set_cluster_metric_tag( cluster_metric_tag_for_stage_[ stage ] );
 
-	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( jd3::PrelimJobNodeID( input_pose_id ), * pose );
+	ParsedTagCacheOP const data_for_job = tag_manager_.generate_data_for_input_pose_id( jd3::PrelimJobNodeID( input_pose_id ) );
 	msp_job->parse_my_tag(
 		tag_for_stage_[ stage ],
-		* pose,
 		data_for_job
 	);
 
@@ -1017,7 +1016,6 @@ void MRSJobQueen::print_job_lineage() const {
 
 void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for node 0
 
-	utility::vector1< standard::PreliminaryLarvalJob > const & prelim_larval_jobs = get_preliminary_larval_jobs();
 	runtime_assert( num_input_structs_ > 0 );
 
 	moves::MoverFactory const * mover_factory = moves::MoverFactory::get_instance();
@@ -1025,11 +1023,9 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 
 	for ( core::Size ii = 1; ii <= num_input_structs_; ++ii ) {
 		TR << "Confirming validity of tags for input job " << ii << std::endl;
-		core::pose::PoseOP pose =
-			pose_for_inner_job_derived( prelim_larval_jobs[ ii ].inner_job, * prelim_larval_jobs[ ii ].job_options );
 
 		ParsedTagCacheOP const data_for_job =
-			tag_manager_.generate_data_for_input_pose_id( PrelimJobNodeID( ii ), * pose );
+			tag_manager_.generate_data_for_input_pose_id( PrelimJobNodeID( ii ) );
 
 		short unsigned int stage_count = 0;
 		for ( utility::tag::TagCOP tag : tag_for_stage_ ) {
@@ -1045,7 +1041,7 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 					);//either one works
 					if ( mover_name.size() ) { //length() instead?
 						utility::tag::TagCOP mover_tag = data_for_job->mover_tags->at( mover_name );
-						mover_factory->newMover( mover_tag, * data_for_job->data_map, * pose );
+						mover_factory->newMover( mover_tag, * data_for_job->data_map );
 					}
 				}
 
@@ -1054,7 +1050,7 @@ void MRSJobQueen::determine_validity_of_stage_tags(){//TODO only do this for nod
 				);
 				if ( filter_name.size() ) { //length() instead?
 					utility::tag::TagCOP filter_tag = data_for_job->filter_tags->at( filter_name );
-					filter_factory->newFilter( filter_tag, * data_for_job->data_map, * pose );
+					filter_factory->newFilter( filter_tag, * data_for_job->data_map );
 				} else if ( add_or_sort_count == tag->getTags().size() ) {
 					utility_exit_with_message( "All stages need to finish with a filter. No filter at the end of stage "
 						+ std::to_string( ii ) + " for input pose " + std::to_string( ii ) + "." );

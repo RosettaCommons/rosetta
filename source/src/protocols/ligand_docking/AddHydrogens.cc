@@ -71,8 +71,7 @@ protocols::moves::MoverOP AddHydrogens::fresh_instance() const {
 void
 AddHydrogens::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*datamap*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*datamap*/
 )
 {
 	debug_assert( tag->getName() != "AddHydrogens");

@@ -35,7 +35,6 @@
 
 using std::string;
 using std::endl;
-using core::pose::Pose;
 using utility::tag::TagCOP;
 using basic::datacache::DataMap;
 using protocols::loops::loops_definers::LoopsDefinerOP;
@@ -51,7 +50,6 @@ LoopsDefinerLoader::LoopsDefinerLoader() = default;
 LoopsDefinerLoader::~LoopsDefinerLoader() = default;
 
 void LoopsDefinerLoader::load_data(
-	Pose const & pose,
 	TagCOP const tag,
 	basic::datacache::DataMap & data
 ) const
@@ -68,7 +66,7 @@ void LoopsDefinerLoader::load_data(
 			utility_exit_with_message("Duplicate definition of LoopsDefiner with name " + name);
 		}
 		LoopsDefinerOP loops_definer( LoopsDefinerFactory::get_instance()->create_loops_definer( type ) );
-		loops_definer->parse_my_tag(subtag, data, pose);
+		loops_definer->parse_my_tag(subtag, data);
 		data.add("loops_definers", name, loops_definer );
 		TR << "Created LoopsDefiner named \"" << name << "\" of type " << type << endl;
 	}

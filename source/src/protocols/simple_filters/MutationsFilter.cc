@@ -288,9 +288,8 @@ MutationsFilter::report( std::ostream & out, core::pose::Pose const & pose ) con
 
 void
 MutationsFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	TR << "MutationsFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
 	rate_threshold( tag->getOption< core::Real >( "rate_threshold", 0.0 ) );

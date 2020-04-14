@@ -141,8 +141,8 @@ AntibodyCDRGrafter::AntibodyCDRGrafter( AntibodyCDRGrafter const & src ):
 void
 AntibodyCDRGrafter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap& data
+)
 {
 	if ( tag->hasOption("cdrs") ) {
 		TR << "Setting CDRs from settings" << std::endl;

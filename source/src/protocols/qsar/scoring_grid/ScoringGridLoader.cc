@@ -42,7 +42,6 @@ ScoringGridLoader::ScoringGridLoader() = default;
 ScoringGridLoader::~ScoringGridLoader() = default;
 
 void ScoringGridLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const

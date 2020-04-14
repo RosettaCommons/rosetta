@@ -126,8 +126,8 @@ bool SecondaryStructureFilter::apply( Pose const & pose ) const
 void
 SecondaryStructureFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	filtered_ss_ = tag->getOption<String>( "ss", "" );
 

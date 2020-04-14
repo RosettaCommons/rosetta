@@ -1015,8 +1015,7 @@ void InsertZincCoordinationRemarkLines::apply( core::pose::Pose & p )
 
 void InsertZincCoordinationRemarkLines::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	//noop
@@ -1262,8 +1261,8 @@ LoadZnCoordNumHbondCalculatorMover::apply( core::pose::Pose & )
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void LoadZnCoordNumHbondCalculatorMover::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {}
 
 std::string LoadZnCoordNumHbondCalculatorMover::get_name() const {

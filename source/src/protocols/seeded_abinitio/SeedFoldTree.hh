@@ -52,8 +52,8 @@ public:
 	std::set< core::Size > get_folding_vertices();
 
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 
 	core::kinematics::FoldTreeOP set_foldtree(

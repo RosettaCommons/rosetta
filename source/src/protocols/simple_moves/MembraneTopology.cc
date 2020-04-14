@@ -57,8 +57,8 @@ void MembraneTopology::apply( Pose & pose ) {
 
 
 void MembraneTopology::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 
 	span_file( tag->getOption< std::string >( "span_file" ) );

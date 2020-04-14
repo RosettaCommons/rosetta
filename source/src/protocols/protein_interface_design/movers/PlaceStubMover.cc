@@ -1073,8 +1073,8 @@ PlaceStubMover::add_coordinate_constraints_for_res_stub( core::pose::Pose & pose
 
 void
 PlaceStubMover::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using namespace protocols::hotspot_hashing;
 

@@ -1080,8 +1080,8 @@ PeriodicBoxMover::apply( Pose & pose ) {
 void
 PeriodicBoxMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const &  ) {
+	basic::datacache::DataMap & datamap
+) {
 	using namespace core::conformation;
 	using namespace core::pack::task;
 

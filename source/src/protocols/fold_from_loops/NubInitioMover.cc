@@ -172,9 +172,8 @@ NubInitioMover::apply( core::pose::Pose & pose )
 void
 NubInitioMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & reference_pose )
-{
+	basic::datacache::DataMap & data
+) {
 
 	prefix( tag->getOption< std::string >( "name", default_prefix() ) );
 	template_selector( core::select::residue_selector::parse_residue_selector( tag, data, "template_motif_selector" ) );
@@ -234,7 +233,7 @@ NubInitioMover::parse_my_tag(
 		filter_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, "filter_scorefxn", data ) );
 	}
 
-	nub_->parse_tag( tag, data, reference_pose );
+	nub_->parse_tag( tag, data );
 
 }
 

@@ -95,9 +95,8 @@ ResidueBurialFilter::apply( core::pose::Pose const & pose ) const {
 }
 
 void
-ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+ResidueBurialFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data
+) {
 	residue( tag->getOption< std::string >( "pdb_num", "" ) );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );

@@ -550,7 +550,7 @@ private: // per-stage movers
 
 public: // parser
 
-	void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data, Pose const & ) override;
+	void parse_my_tag( TagCOP tag, basic::datacache::DataMap & data ) override;
 
 	std::string
 	get_name() const override;

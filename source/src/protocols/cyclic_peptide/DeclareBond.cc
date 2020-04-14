@@ -213,8 +213,7 @@ void DeclareBond::apply( core::pose::Pose & pose )
 void
 DeclareBond::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	res1_ = tag->getOption< core::Size >( "res1" );

@@ -71,7 +71,7 @@ public :
 	~ddG() override;
 	protocols::moves::MoverOP fresh_instance() const override { return (protocols::moves::MoverOP) utility::pointer::make_shared< ddG >(); }
 	protocols::moves::MoverOP clone() const override;
-	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap &, core::pose::Pose const& ) override;
+	void parse_my_tag(  utility::tag::TagCOP, basic::datacache::DataMap & ) override;
 
 	protocols::moves::MoverOP relax_mover() const{ return relax_mover_; }
 	void relax_mover( protocols::moves::MoverOP m ){ relax_mover_ = m; }

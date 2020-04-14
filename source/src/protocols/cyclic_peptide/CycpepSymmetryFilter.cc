@@ -57,8 +57,8 @@ CycpepSymmetryFilter::~CycpepSymmetryFilter() = default;
 void
 CycpepSymmetryFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using namespace core::select::residue_selector;
 	ResidueSelectorCOP selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );

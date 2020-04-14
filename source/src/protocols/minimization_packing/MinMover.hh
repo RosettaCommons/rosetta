@@ -136,8 +136,8 @@ public:
 
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	void parse_opts(
 		TagCOP,

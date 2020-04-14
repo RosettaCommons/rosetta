@@ -67,9 +67,8 @@ TerminusDistanceFilter::~TerminusDistanceFilter()= default;
 void
 TerminusDistanceFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	distance_ = tag->getOption<core::Size>( "distance", 5 );
 

@@ -42,7 +42,7 @@ public:
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	core::Size from_res() const{ return from_res_; }
 	void from_res( core::Size const r ){ from_res_ = r; }

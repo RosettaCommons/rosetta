@@ -46,7 +46,6 @@ namespace matdes {
 
 using namespace core;
 using namespace utility;
-using core::pose::Pose;
 
 
 // -------------  Mover Creator -------------
@@ -193,8 +192,7 @@ SchemePlaceMotifsMover::apply(Pose & pose) {
 void
 SchemePlaceMotifsMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & data
 ){
 	tag_name_ = tag->getOption< std::string >("name","");
 	dumpfile_ = tag->getOption<std::string>("dumpfile","");

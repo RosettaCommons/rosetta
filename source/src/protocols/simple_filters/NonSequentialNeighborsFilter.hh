@@ -44,7 +44,7 @@ public:
 	core::Real report_sm( core::pose::Pose const & pose ) const override;
 	core::Real compute( core::pose::Pose const &pose ) const;
 	~NonSequentialNeighborsFilter() override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	core::Real distance_threshold() const { return distance_threshold_; }
 	void distance_threshold( core::Real const r ){ distance_threshold_ = r; }

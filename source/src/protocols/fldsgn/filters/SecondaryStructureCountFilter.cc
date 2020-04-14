@@ -109,8 +109,8 @@ bool SecondaryStructureCountFilter::apply( core::pose::Pose const & pose ) const
 void
 SecondaryStructureCountFilter::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	using protocols::parser::BluePrint;
 	num_helix_ = tag->getOption<core::Size>( "num_helix", 0 );

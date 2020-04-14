@@ -478,8 +478,8 @@ OptimizeThreadingMover::rebuild_unaligned(core::pose::Pose &pose) {
 
 void OptimizeThreadingMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & /*pose*/ )
+	basic::datacache::DataMap & data
+)
 {
 	if ( tag->hasOption( "scorefxn" ) ) {
 		std::string const scorefxn_name( tag->getOption<std::string>( "scorefxn" ) );

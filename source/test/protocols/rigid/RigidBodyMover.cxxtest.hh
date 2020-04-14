@@ -205,7 +205,7 @@ public:
 
 		basic::datacache::DataMap data;
 		TagCOP tag = tagptr_from_string("<RigidBodyTransMover name=trans distance=1 jump=1/>\n");
-		RB_mover->parse_my_tag( tag, data, pose );
+		RB_mover->parse_my_tag( tag, data );
 
 		/////////////////////////run
 		RB_mover->apply(pose);

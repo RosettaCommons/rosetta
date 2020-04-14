@@ -130,9 +130,8 @@ RandomizeBBByRamaPrePro::show(std::ostream & output) const
 void
 RandomizeBBByRamaPrePro::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& datamap
+) {
 	set_residue_selector( core::select::residue_selector::parse_residue_selector( tag, datamap ) );
 }
 

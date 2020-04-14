@@ -56,7 +56,7 @@ public:
 	std::string get_name() const override;
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< SpliceIn >(); }
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	~SpliceIn() override;
 	virtual core::Size find_dbase_entry(core::pose::Pose const & pose); //get pdb entry from database
 	virtual void assign_from_res_to_res(core::pose::Pose const & pose); //assign the start and end residues of the Spliced in segment

@@ -65,8 +65,8 @@ LongestContinuousPolarSegmentFilter::~LongestContinuousPolarSegmentFilter() = de
 void
 LongestContinuousPolarSegmentFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	set_exclude_chain_termini( tag->getOption<bool>( "exclude_chain_termini", exclude_chain_termini() ) );
 	set_count_gly_as_polar( tag->getOption<bool>("count_gly_as_polar", count_gly_as_polar()) );

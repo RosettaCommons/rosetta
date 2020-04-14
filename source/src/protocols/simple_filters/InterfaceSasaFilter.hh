@@ -49,7 +49,7 @@ public:
 	void sym_dof_names( utility::vector1<std::string> const & sym_dof_names );
 	void add_sym_dof_name( std::string const & sym_dof_name );
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	std::string
 	name() const override;

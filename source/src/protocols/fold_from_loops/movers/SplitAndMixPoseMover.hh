@@ -119,8 +119,8 @@ public:
 	inline moves::MoverOP clone() const override { return utility::pointer::make_shared< SplitAndMixPoseMover >( *this ); };
 	inline moves::MoverOP fresh_instance() const override{ return utility::pointer::make_shared< SplitAndMixPoseMover >(); };
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &data,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &data
+	) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 private:

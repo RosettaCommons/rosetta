@@ -116,8 +116,7 @@ void Tumble::apply( core::pose::Pose & pose ) {
 void
 Tumble::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & ,
-	Pose const &
+	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption( "chain_number" ) ) {
 		auto chain = tag->getOption< std::string >( "chain_number" );

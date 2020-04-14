@@ -125,8 +125,7 @@ class NullMover1ABC : public protocols::moves::NullMover
 public:
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap & data,
-		Pose const &
+		basic::datacache::DataMap & data
 	) override {
 		//std::cout << "parse_my_tag for NullMover1ABC" << std::endl;
 		TS_ASSERT( data.has_resource( "1abc" ) );
@@ -138,8 +137,7 @@ class NullMover2DEF : public protocols::moves::NullMover
 public:
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap & data,
-		Pose const &
+		basic::datacache::DataMap & data
 	) override {
 		TS_ASSERT( data.has_resource( "2def" ) );
 	}

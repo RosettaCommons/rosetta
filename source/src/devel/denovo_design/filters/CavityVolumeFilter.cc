@@ -98,8 +98,8 @@ CavityVolumeFilter::fresh_instance() const
 void
 CavityVolumeFilter::parse_my_tag(
 	utility::tag::TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & datamap
+)
 {
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const & selectorname = tag->getOption< std::string >( "selector" );

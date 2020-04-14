@@ -97,8 +97,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	//AssemblyMover & operator=( AssemblyMover const & src );
 
@@ -147,15 +147,15 @@ public:
 	void
 	parse_requirements(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose);
+		basic::datacache::DataMap& datamap
+	);
 
 	///@brief Parses the AssemblyScorers subtag of AssemblyMover
 	void
 	parse_assembly_scorers(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap& datamap,
-		core::pose::Pose const & pose);
+		basic::datacache::DataMap& datamap
+	);
 
 	///@brief Set default score function for this AssemblyMover. Called if no AssemblyScorers are specified through RosettaScripts.
 	virtual void

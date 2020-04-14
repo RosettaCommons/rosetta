@@ -61,7 +61,7 @@ namespace coupled_sidechains {
 class CoupledSidechainProtocol : public protocols::simple_moves::sidechain_moves::SidechainMover {
 
 public:
-//
+	//
 	static void register_options();
 	/// @brief default constructor
 	CoupledSidechainProtocol();
@@ -82,7 +82,7 @@ public:
 	//parser stuff
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief apply a sidechain move to a Pose object
 	void
@@ -103,7 +103,7 @@ public:
 
 	core::Size
 	ntrials(){
-		return 	ntrials_;
+		return  ntrials_;
 	}
 
 	void
@@ -123,7 +123,7 @@ public:
 		return *sfxn_;
 	}
 
-	
+
 	void
 	initialize_simulation(
 		core::pose::Pose & pose,
@@ -137,15 +137,15 @@ private:
 
 	void
 	perturb_chi(numeric::random::RandomGenerator Rand,
-							core::Real max_deviation,
-							utility::vector1<core::Real> & current_chi,
-							utility::vector1<core::Real> & new_chi
+		core::Real max_deviation,
+		utility::vector1<core::Real> & current_chi,
+		utility::vector1<core::Real> & new_chi
 	);
 
 	core::Size output_count( core::Size ct ) {
 		if ( ct % score_stride_ == 0 ) {
 			return ct / score_stride_;
-		}	else return 0;
+		} else return 0;
 	}
 
 	void observe_rotamers( core::Size ct, std::string const& traj_file_tag );

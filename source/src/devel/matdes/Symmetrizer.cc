@@ -178,8 +178,8 @@ Symmetrizer::apply(Pose & pose) {
 
 void
 Symmetrizer::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & ) {
+	basic::datacache::DataMap &
+) {
 
 	// Turn symmetry hacks on
 	if ( !basic::options::option[basic::options::OptionKeys::symmetry::symmetry_definition].user() ) {

@@ -88,9 +88,8 @@ AlignmentAAFinder::~AlignmentAAFinder() = default;
 void
 AlignmentAAFinder::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &data
+) {
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	exclude_AA_threshold( tag->getOption< core::Real >( "exclude_AA_threshold", 10.0 ) );
 	loop_seqid_threshold( tag->getOption< core::Real >( "loop_seqid_threshold", 0.50 ) );

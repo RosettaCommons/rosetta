@@ -128,7 +128,7 @@ public: // test functions
 		core::pose::Pose pose;
 
 		OptimizeMembranePositionMoverOP xomp( new OptimizeMembranePositionMover() );
-		xomp->parse_my_tag( tag, dm, pose );
+		xomp->parse_my_tag( tag, dm );
 
 		TS_ASSERT(xomp->get_sfxn() != nullptr);
 		TS_ASSERT_EQUALS(xomp->get_score_best(), 999001);

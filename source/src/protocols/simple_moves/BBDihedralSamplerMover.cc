@@ -83,8 +83,8 @@ BBDihedralSamplerMover::BBDihedralSamplerMover( BBDihedralSamplerMover const & s
 void
 BBDihedralSamplerMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 
 }

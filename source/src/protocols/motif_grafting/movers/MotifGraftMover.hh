@@ -272,8 +272,8 @@ public:
 	/**@brief Fuction to parse RosettaScripts XML options**/
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &) override;
+		basic::datacache::DataMap &
+	) override;
 
 	/**@brief Identify all potential matches for the given target scaffold (this is where the motif grafting code is called)**/
 	std::priority_queue<MotifMatch> generate_scaffold_matches(

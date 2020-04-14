@@ -79,8 +79,7 @@ protocols::moves::MoverOP ResidueTypeConstraintMover::fresh_instance() const { r
 void
 ResidueTypeConstraintMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	if ( tag->hasOption("AA_name3") ) {

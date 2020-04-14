@@ -38,8 +38,7 @@ public:
 	//qsarMover(scoring_grid::GridSetCOP grid_set_prototype, core::Real width, core::Real resolution);
 	void apply(core::pose::Pose & pose) override;
 	void parse_my_tag(utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 	std::string get_name() const override;
 

@@ -37,8 +37,8 @@ public:
 
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	std::string RBDatabase_fname() const {return RB_dbase_; }
 	void RBDatabase_fname( std::string const & s ){ RB_dbase_ = s; }

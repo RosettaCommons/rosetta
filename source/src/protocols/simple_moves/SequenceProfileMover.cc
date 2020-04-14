@@ -82,9 +82,8 @@ SequenceProfileMover::fresh_instance() const{
 void
 SequenceProfileMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data
+) {
 	using namespace core::scoring;
 
 	//handle cst_file_name

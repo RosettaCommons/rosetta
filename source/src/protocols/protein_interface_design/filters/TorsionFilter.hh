@@ -48,8 +48,9 @@ public:
 	core::Real compute( core::pose::Pose const & pose ) const;
 	~Torsion() override;
 	void parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap &,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
+
 	core::Real lower() const{ return lower_; }
 	void lower( core::Real const l ) { lower_ = l; }
 	core::Real upper() const{ return upper_; }

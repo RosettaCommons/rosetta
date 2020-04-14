@@ -55,8 +55,8 @@ SymFoldandDockMoveRbJumpMover::apply( core::pose::Pose & pose )
 void
 SymFoldandDockMoveRbJumpMover::parse_my_tag(
 	utility::tag::TagCOP const,
-	basic::datacache::DataMap & ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 }
 

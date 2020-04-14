@@ -215,8 +215,7 @@ UnrecognizedAtomFeatures::features_reporter_dependencies() const {
 void
 UnrecognizedAtomFeatures::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data*/,
-	Pose const & /*pose*/
+	basic::datacache::DataMap & /*data*/
 ) {
 	neighbor_distance_cutoff_ = tag->getOption<Real>("neighbor_distance_cutoff", 12.0);
 }

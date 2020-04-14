@@ -39,7 +39,6 @@ MoveMapFactoryLoader::MoveMapFactoryLoader() = default;
 MoveMapFactoryLoader::~MoveMapFactoryLoader() = default;
 
 void MoveMapFactoryLoader::load_data(
-	core::pose::Pose const &,
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) const

@@ -91,7 +91,7 @@ public:
 
 
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data_map ) override;
 
 	std::string
 	get_name() const override;

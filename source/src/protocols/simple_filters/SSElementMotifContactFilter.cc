@@ -296,8 +296,8 @@ bool SSElementMotifContactFilter::apply(const Pose & pose ) const
 void
 SSElementMotifContactFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	// set threshold
 	threshold_ = tag->getOption<Real>("threshold",0);

@@ -155,9 +155,8 @@ GlycanInfoMover::show(std::ostream & output) const
 void
 GlycanInfoMover::parse_my_tag(
 	utility::tag::TagCOP ,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap&
+) {
 
 }
 void GlycanInfoMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

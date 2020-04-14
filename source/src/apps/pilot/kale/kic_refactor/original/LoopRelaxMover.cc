@@ -1366,7 +1366,7 @@ void LoopRelaxMover::set_defaults_() {
 }
 
 // {{{1
-void LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data, core::pose::Pose const & pose )
+void LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap &data )
 {
 	using namespace utility::tag;
 	using namespace protocols::moves;

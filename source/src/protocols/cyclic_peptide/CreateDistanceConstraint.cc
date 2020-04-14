@@ -111,8 +111,7 @@ void CreateDistanceConstraint::apply( core::pose::Pose & pose )
 void
 CreateDistanceConstraint::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );

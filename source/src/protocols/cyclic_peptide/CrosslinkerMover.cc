@@ -215,8 +215,8 @@ CrosslinkerMover::show(std::ostream & output) const
 void
 CrosslinkerMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& datamap,
-	core::pose::Pose const & )
+	basic::datacache::DataMap& datamap
+)
 {
 	runtime_assert_string_msg( tag->hasOption("residue_selector"), "Error in protocols::cyclic_peptide::CrosslinkerMover::parse_my_tag(): A residue selector MUST be supplied with the \"residue_selector\" option." );
 	set_residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, datamap ) );

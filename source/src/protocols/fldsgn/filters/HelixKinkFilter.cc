@@ -199,8 +199,8 @@ HelixKinkFilter::apply( Pose const & pose ) const
 void
 HelixKinkFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	bend_angle_  = tag->getOption<Real>( "bend",  20 );
 	// secondary strucuture info

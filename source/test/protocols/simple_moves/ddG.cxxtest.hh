@@ -83,7 +83,7 @@ public:
 
 		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test chain_num=1 />\n");
-		testmover.parse_my_tag( tag, data, *test_dimer_pose_ );
+		testmover.parse_my_tag( tag, data );
 
 		TS_ASSERT_EQUALS( testmover.chain_ids().size(), 1 );
 		TS_ASSERT_EQUALS( testmover.chain_ids()[1], 1 );
@@ -91,7 +91,7 @@ public:
 
 		protocols::simple_ddg::ddG testmover2;
 		tag = tagptr_from_string("<ddG name=test chain_num=2 />\n");
-		testmover2.parse_my_tag( tag, data, *test_dimer_pose_ );
+		testmover2.parse_my_tag( tag, data );
 
 		TS_ASSERT_EQUALS( testmover2.chain_ids().size(), 1 );
 		TS_ASSERT_EQUALS( testmover2.chain_ids()[1], 2 );
@@ -109,7 +109,7 @@ public:
 
 		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
-		testmover.parse_my_tag( tag, data, *test_dimer_pose_ );
+		testmover.parse_my_tag( tag, data );
 
 		testmover.apply( *test_dimer_pose_ );
 
@@ -142,7 +142,7 @@ public:
 
 		protocols::simple_ddg::ddG testmover;
 		TagCOP tag = tagptr_from_string("<ddG name=test filter=sfT99 />\n");
-		testmover.parse_my_tag( tag, data, *test_monomer_pose_ );
+		testmover.parse_my_tag( tag, data );
 		testmover.apply( *test_monomer_pose_ );
 
 		TS_ASSERT_EQUALS( testmover.sum_ddG(), 199 );

@@ -54,8 +54,7 @@ public:
 	void
 	parse_my_tag(
 		TagCOP tag,
-		basic::datacache::DataMap & data,
-		Pose const & pose
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief Attempt to add cluster-based dihedral constraints.  If this is set to false will simply add General Dihedral constraints instead.

@@ -490,8 +490,7 @@ ProteinInterfaceMultiStateDesignMover::output_results( Pose & pose )
 
 void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const &
+	basic::datacache::DataMap & datamap
 )
 {
 	// flags/parameters (override options settings)

@@ -202,8 +202,7 @@ void MakeBundle::apply (core::pose::Pose & pose)
 void
 MakeBundle::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data_map*/,
-	core::pose::Pose const & /*pose*/
+	basic::datacache::DataMap & /*data_map*/
 ) {
 	runtime_assert_string_msg( tag->getName() == "MakeBundle", "This should be impossible -- the tag name does not match the mover name.");
 

@@ -343,8 +343,8 @@ TaskAwareScoreTypeFilter::report( std::ostream & out, core::pose::Pose const & p
 
 void
 TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	TR << "TaskAwareScoreTypeFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );

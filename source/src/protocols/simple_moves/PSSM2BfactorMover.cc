@@ -141,8 +141,8 @@ PSSM2BfactorMover::fresh_instance() const
 void
 PSSM2BfactorMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	max_value( tag->getOption< core::Real >( "Value_for_blue", 5.0 ) );
 	chain_num( tag->getOption< core::Real >( "chain_num", 1 ) );

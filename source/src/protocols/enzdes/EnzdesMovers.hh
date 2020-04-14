@@ -173,8 +173,8 @@ public:
 	void
 	parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap ,
-		core::pose::Pose const & ) override;
+		basic::datacache::DataMap & datamap
+	) override;
 
 	protocols::moves::MoverOP clone() const override;
 

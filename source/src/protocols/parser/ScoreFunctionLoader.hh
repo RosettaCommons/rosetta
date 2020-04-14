@@ -41,7 +41,6 @@ public:
 
 	/// @brief The ScoreFunctionLoader will create named ScoreFunctions and load them into the basic::datacache::DataMap
 	void load_data(
-		core::pose::Pose const & pose,
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data
 	) const override;

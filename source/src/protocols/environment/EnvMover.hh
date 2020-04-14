@@ -39,8 +39,8 @@ public:
 
 	void
 	parse_my_tag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const& pose ) override;
+		basic::datacache::DataMap & data
+	) override;
 
 	~EnvMover() override;
 
@@ -70,8 +70,8 @@ public:
 
 private:
 	void parse_subtag( utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const& pose );
+		basic::datacache::DataMap & data
+	);
 
 	EnvironmentOP env_;
 	moves::SequenceMoverOP movers_;

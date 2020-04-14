@@ -22,7 +22,6 @@
 
 // Project Headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>
@@ -76,8 +75,7 @@ public:
 	PosePropertyReporterOP
 	newPosePropertyReporter(
 		TagCOP,
-		basic::datacache::DataMap &,
-		core::pose::Pose const &
+		basic::datacache::DataMap &
 	);
 
 	void define_pose_reporter_group( utility::tag::XMLSchemaDefinition & xsd ) const;

@@ -72,8 +72,7 @@ public:
 	/// @brief RS integration
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data,
-		core::pose::Pose const &
+		basic::datacache::DataMap & data
 	) override;
 
 	/// @brief return a fresh instance of this class in an owning pointer

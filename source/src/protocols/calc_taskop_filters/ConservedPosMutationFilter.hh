@@ -56,7 +56,7 @@ public:
 
 	FilterOP fresh_instance() const override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const &  ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 
 	/// @brief Returns true if the given pose passes the filter, false otherwise.

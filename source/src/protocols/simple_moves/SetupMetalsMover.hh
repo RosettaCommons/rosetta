@@ -55,8 +55,8 @@ public:
 	/// @brief Called by protocols::moves::MoverFactory when constructing new protocols::moves::Movers. Takes care of the specific mover's parsing.
 	void parse_my_tag(
 		TagCOP,
-		basic::datacache::DataMap &,
-		Pose const & ) override;
+		basic::datacache::DataMap &
+	) override;
 
 	//Static methods
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

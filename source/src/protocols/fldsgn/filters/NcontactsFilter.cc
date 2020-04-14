@@ -111,8 +111,8 @@ NcontactsFilter::compute( Pose const & pose ) const
 void
 NcontactsFilter::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	Pose const & )
+	basic::datacache::DataMap &
+)
 {
 	report_type_ = tag->getOption< String >( "type", "sidechain_heavy_apolar_atm" );
 	filter_value_ = tag->getOption< Real >( "value", 0.0 );

@@ -166,8 +166,7 @@ SeparateDnaFromNonDna::apply( pose::Pose & pose )
 /// @brief parse XML (specifically in the context of the parser/scripting scheme)
 void SeparateDnaFromNonDna::parse_my_tag(
 	TagCOP const,
-	basic::datacache::DataMap &,
-	Pose const &
+	basic::datacache::DataMap &
 )
 {}
 

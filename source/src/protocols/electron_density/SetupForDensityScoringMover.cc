@@ -105,9 +105,8 @@ void SetupForDensityScoringMover::mask( protocols::loops::Loops const & loops ) 
 
 void SetupForDensityScoringMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 
 	TR << "Parsing SetupForDensityScoringMover----" << std::endl;
 	dock_into_dens_strategy_ = tag->getOption<std::string>( "realign", "no" );

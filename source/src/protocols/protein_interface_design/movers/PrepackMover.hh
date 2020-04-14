@@ -40,7 +40,7 @@ public:
 	protocols::moves::MoverOP clone() const override;
 	protocols::moves::MoverOP fresh_instance() const override;
 	void apply( core::pose::Pose & pose ) override;
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 	bool min_bb() const;
 	void min_bb( bool const m );
 	core::kinematics::MoveMapOP mm( core::pose::Pose const & pose ) const;

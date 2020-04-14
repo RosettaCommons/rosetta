@@ -298,8 +298,7 @@ AtomCoordinateCstMover::generate_constraints( core::pose::Pose const & pose )
 void
 AtomCoordinateCstMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const &
+	basic::datacache::DataMap & data
 ) {
 
 	func_groups( tag->getOption< bool >( "func_groups", false ) );

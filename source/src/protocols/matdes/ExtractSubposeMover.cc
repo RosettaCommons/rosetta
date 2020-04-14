@@ -185,8 +185,8 @@ ExtractSubposeMover::apply(Pose & pose) {
 
 void
 ExtractSubposeMover::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & ) {
+	basic::datacache::DataMap & /*data*/
+) {
 
 	sym_dof_names_ = tag->getOption< std::string >( "sym_dof_names","" );
 	prefix_ = tag->getOption< std::string >( "prefix", "" );

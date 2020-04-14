@@ -312,9 +312,8 @@ CreateSequenceMotifMover::show(std::ostream & output) const
 void
 CreateSequenceMotifMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& data,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap& data
+) {
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = parse_residue_selector(tag, data);
 	} else {

@@ -1115,9 +1115,8 @@ vector1<PossibleLoopOP> NearNativeLoopCloser::create_potential_loops(core::pose:
 void
 NearNativeLoopCloser::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & ){
-	using namespace protocols::indexed_structure_store;
+	basic::datacache::DataMap &
+){
 	std::string loopLengthRange( tag->getOption< std::string >( "loopLengthRange", "1,5") );
 	rmsThreshold_ = tag->getOption< core::Real >( "RMSthreshold", 0.4 );
 	if ( rmsThreshold_>0.6 ) {

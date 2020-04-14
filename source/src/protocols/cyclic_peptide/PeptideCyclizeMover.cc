@@ -280,8 +280,7 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 void
 PeptideCyclizeMover::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap & data,
-	Pose const &
+	basic::datacache::DataMap & data
 )
 {
 	std::string const name( tag->getOption<std::string>( "name" ));

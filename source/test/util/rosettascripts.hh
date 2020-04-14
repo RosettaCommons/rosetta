@@ -115,13 +115,12 @@ utility::pointer::shared_ptr<MoverSubclass> parse_tag(std::string tag_string) {
 	std::istringstream tag_stream(tag_string);
 	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
 	basic::datacache::DataMap data;
-	core::pose::Pose pose;
 
 	prime_Data( data );
 
 	protocols::moves::MoverOP base_mover(
-		protocols::moves::MoverFactory::get_instance()->newMover(
-		tag, data, pose ) );
+		protocols::moves::MoverFactory::get_instance()->newMover( tag, data )
+	);
 	utility::pointer::shared_ptr<MoverSubclass> mover =
 		utility::pointer::dynamic_pointer_cast<MoverSubclass>(base_mover);
 
@@ -136,13 +135,12 @@ utility::pointer::shared_ptr<FilterSubclass> parse_filter_tag(std::string tag_st
 	std::istringstream tag_stream(tag_string);
 	utility::tag::TagCOP tag = utility::tag::Tag::create(tag_stream);
 	basic::datacache::DataMap data;
-	core::pose::Pose pose;
 
 	prime_Data( data );
 
 	protocols::filters::FilterOP base_filter(
-		protocols::filters::FilterFactory::get_instance()->newFilter(
-		tag, data, pose ) );
+		protocols::filters::FilterFactory::get_instance()->newFilter( tag, data )
+	);
 	utility::pointer::shared_ptr<FilterSubclass> filter =
 		utility::pointer::dynamic_pointer_cast<FilterSubclass>(base_filter);
 

@@ -125,8 +125,8 @@ AntibodyNumberingConverterMover::~AntibodyNumberingConverterMover()= default;
 void
 AntibodyNumberingConverterMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap& ,
-	core::pose::Pose const & )
+	basic::datacache::DataMap&
+)
 {
 	if ( ! (tag->hasOption("from") && tag->hasOption("to") ) ) {
 		utility_exit_with_message("AntibodyNumberingConverterMover: 'from' and 'to' must be specified to do the conversion!");

@@ -58,9 +58,8 @@ SidechainRmsdFilter::~SidechainRmsdFilter()= default;
 void
 SidechainRmsdFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data_map
+) {
 	res1_ = core::pose::get_resnum_string( tag, "res1_" );
 	res2_ = core::pose::get_resnum_string( tag, "res2_" );
 	rmsd_threshold_ = tag->getOption<core::Real>("threshold", 1.0);

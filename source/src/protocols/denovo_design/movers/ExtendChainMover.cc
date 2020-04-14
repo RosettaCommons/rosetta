@@ -94,8 +94,8 @@ ExtendChainMover::fresh_instance() const
 void
 ExtendChainMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	architect_->parse_my_tag( tag, data );
 	// scorefunction

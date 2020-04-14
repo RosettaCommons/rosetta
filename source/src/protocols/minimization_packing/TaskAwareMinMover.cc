@@ -162,8 +162,7 @@ protocols::moves::MoverOP TaskAwareMinMover::clone() const { return utility::poi
 void
 TaskAwareMinMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & datamap,
-	Pose const & pose
+	basic::datacache::DataMap & datamap
 )
 {
 	if ( tag->hasOption("chi") ) chi_ = tag->getOption<bool>("chi");
@@ -178,7 +177,7 @@ TaskAwareMinMover::parse_my_tag(
 	minmover_ = utility::pointer::make_shared< MinMover >();
 	// call to MinMover::parse_my_tag avoided here to prevent collision of movemap tag options
 	minmover_->parse_opts( tag, datamap );
-	parse_task_operations( tag, datamap, pose );
+	parse_task_operations( tag, datamap );
 	minmover_->score_function( protocols::rosetta_scripts::parse_score_function( tag, datamap) );
 }
 
@@ -186,8 +185,7 @@ TaskAwareMinMover::parse_my_tag(
 void
 TaskAwareMinMover::parse_task_operations(
 	TagCOP const tag,
-	basic::datacache::DataMap const & datamap,
-	Pose const &
+	basic::datacache::DataMap const & datamap
 )
 {
 	using namespace core::pack::task;

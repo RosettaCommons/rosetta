@@ -73,8 +73,8 @@ LoadPDBMover::fresh_instance() const
 void
 LoadPDBMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & /*data*/
+)
 {
 	filename( tag->getOption< std::string >( "filename" ) );
 	TR<<"filename: "<<filename_<<std::endl;

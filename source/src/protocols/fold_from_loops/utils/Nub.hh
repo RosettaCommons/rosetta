@@ -122,7 +122,7 @@ public:
 public:
 	// -- ROSETTASCRIPTS -- //
 	static void provide_xml_definition( utility::tag::XMLSchemaDefinition & xsd, utility::tag::XMLSchemaSimpleSubelementList & elements );
-	void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data, core::pose::Pose const & reference_pose );
+	void parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &data );
 	static std::string object_name();
 	static std::string complex_object_name( std::string tag_name );
 	static std::string segment_object_name();

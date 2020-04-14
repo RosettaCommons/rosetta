@@ -81,8 +81,8 @@ public:
 	core::pose::PoseOP get_additional_output()override;
 	void parse_my_tag(
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & datamap,
-		core::pose::Pose const & pose ) override;
+		basic::datacache::DataMap & datamap
+	) override;
 
 private:
 	std::map<std::string,core::pose::Pose> pdb_cache_;

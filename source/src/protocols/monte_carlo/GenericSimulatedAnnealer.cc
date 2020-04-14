@@ -714,10 +714,10 @@ GenericSimulatedAnnealer::apply_mover( core::pose::Pose & pose ) {
 /// @brief parse xml file
 void
 GenericSimulatedAnnealer::parse_my_tag( TagCOP const tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & pose )
+	basic::datacache::DataMap & data
+)
 {
-	GenericMonteCarloMover::parse_my_tag( tag, data, pose );
+	GenericMonteCarloMover::parse_my_tag( tag, data );
 	history_ = tag->getOption< core::Size >( "history", history_ );
 	eval_period_ = tag->getOption< core::Size >( "eval_period", eval_period_ );
 	std::string const mover_name( tag->getOption< std::string >( "periodic_mover", "" ) );

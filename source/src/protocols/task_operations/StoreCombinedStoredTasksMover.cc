@@ -151,9 +151,8 @@ StoreCombinedStoredTasksMover::apply( core::pose::Pose & pose )
 void
 StoreCombinedStoredTasksMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & /*data_map*/,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & /*data_map*/
+) {
 	task1_ = tag->getOption< std::string >( "task1" ) ;
 	task2_ = tag->getOption< std::string >( "task2" ) ;
 	operator_ = tag->getOption< std::string >( "operator", "union" ) ;

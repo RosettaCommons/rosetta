@@ -63,7 +63,7 @@ HeavyAtomFilter::report_sm( core::pose::Pose const & pose ) const {
 }
 
 void
-HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & )
+HeavyAtomFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
 {
 	if ( ! (tag->hasOption("chain") && tag->hasOption("heavy_atom_limit") ) ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "HeavyAtom filter needs a 'chain' and a 'heavy_atom_limit' option");

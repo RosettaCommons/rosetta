@@ -79,9 +79,8 @@ StoreTaskMover::apply( core::pose::Pose & pose )
 void
 StoreTaskMover::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap & data_map,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap & data_map
+) {
 
 	task_factory_ = protocols::rosetta_scripts::parse_task_operations( tag, data_map );
 	task_name_ = tag->getOption< std::string >( "task_name" );

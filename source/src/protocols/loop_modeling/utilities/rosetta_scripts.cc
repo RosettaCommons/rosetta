@@ -21,7 +21,6 @@
 #include <protocols/filters/Filter.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <core/pose/Pose.hh>
 
 // C++ headers
 #include <string>
@@ -32,7 +31,6 @@ using namespace std;
 using utility::tag::TagCOP;
 using utility::pointer::dynamic_pointer_cast;
 using basic::datacache::DataMap;
-using core::pose::Pose;
 
 namespace protocols {
 namespace loop_modeling {
@@ -40,13 +38,13 @@ namespace utilities {
 
 LoopMoverOP loop_mover_from_tag(
 	TagCOP tag,
-	DataMap & data,
-	Pose const & pose) {
+	DataMap & data
+) {
 
 	using protocols::moves::MoverOP;
 	using protocols::moves::MoverFactory;
 
-	MoverOP base_mover = MoverFactory::get_instance()->newMover( tag, data, pose );
+	MoverOP base_mover = MoverFactory::get_instance()->newMover( tag, data );
 	LoopMoverOP loop_mover = dynamic_pointer_cast< LoopMover > ( base_mover );
 
 	if ( ! loop_mover ) {

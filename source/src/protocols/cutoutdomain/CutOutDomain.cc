@@ -86,9 +86,8 @@ CutOutDomain::apply( core::pose::Pose & pose )
 void
 CutOutDomain::parse_my_tag(
 	TagCOP const tag,
-	basic::datacache::DataMap &,
-	core::pose::Pose const & )
-{
+	basic::datacache::DataMap &
+) {
 	start_res_ = tag->getOption<core::Size>( "start_res", 1 );
 	end_res_ = tag->getOption<core::Size>( "end_res", 1 );
 	source_pdb_name( tag->getOption< std::string >( "source_pdb" ));

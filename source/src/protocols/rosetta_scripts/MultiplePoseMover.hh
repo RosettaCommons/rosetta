@@ -63,7 +63,7 @@ public:
 	void apply(core::pose::Pose& pose) override;
 	core::pose::PoseOP get_additional_output() override;
 
-	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap &, core::pose::Pose const & ) override;
+	void parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & ) override;
 
 	/// @brief Used by RosettaScripts to set the previous mover to pull poses from
 	void set_previous_mover( protocols::moves::MoverOP const m );

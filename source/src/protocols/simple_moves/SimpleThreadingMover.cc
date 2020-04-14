@@ -78,8 +78,8 @@ SimpleThreadingMover::set_defaults(){
 void
 SimpleThreadingMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & data,
-	core::pose::Pose const & )
+	basic::datacache::DataMap & data
+)
 {
 	pack_neighbors_ = tag->getOption< bool >("pack_neighbors", pack_neighbors_);
 	neighbor_dis_ = tag->getOption< core::Real >("neighbor_dis", neighbor_dis_);
