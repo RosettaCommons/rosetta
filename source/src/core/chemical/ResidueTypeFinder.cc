@@ -83,7 +83,7 @@ ResidueTypeFinder::ResidueTypeFinder( core::chemical::ResidueTypeSet const & res
 	ignore_atom_named_H_( false ),
 	disallow_carboxyl_conjugation_at_glu_asp_( false ),
 	check_nucleic_acid_virtual_phosphates_( false ),
-	no_metapatches_(false),
+	no_metapatches_(false), // true would disable consideration of metapatches (relevant for speed)
 	no_CCD_on_name3_match_( ! option[ OptionKeys::in::file::check_all_PDB_components ]() )
 {}
 
@@ -98,6 +98,9 @@ ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 	rsd_types = get_possible_base_residue_types( false /* include_unpatchable */ );
 
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/, true /*get_first_residue_found*/ );
+
+	// If there are metapatches to apply and they are to be considered
+	// disable_metapatches() would disable consideration of metapatches (relevant for speed)
 	if ( metapatches && !no_metapatches() ) {
 		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 		// We need to apply metapatches again just in case there are some double variants.
@@ -109,7 +112,9 @@ ResidueTypeFinder::get_representative_type( bool const metapatches ) const
 
 	rsd_types = apply_filters_after_patches( rsd_types, true /* allow_extra_variants */ );
 
-	if ( rsd_types.size() == 0 ) return nullptr;
+	// No residue types left after patching and filtering
+	if ( rsd_types.size() == 0 ) { return nullptr; }
+
 	return rsd_types[ 1 ];
 }
 
@@ -120,11 +125,13 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	// Get all possible basic residues that might match
 	ResidueTypeCOPs rsd_types = get_possible_base_residue_types( false /* include_unpatchable*/ );
 
-	TR.Debug << "Found " << rsd_types.size() << " base ResidueTypes." << std::endl;
+	TR.Debug << "Found " << rsd_types.size() << " base ResidueType(s) that might match." << std::endl;
 
 	// Go down the binary tree of patches.
 	rsd_types = apply_patches_recursively( rsd_types, 1 /*start with this patch*/ );
 
+	// If metapatches to be considered
+	// disable_metapatches() would disable consideration of metapatches (relevant for speed)
 	if ( !no_metapatches() ) {
 		rsd_types = apply_metapatches_recursively( rsd_types, 1 /*start with this patch*/ );
 		// We need to apply metapatches again just in case there are some double variants.
@@ -136,12 +143,14 @@ ResidueTypeFinder::get_all_possible_residue_types( bool const allow_extra_varian
 	// add in any unpatchable residues.
 	rsd_types.append( get_possible_unpatchable_residue_types() );
 
-	TR.Debug << "Patched up to " << rsd_types.size() << " ResidueTypes." << std::endl;
+	TR.Debug << "Patched up to " << rsd_types.size() << " ResidueType(s)." << std::endl;
 
 	// Filter for rsd_types that strictly obey requirements
 	rsd_types = apply_filters_after_patches( rsd_types, allow_extra_variants );
 
 	rsd_types = apply_preferences_and_discouragements( rsd_types );
+
+	TR.Debug << "Keeping up to " << rsd_types.size() << " ResidueType(s) after filtering." << std::endl;
 
 	return rsd_types;
 }
@@ -184,7 +193,9 @@ ResidueTypeCOPs
 ResidueTypeFinder::get_possible_base_residue_types(
 	bool const include_unpatchable /*=true*/, bool const apply_all_filters /*=false*/ ) const
 {
-	if ( base_type_ ) { //If a base type has already been specified, there's no need to bother with a lot of other rigamarole.
+	//If a base type has already been specified,
+	//there's no need to bother with a lot of other rigamarole.
+	if ( base_type_ ) {
 		ResidueTypeCOPs rsd_types;
 		rsd_types.push_back( base_type_ );
 		return rsd_types;
@@ -194,7 +205,6 @@ ResidueTypeFinder::get_possible_base_residue_types(
 	initialize_relevant_pdb_components();
 
 	ResidueTypeCOPs rsd_types = residue_type_set_.base_residue_types();
-
 
 	if ( include_unpatchable ) {
 		rsd_types.append( get_possible_base_unpatchable_residue_types() );
@@ -233,8 +243,9 @@ ResidueTypeCOPs
 ResidueTypeFinder::get_possible_unpatchable_residue_types() const
 {
 	ResidueTypeCOPs rsd_types = residue_type_set_.unpatchable_residue_types();
-	rsd_types = apply_basic_filters( rsd_types );
-	return rsd_types;
+	// No need to filter if there are no unpatchable residue types
+	if ( rsd_types.size() == 0 ) { return rsd_types; }
+	return apply_basic_filters( rsd_types );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +269,7 @@ ResidueTypeCOPs
 ResidueTypeFinder::apply_basic_filters( ResidueTypeCOPs rsd_types ) const
 {
 	if ( rsd_types.empty() ) {
-		TR.Debug << "Going into apply_basic_filters() ResidueType filtering, no residue types were passed." << std::endl;
+		TR.Debug << "No ResidueTypes were passed for applying basic filters." << std::endl;
 		return rsd_types;
 	}
 	rsd_types = filter_by_aa( rsd_types );
@@ -276,7 +287,7 @@ ResidueTypeFinder::apply_filters_after_patches( ResidueTypeCOPs rsd_types,
 	bool const allow_extra_variants  /* = false */ ) const
 {
 	if ( rsd_types.empty() ) {
-		TR.Debug << "Going into apply_filters_after_patches() ResidueType filtering, no residue types were passed." << std::endl;
+		TR.Debug << "No ResidueTypes were passed for applying filters after patching." << std::endl;
 		return rsd_types;
 	}
 	rsd_types = filter_by_name3( rsd_types, false /* keep_if_base_type_generates_name3 */ );
@@ -327,8 +338,9 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 			}
 		}
 		if ( TR.Debug.visible() ) {
-			TR.Debug << "Discouraging " << discouraged_properties_.size() << " properties, "
-				<< "going from " << current_type_list.size() << " types to " << new_type_list.size() << " types." << std::endl;
+			TR.Debug << "Discouraging " << discouraged_properties_.size() << " properties, " <<
+				"going from " << current_type_list.size() << " types to " <<
+				new_type_list.size() << " types." << std::endl;
 			TR.Debug << "Discouraged: " <<  discouraged_properties_ << std::endl;
 			TR.Debug << "Going from ";
 			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
@@ -360,8 +372,9 @@ ResidueTypeFinder::apply_preferences_and_discouragements( ResidueTypeCOPs const 
 			}
 		}
 		if ( TR.Debug.visible() ) {
-			TR.Debug << "Encouraging " << preferred_properties_.size() << " properties, "
-				<< "going from " << current_type_list.size() << " types to " << new_type_list.size() << " types." << std::endl;
+			TR.Debug << "Encouraging " << preferred_properties_.size() << " properties, " <<
+				"going from " << current_type_list.size() << " types to " <<
+				new_type_list.size() << " types." << std::endl;
 			TR.Debug << "Encouraged: " << preferred_properties_ << std::endl;
 			TR.Debug<< "Going from ";
 			for ( auto rt: current_type_list ) { TR.Debug << " " << rt->name(); }
@@ -435,8 +448,12 @@ ResidueTypeFinder::apply_patches_recursively(
 
 	// Pointless to apply patches if we don't have any residue types to apply them to.
 	if ( rsd_types.empty() ) {
+		TR.Debug << "No ResidueTypes to apply patches to" << std::endl;
 		return rsd_types;
 	}
+
+	// Return rsd_types if patch_number is not applicable
+	if ( patch_number == 0 || patch_number > residue_type_set_.patches().size() ) return rsd_types;
 
 	ResidueTypeCOPs rsd_types_new = rsd_types;
 	PatchCOP patch = residue_type_set_.patches()[ patch_number ];
@@ -473,7 +490,12 @@ ResidueTypeFinder::apply_patches_recursively(
 
 	} // end loop
 
-	if ( get_first_totally_ok_residue_type && ! rsd_types_new.empty() ) { // maybe we're done?
+	// maybe we're done?
+	// TODO
+	// Only want to do the work of filtering if we actually added
+	// a new patched ResidueType to check, as rsd_types_new is likely never empty
+	if ( ( get_first_totally_ok_residue_type ) &&
+			( ! rsd_types_new.empty() ) ) {
 		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
 		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
 		if ( ! rsd_types_filtered.empty() ) return rsd_types_filtered;
@@ -482,7 +504,7 @@ ResidueTypeFinder::apply_patches_recursively(
 	// end of recursion through patches?
 	if ( patch_number == residue_type_set_.patches().size() ) return rsd_types_new;
 
-	return  apply_patches_recursively( rsd_types_new, patch_number + 1, get_first_totally_ok_residue_type );
+	return apply_patches_recursively( rsd_types_new, patch_number + 1, get_first_totally_ok_residue_type );
 
 }
 
@@ -492,11 +514,16 @@ ResidueTypeFinder::apply_metapatches_recursively(
 	Size const metapatch_number,
 	bool const get_first_totally_ok_residue_type /*= false*/
 ) const {
-	if ( no_metapatches() ) return rsd_types;
-	ResidueTypeCOPs rsd_types_new = rsd_types;
-	utility::vector1< MetapatchCOP > metapatch_list( residue_type_set_.metapatches() ); // Returned by value
-	if ( metapatch_number == 0 || metapatch_number > metapatch_list.size() ) return rsd_types_new;
 
+	// If metapatches are not to be considered, return rsd_types
+	// no_metapatches() == true means do not consider metapatches
+	if ( no_metapatches() ) { return rsd_types; }
+
+	utility::vector1< MetapatchCOP > metapatch_list( residue_type_set_.metapatches() ); // Returned by value
+
+	if ( metapatch_number == 0 || metapatch_number > metapatch_list.size() ) { return rsd_types; }
+
+	ResidueTypeCOPs rsd_types_new = rsd_types;
 	MetapatchCOP metapatch = metapatch_list[ metapatch_number ];
 
 	for ( Size n = 1; n <= rsd_types.size(); n++ ) {
@@ -545,7 +572,12 @@ ResidueTypeFinder::apply_metapatches_recursively(
 
 	} // end loop
 
-	if ( get_first_totally_ok_residue_type ) { // maybe we're done?
+	// maybe we're done?
+	// TODO
+	// Only want to do the work of filtering if we actually added
+	// a new patched ResidueType to check, as rsd_types_new is likely never empty
+	if ( ( get_first_totally_ok_residue_type ) &&
+			( ! rsd_types_new.empty() ) ) {
 		// note that this repeats some work -- some rsd_types were checked in prior steps in the recursion
 		ResidueTypeCOPs rsd_types_filtered = apply_filters_after_patches( rsd_types_new, true /*allow_extra_variants*/ );
 		if ( rsd_types_filtered.size() > 0 ) return rsd_types_filtered;
@@ -554,7 +586,7 @@ ResidueTypeFinder::apply_metapatches_recursively(
 	// end of recursion through patches?
 	if ( metapatch_number == residue_type_set_.metapatches().size() ) return rsd_types_new;
 
-	return  apply_metapatches_recursively( rsd_types_new, metapatch_number + 1, get_first_totally_ok_residue_type );
+	return apply_metapatches_recursively( rsd_types_new, metapatch_number + 1, get_first_totally_ok_residue_type );
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -569,7 +601,7 @@ ResidueTypeFinder::filter_by_name1( ResidueTypeCOPs const & rsd_types  ) const
 		rsd_types_new.push_back( rsd_type );
 	}
 	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
-		TR.Debug << "No ResidueTypes remain after filtering by one letter code: '" << name1_ << "'" << std::endl;
+		TR.Debug << "No ResidueTypes remain after filtering by one-letter code: '" << name1_ << "'" << std::endl;
 	}
 	return rsd_types_new;
 }
@@ -595,7 +627,7 @@ ResidueTypeFinder::filter_by_name3( ResidueTypeCOPs const & rsd_types, bool cons
 	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering by name3 on sets that don't contain what we want.
-		TR.Debug << "No ResidueTypes remain after filtering by three letter code: '" << name3_ << "'" << std::endl;
+		TR.Debug << "No ResidueTypes remain after filtering by three-letter code: '" << name3_ << "'" << std::endl;
 	}
 	return rsd_types_new;
 }
@@ -618,7 +650,8 @@ ResidueTypeFinder::filter_by_interchangeability_group( ResidueTypeCOPs const & r
 	if ( rsd_types_new.empty() && ! rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering on sets that don't contain what we want.
-		TR.Debug << "No ResidueTypes remain after filtering by interchangeability group: '" << interchangeability_group_ << "'" << std::endl;
+		TR.Debug << "No ResidueTypes remain after filtering by interchangeability group: '" <<
+			interchangeability_group_ << "'" << std::endl;
 	}
 	return rsd_types_new;
 }
@@ -658,7 +691,8 @@ ResidueTypeFinder::filter_by_residue_type_base_name( ResidueTypeCOPs const & rsd
 		}
 	}
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
-		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base name: '" << residue_type_base_name_ << "'" << std::endl;
+		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base name: '" <<
+			residue_type_base_name_ << "'" << std::endl;
 	}
 	return filtered_rsd_types;
 }
@@ -676,7 +710,8 @@ ResidueTypeFinder::filter_by_base_property( ResidueTypeCOPs const & rsd_types ) 
 		}
 	}
 	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
-		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base property: '" << base_property_ << "'" << std::endl;
+		TR.Debug << "No ResidueTypes remain after filtering by ResidueType base property: '" <<
+			base_property_ << "'" << std::endl;
 	}
 	return filtered_rsd_types;
 }
@@ -756,6 +791,7 @@ ResidueTypeFinder::fixes_interchangeability_group( PatchCOP patch, ResidueTypeCO
 		if ( new_type && new_type->interchangeability_group() == interchangeability_group_ ) {
 			return true;
 		}
+		// @mlnance: why is this return true here? seems like the above if-statement doesn't matter then
 		return true;
 	}
 	return false;
@@ -805,7 +841,7 @@ ResidueTypeFinder::adds_any_property( PatchCOP patch, ResidueTypeCOP rsd_type ) 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @brief Returns ture if this patch deletes any of the properties that the ResidueTypeFinder is seeking.
+/// @brief Returns true if this patch deletes any of the properties that the ResidueTypeFinder is seeking.
 /// @details ONLY works for canonical properties (not on-the-fly properties) at present.  Modified on
 /// 25 Aug 2016 by VKM to remove string parsing.
 bool
@@ -855,7 +891,13 @@ ResidueTypeFinder::matches_any_atom_name( PatchCOP patch, ResidueTypeCOP rsd_typ
 {
 	vector1< std::string > new_atom_names = patch->adds_atoms( *rsd_type );
 	for ( auto & new_atom_name : new_atom_names ) {
-		if ( atom_names_soft_.has_value( ObjexxFCL::strip_whitespace( new_atom_name ) ) ) return true;
+		if ( atom_names_soft_.has_value( ObjexxFCL::strip_whitespace( new_atom_name ) ) ) {
+			// @mlnance a verbose debug here is helpful for carbohydrate debugging
+			TR.Debug << "Patch '" << patch->name() <<
+				"' is relevant because this patch has atom name " << new_atom_name <<
+				" which is an atom name found in the PDB file" << std::endl;
+			return true;
+		}
 	}
 	return false;
 }
@@ -870,7 +912,7 @@ ResidueTypeFinder::filter_all_variants_matched( ResidueTypeCOPs const & rsd_type
 	if ( !allow_extra_variants ) {
 		filtered_rsd_types = check_variant_sets_have_all_candidate_variants( filtered_rsd_types );
 	}
-	if ( filtered_rsd_types.empty() && ! rsd_types.empty() ) {
+	if ( TR.Debug.visible() && filtered_rsd_types.empty() && ! rsd_types.empty() ) {
 		// RM: This seems to occur frequently in the integration tests.
 		// We may want to examine why we're doing so much filtering by matched variants on sets that don't contain what we want.
 		TR.Debug << "No ResidueTypes remain after filtering for matched variants." << std::endl;
@@ -1229,7 +1271,7 @@ ResidueTypeFinder::variant_exceptions( utility::vector1< std::string > const & s
 				variant_exceptions_.push_back( variant_type );
 			}
 		} else {
-			utility_exit_with_message( "not currently handling custom variants within variant_exceptions" );
+			utility_exit_with_message( "Not currently handling custom variants within variant_exceptions!" );
 		}
 	}
 	return *this;

@@ -5,7 +5,7 @@
   amino_sugar           amino        deoxy    N      NH3+                  2             0  ose         oside      N/A
   acetyl_sugar          acetyl       N/A      Ac     Ac                    5             0  ose         oside      N/A
   acetylamino_sugar     acetylamino  deoxy    NAc    AcNH                  2             0  ose         oside      N/A
-  methyl_sugar          methyl       deoxy    OMe    Me                    0             0  ose         oside      N/A
+  methyl_sugar          methyl       deoxy    Me     Me                    0             0  ose         oside      N/A
   deoxy_sugar           deoxy        N/A      N/A    deoxy                 0             0  ose         oside      N/A
   phosphorylated_sugar  N/A          N/A      P      OPO32-                6             0  ose         oside      phosphate
   thio_sugar            thio         N/A      SH     SH                    0             0  ose         oside      N/A

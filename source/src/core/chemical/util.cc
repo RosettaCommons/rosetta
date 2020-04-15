@@ -511,6 +511,12 @@ find_best_match( ResidueTypeCOPs const & rsd_type_list,
 		// xyz_missing is number of candidate ResidueType's atoms that do not match target atom names
 		for ( Size k=1; k<= rsd_type.natoms(); ++k ) {
 			bool found_match( false );
+			// @mlnance TODO (quote from RM from closed PR #4570)
+			// "some 'half' approach which considers virtuals but not the same as non-virtuals
+			// (e.g. just as a tiebreaker) might be the better approach" [It may be]
+			// "worth putting in missing virtuals as a secondary, lower level check,
+			// versus being equivalent to a missing real atom."
+			// context: both virtual and non-virtual atoms can be considered a match
 			for ( Size m = 1; m <= atom_names.size(); ++m ) {
 				if ( ObjexxFCL::stripped_whitespace( atom_names[m] ) == ObjexxFCL::stripped_whitespace( rsd_type.atom_name(k) ) ) {
 					found_match = true; break;

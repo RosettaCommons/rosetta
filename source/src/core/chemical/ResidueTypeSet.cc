@@ -121,7 +121,10 @@ ResidueTypeSet::name_map( std::string const & name_in ) const
 		name = "CYS:disulfide";
 	}
 	ResidueTypeCOP restype( name_mapOP( name ) );
-	runtime_assert_string_msg( restype != nullptr, "The residue " + name + " could not be generated.  Has a suitable params file been loaded?  (Note that custom params files not in the Rosetta database can be loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
+	runtime_assert_string_msg( restype != nullptr, "The residue " + name +
+		" could not be generated.  Has a suitable params file been loaded?"
+		" (Note that custom params files not in the Rosetta database can be"
+		" loaded with the -extra_res or -extra_res_fa command-line flags.)"  );
 	return *restype;
 }
 
@@ -138,7 +141,7 @@ ResidueTypeSet::name_mapOP( std::string const & name_in ) const
 #ifdef MULTI_THREADED
 		utility::thread::ReadLockGuard read_lock( cache_->read_write_mutex() );
 #endif
-		if ( cache_object()->has_generated_residue_type( name) ) {
+		if ( cache_object()->has_generated_residue_type( name ) ) {
 			return cache_object()->name_map( name );
 		}
 	}
@@ -202,12 +205,11 @@ ResidueTypeSet::generate_residue_type_write_locked( std::string const & rsd_name
 
 	// now apply patches.
 	ResidueTypeCOP rsd_base_ptr = name_mapOP_write_locked( rsd_name_base );
-	if ( ! rsd_base_ptr ) { return nullptr; }
+	if ( rsd_base_ptr == nullptr ) { return nullptr; }
 
 	MutableResidueTypeCOP patched_mut_type( apply_patch( rsd_base_ptr, patch_name, patch_map(), metapatch_map() ) );
-	if ( patched_mut_type == nullptr ) {
-		return nullptr;
-	} else {
+	if ( patched_mut_type == nullptr ) { return nullptr; }
+	else {
 		ResidueTypeCOP patched_type( ResidueType::make( *patched_mut_type ) );
 		cache_object()->add_residue_type( patched_type );
 		return patched_type;
@@ -219,7 +221,7 @@ ResidueTypeSet::apply_patch(
 	ResidueTypeCOP const & rsd_base_ptr,
 	std::string const & patch_name,
 	std::map< std::string, utility::vector1< PatchCOP > > const & patch_mapping,
-	std::map< std::string, MetapatchCOP > const & metapach_mapping
+	std::map< std::string, MetapatchCOP > const & metapatch_mapping
 ) const {
 
 	if ( rsd_base_ptr == nullptr ) { return nullptr; }
@@ -237,25 +239,25 @@ ResidueTypeSet::apply_patch(
 		// Atom name: second element if you split the patch name by '-'
 		std::string atom_name = utility::string_split( patch_name, '-' )[2];
 
-		if ( metapach_mapping.count( metapatch_name ) == 0 ) {
+		if ( metapatch_mapping.count( metapatch_name ) == 0 ) {
 			return nullptr; // Can't generate this with this ResidueTypeSet
 		}
 
 		// Add buffering spaces just in case the resultant patch is PDB-naming sensitive
 		// we need enough whitespace -- will trim later
-		PatchCOP needed_patch = metapach_mapping.at( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
+		PatchCOP needed_patch = metapatch_mapping.at( metapatch_name )->get_one_patch( /*rsd_base, */"  " + atom_name + "  " );
 
 		MutableResidueTypeOP rsd_instantiated ( needed_patch->apply( *rsd_base_ptr ) );
 
-		if ( rsd_instantiated == nullptr ) {
-			return nullptr;
-		}
+		if ( rsd_instantiated == nullptr ) { return nullptr; }
+
 		prep_restype( rsd_instantiated );
 
 		//Set the pointer to the base type:
 		if ( rsd_base_ptr->get_base_type_cop() ) {
 			rsd_instantiated->set_base_type_cop( rsd_base_ptr->get_base_type_cop() );
-			if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type and the mainchain potentials match...
+			//If we're making a copy of a base type and the mainchain potentials match...
+			if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) {
 				rsd_instantiated->reset_mainchain_torsion_potential_names();
 			}
 		} else {
@@ -274,14 +276,16 @@ ResidueTypeSet::apply_patch(
 
 			MutableResidueTypeOP rsd_instantiated = p->apply( *rsd_base_ptr );
 
-			if ( rsd_instantiated == nullptr ) return nullptr; // Should this really be a hard-fail, or should we just go on to the next patch?
+			// TODO Should this really be a hard-fail, or should we just go on to the next patch?
+			if ( rsd_instantiated == nullptr ) return nullptr;
 
 			prep_restype( rsd_instantiated );
 
 			//Set the pointer to the base type:
 			if ( rsd_base_ptr->get_base_type_cop() ) {
 				rsd_instantiated->set_base_type_cop( rsd_base_ptr->get_base_type_cop() );
-				if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) { //If we're making a copy of a base type...
+				//If we're making a copy of a base type...
+				if ( rsd_base_ptr->is_base_type() && rsd_base_ptr->mainchain_potentials_match( *rsd_instantiated ) ) {
 					rsd_instantiated->reset_mainchain_torsion_potential_names();
 				}
 			} else {
@@ -292,7 +296,10 @@ ResidueTypeSet::apply_patch(
 		}
 	}
 
-	return nullptr; // If we make it here, we weren't able to successfully patch the ResidueType
+	// If we make it here, we weren't able to successfully patch the ResidueType
+	TR.Debug << "Unsuccessful in patching the ResidueType with patch '" <<
+		patch_name << "' with ResidueTypeSet of mode '" << mode() << "'" << std::endl;
+	return nullptr;
 }
 
 
@@ -435,8 +442,9 @@ ResidueTypeSet::add_base_residue_type( MutableResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
-		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
-			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
+		TR.Warning << "ResidueType " << new_type->name() <<
+			" of mode " << new_type->mode() <<
+			" is being added to a ResidueTypeSet of mode " << mode() << std::endl;
 		// But we're doing it anyway (though we probably shouldn't).
 	}
 
@@ -462,8 +470,9 @@ ResidueTypeSet::force_add_base_residue_type_already_write_locked(
 ) const {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
-		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
-			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
+		TR.Warning << "ResidueType " << new_type->name() <<
+			" of mode " << new_type->mode() <<
+			" is being added to a ResidueTypeSet of mode " << mode() << std::endl;
 		// But we're doing it anyway (though we probably shouldn't).
 	}
 	prep_restype( new_type );
@@ -496,8 +505,9 @@ ResidueTypeSet::add_unpatchable_residue_type( MutableResidueTypeOP new_type )
 {
 	debug_assert( new_type );
 	if ( mode() != new_type->mode() ) {
-		TR.Warning << "ResidueType " << new_type->name() << " of mode " << new_type->mode()
-			<< " is being added to a ResidueTypeSet of mode " << mode() << std::endl;
+		TR.Warning << "ResidueType " << new_type->name() <<
+			" of mode " << new_type->mode() <<
+			" is being added to a ResidueTypeSet of mode " << mode() << std::endl;
 		// But we're doing it anyway (though we probably shouldn't).
 	}
 
@@ -516,7 +526,8 @@ void
 ResidueTypeSet::remove_base_residue_type( std::string const & name )
 {
 	if ( ! has_name( name ) ) {
-		utility_exit_with_message( "Attempting to remove ResidueType " + name + " from a ResidueTypeSet which doesn't contain it.");
+		utility_exit_with_message( "Attempting to remove base ResidueType '" + name +
+			"' from a ResidueTypeSet which does not contain it!");
 	}
 
 #ifdef MULTI_THREADED
@@ -536,7 +547,8 @@ void
 ResidueTypeSet::remove_unpatchable_residue_type( std::string const & name )
 {
 	if ( ! has_name( name ) ) {
-		utility_exit_with_message( "Attempting to remove ResidueType " + name + " from a ResidueTypeSet which doesn't contain it.");
+		utility_exit_with_message( "Attempting to remove unpatchable ResidueType '" + name +
+			"' from a ResidueTypeSet which doesn't contain it!");
 	}
 
 #ifdef MULTI_THREADED
@@ -681,11 +693,18 @@ ResidueTypeCOP
 ResidueTypeSet::get_d_equivalent(
 	ResidueTypeCOP l_rsd
 ) const {
-	runtime_assert_string_msg( l_rsd, "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): A null pointer was passed to this function!" );
-	runtime_assert_string_msg( l_rsd->is_l_aa() || l_rsd->is_s_peptoid(), "Error in core::chemical::ResidueTypeSet::get_d_equivalent(): The residue passed to this function is not an L_AA or S_PEPTOID!" );
+	runtime_assert_string_msg( l_rsd,
+		"Error in core::chemical::ResidueTypeSet::get_d_equivalent():"
+		" A null pointer was passed to this function!" );
+	runtime_assert_string_msg( l_rsd->is_l_aa() || l_rsd->is_s_peptoid(),
+		"Error in core::chemical::ResidueTypeSet::get_d_equivalent():"
+		" The residue passed to this function is not an L_AA or S_PEPTOID!" );
 
-	ResidueTypeCOP l_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>(l_rsd->get_base_type_cop()) );
-	if ( !l_to_d_mapping_.count(l_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
+	ResidueTypeCOP l_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>
+		(l_rsd->get_base_type_cop()) );
+
+	//Returns NULL pointer if there's no D-equivalent.
+	if ( !l_to_d_mapping_.count(l_basetype) ) return ResidueTypeCOP();
 
 	ResidueTypeCOP d_basetype( l_to_d_mapping_.at(l_basetype) );
 
@@ -693,25 +712,31 @@ ResidueTypeSet::get_d_equivalent(
 	utility::vector1<VariantType> const variant_type_list( l_rsd->variant_type_enums() );
 	utility::vector1<std::string> const & custom_variant_type_list( l_rsd->custom_variant_types() );
 
-	ResidueTypeCOP d_rsd ( ResidueTypeFinder( *this ).base_type(d_basetype).variants( variant_type_list, custom_variant_type_list ).get_representative_type() );
+	ResidueTypeCOP d_rsd ( ResidueTypeFinder( *this ).base_type(d_basetype).variants(
+		variant_type_list, custom_variant_type_list ).get_representative_type() );
 
 	return d_rsd;
 }
 
 /// @brief Given an D-residue, get its L-equivalent.
-/// @details Returns NULL if there is no equivalent, true otherwise.  Throws an error if this is not an L-residue.
-/// Preserves variant types.
+/// @details Returns NULL if there is no equivalent, true otherwise.
+/// Throws an error if this is not an L-residue. Preserves variant types.
 /// @note Works for D-amino acids and D-peptoids (peptoids with chiral "D" sidechains").
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 ResidueTypeCOP
 ResidueTypeSet::get_l_equivalent(
 	ResidueTypeCOP d_rsd
 ) const {
-	runtime_assert_string_msg( d_rsd, "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): A null pointer was passed to this function!" );
-	runtime_assert_string_msg( d_rsd->is_d_aa() || d_rsd->is_r_peptoid(), "Error in core::chemical::ResidueTypeSet::get_l_equivalent(): The residue passed to this function is not a D_AA or R_PEPTOID!" );
+	runtime_assert_string_msg( d_rsd, "Error in core::chemical::ResidueTypeSet::get_l_equivalent():"
+		" A null pointer was passed to this function!" );
+	runtime_assert_string_msg( d_rsd->is_d_aa() || d_rsd->is_r_peptoid(),
+		"Error in core::chemical::ResidueTypeSet::get_l_equivalent():"
+		" The residue passed to this function is not a D_AA or R_PEPTOID!" );
 
-	ResidueTypeCOP d_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>(d_rsd->get_base_type_cop()) );
-	if ( !d_to_l_mapping_.count(d_basetype) ) return ResidueTypeCOP(); //Returns NULL pointer if there's no D-equivalent.
+	ResidueTypeCOP d_basetype( utility::pointer::dynamic_pointer_cast<ResidueType const>
+		(d_rsd->get_base_type_cop()) );
+	//Returns NULL pointer if there's no D-equivalent.
+	if ( !d_to_l_mapping_.count(d_basetype) ) return ResidueTypeCOP();
 
 	ResidueTypeCOP l_basetype( d_to_l_mapping_.at(d_basetype) );
 
@@ -719,14 +744,17 @@ ResidueTypeSet::get_l_equivalent(
 	utility::vector1<VariantType> const variant_type_list( d_rsd->variant_type_enums() );
 	utility::vector1<std::string> const & custom_variant_type_list( d_rsd->custom_variant_types() );
 
-	ResidueTypeCOP l_rsd ( ResidueTypeFinder( *this ).base_type(l_basetype).variants( variant_type_list, custom_variant_type_list ).get_representative_type() );
+	ResidueTypeCOP l_rsd ( ResidueTypeFinder( *this ).base_type(l_basetype).variants(
+		variant_type_list, custom_variant_type_list ).get_representative_type() );
 
 	return l_rsd;
 }
 
 /// @brief Given a residue, get its mirror-image type.
-/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly), the D-equivalent for an L-residue, the L-equivalent of a D-residue,
-/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).  Preserves variant types.
+/// @details Returns the same residue if this is an ACHIRAL type (e.g. gly),
+/// the D-equivalent for an L-residue, the L-equivalent of a D-residue,
+/// or NULL if this is an L-residue with no D-equivalent (or a D- with no L-equivalent).
+/// Preserves variant types.
 ResidueTypeCOP
 ResidueTypeSet::get_mirrored_type(
 	ResidueTypeCOP original_rsd
@@ -735,12 +763,20 @@ ResidueTypeSet::get_mirrored_type(
 
 	if ( original_rsd->is_ligand() ) return original_rsd; // fd
 
-	runtime_assert_string_msg( original_rsd->is_d_aa() || original_rsd->is_l_aa() || original_rsd->is_r_peptoid() || original_rsd->is_s_peptoid(), "Error in core::chemical::ResidueTypeSet::get_mirror_type(): The residue type must be achiral, or must have one of the D_AA, L_AA, R_PEPTOID, or S_PEPTOID properties." );
+	runtime_assert_string_msg( original_rsd->is_d_aa() ||
+		original_rsd->is_l_aa() ||
+		original_rsd->is_r_peptoid() ||
+		original_rsd->is_s_peptoid(),
+		"Error in core::chemical::ResidueTypeSet::get_mirror_type():"
+		" The residue type must be achiral, or must have one of the"
+		" D_AA, L_AA, R_PEPTOID, or S_PEPTOID properties." );
 
 	if ( original_rsd->is_d_aa() || original_rsd->is_r_peptoid() ) return get_l_equivalent(original_rsd);
 	if ( original_rsd->is_l_aa() || original_rsd->is_s_peptoid() ) return get_d_equivalent(original_rsd);
 
-	utility_exit_with_message( "Error in core::chemical::ResidueTypeSet::get_mirrored_type(): Couldn't get mirrored type for " + original_rsd->name() + "!" );
+	utility_exit_with_message( "Error in core::chemical::ResidueTypeSet::get_mirrored_type():"
+		" Couldn't get mirrored type for " + original_rsd->name() + "!" );
+
 	return ResidueTypeCOP();
 }
 
@@ -801,7 +837,8 @@ ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 	// Without creating a write lock, go collect the appropriate set of RTs for the
 	// given query. Wait until this statement completes before creating the write lock,
 	// or the locks that the RTF creates will create a deadlock
-	ResidueTypeCOPs rts = ResidueTypeFinder( *this ).aa( aa ).variants( variants ).variant_exceptions( exceptions ).get_all_possible_residue_types();
+	ResidueTypeCOPs rts = ResidueTypeFinder( *this ).aa( aa ).variants( variants ).variant_exceptions(
+		exceptions ).get_all_possible_residue_types();
 
 #ifdef MULTI_THREADED
 	utility::thread::WriteLockGuard write_lock( cache_object()->read_write_mutex() );
@@ -813,9 +850,9 @@ ResidueTypeSet::get_all_types_with_variants_aa( AA aa,
 /// @brief Given a base residue type, desired variants, and undesired variants, retrieve a list
 /// of cached ResidueTypeCOPs.  If not cached, generate the data and cache them.
 /// @param[in] base_type A ResidueTypeCOP to a base residue type, used for looking up the variant.
-/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have, used for looking up the variant.
-/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums) that the returned ResidueTypes *must*
-/// have, used for looking up the variant.
+/// @param[in] variants A list of VariantTypes that the returned ResidueTypes *must* have; used for looking up the variant.
+/// @param[in] variant_strings A list of custom VariantTypes (that don't have enums)
+/// that the returned ResidueTypes *must* have, used for looking up the variant.
 /// @param[in] exceptions A list of VariantTypes that are ignored in matching.
 /// @param[in] no_metapatches If true, metapatches are ignored.
 /// @returns A list of ResidueTypeCOPs matching the desired variants, with the desired base type.
@@ -833,8 +870,10 @@ ResidueTypeSet::get_all_types_with_variants_by_basetype(
 #ifdef MULTI_THREADED
 		utility::thread::ReadLockGuard read_lock( cache_object()->read_write_mutex() );
 #endif
-		if ( cache_object()->all_types_with_variants_residuetypecops_already_cached( base_type, variants, variant_strings, exceptions, no_metapatches ) ) {
-			return cache_object()->retrieve_all_types_with_variants_residuetypecops( base_type, variants, variant_strings, exceptions, no_metapatches );
+		if ( cache_object()->all_types_with_variants_residuetypecops_already_cached(
+				base_type, variants, variant_strings, exceptions, no_metapatches ) ) {
+			return cache_object()->retrieve_all_types_with_variants_residuetypecops(
+				base_type, variants, variant_strings, exceptions, no_metapatches );
 		}
 	}
 
@@ -906,17 +945,20 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	ResidueType const & init_rsd,
 	std::string const & new_type ) const
 {
+	// If init_rsd already has desired variant type new_type, return the init_rsd
 	if ( init_rsd.has_variant_type( new_type ) ) return init_rsd;
 
 	// Find all residues with the same base name as init_rsd.
 	std::string const base_name( residue_type_base_name( init_rsd ) );
-	//std::string const & base_name( init_rsd.base_name() );
 
 	// the desired set of variant types:
+	// Includes variants already associated with init_rsd and the new_type
 	utility::vector1< std::string > target_variants( init_rsd.properties().get_list_of_variants() );
 	if ( !init_rsd.has_variant_type(new_type) ) {
 		target_variants.push_back( new_type );
 	}
+	//TR.Debug << "Target variant(s) to add to ResidueType with base name '" <<
+	// base_name << "' : " << target_variants << std::endl;
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants ).get_representative_type();
 	if ( !rsd_type ) {
@@ -940,7 +982,11 @@ ResidueTypeSet::get_residue_type_with_variant_added(
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " + new_type );
+		utility_exit_with_message( "Unable to find desired variant residue '" + init_rsd.name() +
+			"'. Attempted to add target variant(s) to ResidueType using both"
+			" ResidueType base name '" + base_name +
+			"' and base ResidueType. Was attempting to add new variant type '" +
+			new_type + "'" );
 	}
 
 	return *rsd_type;
@@ -955,7 +1001,6 @@ ResidueTypeSet::get_residue_type_with_custom_variant_added(
 
 	// Find all residues with the same base name as init_rsd.
 	std::string const base_name( residue_type_base_name( init_rsd ) );
-	//std::string const & base_name( init_rsd.base_name() );
 
 	// the desired set of variant types:
 	utility::vector1< VariantType > target_variants( init_rsd.variant_type_enums() );
@@ -963,6 +1008,8 @@ ResidueTypeSet::get_residue_type_with_custom_variant_added(
 	if ( !init_rsd.properties().has_custom_variant_types() || !init_rsd.has_variant_type(new_type) ) {
 		target_custom_variants.push_back( new_type );
 	}
+	//TR.Debug << "Target custom variant(s) to add to ResidueType with base name '" <<
+	// base_name << "' : " << target_custom_variants << std::endl;
 
 	ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).residue_base_name( base_name ).variants( target_variants, target_custom_variants ).get_representative_type();
 	if ( !rsd_type ) {
@@ -986,7 +1033,11 @@ ResidueTypeSet::get_residue_type_with_custom_variant_added(
 	// ResidueTypeCOP rsd_type = ResidueTypeFinder( *this ).base_type( init_rsd.get_self_ptr() ).variants( target_variants ).get_representative_type();
 
 	if ( rsd_type == nullptr ) {
-		utility_exit_with_message( "unable to find desired variant residue: " + init_rsd.name() + " " + base_name + " " + new_type );
+		utility_exit_with_message( "Unable to find desired variant residue '" + init_rsd.name() +
+			"'. Attempted to add target variant(s) to ResidueType using both"
+			" ResidueType base name '" + base_name +
+			"' and base ResidueType. Was attempting to add new custom variant type '" +
+			new_type + "'" );
 	}
 
 	return *rsd_type;
@@ -1035,8 +1086,9 @@ ResidueTypeSet::get_residue_type_with_variant_removed(
 		return *rsd_type;
 	}
 
-	utility_exit_with_message( "Unable to find a version of " + init_rsd.name() + " without the variant type " +
-		ResidueProperties::get_string_from_variant( old_type ) );
+	utility_exit_with_message( "Unable to find a version of ResidueType '" + init_rsd.name() +
+		"' with the variant type " +
+		ResidueProperties::get_string_from_variant( old_type ) + " removed!" );
 
 	return *rsd_type;
 }
