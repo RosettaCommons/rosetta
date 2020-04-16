@@ -1,4 +1,5 @@
 -in:ignore_unrecognized_res
+-precompute_ig true
 -file:s msoleft.pdb
 -score:weights dna
 -sparse_pdb_output

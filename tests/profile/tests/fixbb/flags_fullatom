@@ -6,3 +6,4 @@
 -nstruct 10
 -ndruns 10
 -out:prefix output/
+-precompute_ig true

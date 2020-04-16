@@ -3012,6 +3012,7 @@ HBNet::setup_packer_task_and_starting_residues( Pose const & pose )
 		task_factory_ = pointer::make_shared< task::TaskFactory >( );
 	}
 	task_ = create_ptask( pose ); //set task (which residues are designable/repackable
+	task_->or_precompute_ig( true );
 	if ( start_res_vec_.empty() ) {
 		utility::vector1<bool> is_repack = task_->repacking_residues();
 		runtime_assert(is_repack.size() == pose.total_residue());
@@ -3243,6 +3244,7 @@ HBNet::run( Pose & pose )
 		initialize_hbond_graph();
 		ig_ = pointer::make_shared< HBondGraphInitializerIG >( hbond_graph_, rotamer_sets_, hydrogen_bond_threshold_, clash_threshold_ );
 	} else {
+		task_->or_precompute_ig( true );
 		ig_ = InteractionGraphFactory::create_interaction_graph( *task_, *rotamer_sets_, pose, *init_scorefxn_, *packer_neighbor_graph_ );
 	}
 	ig_->initialize( *rotamer_sets_ );

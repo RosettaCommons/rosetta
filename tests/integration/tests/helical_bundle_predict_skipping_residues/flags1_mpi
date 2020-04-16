@@ -1,4 +1,5 @@
 -nstruct 5
+-precompute_ig 1
 -symmetric_gly_tables true
 -inout:write_all_connect_info true
 -in:file:fasta inputs/seq.fasta

@@ -12,6 +12,7 @@
 -resfile ./inputs/stdmfrf1LVB.txt
 -run:preserve_header
 -nooutput true
+-precompute_ig true
 -lazy_ig false
 -double_lazy_ig false
 -restore_talaris_behavior

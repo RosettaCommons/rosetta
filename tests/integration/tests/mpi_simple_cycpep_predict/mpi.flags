@@ -1,4 +1,5 @@
 -nstruct 4
+-precompute_ig 1
 -compute_rmsd_to_lowest
 -compute_ensemble_sasa_metrics
 -out:file:silent out.silent

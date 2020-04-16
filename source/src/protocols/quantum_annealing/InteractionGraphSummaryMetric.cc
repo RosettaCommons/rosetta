@@ -162,7 +162,7 @@ InteractionGraphSummaryMetric::calculate(const core::pose::Pose & pose ) const {
 	core::pose::PoseOP pose_copy( pose.clone() );
 	pose_copy->update_residue_neighbors();
 
-	core::pack::task::PackerTaskCOP my_task;
+	core::pack::task::PackerTaskOP my_task;
 	if ( task_factory_ == nullptr ) {
 		TR << "No task factory or task operations specified,  Creating default PackerTask." << std::endl;
 		my_task = core::pack::task::TaskFactory::create_packer_task( *pose_copy );
@@ -173,6 +173,8 @@ InteractionGraphSummaryMetric::calculate(const core::pose::Pose & pose ) const {
 	if ( core::pose::symmetry::is_symmetric( *pose_copy ) ) {
 		my_task = core::pack::make_symmetric_task( *pose_copy, my_task );
 	}
+
+	my_task->or_precompute_ig( true );
 
 	core::pack::rotamer_set::RotamerSetsOP rot_sets( core::pack::rotamer_set::RotamerSetsFactory::create_rotamer_sets( *pose_copy ) );
 

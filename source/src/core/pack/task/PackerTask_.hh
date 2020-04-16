@@ -182,6 +182,12 @@ public:
 	/// @brief Return the linear memory interaction graph's recent history size.
 	Size linmem_ig_history_size() const override;
 
+
+	void or_precompute_ig( bool setting ) override;
+	//void and_precompute_ig( bool setting ) override;
+	bool precompute_ig() const override;
+
+
 	/// @brief  if setting == true, turns on lazy interaction graph usage
 	/// NOTE: the linear memory interaction graph takes precedence over the LazyIG when
 	/// the InteractionGraphFactory examines the PackerTask.
@@ -468,6 +474,8 @@ private:
 
 	mutable Size n_to_be_packed_;
 	mutable bool n_to_be_packed_up_to_date_ = true;
+
+	bool precompute_ig_ = false;
 
 	/// @details linmem_ig overrides PDInteractionGraph
 	bool linmem_ig_ = false;

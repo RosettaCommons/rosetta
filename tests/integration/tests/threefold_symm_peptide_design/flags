@@ -6,3 +6,4 @@
 -nstruct 3
 -extra_res_fa sidechain_conjugation/CYX.params crosslinker/1.3.5_trisbromomethylbenzene_symm.params
 -restore_talaris_behavior true
+-precompute_ig

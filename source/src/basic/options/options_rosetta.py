@@ -1972,6 +1972,10 @@ Options = Option_Group( '',
 				store RPEs for (~4 KB per rotamer by default)",
 			default='10',
 			),
+		Option( 'precompute_ig', 'Boolean',
+			desc="Explicitly request the O(N^2) interaction graph that precopmutes all 2-body energies. This option is overriden by linmem_ig.",
+			default='false',
+			),
 		##Option( 'minimalist_ig', 'Boolean',
 		##       desc="DOES NOT YET WORK. Force the packer to use the minimalist interaction graph.  The minimalist \
 		##             interaction graph allocates no space for RPE storage.  It is \

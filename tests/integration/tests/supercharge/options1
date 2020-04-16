@@ -4,6 +4,7 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
+#-precompute_ig true
 -surface_residue_cutoff 16
 -include_arg
 #-include_lys
@@ -17,5 +18,4 @@
 -compare_residue_energies_mut true
 
 -resfile resfile
-
 -out:path outpath1

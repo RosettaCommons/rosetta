@@ -4,6 +4,7 @@
 -jd2:no_output
 -ignore_unrecognized_res
 
+#-precompute_ig true
 -AvNAPSA_positive
 -surface_atom_cutoff 120
 

@@ -197,7 +197,8 @@ pack_rotamers_setup(
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
 	rotamer_set::RotamerSetsOP rotsets,
-	interaction_graph::AnnealableGraphBaseOP & ig
+	interaction_graph::AnnealableGraphBaseOP & ig,
+	core::Size const nloop //how many packing runs will use this IG? This totally optional parameter helps the factory decide which IG to use if nothing else is specified
 ) {
 	using namespace interaction_graph;
 
@@ -240,7 +241,7 @@ pack_rotamers_setup(
 	}
 	tt << " threads for interaction graph computation." << std::endl;
 #endif
-	ig = InteractionGraphFactory::create_and_initialize_annealing_graph(*task, *rotsets, pose, scfxn, packer_neighbor_graph );
+	ig = InteractionGraphFactory::create_and_initialize_annealing_graph(*task, *rotsets, pose, scfxn, packer_neighbor_graph, nloop );
 }
 
 /// @brief PyRosetta compatible version.

@@ -48,6 +48,7 @@
 #include <protocols/simple_moves/VirtualRootMover.hh>
 #include <protocols/symmetry/SetupForSequenceSymmetryMover.hh>
 #include <core/select/residue_selector/ChainSelector.hh>
+#include <protocols/task_operations/SetIGTypeOperation.hh>
 
 #include <list>
 #include <basic/Tracer.hh>
@@ -73,6 +74,7 @@ public:
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER" };
 			operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types ) );
+			operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 		}
 
 		protocols::minimization_packing::PackRotamersMover packer;
@@ -101,6 +103,7 @@ public:
 		core_init_with_additional_options( "-sequence_symmetric_annealer 1" );
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 		operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER" };
@@ -133,6 +136,7 @@ public:
 		core_init_with_additional_options( "-sequence_symmetric_annealer 1" );
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 		operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER" };
@@ -170,6 +174,7 @@ public:
 		TR << "starting test_recover_symmetry" << std::endl;
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 		operations.emplace_back( utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >() );
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER" };
@@ -212,6 +217,7 @@ public:
 		TR << "starting test_unequal_chain_lengths" << std::endl;
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 		operations.emplace_back( utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >() );
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "VAL", "LYS" };
@@ -245,6 +251,7 @@ public:
 		TR << "starting test_residue_selectors" << std::endl;
 		std::list< core::pack::task::operation::TaskOperationCOP > operations;
 		operations.emplace_back( utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >() );
+		operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 		{//for speedup
 			utility::vector1< std::string > base_types = { "ALA", "GLY", "SER", "THR" };
@@ -285,6 +292,7 @@ public:
 	void NEGATIVE_test_fail_if_impossible(){
 	std::list< core::pack::task::operation::TaskOperationCOP > operations;
 	operations.emplace_back( utility::pointer::make_shared< task::operation::KeepSequenceSymmetry >() );
+	operations.emplace_back( utility::pointer::make_shared< protocols::task_operations::SetIGTypeOperation >( false, false, false, true ) );
 
 	utility::vector1< std::string > base_types = { "ALA" };
 	operations.emplace_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToSpecifiedBaseResidueTypes >( base_types ) );

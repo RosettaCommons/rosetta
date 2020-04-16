@@ -187,6 +187,7 @@ public:
 
 		//create packer task
 		packertask = core::pack::task::TaskFactory::create_packer_task( pose );
+		packertask->or_precompute_ig( true );
 
 		//create the rotamer sets
 		make_rotset();
@@ -208,6 +209,7 @@ public:
 
 		//create packer task
 		packertask = core::pack::task::TaskFactory::create_packer_task( pose );
+		packertask->or_precompute_ig( true );
 
 		//create the rotamer sets
 		make_rotset();
@@ -275,6 +277,7 @@ public:
 		//create packer task
 		packertask = core::pack::task::TaskFactory::create_packer_task( pose );
 		packertask->restrict_to_repacking();
+		packertask->or_precompute_ig( true );
 
 		//create the rotamer sets
 		make_rotset();
@@ -293,6 +296,7 @@ public:
 
 		//create packer task
 		packertask = core::pack::task::TaskFactory::create_packer_task( pose );
+		packertask->or_precompute_ig( true );
 		for ( core::Size i(1), end(packertask->total_residue()); i<=end; ++i ) {
 			packertask->nonconst_residue_task(i).prevent_repacking();
 		}
@@ -314,6 +318,7 @@ public:
 
 		//create packer task
 		packertask = core::pack::task::TaskFactory::create_packer_task( pose );
+		packertask->or_precompute_ig( true );
 
 		//create the rotamer sets
 		make_rotset();

@@ -313,7 +313,7 @@ void PackRotamersMover::setup( Pose & pose )
 
 	rotamer_sets_ = core::pack::rotamer_set::RotamerSetsFactory::create_rotamer_sets( pose );
 
-	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_ );
+	pack_rotamers_setup( pose, *scorefxn_, task_, rotamer_sets_, ig_, nloop_ );
 }
 
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const

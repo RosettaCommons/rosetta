@@ -34,16 +34,18 @@ using namespace utility::tag;
 SetIGTypeOperation::SetIGTypeOperation():
 	lin_mem_(false),
 	lazy_(false),
-	double_lazy_(false)
+	double_lazy_(false),
+	precompute_(false)
 {}
 
-SetIGTypeOperation::SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy ) :
+SetIGTypeOperation::SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy, bool precompute ) :
 	lin_mem_( lin_mem ),
 	lazy_( lazy ),
-	double_lazy_( double_lazy )
+	double_lazy_( double_lazy ),
+	precompute_( precompute )
 {}
 
-SetIGTypeOperation::~SetIGTypeOperation()= default;
+SetIGTypeOperation::~SetIGTypeOperation() = default;
 
 core::pack::task::operation::TaskOperationOP SetIGTypeOperation::clone() const
 {
@@ -55,6 +57,7 @@ void SetIGTypeOperation::apply( core::pose::Pose const &, core::pack::task::Pack
 	if ( lin_mem_ ) task.or_linmem_ig( true );
 	else if ( lazy_ ) task.or_lazy_ig( true );
 	else if ( double_lazy_ ) task.or_double_lazy_ig( true );
+	else if ( precompute_ ) task.or_precompute_ig( true );
 }
 
 void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & )
@@ -62,6 +65,7 @@ void SetIGTypeOperation::parse_tag( utility::tag::TagCOP tag, basic::datacache::
 	lin_mem_ = tag->getOption< bool >("lin_mem_ig", false);
 	lazy_ = tag->getOption< bool >("lazy_ig", false);
 	double_lazy_ = tag->getOption< bool >("double_lazy_ig", false);
+	precompute_ = tag->getOption< bool >("precompute_ig", false);
 }
 
 void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
@@ -71,7 +75,8 @@ void SetIGTypeOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 	attributes
 		+ XMLSchemaAttribute::attribute_w_default(  "lin_mem_ig", xsct_rosetta_bool, "Interaction graph type lin_mem-ig.",  "false"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "lazy_ig", xsct_rosetta_bool, "Interaction graph type lazy_ig.",  "false"  )
-		+ XMLSchemaAttribute::attribute_w_default(  "double_lazy_ig", xsct_rosetta_bool, "Interaction graph type double_lazy_ig.",  "false"  );
+		+ XMLSchemaAttribute::attribute_w_default(  "double_lazy_ig", xsct_rosetta_bool, "Interaction graph type double_lazy_ig.",  "false"  )
+		+ XMLSchemaAttribute::attribute_w_default(  "precompute_ig", xsct_rosetta_bool, "Interaction graph type precompute_ig.",  "false"  );
 
 	task_op_schema_w_attributes( xsd, keyname(), attributes, "Task operation to set interaction graph type -linmem, lazy or double lazy." );
 }

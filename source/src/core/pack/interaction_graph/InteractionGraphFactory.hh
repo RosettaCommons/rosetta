@@ -48,7 +48,8 @@ public:
 		rotamer_set::RotamerSets const & rotsets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		utility::graph::Graph const & packer_neighbor_graph
+		utility::graph::Graph const & packer_neighbor_graph,
+		core::Size nloop = 1 //how many packing runs will use this IG? This totally optional parameter helps the factory decide which IG to use if nothing else is specified
 	);
 
 	/// @brief Create and initialize two-body interaction graph for the given
@@ -68,7 +69,8 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose const & pose,
 		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph,
+		core::Size nloop = 1 //how many packing runs will use this IG? This totally optional parameter helps the factory decide which IG to use if nothing else is specified
 	);
 
 	/// @brief Create and initialize annealable graph for the given
@@ -92,7 +94,8 @@ public:
 		rotamer_set::RotamerSets & rotsets,
 		pose::Pose & pose,
 		scoring::ScoreFunction const & scfxn,
-		utility::graph::GraphCOP packer_neighbor_graph
+		utility::graph::GraphCOP packer_neighbor_graph,
+		core::Size nloop = 1 //how many packing runs will use this IG? This totally optional parameter helps the factory decide which IG to use if nothing else is specified
 	);
 
 private:

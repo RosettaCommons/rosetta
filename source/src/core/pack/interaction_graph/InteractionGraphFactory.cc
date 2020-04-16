@@ -45,6 +45,7 @@
 
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -55,11 +56,181 @@
 #include <utility/vector1.hh>
 #include <utility/options/BooleanVectorOption.hh>
 
+#include <basic/thread_manager/RosettaThreadManager.hh>
+
 namespace core {
 namespace pack {
 namespace interaction_graph {
 
 static basic::Tracer T( "core.pack.interaction_graph.interaction_graph_factory", basic::t_info );
+
+///@brief estimate the amount of work require for precomputation
+///@details This may be off by a constant factor, which will be measured using benchmarks
+Size
+estimate_n_2body_calcs_for_precomputation(
+	task::PackerTask const & the_task,
+	rotamer_set::RotamerSets const & rotsets,
+	utility::graph::Graph const & packer_neighbor_graph
+){
+	core::Size twobody_count_sum = 0;
+
+	//Count m*n rotamer pair calculations for each pair of residues
+	for ( auto iter = packer_neighbor_graph.const_edge_list_begin(),
+			end = packer_neighbor_graph.const_edge_list_end();
+			iter != end; ++iter ) {
+		core::Size const resid1 = (*iter)->get_first_node_ind();
+		core::Size const resid2 = (*iter)->get_second_node_ind();
+
+		core::Size const mres1 = rotsets.resid_2_moltenres( resid1 );
+		core::Size const mres2 = rotsets.resid_2_moltenres( resid2 );
+
+		// For the sake of this estimation, fixed residues have 1 rotamer
+		// This assumption falls apart when both residues are fixed but the penalty of this bad assumption will quickly be drowned out by large m*n products
+		core::Size const nrot1 = ( the_task.being_packed( resid1 ) ?
+			rotsets.nrotamers_for_moltenres( mres1 ) :
+			1 );
+		core::Size const nrot2 = ( the_task.being_packed( resid2 ) ?
+			rotsets.nrotamers_for_moltenres( mres2 ) :
+			1 );
+
+		twobody_count_sum += nrot1 * nrot2;
+	}
+
+	return twobody_count_sum;
+}
+
+///@brief estimate the amount of work require for on-the-fly calculations
+///@details This may be off by a constant factor, which will be measured using benchmarks
+Size
+estimate_n_2body_calcs_for_linmem_ig(
+	rotamer_set::RotamerSets const & rotsets,
+	utility::graph::Graph const & packer_neighbor_graph
+){
+	//For each rotamer, count the number of neighbors it has
+	Size nbr_sum = 0;
+	for ( Size rot = 1; rot <= rotsets.nrotamers(); ++rot ) {
+		Size const resid = rotsets.res_for_rotamer( rot );
+		runtime_assert( resid > 0 && resid <= packer_neighbor_graph.num_nodes() );
+		nbr_sum += packer_neighbor_graph.get_node( resid )->num_edges();
+	}
+	return nbr_sum;
+}
+
+///@brief This function is called when the user does not specify an IG Type.
+///@details The goal is to use the most economical IG type based on the use case. This can get very complicated to predict, but the gist is that the O(N^2) precomputed IG should be used with a small number of rotamers and the O(N) linmem_ig should be used for a large number of rotamers.
+///@author Jack Maguire
+bool
+auto_use_linmem_ig(
+	task::PackerTask const & the_task,
+	rotamer_set::RotamerSets const & rotsets,
+	utility::graph::Graph const & packer_neighbor_graph,
+	core::Size const nloop
+){
+	//This is not the optimal "line in the sand", but it is better than nothing.
+	//Feel free to replace this with a more complicated metric if you have the free time to run some benchmarks
+
+	using namespace basic::options;
+	//using namespace basic::options::OptionKeys;
+
+	core::Real const iteration_scaling_factor = 1.0 * basic::options::option[ OptionKeys::packing::outeriterations_scaling ]() * option[ OptionKeys::packing::inneriterations_scaling ]();
+
+	//units for expected_linmem_ig_runtime are seconds
+	core::Real const expected_linmem_ig_runtime =
+		( estimate_n_2body_calcs_for_linmem_ig( rotsets, packer_neighbor_graph ) * nloop * iteration_scaling_factor * 0.000108567 ) + 28.603;
+
+	if ( expected_linmem_ig_runtime < 0 ) {
+		//These estimates are noisy for small runtime values.
+		//If the value is less than 0, assume that we are so deep into precompute territory that we should not use the linmem_ig
+		return false;
+	}
+
+	//units for expected_precompute_ig_runtime are seconds
+	core::Real expected_precompute_ig_runtime =
+		( estimate_n_2body_calcs_for_precomputation( the_task, rotsets, packer_neighbor_graph ) * 9.39307e-07 ) - 11.041;
+
+#ifdef MULTI_THREADED
+	expected_precompute_ig_runtime /= std::min( the_task.ig_threads_to_request(), basic::thread_manager::RosettaThreadManager::total_threads() );
+#endif
+
+	//The special "unit test" clause
+	if ( expected_precompute_ig_runtime < 60 ) {
+		//1 minute or less defaults to precopmuted IG
+		return false;
+		//Again, this is due to these estimates being very noisy for small runtime values
+	}
+
+	//Note that there still may be reasons to want the linmem_ig - such as memory usage
+	return expected_linmem_ig_runtime < expected_precompute_ig_runtime;
+}
+
+InteractionGraphBaseOP
+make_linmem_ig(
+	task::PackerTask const & the_task,
+	rotamer_set::RotamerSets const & rotsets,
+	pose::Pose const & pose,
+	scoring::ScoreFunction const & sfxn,
+	utility::graph::Graph const & packer_neighbor_graph,
+	core::Real const surface_weight,
+	core::Real const hpatch_weight,
+	core::Real const npd_hbond_weight
+){
+	if ( the_task.ig_threads_to_request() > 1 ) {
+		T.Warning << "User requested >1 threads for Interaction Graph computation. The LinearMemoryInteractionGraph does not have multithreading functionality yet so we will proceed in a single-threaded computation." << std::endl;
+	}
+
+	// Symmetric OTFIGs are not currently capable of handling either the Surface, HPatch, or NPDHBond scores, so check
+	// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
+	if ( pose::symmetry::is_symmetric( pose ) ) {
+		T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
+		SymmLinearMemoryInteractionGraphOP symlinmemig( new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
+		symlinmemig->set_pose( pose );
+		symlinmemig->set_score_function( sfxn );
+		symlinmemig->set_recent_history_size( the_task.linmem_ig_history_size() );
+		return symlinmemig;
+	}
+
+	if ( surface_weight ) {
+		T << "Instantiating LinearMemorySurfaceInteractionGraph" << std::endl;
+		LinearMemorySurfaceInteractionGraphOP lmsolig( new LinearMemorySurfaceInteractionGraph( the_task.num_to_be_packed() ) );
+		lmsolig->set_pose( pose );
+		lmsolig->set_packer_task( the_task );
+		lmsolig->set_score_function( sfxn );
+		lmsolig->set_rotamer_sets( rotsets );
+		lmsolig->set_surface_score_weight( surface_weight );
+		lmsolig->set_recent_history_size( the_task.linmem_ig_history_size() );
+		return lmsolig;
+	}
+
+	if ( hpatch_weight ) {
+		T << "Instantiating LinearMemoryHPatchInteractionGraph" << std::endl;
+		LinearMemoryHPatchInteractionGraphOP lmhig( new LinearMemoryHPatchInteractionGraph( the_task.num_to_be_packed() ) );
+		lmhig->set_pose( pose );
+		lmhig->set_packer_task( the_task );
+		lmhig->set_score_function( sfxn );
+		lmhig->set_rotamer_sets( rotsets );
+		lmhig->set_score_weight( hpatch_weight );
+		lmhig->set_recent_history_size( the_task.linmem_ig_history_size() );
+		return lmhig;
+	}
+	if ( npd_hbond_weight ) {
+		T << "Instantiating LinearMemoryNPDHBondInteractionGraph" << std::endl;
+		LinearMemoryNPDHBondInteractionGraphOP lmig( new LinearMemoryNPDHBondInteractionGraph( the_task.num_to_be_packed() ) );
+		lmig->set_pose( pose );
+		lmig->set_packer_neighbor_graph( packer_neighbor_graph );
+		lmig->set_packer_task( the_task );
+		lmig->set_score_function( sfxn );
+		lmig->set_rotamer_sets( rotsets );
+		lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
+		return lmig;
+	}
+
+	T << "Instantiating LinearMemoryInteractionGraph" << std::endl;
+	LinearMemoryInteractionGraphOP lmig( new LinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
+	lmig->set_pose( pose );
+	lmig->set_score_function( sfxn );
+	lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
+	return lmig;
+}
 
 InteractionGraphBaseOP
 InteractionGraphFactory::create_interaction_graph(
@@ -67,7 +238,8 @@ InteractionGraphFactory::create_interaction_graph(
 	rotamer_set::RotamerSets const & rotsets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & sfxn,
-	utility::graph::Graph const & packer_neighbor_graph
+	utility::graph::Graph const & packer_neighbor_graph,
+	core::Size const nloop
 )
 {
 	core::Real surface_weight( sfxn.get_weight( core::scoring::surface ) );
@@ -86,59 +258,7 @@ InteractionGraphFactory::create_interaction_graph(
 	if ( ! the_task.design_any() ) { surface_weight = 0; hpatch_weight = 0; }
 
 	if ( the_task.linmem_ig() ) {
-		// Symmetric OTFIGs are not currently capable of handling either the Surface, HPatch, or NPDHBond scores, so check
-		// for symmetry first and return a (pairwise-decomposable) SymmLinearMemoryInteractionGraph if requested.
-		if ( pose::symmetry::is_symmetric( pose ) ) {
-			T << "Instantiating SymmLinearMemoryInteractionGraph" << std::endl;
-			SymmLinearMemoryInteractionGraphOP symlinmemig( new SymmLinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
-			symlinmemig->set_pose( pose );
-			symlinmemig->set_score_function( sfxn );
-			symlinmemig->set_recent_history_size( the_task.linmem_ig_history_size() );
-			return symlinmemig;
-		}
-
-		if ( surface_weight ) {
-			T << "Instantiating LinearMemorySurfaceInteractionGraph" << std::endl;
-			LinearMemorySurfaceInteractionGraphOP lmsolig( new LinearMemorySurfaceInteractionGraph( the_task.num_to_be_packed() ) );
-			lmsolig->set_pose( pose );
-			lmsolig->set_packer_task( the_task );
-			lmsolig->set_score_function( sfxn );
-			lmsolig->set_rotamer_sets( rotsets );
-			lmsolig->set_surface_score_weight( surface_weight );
-			lmsolig->set_recent_history_size( the_task.linmem_ig_history_size() );
-			return lmsolig;
-		}
-
-		if ( hpatch_weight ) {
-			T << "Instantiating LinearMemoryHPatchInteractionGraph" << std::endl;
-			LinearMemoryHPatchInteractionGraphOP lmhig( new LinearMemoryHPatchInteractionGraph( the_task.num_to_be_packed() ) );
-			lmhig->set_pose( pose );
-			lmhig->set_packer_task( the_task );
-			lmhig->set_score_function( sfxn );
-			lmhig->set_rotamer_sets( rotsets );
-			lmhig->set_score_weight( hpatch_weight );
-			lmhig->set_recent_history_size( the_task.linmem_ig_history_size() );
-			return lmhig;
-		}
-		if ( npd_hbond_weight ) {
-			T << "Instantiating LinearMemoryNPDHBondInteractionGraph" << std::endl;
-			LinearMemoryNPDHBondInteractionGraphOP lmig( new LinearMemoryNPDHBondInteractionGraph( the_task.num_to_be_packed() ) );
-			lmig->set_pose( pose );
-			lmig->set_packer_neighbor_graph( packer_neighbor_graph );
-			lmig->set_packer_task( the_task );
-			lmig->set_score_function( sfxn );
-			lmig->set_rotamer_sets( rotsets );
-			lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
-			return lmig;
-		}
-
-		T << "Instantiating LinearMemoryInteractionGraph" << std::endl;
-		LinearMemoryInteractionGraphOP lmig( new LinearMemoryInteractionGraph( the_task.num_to_be_packed() ) );
-		lmig->set_pose( pose );
-		lmig->set_score_function( sfxn );
-		lmig->set_recent_history_size( the_task.linmem_ig_history_size() );
-		return lmig;
-
+		return make_linmem_ig( the_task, rotsets, pose, sfxn, packer_neighbor_graph, surface_weight, hpatch_weight, npd_hbond_weight );
 	} else if ( the_task.design_any() ) {
 
 		if ( rotsets.nmoltenres() >= 1 ) { //we are altering at least one residue
@@ -185,9 +305,17 @@ InteractionGraphFactory::create_interaction_graph(
 						//T << "Setting DoubleLazyIngeractionGraph memory limit to " << the_task.double_lazy_ig_memlimit()  << std::endl;
 						double_lazy_ig->set_memory_max_for_rpes( the_task.double_lazy_ig_memlimit() );
 						return double_lazy_ig;
-					} else {
+					} else if ( the_task.precompute_ig() ) {
 						T << "Instantiating PDInteractionGraph" << std::endl;
 						return utility::pointer::make_shared< PDInteractionGraph >( the_task.num_to_be_packed() );
+					} else {
+						//Fall back to auto detection
+						if ( auto_use_linmem_ig( the_task, rotsets, packer_neighbor_graph, nloop ) ) {
+							return make_linmem_ig( the_task, rotsets, pose, sfxn, packer_neighbor_graph, surface_weight, hpatch_weight, npd_hbond_weight );
+						} else {
+							T << "Instantiating PDInteractionGraph" << std::endl;
+							return utility::pointer::make_shared< PDInteractionGraph >( the_task.num_to_be_packed() );
+						}
 					}
 				}
 			}
@@ -230,9 +358,10 @@ InteractionGraphFactory::create_and_initialize_two_body_interaction_graph(
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose const & pose,
 	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph,
+	core::Size const nloop
 ) {
-	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn, *packer_neighbor_graph);
+	InteractionGraphBaseOP ig = create_interaction_graph( packer_task, rotsets, pose, scfxn, *packer_neighbor_graph, nloop );
 
 	PROF_START( basic::GET_ENERGIES );
 	rotsets.compute_energies( pose, scfxn, packer_neighbor_graph, ig, packer_task.ig_threads_to_request() );
@@ -268,13 +397,14 @@ InteractionGraphFactory::create_and_initialize_annealing_graph(
 	rotamer_set::RotamerSets & rotsets,
 	pose::Pose & pose,
 	scoring::ScoreFunction const & scfxn,
-	utility::graph::GraphCOP packer_neighbor_graph
+	utility::graph::GraphCOP packer_neighbor_graph,
+	core::Size const nloop
 ) {
 	//Clear cached information in the pose that the ResidueArrayAnnealableEneriges use:
 	clear_cached_residuearrayannealableenergy_information(pose);
 
 	std::list< AnnealableGraphBaseOP > annealing_graphs;
-	annealing_graphs.push_back(create_and_initialize_two_body_interaction_graph(packer_task, rotsets, pose, scfxn, packer_neighbor_graph));
+	annealing_graphs.push_back(create_and_initialize_two_body_interaction_graph(packer_task, rotsets, pose, scfxn, packer_neighbor_graph,nloop));
 
 	//TODO alexford This resolves target methods via dynamic cast of all activated WholeStructureMethods
 	// in the score function. This should likely be replaced with some sort of registration mechanism.

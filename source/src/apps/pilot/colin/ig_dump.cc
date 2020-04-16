@@ -115,7 +115,8 @@ main( int argc, char * argv [] )
 			}
 
 			// allocate variables necessary for creating an interaction graph
-			PackerTaskCOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
+			PackerTaskOP task = main_task_factory->create_task_and_apply_taskoperations( *input_pose );
+			task->or_precompute_ig( true );
 			core::pack::rotamer_set::RotamerSetsOP rotsets( new core::pack::rotamer_set::RotamerSets );
 			core::pack::interaction_graph::AnnealableGraphBaseOP igbase;
 

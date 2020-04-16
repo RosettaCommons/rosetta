@@ -129,6 +129,8 @@ PackerTask_::update_commutative(
 	n_to_be_packed_ = o.n_to_be_packed_;/// <-- this derived data will need to be updated
 	n_to_be_packed_up_to_date_ = false; /// <-- signal that n_to_be_packed will need to be updated
 
+	precompute_ig_ |= o.precompute_ig_;
+
 	linmem_ig_ |= o.linmem_ig_;
 	if ( linmem_ig_history_size_at_default_ ) {
 		linmem_ig_history_size_at_default_ = o.linmem_ig_history_size_at_default_;
@@ -537,6 +539,21 @@ Size PackerTask_::linmem_ig_history_size() const {
 	return linmem_ig_history_size_;
 }
 
+void PackerTask_::or_precompute_ig( bool setting )
+{
+	precompute_ig_ |= setting;
+}
+
+/*void PackerTask_::and_precompute_ig( bool setting )
+{
+precompute_ig_ &= setting;
+}*/
+
+bool PackerTask_::precompute_ig() const
+{
+	return precompute_ig_;
+}
+
 void PackerTask_::or_lazy_ig( bool setting )
 {
 	lazy_ig_ |= setting;
@@ -732,6 +749,12 @@ PackerTask_::initialize_from_options( utility::options::OptionCollection const &
 		or_linmem_ig( true );
 		decrease_linmem_ig_history_size( options[ packing::linmem_ig ] );
 	}
+	if ( options[ packing::precompute_ig ]() ) {
+		or_precompute_ig( true );
+		if ( options[ packing::linmem_ig ].user() && options[ packing::linmem_ig ]() != 0 ) {
+			T << "Warning: Both -linmem_ig and -precompute_ig were passed to the PackerTask. These flags are mutally exclusive. If you are unsure about which IG type to use, omit both flags and Rosetta will attempt to pick the best type." << std::endl;
+		}
+	}
 	if ( options[ packing::lazy_ig ] && ! optimize_H_ ) {
 		or_lazy_ig( true );
 	}
@@ -794,6 +817,7 @@ PackerTask::list_options_read( utility::options::OptionKeyList & read_options )
 	using namespace basic::options::OptionKeys;
 	read_options
 		+ packing::linmem_ig
+		+ packing::precompute_ig
 		+ packing::lazy_ig
 		+ packing::double_lazy_ig
 		+ packing::multi_cool_annealer
@@ -1167,6 +1191,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( residue_tasks_ ) ); // utility::vector1<ResidueLevelTask_>
 	arc( CEREAL_NVP( n_to_be_packed_ ) ); // Size
 	arc( CEREAL_NVP( n_to_be_packed_up_to_date_ ) ); // _Bool
+	arc( CEREAL_NVP( precompute_ig_ ) ); // _Bool
 	arc( CEREAL_NVP( linmem_ig_ ) ); // _Bool
 	arc( CEREAL_NVP( linmem_ig_history_size_at_default_ ) ); // _Bool
 	arc( CEREAL_NVP( linmem_ig_history_size_ ) ); // Size
@@ -1202,6 +1227,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( residue_tasks_ ); // utility::vector1<ResidueLevelTask_>
 	arc( n_to_be_packed_ ); // Size
 	arc( n_to_be_packed_up_to_date_ ); // _Bool
+	arc( precompute_ig_ ); // _Bool
 	arc( linmem_ig_ ); // _Bool
 	arc( linmem_ig_history_size_at_default_ ); // _Bool
 	arc( linmem_ig_history_size_ ); // Size

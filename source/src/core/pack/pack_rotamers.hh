@@ -92,7 +92,8 @@ pack_rotamers_setup(
 	scoring::ScoreFunction const & scfxn,
 	task::PackerTaskCOP task,
 	rotamer_set::RotamerSetsOP rotsets,
-	interaction_graph::AnnealableGraphBaseOP & ig
+	interaction_graph::AnnealableGraphBaseOP & ig,
+	core::Size nloop = 1 //how many packing runs will use this IG? This totally optional parameter helps the factory decide which IG to use if nothing else is specified
 );
 
 /// @brief PyRosetta compatible version.

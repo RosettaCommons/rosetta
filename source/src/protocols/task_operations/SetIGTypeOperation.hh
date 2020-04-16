@@ -37,7 +37,7 @@ class SetIGTypeOperation : public core::pack::task::operation::TaskOperation
 public:
 	SetIGTypeOperation();
 
-	SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy );
+	SetIGTypeOperation( bool lin_mem, bool lazy, bool double_lazy, bool precompute );
 
 	~SetIGTypeOperation() override;
 
@@ -51,7 +51,7 @@ public:
 
 private:
 
-	bool lin_mem_,lazy_,double_lazy_;
+	bool lin_mem_,lazy_,double_lazy_,precompute_;
 
 };
 

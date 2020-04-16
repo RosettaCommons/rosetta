@@ -128,6 +128,12 @@ public:
 	virtual void decrease_linmem_ig_history_size( Size setting ) = 0;
 	virtual Size linmem_ig_history_size() const = 0;
 
+	/// @brief Explicitly request the O( N^2 ) precomputed graph
+	/// @details linmem_ig() is checked first and will override this setting
+	virtual void or_precompute_ig( bool setting ) = 0;
+	//virtual void and_precompute_ig( bool setting ) = 0;
+	virtual bool precompute_ig() const = 0;
+
 	/// @brief Activate a LazyInteractionGraph that computes rotamer pair energies at most once
 	virtual void or_lazy_ig( bool setting ) = 0;
 	virtual bool lazy_ig() const = 0;

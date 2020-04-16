@@ -4,3 +4,4 @@
 -out:file:scorefile score.cen_sc
 -nstruct 400
 -out:prefix output/
+-precompute_ig true
