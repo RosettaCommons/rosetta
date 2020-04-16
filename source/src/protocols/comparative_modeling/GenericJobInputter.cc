@@ -21,6 +21,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/sequence/util.hh>
+#include <core/chemical/ChemicalManager.hh>
 #include <protocols/pose_creation/ExtendedPoseMover.hh>
 
 // Utility headers
@@ -70,8 +71,15 @@ void GenericJobInputter::pose_from_job( core::pose::Pose& pose, protocols::jd2::
 		if ( option[OptionKeys::in::file::fasta].user() ) {
 			string fasta = option[in::file::fasta]()[1];
 			string sequence = core::sequence::read_fasta_file_str(fasta)[1];
-			ExtendedPoseMover m(sequence);
-			m.apply(pose);
+
+			//fpd respect the -in:file:fullatom flag
+			if ( option[ in::file::fullatom ].user() && option[ in::file::fullatom ]() ) {
+				ExtendedPoseMover m(sequence, "fa_standard");
+				m.apply(pose);
+			} else {
+				ExtendedPoseMover m(sequence);
+				m.apply(pose);
+			}
 		}
 	} else {
 		pose = *(job->inner_job()->get_pose());
