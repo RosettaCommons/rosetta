@@ -209,6 +209,7 @@ sources = {
 		"BasicFilters",
 		"CalculatorFilter",
 		"FilterFactory",
+		"FilterValueMetricTests",
 		"ReplicateFilter",
 	],
 

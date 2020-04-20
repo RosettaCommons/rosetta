@@ -71,6 +71,7 @@ sources = {
 		"FilterCreator",
 		"FilterFactory",
 		"filter_schemas",
+		"FilterValueMetric",
 		"ReplicateFilter",
 		"TimeFilter",
 		"VectorPoseFilter",
