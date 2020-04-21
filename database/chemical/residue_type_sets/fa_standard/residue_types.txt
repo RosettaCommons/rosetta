@@ -1362,8 +1362,14 @@ residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-alpha-L-Tagp.params
 residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-beta-L-Tagp.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
+residue_types/carbohydrates/ketoses/nonoses/to4-alpha-Neup.params
+residue_types/carbohydrates/ketoses/nonoses/to4-beta-Neup.params
+residue_types/carbohydrates/ketoses/nonoses/to7-alpha-Neup.params
+residue_types/carbohydrates/ketoses/nonoses/to7-beta-Neup.params
 residue_types/carbohydrates/ketoses/nonoses/to8-alpha-Neup.params
 residue_types/carbohydrates/ketoses/nonoses/to8-beta-Neup.params
+residue_types/carbohydrates/ketoses/nonoses/to9-alpha-Neup.params
+residue_types/carbohydrates/ketoses/nonoses/to9-beta-Neup.params
 
 
 ## Membrane Types
