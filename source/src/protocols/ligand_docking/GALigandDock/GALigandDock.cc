@@ -913,7 +913,7 @@ GALigandDock::final_exact_cartmin(
 	// waters, hetmol
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
 		if ( (pose.residue_type(j).is_water() && move_water_)
-				|| !pose.residue(j).is_protein() ) {
+				|| !pose.residue(j).is_polymer() ) {
 			if ( frozen_residues.count(j) == 0 ) {
 				core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
 				mm->set_jump( wjump, true );
