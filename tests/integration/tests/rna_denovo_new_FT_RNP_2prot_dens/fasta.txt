@@ -1,4 +1,4 @@
->1a9n.pdb A:1-10 B:1-24 C:5-15
+>1a9n.pdb A:1-10 C:5-15 B:1-24
 VKLTAELIEQ
-ccugguauugcaguaccuccaggu
 AELIEQAAQYT
+ccugguauugcaguaccuccaggu

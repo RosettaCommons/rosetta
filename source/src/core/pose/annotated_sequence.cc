@@ -736,6 +736,36 @@ void make_pose_from_sequence(
 			// each time this happens, a new chain should be started
 
 			pose.append_residue_by_jump( *new_rsd, 1, "", "", true );
+		} else if ( pose.size() > 0 && pose.residue_type( pose.size() ).is_RNA() && new_rsd->is_polymer() && !new_rsd->is_NA() ) {
+			// upper-to-upper
+			//
+			// There are only so many guarantees that we can enforce while we are assembling a pose one residue at a time.
+			// We have to assume that making each connection i => i+1 is not going to make impossible subsequent connections i+1 => i+2.
+			// This can be violated, say, by making umpolung connections that demand subsequent umpolung that may be impossible.
+			// This case ONLY triggers when adjacent residues are i: RNA; i+1: a non-NA polymer. Why are we confident doing this in
+			// this instance? The alternative to connecting by [the only legal, possible] bond is connecting by jump. We will in fact
+			// connect by jump, preferentially, if i+1 is lower terminal (see first conditional clause) or if i is nonpolymer or upper terminal
+			// (see final clause, previous iteration). So if you want a jump, there is an explicit way to demand one. By asking for
+			// variant-free residue types in your annotated sequence, you are saying: maybe these should be bonding.
+			//
+			// In the long run, we may need to study cases where make_pose_from_sequence is being called on something that *isn't* directly
+			// user input, where the user has no opportunity to "fix" an assumption that in fact some other module is making. (Imagine if the
+			// RNA-protein-docker-mover constructed an 'ideal pose' from sequence and just assumed it didn't have to ask about variant types.)
+			// the that this is an annotated sequence
+			//
+			// In the short run, we are going to make our assumption explicit here: we are going to DEMAND that this appended polymer residue
+			// cannot make a bond to next, because its polarity has been flipped.
+			pose.append_residue_by_atoms(
+				*new_rsd,
+				true,
+				rsd_type.atom_name( rsd_type.upper_connect_id() ),
+				pose.size(),
+				pose.residue_type( pose.size() ).atom_name( pose.residue_type( pose.size() ).upper_connect_id() ),
+				false,
+				false );
+			TR.Warning << "Pose residue " << pose.size() << " has been appended by an upper-to-upper connection." << std::endl;
+			TR.Warning << "Accordingly, the subsequent residue must be appended by a jump, rather than by bond, as only its own lower connect remains." << std::endl;
+			jump_to_next = true;
 		} else {
 			pose.append_residue_by_bond( *new_rsd, true );
 

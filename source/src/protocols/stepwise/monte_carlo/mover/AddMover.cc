@@ -347,7 +347,24 @@ AddMover::append_residue( pose::Pose & pose, core::Size const offset ) {
 		remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
 		remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, res_to_build_off ); // got to be safe.
 		//   fix_protein_jump_atom( pose, res_to_build_off, " N  " );
-		pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+		// AMW: This is a special case for appending a residue that is "upper-upper" bonded.
+		// It can't be a polymeric bond like this. Does this mean we can't control its seqpos?
+		// It seems so.
+		if ( pose.residue_type( res_to_build_off ).is_NA() && !new_rsd->is_NA() ) {
+			// pose.insert_residue_by_bond( *new_rsd, res_to_build_off+1, res_to_build_off, true,
+			//  pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() )/* upper atom*/,
+			//  new_rsd->atom_name( new_rsd->upper_connect_atom() )/*upper atom*/,
+			//  false, false );
+			// pose.append_residue_by_atoms( *new_rsd, true, new_rsd->atom_name( new_rsd->upper_connect_atom() ),
+			//  res_to_build_off, pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() ),
+			//  false, false );
+			pose.insert_residue_by_atoms( *new_rsd, res_to_build_off+1, true, new_rsd->atom_name( new_rsd->upper_connect_atom() ),
+				res_to_build_off, pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() ),
+				false, false );
+		} else {
+			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
+		}
+
 		suite_num_ = res_to_add - 1;
 	} else {
 		runtime_assert( swa_move_.is_jump() );
@@ -416,7 +433,21 @@ AddMover::prepend_residue( pose::Pose & pose, core::Size const offset ){
 		remove_variant_type_from_pose_residue( pose, core::chemical::LOWER_TERMINUS_VARIANT,   res_to_build_off ); // got to be safe.
 		remove_variant_type_from_pose_residue( pose, core::chemical::N_ACETYLATION,        res_to_build_off ); // got to be safe.
 
-		pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+		if ( !pose.residue_type( res_to_build_off ).is_NA() && new_rsd->is_NA() ) {
+			remove_variant_type_from_pose_residue( pose, core::chemical::THREE_PRIME_PHOSPHATE, res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::C_METHYLAMIDATION, res_to_build_off ); // got to be safe.
+			remove_variant_type_from_pose_residue( pose, core::chemical::UPPER_TERMINUS_VARIANT,   res_to_build_off ); // got to be safe.
+			// pose.insert_residue_by_bond( *new_rsd, res_to_add, res_to_build_off, true,
+			//  pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() )/* upper atom*/,
+			//  new_rsd->atom_name( new_rsd->upper_connect_atom() )/*upper atom*/,
+			//  false, false );
+			pose.insert_residue_by_atoms( *new_rsd, res_to_add, true, new_rsd->atom_name( new_rsd->upper_connect_atom() ),
+				res_to_build_off, pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() ),
+				false, false );
+		} else {
+			pose.prepend_polymer_residue_before_seqpos( *new_rsd, res_to_add, true /*build ideal geometry*/ );
+		}
+
 		suite_num_ = res_to_add;
 	} else {
 		runtime_assert( swa_move_.is_jump() );

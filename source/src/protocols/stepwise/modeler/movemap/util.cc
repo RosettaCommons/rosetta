@@ -90,6 +90,17 @@ figure_out_stepwise_movemap( core::kinematics::MoveMap & mm,
 	using namespace core::id;
 	core::Size const nres( pose.size() );
 	for ( core::Size n = 1; n <= nres; n++ ) {
+
+		if ( n != pose.fold_tree().root() ) {
+			auto e = pose.fold_tree().get_residue_edge( n );
+			if ( e.label() == kinematics::Edge::CHEMICAL ) {
+				// residue is *built by* the branch
+				atom_level_domain_map->set( NamedAtomID( "C", n ), pose, true );
+				atom_level_domain_map->set( NamedAtomID( "CA", n ), pose, true );
+			}
+		}
+
+
 		if ( working_minimize_res.has_value( n )
 				&& ( n != nres || pose.residue_type( nres ).aa() != core::chemical::aa_vrt ) ) atom_level_domain_map->set( n, true );
 		if ( !working_minimize_res.has_value( n ) ) atom_level_domain_map->set_fixed_if_moving( n );

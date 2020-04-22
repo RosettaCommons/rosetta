@@ -1321,6 +1321,7 @@ revise_root_and_moving_res( pose::Pose & pose, core::Size & moving_res /* note t
 	if ( moving_res == 0 ) return false;
 
 	utility::vector1< core::Size > root_partition_res, moving_partition_res;
+
 	figure_out_root_and_moving_partition_res( pose, moving_res, root_partition_res, moving_partition_res );
 
 	bool switch_moving_and_root_partitions( false );
@@ -1350,6 +1351,11 @@ revise_root_and_moving_res( pose::Pose & pose, core::Size & moving_res /* note t
 		core::Size const reference_res = pose.fold_tree().get_parent_residue( moving_res );
 		moving_res = reference_res;
 		reroot_based_on_full_model_info( pose, moving_partition_res /* new root_parition_res*/  );
+		if ( pose.fold_tree().get_parent_residue( moving_res ) != moving_res_original ) {
+			TR.Error << "Bad fold tree for moving res (" << moving_res << ") whose parent is not " << moving_res_original << ":" << std::endl;
+			TR.Error << pose.fold_tree() << std::endl;
+			utility_exit();
+		}
 		runtime_assert( pose.fold_tree().get_parent_residue( moving_res ) == moving_res_original );
 	} else {
 		reroot_based_on_full_model_info( pose, root_partition_res );

@@ -194,6 +194,10 @@ RNA_LoopCloser::passes_fast_scan( core::pose::Pose & pose, core::Size const i ) 
 	pose.conformation().update_domain_map( domain_map );
 	// AMW: eliminated i+1 assumption
 	core::Size const j = core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, i );
+
+	// Skip if it's a nonRNA to RNA connection I guess?
+	if ( !pose.residue_type( j ).is_RNA() ) return false;
+
 	if ( domain_map( i ) == domain_map( j ) ) {
 		if ( verbose_ ) TR << "Skipping " << i << " due to domain map."  << domain_map( i ) << " " << domain_map( i+1 ) << std::endl;
 		return false;
@@ -257,6 +261,8 @@ RNA_LoopCloser::rna_ccd_close( core::pose::Pose & input_pose, std::map< core::Si
 	using namespace core::id;
 
 	core::Size const cutpoint_next( core::scoring::methods::get_upper_cutpoint_partner_for_lower( input_pose, cutpoint ) );
+
+	if ( cutpoint_next == 0 ) return 0;
 
 	if ( !input_pose.residue_type( cutpoint ).is_NA() ||
 			!input_pose.residue_type( cutpoint_next ).is_NA() ) {

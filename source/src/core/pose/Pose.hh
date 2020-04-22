@@ -540,6 +540,18 @@ public:
 		bool const lookup_bond_length = false
 	);
 
+	void
+	insert_residue_by_atoms(
+		Residue const & new_rsd,
+		Size const seqpos,
+		bool const build_ideal_geometry,
+		std::string const & connect_atom,
+		Size const anchor_rsd_seqpos,
+		std::string const & anchor_connect_atom = "",
+		bool const start_new_chain = false,
+		bool const lookup_bond_length = false
+	);
+
 	/// @brief Replaces the residue at  <seqpos>  with  <new_rsd_in>
 	void
 	replace_residue(

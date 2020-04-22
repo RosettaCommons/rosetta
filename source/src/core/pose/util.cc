@@ -2192,8 +2192,7 @@ get_definite_terminal_root( pose::Pose const & pose,
 	utility::vector1< Size > const & fixed_domain_map /* 0 in free; 1,2,... for separate fixed domains */,
 	utility::vector1< Size > const & cutpoint_open_in_full_model,
 	utility::vector1< Size > const & working_res ){
-	for ( Size n = 1; n <= partition_res.size(); n++ ) {
-		Size const i = partition_res[ n ];
+	for ( Size const i : partition_res ) {
 		if ( !pose.fold_tree().possible_root( i ) ) continue;
 		if ( definite_terminal_root( cutpoint_open_in_full_model, working_res, res_list, fixed_domain_map.size(), i ) ) {
 			return i;
@@ -2226,8 +2225,8 @@ reorder_root_partition_res(
 	utility::vector1< std::pair< Size, Size > > domain_sizes;
 	for ( Size domain = 1; domain <= utility::max( fixed_domain_map ); domain++ ) {
 		Size nres_with_domain( 0 );
-		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
-			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
+		for ( Size const rp_res : root_partition_res ) {
+			if ( fixed_domain_map[ res_list[ rp_res ] ] == domain ) {
 				nres_with_domain++;
 			}
 		}
@@ -2239,21 +2238,21 @@ reorder_root_partition_res(
 	std::reverse( domain_sizes.begin(), domain_sizes.end() );
 
 	utility::vector1< Size > root_partition_res_reorder;
-	for ( Size k = 1; k <= domain_sizes.size(); k++ ) {
-		if ( domain_sizes[ k ].first == 0 ) continue; // no residues found.
-		Size const domain = domain_sizes[ k ].second;
-		for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
-			if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
-				root_partition_res_reorder.push_back( root_partition_res[ n ] );
+	for ( auto const & domain_size : domain_sizes ) {
+		if ( domain_size.first == 0 ) continue; // no residues found.
+		Size const domain = domain_size.second;
+		for ( Size const rp_res : root_partition_res ) {
+			if ( fixed_domain_map[ res_list[ rp_res ] ] == domain ) {
+				root_partition_res_reorder.push_back( rp_res );
 			}
 		}
 	}
 
 	// the rest of the residues that weren't in fixed domains.
 	Size const domain( 0 );
-	for ( Size n = 1; n <= root_partition_res.size(); n++ ) {
-		if ( fixed_domain_map[ res_list[ root_partition_res[ n ] ] ] == domain ) {
-			root_partition_res_reorder.push_back( root_partition_res[ n ] );
+	for ( Size const rp_res : root_partition_res ) {
+		if ( fixed_domain_map[ res_list[ rp_res ] ] == domain ) {
+			root_partition_res_reorder.push_back( rp_res );
 		}
 	}
 

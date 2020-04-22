@@ -5,7 +5,7 @@
 -out:file:silent test_new_FT_RNP.out 
 -rna:denovo:lores_scorefxn rna/denovo/rna_lores_with_rnp_aug.wts
 -cycles 1000
--s subset_native_protein.pdb helix_1.pdb subset_native_protein_2.pdb
+-s subset_native_protein.pdb subset_native_protein_2.pdb helix_1.pdb
 -ignore_zero_occupancy false 
 -new_fold_tree_initializer true
 -denovo:use_legacy_job_distributor true

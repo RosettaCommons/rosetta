@@ -2057,8 +2057,15 @@ Conformation::set_polymeric_connection(
 	Size res_id_upper
 )
 {
+	// AMW: I'm updating this to permit upper-to-upper connections with RNA to other
+	// connections, which require upper-to-upper.
 	Size const lr_conn_id( residue_( res_id_lower ).type().upper_connect_id());
-	Size const ur_conn_id( residue_( res_id_upper ).type().lower_connect_id());
+	Size ur_conn_id( residue_( res_id_upper ).type().lower_connect_id());
+	if ( ur_conn_id == 0 )  {
+		TR.Warning << "ur_conn_id, the lower connection of residue " << res_id_upper << ", was zero." << std::endl;
+		TR.Warning << "Inferring that this situation demands an upper-to-upper connection (i.e., an RNA O3' to protein C)." << std::endl;
+		ur_conn_id = residue_( res_id_upper ).type().upper_connect_id();
+	}
 	residues_[ res_id_lower ]->residue_connection_partner( lr_conn_id, res_id_upper, ur_conn_id );
 	residues_[ res_id_upper ]->residue_connection_partner( ur_conn_id, res_id_lower, lr_conn_id );
 }

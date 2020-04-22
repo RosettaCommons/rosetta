@@ -139,7 +139,7 @@ private:
 	bool auto_tune_;
 	bool rename_tags_;
 	bool force_align_;
-	bool numbered_pdb_output_;
+	bool numbered_pdb_output_ = false;
 	std::string rsd_type_set_;
 
 	core::Real score_min_;

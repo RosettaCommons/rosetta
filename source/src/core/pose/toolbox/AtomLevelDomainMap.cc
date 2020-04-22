@@ -396,6 +396,17 @@ AtomLevelDomainMap::setup_movemap( core::kinematics::MoveMap & mm,
 				pose.residue_type( ii + 1 ).has_variant_type( core::chemical::FIVEPRIME_CAP ) ) {
 			mm.set( DOF_ID( AtomID( pose.residue_type( ii ).atom_index( "P" ), ii ), D ), true );
 		}
+
+
+
+		if ( ii != pose.fold_tree().root() ) {
+			auto e = pose.fold_tree().get_residue_edge( ii );
+			if ( e.label() == kinematics::Edge::CHEMICAL ) {
+				// residue is *built by* the branch
+				mm.set( DOF_ID( AtomID( pose.residue_type( ii ).atom_index( "C" ), ii ), PHI ), true );
+				mm.set( DOF_ID( AtomID( pose.residue_type( ii ).atom_index( "CA" ), ii ), PHI ), true );
+			}
+		}
 	}
 
 	for ( Size n = 1; n <= pose.fold_tree().num_jump(); n++ ) {

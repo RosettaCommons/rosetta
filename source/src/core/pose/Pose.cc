@@ -506,6 +506,61 @@ Pose::append_residue_by_atoms(
 }
 
 void
+Pose::insert_residue_by_atoms(
+	conformation::Residue const & new_rsd,
+	Size const seqpos,
+	bool const build_ideal_geometry,
+	std::string const & connect_atom,
+	Size const anchor_rsd_seqpos,
+	std::string const & anchor_connect_atom,
+	bool const start_new_chain /*= false*/,
+	bool const lookup_bond_length /*= false*/
+) {
+	PyAssert( (anchor_rsd_seqpos<=size()&&anchor_rsd_seqpos!=0), "Pose::insert_residue_by_atoms( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
+
+	energies_->clear();
+	uint anchor_connection( 0 );
+	uint connection( 0 );
+	uint connect_atom_index, anchor_connect_atom_index;
+
+	// First, see if the atoms exist.
+	conformation::Residue const & anchor_rsd( residue( anchor_rsd_seqpos ) );
+	if ( ! new_rsd.has( connect_atom ) || ! anchor_rsd.has( anchor_connect_atom ) ) {
+		utility_exit_with_message( "Can't append by these atoms, "
+			"since they are not found in the Residues in question!" );
+	}
+
+	// Next, convert to indices.
+	connect_atom_index = new_rsd.atom_index( connect_atom );
+	anchor_connect_atom_index = anchor_rsd.atom_index( anchor_connect_atom );
+
+	// Determine both connections...
+	Size n_connections( anchor_rsd.n_possible_residue_connections() );
+	for ( Size ii = 1; ii <= n_connections; ++ii ) {
+		if ( anchor_rsd.residue_connect_atom_index( ii ) == anchor_connect_atom_index ) {
+			anchor_connection = ii;
+			break;
+		}
+	}
+	n_connections = new_rsd.n_possible_residue_connections();
+	for ( Size ii = 1; ii <= n_connections; ++ii ) {
+		if ( new_rsd.residue_connect_atom_index( ii ) == connect_atom_index ) {
+			connection = ii;
+			break;
+		}
+	}
+
+	if ( ( ! anchor_connection ) || ( ! connection ) ) {
+		utility_exit_with_message( "Can't append by these atoms, "
+			"since they do not correspond to connections on the Residues in question!" );
+	}
+
+	conformation_->insert_residue_by_bond( new_rsd, seqpos, anchor_rsd_seqpos, build_ideal_geometry,
+		anchor_connect_atom, connect_atom, start_new_chain, lookup_bond_length );
+	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.
+}
+
+void
 Pose::insert_residue_by_jump(
 	Residue const & new_rsd_in,
 	Size const seqpos, // desired seqpos of new_rsd
@@ -532,7 +587,7 @@ Pose::insert_residue_by_bond(
 	bool const lookup_bond_length // default false
 )
 {
-	PyAssert( (anchor_pos<=size()&&anchor_pos!=0), "Pose::insert_residue_by_jump( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
+	PyAssert( (anchor_pos<=size()&&anchor_pos!=0), "Pose::insert_residue_by_bond( ...Size anchor_pos... ): variable anchor_pos is out of range!" );    // check later:
 	energies_->clear(); // TEMPORARY
 	conformation_->insert_residue_by_bond( new_rsd_in, seqpos, anchor_pos, build_ideal_geometry, anchor_atom, root_atom, new_chain, lookup_bond_length );
 	increment_reference_pose_mapping_after_seqpos( seqpos ); //All mappings in the new pose after seqpos must be incremented by 1 in all ReferencePose objects.

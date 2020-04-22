@@ -6,4 +6,4 @@
 -allow_internal_local_moves false
 -out:levels protocols.stepwise.monte_carlo.mover.TransientCutpointHandler:500
 -use_legacy_stepwise_job_distributor true
--cycles 2
+-cycles 1

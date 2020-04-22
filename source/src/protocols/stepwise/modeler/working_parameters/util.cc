@@ -224,7 +224,9 @@ setup_working_parameters_explicit( core::Size const rebuild_res, /* this must be
 		core::Size const n = five_prime_chain_breaks[ i ];
 		if ( ( reference_res < rebuild_res && rebuild_res == (n+1) ) ||
 				( reference_res > rebuild_res && rebuild_res == n ) ) {
-			runtime_assert( floating_base ); continue;
+			// AMW: could also be a chemical edge. maybe build infrastructure special for this.
+			// runtime_assert( floating_base );
+			continue;
 		}
 		five_prime_chain_break_res = n;
 		gap_size = chain_break_gap_sizes[ i ];

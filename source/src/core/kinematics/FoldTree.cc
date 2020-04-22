@@ -2095,7 +2095,7 @@ FoldTree::partition_by_residue(
 
 		Size const start( std::min( it.start(), it.stop() ) );
 		Size const stop ( std::max( it.start(), it.stop() ) );
-		if ( it.is_polymer() && start <= seqpos && stop >= seqpos ) {
+		if ( ( it.is_polymer() || it.is_chemical_bond() ) && start <= seqpos && stop >= seqpos ) {
 			edge = it;
 			found_edge = true;
 
@@ -2122,12 +2122,12 @@ FoldTree::partition_by_residue(
 			Size const start( std::min( it->start(), it->stop() ) );
 			Size const stop ( std::max( it->start(), it->stop() ) );
 
-			if ( it->is_polymer() && start <= seqpos && stop >= seqpos ) continue; // skip input edge.
+			if ( ( it->is_polymer() || it->is_chemical_bond() ) && start <= seqpos && stop >= seqpos ) continue; // skip input edge.
 
 			if ( ( partner1( start ) && !partner1( stop ) ) ||
 					( partner1( stop ) && !partner1( start ) ) ) {
 				new_member = true;
-				if ( it->is_polymer() ) {
+				if ( ( it->is_polymer() || it->is_chemical_bond() ) ) {
 					// all the residues
 					for ( Size i=start; i<= stop; ++i ) {
 						partner1( i ) = true;

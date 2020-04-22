@@ -97,6 +97,7 @@ sources = {
     "protocols/stepwise/sampler": [
         "StepWiseSamplerComb",
         "StepWiseSamplerOneTorsion",
+        "StepWiseSamplerOneDOF",
         "StepWiseSamplerRingConformer",
         "StepWiseSamplerOneValue",
         "StepWiseSamplerOneValueComb",

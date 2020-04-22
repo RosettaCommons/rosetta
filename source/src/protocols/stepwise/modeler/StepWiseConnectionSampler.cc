@@ -64,6 +64,7 @@
 #include <protocols/stepwise/sampler/StepWiseSampler.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerComb.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerOneTorsion.hh>
+#include <protocols/stepwise/sampler/StepWiseSamplerOneDOF.hh>
 #include <protocols/stepwise/sampler/StepWiseSamplerRingConformer.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
@@ -80,6 +81,7 @@
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/Pose.hh>
@@ -291,7 +293,7 @@ StepWiseConnectionSampler::initialize_residue_level_screeners( pose::Pose & pose
 
 	screeners_.push_back( utility::pointer::make_shared< StubDistanceScreener >( moving_res_base_stub_, rigid_body_rotamer_->reference_stub(), max_distance_squared_ ) );
 
-	if ( base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() &&  pose.residue_type( moving_res_ ).is_polymer() ) {
+	if ( base_centroid_checker_ && !protein_connection_ && pose.residue_type( moving_res_ ).is_NA() ) {
 		screeners_.push_back( utility::pointer::make_shared< BaseCentroidScreener >( base_centroid_checker_,
 			moving_res_base_stub_ ) );
 	}
@@ -358,7 +360,7 @@ StepWiseConnectionSampler::initialize_pose_level_screeners( pose::Pose & pose ) 
 	//  screeners_.push_back( new ResidueContactScreener( *screening_pose_, last_append_res_,  last_prepend_res_, atom_atom_overlap_dist_cutoff_ ) );
 	// }
 
-	if ( !rigid_body_modeler_ && base_centroid_checker_ && !protein_connection_ && !pose.residue_type( moving_res_ ).is_carbohydrate() ) {
+	if ( !rigid_body_modeler_ && base_centroid_checker_ && !protein_connection_ && pose.residue_type( moving_res_ ).is_NA() ) {
 		bool const force_centroid_interaction = ( rigid_body_modeler_ || options_->force_centroid_interaction()
 			|| ( rna_cutpoints_closed_.size() == 0 ) );
 		screeners_.push_back( utility::pointer::make_shared< BaseCentroidScreener >( base_centroid_checker_, screening_pose_, force_centroid_interaction ) );
@@ -836,13 +838,47 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	TR << "Setting up bonded polymer sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
 	// AMW: be very careful here because it's not clear all of these will be very useful.
+
+	auto e = pose.fold_tree().get_residue_edge( moving_res_ );
+
+	bool omit_first_two_bb = false;
+	if ( e.label() == kinematics::Edge::CHEMICAL ) {
+		// we must add BRANCH torsions.
+		//Size other_seqpos = ( e.start() == moving_res_ ) ? e.stop() : e.start();
+		//TR.Warning << "pose ft is " << pose.fold_tree() << std::endl;
+		//utility_exit();
+
+		/*
+		id::DOF_ID
+		AtomTree::torsion_angle_dof_id(
+		AtomID const & atom1_in_id,
+		AtomID const & atom2_in_id,
+		AtomID const & atom3_in_id,
+		AtomID const & atom4_in_id,
+		Real & offset,
+		bool const quiet
+		) const
+		{*/
+		using namespace core::id;
+		// residue is *built by* the branch
+		sampler->add_external_loop_rotamer(
+			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "C" ), moving_res_ ), id::PHI ), allowed_values ) );
+		sampler->add_external_loop_rotamer(
+			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "CA" ), moving_res_ ), id::PHI ), allowed_values ) );
+		omit_first_two_bb = true;
+	}
+
 	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).mainchain_atoms().size(); ++ii ) {
+		if ( omit_first_two_bb && ii <= 2 ) continue;
 		// skip if lower connect not there. Might be bad if it exists but is unfulfilled?
 		// ideally skip if it's there but unfulfilled
 		//if ( !pose.residue_type( moving_res_ ).lower_connect_id() && ii == 1 ) continue;
 		// This was a good idea... but... what if you naturally don't have an upper
 		//if ( !pose.residue_type( moving_res_ ).upper_connect_id() && ii >= pose.residue_type( moving_res_ ).mainchain_atoms().size() - 1 ) continue;
 
+		// AMW TODO: use functions in conformation or something to only add sensible ones.
 		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::BB, ii ), allowed_values ) );
 	}
 	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
