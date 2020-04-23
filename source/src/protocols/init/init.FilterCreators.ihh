@@ -19,6 +19,7 @@
 #include <protocols/constraint_filters/ShowConstraintsFilterCreator.hh>
 #include <protocols/cyclic_peptide/CycpepSymmetryFilterCreator.hh>
 #include <protocols/cyclic_peptide/OversaturatedHbondAcceptorFilterCreator.hh>
+#include <protocols/cyclic_peptide/PeptideInternalHbondsFilterCreator.hh>
 
 #include <protocols/enzdes/EnzFilterCreators.hh>
 #include <protocols/enzdes/RemoveLigandFilterCreator.hh>

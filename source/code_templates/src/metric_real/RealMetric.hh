@@ -30,7 +30,7 @@
 
 --namespace--
 
-///@brief --brief--
+/// @brief --brief--
 class --class-- : public core::simple_metrics::RealMetric{
 
 public:
@@ -65,22 +65,22 @@ public:
 	//void
 	//apply( core::pose::Pose & pose, prefix="", suffix="" ) override;
 
-	///@brief Calculate the metric.
+	/// @brief Calculate the metric.
 	core::Real
 	calculate( core::pose::Pose const & pose ) const override;
 
 public:
 
-	///@brief Name of the class
+	/// @brief Name of the class
 	std::string
 	name() const override;
 
-	///@brief Name of the class for creator.
+	/// @brief Name of the class for creator.
 	static
 	std::string
 	name_static();
 
-	///@brief Name of the metric
+	/// @brief Name of the metric
 	std::string
 	metric() const override;
 

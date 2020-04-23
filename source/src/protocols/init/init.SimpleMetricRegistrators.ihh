@@ -92,4 +92,7 @@ static SimpleMetricRegistrator< protocols::analysis::burial_metrics::PolarGroupB
 // Added by VKM, 5 Sept. 2018:
 static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
 
+// Added by VKM, 19 April 2020:
+static SimpleMetricRegistrator< protocols::cyclic_peptide::PeptideInternalHbondsMetricCreator > reg_PeptideInternalHbondsMetricCreator;
+
 } // namespace protocols

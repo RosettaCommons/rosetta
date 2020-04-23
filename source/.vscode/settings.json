@@ -93,6 +93,8 @@
         "memory_resource": "cpp",
         "rope": "cpp",
         "slist": "cpp",
-        "cfenv": "cpp"
+        "cfenv": "cpp",
+        "hash_map": "cpp",
+        "hash_set": "cpp"
     }
 }

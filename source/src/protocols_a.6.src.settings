@@ -20,6 +20,8 @@ sources = {
 		"FlipChiralityMover",
 		"OversaturatedHbondAcceptorFilter",
 		"PeptideCyclizeMover",
+		"PeptideInternalHbondsFilter",
+		"PeptideInternalHbondsMetric",
         	"PeptideStubMover",
 		"RamaMutationSelector",
 		"SymmetricCycpepAlign",

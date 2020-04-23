@@ -32,6 +32,7 @@ static FilterRegistrator< protocols::constraint_filters::SavePoseConstraintToFil
 static FilterRegistrator< protocols::constraint_filters::ShowConstraintsFilterCreator > reg_ShowConstraintsFilterCreator;
 static FilterRegistrator< protocols::cyclic_peptide::CycpepSymmetryFilterCreator > reg_CycpepSymmetryFilterCreator;
 static FilterRegistrator< protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterCreator > reg_OversaturatedHbondAcceptorFilterCreator;
+static FilterRegistrator< protocols::cyclic_peptide::PeptideInternalHbondsFilterCreator > reg_PeptideInternalHbondsFilterCreator;
 
 static FilterRegistrator< protocols::enzdes::DiffAtomSasaFilterCreator > reg_DiffAtomSasaFilterCreator;
 static FilterRegistrator< protocols::enzdes::EnzdesScorefileFilterCreator > reg_EnzdesScorefileFilterCreator;

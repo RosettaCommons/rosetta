@@ -29,12 +29,19 @@
 		# will be restricted to becoming L-amino acids during design:
 		<Phi name="negPhi" select_positive_phi="false" />
 	</RESIDUE_SELECTORS>
+	# The SIMPLE_METRICS section allows users to configure metrics used to measure properties of a structure.
+	<SIMPLE_METRICS>
+		# Metric to measure backbone hydrogen bonds:
+		<PeptideInternalHbondsMetric name="internal_hbonds" />
+	</SIMPLE_METRICS>
 	# The FILTERS section allows users to configure filters.  These measure properties of a
 	# structure and make decisions, based on the measured properties, about whether to discard
 	# the current structure.
 	<FILTERS>
 		# Filter to avoid score function artifact of having more than two hydrogen bonds to carbonyls:
 		<OversaturatedHbondAcceptorFilter name="oversat" scorefxn="ref" max_allowed_oversaturated="0" consider_mainchain_only="false"/>
+		# Filter to ensure a minimum number of hbonds:
+		<PeptideInternalHbondsFilter name="min_internal_hbonds" hbond_cutoff="1" />
 	</FILTERS>
 	# The TASKOPERATIONS section allows users to configure task operations, which are Rosetta modules that control the
 	# behavior of Rosetta's "Packer" module.  The Packer, in turn, is used for side-chain identity and rotamer optimization.
@@ -88,11 +95,14 @@
 				<Chain number="1" chi="true" bb="true" />
 			</MoveMap>
 		</FastRelax>
+		# This mover allows the simple metrics to be run, to measure internal hydrogen bonds.
+		<RunSimpleMetrics name="measure_internal_hbonds" metrics="internal_hbonds" />
 	</MOVERS>
 	# The PROTOCOLS section is the section in which the user invokes the modules defined above in linear sequence
 	# to define a protocol:
 	<PROTOCOLS>
 		 <Add mover="peptide_bond1" />
+		 <Add filter="min_internal_hbonds" />
 		 <Add mover="peptide_torsion_constraint" />
 		 <Add mover="peptide_angle_constraints" />
 		 <Add mover="N_To_C_dist_cst" />
@@ -104,6 +114,7 @@
 		 <Add mover="frlx" />
 		 <Add mover="peptide_bond1" />
 		 <Add filter="oversat" />
+		 <Add mover="measure_internal_hbonds" />
 	</PROTOCOLS>
 	# The OUTPUT section allows the user to define output settings.  Here, we specify the scoring function that will be used
 	# to score the output structure for the score written in the output PDB file.
