@@ -257,7 +257,7 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	suite_mm->set_bb( true );
 	suite_mm->set_chi( true );
 	suite_mm->set_jump( true );
-	protocols::minimization_packing::MinMoverOP minm = utility::pointer::make_shared< protocols::minimization_packing::MinMover( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+	protocols::minimization_packing::MinMoverOP minm = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
 	for ( Size ii = 1; ii < ideal_pose.size(); ++ii ) {
 
