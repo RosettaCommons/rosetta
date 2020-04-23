@@ -236,7 +236,7 @@ StepWiseLegacyClustererSilentBased::do_some_clustering() {
 			silent_struct_output_list_.push_back(  silent_struct  );
 			num_pose_in_cluster_.push_back( 1 );
 			TR.Debug << " ... added. " << std::endl;
-			if ( numbered_pdb_output_ ) {
+			if ( numbered_pdb_output_ && num_pose_in_cluster_.size() <= 10 ) {
 				std::stringstream ss;
 				ss << "c." << num_pose_in_cluster_.size() - 1 << ".0.pdb";
 				pose.dump_pdb( ss.str() );

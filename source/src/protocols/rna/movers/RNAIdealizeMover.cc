@@ -96,7 +96,7 @@ RNAIdealizeMover::parse_my_tag(
 	basic::datacache::DataMap&
 )
 {
-	iterations_ = tag->getOption< core::Size >( "iterations", iterations_ );
+	iterations_ = tag->getOption< Size >( "iterations", iterations_ );
 	noise_ = tag->getOption< bool >( "noise", noise_ );
 	final_minimize_ = tag->getOption< bool >( "final_minimize", final_minimize_ );
 	ang_significance_threshold_ = tag->getOption< Real >( "ang_significance_threshold", ang_significance_threshold_ );
@@ -135,8 +135,8 @@ void
 RNAIdealizeMover::perturb_pose( pose::Pose & pose ) const
 {
 	using namespace numeric;
-	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		for ( Size jj = 1; jj <= pose.residue_type( ii ).natoms(); ++jj ) {
 			pose.conformation().set_xyz(
 				AtomID( jj, ii ),
 				pose.conformation().xyz( AtomID( jj, ii ) )
@@ -144,152 +144,6 @@ RNAIdealizeMover::perturb_pose( pose::Pose & pose ) const
 				random::rg().gaussian() * 0.02,
 				random::rg().gaussian() * 0.02,
 				random::rg().gaussian() * 0.02 ) );
-		}
-	}
-}
-
-bool
-connected_in_atom_tree(
-	core::pose::Pose const & pose,
-	AtomID const & atom_id1,
-	AtomID const & atom_id2
-) {
-	core::kinematics::tree::AtomCOP atom1( pose.atom_tree().atom( atom_id1 ).get_self_ptr() );
-	core::kinematics::tree::AtomCOP atom2( pose.atom_tree().atom( atom_id2 ).get_self_ptr() );
-
-	if ( atom1->parent() == atom2 ) return true;
-	if ( atom2->parent() == atom1 ) return true;
-
-	return false;
-}
-
-void
-RNAIdealizeMover::add_bond_constraint(
-	AtomID const & atom_id1,
-	AtomID const & atom_id2,
-	core::pose::Pose & pose
-) const {
-	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
-	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
-
-	if ( !ref_pose_.residue_type( atom_id1.rsd() ).has( atom_name1 ) ) return;
-	if ( !ref_pose_.residue_type( atom_id2.rsd() ).has( atom_name2 ) ) return;
-
-	Real const bond_length_sd( 0.05 );
-	Real const bond_length = ( ref_pose_.residue( atom_id1.rsd() ).xyz( atom_name1 ) -
-		ref_pose_.residue( atom_id2.rsd() ).xyz( atom_name2 ) ).length();
-	Real const bond_tol = 0.02;
-	func::FuncOP dist_harm_func( new core::scoring::func::FlatHarmonicFunc( bond_length, bond_length_sd, bond_tol ) );
-	pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( atom_id1, atom_id2, dist_harm_func, atom_pair_constraint ) );
-
-	TR.Trace << "PUTTING CONSTRAINT ON DISTANCE: " <<
-		atom_id2.rsd() << " " << atom_name1 << "; "  <<
-		atom_id1.rsd() << " " << atom_name2 << " "  <<
-		bond_length << std::endl;
-}
-
-void
-RNAIdealizeMover::add_bond_angle_constraint(
-	AtomID const & atom_id1,
-	AtomID const & atom_id2,
-	AtomID const & atom_id3,
-	core::pose::Pose & pose
-) const {
-	using namespace numeric::conversions;
-
-	if ( atom_id2 == atom_id3 ) return;
-	if ( atom_id1 == atom_id3 ) return;
-	if ( atom_id1 == atom_id2 ) return;
-
-	std::string const & atom_name1 = pose.residue_type( atom_id1.rsd() ).atom_name( atom_id1.atomno() );
-	std::string const & atom_name2 = pose.residue_type( atom_id2.rsd() ).atom_name( atom_id2.atomno() );
-	std::string const & atom_name3 = pose.residue_type( atom_id3.rsd() ).atom_name( atom_id3.atomno() );
-
-	if ( !ref_pose_.residue_type( atom_id1.rsd() ).has( atom_name1 ) ) return;
-	if ( !ref_pose_.residue_type( atom_id2.rsd() ).has( atom_name2 ) ) return;
-	if ( !ref_pose_.residue_type( atom_id3.rsd() ).has( atom_name3 ) ) return;
-
-	Real const bond_angle_sd_( radians( 3.0 ) );
-	Real const bond_angle = angle_radians(
-		ref_pose_.residue( atom_id2.rsd() ).xyz( atom_name2 ),
-		ref_pose_.residue( atom_id1.rsd() ).xyz( atom_name1 ),
-		ref_pose_.residue( atom_id3.rsd() ).xyz( atom_name3 ) );
-	Real const bond_angle_tol( radians( 4.0 ) );
-	if ( bond_angle < 0.001 ) TR.Warning << "WHAT THE HELL????????? " << std::endl;
-
-	pose.add_constraint( utility::pointer::make_shared< AngleConstraint >(
-		atom_id2, atom_id1, atom_id3,
-		//utility::pointer::make_shared< CircularHarmonicFunc >( bond_angle, bond_angle_sd_ ),
-		utility::pointer::make_shared< FlatHarmonicFunc >( bond_angle, bond_angle_sd_, bond_angle_tol ),
-		angle_constraint ) );
-
-	TR.Trace << "PUTTING CONSTRAINT ON ANGLE: "
-		<< atom_id2.rsd() << " " << atom_name2 << "; "
-		<< atom_id1.rsd() << " " << atom_name1 << "; "
-		<< atom_id3.rsd() << " " << atom_name3 << " ==> "
-		<< degrees( bond_angle ) << " " << degrees( bond_angle_sd_ ) << std::endl;
-}
-
-/// @brief For dofs not in the AtomTree, constrain to ideal
-/// @details If you don't do this, all the error ends up in the dofs not in the
-/// AtomTree
-void
-RNAIdealizeMover::constrain_to_ideal(
-	pose::Pose & pose,
-	utility::vector1< core::Size > const & bad_suite_res
-) const {
-
-	for ( core::Size ii = 1; ii <= pose.size(); ++ii )  {
-		// If this residue or its successor is in bad suite res, no constraints
-		// Update could constrain only PARTICULAR atoms for predecessor/successor situation
-		// according to suite torsions
-		if ( std::find( bad_suite_res.begin(), bad_suite_res.end(), ii ) != bad_suite_res.end() ) {
-			continue;
-		}
-		if ( std::find( bad_suite_res.begin(), bad_suite_res.end(), ii + 1 ) != bad_suite_res.end() ) {
-			continue;
-		}
-		if ( pose.residue_type( ii ).aa() == core::chemical::aa_vrt ) continue;
-
-		chemical::ResidueType const & residue_type( pose.residue_type( ii ) );
-
-		for ( core::Size jj = 1; jj <= residue_type.natoms(); ++jj ) {
-
-			AtomID jj_atomid( jj, ii );
-			utility::vector1< AtomID > nbrs( pose.conformation().bonded_neighbor_all_res( jj_atomid ) );
-
-			for ( auto const & nbr : nbrs ) {
-				if ( nbr.rsd() > pose.size() || nbr.rsd() < 1 ) continue;
-				// Also constrain stuff in the atom tree. This way, we don't
-				// move all error into atom tree dofs!
-				if ( connected_in_atom_tree( pose, jj_atomid, nbr ) ) continue;
-
-				add_bond_constraint( jj_atomid, nbr, pose );
-			}
-
-			// Bond angles
-			for ( auto const & nbr : nbrs ) {
-				if ( nbr.rsd() > pose.size() || nbr.rsd() < 1 ) continue;
-
-				for ( auto const & ang_nbr : nbrs ) {
-					if ( ang_nbr.rsd() > pose.size() || ang_nbr.rsd() < 1 ) continue;
-					if ( connected_in_atom_tree( pose, jj_atomid, nbr )
-							&& connected_in_atom_tree( pose, jj_atomid, ang_nbr ) ) continue;
-
-					add_bond_angle_constraint( jj_atomid, nbr, ang_nbr, pose );
-				}
-
-				utility::vector1< AtomID > nbrs2( pose.conformation().bonded_neighbor_all_res( nbr ) );
-
-				for ( auto const & nbr2 : nbrs2 ) {
-					if ( nbr2.rsd() > pose.size() || nbr2.rsd() < 1 ) continue;
-
-					if ( connected_in_atom_tree( pose, jj_atomid, nbr )
-							&& connected_in_atom_tree( pose, nbr, nbr2 ) ) continue;
-
-					add_bond_angle_constraint( jj_atomid, nbr, nbr2, pose );
-				}
-			}
 		}
 	}
 }
@@ -305,6 +159,8 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 
 	ScoreFunctionOP scorefxn = get_score_function();
 
+	scorefxn->set_weight( core::scoring::coordinate_constraint, 1.0 );
+
 	// Perturb input pose with Gaussian xyz noise
 	if ( noise_ ) perturb_pose( pose );
 
@@ -312,333 +168,143 @@ RNAIdealizeMover::apply( pose::Pose & pose )
 	auto const cst_set = pose.constraint_set()->clone();
 	auto const orig_ft = pose.fold_tree();
 
-	// For every ba/bl in the pose, identify the ideal value.
-	// Easiest implementation first: create a pose of the same sequence
-	// as a reference.
-	pose::make_pose_from_sequence( ref_pose_, pose.annotated_sequence(), core::chemical::FA_STANDARD );
-
-	//scorefxn->set_weight( rna_bond_geometry, 1 );
-	scorefxn->set_weight( atom_pair_constraint, 1 );
-	//scorefxn->set_weight( angle_constraint, 1 );
-	if ( handle_suites_ ) scorefxn->set_weight( dihedral_constraint, 1 );
-
-	// 0. What's the suite situation?
-	core::pose::rna::RNA_SuiteName suite_assignment;
-	utility::vector1< core::Size > bad_suite_res;
-	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		auto assignment = suite_assignment.assign( pose, ii );
-		if ( assignment.name == "!!" ) {
-			bad_suite_res.push_back( ii );
-			TR << "Residue " << ii << " is a suite outlier!" << std::endl;
-			auto closest_suite = suite_assignment.closest_suite( pose, ii );
-			TR << "Closest suite is " << closest_suite.name << std::endl;
-
-			// Add seven? dihedral constraints
-			// Don't bother with circular harmonics yet. Trialing flat harmonic behavior
-
-			if ( handle_suites_ ) {
-				AtomID aid1, aid2, aid3, aid4;
-				if ( ii > 1 ) {
-					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, DELTA ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-						aid1, aid2, aid3, aid4,
-						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[1], 0.3 ) ) );
-					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, EPSILON ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-						aid1, aid2, aid3, aid4,
-						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[2], 0.3 ) ) );
-					pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii - 1, id::BB, ZETA ), aid1, aid2, aid3, aid4 );
-					pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-						aid1, aid2, aid3, aid4,
-						utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[3], 0.3 ) ) );
-				}
-				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, ALPHA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-					aid1, aid2, aid3, aid4,
-					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[4], 0.3 ) ) );
-				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, BETA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-					aid1, aid2, aid3, aid4,
-					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[5], 0.3 ) ) );
-				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, GAMMA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-					aid1, aid2, aid3, aid4,
-					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[6], 0.3 ) ) );
-				pose.conformation().get_torsion_angle_atom_ids( TorsionID( ii, id::BB, DELTA ), aid1, aid2, aid3, aid4 );
-				pose.add_constraint( utility::pointer::make_shared< DihedralConstraint >(
-					aid1, aid2, aid3, aid4,
-					utility::pointer::make_shared< CircularHarmonicFunc >( closest_suite.torsion[7], 0.3 ) ) );
-
-				// Resample
-
-				if ( ! pose.fold_tree().is_cutpoint( ii ) ) {
-					//protocols::stepwise::monte_carlo::mover::TransientCutpointHandler tch( ii );
-					protocols::stepwise::monte_carlo::mover::TransientCutpointHandler tch( ii-1, ii, true );
-					tch.put_in_cutpoints( pose );
-				}
-
-				//protocols::recces::sampler::rna::MC_RNA_KIC_Sampler sampler( utility::pointer::make_shared< Pose >( pose ), ii - 1, ii, true );
-				protocols::stepwise::sampler::rna::RNA_KIC_Sampler sampler( utility::pointer::make_shared< Pose >( pose ), ii - 1, ii );
-				sampler.init();
-				++sampler;
-				sampler.apply( pose );
-
-				/*
-				if ( ii > 1 && ii < pose.size() ) {
-				// be smarter later
-				using namespace protocols::stepwise::monte_carlo::mover;
-				using namespace protocols::stepwise::monte_carlo::options;
-				utility::vector1< Attachment > attachments;
-				attachments.emplace_back( ii - 1, BOND_TO_PREVIOUS );
-				attachments.emplace_back( ii + 1, BOND_TO_NEXT );
-				StepWiseMove stepwise_move( ii, attachments, RESAMPLE_INTERNAL_LOCAL );
-
-				StepWiseMonteCarloOptionsCOP options( new StepWiseMonteCarloOptions );
-				StepWiseMasterMover swmm( scorefxn, options );
-				swmm.apply( pose, stepwise_move );
-				}
-				// Add cutpoint and install good suite torsions
-				if ( ! pose.fold_tree().is_cutpoint( ii ) ) {
-				//protocols::stepwise::monte_carlo::mover::TransientCutpointHandler tch( ii );
-				protocols::stepwise::monte_carlo::mover::TransientCutpointHandler tch( ii-1, ii, true );
-				tch.put_in_cutpoints( pose );
-				}
-				if ( ii > 1 ) {
-				pose.set_torsion( TorsionID( ii - 1, id::BB, DELTA ), closest_suite.torsion[1] );
-				pose.set_torsion( TorsionID( ii - 1, id::BB, EPSILON ), closest_suite.torsion[2] );
-				pose.set_torsion( TorsionID( ii - 1, id::BB, ZETA ), closest_suite.torsion[3] );
-				}
-				pose.set_torsion( TorsionID( ii, id::BB, ALPHA ), closest_suite.torsion[4] );
-				pose.set_torsion( TorsionID( ii, id::BB, BETA ), closest_suite.torsion[5] );
-				pose.set_torsion( TorsionID( ii, id::BB, GAMMA ), closest_suite.torsion[6] );
-				pose.set_torsion( TorsionID( ii, id::BB, DELTA ), closest_suite.torsion[7] );
-				*/
-			}
-		}
-	}
-
-	// TODO: don't constrain residues with bad suites nearly as much.....
-	constrain_to_ideal( pose, bad_suite_res );
-
-	// Add high-value bounded func coord constraints to every P/CA
-	scorefxn->set_weight( coordinate_constraint, 10 );
-
-	Pose const first_basis_pose = pose;
-	for ( core::Size ii = 1; ii <= iterations_; ++ii ) {
-
-		kinematics::MoveMapOP suite_mm( new kinematics::MoveMap );
-		suite_mm->set_bb( true );
-		suite_mm->set_chi( true );
-		//mm->set_bb( false );
-		//mm->set_chi( false );
-		for ( core::Size const res : bad_suite_res ) {
-			suite_mm->set_bb( true, res );
-			suite_mm->set_chi( true, res );
-
-			core::Size const min_res = res > 4 ? res - 3 : 1;
-			core::Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
-
-			for ( core::Size jj = min_res; jj <= max_res; ++jj ) {
-				suite_mm->set_bb( true, jj );
-				suite_mm->set_chi( true, jj );
-			}
+	Pose ideal_pose;
+	// Pose copy_pose;// = pose;
+	for ( Size imax = 1 ; imax <= pose.size(); ++imax ) {
+		if ( imax == 1 || !pose.residue( imax ).is_bonded( imax-1 ) ) {
+			ideal_pose.append_residue_by_jump( core::conformation::Residue( pose.residue_type( imax ), true ), 1 );
+		} else {
+			ideal_pose.append_residue_by_bond( core::conformation::Residue( pose.residue_type( imax ), true ), true );
 		}
 
-		protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
+		// if ( imax == 1 || !pose.residue( imax ).is_bonded( imax-1 ) ) {
+		//  copy_pose.append_residue_by_jump( pose.residue( imax ), 1 );
+		// } else {
+		//  copy_pose.append_residue_by_bond( pose.residue( imax ), true );
+		// }
 
-		TR << TR.Blue << "Suite-fix iteration " << ii << "," << " score " << ( *scorefxn )( pose ) << "." << std::endl;
-		TR            << "RMS to starting: " << core::scoring::all_atom_rmsd( pose, first_basis_pose ) << "." << std::endl;
+		// add constraints
+		core::pose::addVirtualResAsRoot( ideal_pose );
+		// core::pose::addVirtualResAsRoot( copy_pose );
+		Size const my_anchor( ideal_pose.fold_tree().root() );
 
+		FuncOP constraint_func = utility::pointer::make_shared< FlatHarmonicFunc >( 0, 0.25, 1 );
+		// FuncOP constraint_func( new HarmonicFunc( 0, 1 ) );
 
-		minm->apply( pose );
-
-		std::stringstream ss;
-		ss << "suite_iter_" << ii << ".pdb";
-		pose.dump_scored_pdb( ss.str(), *scorefxn );
-	}
-	scorefxn->set_weight( dihedral_constraint, 0 );
-
-
-	// 1. Add virt res
-	bool we_added_the_virt = false;
-	if ( pose.residue_type( pose.fold_tree().root() ).aa() != core::chemical::aa_vrt ) {
-		we_added_the_virt = true;
-		// attach virt res there
-		ResidueOP new_res( ResidueFactory::create_residue( *core::pose::virtual_type_for_pose(pose) ) );
-		pose.append_residue_by_jump( *new_res, pose.size() );
-		ref_pose_.append_residue_by_jump( *new_res, ref_pose_.size() );
-		// make the virt atom the root
-		kinematics::FoldTree newF( pose.fold_tree() );
-		newF.reorder( pose.size() );
-		pose.fold_tree( newF );
-		ref_pose_.fold_tree( newF );
-	}
-
-	utility::vector1< core::Size > all_res( pose.size() );
-	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) all_res[ ii ] = ii;
-	protocols::stepwise::modeler::rna::o2prime::O2PrimePacker o2prime_packer( pose, scorefxn, all_res );
-
-	// 2. Add funcs
-	for ( core::Size ii = 1; ii <= pose.size(); ++ii ) {
-		if ( pose.residue_type( ii ).aa() == core::chemical::aa_vrt ) continue;
-
-		Real const coord_sdev( 0.3 );
-		Real const coord_tol(  0.3 );
-		core::Size const my_anchor( pose.size() ); //anchor on virtual residue
-		Residue const & rsd( pose.residue( ii ) );
-		//core::Size const atm_indexP = rsd.has( "P" ) ? rsd.atom_index( "P" ) : rsd.atom_index( "CA" );
-
-		// All coord cst
-		for ( core::Size jj = 1; jj <= pose.residue_type( ii ).nheavyatoms(); ++jj ) {
-			pose.add_constraint( utility::pointer::make_shared< CoordinateConstraint >(
-				AtomID( jj, ii ),
-				AtomID( 1, my_anchor ), rsd.xyz( jj ),
-				utility::pointer::make_shared< FlatHarmonicFunc >( 0.0, coord_sdev, coord_tol ) ) );
+		kinematics::MoveMapOP suite_mm = utility::pointer::make_shared< kinematics::MoveMap >();
+		for ( Size kk = 0; kk <= 4; ++kk ) {
+			suite_mm->set_bb( ideal_pose.size() - kk, true );
+			suite_mm->set_chi( ideal_pose.size() - kk, true );
 		}
-	}
+		// suite_mm->set_bb( true );
+		// suite_mm->set_chi( true );
+		suite_mm->set_jump( true );
+		protocols::minimization_packing::MinMoverOP minm = utility::pointer::make_shared< protocols::minimization_packing::MinMover >( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
 
-	std::map< DOF_ID, Real > ref_dofs;
-	std::map< DOF_ID, Real > start_dofs;
-	std::set< core::Size > residues_with_idealizing_dofs;
-
-	for ( core::Size jj = 1; jj <= ref_pose_.size(); ++jj ) {
-		for ( core::Size kk = 1; kk <= ref_pose_.residue_type( jj ).natoms(); ++kk ) {
-
-			// Broken for C5' of upper terminus
-			if ( jj == ref_pose_.size() && kk == 5 ) continue;
-
-			auto const atom_id  = AtomID( kk, jj );
-
-			TR.Trace << ref_pose_.residue_type( jj ).name() << " " << atom_id << ref_pose_.residue_type( jj ).atom_name( kk ) << std::endl;
-
-			kinematics::tree::AtomCOP current_atom( ref_pose_.atom_tree().atom_dont_do_update( atom_id ).get_self_ptr() );
-			if ( !current_atom ) continue;
-			if ( current_atom->is_jump() ) continue;
-			if ( !current_atom->parent() ) continue;
-
-			kinematics::tree::AtomCOP input_stub_atom1( current_atom->input_stub_atom1() );
-			if ( !input_stub_atom1 ) continue;
-			if ( input_stub_atom1->is_jump() ) continue;
-
-			auto const dis_id   = DOF_ID( atom_id, D     );
-			// if distance is within 0.05A we don't care.
-			//TR << "dis " << ref_pose_.conformation().dof( dis_id ) << " vs " << pose.conformation().dof( dis_id ) << std::endl;
-			if ( std::abs( ref_pose_.conformation().dof( dis_id ) - pose.conformation().dof( dis_id ) ) > 0.03 ) {
-				TR << "The distance dof defining the position of res " << jj << " atom " << ref_pose_.residue_type( jj ).atom_name( kk ) << " matters." << std::endl;
-				TR << ref_pose_.conformation().dof( dis_id ) << " vs " <<  pose.conformation().dof( dis_id ) << std::endl;
-				ref_dofs[ dis_id ] = ref_pose_.conformation().dof( dis_id );
-				start_dofs[ dis_id ] = pose.conformation().dof( dis_id );
-				residues_with_idealizing_dofs.insert( jj );
-			}
-
-			kinematics::tree::AtomCOP input_stub_atom2( current_atom->input_stub_atom2() );
-			if ( !input_stub_atom2 ) continue;
-			if ( input_stub_atom2->is_jump() ) continue;
-			if ( input_stub_atom2 == current_atom ) continue;
-
-			// Arbitrary constraints: can't go crazy with sugar torsions
-			// or base details, or this gets terrible.
-			// TEMP only phos
-			//if ( //ref_pose_.residue_type( jj ).atom_name( kk ) != " O2'" &&
-			//ref_pose_.residue_type( jj ).atom_name( kk ) != " O3'" &&
-			//ref_pose_.residue_type( jj ).atom_name( kk ) != " O5'" &&
-			//ref_pose_.residue_type( jj ).atom_name( kk ) != " P  " ) {
-			// ref_pose_.residue_type( jj ).atom_name( kk ) != " C3'" ) {
-			// continue;
-			//}
-			if ( ref_pose_.residue_type( jj ).atom_name( kk ) != " C3'" &&
-					ref_pose_.residue_type( jj ).atom_name( kk ) != " C4'" &&
-					ref_pose_.residue_type( jj ).atom_name( kk ) != " O3'" ) {
-				continue;
-			}
-
-			auto const ang_id   = DOF_ID( atom_id, THETA );
-			// if distance is within 5 degrees we don't care.
-			TR << "ang " << jj << ref_pose_.residue_type( jj ).atom_name( kk ) << " " << numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) << " vs " << numeric::conversions::degrees( pose.conformation().dof( ang_id ) ) << std::endl;
-			if ( std::abs( numeric::conversions::degrees( pose.conformation().dof( ang_id ) ) - numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) ) > ang_significance_threshold_ ) {
-				//if ( std::abs( numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) -
-				//     numeric::nearest_angle_degrees( pose.conformation().dof( ang_id ), ref_pose_.conformation().dof( ang_id ) ) ) > 5 ) {
-				//if ( std::abs( numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) -
-				//  numeric::nearest_angle_degrees( numeric::conversions::degrees( pose.conformation().dof( ang_id ) ), numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) ) ) > 5 ) {
-				TR << "The angle dof defining the position of res " << jj << " atom " << ref_pose_.residue_type( jj ).atom_name( kk ) << " matters." << std::endl;
-				TR << numeric::conversions::degrees( ref_pose_.conformation().dof( ang_id ) ) << " vs " << numeric::conversions::degrees(  pose.conformation().dof( ang_id ) ) << std::endl;
-				ref_dofs[ ang_id ] = ref_pose_.conformation().dof( ang_id );
-				start_dofs[ ang_id ] = pose.conformation().dof( ang_id );
-				residues_with_idealizing_dofs.insert( jj );
+		// Clone dihedrals, just for imax and imax - 1
+		if ( imax > 1 && pose.residue( imax ).is_bonded( imax-1 ) ) {
+			for ( Size jj = 1; jj <= ideal_pose.residue_type( imax - 1 ).mainchain_atoms().size(); ++jj ) {
+				ideal_pose.set_torsion( core::id::TorsionID( imax - 1, core::id::BB, jj ), pose.torsion( core::id::TorsionID( imax - 1, core::id::BB, jj ) ) );
 			}
 		}
-	}
-
-
-	kinematics::MoveMapOP mm( new kinematics::MoveMap );
-	mm->set_bb( true );
-	mm->set_chi( true );
-	//mm->set_bb( false );
-	//mm->set_chi( false );
-	for ( core::Size const res : residues_with_idealizing_dofs ) {
-		mm->set_bb( true, res );
-		mm->set_chi( true, res );
-
-		core::Size const min_res = res > 4 ? res - 3 : 1;
-		core::Size const max_res = res < pose.size() - 3 ? res + 3 : pose.size();
-
-		for ( core::Size jj = min_res; jj <= max_res; ++jj ) {
-			mm->set_bb( true, jj );
-			mm->set_chi( true, jj );
-		}
-	}
-
-	for ( core::Size const res : bad_suite_res ) {
-		mm->set_bb( true, res - 1 );
-		mm->set_bb( true, res );
-	}
-
-	protocols::minimization_packing::MinMoverOP minm( new protocols::minimization_packing::MinMover( mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true ) );
-
-	Pose const basis_pose = pose;
-	for ( core::Size ii = 1; ii <= iterations_; ++ii ) {
-		scorefxn->set_weight( fa_rep, scorefxn->get_weight( fa_rep ) + 0.01);
-
-		TR << TR.Blue << "Idealize iteration " << ii << "," << " score " << ( *scorefxn )( pose ) << "." << std::endl;
-		TR            << "RMS to starting: " << core::scoring::all_atom_rmsd( pose, basis_pose ) << "." << std::endl;
-		for ( auto const & elem : ref_dofs ) {
-			// Only interested in halving overall 'error'.
-			Real const dof_diff = ( elem.second - start_dofs[ elem.first ] ) / 2.0;
-			Real const target_dof = start_dofs[ elem.first ] + dof_diff * Real( ii ) / Real ( iterations_ );
-
-			if ( elem.first.type() == THETA ) {
-				TR.Debug << "Changing BA from "
-					<< numeric::conversions::degrees( start_dofs[ elem.first ] ) << " to " << numeric::conversions::degrees( target_dof ) << std::endl;
-			} else { // D
-				TR.Debug << "Changing BL from "
-					<< start_dofs[ elem.first ] << " to " << target_dof << std::endl;
-			}
-			pose.conformation().set_dof( elem.first, target_dof );
+		for ( Size jj = 1; jj <= ideal_pose.residue_type( imax ).mainchain_atoms().size(); ++jj ) {
+			ideal_pose.set_torsion( core::id::TorsionID( imax, core::id::BB, jj ), pose.torsion( core::id::TorsionID( imax, core::id::BB, jj ) ) );
 		}
 
-		minm->apply( pose );
+		for ( Size jj = 1; jj <= ideal_pose.residue_type( imax ).nchi(); ++jj ) {
+			ideal_pose.set_torsion( core::id::TorsionID( imax, core::id::CHI, jj ), pose.torsion( core::id::TorsionID( imax, core::id::CHI, jj ) ) );
+		}
 
-		// Rotamer trials
-		o2prime_packer.apply( pose );
 
+		// for ( Size ii = 1; ii < ideal_pose.size(); ++ii ) {
 
-		std::stringstream ss;
-		ss << "iter_" << ii << ".pdb";
-		pose.dump_scored_pdb( ss.str(), *scorefxn );
+		for ( Size jj = 1; jj <= ideal_pose.residue_type( ideal_pose.size()-1 ).natoms(); ++jj ) {
+			ConstraintOP constraint = utility::pointer::make_shared< CoordinateConstraint >( core::id::AtomID( jj, ideal_pose.size()-1 ), core::id::AtomID( 1, my_anchor ),
+				pose.residue( ideal_pose.size()-1 ).xyz( jj ),
+				constraint_func );
+			ideal_pose.add_constraint( constraint );
+			// copy_pose.add_constraint( constraint );
+		}
+
+		// minimize ideal pose, I guess.
+		// }
+		TR << "Minimized ideal pose " << imax << " from " << ( *scorefxn )( ideal_pose ) << " to ";
+		minm->apply( ideal_pose );
+		TR << ( *scorefxn )( ideal_pose ) << "." << std::endl;
+
+		// TR << "Minimized orig pose " << imax << " from " << ( *scorefxn )( copy_pose ) << " to ";
+		// minm->apply( copy_pose );
+		// TR << ( *scorefxn )( copy_pose ) << "." << std::endl;
+
+		// std::stringstream ss;
+		// ss << "min_ideal_" << imax << ".pdb";
+		// ideal_pose.dump_pdb( ss.str() );
+		core::pose::remove_virtual_residues( ideal_pose );
+
+		// ss.clear();
+		// ss << "min_orig_" << imax << ".pdb";
+		// copy_pose.dump_pdb( ss.str() );
+		// core::pose::remove_virtual_residues( copy_pose );
 	}
 
+	core::pose::addVirtualResAsRoot( ideal_pose );
+	// core::pose::addVirtualResAsRoot( copy_pose );
+	Size const my_anchor( ideal_pose.fold_tree().root() );
 
-	// Remove added virt
-	if ( we_added_the_virt ) {
-		pose.conformation().delete_residue_slow( pose.fold_tree().root() );
+	FuncOP constraint_func = utility::pointer::make_shared< FlatHarmonicFunc >( 0, 1, 1 );
+
+	kinematics::MoveMapOP suite_mm = utility::pointer::make_shared< kinematics::MoveMap >();
+	suite_mm->set_bb( true );
+	suite_mm->set_chi( true );
+	suite_mm->set_jump( true );
+	protocols::minimization_packing::MinMoverOP minm = utility::pointer::make_shared< protocols::minimization_packing::MinMover( suite_mm, scorefxn, "lbfgs_armijo_nonmonotone", 0.001, true );
+
+	for ( Size ii = 1; ii < ideal_pose.size(); ++ii ) {
+
+		for ( Size jj = 1; jj <= ideal_pose.residue_type( ii ).natoms(); ++jj ) {
+			ConstraintOP constraint = utility::pointer::make_shared< CoordinateConstraint >( core::id::AtomID( jj, ii ), core::id::AtomID( 1, my_anchor ),
+				pose.residue( ii ).xyz( jj ),
+				constraint_func );
+			ideal_pose.add_constraint( constraint );
+		}
+
 	}
+	minm->apply( ideal_pose );
+	ideal_pose.dump_pdb( "final_ideal_1.pdb" );
 
+	// for ( Size ii = 1; ii < copy_pose.size(); ++ii ) {
+
+	//  for ( Size jj = 1; jj <= copy_pose.residue_type( ii ).natoms(); ++jj ) {
+	//   ConstraintOP constraint( new CoordinateConstraint( core::id::AtomID( jj, ii ), core::id::AtomID( 1, my_anchor ),
+	//    pose.residue( ii ).xyz( jj ),
+	//    constraint_func ) );
+	//   copy_pose.add_constraint( constraint );
+	//  }
+
+	// }
+	// minm->apply( copy_pose );
+	// copy_pose.dump_pdb( "final_orig_1.pdb" );
+
+	// OK, reminimize but with just C4' constraints.
+
+	constraint_func = utility::pointer::make_shared< FlatHarmonicFunc >( 0, 1.5, 1 ); //ideal_pose.constraint_set( cst_set );
+	minm->apply( ideal_pose );
+	// minm->apply( copy_pose );
+	// ideal_pose.dump_pdb( "final_2.pdb" );
+
+	// now, looser constraints.
+	constraint_func = utility::pointer::make_shared< FlatHarmonicFunc >( 0, 2, 2 );
+	minm->apply( ideal_pose );
+	// minm->apply( copy_pose );
+	// ideal_pose.dump_pdb( "final_3.pdb" );
+
+	core::pose::remove_virtual_residues( ideal_pose );
+	// core::pose::remove_virtual_residues( copy_pose );
+
+	pose = ideal_pose;
 	// Restore original constraints
 	pose.constraint_set( cst_set );
 	pose.fold_tree( orig_ft );
-
-	// Final minimization - optional
-	if ( final_minimize_ ) minm->apply( pose );
 }
 
 /////////////// Creator ///////////////
