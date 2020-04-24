@@ -397,8 +397,8 @@ void JobGenealogist::all_job_results_for_node(
 	core::Size const job_dag_node,
 	std::list< jd3::JobResultID > & container_for_output
 ) const {
-	for ( JGJobNodeCOP const & job_node : job_nodes_for_dag_node_[ job_dag_node ] ) {
-		for ( JGResultNodeCAP const & result_node : job_node->children() ) {
+	for ( auto const & job_node : job_nodes_for_dag_node_[ job_dag_node ] ) {
+		for ( auto const & result_node : job_node->children() ) {
 			container_for_output.emplace_back( job_node->global_job_id(), result_node.lock()->result_id() );
 		}
 	}
@@ -441,12 +441,11 @@ JobGenealogist::newick_tree() const {
 	parentless_results_for_input_source.resize( num_input_sources_ );
 
 	for ( unsigned int i = 1; i < job_nodes_for_dag_node_.size(); ++i ) {
-		for ( JGJobNodeCAP const & job_node : job_nodes_for_dag_node_[ i ] ) {
-			JGJobNodeCOP job_node_cop = job_node.lock();
+		for ( auto const & job_node_cop : job_nodes_for_dag_node_[ i ] ) {
 			debug_assert( job_node_cop != nullptr );
 			if ( job_node_cop->parents().empty() ) {
 				unsigned int const input_src = job_node_cop->input_source_id();
-				for ( JGResultNodeCAP const & result_node : job_node_cop->children() ) {
+				for ( auto const & result_node : job_node_cop->children() ) {
 					parentless_results_for_input_source[ input_src ].push_back( result_node );
 				}
 			}
@@ -486,8 +485,8 @@ void
 JobGenealogist::print_all_nodes(){
 	for ( core::Size node = 1; node <= job_nodes_for_dag_node_.size(); ++node ) {
 		TR << "node " << node << " : ";
-		for ( JGJobNodeCAP const & job_node : job_nodes_for_dag_node_[ node ] ) {
-			TR << " " << job_node.lock()->global_job_id();
+		for ( auto const & job_node : job_nodes_for_dag_node_[ node ] ) {
+			TR << " " << job_node->global_job_id();
 		}
 		TR << std::endl;
 	}

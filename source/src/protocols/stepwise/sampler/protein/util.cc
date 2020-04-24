@@ -228,7 +228,7 @@ generate_beta_database_test() {
 	std::string const silent_file( option[ out::file::silent ]() );
 
 	core::Size count( 0 );
-	for ( std::string const & in_file : in_files ) {
+	for ( auto const & in_file : in_files ) {
 
 		std::cout << "-------- " << in_file << "----------" << std::endl;
 		import_pose::pose_from_file( pose, *rsd_set, in_file, core::import_pose::PDB_file);

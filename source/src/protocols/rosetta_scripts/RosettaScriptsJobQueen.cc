@@ -88,7 +88,7 @@ RosettaScriptsJobQueen::RosettaScriptsJobQueen()
 	resource_manager_ = utility::pointer::make_shared< basic::resource_manager::ResourceManager >();
 	if ( basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ].user() ) {
 
-		for ( std::string const & fname : basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ]  ) {
+		for ( auto const & fname : basic::options::option[ basic::options::OptionKeys::jd3::resource_definition_files ]  ) {
 			std::string contents;
 			try {
 				contents = utility::file_contents( fname );

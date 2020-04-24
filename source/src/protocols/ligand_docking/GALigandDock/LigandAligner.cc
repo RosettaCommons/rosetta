@@ -132,14 +132,6 @@ Pharmacophore::Pharmacophore()
 	index_ = "";
 }
 
-Pharmacophore::Pharmacophore( Pharmacophore const &p ) :
-	atms_( p.atms() ),
-	props_( p.props() ),
-	dist_( p.dist() ),
-	com_( p.com() ),
-	index_( p.index() )
-{}
-
 // general constructor
 Pharmacophore::Pharmacophore( utility::vector1< core::Size > atmno,
 	utility::vector1< AtomProperties > const & p,

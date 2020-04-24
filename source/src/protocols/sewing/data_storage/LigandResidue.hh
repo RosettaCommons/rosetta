@@ -34,8 +34,6 @@ public:
 	LigandResidue();
 	LigandResidue(LigandResidue const & src);
 
-	~LigandResidue() override;
-
 	LigandResidueOP
 	clone() const;
 
@@ -129,16 +127,6 @@ struct ContactDescription
 	core::Size contact_atom_num=0;
 	core::Size ligand_atom_num=0;
 	ContactDescription(){}
-	ContactDescription( ContactDescription const & other ):
-		partner_contact( other.partner_contact ),
-		contact_resnum_string( other.contact_resnum_string ),
-		ligand_atom_name( other.ligand_atom_name ),
-		contact_atom_name( other.contact_atom_name ),
-		contact_resnum( other.contact_resnum ),
-		contact_atom_num( other.contact_atom_num ),
-		ligand_atom_num( other.ligand_atom_num )
-	{
-	}
 };
 
 struct LigandDescription
@@ -160,28 +148,6 @@ struct LigandDescription
 	utility::pointer::shared_ptr< std::map< char, hashing::LigandHashMap > > ligand_coords;
 	core::Real geometry_score_threshold;
 	LigandDescription(){}
-	LigandDescription(LigandDescription const & other ):
-		ligand_id( other.ligand_id ),
-		partner_ligand( other.partner_ligand ),
-		ligand_resnum_string( other.ligand_resnum_string ),
-		ligand_selector( other.ligand_selector ),
-		ligand_resnum( other.ligand_resnum ),
-		auto_detect_contacts( other.auto_detect_contacts ),
-		alignment_atoms_str( other.alignment_atoms_str ),
-		alignment_atoms_num( other.alignment_atoms_num ),
-		ideal_contacts_str( other.ideal_contacts_str ),
-		ideal_contacts_num( other.ideal_contacts_num ),
-		pdb_conformers_string( other.pdb_conformers_string ),
-		pdb_conformers( other.pdb_conformers ),
-		ligand_coord_files( other.ligand_coord_files ),
-		ligand_coords( other.ligand_coords ),
-		geometry_score_threshold( other.geometry_score_threshold )
-	{
-		ligand_contacts.clear();
-		for ( ContactDescription contact: other.ligand_contacts ) {
-			ligand_contacts.push_back( ContactDescription( contact ) );
-		}
-	}
 };
 
 

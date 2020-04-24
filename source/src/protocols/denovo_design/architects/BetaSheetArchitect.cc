@@ -585,7 +585,7 @@ BetaSheetArchitect::check_permutation( components::StructureData const & perm_no
 
 	// add extensions
 	components::StructureData perm = perm_noextend;
-	for ( StrandExtension const & ext : extensions_ ) {
+	for ( auto const & ext : extensions_ ) {
 		std::stringstream ss, abego;
 		ss << 'L';
 		abego << 'X';

@@ -86,7 +86,6 @@ class
 
 public:
 	Pharmacophore();
-	Pharmacophore( Pharmacophore const &p );
 
 	Pharmacophore( utility::vector1< core::Size > atmno,
 		utility::vector1< AtomProperties > const & p,

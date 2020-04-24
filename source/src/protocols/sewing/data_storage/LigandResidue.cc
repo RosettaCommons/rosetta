@@ -45,9 +45,6 @@ LigandResidue::LigandResidue(LigandResidue const & src):
 	alignment_atoms_ = src.get_alignment_atoms();
 }
 
-LigandResidue::~LigandResidue()
-{}
-
 LigandResidueOP
 LigandResidue::clone() const{
 	return utility::pointer::make_shared< LigandResidue >( *this );

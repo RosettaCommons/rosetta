@@ -199,7 +199,7 @@ void JobDataFeatures::insert_string_string_rows(StructureID struct_id, utility::
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( std::pair< std::string, std::string > const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
+	for ( auto const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
 
 		RowDataBaseOP key_data( new RowData<std::string>("data_key",sspair.first) );
 		RowDataBaseOP value_data( new RowData<std::string>("data_value",sspair.second) );
@@ -247,7 +247,7 @@ void JobDataFeatures::insert_string_real_rows( StructureID struct_id, utility::s
 
 	RowDataBaseOP struct_id_data( new RowData<StructureID>("struct_id",struct_id) );
 
-	for ( std::pair< std::string, core::Real > const & srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
+	for ( auto const & srpair: protocols::jd2::get_string_real_pairs_from_current_job() ) {
 
 		RowDataBaseOP key_data( new RowData<std::string>("data_key",srpair.first) );
 		RowDataBaseOP value_data( new RowData<core::Real>("data_value",srpair.second) );

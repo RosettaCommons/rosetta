@@ -74,7 +74,6 @@ class RealFilter{
 public:
 	RealFilter(): graph_(nullptr) {}; // This can't be private, because various (unused) default objects need it.
 	RealFilter(ResidueGraph const & graph): graph_( &graph ) {};
-	RealFilter(RealFilter const & other): graph_( other.graph_ ) {};
 	bool operator()(VD const vd) const;
 	bool operator()(ED const ed) const;
 private:

@@ -72,7 +72,7 @@ public:
 		resize( nres_in );
 		//fold_tree_ = core::kinematics::FoldTree();
 		bJumps_use_IntraResStub_ = false;
-		symminfo_ = new core::conformation::symmetry::SymmetryInfo();
+		symminfo_ = utility::pointer::make_shared< core::conformation::symmetry::SymmetryInfo >();
 		symminfo_->set_use_symmetry(false);
 	}
 

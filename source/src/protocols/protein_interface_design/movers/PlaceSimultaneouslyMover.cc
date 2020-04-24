@@ -227,7 +227,7 @@ PlaceSimultaneouslyMover::create_task_for_hotspot_packing( core::pose::Pose cons
 		using namespace core::pack::task::operation;
 		RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
 		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-		for ( ResidueAuctionItem const & item : auction_->auction_results() ) {
+		for ( auto const & item : auction_->auction_results() ) {
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			if ( hs_set_curr != hs_set ) continue;
 			HotspotStubCOP hs_stub_curr( item.second.second.second );
@@ -262,7 +262,7 @@ PlaceSimultaneouslyMover::create_task_for_allhotspot_packing( core::pose::Pose c
 		using namespace core::pack::task::operation;
 		RotamerExplosionOP re_op( new RotamerExplosion( pos, EX_THREE_THIRD_STEP_STDDEVS, explosion_ ) );
 		utility::vector1< bool > allowed_aas( chemical::num_canonical_aas, false );
-		for ( ResidueAuctionItem const & item : auction_->auction_results() ) {
+		for ( auto const & item : auction_->auction_results() ) {
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			if ( pos==item.second.first ) {
 				HotspotStubCOP hs_stub_curr( item.second.second.second );
@@ -288,7 +288,7 @@ void PlaceSimultaneouslyMover::add_coordinatecst_for_hotspot_packing( core::pose
 		runtime_assert( pos );
 		HotspotStubSetCOP hs_set = stubset_pos.first;
 
-		for ( ResidueAuctionItem const & item : auction_->auction_results() ) {
+		for ( auto const & item : auction_->auction_results() ) {
 			HotspotStubSetCOP hs_set_curr( item.second.second.first );
 			HotspotStubCOP hs_stub_curr( item.second.second.second );
 			//chemical::ResidueType const & type( hs_stub_curr->residue()->type() );

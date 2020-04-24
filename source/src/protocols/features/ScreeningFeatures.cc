@@ -181,14 +181,14 @@ std::vector<utility::json_spirit::Pair>  ScreeningFeatures::get_desriptor_data()
 {
 	std::vector<utility::json_spirit::Pair>  descriptor_data;
 
-	for ( std::pair< std::string, std::string > const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
+	for ( auto const & sspair: protocols::jd2::get_string_string_pairs_from_current_job() ) {
 		if ( std::find(descriptors_.begin(),descriptors_.end(),sspair.first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(sspair.first,sspair.second);
 			descriptor_data.push_back(data_pair);
 		}
 	}
 
-	for ( std::pair< std::string, core::Real > const & srpair: protocols::jd2::get_string_real_pairs_from_current_job()  ) {
+	for ( auto const & srpair: protocols::jd2::get_string_real_pairs_from_current_job()  ) {
 		if ( std::find(descriptors_.begin(),descriptors_.end(),srpair.first) != descriptors_.end() ) {
 			utility::json_spirit::Pair data_pair(srpair.first,srpair.second);
 			descriptor_data.push_back(data_pair);

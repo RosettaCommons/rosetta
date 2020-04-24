@@ -32,7 +32,6 @@
 namespace protocols {
 namespace rpc {
 
-
 void pose_energies_to_json( core::pose::Pose const & pose, utility::json_spirit::Object &json_energies );
 
 // this is a virtual functor which is going to act basically as a callback or function pointer but cleaner.
@@ -52,13 +51,13 @@ public:
 	BasicCmdLineInit()
 	{
 		argc_ = 0;
-		empty_ = &std::string("")[0];
+		empty_ = empty_string;
 		argv_ = &empty_;
 	}
 
 	BasicCmdLineInit( int argc, char * argv [] ) :
 		argc_(argc),
-		empty_(&std::string("")[0]),
+		empty_( empty_string ),
 		argv_(argv)
 	{}
 
@@ -68,6 +67,8 @@ private:
 	int argc_;
 	char * empty_;
 	char ** argv_ ;
+
+	static char empty_string[1]; //= {'\0'};
 };
 
 // This is an interface to rosetta tailored for remote procedure calls through HTTP requests or via Native Client.

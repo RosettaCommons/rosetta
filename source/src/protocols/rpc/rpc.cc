@@ -51,6 +51,7 @@
 namespace protocols {
 namespace rpc {
 
+char BasicCmdLineInit::empty_string[1] = {'\0'};
 
 // Helper functions
 

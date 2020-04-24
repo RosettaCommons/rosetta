@@ -1407,7 +1407,7 @@ GenericMonteCarloMover::provide_citation_info() const {
 	if ( mover_ != nullptr ) {
 		merge_into_citation_collection_vector( mover_->provide_citation_info(), returnvec );
 	}
-	for ( protocols::filters::FilterCOP const & filter : filters_ ) {
+	for ( protocols::filters::FilterOP const & filter : filters_ ) {
 		if ( filter != nullptr ) {
 			merge_into_citation_collection_vector( filter->provide_citation_info(), returnvec );
 		}
@@ -1434,7 +1434,7 @@ GenericMonteCarloMover::provide_authorship_info_for_unpublished() const {
 	if ( mover_ != nullptr ) {
 		merge_into_unpublished_collection_vector( mover_->provide_authorship_info_for_unpublished(), returnvec );
 	}
-	for ( protocols::filters::FilterCOP const & filter : filters_ ) {
+	for ( protocols::filters::FilterOP const & filter : filters_ ) {
 		if ( filter != nullptr ) {
 			merge_into_unpublished_collection_vector( filter->provide_authorship_info_for_unpublished(), returnvec );
 		}

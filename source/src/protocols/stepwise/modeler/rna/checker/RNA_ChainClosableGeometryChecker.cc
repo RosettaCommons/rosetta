@@ -184,7 +184,7 @@ RNA_ChainClosableGeometryChecker::check_chain_closable_geometry( core::Size cons
 	bool const is_prepend ) const {
 	using namespace core::conformation;
 
-	for ( ResidueCOP const & rsd_at_origin : rsd_at_origin_list ) {
+	for ( ResidueOP const & rsd_at_origin : rsd_at_origin_list ) {
 
 		if ( rsd_at_origin->is_TNA() ) {
 			std::string const moving_atom_name    = ( is_prepend ) ? " O2'" : " C3'";

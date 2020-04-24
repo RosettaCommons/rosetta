@@ -452,7 +452,8 @@ void GlobalResidueTypeSet::init_patches_from_database() {
 	// E.g. "SpecialRotamer" or "SpecialRotamer.txt".  Directory names will be ignored if given.
 	std::set< std::string > patches_to_avoid;
 	if ( option[ OptionKeys::chemical::exclude_patches ].user() ) {
-		for ( utility::file::FileName const & fname : option[ OptionKeys::chemical::exclude_patches ] ) {
+		// Not by ref, as we want to create a FileName object from the string.
+		for ( utility::file::FileName fname : option[ OptionKeys::chemical::exclude_patches ] ) {
 			patches_to_avoid.insert( fname.base() );
 		}
 	}
@@ -497,7 +498,8 @@ void GlobalResidueTypeSet::init_patches_from_database() {
 	// useful for testing non-canonical patches.
 	// Retaining this just because maybe you haven't put your patch in the list yet
 	if ( option[ OptionKeys::chemical::include_patches ].active() ) {
-		for ( utility::file::FileName const & fname : option[ OptionKeys::chemical::include_patches ] ) {
+		// Not by ref, as we explicitly want to create a new Filename object from the string
+		for ( utility::file::FileName fname : option[ OptionKeys::chemical::include_patches ] ) {
 			if ( !utility::file::file_exists( database_directory_ + fname.name() ) ) {
 				TR.Warning << "Could not find: " << database_directory_ + fname.name()  << std::endl;
 				continue;

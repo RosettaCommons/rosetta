@@ -260,7 +260,7 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 	TR << "START RESID CLUSTERS" << std::endl;
 #endif
 
-	for ( std::pair< Key, std::list< Mres > > const & iter : mress_for_key ) {
+	for ( std::pair< const Key, std::list< Mres > > const & iter : mress_for_key ) {
 		std::list< Mres > const & mress = iter.second;
 
 		for ( auto iter = mress.begin(); iter != mress.end(); ++iter ) {

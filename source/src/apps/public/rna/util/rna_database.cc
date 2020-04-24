@@ -294,7 +294,7 @@ create_bp_jump_database_test( ){
 	ResidueTypeSetCOP rsd_set;
 	rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 
-	for ( std::string const & infile : option[ in::file::s ]() ) {
+	for ( auto const & infile : option[ in::file::s ]() ) {
 		//std::string infile  = option[ in::file::s ][1];
 
 		pose::Pose pose;
