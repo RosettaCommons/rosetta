@@ -1512,6 +1512,13 @@ ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 		return false;
 	}
 
+	//Flip the backbone aa:
+	if ( core::chemical::is_canonical_L_aa_excluding_gly( rsd.backbone_aa() ) ) {
+		rsd.backbone_aa( core::chemical::get_D_equivalent( rsd.backbone_aa() ) );
+	} else if ( core::chemical::is_canonical_D_aa( rsd.backbone_aa() ) ) {
+		rsd.backbone_aa( core::chemical::get_L_equivalent( rsd.backbone_aa() ) );
+	}
+
 	if ( rsd.aa() <= aa_tyr ) {
 		rsd.aa( get_D_equivalent( rsd.aa() ) );
 

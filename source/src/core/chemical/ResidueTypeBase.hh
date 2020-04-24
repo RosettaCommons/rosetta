@@ -511,6 +511,13 @@ public:
 		backbone_aa_ = aa_from_name( type );
 	}
 
+	/// @brief Set AA to use for backbone scoring directly (without string conversion).
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	backbone_aa( core::chemical::AA const type ) {
+		backbone_aa_ = type;
+	}
+
 	/// @brief NA to use for base-specific generalization (can be more
 	/// forgiving than na_analogue for new NA backbones)
 	void

@@ -67,24 +67,29 @@ P_AA::~P_AA() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/// @brief Returns true if passed a core::chemical::AA corresponding to a
-/// D-amino acid, and false otherwise.
-bool
-P_AA::is_canonical_d_aminoacid(
-	core::chemical::AA const res_aa
-) const {
-	return core::chemical::is_canonical_D_aa(res_aa);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-/// @brief When passed a d-amino acid, returns the l-equivalent.  Returns
-/// aa_unk otherwise.
+/// @brief Given a residue's AA and BACKBONE_AA types, return the AA enum type to use.
+/// @details Uses backbone_aa over aa; flips types to the l-equivalent.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 core::chemical::AA
-P_AA::get_l_equivalent(
-	core::chemical::AA const d_aa
+P_AA::get_aa_to_use(
+	core::chemical::AA const aa,
+	core::chemical::AA const backbone_aa
 ) const {
-	return core::chemical::get_L_equivalent(d_aa);
+	using namespace core::chemical;
+
+	if ( backbone_aa != aa_unk ) {
+		if ( is_canonical_D_aa(backbone_aa) ) {
+			return get_L_equivalent( backbone_aa );
+		} else {
+			return backbone_aa;
+		}
+	}
+
+	if ( is_canonical_D_aa( aa ) ) {
+		return get_L_equivalent( aa );
+	}
+
+	return aa;
 }
 
 /// @brief Read the amino acid probability file into P_AA
@@ -379,7 +384,7 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 
 	if ( res.is_terminus() || res.is_virtual_residue() ) return Energy( 0.0 );
 
-	AA const aa( is_canonical_d_aminoacid( res.aa() ) ? get_l_equivalent( res.aa() ) : ( res.backbone_aa() == aa_unk ? res.aa() : res.backbone_aa() ) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	AA const aa( get_aa_to_use( res.aa(), res.backbone_aa() ) );
 
 	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes noncanonicals that aren't templated on a canonical.
 
@@ -437,7 +442,7 @@ P_AA::get_Paa_pp_deriv(
 	using numeric::conversions::degrees;
 	using numeric::interpolation::periodic_range::half::bilinearly_interpolated;
 
-	AA const aa( is_canonical_d_aminoacid( res.aa() ) ? get_l_equivalent( res.aa() ) : ( res.backbone_aa() == aa_unk ? res.aa() : res.backbone_aa() ) ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	AA const aa( get_aa_to_use( res.aa(), res.backbone_aa() ) );
 
 	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes non-templated noncanonicals.
 
@@ -498,7 +503,7 @@ P_AA::P_AA_energy( conformation::Residue const & res ) const {
 
 	using namespace core::chemical;
 
-	AA const aa( res.backbone_aa() == aa_unk ? ( is_canonical_d_aminoacid( res.aa() ) ? get_l_equivalent( res.aa() ) : res.aa() ) : res.backbone_aa() ); //This handles D-canonical amino acids, as well as noncanonicals templated on an L-canonical.
+	AA const aa( get_aa_to_use( res.aa(), res.backbone_aa() ) );
 
 	if ( aa > chemical::num_canonical_aas ) {
 		return 0.0;

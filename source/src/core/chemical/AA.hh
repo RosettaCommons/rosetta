@@ -190,6 +190,15 @@ aa_from_one_or_three( std::string const & name );
 bool
 is_canonical_D_aa( AA const aa );
 
+////////////////////////////////////////////////////////////////
+/// @brief Give an enum type, return true if and only if
+/// it is an L-amino acid of a canonical type.
+/// @note Returns FALSE for glycine.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+////////////////////////////////////////////////////////////////
+bool
+is_canonical_L_aa_excluding_gly( AA const aa );
+
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type, return true if and only if
 /// it is a canonical L-amino acid.

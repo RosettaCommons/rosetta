@@ -68,15 +68,13 @@ public:
 	~P_AA() override;
 private:
 
-	/// @brief Gets whether this amino acid enum type is a canonical D-amino acid.
-	bool
-	is_canonical_d_aminoacid(
-		core::chemical::AA const res_aa
-	) const;
-
+	/// @brief Given a residue's AA and BACKBONE_AA types, return the AA enum type to use.
+	/// @details Uses backbone_aa over aa; flips types to the l-equivalent.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	core::chemical::AA
-	get_l_equivalent(
-		core::chemical::AA const d_aa
+	get_aa_to_use(
+		core::chemical::AA const aa,
+		core::chemical::AA const backbone_aa
 	) const;
 
 	/// @brief Initialize the amino acid probability data structures

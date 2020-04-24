@@ -10,8 +10,9 @@
 /// @file   core/energy_methods/RamaPreProEnergy.cc
 /// @brief  A variation on the Ramachandran scorefunction that has separate probability tables for residues that precede prolines.
 /// @author Frank DiMaio
-/// @author Vikram K. Mulligan (vmullig@uw.edu) -- not the original author, but modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic
-/// geometry.  Refactored greatly to support arbitrary heteropolymer building blocks with any number of mainchain torsions.
+/// @modified Vikram K. Mulligan (vmullig@uw.edu) -- not the original author, but modified this to work with D-amino acids, BACKBONE_AA
+/// amino acids, and cyclic geometry.  Refactored greatly to support arbitrary heteropolymer building blocks with any number of
+/// mainchain torsions.
 
 // Unit headers
 #include <core/energy_methods/RamaPreProEnergy.hh>

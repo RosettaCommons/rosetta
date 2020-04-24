@@ -323,9 +323,20 @@ aa_from_one_or_three( std::string const & name ){
 bool
 is_canonical_D_aa( AA const aa )
 {
-	if ( aa>=first_D_aa && aa<=last_D_aa ) return true;
-	return false;
+	return ( aa>=first_D_aa && aa<=last_D_aa );
 }
+
+////////////////////////////////////////////////////////////////
+/// @brief Give an enum type, return true if and only if
+/// it is an L-amino acid of a canonical type.
+/// @note Returns FALSE for glycine.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+////////////////////////////////////////////////////////////////
+bool
+is_canonical_L_aa_excluding_gly( AA const aa ) {
+	return ( aa >= first_l_aa && aa <= num_canonical_aas && aa != aa_gly );
+}
+
 
 //////////////////////////////////////////////////////////
 /// @brief Given an enum type, return true if and only if
@@ -334,8 +345,7 @@ is_canonical_D_aa( AA const aa )
 //////////////////////////////////////////////////////////
 bool
 is_canonical_L_aa_or_gly( AA const aa){
-	if ( aa>=first_l_aa && aa<=num_canonical_aas ) return true;
-	return false;
+	return ( aa>=first_l_aa && aa<=num_canonical_aas );
 }
 
 //////////////////////////////////////////////////////////
@@ -345,8 +355,7 @@ is_canonical_L_aa_or_gly( AA const aa){
 //////////////////////////////////////////////////////////
 bool
 is_canonical_beta3_aa( AA const aa) {
-	if ( aa >= first_beta3_aa && aa <= last_beta3_aa ) return true;
-	return false;
+	return ( aa >= first_beta3_aa && aa <= last_beta3_aa );
 }
 
 //////////////////////////////////////////////////////////
