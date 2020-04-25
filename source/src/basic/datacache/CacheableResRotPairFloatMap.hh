@@ -10,6 +10,8 @@
 /// @file   basic/datacache/CacheableResRotPairFloatMap.hh
 /// @brief  A CacheableData that stores a std::map<ResRotPair,float>
 /// @author Brian Coventry
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added caching of floats indexed by rotamer memory address,
+/// used _only_ for self-interactions in the symmetric case.
 
 
 #ifndef INCLUDED_basic_datacache_CacheableResRotPairFloatMap_hh
@@ -21,8 +23,10 @@
 // package headers
 #include <basic/datacache/CacheableData.hh>
 #include <numeric/MathMatrix.hh>
+#include <utility/VirtualBase.fwd.hh>
 
 // C++ headers
+#include <map>
 #include <unordered_map>
 #include <string>
 
@@ -119,8 +123,27 @@ public:
 	virtual const std::unordered_map< ResRotPair, float, ResRotPairHasher > &
 	map() const;
 
+	/// @brief Nonconst access to map of four ints --> float value.
+	/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > &
+	four_int_indexed_map();
+
+	/// @brief Const access to map of four ints --> float value.
+	/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > const &
+	four_int_indexed_map() const;
+
 private:
+	/// @brief Map of seqpos1/rotamer1/seqpos2/rotamer2 --> float value.
 	std::unordered_map< ResRotPair, float, ResRotPairHasher > map_;
+
+	/// @brief Map of four ints --> float value.
+	/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > four_int_indexed_map_;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

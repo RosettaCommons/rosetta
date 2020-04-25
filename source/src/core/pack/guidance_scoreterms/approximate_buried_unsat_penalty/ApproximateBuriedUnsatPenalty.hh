@@ -10,6 +10,7 @@
 /// @file   core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/ApproximateBuriedUnsatPenalty.hh
 /// @brief  Guidance term that gives a quadratic approximation to no buried unsats
 /// @author Brian Coventry (bcov@uw.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Made compatible with multi-threading.
 
 
 #ifndef INCLUDED_core_pack_guidance_scoreterms_approximate_buried_unsat_penalty_ApproximateBuriedUnsatPenalty_hh
@@ -55,7 +56,8 @@ public:
 		utility::vector1< bool > const &
 	) const override;
 
-	// This is where we evaluate the 3-body terms
+	/// @brief This is where we evaluate the 3-body terms
+	/// @note Must be called by only one thread!
 	void
 	setup_for_packing_with_rotsets(
 		pose::Pose & pose,
@@ -92,7 +94,8 @@ public:
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const override;
 
-	// This is where we evaluate 3-body terms during scoring
+	/// @brief This is where we evaluate 3-body terms during scoring
+	/// @note Must be called by only one thread!
 	void
 	setup_for_scoring(
 		pose::Pose &,
@@ -211,6 +214,8 @@ private:
 		MINIMIZING
 	};
 
+	/// @note This is only mutated in functions that are called by one thread at a time, and
+	/// not during access by another thread.
 	mutable Mode mode_;
 
 	// We need this score function to find hbonds. In an absolute sense, time
@@ -233,14 +238,10 @@ private:
 	bool assume_const_backbone_;
 
 	UnsatCorrectionOptions cor_opt_;
-	mutable HBondBonusOptions hbond_bonus_opt_;
 
-	// We have to jump through some hoops to give the scorefunction the energies
-	//  of rotamers interacting with their symmetric copies. It asks for the energies
-	//  down the diagonal one at a time, so we have to cache how far we are.
-	mutable Size symm_vs_self_asu_resnum1 = 0;
-	mutable Size symm_vs_self_asu_resnum2 = 0;
-	mutable Size symm_vs_self_rotamer_count = 0;
+	/// @note This is only mutated in functions that are called by one thread at a time, and
+	/// not during access by another thread.
+	mutable HBondBonusOptions hbond_bonus_opt_;
 
 };
 

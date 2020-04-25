@@ -10,6 +10,7 @@
 /// @file   core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/ApproximateBuriedUnsatPenalty.cc
 /// @brief  Guidance term that gives a quadratic approximation to no buried unsats
 /// @author Brian Coventry (bcov@uw.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Made compatible with multi-threading.
 
 // Unit Headers
 #include <core/pack/guidance_scoreterms/approximate_buried_unsat_penalty/ApproximateBuriedUnsatPenalty.hh>
@@ -30,6 +31,7 @@
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/pack/rotamer_set/symmetry/SymmetricRotamerSet_.hh>
 
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
@@ -80,14 +82,8 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 	oversat_penalty_( options.approximate_buried_unsat_penalty_oversat_penalty() ),
 	assume_const_backbone_( options.approximate_buried_unsat_penalty_assume_const_backbone() )
 {
-#ifdef MULTI_THREADED
-	if ( basic::options::option[ basic::options::OptionKeys::multithreading::total_threads ]() != 1 ) {
-		utility_exit_with_message( "The ApproximateBuriedUnsatPenalty is fundamentally non-threadsafe.  In the multithreaded build of Rosetta, it can only be used with the \"-multithreading:total_threads 1\" option.  If this is a problem for your workflow, please contact Vikram K. Mulligan (vmulligan@flatironinstitute.org) and Brian Coventry (bcov@uw.edu)." );
-	}
-#endif
-
 	{
-		scorefxn_sc_ = scoring::ScoreFunctionOP ( new scoring::ScoreFunction() );
+		scorefxn_sc_ = scoring::ScoreFunctionOP ( utility::pointer::make_shared< scoring::ScoreFunction >() );
 		core::scoring::methods::EnergyMethodOptions opts = scorefxn_sc_->energy_method_options();
 		core::scoring::hbonds::HBondOptions hbopts = opts.hbond_options();
 		hbopts.use_hb_env_dep(false);
@@ -97,7 +93,7 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 		scorefxn_sc_->set_weight( scoring::hbond_sc, 1.0 );
 	}
 	{
-		scorefxn_bb_ = scoring::ScoreFunctionOP ( new scoring::ScoreFunction() );
+		scorefxn_bb_ = scoring::ScoreFunctionOP ( utility::pointer::make_shared< scoring::ScoreFunction >() );
 		core::scoring::methods::EnergyMethodOptions opts = scorefxn_bb_->energy_method_options();
 		core::scoring::hbonds::HBondOptions hbopts = opts.hbond_options();
 		hbopts.use_hb_env_dep(false);
@@ -107,7 +103,7 @@ ApproximateBuriedUnsatPenalty::ApproximateBuriedUnsatPenalty(
 		scorefxn_bb_->set_weight( scoring::hbond_lr_bb, 1.0 );
 	}
 	{
-		scorefxn_hbond_ = scoring::ScoreFunctionOP ( new scoring::ScoreFunction() );
+		scorefxn_hbond_ = scoring::ScoreFunctionOP ( utility::pointer::make_shared< scoring::ScoreFunction >() );
 		core::scoring::methods::EnergyMethodOptions opts = scorefxn_hbond_->energy_method_options();
 		core::scoring::hbonds::HBondOptions hbopts = opts.hbond_options();
 		hbopts.use_hb_env_dep(false);
@@ -150,6 +146,8 @@ ApproximateBuriedUnsatPenalty::setup_for_packing(
 }
 
 
+/// @brief This is where we evaluate the 3-body terms
+/// @note Must be called by only one thread!
 void
 ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 	pose::Pose & pose,
@@ -255,44 +253,37 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_pair_energies(
 
 	Real weight = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
 
-	// When evaluating a symmetric rotamer against itself, the scorefunction walks down the diagonal
+	//  When evaluating a symmetric rotamer against itself, the scorefunction walks down the diagonal
 	//  and asks for every pair individually. We detect this behavior and runtime_assert everywhere to
 	//  make sure this works correctly.
 	if ( core::pose::symmetry::is_symmetric( pose ) && set_a.num_rotamers() == 1 && set_b.num_rotamers() == 1 ) {
 
+#ifndef NDEBUG //Debug mode -- errors on cast fail.
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & symrotset_a( dynamic_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & >(set_a) );
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & symrotset_b( dynamic_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & >(set_b) );
+#else //Release mode -- maybe a segfault on cast fail.
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & symrotset_a( static_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & >(set_a) );
+		core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & symrotset_b( static_cast< core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ const & >(set_b) );
+#endif
+		core::Size const set_a_rotindex( symrotset_a.single_rotamer_rotset_original_rotmer_index() );
+		core::Size const set_b_rotindex( symrotset_b.single_rotamer_rotset_original_rotmer_index() );
+
+		runtime_assert( set_a_rotindex != 0 );
+		runtime_assert( set_b_rotindex != 0 );
+
 		// Get the cached nrotamers that were hidden in the map
-		Size nrots_a = energies->map().at( {seqpos_a, 0, 0, 0} );
-		Size nrots_b = energies->map().at( {seqpos_b, 0, 0, 0} );
+		Size const nrots_a = energies->map().at( {seqpos_a, 0, 0, 0} );
+		Size const nrots_b = energies->map().at( {seqpos_b, 0, 0, 0} );
 
 		if ( nrots_a != 1 && nrots_b != 1 ) {
 
 			// If this is a symmetric rotamer vs itself, there should be the same number of rotamers
 			runtime_assert( nrots_a == nrots_b );
 
-			// Are we starting on a new self-interaction?
-			if ( seqpos_a != symm_vs_self_asu_resnum1 || seqpos_b != symm_vs_self_asu_resnum2 ) {
-				// Make sure we finished the last self-interaction
-				runtime_assert( symm_vs_self_rotamer_count == 0 );
+			std::tuple< platform::Size, platform::Size, platform::Size, platform::Size > const mapindex( seqpos_a, set_a_rotindex, seqpos_b, set_b_rotindex );
 
-				symm_vs_self_asu_resnum1 = set_a.resid();
-				symm_vs_self_asu_resnum2 = set_b.resid();
-				// symm_vs_self_rotamer_count = 0;
-			}
-
-			symm_vs_self_rotamer_count ++;
-
-			// std::cout << "SPos: " << set1.resid() << " " << set2.resid() << " " << symm_vs_self_rotamer_count << " " << matrix( symm_vs_self_rotamer_count, symm_vs_self_rotamer_count ) << std::endl;
-
-			ResRotPair resrot( seqpos_a, symm_vs_self_rotamer_count, seqpos_b, symm_vs_self_rotamer_count );
-			if ( energies->map().count(resrot) != 0 ) {
-				energy_table( 1, 1 ) += energies->map().at(resrot) * weight;
-			}
-
-			// This is the last one, reset everything back to zero so we know we finished it.
-			if ( symm_vs_self_rotamer_count == nrots_a ) {
-				symm_vs_self_asu_resnum1 = 0;
-				symm_vs_self_asu_resnum2 = 0;
-				symm_vs_self_rotamer_count = 0;
+			if ( energies->four_int_indexed_map().count(mapindex) != 0 ) {
+				energy_table( 1, 1 ) += energies->four_int_indexed_map().at( mapindex ) * weight;
 			}
 
 			return;
@@ -318,6 +309,8 @@ ApproximateBuriedUnsatPenalty::evaluate_rotamer_pair_energies(
 
 }
 
+/// @brief This is where we evaluate 3-body terms during scoring
+/// @note Must be called by only one thread!
 void
 ApproximateBuriedUnsatPenalty::setup_for_scoring(
 	pose::Pose & pose,
@@ -326,7 +319,7 @@ ApproximateBuriedUnsatPenalty::setup_for_scoring(
 	if ( mode_ == MINIMIZING ) return;
 	mode_ = SCORING;
 
-	pack::rotamer_set::RotamerSetsOP empty_set( new pack::rotamer_set::RotamerSets() );
+	pack::rotamer_set::RotamerSetsOP empty_set( utility::pointer::make_shared< pack::rotamer_set::RotamerSets >() );
 	pack::task::PackerTaskOP task = pack::task::TaskFactory::create_packer_task( pose );
 	task->temporarily_fix_everything();
 	empty_set->set_task( task );
@@ -454,14 +447,22 @@ ApproximateBuriedUnsatPenalty::energy_method_is_unpublished() const {
 utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
 ApproximateBuriedUnsatPenalty::provide_authorship_info_for_unpublished() const {
 	using namespace basic::citation_manager;
-	return utility::vector1< UnpublishedModuleInfoCOP > {
+	UnpublishedModuleInfoOP authors(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		"ApproximateBuriedUnsatPenalty", CitedModuleType::EnergyMethod,
 		"Brian Coventry",
 		"Dept. of Biochemistry, Institute for Protein Design, University of Washington",
-		"bcov@uw.edu"
+		"bcov@uw.edu",
+		"Devised and wrote the ApproximateBuriedUnsatPenalty."
 		)
-		};
+	);
+	authors->add_author(
+		"Vikram K. Mulligan",
+		"Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org",
+		"Refactored for compatibility with multi-threading."
+	);
+	return utility::vector1< UnpublishedModuleInfoCOP > { authors };
 }
 
 basic::datacache::CacheableResRotPairFloatMapCOP
