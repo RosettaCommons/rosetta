@@ -285,7 +285,7 @@ class PR_UDPServer:
                 current_time = time.time()
                 if current_time - self.last_cleanup_time > 2.:
                     # Cleaning up every 2 s
-                    for k in self.buf.keys():
+                    for k in list( self.buf.keys() ):
                         if current_time - self.buf[k][0] > 10.0:
                             print( 'Buffer clean up: %s' % repr(k) )
                             del self.buf[k]
