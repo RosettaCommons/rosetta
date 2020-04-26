@@ -259,8 +259,8 @@ catch(cppdb::cppdb_error & except)
 
 void Schema::check_table_and_perform_write(
 	utility::sql_database::sessionOP db_session,
-	std::string schema_statement,
-	std::string init_statements) const
+	std::string const & schema_statement,
+	std::string const & init_statements) const
 {
 	cppdb::transaction guard(*db_session);
 	statement stmt;

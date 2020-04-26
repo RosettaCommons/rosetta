@@ -40,6 +40,7 @@ Test will fail if there are any level-prohibited includes used.
 
 -----
 ### cppcheck
+(Moved to code_quality tests.)
 Run the Cppcheck code quality analyzer on Rosetta. Test will fail if a code quality issue identified by Cppcheck is introduced.
 Test will *continue* to fail for future tests until the issue is dealt with.
 

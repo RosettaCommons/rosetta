@@ -79,8 +79,8 @@ protected:
 	//@brief Write and initialize schema if not already declared.
 	void check_table_and_perform_write(
 		utility::sql_database::sessionOP db_session,
-		std::string schema_statement,
-		std::string init_statements) const;
+		std::string const & schema_statement,
+		std::string const & init_statements) const;
 
 private:
 

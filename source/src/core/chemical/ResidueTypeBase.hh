@@ -623,7 +623,7 @@ public:
 
 	/// @brief set our interchangeability-group id
 	void
-	interchangeability_group( std::string setting ) {
+	interchangeability_group( std::string const & setting ) {
 		interchangeability_group_ = setting;
 	}
 

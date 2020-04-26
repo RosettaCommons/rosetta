@@ -1643,16 +1643,16 @@ ChiralFlipAtoms::apply( MutableResidueType & rsd ) const {
 	//rsd.debug_dump_icoor();
 	if ( rsd.natoms() < 4 ) return true;
 
-	std::string base_atom_name;
+	//std::string base_atom_name;
 	// The rest of the Patch takes care of props, and it's really out of theme.
 	if ( rsd.is_l_aa() || rsd.is_s_peptoid() ) {
 		//rsd.delete_property( "L_AA" );
 		//rsd.add_property( "D_AA" );
-		base_atom_name = "N";
+		//base_atom_name = "N";
 	} else if ( rsd.is_d_rna() ) {
 		//rsd.delete_property( "D_RNA" );
 		//rsd.add_property( "L_RNA" );
-		base_atom_name = "P";
+		//base_atom_name = "P";
 	} else {
 		utility_exit_with_message( "For some reason, calling ChiralFlipAtoms on a residue type that's not an L-amino acid, not a D-nucleic acid, and not a peptoid with a chiral sidechain." );
 	}

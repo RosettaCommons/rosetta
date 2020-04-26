@@ -37,8 +37,6 @@ tests = dict(
     header    = NT(command='./scons.py unit_test_platform_only ; cd src && python3 ./../../tools/python_cc_reader/test_all_headers_compile_w_fork.py -n {jobs}', incremental=False),
     levels    = NT(command= ' && '.join(PRE_COMPILE_SETUP_SCRIPTS) + ' && {activate} && cd src && python ./../../tools/python_cc_reader/library_levels.py', incremental=False),
 
-    cppcheck  = NT(command='cd src && bash ../../tests/benchmark/util/do_cppcheck.sh -j {jobs} -e "{extras}" -w "{working_dir}"', incremental=False),
-
     ui  = NT(command='cd src/ui && {python} update_ui_project.py && cd ../../build && mkdir -p ui.{platform_suffix}.debug && cd ui.{platform_suffix}.debug && {qmake} -r ../qt/qt.pro {qt_extras}&& make -j{jobs}', incremental=True),
 
     xcode = NT(command='cd xcode && {python} make_project.py all && xcodebuild -scheme rosetta_scripts -configuration Debug -jobs {jobs} build', incremental=True),  #  -alltargets
@@ -153,6 +151,10 @@ def run_test_suite(rosetta_dir, working_dir, platform, jobs=1, hpc_driver=None, 
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if test and test.startswith('clean.'): return run_test_on_fresh_clone( test[ len('clean.') : ], rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if test == "cppcheck":
+        # Backwards compatibility shim
+        from .code_quality import run as code_quality_run
+        return code_quality_run(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug)
+    elif test and test.startswith('clean.'): return run_test_on_fresh_clone( test[ len('clean.') : ], rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test: return run_test(test, rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: return run_test_suite(rosetta_dir, working_dir, platform, jobs=jobs, hpc_driver=hpc_driver, verbose=verbose, debug=debug)

@@ -1785,7 +1785,7 @@ public:
 class ReplaceProtonWithTrifluoromethyl : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithTrifluoromethyl( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithTrifluoromethyl( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( MutableResidueType & rsd ) const override;
@@ -1901,7 +1901,7 @@ public:
 class ReplaceProtonWithChlorine : public PatchOperation {
 public:
 	/// @brief constructor
-	ReplaceProtonWithChlorine( std::string atom ): atom_( atom ) {};
+	ReplaceProtonWithChlorine( std::string const & atom ): atom_( atom ) {};
 
 	bool
 	apply( MutableResidueType & rsd ) const override;

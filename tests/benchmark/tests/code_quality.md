@@ -15,6 +15,11 @@ Run the Clang Static Analyzer on Rosetta and report any issues found.
 Run Clang Tidy on Rosetta and report issues found.
 (Does not modify code.)
 
+-----
+### cppcheck
+Run the Cppcheck code quality analyzer on Rosetta. Test will fail if a code quality issue identified by Cppcheck is introduced.
+Test will *continue* to fail for future tests until the issue is dealt with.
+
 ----
 ### beautification
 Check if new code in branch if beautified according to Rosetta standards.
