@@ -2011,6 +2011,28 @@ Options = Option_Group( '',
 		  default='false'
 		),
 
+
+		Option( 'smart_annealer', 'Boolean',
+			desc="(requires extras=tensorflow) Use AI to guide your packing protocol. Currently not usable with the multi_cool_annealer, but it may be soon.",
+		  default='false'
+		),
+		Option( 'smart_annealer_model', 'String',
+			desc="(requires extras=tensorflow) Choose which neural network to use for the smart annealer. Look at database/protocol_data/tensorflow_graphs/smart_annealer/ to see the options. Passing this flag enables '-smart_annealer'",
+		  default='jack3.07.1'
+		),
+		Option( 'smart_annealer_cutoff', 'Real',
+			desc="(requires extras=tensorflow) Choose a number from 0 to 1 to tune how aggressive the smart annealer is. Higher numbers are more agressive (risky) but have a potentially greater speedup (speedup requires -smart_annealer_pick_again false). Passing this flag enables '-smart_annealer'",
+		  default='0.25'
+		),
+		Option( 'smart_annealer_pick_again', 'Boolean',
+			desc="(requires extras=tensorflow) If disabled, the smart annealer just skips unfruitful amino acids. Enabling this option tells the annealer to pick a fruitful rotamer to sample this round instead of skipping the round. Will not give you a speedup but may give you a better final outcome. Passing this flag enables '-smart_annealer'",
+		  default='true'
+		),
+		Option( 'smart_annealer_disable_during_quench', 'Boolean',
+      desc="(requires extras=tensorflow) Run the final quenching stage as normal, regardless of how bad an amino acid may be. Passing this flag enables '-smart_annealer'",
+		  default='true'
+		),
+
 		Option( 'minpack_temp_schedule', 'RealVector',
 			desc="Alternate annealing schedule for min_pack.",
 		),

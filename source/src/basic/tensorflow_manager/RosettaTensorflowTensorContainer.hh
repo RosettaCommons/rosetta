@@ -352,19 +352,31 @@ protected: //Danger Zone!
 
 public: //static utilities
 
-static
-RosettaTensorflowTensorContainer< T >
-combine_tensors(
-	utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
-);
+	static
+	RosettaTensorflowTensorContainer< T >
+	combine_tensors(
+		utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
+	);
 
-static
-void
-split_combined_tensors(
-	RosettaTensorflowTensorContainer< T > combined_tensors,
-	utility::vector1< RosettaTensorflowTensorContainer<T> > & tensor_vector
-);
+	static
+	void
+	split_combined_tensors(
+		RosettaTensorflowTensorContainer< T > combined_tensors,
+		utility::vector1< RosettaTensorflowTensorContainer<T> > & tensor_vector
+	);
 
+	template< typename Container >
+	void
+	copy_data_from_container( Container const & src ){
+		debug_assert( src.size() == num_tensor_elements() );
+		copy_data( src.data() );
+	}
+
+protected:
+
+	///@brief memcpy data from src to tensor_data_
+ 	void
+ 	copy_data( T const * src );
 
 private:
 

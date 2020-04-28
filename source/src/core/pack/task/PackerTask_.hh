@@ -227,6 +227,20 @@ public:
 	/// @brief returns the requested size for the MultiCoolAnnealer
 	Size multi_cool_annealer_history_size() const override;
 
+	bool smart_annealer() const override { return smart_annealer_; }
+	std::string smart_annealer_model() const override { return smart_annealer_model_; }
+	core::Real smart_annealer_cutoff() const override { return smart_annealer_cutoff_; }
+	bool smart_annealer_pick_again() const override { return smart_annealer_pick_again_; }
+	bool smart_annealer_disable_during_quench() const override {
+		return smart_annealer_disable_during_quench_;
+	}
+
+	void set_smart_annealer( bool setting ) override { smart_annealer_ = setting; }
+	void set_smart_annealer_model( std::string const & setting ) override { smart_annealer_model_ = setting; }
+	void set_smart_annealer_cutoff( core::Real setting ) override { smart_annealer_cutoff_ = setting; }
+	void set_smart_annealer_pick_again( bool setting ) override { smart_annealer_pick_again_ = setting; }
+	void set_smart_annealer_disable_during_quench( bool setting ) override { smart_annealer_disable_during_quench_ = setting; }
+
 	void show( std::ostream & out ) const override;
 	void show() const override;
 	void show_residue_task( std::ostream & out, Size resid ) const override;
@@ -490,6 +504,12 @@ private:
 
 	bool multi_cool_annealer_ = false;
 	Size mca_history_size_ = 1;
+
+	bool smart_annealer_ = false;
+	std::string smart_annealer_model_ = "generation2";
+	core::Real smart_annealer_cutoff_ = 0.25;
+	bool smart_annealer_pick_again_ = true;
+	bool smart_annealer_disable_during_quench_ = true;
 
 	bool keep_sequence_symmetry_ = false;
 

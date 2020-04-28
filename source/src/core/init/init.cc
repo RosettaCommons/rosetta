@@ -282,6 +282,7 @@
 #include <core/pack/task/operation/DesignRestrictionsCreator.hh>
 #include <core/pack/task/operation/ClashBasedRepackShellCreator.hh>
 #include <core/pack/task/operation/EnableMultiCoolAnnealerCreator.hh>
+#include <core/pack/task/operation/EnableSmartAnnealerCreator.hh>
 #include <core/pack/task/operation/KeepSequenceSymmetryCreator.hh>
 #include <core/pack/task/operation/OperateOnCertainResiduesCreator.hh>
 #include <core/pack/task/operation/OperateOnResidueSubsetCreator.hh>
@@ -708,6 +709,7 @@ static TaskOperationRegistrator< AppendRotamerSetCreator > AppendRotamerSetCreat
 static TaskOperationRegistrator< AppendRotamerCreator > AppendRotamerCreator_registrator;
 static TaskOperationRegistrator< DesignRestrictionsCreator > DesignRestrictionsCreator_registrator;
 static TaskOperationRegistrator< EnableMultiCoolAnnealerCreator > EnableMultiCoolAnnealerCreator_registrator;
+static TaskOperationRegistrator< EnableSmartAnnealerCreator > EnableSmartAnnealerCreator_registrator;
 static TaskOperationRegistrator< ExtraRotamersCreator > ExtraRotamersCreator_registrator;
 static TaskOperationRegistrator< ExtraChiCutoffCreator > ExtraChiCutoffCreator_registrator;
 static TaskOperationRegistrator< SetRotamerCouplingsCreator > SetRotamerCouplingsCreator_registrator;

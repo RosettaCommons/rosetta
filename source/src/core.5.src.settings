@@ -60,6 +60,7 @@ sources = {
 		"RotamerAssigningAnnealer",
 		"SequenceSymmetricAnnealer",
 		"SimAnnealerBase",
+		"SmartFixbbSimAnnealer",
 	],
 	"core/pack/dunbrack": [
 		"DunbrackConstraint",
@@ -204,6 +205,7 @@ sources = {
 		"ClashBasedRepackShell",
 		"DesignRestrictions",
 		"EnableMultiCoolAnnealer",
+		"EnableSmartAnnealer",
 		"FillAUTOTaskOperation",
 		"KeepSequenceSymmetry",
 		"NoRepackDisulfides",

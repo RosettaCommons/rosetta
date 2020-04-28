@@ -769,6 +769,25 @@ PackerTask_::initialize_from_options( utility::options::OptionCollection const &
 		keep_sequence_symmetry( true );
 	}
 
+	smart_annealer_ |= options[ packing::smart_annealer ]()
+		|| options[ packing::smart_annealer_model ].user()
+		|| options[ packing::smart_annealer_cutoff ].user()
+		|| options[ packing::smart_annealer_disable_during_quench ].user()
+		|| options[ packing::smart_annealer_pick_again ].user();
+
+	if ( options[ packing::smart_annealer_model ].user() ) {
+		smart_annealer_model_ = options[ packing::smart_annealer_model ]();
+	}
+	if ( options[ packing::smart_annealer_cutoff ].user() ) {
+		smart_annealer_cutoff_ = options[ packing::smart_annealer_cutoff ]();
+	}
+	if ( options[ packing::smart_annealer_pick_again ].user() ) {
+		smart_annealer_pick_again_ = options[ packing::smart_annealer_pick_again ]();
+	}
+	if ( options[ packing::smart_annealer_disable_during_quench ].user() ) {
+		smart_annealer_disable_during_quench_ = options[ packing::smart_annealer_disable_during_quench ]();
+	}
+
 	for ( Size ii = 1; ii <= nres_; ++ii ) {
 		residue_tasks_[ ii ].initialize_from_options( options );
 	}
@@ -822,6 +841,11 @@ PackerTask::list_options_read( utility::options::OptionKeyList & read_options )
 		+ packing::double_lazy_ig
 		+ packing::multi_cool_annealer
 		+ packing::sequence_symmetric_annealer
+		+ packing::smart_annealer
+		+ packing::smart_annealer_model
+		+ packing::smart_annealer_cutoff
+		+ packing::smart_annealer_disable_during_quench
+		+ packing::smart_annealer_pick_again
 		+ packing::fix_his_tautomer
 		+ packing::repack_only
 		+ packing::max_rotbump_energy;
@@ -1200,6 +1224,11 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( dlig_mem_limit_ ) ); // Size
 	arc( CEREAL_NVP( multi_cool_annealer_ ) ); // _Bool
 	arc( CEREAL_NVP( keep_sequence_symmetry_ ) ); // _Bool
+	arc( CEREAL_NVP( smart_annealer_ ) );
+	arc( CEREAL_NVP( smart_annealer_model_ ) );
+	arc( CEREAL_NVP( smart_annealer_cutoff_ ) );
+	arc( CEREAL_NVP( smart_annealer_pick_again_ ) );
+	arc( CEREAL_NVP( smart_annealer_disable_during_quench_ ) );
 	arc( CEREAL_NVP( mca_history_size_ ) ); // Size
 	arc( CEREAL_NVP( optimize_H_ ) ); // _Bool
 	arc( CEREAL_NVP( bump_check_ ) ); // _Bool
@@ -1236,6 +1265,11 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( dlig_mem_limit_ ); // Size
 	arc( multi_cool_annealer_ ); // _Bool
 	arc( keep_sequence_symmetry_ ); // _Bool
+	arc( smart_annealer_ );
+	arc( smart_annealer_model_ );
+	arc( smart_annealer_cutoff_ );
+	arc( smart_annealer_pick_again_ );
+	arc( smart_annealer_disable_during_quench_ );
 	arc( mca_history_size_ ); // Size
 	arc( optimize_H_ ); // _Bool
 	arc( bump_check_ ); // _Bool

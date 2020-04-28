@@ -17,6 +17,7 @@
 /// Package headers
 #include <core/pack/annealer/FixbbSimAnnealer.hh>
 #include <core/pack/annealer/SequenceSymmetricAnnealer.hh>
+#include <core/pack/annealer/SmartFixbbSimAnnealer.hh>
 #include <core/pack/annealer/FixbbCoupledRotamerSimAnnealer.hh>
 #include <core/pack/annealer/FixbbLinkingRotamerSimAnnealer.hh>
 #include <core/pack/annealer/MultiCoolAnnealer.hh>
@@ -80,6 +81,13 @@ AnnealerFactory::create_annealer(
 		return utility::pointer::make_shared< MultiCoolAnnealer >(
 			task, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
 			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
+	} else if ( task->smart_annealer() ) {
+		TR.Debug << "Creating SmartFixbbSimAnnealer" << std::endl;
+		auto const ptr = utility::pointer::make_shared< SmartFixbbSimAnnealer >(
+			rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
+		ptr->initialize_from_task( * task );
+		return ptr;
 	} else {
 		TR.Debug << "Creating FixbbSimAnnealer" << std::endl;
 		return utility::pointer::make_shared< FixbbSimAnnealer >(

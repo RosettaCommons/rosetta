@@ -150,6 +150,17 @@ public:
 	virtual void increase_multi_cool_annealer_history_size( Size setting ) = 0;
 	virtual Size multi_cool_annealer_history_size() const = 0;
 
+	virtual bool smart_annealer() const = 0;
+	virtual std::string smart_annealer_model() const = 0;
+	virtual core::Real smart_annealer_cutoff() const = 0;
+	virtual bool smart_annealer_pick_again() const = 0;
+	virtual bool smart_annealer_disable_during_quench() const = 0;
+	virtual void set_smart_annealer( bool setting ) = 0;
+	virtual void set_smart_annealer_model( std::string const & setting ) = 0;
+	virtual void set_smart_annealer_cutoff( core::Real setting ) = 0;
+	virtual void set_smart_annealer_pick_again( bool setting ) = 0;
+	virtual void set_smart_annealer_disable_during_quench( bool setting ) = 0;
+
 	virtual void show( std::ostream & out ) const = 0;
 	virtual void show() const = 0;
 	virtual void show_residue_task( std::ostream & out, Size resid ) const = 0;

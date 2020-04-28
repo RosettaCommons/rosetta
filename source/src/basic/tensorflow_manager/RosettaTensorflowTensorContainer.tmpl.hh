@@ -24,6 +24,7 @@
 #include <utility/pointer/memory.hh>
 #include <utility/vector0.hh>
 
+#include <cstring> //memcpy
 
 namespace basic {
 namespace tensorflow_manager {
@@ -335,6 +336,12 @@ RosettaTensorflowTensorContainer< T >::split_combined_tensors(
 
 }
 
+template < typename T >
+void
+RosettaTensorflowTensorContainer<T>::copy_data( T const * src ){
+ 	debug_assert( tensor_data_ != nullptr );
+ 	std::memcpy( tensor_data_, src, sizeof(T) * num_tensor_elements() );
+}
 
 } //tensorflow_manager
 } //basic
