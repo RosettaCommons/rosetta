@@ -91,7 +91,7 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Lex, SLex, GalCer, UDP_D_Glc, target57,
+			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc, target57,
 			maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar, whacky_sugar,
 			ketopentofuranose, pdb_code_pdb, bad_pdb;
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
@@ -253,6 +253,22 @@ main( int argc, char *argv[] )
 		make_pose_from_saccharide_sequence( Lex, "beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc", *residue_set );
 
 		test_sugar( Lex );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating Muramic acid from sequence: alpha-Murp:" << endl;
+
+		make_pose_from_saccharide_sequence( Murp, "alpha-Murp", *residue_set );
+
+		test_sugar( Murp );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating Rhodinofuranose from sequence: alpha-D-Rhof:" << endl;
+
+		make_pose_from_saccharide_sequence( Rhof, "->5)-alpha-D-Rhof", *residue_set );
+
+		test_sugar( Rhof );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
