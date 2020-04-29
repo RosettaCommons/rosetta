@@ -119,53 +119,70 @@ def figure_out_next_round( args ):
 			for i, map_half in enumerate([args.map_half_1, args.map_half_2]):
 				output_tag = 'FINAL_R' + str( this_round_num + 1 ) + '_half' + str(i+1)
 				drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag=output_tag,
-					outfile_basename=args.out_pref, last_round=True,
+					outfile_basename=args.out_pref, last_round=True, chunk_res=args.chunk_res,
 					do_not_recalc_convergence=args.do_not_recalc_convergence, final_round_2=True, map_to_use=map_half,
-					rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, test=args.test )
+					rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, test=args.test, dens_thr=args.dens_thr )
 		else:
 			output_tag = 'FINAL_R' + str( this_round_num + 1 )
 			drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag=output_tag,
-				outfile_basename=args.out_pref, last_round=True, test=args.test,
+				outfile_basename=args.out_pref, last_round=True, test=args.test, chunk_res=args.chunk_res,
 				do_not_recalc_convergence=args.do_not_recalc_convergence, final_round_2=True,
-				rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory )
+				rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, dens_thr=args.dens_thr )
 	elif FIRST_FINAL_ROUND or SKIP_TO_FINAL_ROUND:
 		output_tag = 'FINAL_R' + str( this_round_num + 1 )
 		# we need to figure out the best fit
 		best_fit = ''
 		overall_min_score = 0.
-		for fit in fits:
-		        score_file = args.out_pref + '_' + fit + '_' + args.curr_round + '_CAT_ALL_ROUNDS.sc'
-		        if not os.path.exists( score_file ):
-		                print( "Cannot find score file %s" %( score_file ) )
-		        scores = []
-		        for line in open( score_file ):
-		                if "description" in  line: continue
-		                scores.append( float(line.split()[1]) )
-		        if  best_fit == '' or min(scores) <  overall_min_score:
-		                best_fit = fit
-		                overall_min_score = min( scores )
+		if "SINGLE_FIT" not in fits:
+			for fit in fits:
+			        score_file = args.out_pref + '_' + fit + '_' + args.curr_round + '_CAT_ALL_ROUNDS.sc'
+			        if not os.path.exists( score_file ):
+			                print( "Cannot find score file %s" %( score_file ) )
+			        scores = []
+			        for line in open( score_file ):
+			                if "description" in  line: continue
+			                scores.append( float(line.split()[1]) )
+			        if  best_fit == '' or min(scores) <  overall_min_score:
+			                best_fit = fit
+			                overall_min_score = min( scores )
 		models = []
 		for i in range(1,11):
 			model = args.out_pref + '_all_models_all_fits_' + args.curr_round
 			model += '.out.' + str(i) + '.pdb'
 			models.append( model )
-		last_flags = 'flags_' + args.out_pref + '_' + best_fit + '_' + args.curr_round
+		if "SINGLE_FIT" not in fits:
+			last_flags = 'flags_' + args.out_pref + '_' + best_fit + '_' + args.curr_round
+		else:
+			last_flags = 'flags_' + args.out_pref + '_' + args.curr_round
 		drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag=output_tag,
 			outfile_basename=args.out_pref, last_round=True, test=args.test,
-			do_not_recalc_convergence=args.do_not_recalc_convergence,
-			rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory )
+			do_not_recalc_convergence=args.do_not_recalc_convergence, chunk_res=args.chunk_res,
+			rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, dens_thr=args.dens_thr )
 	else:
 		# need to do the setup for each fit
 		output_tag = 'R' + str( this_round_num + 1 )
 		for fit in fits:
-			last_flags = 'flags_' + args.out_pref + '_' + fit + '_' + args.curr_round
+			if fit=="SINGLE_FIT":
+				last_flags = 'flags_' + args.out_pref + '_' + args.curr_round
+			else:
+				last_flags = 'flags_' + args.out_pref + '_' + fit + '_' + args.curr_round
 			models = []
 			for i in range(1,11):
-				model = args.out_pref + '_' + fit + '_' + args.curr_round + '_CAT_ALL_ROUNDS.out.%d.pdb' %(i)
+				if fit=="SINGLE_FIT":
+					model = args.out_pref + '_' + args.curr_round + '_CAT_ALL_ROUNDS.out.%d.pdb' %(i)
+				else:
+					model = args.out_pref + '_' + fit + '_' + args.curr_round + '_CAT_ALL_ROUNDS.out.%d.pdb' %(i)
 				models.append( model )
-			drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag= output_tag,
-				outfile_basename=args.out_pref + '_' + fit, do_not_recalc_convergence=args.do_not_recalc_convergence,
-				rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, test=args.test )
+			if fit=="SINGLE_FIT":
+				drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag= output_tag,
+					outfile_basename=args.out_pref, do_not_recalc_convergence=args.do_not_recalc_convergence,
+					rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, test=args.test,
+					chunk_res=args.chunk_res, dens_thr=args.dens_thr )
+			else:
+				drrafter_rna.setup_next_round( last_flags=last_flags, models=models, output_tag= output_tag,
+					outfile_basename=args.out_pref + '_' + fit, do_not_recalc_convergence=args.do_not_recalc_convergence,
+					rosetta_ext=args.rosetta_extension, rosetta_dir=args.rosetta_directory, test=args.test,
+					chunk_res=args.chunk_res, dens_thr=args.dens_thr )
 	
 def get_top_ten_models_from_silent_files( silent_files, output_name ):
 	# get the top ten models from a list of silent files
@@ -281,7 +298,10 @@ def get_results( args ):
 			# not sure if this is final round 1 or final round 2
 			for r in range( 1, this_round_num-1 ):
 				for fit in all_fits:
-					silent_file_r = args.out_pref + '_' + str(fit) + '_R' + str(r) + '_subset.out'
+					if fit == "SINGLE_FIT":
+						silent_file_r = args.out_pref + '_R' + str(r) + '_subset.out'
+					else:
+						silent_file_r = args.out_pref + '_' + str(fit) + '_R' + str(r) + '_subset.out'
 					silent_files_all_rounds.append( silent_file_r )
 			silent_files_all_rounds.append( silent_file_subset )
 			silent_file_prev_round_final = args.out_pref + '_FINAL_R' + str(this_round_num-1) + '_subset.out'
@@ -291,7 +311,10 @@ def get_results( args ):
 				final_round2 = True
 			else:
 				for fit in all_fits:
-					silent_file_prev_round = args.out_pref + '_' + str(fit) + '_R' + str(this_round_num-1) + '_subset.out'
+					if fit == "SINGLE_FIT":
+						silent_file_prev_round = args.out_pref + '_R' + str(this_round_num-1) + '_subset.out'
+					else:
+						silent_file_prev_round = args.out_pref + '_' + str(fit) + '_R' + str(this_round_num-1) + '_subset.out'
 					silent_files_all_rounds.append( silent_file_prev_round )
 			get_top_ten_models_from_silent_files( silent_files_all_rounds, output_name )
 
@@ -369,5 +392,6 @@ if __name__ == '__main__':
 	parser.add_argument('-do_not_check_convergence_decrease', action='store_true', default=False, help="Do not check convergence decrease (will normally stop running if convergence stays the same over many rounds).")
 	parser.add_argument( '-rosetta_directory', required=True, help="Path to Rosetta executables" )
 	parser.add_argument( '-rosetta_extension', default='', help="Extension for Rosetta executables e.g. '.linuxgccrelease'" )
+	parser.add_argument('-dens_thr', type=float, default=-1.0, help="Threshold average density value for chunk to be fixed -- useful to play around with this if the fixed helices don't look like they fit in the map well")
 	args = parser.parse_args()
 	get_results_and_setup_next_round( args )

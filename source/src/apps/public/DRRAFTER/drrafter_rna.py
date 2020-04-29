@@ -440,7 +440,7 @@ def setup_next_round( models, last_flags, output_tag, outfile_basename, do_not_r
 			print( "Problem with setting up round. Extending last round." )
 			# extend the previous round
 			new_flags = write_flags_extend_last_round( outfile_basename=outfile_basename,
-				output_tag=output_tag, last_flags=last_flags, last_round=last_round, nstruct=nstruct )
+				output_tag=output_tag, last_flags=last_flags, last_round=last_round, nstruct=nstruct, test=test )
 			# and write a command file
 			write_command_file( 'command_' + outfile_basename + '_' + output_tag, new_flags, rosetta_dir, rosetta_ext)
 			exit( 1 )
@@ -544,7 +544,7 @@ if __name__ == '__main__':
 	parser.add_argument('-nstruct', type=int, default=0, help="nstruct for the flags file, if not set, it will default to value from last round")
 	parser.add_argument('-last_flags', type=str, required=True, help="flags file from last round of modeling")
 	parser.add_argument('-output_tag', type=str, help="output_tag e.g. R3")
-	parser.add_argument('-map_to_use', type=str, help="use this density map instead of the map from the last flags file")
+	parser.add_argument('-map_to_use', type=str, default='', help="use this density map instead of the map from the last flags file")
 	parser.add_argument('-outfile_basename', type=str, help="base name for the output silent file e.g. 1GID_auto_0")
 	parser.add_argument('-do_not_recalc_convergence', action='store_true', default=False, help="Do not recalculate convergence, if it was already calculated")
 	parser.add_argument('-last_round', action='store_true', default=False, help="Set up the last round of modeling? (will set up special refinement)")
@@ -552,9 +552,10 @@ if __name__ == '__main__':
 	parser.add_argument('-skip_clash_check', action='store_true', default=False, help="Don't check for clashes")
 	parser.add_argument('-chunk_res', type=str, nargs='+', default=False, help="Don't check for clashes")
 	parser.add_argument('-dens_thr', type=float, default=-1.0, help="Threshold average density value for chunk to be fixed -- useful to play around with this if the fixed helices don't look like they fit in the map well")
+	parser.add_argument( '-rosetta_directory', required=True, help="Path to Rosetta executables" )
 	args = parser.parse_args()
 	setup_next_round( models=args.models, nstruct=args.nstruct, last_flags=args.last_flags,
 			output_tag=args.output_tag, outfile_basename=args.outfile_basename, 
 			do_not_recalc_convergence=args.do_not_recalc_convergence, last_round=args.last_round,
 			skip_clash_check=args.skip_clash_check, chunk_res=args.chunk_res, dens_thr=args.dens_thr,
-			final_round_2=args.final_round_2, map_to_use=args.map_to_use )
+			final_round_2=args.final_round_2, map_to_use=args.map_to_use, rosetta_dir=args.rosetta_directory )

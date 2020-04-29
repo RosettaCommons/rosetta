@@ -667,6 +667,10 @@ def rna_helix( seq, resnum, output_pdb, rosetta_directory, rosetta_extension, te
     #Build the helix
     temp = tempfile.NamedTemporaryFile(delete=False)
     cmdline = os.path.expanduser( rosetta_directory ) + '/rna_helix' + rosetta_extension
+    if not os.path.exists( cmdline ):
+	    print( 'ERROR: ' + cmdline + ' does not exist.' )
+	    print( 'Check that you have specified the correct -rosetta_directory and -rosetta_extension' )
+	    exit( 1 )
     cmdline += (' -rna::corrected_geo  '+
                 '-score:rna_torsion_potential RNA11_based_new ' +
                 '-chemical::enlarge_H_lj ')

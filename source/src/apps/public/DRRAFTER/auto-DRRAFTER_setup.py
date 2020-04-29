@@ -119,6 +119,9 @@ def auto_setup_helices( args ):
 	for line in open( args.fasta ):
 		if line.startswith( '>' ): continue
 		SEQ += line.replace('\n','').replace(' ','' )
+	if not SEQ.islower():
+		print( "ERROR: RNA sequence must be specified with lowercase letters (a, c, g, and u).")
+		exit()
 	NRES = len( SEQ )
 	SS = ''
 	for line in open( args.secstruct ):
