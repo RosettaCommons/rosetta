@@ -91,9 +91,11 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
+
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc, target57,
-			maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar, whacky_sugar,
-			ketopentofuranose, pdb_code_pdb, bad_pdb;
+			maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar, ketopentofuranose, ketohexofuranose, whacky_sugar,
+			pdb_code_pdb, bad_pdb;
+    
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
@@ -376,6 +378,15 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating aldohexofuranoses from sequences" << endl;
+
+		// TODO: Fix defaults so that people don't have to keep specifying the non-reducing-end linkage. ~JWL
+		make_pose_from_saccharide_sequence( ketohexofuranose, "->3)-a-D-Glcf-(1->3)-b-D-Idof", *residue_set );
+
+		test_sugar( ketohexofuranose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating an O-acetylated sugar from sequence:" << endl;
 
 		make_pose_from_saccharide_sequence( Ac_sugar, "alpha-d-Glcp6Ac", *residue_set );
@@ -386,7 +397,7 @@ main( int argc, char *argv[] )
 		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating aldopentofuranose dimer from sequence:" << endl;
 
-		make_pose_from_saccharide_sequence( ketopentofuranose, "a-D-Xulf-(2->1)-b-D-Rulf", *residue_set );
+		make_pose_from_saccharide_sequence( ketopentofuranose, "->3)-a-D-Xulf-(2->1)-b-D-Rulf", *residue_set );
 
 		test_sugar( ketopentofuranose );
 
