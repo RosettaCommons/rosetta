@@ -378,7 +378,7 @@ def get_required_pyrosetta_packages_for_platform(platform, conda=False):
         IMPORTANT: there should be no spaces between package name and version number
     '''
     packages = '\
-    blosc==1.8.3         \
+    blosc==1.7.0         \
     cloudpickle==0.7.0   \
     dask>=2.11.0         \
     dask-jobqueue>=0.7.0 \
@@ -386,14 +386,18 @@ def get_required_pyrosetta_packages_for_platform(platform, conda=False):
     jupyter>=1.0.0       \
     numpy>=1.17.3        \
     pandas>=0.25.2       \
-    py3Dmol>=0.8.0       \
-    scipy>=1.3.1         \
+    scipy>=1.4.1         \
     traitlets>=4.3.3     \
     '
+    # not available in standard Conda channels:
+    #    blosc==1.8.3         \
+    #    py3Dmol>=0.8.0       \
 
     if conda: packages = packages.replace('blosc', 'python-blosc')
 
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+
+    #if conda: packages = [ p.replace('blosc', 'python-blosc').replace('>=', ' >=').replace('==', ' ==') for p in packages ]
 
     for p in packages: assert '=' in p
 

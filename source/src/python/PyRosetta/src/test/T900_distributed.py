@@ -36,7 +36,7 @@ test_suites = [
     "pyrosetta.tests.distributed.test_dask",
     "pyrosetta.tests.distributed.test_gil",
     "pyrosetta.tests.distributed.test_smoke",
-    "pyrosetta.tests.distributed.test_viewer",
+    #"pyrosetta.tests.distributed.test_viewer",
     "pyrosetta.tests.numeric.test_alignment",
 ]
 
