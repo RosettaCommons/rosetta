@@ -95,7 +95,7 @@ main( int argc, char *argv[] )
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc, target57,
 			maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar, ketopentofuranose, ketohexofuranose, whacky_sugar,
 			pdb_code_pdb, bad_pdb;
-    
+
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
 
