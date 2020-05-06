@@ -1129,7 +1129,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		for ( Size i = 1; i <= T; ++i ) rot[ sri ].chi_sd(   i ) = rotamers_( index, sorted_rotno[ sri ] ).chi_sd(   i );
 		rot[ sri ].rotamer_probability() = rotamers_( index, sorted_rotno[ sri ] ).rotamer_probability();
 		for ( Size di = 1; di <= ( 1 << N ); ++di ) {
-			n_derivs[ di ][ sri ] = static_cast< Real >( rotamers_( index, sorted_rotno[ sri ] ).n_derivs()[ di ] );
+			n_derivs[ di ][ sri ] = rotamers_( index, sorted_rotno[ sri ] ).n_derivs()[ di ];
 		}
 		rotprob[ sri ] = static_cast< Real >( rot[ sri ].rotamer_probability() );
 		if ( rotprob[ sri ] <= 1e-6 ) rotprob[ sri ] = 1e-6;
@@ -1862,8 +1862,6 @@ template < Size T, Size N >
 void
 RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozstream & out ) const
 {
-	using namespace boost;
-
 	parent::write_to_binary( out );
 
 	/// 1. rotamers_
@@ -1877,9 +1875,9 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 		// c. rotamer probabilities
 		DunbrackReal * rotamer_probs = new DunbrackReal[ ntotalrot ];
 		// d. bicubic polynomial parameters
-		utility::vector1< DunbrackReal * > rotamer_negln_n_derivs( 1 << N );
+		utility::vector1< core::Real * > rotamer_negln_n_derivs( 1 << N );
 		for ( Size initi = 1; initi <= ( 1 << N ); ++initi ) {
-			rotamer_negln_n_derivs[ initi ] = new DunbrackReal[ ntotalrot ];
+			rotamer_negln_n_derivs[ initi ] = new core::Real[ ntotalrot ];
 		}
 
 		// e. packed rotamer numbers
@@ -1924,7 +1922,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::write_to_binary( utility::io::ozs
 		out.write( (char*) rotamer_stdvs, ntotalchi * sizeof( DunbrackReal ));
 		out.write( (char*) rotamer_probs, ntotalrot * sizeof( DunbrackReal ));
 		for ( Size writei = 1; writei <= ( 1 << N ); ++writei ) {
-			out.write( (char*) rotamer_negln_n_derivs[ writei ], ntotalrot * sizeof( DunbrackReal ));
+			out.write( (char*) rotamer_negln_n_derivs[ writei ], ntotalrot * sizeof( core::Real ));
 		}
 
 		out.write( (char*) packed_rotnos, ntotalrot * sizeof( DunbrackReal ));
@@ -1984,14 +1982,14 @@ RotamericSingleResidueDunbrackLibrary< T, N >::read_from_binary( utility::io::iz
 		// c. rotamer probabilities
 		DunbrackReal * rotamer_probs = new DunbrackReal[ ntotalrot ];
 		// d. bicubic polynomial parameters
-		utility::vector1< DunbrackReal * > rotamer_negln_n_derivs( 1 << N );
+		utility::vector1< core::Real * > rotamer_negln_n_derivs( 1 << N );
 
 		in.read( (char*) rotamer_means, ntotalchi * sizeof( DunbrackReal ));
 		in.read( (char*) rotamer_stdvs, ntotalchi * sizeof( DunbrackReal ));
 		in.read( (char*) rotamer_probs, ntotalrot * sizeof( DunbrackReal ));
 		for ( Size initi = 1; initi <= ( 1 << N ); ++initi ) {
-			rotamer_negln_n_derivs[ initi ] = new DunbrackReal[ ntotalrot ];
-			in.read( (char*) rotamer_negln_n_derivs[ initi ], ntotalrot * sizeof( DunbrackReal ));
+			rotamer_negln_n_derivs[ initi ] = new core::Real[ ntotalrot ];
+			in.read( (char*) rotamer_negln_n_derivs[ initi ], ntotalrot * sizeof( core::Real ));
 		}
 		// e. packed rotamer numbers
 		DunbrackReal * packed_rotnos = new DunbrackReal[ ntotalrot ];
@@ -2372,7 +2370,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 					Size jp1kp1 = jj * N_BB_BINS[2] + kk+1;
 					Size sortedrotno = packed_rotno_2_sorted_rotno_( jp1kp1, ii );
 					PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1, sortedrotno );
-					DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
+					core::Real rotamer_energy = -std::log( core::Real(rot.rotamer_probability()) );
 					rot.n_derivs()[ 1 ] = rotamer_energy;
 					energy_vals( jj, kk ) = rotamer_energy;
 				}
@@ -2412,7 +2410,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 						PackedDunbrackRotamer< T, N > & rot = rotamers_( jp1kp1lp1, sortedrotno );
 						//rot.rotamer_probability() = rotamers_( jp1kp1lp1, sortedrotno ).rotamer_probability();
 						//if ( rot.rotamer_probability() <= 1e-6 ) rot.rotamer_probability() = 1e-6;
-						DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
+						core::Real rotamer_energy = -std::log( core::Real(rot.rotamer_probability()) );
 						rot.n_derivs()[ 1 ] = rotamer_energy;
 						energy_vals( jj, kk, ll ) = rotamer_energy;
 					}
@@ -2465,7 +2463,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::initialize_bicubic_splines()
 				Size bb_rot_index = make_index< N >( N_BB_BINS, bb_bin );
 				Size sortedrotno = packed_rotno_2_sorted_rotno_( bb_rot_index, ii );
 				PackedDunbrackRotamer< T, N > & rot = rotamers_( bb_rot_index, sortedrotno );
-				DunbrackReal rotamer_energy = -std::log( rot.rotamer_probability() );
+				core::Real rotamer_energy = -std::log( core::Real(rot.rotamer_probability()) );
 				rot.n_derivs()[ 1 ] = rotamer_energy;
 				utility::vector1< Size > indices;
 				for ( Size i = 1; i <= N; ++i ) indices.push_back( bb_bin[ i ] - 1 );

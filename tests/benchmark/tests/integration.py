@@ -139,6 +139,17 @@ def run_integration_tests(mode, rosetta_dir, working_dir, platform, config, hpc_
         results[_LogKey_]   = 'Compiling: {}\n'.format(build_command_line) + full_log
         return results
 
+    # For trajectory consistency from run-to-run we want to have the Dunbrack libraries generated with the particular mode (release/debug) that we're running with.
+    os_spec = platform['os']
+    compiler = platform['compiler']
+    extras = ''.join( sorted(platform['extras']) )
+    if extras:
+        extras += '.'
+    database_cache_path = f"{rosetta_dir}/.database-binaries/{extras}{os_spec}{compiler}{mode}"
+    if not os.path.exists(database_cache_path):
+        os.makedirs(database_cache_path)
+    additional_flags += f' --additional_flags "-in:path:database_cache_dir {database_cache_path}" ' # Quoted to keep it together
+
     #if os.path.isdir(files_location): TR('Removing old ref dir %s...' % files_location);  shutil.rmtree(files_location)  # remove old dir if any
     command_line, output, results, full_log = run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_command_line, additional_flags, results, config=config)
 

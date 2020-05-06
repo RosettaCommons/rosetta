@@ -209,7 +209,7 @@ EXAMPLES For Running Demos/Tutorials
     )
 
     parser.add_option("--additional_flags",
-      default="",
+      default=[], action="append",
       help="Add additional flags to integration tests. (default: None)",
     )
 
@@ -1055,7 +1055,7 @@ def generateIntegrationTestGlobalSubstitutionParameters():
     binext, local_vars = get_binext()
     #print 'binext: %s, extras: %s, Options.extras: %s' % (binext, repr(extras), repr(Options.extras) )
 
-    additional_flags = Options.additional_flags
+    additional_flags = ' '.join( Options.additional_flags )
     dbms_host = Options.dbms_host
     dbms_user = Options.dbms_user
     dbms_port = Options.dbms_port

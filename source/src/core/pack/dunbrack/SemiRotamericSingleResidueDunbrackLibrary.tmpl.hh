@@ -1866,9 +1866,9 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::read_bbdep_continuous_minimiz
 
 			for ( Size ll = 1; ll <= bbdep_nrchi_nbins_; ++ll ) {
 				position[ N + 1 ] = ll - 1;
-				bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ 1 ]   = ( DunbrackReal ) data( position );
+				bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ 1 ]   = data( position );
 				for ( Size di = 2; di <= ( 1 << ( N + 1 ) ); ++di ) {
-					bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ di ] = ( DunbrackReal ) spline.get_deriv( di )( position );
+					bbdep_nrc_interpdata_[ ii ]( bbdepindex, ll ).n_derivs_[ di ] = spline.get_deriv( di )( position );
 				}
 			}
 

@@ -47,3 +47,17 @@ find ./ -type f -exec $MD5_COMMAND {} \; | sort -k 2 > %(workdir)s/database_md5s
 
 } 2> %(workdir)s/error.log # The `{} 2>` redirects the stderr for all of the code within.
 
+
+# We also want to capture the MD5 of the Dunbrack binaries used for the database test,
+# But if the number/identity changes, we don't care too much.
+cd %(minidir)s/../
+{
+
+if [ -d ./.database-binaries/ ]; then
+  find ./.database-binaries/ -type f -exec $MD5_COMMAND {} \; | sort -k 2 > %(workdir)s/dunbrack_cache_md5s.ignore
+fi
+
+} 2> %(workdir)s/error2.log # The `{} 2>` redirects the stderr for all of the code within.
+
+
+

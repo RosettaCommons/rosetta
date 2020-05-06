@@ -30,3 +30,4 @@ database/scoring/**/potential.bin.gz
 source/.version.json
 source/src/python/PyRosetta/src/pyrosetta/database
 source/src/python/PyRosetta/src/pyrosetta.egg-info
+.database-binaries/

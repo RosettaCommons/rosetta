@@ -180,7 +180,7 @@ public:
 		rotamer_probability_( prob_in )
 	{
 		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
-			n_derivs_[ deriv_i ] = P( 0.0 );
+			n_derivs_[ deriv_i ] = 0.0;
 		}
 
 		for ( Size ii = 1; ii <= S; ++ii ) {
@@ -193,7 +193,7 @@ public:
 		rotamer_probability_( P( 0.0 ) )
 	{
 		for ( Size deriv_i = 1; deriv_i <= ( 1 << N ); ++deriv_i ) {
-			n_derivs_[ deriv_i ] = P( 0.0 );
+			n_derivs_[ deriv_i ] = 0.0;
 		}
 		for ( Size ii = 1; ii <= S; ++ii ) {
 			chi_mean_[ ii ] = P( 0.0 );
@@ -214,7 +214,7 @@ public:
 		return rotamer_probability_;
 	}
 
-	utility::fixedsizearray1< P, (1<<N) >
+	utility::fixedsizearray1< core::Real, (1<<N) >
 	n_derivs() const {
 		return n_derivs_;
 	}
@@ -234,7 +234,7 @@ public:
 		return rotamer_probability_;
 	}
 
-	utility::fixedsizearray1< P, (1<<N) > & n_derivs() {
+	utility::fixedsizearray1< core::Real, (1<<N) > & n_derivs() {
 		return n_derivs_;
 	}
 
@@ -254,7 +254,7 @@ private:
 	utility::fixedsizearray1< P, S > chi_mean_;
 	utility::fixedsizearray1< P, S > chi_sd_;
 	P rotamer_probability_;
-	utility::fixedsizearray1< P, (1<<N) > n_derivs_;
+	utility::fixedsizearray1< core::Real, (1<<N) > n_derivs_; // We increase the precision of the derivatives for better numeric stability in integration tests.
 };
 
 template < Size S, Size N, class P >

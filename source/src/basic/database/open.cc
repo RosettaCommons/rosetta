@@ -238,6 +238,9 @@ full_cache_name(
 		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
+
+		// If we explictly call for the cache directory, we should use it in preference to anything else.
+		return "";
 	}
 
 	char const * path = getenv("ROSETTA3_DBCACHE");
@@ -246,6 +249,9 @@ full_cache_name(
 		if ( find_cache_file( cache_name, for_writing ) ) {
 			return cache_name;
 		}
+
+		// If we explictly have a cache environment variable, we should use it in preference to anything else.
+		return "";
 	}
 
 	// Then try the database directory
