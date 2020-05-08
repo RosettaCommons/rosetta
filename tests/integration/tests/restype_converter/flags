@@ -1,4 +1,4 @@
--types URA:UpperRNA:5PrimePackTriPhos pdb_TTL ADE GLY CYS LYS PRO sphingosine OU3_ASN MCY APN NLU C90
+-types URA:UpperRNA:5PrimePackTriPhos pdb_TTL pdb_ANP ADE GLY CYS LYS PRO sphingosine OU3_ASN MCY APN NLU C90
 -name3 TRP Glc 
 -extra_res_fa input/7cpa.params input/000.params
 -extra_res_mol input/XST.sdf

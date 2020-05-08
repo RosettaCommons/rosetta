@@ -1318,9 +1318,10 @@ write_topology_file(
 
 	// then write out the atoms
 	for ( Size i=1; i <= rsd.natoms(); ++i ) {
-		std::string atom_out = "ATOM " + rsd.atom_name( i ) + " " + rsd.atom_type( i ).name() + "  ";
-		atom_out = atom_out + rsd.mm_atom_type(i).name();
-		out << atom_out << " " << rsd.atom_charge(i) << "\n";
+		out << "ATOM " << utility::pad_right( rsd.atom_name( i ), 4 ); // Input assumes fixed width, (right padding matches what PDB output does).
+		out << ' ' << rsd.atom_type( i ).name();
+		out << ' ' <<  rsd.mm_atom_type(i).name();
+		out << ' ' << rsd.atom_charge(i) << '\n';
 		// NOTE: Unless we're using them (in which case they're the regular charges), we don't ever save the parse charges, so we can't write them out.
 	} // atom write out
 

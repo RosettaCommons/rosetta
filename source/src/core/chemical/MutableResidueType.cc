@@ -1086,7 +1086,7 @@ void
 MutableResidueType::add_bond(std::string const & atom_name1, std::string const & atom_name2, BondName bondLabel /*=SingleBond*/)
 {
 	if ( !has( atom_name1 ) || !has( atom_name2 ) ) {
-		std::string message = "add_bond: atoms " + atom_name1 + " and " + atom_name2 + " don't exist!";
+		std::string message = "add_bond: atom " + atom_name1 + " and/or " + atom_name2 + " don't exist!";
 		utility_exit_with_message( message );
 	}
 
