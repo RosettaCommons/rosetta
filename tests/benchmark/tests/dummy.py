@@ -31,6 +31,16 @@ def run_state_test(rosetta_dir, working_dir, platform, config):
     return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : f'run_state_test: setting test state to {state!r}...' }
 
 
+sub_test_description_template = '''\
+# subtests_test test suite
+These sub-test description is generated for 3/4 of sub-tests
+
+-----
+### {name}
+The warm time, had already disappeared like dust. Broken rain, fragment of light shadow, bring more pain to my heart...
+-----
+'''
+
 def run_subtests_test(rosetta_dir, working_dir, platform, config):
     tests = {}
     for i in range(16):
@@ -40,6 +50,12 @@ def run_subtests_test(rosetta_dir, working_dir, platform, config):
         if   s == 0: state = _S_passed_
         elif s == 1: state = _S_failed_
         else:        state = _S_script_failed_
+
+        if i % 4:
+            os.mkdir( f'{working_dir}/{name}' )
+            with open(f'{working_dir}/{name}/description.md', 'w') as f: f.write( sub_test_description_template.format(**vars()) )
+
+            with open( f'{working_dir}/{name}/fantome.txt', 'w') as f: f.write('No one wants to hear the sequel to a fairytale\n')
 
         tests[name] = { _StateKey_ : state, _LogKey_   : log, }
 

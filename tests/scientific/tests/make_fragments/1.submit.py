@@ -86,7 +86,7 @@ conda = benchmark.tests.setup_conda_virtual_environment(
 for channel in conda_channels_to_add:
     benchmark.execute(f'Adding extra extra channel {channel}...',
                       f'{conda.activate} && conda config --env --add channels {channel}' )
- 
+
 conda_extra_packages = 'perl perl-if perl-parallel-forkmanager perl-switch perl-text-balanced perl-json'
 benchmark.execute( f'Setting up extra packages {conda_extra_packages}...', f'{conda.activate} && conda install --quiet --yes {conda_extra_packages}' )
 
@@ -102,13 +102,16 @@ make_frags_environment_commands = (
         f' && export VALL={config["rosetta_dir"]}/tools/fragment_tools/vall.jul19.2011'
         f' && export FRAGMENT_PICKER={config["rosetta_dir"]}/source/bin/fragment_picker.{extension}'
         f' && export FRAGMENT_PICKER_NUM_CPUS=1'
-        f' && export BLAST_NUM_CPUS={num_cores_to_use}' 
+        f' && export BLAST_NUM_CPUS={num_cores_to_use}'
         f' && export PERL5LIB={perl5libdir}')
 
 # Always copy over new code from install deps/make_frags
 if os.path.isdir(frag_db_prefix):
     shutil.copy(f"{config['rosetta_dir']}/tools/fragment_tools/install_dependencies.pl", os.path.join(frag_db_prefix, "install_dependencies.pl"))
     shutil.copy(f"{config['rosetta_dir']}/tools/fragment_tools/make_fragments.pl", os.path.join(frag_db_prefix, "make_fragments.pl"))
+
+
+if not os.path.isdir(frag_db_prefix): pathlib.Path(frag_db_prefix).mkdir(exist_ok=True, parents=True)
 
 seqres_fn = os.path.join(frag_db_prefix, "pdb_seqres.txt")
 if not os.path.isfile(seqres_fn):
@@ -128,7 +131,7 @@ if not os.path.isdir(frag_db_prefix) or found_sig != current_expected_sig:
     benchmark.execute('Installing dependencies...',
                       (f'cd {frag_db_prefix}'
                        f' && {conda.activate}'
-                       f' && export LOCAL_NR_COPY={config["fragment_picking_database"]}'
+                       f' && export LOCAL_NR_COPY={config["mounts"]["fragment_picking_database"]}'
                        f' && ./install_dependencies.pl standard localnrcopy'
                        f' && cd {os.getcwd()}'))
 
