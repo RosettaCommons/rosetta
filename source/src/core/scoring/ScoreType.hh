@@ -107,6 +107,7 @@ enum ScoreType {
 #ifdef USECUDA
 	fiberdiffractiongpu, // fiber diffraction gpu score
 #endif
+	epr_deer_score,
 
 	//pba Membrane all atom terms
 	fa_mbenv,       // depth dependent reference term

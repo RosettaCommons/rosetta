@@ -175,6 +175,7 @@ ScoreTypeManager::setup_score_type_names()
 #ifdef USECUDA
 	name2score_type_[ "fiberdiffractiongpu" ] = fiberdiffractiongpu;
 #endif
+	name2score_type_[ "epr_deer_score" ] = epr_deer_score;
 
 	name2score_type_[ "fa_pair" ] = fa_pair; // fa_pair == fa_pair_pol_pol
 	name2score_type_[ "fa_pair_aro_aro" ] = fa_pair_aro_aro;

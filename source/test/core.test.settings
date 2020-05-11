@@ -442,6 +442,12 @@ sources = {
 	"scoring/electron_density" : [
 		#"ElectronDensityLoader",
 	],
+	"scoring/epr_deer" : [
+		"DEERData_test",
+		"DEERDataCache_test",
+		"DEEREnergyMethod_test",
+		"EPRSpinLabel_test",
+	],
 	"scoring/etable" : [
 		"EtableEnergy",
 		"EtableUnModifyPot",
@@ -1192,6 +1198,9 @@ testinputfiles = [
 	"scoring/aa_composition_energy/tailfunction_linear.comp",
 	"scoring/aa_composition_energy/tailfunction_quadratic.comp",
 	"scoring/aa_composition_energy/twenty_percent_pro_fract_ranges.comp",
+	"scoring/epr_deer/2lzm.pdb",
+	"scoring/epr_deer/coords_file.txt",
+	"scoring/epr_deer/input_file_epr_deer.txt",
 	"scoring/loop_graph/GC_pair.pdb",
 	"scoring/loop_graph/P1.pdb",
 	"scoring/loop_graph/P2_part1.pdb",

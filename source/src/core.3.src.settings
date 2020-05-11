@@ -389,6 +389,14 @@ sources = {
 	"core/scoring/custom_pair_distance": [
 		"FullatomCustomPairDistanceEnergy",
 	],
+	"core/scoring/epr_deer" : [
+		"DEERData",
+		"DEERDataCache",
+		"DEERIO",
+		"EPRSpinLabel",
+		"Simulated4PDEERTrace",
+	],
+
 	"core/scoring/disulfides": [
 		"CentroidDisulfideEnergyContainer",
 		"CentroidDisulfidePotential",

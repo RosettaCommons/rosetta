@@ -30,6 +30,7 @@ sources = {
 		"FA_ElecEnergyAroAro",
 		"RNA_FA_ElecEnergy",
 		"FA_GrpElecEnergy",
+		"DEEREnergy",
 
 		"ElecDensAllAtomCenEnergy",
 		"ElecDensCenEnergy",

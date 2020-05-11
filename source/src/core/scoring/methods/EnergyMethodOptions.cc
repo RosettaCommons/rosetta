@@ -27,6 +27,7 @@
 // Utility headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/keys/epr_deer.OptionKeys.gen.hh>
 #include <basic/options/keys/dump_trajectory.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
@@ -553,9 +554,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_natural_corrections1
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_cross_chain
 		+ basic::options::OptionKeys::score::approximate_buried_unsat_penalty_hbond_bonus_ser_to_helix_bb
-
 		+ basic::options::OptionKeys::score::target_clash_pdb
-
 		+ basic::options::OptionKeys::dump_trajectory::prefix
 		+ basic::options::OptionKeys::dump_trajectory::gz
 		+ basic::options::OptionKeys::dump_trajectory::stride

@@ -123,6 +123,7 @@
 #include <core/energy_methods/ContextIndependentGeometricSolEnergyCreator.hh>
 #include <core/energy_methods/OccludedHbondSolEnergyCreator.hh>
 #include <core/energy_methods/OccludedHbondSolEnergy_onebodyCreator.hh>
+#include <core/energy_methods/DEEREnergyCreator.hh>
 #include <core/scoring/elec/FA_ElecEnergyCreator.hh>
 #include <core/energy_methods/FA_GrpElecEnergyCreator.hh>
 #include <core/energy_methods/FA_ElecEnergyAroAroCreator.hh>
@@ -520,6 +521,7 @@ static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAroCreator > FA_E
 static EnergyMethodRegistrator< scoring::elec::FA_ElecEnergyAroAllCreator > FA_ElecEnergyAroAllCreator_registrator;
 static EnergyMethodRegistrator< scoring::elec::FA_GrpElecEnergyCreator > FA_GrpElecEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::hackaro::HackAroEnergyCreator > HackAroEnergyCreator_registrator;
+static EnergyMethodRegistrator< energy_methods::DEEREnergyCreator > DEEREnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNAChiEnergyCreator > DNAChiEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::dna::DNATorsionEnergyCreator > DNATorsionEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::loop_graph::LoopCloseEnergyCreator > LoopCloseEnergyCreator_registrator;

@@ -5202,7 +5202,6 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option( 'create_from_template_pdb', 'File', desc='create starting structure from a template pdb, follow with pdb name'),
 		Option( 'create_from_secondary_structure', 'Boolean', desc='create starting structure from a file that contains H/C/E to describe topology or B/P pattern, has fasta file format', default='false'),
 	), # -DenovoProteinDesign
-
 	Option_Group( 'dna',
 		Option_Group( 'specificity',
 			Option( 'exclude_dna_dna', 'Boolean', default='true'),
@@ -5815,7 +5814,11 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('parser_read_cloud_pdb','Boolean', default = 'false',
 			desc="read cloud format PDB for enzdes in rosetta scripts"),
 	), # -enzdes
-
+	Option_Group('epr_deer',
+		Option( 'input_files', 'FileVector', desc='Input files for DEER distance or decay data'),
+		Option( 'coords_files', 'FileVector', desc='Input files for coordinates used for DEER measurement simulation'),
+		Option( 'print_data', 'Boolean', default='false', desc='Prints DEER distance distributions and decay traces. Note that this will flood your terminal if used during Monte Carlo modeling.'), 
+	), #-epr_deer
 	Option_Group( 'fast_loops',
 			Option( 'window_accept_ratio',       'Real',   desc='windows with more than x percent of good loops in fast-loop sampling are used for scored-sampling',  default='0.01' ),
 			Option( 'nr_scored_sampling_passes', 'Integer',desc='good windows go into scored-sampling N times',  default='4'  ),

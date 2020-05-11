@@ -56,6 +56,8 @@ public:
 		POSITION_CONSERVED_RESIDUES, // a core::pose::datacache::PositionConservedResiduesStore; used by core::pose::is_position_conserved_residue() (currently unused)
 		INTERFACE_DDG_MUTATION, // a InterfaceDDGMutationTask; the mutation to be considered; set by the InterfaceDDGJobInputter (in the interface_ddg_bind app)
 
+		EPR_DEER_DATA, // Used for storing experimental double electron-electron resonance (DEER) data
+
 		// Energy-function information cache (including experimental data)
 		BASE_PARTNER, // a core::scoring::dna::BasePartner; used by DNA energy terms
 		CEN_LIST_INFO, // a core::scoring::CenListInfo; used by EnvPairPotential

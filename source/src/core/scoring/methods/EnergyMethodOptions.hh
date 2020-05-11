@@ -891,7 +891,6 @@ public:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	inline core::Size dump_trajectory_stride() const { return dump_trajectory_stride_; }
 
-
 	utility::vector1< core::Real > const & get_density_sc_scale_byres() const;
 	void set_density_sc_scale_byres(core::Real newscscale);
 	void set_density_sc_scale_byres(core::chemical::AA aa, core::Real newscscale);
@@ -1178,6 +1177,7 @@ private:
 	std::string dump_trajectory_prefix_;
 	bool dump_trajectory_gz_;
 	core::Size dump_trajectory_stride_;
+
 
 	/// deprecated
 	utility::vector1<std::string> bond_angle_central_atoms_to_score_;

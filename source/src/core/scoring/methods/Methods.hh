@@ -43,6 +43,7 @@ enum LongRangeEnergyType {
 	multipole_elec_lr,
 	vdw_tinker_lr,
 	sasa_lr,
+	epr_deer_lr,
 	PB_elec_lr,
 	cart_bonded_lr,
 	gen_bonded_lr,
