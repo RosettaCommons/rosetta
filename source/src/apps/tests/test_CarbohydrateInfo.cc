@@ -92,9 +92,9 @@ main( int argc, char *argv[] )
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 
-			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc, target57,
-			maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar, ketopentofuranose, ketohexofuranose, whacky_sugar,
-			pdb_code_pdb, bad_pdb;
+			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
+			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -258,7 +258,7 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating Muramic acid from sequence: alpha-Murp:" << endl;
+		cout << "Creating muramic acid from sequence: alpha-Murp:" << endl;
 
 		make_pose_from_saccharide_sequence( Murp, "alpha-Murp", *residue_set );
 
@@ -266,7 +266,7 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating Rhodinofuranose from sequence: alpha-D-Rhof:" << endl;
+		cout << "Creating rhodinofuranose from sequence: alpha-D-Rhof:" << endl;
 
 		make_pose_from_saccharide_sequence( Rhof, "->5)-alpha-D-Rhof", *residue_set );
 
@@ -282,7 +282,7 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing Sialyl-Lewisx:" << endl;
+		cout << "Importing sialyl-Lewisx:" << endl;
 
 		pose_from_file( SLex, PATH + "SLex.pdb", PDB_file );
 
@@ -290,7 +290,7 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Creating Sialyl-Lewisx from sequence: " <<
+		cout << "Creating sialyl-Lewisx from sequence: " <<
 			"->8)-alpha-Neup5Ac-(2->6)-beta-D-Galp-(1->4)-[alpha-L-Fucp-(1->3)]-D-GlcpNAc:" << endl;
 
 		make_pose_from_saccharide_sequence(
@@ -400,6 +400,22 @@ main( int argc, char *argv[] )
 		make_pose_from_saccharide_sequence( ketopentofuranose, "->3)-a-D-Xulf-(2->1)-b-D-Rulf", *residue_set );
 
 		test_sugar( ketopentofuranose );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating ketodeoxyoctanoate from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( Kdo, "->8)-a-Kdop", *residue_set );
+
+		test_sugar( Kdo );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating ketodeoxynonanoate from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( Kdn, "->9)-a-Kdnp", *residue_set );
+
+		test_sugar( Kdn );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

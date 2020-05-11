@@ -697,8 +697,27 @@ residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-alpha-L-Tagp.params
 residue_types/carbohydrates/ketoses/hexoses/tagatoses/to4-beta-L-Tagp.params
 residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-alpha-L-Tagp.params
 residue_types/carbohydrates/ketoses/hexoses/tagatoses/to5-beta-L-Tagp.params
+### Ketooctoses
+residue_types/carbohydrates/ketoses/octoses/to4-alpha-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to4-beta-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to5-alpha-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to5-beta-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to7-alpha-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to7-beta-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to8-alpha-Kdop.params
+residue_types/carbohydrates/ketoses/octoses/to8-beta-Kdop.params
 ### Ketononoses
 #### Ketoaldonic Acids (e.g., Sialic Acids)
+residue_types/carbohydrates/ketoses/nonoses/to4-alpha-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to4-beta-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to5-alpha-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to5-beta-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to7-alpha-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to7-beta-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to8-alpha-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to8-beta-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to9-alpha-Kdnp.params
+residue_types/carbohydrates/ketoses/nonoses/to9-beta-Kdnp.params
 residue_types/carbohydrates/ketoses/nonoses/to4-alpha-Neup.params
 residue_types/carbohydrates/ketoses/nonoses/to4-beta-Neup.params
 residue_types/carbohydrates/ketoses/nonoses/to7-alpha-Neup.params
