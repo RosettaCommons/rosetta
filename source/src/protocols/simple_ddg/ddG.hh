@@ -100,6 +100,9 @@ public :
 
 	virtual void scorefxn( core::scoring::ScoreFunctionCOP scorefxn_in );
 
+	void dump_pdbs( bool dp ) { dump_pdbs_ = dp; }
+	bool dump_pdbs() const { return dump_pdbs_; }
+
 	std::string
 	get_name() const override;
 
@@ -171,6 +174,9 @@ private :
 	core::Size bound_HOH_, bound_HOH_V_, unbound_HOH_, unbound_HOH_V_;
 	bool compute_rmsd_;
 	core::Real bound_rmsd_, bound_rmsd_super_;
+
+	// dump pdbs for debugging
+	bool dump_pdbs_; //dflt false
 
 };
 

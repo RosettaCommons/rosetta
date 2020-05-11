@@ -133,7 +133,8 @@ ddG::ddG() :
 	unbound_HOH_V_(0),
 	compute_rmsd_(false),
 	bound_rmsd_(1e6),
-	bound_rmsd_super_(1e6)
+	bound_rmsd_super_(1e6),
+	dump_pdbs_(false)
 {
 	bound_energies_.clear();
 	unbound_energies_.clear();
@@ -165,7 +166,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	unbound_HOH_V_(0),
 	compute_rmsd_(false),
 	bound_rmsd_(1e6),
-	bound_rmsd_super_(1e6)
+	bound_rmsd_super_(1e6),
+	dump_pdbs_(false)
 {
 	scorefxn_ = scorefxn_in->clone();
 
@@ -211,7 +213,8 @@ ddG::ddG( core::scoring::ScoreFunctionCOP scorefxn_in,
 	unbound_HOH_V_(0),
 	compute_rmsd_(false),
 	bound_rmsd_(1e6),
-	bound_rmsd_super_(1e6)
+	bound_rmsd_super_(1e6),
+	dump_pdbs_(false)
 {
 	scorefxn_ = scorefxn_in->clone();
 	chain_ids_ = chain_ids;
@@ -253,6 +256,7 @@ void ddG::parse_my_tag(
 	min_water_jump_ = tag->getOption<bool>("min_water_jump",true);
 	translate_by_ = tag->getOption<core::Real>("translate_by", 1000.0);
 	compute_rmsd_ = tag->getOption<bool>("compute_rmsd",false);
+	dump_pdbs_ = tag->getOption<bool>("dump_pdbs",false);
 
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), data ) );
@@ -622,16 +626,14 @@ ddG::calculate( pose::Pose const & pose_original )
 		setup_task(pose);
 	}
 
-	//setup debugging
-	//std::string name;
-	//std::string name_b;
-
-	//Dump pdb before repacking
-	//name = protocols::jd2::current_output_name();
-	//name_b = name + "_BOUND_before_repack_" + utility::timestamp_short() + ".pdb";
-	//TR << "DEBUGGING: dumping pdb - " << name_b << std::endl;
-	//protocols::simple_moves::DumpPdb dump_bound_before_repack(name_b);
-	//dump_bound_before_repack.apply(pose);
+	if ( dump_pdbs_ ) {
+		//Dump bound pdb before repack
+		std::string name;
+		name = protocols::jd2::current_output_name() + "_BOUND_before_repack_" + utility::timestamp_short() + ".pdb";
+		TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+		protocols::simple_moves::DumpPdb dump_bound_before_repack(name);
+		dump_bound_before_repack.apply(pose);
+	}
 
 	// fd: now solvate the bound pose
 	if ( solvate_ ) {
@@ -658,8 +660,26 @@ ddG::calculate( pose::Pose const & pose_original )
 		pack::pack_rotamers( pose, *scorefxn_, task_ );
 	}
 
+	if ( dump_pdbs_ ) {
+		//Dump bound pdb after repack
+		std::string name;
+		name = protocols::jd2::current_output_name() + "_BOUND_after_repack_" + utility::timestamp_short() + ".pdb";
+		TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+		protocols::simple_moves::DumpPdb dump_bound_after_repack(name);
+		dump_bound_after_repack.apply(pose);
+	}
+
 	if ( relax_bound() && relax_mover() ) {
 		relax_mover()->apply( pose );
+	}
+
+	if ( dump_pdbs_ ) {
+		//Dump bound pdb after relax
+		std::string name;
+		name = protocols::jd2::current_output_name() + "_BOUND_after_relax_" + utility::timestamp_short() + ".pdb";
+		TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+		protocols::simple_moves::DumpPdb dump_bound_after_relax(name);
+		dump_bound_after_relax.apply(pose);
 	}
 
 	(*scorefxn_)( pose );
@@ -694,6 +714,15 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Unbound state
 	//---------------------------------
 	if ( unbind(pose) ) {
+		if ( dump_pdbs_ ) {
+			//Dump unbound pdb before repack
+			std::string name;
+			name = protocols::jd2::current_output_name() + "_UNBOUND_before_repack_" + utility::timestamp_short() + ".pdb";
+			TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+			protocols::simple_moves::DumpPdb dump_unbound_before_repack(name);
+			dump_unbound_before_repack.apply(pose);
+		}
+
 		if ( pb_enabled_ ) cached_data->set_energy_state(emoptions.pb_unbound_tag());
 
 		if ( solvate_ ) {
@@ -729,8 +758,26 @@ ddG::calculate( pose::Pose const & pose_original )
 			pack::pack_rotamers( pose, *scorefxn_, task_ );
 		}
 
+		if ( dump_pdbs_ ) {
+			//Dump unbound pdb after repack
+			std::string name;
+			name = protocols::jd2::current_output_name() + "_UNBOUND_after_repack_" + utility::timestamp_short() + ".pdb";
+			TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+			protocols::simple_moves::DumpPdb dump_unbound_after_repack(name);
+			dump_unbound_after_repack.apply(pose);
+		}
+
 		if ( relax_unbound() && relax_mover() ) {
 			relax_mover()->apply( pose );
+		}
+
+		if ( dump_pdbs_ ) {
+			//Dump unbound pdb after relax
+			std::string name;
+			name = protocols::jd2::current_output_name() + "_UNBOUND_after_relax_" + utility::timestamp_short() + ".pdb";
+			TR << "DEBUGGING: dumping pdb - " << name << std::endl;
+			protocols::simple_moves::DumpPdb dump_unbound_after_relax(name);
+			dump_unbound_after_relax.apply(pose);
 		}
 
 		(*scorefxn_)( pose );
@@ -755,10 +802,6 @@ ddG::calculate( pose::Pose const & pose_original )
 			pb_cached_data_ = cached_data;
 		}
 	} // End unbind if
-
-	//pose.dump_pdb("final_unbound.pdb");
-
-
 }
 
 void
@@ -1073,6 +1116,11 @@ ddG::define_ddG_schema() {
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"compute_rmsd", xsct_rosetta_bool,
 		"Compute the rmsd both with and without superimposing -- requires in:file:native to be supplied",
+		"false");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dump_pdbs", xsct_rosetta_bool,
+		"Dump debugging PDB files. Dumps 6 pdbs per instance: BOUND_before_repack, BOUND_after_repack, BOUND_after_relax, UNBOUND_before_repack, UNBOUND_after_repack, and UNBOUND_after_relax.",
 		"false");
 
 	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );

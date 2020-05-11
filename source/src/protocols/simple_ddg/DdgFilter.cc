@@ -50,6 +50,7 @@ static basic::Tracer TR( "protocols.simple_filters.DdgFilter" );
 DdgFilter::DdgFilter() :
 	filters::Filter( "Ddg" ),
 	ddg_threshold_( -15.0 ),
+	ddg_threshold_min_( -999999.0 ),
 	scorefxn_( /* NULL */ ),
 	rb_jump_( 1 ),
 	use_custom_task_(false),
@@ -62,7 +63,8 @@ DdgFilter::DdgFilter() :
 	relax_mover_( /* NULL */ ),
 	pb_enabled_(false),
 	translate_by_(1000),
-	extreme_value_removal_( false )
+	extreme_value_removal_( false ),
+	dump_pdbs_( false )
 {
 	scorename_ = "ddg";
 }
@@ -74,6 +76,7 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	core::Size const repeats/*=1*/) :
 	Filter("Ddg" ),
 	ddg_threshold_(ddg_threshold),
+	ddg_threshold_min_( -999999.0 ),
 	scorefxn_(scorefxn->clone()),
 	rb_jump_(rb_jump),
 	use_custom_task_( false ),
@@ -86,7 +89,9 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	relax_mover_( /* NULL */ ),
 	pb_enabled_(false),
 	translate_by_(1000),
-	extreme_value_removal_( false )
+	extreme_value_removal_( false ),
+	dump_pdbs_( false )
+
 {
 	// Determine if this PB enabled.
 	if ( scorefxn_->get_weight(core::scoring::PB_elec) != 0. ) {
@@ -128,6 +133,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15 );
+	ddg_threshold_min_ = tag->getOption<core::Real>( "threshold_min", -999999.0 );
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", true ) );
@@ -157,12 +163,15 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 		runtime_assert( repeats() >= 3 ); // otherwise makes no sense...
 	}
 
+	dump_pdbs( tag->getOption< bool >( "dump_pdbs", false ) );
+
 	if ( repeats() > 1 && !repack() ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "ERROR: it doesn't make sense to have repeats if repack is false, since the values converge very well." );
 	}
 
 	TR
 		<< "ddg filter with threshold " << ddg_threshold_
+		<< " and threshold_min " << ddg_threshold_min_
 		<< " repeats=" << repeats()
 		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag)
 		<< " over jump " << rb_jump_
@@ -193,7 +202,7 @@ DdgFilter::apply( core::pose::Pose const & pose ) const
 {
 	core::Real const pose_ddg( compute( pose ) );
 	TR<<"ddg is "<<pose_ddg<<" ";
-	if ( pose_ddg <= ddg_threshold_ ) {
+	if ( ( pose_ddg <= ddg_threshold_ ) && ( pose_ddg >= ddg_threshold_min_ ) ) {
 		TR<<"passing"<<std::endl;
 		return true;
 	}
@@ -253,6 +262,7 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		ddg.translate_by( translate_by() );
 		ddg.relax_mover( relax_mover() );
 		ddg.filter( filter() );
+		ddg.dump_pdbs( dump_pdbs() );
 		core::Real average( 0.0 );
 		utility::vector1< core::Real > repeat_values;
 		repeat_values.clear();
@@ -353,7 +363,8 @@ void DdgFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "Threshold below which the filter computes the binding energy." , "-15" )
+	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "If ddG value is lower than this value, filter returns True (passes)." , "-15" )
+		+ XMLSchemaAttribute::attribute_w_default( "threshold_min" , xsct_real , "If ddG value is higher than this value, filter returns True (passes)." , "-999999" )
 		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_positive_integer , "Specifies which chains to separate. Jump=1 would separate the chains interacting across the first chain termination, jump=2, second etc." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "repeats" , xsct_positive_integer , "Averages the calculation over the number of repeats. Note that ddg calculations show noise of about 1-1.5 energy units, so averaging over 3-5 repeats is recommended for many applications." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "repack" , xsct_rosetta_bool , "Should the complex be repacked in the bound and unbound states prior to taking the energy difference? If false, the filter turns to a dG evaluator. If repack=false repeats should be turned to 1, b/c the energy evaluations converge very well with repack=false." , "1" )
@@ -366,7 +377,8 @@ void DdgFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "relax_mover" , xs_string , "Optionally define a mover which will be applied prior to computing the system energy in the unbound state." )
 		+ XMLSchemaAttribute( "filter" , xs_string , "If specified, the given filter will be calculated in the bound and unbound state for the score, rather than the given scorefunction. Repacking, if any, will be done with the provided scorefunction." )
 		+ XMLSchemaAttribute( "chain_num" , xs_string , "Allows you to specify a list of chain numbers to use to calculate the ddg, rather than a single jump. You cannot move chain 1, moving all the other chains is the same thing as moving chain 1, so do that instead. Use independently of jump." )
-		+ XMLSchemaAttribute::attribute_w_default( "extreme_value_removal" , xsct_rosetta_bool , "Compute ddg value times, sort and remove the top and bottom evaluation. This should reduce the noise levels in trajectories involving 1000s of evaluations. If set to true, repeats must be set to at least 3." , "false" ) ;
+		+ XMLSchemaAttribute::attribute_w_default( "extreme_value_removal" , xsct_rosetta_bool , "Compute ddg value times, sort and remove the top and bottom evaluation. This should reduce the noise levels in trajectories involving 1000s of evaluations. If set to true, repeats must be set to at least 3." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "dump_pdbs" , xsct_rosetta_bool , "Dump debugging PDB files. Dumps 6 pdbs per instance: BOUND_before_repack, BOUND_after_repack, BOUND_after_relax, UNBOUND_before_repack, UNBOUND_after_repack, and UNBOUND_after_relax." , "false" ) ;
 
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist ) ;
 	protocols::rosetta_scripts::attributes_for_parse_score_function( attlist ) ;

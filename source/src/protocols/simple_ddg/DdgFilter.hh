@@ -71,6 +71,9 @@ public:
 	void extreme_value_removal( bool const b ) { extreme_value_removal_ = b; }
 	bool extreme_value_removal() const{ return extreme_value_removal_; }
 
+	void dump_pdbs( bool const dp ) { dump_pdbs_ = dp; }
+	bool dump_pdbs() const{ return dump_pdbs_; }
+
 	std::string
 	name() const override;
 
@@ -88,6 +91,7 @@ private:
 	void initPB();
 
 	core::Real ddg_threshold_; //dflt -15
+	core::Real ddg_threshold_min_; //dflt -999999.0
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
 	core::Size rb_jump_; // dflt 1
 	core::pack::task::TaskFactoryOP task_factory_;
@@ -108,6 +112,7 @@ private:
 	/// translation distance in A
 	core::Real translate_by_; //dflt set to 1000. Default resets to 100 for RosettaScripts with a scorefxn containing PB_elec.
 	bool extreme_value_removal_; //dflt false; if true, and repeats >= 3 removes the lowest and highest value computed during repeats. This should lower noise levels
+	bool dump_pdbs_; //dflt false; dumps debugging pdbs
 };
 
 
