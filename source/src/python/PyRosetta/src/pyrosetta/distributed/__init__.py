@@ -69,9 +69,6 @@ def with_lock(func):
 @with_lock
 def maybe_init(**kwargs):
     """Call pyrosetta.init with reformatted options and extra_options if not already initialized."""
-    # if "set_logging_handler" not in kwargs:
-    #     kwargs["set_logging_handler"] = "logging"
-    # TODO In multithreaded builds the python-based logging handler appears to fail...
     for option in ["options", "extra_options"]:
         if option in kwargs:
             normflags = _normflags(kwargs[option])
@@ -79,6 +76,11 @@ def maybe_init(**kwargs):
             kwargs[option] = normflags
     if "extra_options" not in kwargs:
         kwargs["extra_options"] = "-out:levels all:warning"
+    if "set_logging_handler" not in kwargs:
+        if pyrosetta._is_interactive():
+            kwargs["set_logging_handler"] = "interactive"
+        else:
+            kwargs["set_logging_handler"] = "logging"
     if "silent" not in kwargs:
         kwargs["silent"] = True
 

@@ -130,7 +130,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
 
     options string with default Rosetta command-line options args.
             (default: '-ex1 -ex2aro')
-    kargs -
+    kwargs -
         extra_options - Extra command line options to pass rosetta init.
                         (default None)
         set_logging_handler - Route rosetta tracing through logging logger 'rosetta':
@@ -148,8 +148,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
 
     if not isinstance(options, (str, list)) or not isinstance(extra_options, (str, list)):
         raise Exception("Command line rosetta arguments must be passed as list or string!")
-    
-    if set_logging_handler is None and _is_interactive():
+
+    if (set_logging_handler is None) and _is_interactive():
         set_logging_handler = "interactive"
     elif notebook is not None:
         warnings.warn(
@@ -160,7 +160,8 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         set_logging_handler = "interactive"
 
 
-    assert set_logging_handler in (None, True, False, "interactive", "logging")
+    assert set_logging_handler in (None, True, False, "interactive", "logging"), \
+        "pyrosetta.init 'set_logging_handler' argument must be either: None, True, False, 'interactive', or 'logging'."
 
     logging_support.maybe_initialize_handler(set_logging_handler)
     if (set_logging_handler):
@@ -170,7 +171,7 @@ def init(options='-ex1 -ex2aro', extra_options='', set_logging_handler=None, not
         options = shlex.split(options)
     if isinstance(extra_options, str):
         extra_options = shlex.split(extra_options)
-        
+
     args = ['PyRosetta'] + options + extra_options
 
     # Attempt to resolve database location from environment if not present, else fallback
