@@ -1,0 +1,9 @@
+<ROSETTASCRIPTS>
+	<MOVERS>
+		<AlignPDBInfoToSequences name="ap2s" json_fns="input.json" mode="single" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="ap2s"/>
+	</PROTOCOLS>
+</ROSETTASCRIPTS>
+

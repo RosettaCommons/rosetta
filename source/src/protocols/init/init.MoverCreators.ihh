@@ -386,6 +386,7 @@
 #include <protocols/normalmode/NormalModeRelaxMoverCreator.hh>
 
 // P //////////////////////////////////////////////////////////////////////////
+#include <protocols//pdbinfo_manipulations/AlignPDBInfoToSequencesCreator.hh>
 #include <protocols/pb_potential/SetupPoissonBoltzmannPotentialCreator.hh>
 
 #include <protocols/pose_length_moves/AnalyzeLoopModelingCreator.hh>

@@ -10,6 +10,10 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"protocols/pdbinfo_manipulations": [
+		"AlignPDBInfoToSequences",
+		"AlignPDBInfoToSequencesUtil",
+	],
 	"protocols/flexpack": [
 		"FlexPacker",
 		"OtherContextScoreFunction",

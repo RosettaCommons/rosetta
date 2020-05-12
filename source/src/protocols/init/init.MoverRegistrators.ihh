@@ -398,6 +398,7 @@ static MoverRegistrator< normalmode::NormalModeRelaxMoverCreator > reg_NormalMod
 static MoverRegistrator< normalmode::NormalModeMinimizerCreator > reg_NormalModeMinimizerCreator;
 
 // P //////////////////////////////////////////////////////////////////////////
+static MoverRegistrator< pdbinfo_manipulations::AlignPDBInfoToSequencesCreator > reg_AlignPDBInfoToSequencesCreator;
 static MoverRegistrator< pb_potential::SetupPoissonBoltzmannPotentialCreator > reg_SetupPoissonBoltzmannPotentialCreator;
 
 static MoverRegistrator< pose_length_moves::AnalyzeLoopModelingCreator > reg_AnalyzeLoopModelingCreator;

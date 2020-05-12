@@ -559,6 +559,11 @@ sources = {
 		"ProteinProteinInterfaceUpweighterTaskOperation",
 	],
 
+	"pdbinfo_manipulations" : [
+		"AlignPDBInfoToSequencesTests",
+		"AlignPDBInfoToSequencesUtilTests",
+	],
+
 	"parser" : [
 		"BluePrint",
 		"DataLoaders"
@@ -568,13 +573,14 @@ sources = {
 		"PeptideDeriverFilterTests",
 	],
 
+	"pose_creation" : [
+		"PoseFromSequenceMoverTests",
+	],
+
 	"pmut_scan" : [
 		"PointMutScanDriver",
 	],
 
-	"pose_creation" : [
-		"PoseFromSequenceMoverTests",
-	],
 
 	"protein_interface_design" : [
 		"protein_interface_design",
@@ -1226,6 +1232,10 @@ testinputfiles = [
 	"peptide_deriver/2hle_remixed.pdb",
 	"peptide_deriver/1sfi_short.pdb",
 	"peptide_deriver/test_peptiderive.xml",
+	"pdbinfo_manipulations/5GRU_full.pdb",
+	"pdbinfo_manipulations/aln6q6h.pdb.gz",
+	"pdbinfo_manipulations/6q6h.pdb.gz",
+	"pdbinfo_manipulations/6q6h_seqs.json.gz",
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",
