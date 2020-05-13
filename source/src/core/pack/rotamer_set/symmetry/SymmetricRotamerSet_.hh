@@ -113,24 +113,6 @@ public:
 		pose::Pose & pose
 	) const override;
 
-public: //Setter and getter for additional data
-
-	/// @brief Symmetric rotamer sets are used in a funny way for self interactions.  In the case of using
-	/// a symmetric rotamer set to store a single rotamer, this is the index of the single rotamer.  This function
-	/// stores the value.
-	inline void single_rotamer_rotset_original_rotmer_index( core::Size const setting ) { single_rotamer_rotset_original_rotmer_index_ = setting; }
-
-	/// @brief Symmetric rotamer sets are used in a funny way for self interactions.  In the case of using
-	/// a symmetric rotamer set to store a single rotamer, this is the index of the single rotamer.  This function
-	/// retrieves the value.
-	inline core::Size single_rotamer_rotset_original_rotmer_index() const { return single_rotamer_rotset_original_rotmer_index_; }
-
-private: //Additional data
-
-	/// @brief Symmetric rotamer sets are used in a funny way for self interactions.  In the case of using
-	/// a symmetric rotamer set to store a single rotamer, this is the index of the single rotamer.
-	core::Size single_rotamer_rotset_original_rotmer_index_ = 0;
-
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

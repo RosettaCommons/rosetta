@@ -190,14 +190,12 @@ SymmetricRotamerSet_::compute_one_body_energies(
 				for ( int jj = 1; jj <= nrotamers; ++jj ) {
 					// make a new rotamer set that is going to be translated to the neighbor interation residue
 					conformation::ResidueOP sym_rsd( this->rotamer( jj )->clone() );
-					RotamerSetOP one_rotamer_set( utility::pointer::make_shared< SymmetricRotamerSet_ >() );
+					RotamerSetOP one_rotamer_set( new SymmetricRotamerSet_ );
 					one_rotamer_set->set_resid( theresid ); // we know iiresid == theresid
 					one_rotamer_set->add_rotamer( *sym_rsd );
-					utility::pointer::static_pointer_cast< SymmetricRotamerSet_ >( one_rotamer_set )->single_rotamer_rotset_original_rotmer_index( jj );
 					// place rotamer set at neighbor position
 					RotamerSetOP sym_rotset(
 						orient_rotamer_set_to_symmetric_partner( pose, *sym_rsd, neighbor_id, *one_rotamer_set ) );
-					utility::pointer::static_pointer_cast< SymmetricRotamerSet_ >( sym_rotset )->single_rotamer_rotset_original_rotmer_index( jj );
 					sf.prepare_rotamers_for_packing( pose, *one_rotamer_set );
 					sf.prepare_rotamers_for_packing( pose, *sym_rotset );
 					// make a temporary core::PackerEnergy object with on rotamer in it
@@ -441,7 +439,6 @@ template< class Archive >
 void
 core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
-	arc( CEREAL_NVP(single_rotamer_rotset_original_rotmer_index_) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -449,7 +446,6 @@ template< class Archive >
 void
 core::pack::rotamer_set::symmetry::SymmetricRotamerSet_::load( Archive & arc ) {
 	arc( cereal::base_class< core::pack::rotamer_set::RotamerSet_ >( this ) );
-	arc( single_rotamer_rotset_original_rotmer_index_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::pack::rotamer_set::symmetry::SymmetricRotamerSet_ );

@@ -8,10 +8,9 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   basic/datacache/CacheableResRotPairFloatMap.fwd.hh
-/// @brief  A CacheableData that stores a std::map<ResRotPair,float>
+/// @brief
 /// @author Brian Coventry
-/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added caching of floats indexed by rotamer memory address,
-/// used _only_ for self-interactions in the symmetric case.
+
 
 #ifndef INCLUDED_basic_datacache_CacheableResRotPairFloatMap_fwd_hh
 #define INCLUDED_basic_datacache_CacheableResRotPairFloatMap_fwd_hh

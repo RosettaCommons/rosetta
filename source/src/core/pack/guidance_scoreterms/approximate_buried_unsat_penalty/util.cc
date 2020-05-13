@@ -216,8 +216,7 @@ accumulate_oversats(
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
 	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > & oversat_map,
-	ScratchVectors<float> & oversat_scratch,
-	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
+	ScratchVectors<float> & oversat_scratch
 );
 
 
@@ -347,22 +346,15 @@ three_body_approximate_buried_unsat_calculation(
 	const float PENALTY = 1.0f;
 	basic::datacache::CacheableResRotPairFloatMapOP score_map ( utility::pointer::make_shared< basic::datacache::CacheableResRotPairFloatMap >() );
 
-	conformation::symmetry::SymmetryInfoCOP symm_info(nullptr); //Set to non-null iff pose is symmetric, below.
 
 	// We don't strictly need to do this. But it will keep the memory requirements down for giant symmetries
 	utility::vector1<bool> is_asu( pose.size(), true );
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 
 		conformation::symmetry::SymmetricConformation const & symm_conf =
-#ifndef NDEBUG
-			// Debug build: do a slow dynamic cast
 			dynamic_cast< conformation::symmetry::SymmetricConformation const & >( pose.conformation() );
-#else
-			// Release mode: do a fast static cast
-			static_cast< conformation::symmetry::SymmetricConformation const & >( pose.conformation() );
-#endif
 
-		symm_info = symm_conf.Symmetry_Info();
+		conformation::symmetry::SymmetryInfoCOP symm_info = symm_conf.Symmetry_Info();
 		for ( Size seqpos = 1; seqpos <= pose.size(); seqpos ++ ) {
 			is_asu[seqpos] = symm_info->bb_follows( seqpos ) == 0;
 		}
@@ -449,7 +441,7 @@ three_body_approximate_buried_unsat_calculation(
 		//   vectors and lower our memory footprint.
 		if ( node_resnum != last_resnum ) {
 
-			accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch, symm_info );
+			accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch );
 
 			last_resnum = node_resnum;
 		}
@@ -624,8 +616,7 @@ three_body_approximate_buried_unsat_calculation(
 					if ( do_store ) {
 						add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
 							node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ),
-							other_resnum, complete_rotsets->rotid_on_moltenresidue( other_rotamerid ),
-							hbond_bonus, symm_info );
+							other_resnum, complete_rotsets->rotid_on_moltenresidue( other_rotamerid ), hbond_bonus );
 					}
 					// std::cout << boost::str(boost::format("HYD: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
 					//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
@@ -708,8 +699,7 @@ three_body_approximate_buried_unsat_calculation(
 						if ( do_store ) {
 							add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
 								ii_resnum, complete_rotsets->rotid_on_moltenresidue( ii_rotamerid ),
-								jj_resnum, complete_rotsets->rotid_on_moltenresidue( jj_rotamerid ),
-								oversat_penalty, symm_info );
+								jj_resnum, complete_rotsets->rotid_on_moltenresidue( jj_rotamerid ), oversat_penalty );
 						}
 						// std::cout << boost::str(boost::format("OVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
 						//  %ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
@@ -740,7 +730,7 @@ three_body_approximate_buried_unsat_calculation(
 	}
 
 	// Very important!!! This must be here!!! This catches the final residue.
-	accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch, symm_info );
+	accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch );
 
 
 	//////////////////////////////////// HBond Bonus //////////////////////////////////////
@@ -880,8 +870,7 @@ three_body_approximate_buried_unsat_calculation(
 							if ( we_should_store && other_should_store ) {
 								add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
 									node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ),
-									other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ),
-									bonus, symm_info );
+									other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ), bonus );
 
 								// std::cout << boost::str(boost::format("BON: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
 								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
@@ -925,7 +914,7 @@ three_body_approximate_buried_unsat_calculation(
 
 	Size mem_use = 0;
 	// http://jsteemann.github.io/blog/2016/06/14/how-much-memory-does-an-stl-container-use/
-	mem_use += score_map->map().size() * ( sizeof(ResRotPair) + sizeof(float) + 20 ) + score_map->four_int_indexed_map().size() * (sizeof( std::tuple< platform::Size, platform::Size, platform::Size, platform::Size > ) + sizeof(float) + 20);
+	mem_use += score_map->map().size() * ( sizeof(ResRotPair) + sizeof(float) + 20 );
 	TR << "Rough mem use: " << mem_use << " bytes" << std::endl;
 
 	return score_map;
@@ -939,8 +928,7 @@ accumulate_oversats(
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
 	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > & oversat_map,
-	ScratchVectors<float> & oversat_scratch,
-	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
+	ScratchVectors<float> & oversat_scratch
 ) {
 
 	// Loop over all oversat pairs that were identified
@@ -964,7 +952,7 @@ accumulate_oversats(
 			add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
 				oversat.sc1_resid, oversat.sc1_rotid,
 				oversat.sc2_resid, oversat.sc2_rotid,
-				max_penalty, symm_info );
+				max_penalty );
 			// std::cout << boost::str(boost::format("FINOVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i BBRes: %i Score: %6.3f")
 			//  %oversat.sc1_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc1_resid )->rotamer( oversat.sc1_rotid )->name3()%oversat.sc1_rotid
 			//  %oversat.sc2_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc2_resid )->rotamer( oversat.sc2_rotid )->name3()%oversat.sc2_rotid
@@ -1029,8 +1017,7 @@ add_to_twobody(
 	Size rotamer_id1,
 	Size resnum2,
 	Size rotamer_id2,
-	float adder,
-	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
+	float adder
 ) {
 
 	if ( ! ( is_asu[resnum1] || is_asu[resnum2] ) ) return;
@@ -1063,26 +1050,7 @@ add_to_twobody(
 		}
 	}
 
-	float const val( adder / reweight ); // Divide by reweight!!! We are trying to cancel them
-
-	score_map->map()[ResRotPair(r1, ro1, r2, ro2)] += val;
-
-	// VKM, 4 April 2020:
-	// If we have a symmetric pose and this is a rotamer pair involving an asymmetric unit rotamer and one of its mirrors, store
-	// the value indexed by residue addresses.
-	if ( symm_info != nullptr ) {
-		if ( !( is_asu[ r1 ] && is_asu[ r2 ] ) ) { //Skip if they're both asymmetric unit residues.
-			if ( ( symm_info->bb_is_independent(r1) && (symm_info->bb_follows(r2) == r1) ) ||
-					( symm_info->bb_is_independent(r2) && (symm_info->bb_follows(r1) == r2) ) ) {
-				std::tuple< platform::Size, platform::Size, platform::Size, platform::Size > const myindex( r1, ro1, r2, ro2 );
-				if ( score_map->four_int_indexed_map().count( myindex ) == 0 ) {
-					score_map->four_int_indexed_map()[myindex] = val;
-				} else {
-					score_map->four_int_indexed_map()[myindex] += val;
-				}
-			}
-		}
-	}
+	score_map->map()[ResRotPair(r1, ro1, r2, ro2)] += adder / reweight; // Divide by reweight!!! We are trying to cancel them
 
 }
 

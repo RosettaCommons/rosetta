@@ -95,9 +95,6 @@
         "slist": "cpp",
         "cfenv": "cpp",
         "hash_map": "cpp",
-        "hash_set": "cpp",
-        "any": "cpp",
-        "compare": "cpp",
-        "shared_mutex": "cpp"
+        "hash_set": "cpp"
     }
 }

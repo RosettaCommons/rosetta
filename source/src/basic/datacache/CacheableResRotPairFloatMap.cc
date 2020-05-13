@@ -7,11 +7,9 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   basic/datacache/CacheableResRotPairFloatMap.cc
-/// @brief  A CacheableData that stores a std::map<ResRotPair,float>
+/// @file   basic/datacache/CacheableResRotPairFloatMap.hh
+/// @brief
 /// @author Brian Coventry
-/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added caching of floats indexed by rotamer memory address,
-/// used _only_ for self-interactions in the symmetric case.
 
 // unit headers
 #include <basic/datacache/CacheableResRotPairFloatMap.hh>
@@ -28,8 +26,6 @@
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/utility.hpp>
-#include <cereal/types/tuple.hpp>
-#include <cereal/types/map.hpp>
 #endif // SERIALIZATION
 
 namespace basic {
@@ -59,21 +55,6 @@ CacheableResRotPairFloatMap::map() const {
 	return map_;
 }
 
-/// @brief Nonconst access to map of four ints --> float value.
-/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > &
-CacheableResRotPairFloatMap::four_int_indexed_map() {
-	return four_int_indexed_map_;
-}
-
-/// @brief Const access to map of four ints --> float value.
-/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > const &
-CacheableResRotPairFloatMap::four_int_indexed_map() const {
-	return four_int_indexed_map_;
-}
 
 } // namespace datacache
 } // namespace basic
@@ -106,7 +87,6 @@ void
 basic::datacache::CacheableResRotPairFloatMap::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( map_ ) ); // std::unordered_map<uint64_t, MathMatrix<float>>
-	arc( CEREAL_NVP( four_int_indexed_map_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -115,7 +95,6 @@ void
 basic::datacache::CacheableResRotPairFloatMap::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( map_ ); // std::unordered_map<uint64_t, MathMatrix<float>>
-	arc( four_int_indexed_map_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( basic::datacache::CacheableResRotPairFloatMap );

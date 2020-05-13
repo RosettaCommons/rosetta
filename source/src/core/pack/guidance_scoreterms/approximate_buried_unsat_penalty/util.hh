@@ -23,7 +23,6 @@
 #include <core/pack/task/IGEdgeReweightContainer.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>
-#include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
 #include <basic/datacache/CacheableResRotPairFloatMap.hh>
 
@@ -130,8 +129,7 @@ add_to_twobody(
 	Size rotamer_id1,
 	Size resnum2,
 	Size rotamer_id2,
-	float adder,
-	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
+	float adder
 );
 
 
