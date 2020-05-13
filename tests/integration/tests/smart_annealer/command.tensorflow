@@ -32,6 +32,7 @@ cd %(workdir)s
 
 %(bin)s/fixbb.%(binext)s %(additional_flags)s @flags_fullatom -database %(database)s -testing:INTEGRATION_TEST -smart_annealer 1  2>&1 \
     | egrep -vf ../../ignore_list \
+    | grep -v 'I tensorflow' \
     > log_fa
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
