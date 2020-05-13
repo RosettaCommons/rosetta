@@ -337,12 +337,12 @@ DEEREnergy::setup_for_derivatives(
 				Size res2 = residues[ res2_iter ].first;
 				numeric::xyzVector< Real > const & res2_ca = pose.residue( res2 ).xyz( "CA" );
 				if ( f2_forces.find( res1 ) == f2_forces.end() ) {
-					f2_forces[ res1 ] = numeric::xyzVector< Real >();
+					f2_forces[ res1 ] = numeric::xyzVector< Real >(0,0,0);
 				}
 				f2_forces[ res1 ] += ( res2_ca - res1_ca ).normalize() * ( total_scores[ +1 ][ i ] - total_scores[ -1 ][ i ] );
 
 				if ( f1_forces.find( res1 ) == f1_forces.end() ) {
-					f1_forces[ res1 ] = numeric::xyzVector< Real >();
+					f1_forces[ res1 ] = numeric::xyzVector< Real >(0,0,0);
 				}
 				f1_forces[ res1 ] += cross( res2_ca, res1_ca ) * ( total_scores[ +1 ][ i ] - total_scores[ -1 ][ i ] ) / 2.0;
 			}
