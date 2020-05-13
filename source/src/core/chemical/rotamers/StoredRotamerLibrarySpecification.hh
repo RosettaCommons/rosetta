@@ -90,7 +90,7 @@ public:
 private:
 
 	utility::vector1< std::map< std::string, core::Vector > > coordinates_;
-	core::Real ref_energy_;
+	core::Real ref_energy_ = 0;
 
 #ifdef    SERIALIZATION
 public:
