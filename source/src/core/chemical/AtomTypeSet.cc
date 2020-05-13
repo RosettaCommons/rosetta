@@ -81,6 +81,22 @@ AtomTypeSet::AtomTypeSet( std::string const & directory ):
 	legacy_command_line_post_processing();
 
 	clone_atom_types_from_commandline();
+
+	// set name from directory name
+	Size const last_char_pos(directory_.find_last_not_of('/'));
+	if ( last_char_pos == std::string::npos || last_char_pos == 0 ) {
+		name_ = directory_;
+	} else {
+		Size first_char_pos(directory_.find_last_of('/', last_char_pos - 1) + 1);
+		if ( first_char_pos == std::string::npos ) first_char_pos = 0;
+		name_ = directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
+	}
+}
+
+AtomTypeSet::AtomTypeSet( std::string const & directory, std::string const & name ):
+	AtomTypeSet( directory )
+{
+	name_ = name;
 }
 
 AtomTypeSet::AtomTypeSet(
@@ -90,6 +106,16 @@ AtomTypeSet::AtomTypeSet(
 {
 
 	directory_ = basic::database::full_name( "chemical/atom_type_sets/" + name);
+
+	// set name from directory name
+	Size const last_char_pos(directory_.find_last_not_of('/'));
+	if ( last_char_pos == std::string::npos || last_char_pos == 0 ) {
+		name_ = directory_;
+	} else {
+		Size first_char_pos(directory_.find_last_of('/', last_char_pos - 1) + 1);
+		if ( first_char_pos == std::string::npos ) first_char_pos = 0;
+		name_ = directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
+	}
 
 	// TODO: There probably should be a loading of the mode here, though where that would be set
 	// in the database is a good question.
@@ -155,13 +181,7 @@ AtomTypeSet::~AtomTypeSet() {
 /// Note: strip off the trailing slash, if it exists
 std::string
 AtomTypeSet::name() const {
-	Size const last_char_pos(directory_.find_last_not_of('/'));
-	if ( last_char_pos == std::string::npos || last_char_pos == 0 ) return directory_;
-
-	Size first_char_pos(directory_.find_last_of('/', last_char_pos - 1) + 1);
-	if ( first_char_pos == std::string::npos ) first_char_pos = 0;
-
-	return directory_.substr(first_char_pos, last_char_pos - first_char_pos + 1);
+	return name_;
 }
 
 /// @brief lookup the atom_type by the atom_type_name string
@@ -588,21 +608,17 @@ AtomTypeSet::clone_atom_types_from_commandline()
 
 	if ( !basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ].user() ) return;
 
-
 	vector1< string > const clone_strings
 		( basic::options::option[ basic::options::OptionKeys::chemical::clone_atom_types ]() );
 
 	std::string const errmsg( "-clone_atom_types format should be:: -clone_atom_types <set1>:<atomname1>:<cloned-atomname1> <set2>:<atomname2>:<cloned-atomname2> ...; for example: '-chemical:clone_atom_types fa_standard:OOC:OOC2' ");
 
-
 	for ( Size i=1; i<= clone_strings.size(); ++i ) {
-
 		std::string const & mod( clone_strings[i] );
 
 		Size const pos1( mod.find(":") );
 		if ( pos1 == std::string::npos ) utility_exit_with_message(errmsg);
 		std::string const atomset_tag( mod.substr(0,pos1) );
-		if ( atomset_tag != name() ) continue;
 
 		Size const pos2( mod.substr(pos1+1).find(":") );
 		if ( pos2 == std::string::npos ) utility_exit_with_message(errmsg);
@@ -614,7 +630,7 @@ AtomTypeSet::clone_atom_types_from_commandline()
 			utility_exit_with_message(errmsg+". Duplicate atomname: "+new_atom_name);
 		}
 
-		tr.Trace << "clone_atom_types_from_commandline:: cloning " << atomset_tag << ' ' << atom_name <<
+		tr.Trace<< "clone_atom_types_from_commandline:: cloning " << atomset_tag << ' ' << atom_name <<
 			" to " << new_atom_name << std::endl;
 
 		Size const atom_index( atom_type_index( atom_name ) );

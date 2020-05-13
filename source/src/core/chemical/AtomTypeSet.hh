@@ -75,6 +75,11 @@ public:
 	/// the extra parameters specified in extras.txt
 	AtomTypeSet( std::string const & directory );
 
+	// Construct the atom type set using a specific directory
+	AtomTypeSet(
+		std::string const & directory,
+		std::string const & name);
+
 	// Construct the atom type set from an sql database
 	AtomTypeSet(
 		std::string const & name,
@@ -227,6 +232,9 @@ private:
 
 	/// @brief  Save the directory name for future use, eg to load associated AtomVDW data
 	std::string directory_;
+
+	/// @brief  The name of the ATS
+	std::string name_;
 
 };
 
