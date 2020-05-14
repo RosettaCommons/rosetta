@@ -178,7 +178,7 @@ class Viewer:
 
             self._clear_output()
 
-            if _pose and _pose.pdb_info() and _pose.pdb_info().name():
+            if _pose:
                 _logger.debug("Decoy {0}: {1}".format(i, _pose.pdb_info().name()))
 
             return _viewer.show()
