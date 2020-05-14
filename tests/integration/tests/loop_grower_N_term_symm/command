@@ -35,7 +35,7 @@ set -e
 date > start-time.ignore
 
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s \
-    -testing:INTEGRATION_TEST @flags 2>&1 -out:levels all:error \
+    -testing:INTEGRATION_TEST @flags  2>&1 \
     | egrep -vf ../../ignore_list \
     > log
 

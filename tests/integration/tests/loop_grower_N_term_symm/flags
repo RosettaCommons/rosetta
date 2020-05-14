@@ -1,4 +1,6 @@
 
+-edensity:mapfile inputs/fragment.mrc
+-edensity:mapreso 2
 -parser:protocol inputs/RosettaES.xml
 -s inputs/1rpb_symm_INPUT.pdb
 -default_max_cycles 200
