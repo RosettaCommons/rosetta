@@ -224,7 +224,7 @@ MultiThreadedJobDistributor::potentially_output_some_job_results()
 
 	std::list< output::OutputSpecificationOP > jobs_to_output =
 		job_queen_->jobs_that_should_be_output();
-	for ( auto const output_spec : jobs_to_output ) {
+	for ( auto const & output_spec : jobs_to_output ) {
 		JobResultID result_id = output_spec->result_id();
 		auto result_iter = job_results_.find( result_id );
 		if ( result_iter == job_results_.end() ) {

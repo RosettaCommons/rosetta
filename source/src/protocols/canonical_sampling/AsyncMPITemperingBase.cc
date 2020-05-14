@@ -69,7 +69,7 @@ int const mpi_magic_number = 100;
 int const mpi_XCHANGE_READY = 1 + mpi_magic_number;
 int const mpi_FINISHED = 3 + mpi_magic_number;
 int const mpi_FINISHED_ACK = 4 + mpi_magic_number;
-int const mpi_size_FINISHED_ACK = 1;
+//int const mpi_size_FINISHED_ACK = 1;
 int const mpi_SWAP_INVITE = 2 + mpi_magic_number;
 #endif
 
