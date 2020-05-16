@@ -1,17 +1,24 @@
 from pyrosetta.bindings.utility import bind_method, bind_classmethod
-from pyrosetta.rosetta.numeric import HomogeneousTransform_Double as HomogeneousTransform
+from pyrosetta.rosetta.numeric import (
+    HomogeneousTransform_Double as HomogeneousTransform,
+)
 
 
 # function taken from Will Sheffler's homog repo
 def is_homog_xform(xforms):
-    return ((xforms.shape[-2:] == (4, 4))
-            and (np.allclose(1, np.linalg.det(xforms[..., :3, :3])))
-            and (np.allclose(xforms[..., 3, :], [0, 0, 0, 1])))
+    import numpy as np
+
+    return (
+        (xforms.shape[-2:] == (4, 4))
+        and (np.allclose(1, np.linalg.det(xforms[..., :3, :3])))
+        and (np.allclose(xforms[..., 3, :], [0, 0, 0, 1]))
+    )
 
 
 @bind_classmethod(HomogeneousTransform)
 def from_RT(cls, RTinstance):
     from pyrosetta.rosetta.core.kinematics import RT
+
     if not isinstance(RTinstance, RT):
         return
     return cls(RTinstance.get_rotation(), RTinstance.get_translation())
@@ -21,6 +28,7 @@ def from_RT(cls, RTinstance):
 def from_array(cls, xform):
     from pyrosetta.rosetta.numeric import xyzVector_double_t as xyzVector
     import numpy as np
+
     if not isinstance(xform, np.ndarray) or not is_homog_xform(xform):
         return
 
@@ -44,5 +52,5 @@ def as_array(self):
     ht = np.identity(4)
     ht[:3, :3] = list(self.rotation_matrix())
     ht[:3, 3] = list(self.point())
-    assert(is_homog_xform(ht))
+    assert is_homog_xform(ht)
     return ht

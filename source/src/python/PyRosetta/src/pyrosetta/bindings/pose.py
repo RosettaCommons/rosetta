@@ -49,7 +49,7 @@ from pyrosetta.rosetta.core.select.residue_selector import (
     AndResidueSelector,
 )
 from pyrosetta.rosetta.core.select.residue_selector import (
-    PrimarySequenceNeighborhoodSelector
+    PrimarySequenceNeighborhoodSelector,
 )
 from pyrosetta.rosetta.core.select.residue_selector import NotResidueSelector
 
@@ -460,7 +460,7 @@ class PoseScoreAccessor(MutableMapping):
 
         clearPoseExtraScore(self.pose, key)
 
-        #SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
+        # SimpleMetric data cannot be mutated by anything other than a SimpleMetric.
 
     def clear(self):
         """ Clear pose energies, extra scores, and SimpleMetric data"""
@@ -549,7 +549,7 @@ def apply_transform(self, xform):
     """
     from pyrosetta.bindings.homogeneous_transform import is_homog_xform
     from pyrosetta.rosetta.numeric import (
-        HomogeneousTransform_Double as HomogeneousTransform
+        HomogeneousTransform_Double as HomogeneousTransform,
     )
 
     assert is_homog_xform(xform)
@@ -566,6 +566,8 @@ def translate(self, t):
         p (Pose): The Pose instance to manipulate
         t (np.array): A vector to add to the Pose coordinates
     """
+    import numpy as np
+
     assert t.shape in ((3,), (4,))
     xform = np.identity(4)
     xform[: t.shape[0], 3] = t
@@ -580,6 +582,8 @@ def rotate(self, R):
         p (Pose): The Pose instance to manipulate
         R (np.mat): A rotation matrix to apply to the Pose coordinates
     """
+    import numpy as np
+
     assert R.shape in ((3, 3), (4, 3))
     xform = np.identity(4)
     xform[: R.shape[0], :3] = R
