@@ -120,12 +120,10 @@ void AntibodyModelerProtocol::set_default() {
 	extend_h3_before_modeling_ = true;
 
 	benchmark_ = false;
-	camelid_constraints_ = false;
-	use_csts_ = false;
-	constrain_vlvh_qq_ = false;
-	constrain_cter_ = false;
-	auto_constraint_ = false;
-	all_atom_mode_constraint_ = true; // by default, preserve the old behavior. in the future, this should default to false
+	constrain_vlvh_qq_ = true;
+	h3_loop_csts_lr_ = true;
+	h3_loop_csts_hr_ = true;
+	auto_h3_constraint_ = true;
 	packonly_after_graft_=false;
 
 	cst_weight_ = 0.0;
@@ -145,14 +143,13 @@ void AntibodyModelerProtocol::register_options() {
 	option.add_relevant( OptionKeys::antibody::model_h3 );
 	option.add_relevant( OptionKeys::antibody::snugfit );
 	option.add_relevant( OptionKeys::antibody::camelid );
-	option.add_relevant( OptionKeys::antibody::camelid_constraints );
 	option.add_relevant( OptionKeys::run::benchmark );
 	option.add_relevant( OptionKeys::constraints::cst_weight );
 	option.add_relevant( OptionKeys::constraints::cst_file );
 	option.add_relevant( OptionKeys::antibody::constrain_vlvh_qq );
-	option.add_relevant( OptionKeys::antibody::constrain_cter );
-	option.add_relevant( OptionKeys::antibody::auto_generate_kink_constraint );
-	option.add_relevant( OptionKeys::antibody::all_atom_mode_kink_constraint );
+	option.add_relevant( OptionKeys::antibody::h3_loop_csts_lr ); // previously constrain_cter
+	option.add_relevant( OptionKeys::antibody::h3_loop_csts_hr ); // previously all_atom_mode_kink_constraint
+	option.add_relevant( OptionKeys::antibody::auto_generate_h3_kink_constraint ); // previously auto_generate_kink_constraint
 	option.add_relevant( OptionKeys::in::file::native );
 	option.add_relevant( OptionKeys::antibody::refine_h3 );
 	option.add_relevant( OptionKeys::antibody::sc_min);
@@ -185,17 +182,14 @@ void AntibodyModelerProtocol::init_from_options() {
 	if ( option[ OptionKeys::constraints::cst_weight ].user() ) {
 		set_cst_weight( option[ OptionKeys::constraints::cst_weight ]() );
 	}
-	if ( option[ OptionKeys::constraints::cst_file].user() ) {
-		set_use_constraints( option[ OptionKeys::constraints::cst_file ].user() );
+	if ( option[ OptionKeys::antibody::h3_loop_csts_lr ].user() ) {
+		set_h3_loop_csts_lr( option[ OptionKeys::antibody::h3_loop_csts_lr ]() );
 	}
-	if ( option[ OptionKeys::antibody::constrain_cter ].user() ) {
-		set_constrain_cter( option[ OptionKeys::antibody::constrain_cter ]() );
+	if ( option[ OptionKeys::antibody::h3_loop_csts_hr ].user() ) {
+		set_h3_loop_csts_hr( option[ OptionKeys::antibody::h3_loop_csts_hr ]() );
 	}
-	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
-		set_auto_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
-	}
-	if ( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
-		set_all_atom_mode_kink_constraint( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
+	if ( option[ OptionKeys::antibody::auto_generate_h3_kink_constraint ].user() ) {
+		set_auto_h3_constraint( option[ OptionKeys::antibody::auto_generate_h3_kink_constraint ]() );
 	}
 	if ( option[ OptionKeys::antibody::constrain_vlvh_qq ].user() ) {
 		set_constrain_vlvh_qq( option[ OptionKeys::antibody::constrain_vlvh_qq ]() );
@@ -243,31 +237,36 @@ AntibodyModelerProtocol::setup_objects() {
 
 	sync_objects_with_flags();
 
-	if ( use_csts_ ) {
-		if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
-	}
-
 	// setup all the scoring functions
 	pack_scorefxn_ = core::scoring::get_score_function(); //JAB - changing this to normal.
+
 	dock_scorefxn_highres_ = core::scoring::ScoreFunctionFactory::create_score_function( "docking", "docking_min" );
 	dock_scorefxn_highres_->set_weight( core::scoring::chainbreak, 1.0 );
 	dock_scorefxn_highres_->set_weight( core::scoring::overlap_chainbreak, 10./3. );
-	if ( constrain_vlvh_qq_ ) {
-		dock_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
-	}
+
 	loop_scorefxn_centroid_ = scoring::ScoreFunctionFactory::create_score_function( "cen_std", "score4L" );
 	loop_scorefxn_centroid_->set_weight( scoring::chainbreak, 10./3. );
-	//loop_scorefxn_centroid_->set_weight( scoring::atom_pair_constraint, cen_cst_ );
+
 	loop_scorefxn_highres_ = scoring::get_score_function();
 	loop_scorefxn_highres_->set_weight( scoring::chainbreak, 1.0 );
 	loop_scorefxn_highres_->set_weight( scoring::overlap_chainbreak, 10./3. );
-	if ( constrain_cter_ ) {
-		if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0; // This makes sense becuase this cst is generated on-the-fly. Yeah yeah it's ugly.
+
+	// set cst weight, if not already done
+	if ( cst_weight_ == 0.0 ) cst_weight_ = 1.0;
+
+	// This adds a new score term (called atom_pair_constraint with weight 1) to the energy function.
+	TR << "Scorefunction before: " << *dock_scorefxn_highres_ << std::endl;
+	if ( constrain_vlvh_qq_ ) {
+		dock_scorefxn_highres_->set_weight( scoring::atom_pair_constraint, cst_weight_ );
+	}
+	TR << "Scorefunction after: " << *dock_scorefxn_highres_ << std::endl;
+
+	if ( h3_loop_csts_lr_ ) {
 		// Always enable constraints in low-resolution mode (i.e. when the sampling is aggressive enough for it to matter)
 		loop_scorefxn_centroid_->set_weight( scoring::dihedral_constraint, cst_weight_ );
 		loop_scorefxn_centroid_->set_weight( scoring::angle_constraint, cst_weight_ );
 
-		if ( all_atom_mode_constraint_ ) {
+		if ( h3_loop_csts_hr_  ) {
 			loop_scorefxn_highres_->set_weight( scoring::dihedral_constraint, cst_weight_ );
 			loop_scorefxn_highres_->set_weight( scoring::angle_constraint, cst_weight_ );
 		}
@@ -307,6 +306,11 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
 	ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
+    
+    if ( ab_info_->is_camelid() == true ) {
+        // no vhvl constrain for camelids
+        constrain_vlvh_qq_ = false;
+    }
 
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 	TR<<*ab_info_<<std::endl;
@@ -343,12 +347,6 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	pose::set_ss_from_phipsi( pose );
 
-	// display constraints and return
-	if ( camelid_constraints_ ) {
-		display_constraint_residues( pose );
-		return;
-	}
-
 	// Step 1: model the cdr h3 in centroid mode
 	// JQX notes: pay attention to the way it treats the stems when extending the loop
 	if ( model_h3_ ) {
@@ -364,7 +362,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		// call ConstraintSetMover
 		TR<<"Centroid cst_weight: "<<cst_weight_<<std::endl;
 		if (  cst_weight_ != 0.0  ) {
-			if ( ! auto_constraint_ ) {
+			if ( ! auto_h3_constraint_ ) {
 				cdr_constraint_ = utility::pointer::make_shared< constraint_movers::ConstraintSetMover >();
 				cdr_constraint_->apply( pose );
 			} else {
@@ -425,10 +423,33 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 		recover_sidechains.apply( pose );
 	}
 
+	// QQ constraint
+	if ( constrain_vlvh_qq_ ) {
+		core::Size qq_light_residue ( ab_info_->qq_light_residue(pose) );
+		core::Size qq_heavy_residue ( ab_info_->qq_heavy_residue(pose) );
+
+		// Check if both residues are glutamines
+		TR << "Light chain residue in question: " << pose.residue_type(qq_light_residue).name() << std::endl;
+		TR << "Heavy chain residue in question: " << pose.residue_type(qq_heavy_residue).name() << std::endl;
+
+		std::string gln_type = "GLN";
+
+		if ( pose.residue_type(qq_light_residue).name() == gln_type ) {
+			TR << "Got a glutamine in the light chain!" << std::endl;
+			if ( pose.residue_type(qq_heavy_residue).name() == gln_type ) {
+				TR << "Got a glutamine in the heavy chain as well!" << std::endl;
+
+				// If both are glutamines, make QQ constraint
+				antibody::qq_constrain_antibody(pose, qq_heavy_residue, qq_light_residue);
+			}
+		}
+	}
+
+
 	// Repack loop in full atom
 	// call ConstraintSetMover
 	TR << "Full-atom cst_weight: " << cst_weight_ << std::endl;
-	if (  cst_weight_ != 0.0 && ! auto_constraint_ ) {
+	if (  cst_weight_ != 0.0 && ! auto_h3_constraint_ ) {
 		cdr_constraint_ = utility::pointer::make_shared< constraint_movers::ConstraintSetMover >();
 		cdr_constraint_->apply( pose );
 	}
@@ -441,7 +462,7 @@ void AntibodyModelerProtocol::apply( pose::Pose & pose ) {
 
 	// Step 2: SnugFit: relieve the clashes between L-H
 	//JAB - Why are we refining the LH chain in a class called RefineBetaBarrel?????
-	/// Seriously.  And we use pre-talaris 2013 to pack the sidechains in it.  Just FYI....
+	// Seriously.  And we use pre-talaris 2013 to pack the sidechains in it.  Just FYI....
 
 	if ( snugfit_ && ! ab_info_->is_camelid() ) {
 		RefineBetaBarrelOP refine_beta_barrel( new RefineBetaBarrel(ab_info_, dock_scorefxn_highres_, pack_scorefxn_) );
@@ -678,7 +699,13 @@ std::ostream & operator<<(std::ostream& out, const AntibodyModelerProtocol & ab_
 	out << line_marker << " ******  snugfit   :  "          << ab_m.snugfit_             << std::endl;
 	out << line_marker << "         LH_repulsive_ramp   = " << ab_m.LH_repulsive_ramp_   << std::endl;
 	out << line_marker << std::endl;
-	out << line_marker << " ******  refine_h3 :  "          << ab_m.refine_h3_           << std::endl;
+	out << line_marker << " ******  loop_constraints_lr :  "          << ab_m.h3_loop_csts_lr_           << std::endl;
+	out << line_marker << std::endl;
+	out << line_marker << " ******  loop_constraints_hr :  "          << ab_m.h3_loop_csts_hr_           << std::endl;
+	out << line_marker << std::endl;
+	out << line_marker << " ******  h3_kink_constraint :  "          << ab_m.auto_h3_constraint_         << std::endl;
+	out << line_marker << std::endl;
+	out << line_marker << " ******  vlvh_qq_constraint :  "          << ab_m.constrain_vlvh_qq_         << std::endl;
 	out << line_marker << std::endl;
 	out << "////////////////////////////////////////////////////////////////////////////////" << std::endl;
 	return out;

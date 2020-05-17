@@ -292,6 +292,14 @@ public:
 	std::vector<core::Vector>
 	kink_cation_atoms(const core::pose::Pose & pose) const;
 
+
+	core::Size
+	qq_light_residue(const core::pose::Pose & pose) const;
+
+	core::Size
+	qq_heavy_residue(const core::pose::Pose & pose) const;
+
+
 public:
 	///////////////////////////////////////////////////
 	//Landmark Transform

@@ -32,12 +32,11 @@ extension   = benchmark.calculate_extension()
 command_line = '''
 -partners HL_G
 -check_cdr_chainbreaks false
--antibody:auto_generate_kink_constraint
--antibody:all_atom_mode_kink_constraint
 -spin
 -dock_pert 3 8
 -ex1
 -ex2aro
+-extrachi_cutoff 0
 -detect_disulf false
 -database {rosetta_dir}/database
 -in:file:s {rosetta_dir}/tests/scientific/data/{testname}/targets/intial_orientation/{target}_aligned_model_0_0001.pdb

@@ -165,6 +165,12 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, core::Size kink_begin );
 void
 kink_constrain_antibody_H3( core::pose::Pose & pose, AntibodyInfoOP const antibody_info );
 
+void
+qq_constrain_antibody( core::pose::Pose & pose, core::Size VH_qq_resi, core::Size VL_qq_resi );
+
+
+
+
 ///@brief get the equivalent landmark in a numbering scheme.  Set the resnum to zero if not found.
 PDBLandmarkCOP
 get_matching_landmark(

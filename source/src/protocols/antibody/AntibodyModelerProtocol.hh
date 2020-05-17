@@ -82,17 +82,14 @@ public:
 	void set_cst_weight ( core::Real const cst_weight) {
 		cst_weight_ = cst_weight;
 	}
-	void set_use_constraints(bool const use_csts) {
-		use_csts_ = use_csts;
+	void set_h3_loop_csts_lr(bool const setting) {
+		h3_loop_csts_lr_= setting;
 	}
-	void set_constrain_cter(bool const setting) {
-		constrain_cter_ = setting;
+	void set_h3_loop_csts_hr(bool const setting) {
+		h3_loop_csts_hr_ = setting;
 	}
-	void set_auto_constraint(bool const setting) {
-		auto_constraint_ = setting;
-	}
-	void set_all_atom_mode_kink_constraint(bool const setting) {
-		all_atom_mode_constraint_ = setting;
+	void set_auto_h3_constraint(bool const setting) {
+		auto_h3_constraint_ = setting;
 	}
 	void set_constrain_vlvh_qq(bool const setting) {
 		constrain_vlvh_qq_ = setting;
@@ -117,15 +114,12 @@ private:
 	bool LH_repulsive_ramp_;
 	bool sc_min_;
 	bool rt_min_;
-	bool camelid_constraints_;
 	bool middle_pack_min_;
 	bool packonly_after_graft_;
 	core::Real cen_cst_, high_cst_;
 	bool extend_h3_before_modeling_;
-	bool use_csts_;
-	bool constrain_vlvh_qq_, constrain_cter_;
-	bool auto_constraint_;
-	bool all_atom_mode_constraint_;
+	bool constrain_vlvh_qq_, h3_loop_csts_lr_, h3_loop_csts_hr_;
+	bool auto_h3_constraint_;
 	bool run_snugdock_ = false;
 
 	// Benchmark mode for shorter_cycles

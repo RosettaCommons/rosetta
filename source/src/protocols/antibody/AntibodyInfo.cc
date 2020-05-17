@@ -1384,6 +1384,24 @@ AntibodyInfo::kink_cation_atoms(const core::pose::Pose & pose) const {
 	return atoms;
 }
 
+/// get pose number for light chain residue that is part of the qq constraint
+core::Size
+AntibodyInfo::qq_light_residue(const core::pose::Pose & pose) const{
+	core::Size qq_light_resi = get_landmark_resnum(pose, Chothia_Scheme, 'L', 38);
+	core::conformation::Residue qq_light_residue = pose.residue(qq_light_resi);
+	TR << "qq constraint light chain: " << qq_light_resi << std::endl;
+	return qq_light_resi;
+}
+
+/// get pose number for heavy chain residue that is part of the qq constraint
+core::Size
+AntibodyInfo::qq_heavy_residue(const core::pose::Pose & pose) const{
+	core::Size qq_heavy_resi = get_landmark_resnum(pose, Chothia_Scheme, 'H', 39);
+	core::conformation::Residue qq_heavy_residue = pose.residue(qq_heavy_resi);
+	TR << "qq constraint heavy chain: " << qq_heavy_resi << std::endl;
+	return qq_heavy_resi;
+}
+
 
 void
 AntibodyInfo::setup_CDR_clusters(pose::Pose const & pose, bool attempt_set_from_pose) {

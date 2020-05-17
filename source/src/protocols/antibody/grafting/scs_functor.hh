@@ -119,10 +119,10 @@ public:
     SCS_BlastFilter_by_pdbid();
    void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
    void init_from_options();
-   std::string get_pdb_name() const;
-   void set_pdb_name( std::string pdb_name );
+   utility::vector0< std::string > get_pdb_names() const;
+   void set_pdb_names( utility::vector0< std::string > pdb_names );
 private:
-    std::string pdb_name_;
+    utility::vector0< std::string > pdb_names_;
 };
 
 class SCS_BlastFilter_by_template_bfactor : public SCS_Functor
@@ -144,6 +144,13 @@ public:
 private:
 	core::Size n_orientational_templates_;
 	core::Real ocd_cutoff_;
+};
+
+class SCS_BlastFilter_nonmatching_prolines : public SCS_Functor
+{
+public:
+  void apply(AntibodySequence const &antibody_sequence, SCS_ResultsOP results) const override;
+  utility::vector0<size_t> find_positions(std::string str, char query) const;
 };
 
 /// @details filter helper function: generate string with results sizes

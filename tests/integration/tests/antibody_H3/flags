@@ -3,16 +3,14 @@
 -in:file:native ./inputs/LH_renumbered.pdb
 -out:file:scorefile 3QOS.fasc
 -out:levels protocols.simple_moves.ConstraintSetMover:debug
--constraints:cst_file ./inputs/FR02.cst
--constraints:cst_fa_file ./inputs/FR02.cst_fa
 -loops:frag_sizes 9 3 1 
 -loops:frag_files inputs/aaFR02_09_05.200_v1_3 inputs/aaFR02_03_05.200_v1_3 none
 
 #how to run antibody mode -- these are the current best-practices
--antibody:constrain_cter
+-antibody:h3_loop_csts_lr
 -antibody:constrain_vlvh_qq
--antibody:auto_generate_kink_constraint
--antibody:all_atom_mode_kink_constraint
+-antibody:auto_generate_h3_kink_constraint
+-antibody:h3_loop_csts_hr
 
 #more standard settings, for packages used by antibody_H3
 -ex1 

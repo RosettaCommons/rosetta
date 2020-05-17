@@ -1019,6 +1019,19 @@ void check_deprecated_flags(){
 		error_messages.push_back("-no_scores_in_pdb is no longer used.  Please use -output_pose_energies_table false");
 	}
 
+	// deprecated flags from antibody/snugdock code
+	if ( option[antibody::constrain_cter].user() ) {
+		error_messages.push_back("-constrain_cter has been renamed to -h3_loop_csts_lr");
+	}
+
+	if ( option[antibody::all_atom_mode_kink_constraint].user() ) {
+		error_messages.push_back("-all_atom_mode_kink_constraint has been renamed to -h3_loop_csts_hr");
+	}
+
+	if ( option[antibody::auto_generate_kink_constraint].user() ) {
+		error_messages.push_back("-auto_generate_kink_constraint has been renamed to -auto_generate_h3_kink_constraint");
+	}
+
 	if ( error_messages.size() > 0 ) {
 		utility::vector1<std::string>::const_iterator error_it;
 		for ( error_it = error_messages.begin(); error_it != error_messages.end(); ++error_it ) {

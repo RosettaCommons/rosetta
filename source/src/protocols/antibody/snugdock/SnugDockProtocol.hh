@@ -81,6 +81,13 @@ public: // boiler plate / virtuals
 	bool high_res_kink_constraint() const { return high_res_kink_constraint_; }
 	void high_res_kink_constraint( bool const setting ) { high_res_kink_constraint_ = setting; }
 
+	bool low_res_kink_constraint() const { return low_res_kink_constraint_; }
+	void low_res_kink_constraint( bool const setting ) { low_res_kink_constraint_ = setting; }
+
+	// QQ cst
+	bool constrain_vlvh_qq() const { return constrain_vlvh_qq_; }
+	void constrain_vlvh_qq( bool const setting ) { constrain_vlvh_qq_ = setting; }
+
 
 public:
 	void show( std::ostream & out=std::cout ) const override;
@@ -124,6 +131,9 @@ private: // data
 	// auto kink-constraint options
 	bool auto_generate_kink_constraint_;
 	bool high_res_kink_constraint_;
+	bool low_res_kink_constraint_;
+	// qq cst
+	bool constrain_vlvh_qq_;
 
 
 }; // class SnugDockProtocol

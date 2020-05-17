@@ -27,6 +27,8 @@ class TemplateScoreFiles(object):
     def calculate_angles(self):
         models = os.listdir(self.tempfiles[self.counter])
         print models
+        # store current directory
+        cdir = os.getcwd()
         os.chdir(self.tempfiles[self.counter])
         for template in models:
             print 'TEMPLATE: ', template
@@ -52,7 +54,8 @@ class TemplateScoreFiles(object):
                 template_info = (newname, d, hoa, loa, pa)
 
                 self.template_list.append(template_info)
-        os.chdir('..')
+        # return to initial directory where the output will be written
+        os.chdir(cdir)
 
         if self.template_list == []:
             print 'WARNING: Did not find grafted templates!'

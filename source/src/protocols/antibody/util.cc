@@ -29,9 +29,11 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/FlatHarmonicFunc.hh>
+#include <core/scoring/func/HarmonicFunc.hh>
 #include <core/pack/rotamer_set/UnboundRotamersOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
@@ -880,6 +882,59 @@ kink_constrain_antibody_H3( core::pose::Pose & pose, core::Size kink_begin ) {
 	pose.add_constraint( tau_cst );
 	pose.add_constraint( alpha_cst );
 }
+
+
+
+
+void
+qq_constrain_antibody( core::pose::Pose & pose, core::Size VH_qq_resi, core::Size VL_qq_resi ) {
+	// borrowed from kink_constrain_antibody_H3...
+
+	using namespace core::scoring::constraints;
+
+	TR << " Automatically setting qq constraint. " << std::endl;
+
+	// Constraints operate on AtomIDs:
+	Size OE1( 8 ); // OE1 is atom 8; AtomIDs can only use numbers
+	Size NE2( 9 ); // NE2 is atom 9; AtomIDs can only use numbers
+
+	id::AtomID const VH_OE1( OE1, VH_qq_resi );
+	id::AtomID const VL_OE1( OE1, VL_qq_resi );
+	id::AtomID const VH_NE2( NE2, VH_qq_resi );
+	id::AtomID const VL_NE2( NE2, VL_qq_resi );
+
+	//    Separate parameters for two H-bonds
+	//    Real qq_x0_1 = 2.924; // H bond distance (based on distribution in antibody database 01/09/2020)
+	//    Real qq_sd_1 = 0.244; // std (based on distribution in antibody database 01/09/2020)
+	//    Real qq_tol_1 = ( 0.5 * qq_sd_1 );
+	//    Real qq_sd_1_adjust = ( qq_sd_1/ sqrt(2.0) );
+	//    scoring::func::FlatHarmonicFuncOP qq_func1( new scoring::func::FlatHarmonicFunc( qq_x0_1, qq_sd_1_adjust, qq_tol_1) );
+	//
+	//    Real qq_x0_2 = 2.913; // H bond distance (based on distribution in antibody database 01/09/2020)
+	//    Real qq_sd_2 = 0.238; // std (based on distribution in antibody database 01/09/2020)
+	//    Real qq_tol_2 = ( 0.5 * qq_sd_2);
+	//    Real qq_sd_2_adjust = ( qq_sd_2/ sqrt(2.0) );
+	//    scoring::func::FlatHarmonicFuncOP qq_func2( new scoring::func::FlatHarmonicFunc( qq_x0_2, qq_sd_2_adjust, qq_tol_2) );
+	//
+
+
+	//  Joint parameters for two H-bonds
+	Real qq_x0 = 2.91; // H bond distance (based on distribution in antibody database 01/09/2020)
+	Real qq_sd = 0.23; // std (based on distribution in antibody database 01/09/2020)
+	Real qq_tol = ( 0.5 * qq_sd );
+	Real qq_sd_adjust = ( qq_sd/ sqrt(2.0) );
+	scoring::func::FlatHarmonicFuncOP qq_func( new scoring::func::FlatHarmonicFunc( qq_x0, qq_sd_adjust, qq_tol) );
+
+	// Instantiate constraints
+	ConstraintOP qq_cst_1( new AtomPairConstraint( VH_OE1, VL_NE2, qq_func ) );
+	ConstraintOP qq_cst_2( new AtomPairConstraint( VL_OE1, VH_NE2, qq_func ) );
+
+	// Cache to pose
+	pose.add_constraint( qq_cst_1 );
+	pose.add_constraint( qq_cst_2 );
+}
+
+
 
 
 

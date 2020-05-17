@@ -29,11 +29,6 @@ extension   = benchmark.calculate_extension()
 
 #==> EDIT HERE
 command_line = '''
--antibody:snugfit true
--constraints:cst_weight 1.0
--antibody:constrain_vlvh_qq
--antibody:auto_generate_kink_constraint
--antibody:all_atom_mode_kink_constraint
 -ex1
 -ex2
 -extrachi_cutoff 0

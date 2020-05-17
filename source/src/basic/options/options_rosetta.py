@@ -3883,6 +3883,18 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			),
 
 		####### LEGACY ######
+                Option( 'constrain_cter', 'Boolean',
+ 			desc='The option to turn on/off the cterminal constrain penalty in loop scoring function',
+ 			default='false'
+                        ),
+                Option( 'auto_generate_kink_constraint', 'Boolean',
+ 			desc='Generate the kink constraint on-the-fly',
+ 			default='false'
+                        ),
+                Option( 'all_atom_mode_kink_constraint', 'Boolean',
+ 			desc='Enable the kink constraint in the all-atom phase of the simulation',
+ 			default='false'
+                        ),
 		Option('numbering_scheme', 'String',
 			desc='Deprecated Numbering Scheme option',
 			default='Chothia_Scheme'
@@ -4011,21 +4023,21 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			desc='Choose a refine method to refine a loop in centroid mode',
 			default='refine_kic'
 			),
-		Option( 'constrain_cter', 'Boolean',
-			desc='The option to turn on/off the cterminal constrain penalty in loop scoring function',
-			default='false'
+		Option( 'h3_loop_csts_lr', 'Boolean',
+			desc='Turn on/off the dihedral angle and atom pair constraint weights in the low-resolution score function used during H3 loop modeling',
+			default='true'
+			),
+		Option( 'h3_loop_csts_hr', 'Boolean',
+			desc='Turn on/off the dihedral angle and atom pair constraint weights in the high-resolution score function used during H3 loop modeling',
+			default='true'
+			),
+		Option( 'auto_generate_h3_kink_constraint', 'Boolean',
+			desc='Generate the kink constraint on-the-fly for either the low-resolution or high-resolution H3 modeling stages, depending on h3_loop_csts flags.',
+			default='true'
 			),
 		Option( 'constrain_vlvh_qq', 'Boolean',
-			desc='The option to turn on/off the VL-VH QQ H-bond in docking scoring function',
-			default='false'
-			),
-		Option( 'auto_generate_kink_constraint', 'Boolean',
-			desc='Generate the kink constraint on-the-fly',
-			default='false'
-			),
-		Option( 'all_atom_mode_kink_constraint', 'Boolean',
-			desc='Enable the kink constraint in the all-atom phase of the simulation',
-			default='false'
+			desc='Turn on/off a constraint forcing the VL-VH QQ H-bond in docking scoring function',
+			default='true'
 			),
 		Option( 'snug_loops', 'Boolean',
 			desc='Allow CDR loop backbone flexibility during minimization',
@@ -4082,8 +4094,8 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         Option('blastp', 'String',
             desc="Path to NCBI-Blast+ executable", default='blastp'),
 
-        Option('exclude_pdb', 'String',
-            desc = 'do not use given pdb as graft source (no default)'
+        Option('exclude_pdbs', 'StringVector',
+            desc = 'do not use given pdb(s) as sources for grafting (no default), e.g. 1ABC 2CDE'
             ),
         Option('exclude_homologs', 'Boolean',
             desc = 'Filter BLAST matches by sequence identity? (false by default)',

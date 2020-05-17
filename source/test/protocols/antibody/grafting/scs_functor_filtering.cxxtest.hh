@@ -46,7 +46,7 @@ public:
 	void setUp() {
 		// shared initialization goes here
 		// need options for a specific filter...
-		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 4.5 -antibody:exclude_pdb 1dlf -antibody:bfactor_cutoff 50" );
+		core_init_with_additional_options( "-antibody:exclude_homologs true -antibody:exclude_homologs_fr_cutoff 60 -out:level 500 -antibody:n_multi_templates 3 -antibody:ocd_cutoff 4.5 -antibody:exclude_pdbs 1dlf 3bdc -antibody:bfactor_cutoff 50" );
 		// sets sid on and cutoff to 80%
 		// sets sid cutoff to 60% for FR
 	} //setUp
@@ -649,16 +649,19 @@ public:
 
 		// set up two BlastResults, a good one that should pass filtering and a dummy that should fail
 		// in the sequence length filter, the dummy should have an length different from the good
-		SCS_BlastResultOP dummy_br(new SCS_BlastResult);
+		SCS_BlastResultOP dummy_br1(new SCS_BlastResult);
+        SCS_BlastResultOP dummy_br2(new SCS_BlastResult);
 		SCS_BlastResultOP good_br(new SCS_BlastResult);
 
-		dummy_br->pdb = "1dlf";
+		dummy_br1->pdb = "1dlf";
+        dummy_br2->pdb = "3bdc";
 		good_br->pdb = "3liz";
 
 		// store BlastResults in ResultVector;
 		SCS_ResultVector results;
+        results.push_back(dummy_br1);
 		results.push_back(good_br);
-		results.push_back(dummy_br);
+		results.push_back(dummy_br2);
 
 		// store ResultVector in SCS_Results
 		SCS_ResultsOP r(new SCS_Results);
@@ -676,7 +679,7 @@ public:
 		SCS_FunctorCOP scs_filter( new SCS_BlastFilter_by_pdbid );
 		scs_filter->apply(as,r);
 
-		// now test, the top result should be "good" whereas "dummy" should have been filtered out (i.e. len(r->x)=0)
+		// now test, the middle result should be "good" whereas outside two "dummy"s should have been filtered out (i.e. len(r->x)=0)
 		// orientation should remain unchanged.
 		TS_ASSERT_EQUALS(r->h1.size(),1)
 		TS_ASSERT_EQUALS(r->h2.size(),1)
@@ -699,5 +702,113 @@ public:
 #endif //__ANTIBODY_GRAFTING__
 	}
 
+	/// @brief specific filter test for SCS_BlastFilter_nonmatching_prolines
+	void test_filter_by_proline() {
+#ifdef __ANTIBODY_GRAFTING__
+        using namespace protocols::antibody::grafting;
+
+        // this cannot be run on systems with "older" versions of the c++11 std library
+        // those without regex support will compile and link but not run.
+        if ( ! antibody_grafting_usable() ) { return; }
+        //#include <iostream>
+		//std::cout << "proline filter" << "\n";
+        // set up dummy AntibodySequence
+        // reminder of the query sequence as it matters for the proline test
+        // 2BRR, default values for testing
+        // CDRs from SAbDab --> not the same as for 
+        // H1: GYTFTNY
+        // H2: NTYTGE
+        // H3: DYYGSTYPYYAMDY
+        // L1: RASSSVSSSYLH
+        // L2: STSNLAS
+        // L3: QQYSGYPYT
+        AntibodySequence as = AntibodySequence(heavy_chain_sequence, light_chain_sequence);
+        RegEx_based_CDR_Detector().detect(as);
+
+
+        // set up two BlastResults, a good one that should pass filtering and a dummy that should fail
+
+        // proline filter requires matching prolines, so it should dump anything that doesn't match
+        SCS_BlastResultOP dummy_br(new SCS_BlastResult);
+        SCS_BlastResultOP good_br(new SCS_BlastResult);
+
+
+        dummy_br->h1 = "GYTFTNYPMN"; // put a proline here
+        dummy_br->h2 = "WINTYTGETTYADDFKE"; // removed proline here
+        dummy_br->h3 = "DYYPSTYHYYAMDY"; // mismatched the prolines here -- we should filter if the prolines are in wrong spots
+        dummy_br->frh = "ELKKPGETVKISCKASWVKQAPGKGLKWMGRFAFSLETSASAAYLQINNLKNEDTATYFCARWGQGTTV";
+        dummy_br->l1 = "RASPSVSSSYLH"; // put a proline here
+        dummy_br->l2 = "STPNLAS"; // put a proline here
+        dummy_br->l3 = "QPYSGYPYT"; // put a second proline here
+        dummy_br->frl = "IMSASPGEKVTMTCWYQQKSGASPKLWIYGVPARFSGSGSGTSYSLTISSVEAEDAATYYCFGGGTKL";
+        dummy_br->pdb = "dummy";
+        dummy_br->identity = 58.0;
+        dummy_br->alignment_length = 92;
+        dummy_br->bit_score = 0.3;
+        dummy_br->bio_type = "human";
+        dummy_br->light_type = "kappa";
+        dummy_br->struct_source = "xray";
+
+
+        good_br->h1 = "GYTFTNYGMN"; //  Remains: no proline
+        good_br->h2 = "WINTYTGEPTYADDFKE"; // Remains: no proline
+        good_br->h3 = "DYYGSTYPYYAMDY"; // Remains: proline
+        good_br->frh = "ELKKPGETVKISCKASWVKQAPGKGLKWMGRFAFSLETSASAAYLQINNLKNEDTATYFCARWGQGTTV";
+        good_br->l1 = "RASSSVSSSYLH"; // Remains: no proline
+        good_br->l2 = "STSNLAS"; // Remains: no proline
+        good_br->l3 = "QQYSGYPYT"; // Remains: proline
+        good_br->frl = "IMSASPGEKVTMTCWYQQKSGASPKLWIYGVPARFSGSGSGTSYSLTISSVEAEDAATYYCFGGGTKL";
+        good_br->pdb = "good";
+        good_br->identity = 50.0; // ignore
+        good_br->alignment_length = 96; // ignore
+        good_br->bit_score = 0.001; // ignore
+        good_br->bio_type = "human"; // ignore
+        good_br->light_type = "lambda"; // ignore
+        good_br->struct_source = "xray"; // ignore
+
+
+        // store BlastResults in ResultVector;
+        SCS_ResultVector results;
+        results.push_back(dummy_br);
+        results.push_back(good_br);
+
+        // store ResultVector in SCS_Results
+        SCS_ResultsOP r(new SCS_Results);
+        r->h1 = results;
+        r->h2 = results;
+        r->h3 = results;
+        r->l1 = results;
+        r->l2 = results;
+        r->l3 = results;
+        r->orientation = results; // what is stored here normally?
+        r->frh = results;
+        r->frl = results;
+
+        // now apply single filter to ResultsOP and test
+        // options for this filter are set in setUp/core_init
+        SCS_FunctorCOP scs_filter( new SCS_BlastFilter_nonmatching_prolines);
+        scs_filter->apply(as,r);
+
+        // now test, the top result should be "good" whereas "dummy" should have been filtered out
+        // orientation, frh, frl should remain unchanged.
+        TS_ASSERT_EQUALS(r->h1.size(),1)
+        TS_ASSERT_EQUALS(r->h2.size(),1)
+        TS_ASSERT_EQUALS(r->h3.size(),1)
+        TS_ASSERT_EQUALS(r->frh.size(),2)
+        TS_ASSERT_EQUALS(r->l1.size(),1)
+        TS_ASSERT_EQUALS(r->l2.size(),1)
+        TS_ASSERT_EQUALS(r->l3.size(),1)
+        TS_ASSERT_EQUALS(r->frl.size(),2)
+        TS_ASSERT_EQUALS(r->orientation.size(),2)
+
+        // only "good" shall remain
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->h1[0]->pdb),0);
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->h2[0]->pdb),0);
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->h3[0]->pdb),0);
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->l1[0]->pdb),0);
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->l2[0]->pdb),0);
+        TS_ASSERT_EQUALS(good_br->pdb.compare(r->l3[0]->pdb),0);
+#endif //__ANTIBODY_GRAFTING__
+	}
 
 };

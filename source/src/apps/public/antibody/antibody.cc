@@ -270,6 +270,7 @@ int antibody_main()
 		// std::cout << "Heavy Numbering: " << an.heavy << std::endl << std::endl;
 		// std::cout << "Light Numbering: " << an.heavy << std::endl << std::endl;
 
+        // Substitution matrix variant would go here
 		SCS_BlastPlusOP blast = n_templates == 1 ? utility::pointer::make_shared<SCS_BlastPlus>(report) : utility::pointer::make_shared<SCS_BlastPlus>();
 		blast->init_from_options();
 
@@ -280,12 +281,13 @@ int antibody_main()
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_alignment_length >() );
 
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_sequence_identity >() );
+		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_nonmatching_prolines >() );
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_template_resolution >() );
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_outlier >() );
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_template_bfactor >() );
 		blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_OCD >() );
 
-		if ( option[ OptionKeys::antibody::exclude_pdb ].user() ) {
+		if ( option[ OptionKeys::antibody::exclude_pdbs ].user() ) {
 			blast->add_filter( utility::pointer::make_shared< SCS_BlastFilter_by_pdbid >() );
 		}
 
@@ -367,7 +369,11 @@ int antibody_main()
 				bool optimize_cdrs = option[ OptionKeys::optimize_cdrs]();
 
 				core::pose::PoseOP model = graft_cdr_loops(as, r, prefix, suffix, grafting_database, optimal_graft, optimize_cdrs );
-
+                // renumber if requested
+                if ( option[ OptionKeys::antibody::output_ab_scheme].user()){
+                    protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
+                    converter.apply(*model);
+                }
 				if( option[ OptionKeys::vhh_only] ) {
 					// delete light chain
 					core::pose::PoseOP temp_pose = model->split_by_chain( core::pose::get_chain_id_from_chain( 'H', *model ) );
@@ -381,10 +387,6 @@ int antibody_main()
 					model->dump_pdb(prefix + "model" + suffix + ".relaxed.pdb");
 				}
 
-				if ( option[ OptionKeys::antibody::output_ab_scheme].user()){
-					protocols::antibody::AntibodyNumberingConverterMover converter = protocols::antibody::AntibodyNumberingConverterMover();
-					converter.apply(*model);
-				}
                 if ( option[ OptionKeys::in::file::native ].user() ) {
                      // if native is given, load and compare, write to file
                     basic::ReportOP report_native_aln = utility::pointer::make_shared<basic::Report>("native_comparison");
@@ -443,7 +445,7 @@ int main(int argc, char * argv [])
 			    grafting_database = readme_location.substr(0, readme_location.size() - testfile.size());
             }
 			else {
-				utility_exit_with_message( "Could not guess location of antibody grafting_database (typically $ROSETTA/tools/antibody), please use -antibody::grafting_database option to specify it!");
+				utility_exit_with_message( "Could not guess location of antibody grafting_database (previously $ROSETTA/tools/antibody; currently $ROSETTA/main/database/additional_protocol_data/antibody/), please use -antibody::grafting_database option to specify it!");
 			}
 		}
 		basic::options::option[basic::options::OptionKeys::antibody::grafting_database](grafting_database);

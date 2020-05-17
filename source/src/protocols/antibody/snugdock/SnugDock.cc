@@ -182,11 +182,10 @@ void SnugDock::apply( Pose & pose ) {
 	/// minimize the CDRs before move to full-atom SnugDock cycle. Remove clashes which may dissociate L-H
 	pre_minimization_->apply(pose);
 
-	TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "."
-		<< std::endl;
+	//TR << "Reinitializing the shared MC object before applying the high resolution phase of " + get_name() + "." << std::endl;
 
-	TR << "The Monte Carlo object!!" << std::endl;
-	TR << *mc_ << std::endl;
+	//TR << "The Monte Carlo object!!" << std::endl;
+	//TR << *mc_ << std::endl;
 	mc_->reset( pose );
 
 	for ( core::Size i = 0; i < number_of_high_resolution_cycles_; ++i ) {
@@ -195,7 +194,7 @@ void SnugDock::apply( Pose & pose ) {
 		mc_->show_counters();
 	}
 
-	TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;
+	//TR << "Setting the structure to the state with the best score observed during the simulation" << std::endl;
 	mc_->recover_low( pose );
 
 }
@@ -322,7 +321,8 @@ void SnugDock::setup_objects( Pose const & pose ) {
 
 	// if we added constraints in low-res, then SnugDockProtocol has attached them to the pose,
 	// so set the weight for loop modeling
-	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() ) {
+	// raw option value for qq constraint is ok, it should be on by default, even if this is not convention
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user() or basic::options::option[ basic::options::OptionKeys::antibody::constrain_vlvh_qq ]() ) {
 		// set weight to 1.0 or user specified
 		core::Real cst_weight = 1.0;
 		if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_weight ].user() ) {

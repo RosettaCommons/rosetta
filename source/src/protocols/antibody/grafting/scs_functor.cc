@@ -296,7 +296,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 	// Filter heavy framework region by resolution
 	for(auto p = results->frh.rbegin(); p != results->frh.rend(); ) {
 		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
-		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identity::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_resolution::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..." << CSI_Reset() << std::endl;
@@ -311,7 +311,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 	// Filter light framework region by resolution
 	for(auto p = results->frl.rbegin(); p != results->frl.rend(); ) {
 		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
-		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_resolution::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
@@ -325,7 +325,7 @@ void SCS_BlastFilter_by_template_resolution::apply(AntibodySequence const &/*ant
 	// Filter orientation by resolution
 	for(auto p = results->orientation.rbegin(); p != results->orientation.rend(); ) {
 		auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
-		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_sequence_identiy::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+		if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_template_resolution::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
 		if( br->resolution > get_resolution_cutoff() ) {
 			TR.Trace << CSI_Red() << "SCS_BlastFilter_by_template_resolution: Filtering " << br->pdb << "..," << CSI_Reset() << std::endl;
@@ -590,22 +590,22 @@ SCS_BlastFilter_by_pdbid::SCS_BlastFilter_by_pdbid() {
     init_from_options();
 }
 
-std::string SCS_BlastFilter_by_pdbid::get_pdb_name() const {
-    return pdb_name_;
+utility::vector0< std::string > SCS_BlastFilter_by_pdbid::get_pdb_names() const {
+    return pdb_names_;
 }
 
-void SCS_BlastFilter_by_pdbid::set_pdb_name( std::string pdb_name ) {
-    pdb_name_ = pdb_name;
+void SCS_BlastFilter_by_pdbid::set_pdb_names( utility::vector0< std::string > pdb_names ) {
+    pdb_names_ = pdb_names;
 }
 
 void SCS_BlastFilter_by_pdbid::init_from_options() {
 
     using namespace basic::options;
 
-    set_pdb_name( "" ); // default if flag is not given, i.e. do not filter
+    set_pdb_names( {""} ); // default if flag is not given, i.e. do not filter
     // if flag is set by user, then take that value
-    if ( option[ OptionKeys::antibody::exclude_pdb ].user() ) {
-        set_pdb_name( option[ basic::options::OptionKeys::antibody::exclude_pdb]() );
+    if ( option[ OptionKeys::antibody::exclude_pdbs ].user() ) {
+        set_pdb_names( option[ basic::options::OptionKeys::antibody::exclude_pdbs ]() );
     }
 
 }
@@ -637,11 +637,12 @@ void SCS_BlastFilter_by_pdbid::apply(AntibodySequence const& /* A */,
             if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_by_pdbid::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
 
             // check if pdb has been flagged for exclusion
-            if( pdb_name_ == br->pdb ) {
+            // actually let's just check if the name is in the list
+            if (std::find(std::begin(pdb_names_), std::end(pdb_names_), br->pdb) != std::end(pdb_names_)) {
                 TR.Trace << CSI_Red() << "SCS_BlastFilter_by_pdbid: Filtering " << br->pdb << CSI_Reset() << std::endl;
                 //region.r.erase( std::next(p++).base() );
                 region.r.erase( std::next(p).base() );
-				p = region.r.rbegin();
+                p = region.r.rbegin();
             }
             else ++p;
         }
@@ -827,6 +828,92 @@ void SCS_BlastFilter_by_OCD::apply(AntibodySequence const& /* A */,
 	}
 
 	TR.Debug << "SCS_BlastFilter_by_OCD: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
+}
+
+utility::vector0<size_t> SCS_BlastFilter_nonmatching_prolines::find_positions(string str, char query) const
+{
+    utility::vector0<size_t> result;
+    size_t cpos = str.find(query);
+    while(cpos != string::npos)
+    {
+        result.push_back(cpos);
+        cpos = str.find(query,cpos+1);
+    }
+    return result;
+}
+
+// Proline filter
+void SCS_BlastFilter_nonmatching_prolines::apply(AntibodySequence const& A, SCS_ResultsOP results) const
+{
+
+  TR.Debug << "SCS_BlastFilter_nonmatching_prolines: Results count before filtering " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
+
+  struct {
+    SCS_ResultVector &r;
+    string query_sequence;
+    size_t firstP_idx; // index of the first proline, else string::npos
+    string const SCS_BlastResult::*result_sequence;
+  } h1_h2_h3_l1_l2_l3[] {
+    { results->h1, A.h1_sequence(), A.h1_sequence().find('P'), &SCS_BlastResult::h1 },
+    { results->h2, A.h2_sequence(), A.h2_sequence().find('P'), &SCS_BlastResult::h2 },
+    { results->h3, A.h3_sequence(), A.h3_sequence().find('P'), &SCS_BlastResult::h3 },
+    { results->l1, A.l1_sequence(), A.l1_sequence().find('P'), &SCS_BlastResult::l1 },
+    { results->l2, A.l2_sequence(), A.l2_sequence().find('P'), &SCS_BlastResult::l2 },
+    { results->l3, A.l3_sequence(), A.l3_sequence().find('P'), &SCS_BlastResult::l3 },
+  };
+
+  for(auto &region : h1_h2_h3_l1_l2_l3) {
+    for(auto p = region.r.rbegin(); p != region.r.rend(); ) {
+      auto const *br = dynamic_cast< SCS_BlastResult const *>( p->get() );
+      if( !br ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_nonmatching_prolines::apply: Error! Could not cast SCS_Results to SCS_BlastResult!");
+
+      // sequences must be of the same length to compare
+      if( region.query_sequence.size() != (br->*region.result_sequence).size() ) throw CREATE_EXCEPTION(_AE_scs_failed_, "SCS_BlastFilter_nonmatching_prolines::apply: Error! query and template CDRs of unequal length!");
+
+      // sequences must have matching prolines, if there are prolines at all
+
+      // check if result has prolines -- stored in br->*region.result_sequence
+      if ( (br->*region.result_sequence).find('P') != string::npos ) {
+        // at least one proline in result
+
+        // if there is a proline in the result, but not in query then this is a bad template and it should be deleted!
+        if ( region.firstP_idx == string::npos ) {
+          TR.Trace << CSI_Red() << "SCS_BlastFilter_mismatch_proline: Filtering " << br->pdb << CSI_Reset() << std::endl;
+          region.r.erase( std::next(p).base() );
+          p = region.r.rbegin();
+        }
+
+        // if there is a proline in the result, and in the query sequence
+        // compare positions for all prolines
+        if ( region.firstP_idx != string::npos ) {
+
+            // get all proline positions in result (might have to import <utility/vector.hh>
+            utility::vector0<size_t> result_pos = find_positions( br->*region.result_sequence, 'P' );
+
+            // get all proline positions in query
+            utility::vector0<size_t> query_pos = find_positions( region.query_sequence, 'P' );
+
+            // test if the vectors are identical, if not delete
+            if ( result_pos != query_pos ) {
+                TR.Trace << CSI_Red() << "SCS_BlastFilter_mismatch_proline: Filtering " << br->pdb << CSI_Reset() << std::endl;
+                region.r.erase( std::next(p).base() );
+                p = region.r.rbegin();
+            }
+        }
+      } else { // no proline in results
+        // but if there is a proline in the query, there is an issue
+        if ( region.firstP_idx != string::npos ) {
+          TR.Trace << CSI_Red() << "SCS_BlastFilter_mismatch_proline: Filtering " << br->pdb << CSI_Reset() << std::endl;
+          region.r.erase( std::next(p).base() );
+          p = region.r.rbegin();
+        }
+      }
+      ++p;
+    }
+  }
+
+  TR.Debug << "SCS_BlastFilter_by_outlier: Results count after filtering   " << CSI_Red() << result_sizes(results) << CSI_Reset() << std::endl;
+
 }
 
 } // namespace grafting

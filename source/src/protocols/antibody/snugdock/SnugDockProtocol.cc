@@ -156,8 +156,10 @@ void SnugDockProtocol::init_for_equal_operator_and_copy_constructor( SnugDockPro
 }
 
 void SnugDockProtocol::set_default() {
-	auto_generate_kink_constraint_ = false;
-	high_res_kink_constraint_ = false;
+	auto_generate_kink_constraint_ = true;
+	high_res_kink_constraint_ = true;
+	low_res_kink_constraint_ = true;
+	constrain_vlvh_qq_ = true;
 	ab_has_light_chain_ = false;
 }
 
@@ -165,11 +167,17 @@ void SnugDockProtocol::init_from_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	if ( option[ OptionKeys::antibody::auto_generate_kink_constraint ].user() ) {
-		auto_generate_kink_constraint( option[ OptionKeys::antibody::auto_generate_kink_constraint ]() );
+	if ( option[ OptionKeys::antibody::auto_generate_h3_kink_constraint ].user() ) {
+		auto_generate_kink_constraint( option[ OptionKeys::antibody::auto_generate_h3_kink_constraint ]() );
 	}
-	if ( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ].user() ) {
-		high_res_kink_constraint( option[ OptionKeys::antibody::all_atom_mode_kink_constraint ]() );
+	if ( option[ OptionKeys::antibody::h3_loop_csts_hr ].user() ) {
+		high_res_kink_constraint( option[ OptionKeys::antibody::h3_loop_csts_hr ]() );
+	}
+	if ( option[ OptionKeys::antibody::h3_loop_csts_lr ].user() ) {
+		low_res_kink_constraint( option[ OptionKeys::antibody::h3_loop_csts_lr ]() );
+	}
+	if ( option[ OptionKeys::antibody::constrain_vlvh_qq ].user() ) {
+		constrain_vlvh_qq( option[ OptionKeys::antibody::constrain_vlvh_qq ]() );
 	}
 }
 
@@ -239,14 +247,26 @@ void SnugDockProtocol::setup_objects( Pose & pose ) {
 	// re-initialize docking each time, since setup_objects must be called each time to configure the FT
 	// this is probably sub-optimal
 	docking_=nullptr;
-	docking()->set_task_factory( tf_ );
-	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h2_ );
-	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
 
+	// do constraint setting things first, as this requires re-syncing flags
 	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() ) {
 		docking()->set_use_constraints( true );
 	}
+	if ( constrain_vlvh_qq() ) {
+		// hard-coded weight for Q-Q cst... maybe a bad idea?
+		docking()->set_cst_weight( 1.0 );
+	}
 
+
+	if ( basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user() || constrain_vlvh_qq() ) {
+		docking()->set_no_filters( true );
+		docking()->sync_objects_with_flags(); // should fix lose of snugdock mover
+	}
+
+	// set tf/low-res stuff
+	docking()->set_task_factory( tf_ );
+	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h2_ );
+	docking()->add_additional_low_resolution_step( low_res_refine_cdr_h3_ );
 
 	SnugDockOP high_resolution_phase( new SnugDock );
 	// if debugging
@@ -256,8 +276,10 @@ void SnugDockProtocol::setup_objects( Pose & pose ) {
 	high_resolution_phase->set_ab_has_light_chain(ab_has_light_chain_);
 	high_resolution_phase->set_task_factory(tf_);
 	if ( ab_has_light_chain_ ) { high_resolution_phase->set_vh_vl_jump( vh_vl_jump_ ); }
-	// pass on kink constraint to high-res docking mover
-	if ( high_res_kink_constraint() ) { high_resolution_phase->high_res_kink_constraint( true ); }
+	// pass on kink constraint to high-res docking move
+	if ( high_res_kink_constraint() ) {
+		high_resolution_phase->high_res_kink_constraint( true );
+	}
 	docking()->set_docking_highres_mover( high_resolution_phase );
 
 }
@@ -280,7 +302,7 @@ void SnugDockProtocol::setup_loop_refinement_movers() {
 
 	// update low-res sfxn with kink constraint, unlike H3 modeling, constriants are not enable in low-res by default
 	// also weights are hard coded, so this should be refactored later
-	if ( auto_generate_kink_constraint() ) {
+	if ( auto_generate_kink_constraint() and low_res_kink_constraint() ) {
 		low_res_loop_refinement_scorefxn->set_weight( scoring::dihedral_constraint, 1.0 );
 		low_res_loop_refinement_scorefxn->set_weight( scoring::angle_constraint, 1.0 );
 	}
