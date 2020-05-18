@@ -306,11 +306,11 @@ void AntibodyModelerProtocol::finalize_setup( pose::Pose & pose ) {
 	set_native_pose( native_pose ); // pass the native pose to the mover.native_pose_
 
 	ab_info_ = utility::pointer::make_shared< AntibodyInfo >(pose);
-    
-    if ( ab_info_->is_camelid() == true ) {
-        // no vhvl constrain for camelids
-        constrain_vlvh_qq_ = false;
-    }
+
+	if ( ab_info_->is_camelid() == true ) {
+		// no vhvl constrain for camelids
+		constrain_vlvh_qq_ = false;
+	}
 
 	pose.fold_tree( * ab_info_->get_FoldTree_AllCDRs(pose) ) ;
 	TR<<*ab_info_<<std::endl;
