@@ -95,7 +95,7 @@ bool MinimizationRefiner::do_apply(Pose & pose) {
 
 		for ( core::Size i = 1; i<= pose.size(); ++i ) {
 			if ( task->being_packed(i) ) {
-				move_map->set_chi(true, i);
+				move_map->set_chi(i, true);
 			}
 		}
 	}
