@@ -643,15 +643,15 @@ MRSJobQueen::append_common_tag_subelements(
 		"max_num_results_to_keep_per_instance",
 		XMLSchemaType(xsct_non_negative_integer),
 		"If the final mover of a stage can produce multiple output poses, this defines the maximum number of output poses that will be asked for. 0 means no limit. This only applies to the final mover of a step." );
-	num_runs_per_input_struct.default_value( "0" );
-	num_runs_per_input_struct.is_required( false );
+	max_num_results_to_keep_per_instance.default_value( "0" );
+	max_num_results_to_keep_per_instance.is_required( false );
 
 	XMLSchemaAttribute max_num_results_to_keep_per_input_struct (
 		"max_num_results_to_keep_per_input_struct",
 		XMLSchemaType(xsct_non_negative_integer),
 		"If num_runs_per_input_struct is greater than 1, then you may want to use this to make sure you do not end up with too many near-duplicate results." );
-	num_runs_per_input_struct.default_value( "0" );
-	num_runs_per_input_struct.is_required( false );
+	max_num_results_to_keep_per_input_struct.default_value( "0" );
+	max_num_results_to_keep_per_input_struct.is_required( false );
 
 	XMLSchemaAttribute result_cutoff(
 		"result_cutoff",
