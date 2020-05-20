@@ -5,14 +5,14 @@ cd %(workdir)s
  [ -x %(bin)s/Cyclize.%(binext)s ] || exit 1
 
 # run executable
-%(bin)s/Cyclize.%(binext)s @flags_cyclize -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/Cyclize.%(binext)s %(additional_flags)s @flags_cyclize -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_cyclize
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 # run executable
-%(bin)s/Cyclize.%(binext)s @flags_cyclize_peptoid -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/Cyclize.%(binext)s %(additional_flags)s @flags_cyclize_peptoid -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_cyclize_peptoid
 
@@ -22,14 +22,14 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true
  [ -x %(bin)s/relax.%(binext)s ] || exit 1
 
 # run executable
-%(bin)s/relax.%(binext)s @flags_relax -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/relax.%(binext)s %(additional_flags)s @flags_relax -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_relax
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 # run executable
-%(bin)s/relax.%(binext)s @flags_relax_peptoid -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/relax.%(binext)s %(additional_flags)s @flags_relax_peptoid -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_relax_peptoid
 
@@ -37,14 +37,14 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 # run executable
-%(bin)s/relax.%(binext)s @flags_relax_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/relax.%(binext)s %(additional_flags)s @flags_relax_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_relax_nocst
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
 
 # run executable
-%(bin)s/relax.%(binext)s @flags_relax_peptoid_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+%(bin)s/relax.%(binext)s %(additional_flags)s @flags_relax_peptoid_nocst -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
      | egrep -vf ../../ignore_list \
      > log_relax_peptoid_nocst
 

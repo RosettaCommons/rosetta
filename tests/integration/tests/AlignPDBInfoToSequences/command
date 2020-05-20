@@ -32,6 +32,7 @@ cd %(workdir)s
 
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -s 1PEF.pdb -overwrite -parser:protocol rosetta_script.xml -testing:INTEGRATION_TEST 2>&1 \
     | egrep -vf ../../ignore_list \
+    > log
     
 
 
