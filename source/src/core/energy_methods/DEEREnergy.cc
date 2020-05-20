@@ -207,7 +207,7 @@ DEEREnergy::initialize_energy_method(
 	scoring::Energies & energies( pose.energies() );
 
 	bool create_new_lre_container( false );
-	if ( energies.long_range_container( lr_type ) == 0 ) {
+	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
 		scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );

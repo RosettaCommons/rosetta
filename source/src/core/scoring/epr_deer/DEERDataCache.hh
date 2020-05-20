@@ -51,10 +51,9 @@ public:
 	DEERDataCache( DEERDataCache const & ) = default;
 
 	/// @brief Destructor
-	~DEERDataCache();
+	~DEERDataCache() override;
 
 	/// @brief Copy function, overrides parent class
-	virtual
 	basic::datacache::CacheableDataOP
 	clone() const override;
 

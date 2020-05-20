@@ -74,12 +74,11 @@ public: // Methods
 	);
 
 	/// @brief Copy function
-	virtual
 	scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief  Destructor
-	~DEEREnergy();
+	~DEEREnergy() override;
 
 	/// @brief  Returns the parsed input file (const)
 	scoring::epr_deer::DEERDataCacheCOP const
@@ -122,12 +121,10 @@ public: // Methods
 	) const;
 
 	/// @brief Derived function for specifying where the data is getting stored
-	virtual
 	scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 	/// @brief  A declared but unused function
-	virtual
 	void
 	setup_for_minimizing(
 		pose::Pose &,
@@ -136,14 +133,12 @@ public: // Methods
 	) const override;
 
 	/// @brief  Returns "false" by default
-	virtual
 	bool
 	defines_intrares_energy(
 		scoring::EnergyMap const &
 	) const override;
 
 	/// @brief Fetches if two residues are "connected" (i.e. there is a score)
-	virtual
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
@@ -155,7 +150,6 @@ public: // Methods
 	/// @detail Because some sets of data may be between more than two residues,
 	///     this function looks at a map kept in DEERDataCache specifically
 	///     maintained for this purpose
-	virtual
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
@@ -166,7 +160,6 @@ public: // Methods
 	) const override;
 
 	/// @brief  Calculates the derivatives for minimization. Done numerically
-	virtual
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
@@ -186,7 +179,6 @@ public: // Methods
 	) const override;
 
 	/// @brief  A declared but unused function
-	virtual
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
@@ -196,7 +188,6 @@ public: // Methods
 	) const override;
 
 	/// @brief  A declared but unused function
-	virtual
 	void
 	finalize_total_energy(
 		pose::Pose &,
@@ -205,14 +196,12 @@ public: // Methods
 	) const override;
 
 	/// @brief  A declared but unused function
-	virtual
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > &
 	) const override;
 
 	/// @brief  Version 1 (as of 30 January 2017)
-	virtual
 	Size
 	version() const override;
 

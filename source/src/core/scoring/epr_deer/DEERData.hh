@@ -141,7 +141,6 @@ public:
 
 	/// @brief Computes average distance and score based on bounds.
 	Real
-	virtual
 	get_score(
 		std::map< Size, Real > const & simulated_histogram,
 		bool const & set_score = false
@@ -189,7 +188,6 @@ public:
 	///     approach to using them, please contact me. I would live to incorporate
 	///     that information here.
 	Real
-	virtual
 	get_score(
 		std::map< Size, Real > const & simulated_histogram,
 		bool const & set_score = false
@@ -263,7 +261,6 @@ public:
 	///     a slight noise-dependence to this; noisier data will always return higher
 	///     scores.
 	Real
-	virtual
 	get_score(
 		std::map< Size, Real > const & simulated_histogram,
 		bool const & set_score = false

@@ -32,12 +32,12 @@ class DEEREnergyCreator : public scoring::methods::EnergyMethodCreator
 public:
 
 	/// @brief  Energy Method creator required by framework (registrator in core/init.cc)
-	virtual scoring::methods::EnergyMethodOP
-	create_energy_method( scoring::methods::EnergyMethodOptions const & options ) const;
+	scoring::methods::EnergyMethodOP
+	create_energy_method( scoring::methods::EnergyMethodOptions const & options ) const override;
 
 	/// @brief  Energy Method descriptor to identify it if a weight is provided in the command line
-	virtual scoring::ScoreTypes
-	score_types_for_method() const;
+	scoring::ScoreTypes
+	score_types_for_method() const override;
 
 };
 
