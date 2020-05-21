@@ -63,7 +63,7 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
         self, fragment_store, store_name, group_field, group_type
     ):
         with h5py.File(self._target_filename, "r") as dfile:
-            print(
+            logging.info(
                 "Reopening: ",
                 self._target_filename,
                 "/fragments/",
@@ -129,7 +129,7 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
 
         # Open the HDF5 File
         with h5py.File(self._target_filename, "r") as dfile:
-            print("Opened file: ", self._target_filename)
+            logging.info("Opened file: ", self._target_filename)
             # extract the relevent dataset and attributes
             indb = dfile["fragments"][store_name]
             for atom in indb.attrs["fragment_atoms"].decode("UTF-8").split(","):
@@ -143,13 +143,13 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
                     xyzVector = xyzVector_double_t(coord[0], coord[1], coord[2])
                     fragment_coords.append(xyzVector)
 
-        print("read coordinates")
+        logging.info("read coordinates")
         fragment_specification = FragmentSpecification(fragment_length, fragment_atoms)
         result = FragmentStore(
             fragment_specification, int(len(fragment_coords) / fragment_length)
         )
         result.fragment_coordinates = fragment_coords
-        print("put cooordinates into FragmentStore")
+        logging.info("put cooordinates into FragmentStore")
 
         return result
 
