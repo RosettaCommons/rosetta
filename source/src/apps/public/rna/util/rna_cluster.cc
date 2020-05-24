@@ -89,6 +89,7 @@ cluster_test(){
 
 	std::cout << "Maximum number of models: " << max_decoys << ". [use -nstruct to set higher]" << std::endl;
 	std::cout << "Used all-heavy-atom clustering radius of " << cluster_radius << " Angstroms. [use -cluster:radius to change.]" << std::endl;
+	std::cout << "Found " << stepwise_clusterer.clustered_pose_list().size() << " total clusters." << std::endl;
 
 }
 
