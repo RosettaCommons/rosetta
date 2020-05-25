@@ -18,3 +18,4 @@
 -jump_library_file 1jj2_RNA_jump_library.dat
 -vall_torsions RICHARDSON_RNA09.torsions
 -score:weights rna/denovo/rna_hires.wts
+-out:file:silent GIR1_P15P3P8_noP4P6_4RB_noC181_ligation.out

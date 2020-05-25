@@ -601,7 +601,7 @@ operator >>( std::istream & is, FullModelParameters & t )
 		}
 		is >> tag;
 	}
-	std::tuple< std::vector<int>, std::vector<char>, std::vector< std::string > > resnum_chain;
+	std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1< std::string > > resnum_chain;
 	runtime_assert ( !is.fail() && ( tag == "CONVENTIONAL_RES_CHAIN_SEGID" || tag == "CONVENTIONAL_RES_CHAIN" ) );
 	for ( bool ok = true; ok ; ) {
 		is >> tag;
@@ -798,7 +798,7 @@ FullModelParameters::read_disulfides( std::string const & disulfide_file ) {
 		if ( line[0] == '#' || line[0] == '\n' || line.size() == 0 ) continue;
 
 		bool string_is_ok( false );
-		std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( line, string_is_ok );
+		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( line, string_is_ok );
 		runtime_assert( string_is_ok );
 		runtime_assert( std::get< 0 >( resnum_and_chain ).size() == 2 );
 		runtime_assert( std::get< 1 >( resnum_and_chain ).size() == 2 );

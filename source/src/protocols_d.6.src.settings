@@ -26,6 +26,7 @@ sources = {
         "MultipleDomainMover", #deprecated?
     ],
     "protocols/rna/denovo/movers": [
+        "RNA_DeNovoProtocolMover",
         "RNA_DeNovoMasterMover",
         "RNA_FragmentMover",
         "RNA_HelixMover",

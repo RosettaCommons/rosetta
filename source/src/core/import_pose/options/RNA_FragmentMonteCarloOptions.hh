@@ -21,6 +21,8 @@
 #include <numeric/xyzVector.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
 namespace import_pose {
@@ -41,6 +43,10 @@ public:
 	initialize_from_command_line();
 	void
 	initialize_from_options( utility::options::OptionCollection const & opts );
+	void
+	initialize_from_tag( utility::tag::TagCOP const & tag );
+	static void
+	list_attributes( utility::tag::AttributeList & attlist );
 	static void
 	list_options_read( utility::options::OptionKeyList & opts );
 
@@ -273,9 +279,6 @@ public:
 	void set_vall_torsions_file( std::string const & setting ){ all_rna_fragments_file_ = setting; }
 	std::string vall_torsions_file() const { return all_rna_fragments_file_; }
 
-	void set_rna_params_file( std::string const & setting ){ rna_params_file_ = setting; }
-	std::string rna_params_file() const { return rna_params_file_; }
-
 	void
 	set_chunk_pdb_files( utility::vector1< std::string > const & chunk_pdb_files ) {
 		chunk_pdb_files_ = chunk_pdb_files;
@@ -485,7 +488,6 @@ private:
 	bool ft_close_chains_ = true;
 
 	std::string all_rna_fragments_file_ = ""; // gets set in initialize_from_options
-	std::string rna_params_file_ = "";
 	std::string jump_library_file_ = "";
 
 	utility::vector1< std::string > chunk_pdb_files_;

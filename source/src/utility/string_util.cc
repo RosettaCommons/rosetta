@@ -816,13 +816,13 @@ make_tag( utility::vector1< int > res_vector ){
 //
 //  #detailed  several kinds of tags are OK, including "A:1-5 B:20-22" and "A1-5 B20,21,22".
 //
-std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
 get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok ){
 
 	string_is_ok = true;
-	std::vector< int  > resnum;
-	std::vector< char > chain;
-	std::vector< std::string > segid;
+	utility::vector1< int  > resnum;
+	utility::vector1< char > chain;
+	utility::vector1< std::string > segid;
 
 	std::string s_nocommas = replace_in( s, ",", " " ); // order of operations issue?
 	utility::vector1< std::string > const tags = utility::string_split( s_nocommas );
@@ -834,7 +834,7 @@ get_resnum_and_chain_and_segid( std::string const & s, bool & string_is_ok ){
 }
 
 /// @brief for those who have a legacy interface that can't touch segids.
-std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > >
+std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > >
 get_resnum_and_chain( std::string const & s ){
 	bool string_is_ok;
 	//auto tuple = get_resnum_and_chain_and_segid( s, string_is_ok );
@@ -886,9 +886,9 @@ get_resnum_and_segid( std::string const & s, bool & string_is_ok ){
 /// @brief helper function for get_resnum_and_chain
 bool
 get_resnum_and_chain_from_one_tag( std::string const & tag,
-	std::vector< int > & resnum,
-	std::vector< char > & chains,
-	std::vector< std::string > & segids ){
+	utility::vector1< int > & resnum,
+	utility::vector1< char > & chains,
+	utility::vector1< std::string > & segids ){
 	bool string_is_ok( false );
 	std::vector< int > resnum_from_tag;
 	char chain( ' ' );

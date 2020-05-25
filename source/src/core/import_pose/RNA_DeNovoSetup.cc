@@ -148,27 +148,7 @@ RNA_DeNovoSetup::~RNA_DeNovoSetup() = default;
 void
 RNA_DeNovoSetup::initialize_from_command_line()
 {
-	using namespace basic::options;
-	using namespace basic::options::OptionKeys;
-	using namespace core::chemical;
-	using namespace core::import_pose::options;
-
-	options_->initialize_from_options( option );
-
-	rsd_set_ = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
-	if ( options_->use_legacy_setup() || options_->rna_params_file().size() > 0 ) {
-		de_novo_setup_from_command_line_legacy();
-	} else {
-		initialize_inputs_from_options( option );
-		de_novo_setup_from_options( option );
-	}
-
-	// if output_res_num supplied, this will change PDBInfo numbering & chain.
-	set_output_res_and_chain( *pose_, option[ OptionKeys::rna::denovo::output_res_num ].resnum_and_chain() );
-
-	// refine_pose is a seldom-used functionality at the moment -- not well tested.
-	setup_refine_pose_list( option );
-
+	initialize_from_options( basic::options::option );
 }
 
 void
@@ -208,7 +188,7 @@ void RNA_DeNovoSetup::initialize_inputs_from_options( utility::options::OptionCo
 	if ( opts[ OptionKeys::rna::denovo::helical_substructs ].user() ) helical_substructs_ = opts[ OptionKeys::rna::denovo::helical_substructs ]();
 	if ( opts[ OptionKeys::rna::denovo::dock_chunks ].user() ) dock_chunks_ = opts[ OptionKeys::rna::denovo::dock_chunks ]();
 	if ( opts[ OptionKeys::rna::denovo::initial_structures ].user() ) {
-		input_initialization_pdbs_ = option[ OptionKeys::rna::denovo::initial_structures ]();
+		input_initialization_pdbs_ = opts[ OptionKeys::rna::denovo::initial_structures ]();
 	}
 
 }
@@ -306,15 +286,14 @@ RNA_DeNovoSetup::list_options_read( utility::options::OptionKeyList & opts )
 		+ OptionKeys::rna::denovo::lores_scorefxn
 		+ OptionKeys::rna::denovo::refine_native
 		+ OptionKeys::rna::denovo::working_native
-		+ OptionKeys::rna::denovo::refine_native
-		+ OptionKeys::rna::denovo::working_native
 		+ OptionKeys::constraints::cst_file
 		+ OptionKeys::rna::data_file
 		+ OptionKeys::rna::denovo::minimize_rna
 		+ full_model::rna::force_syn_chi_res_list
-		+ full_model::rna::force_anti_chi_res_list;
-
-
+		+ full_model::rna::force_anti_chi_res_list
+		+ OptionKeys::rna::denovo::helical_substructs
+		+ OptionKeys::rna::denovo::dock_chunks
+		+ OptionKeys::rna::denovo::initial_structures;
 
 	opts + OptionKeys::out::nstruct
 		+ OptionKeys::out::file::silent
@@ -444,12 +423,12 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	vector1< Size > const cutpoint_closed          =
 		full_model_parameters->conventional_to_full( opts[ full_model::cutpoint_closed ].resnum_and_chain() );
 	vector1< Size > const cutpoint_cyclize          =
-		full_model_parameters->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::cyclize ].resnum_and_chain() );
 	vector1< Size > const twoprime          =
-		full_model_parameters->conventional_to_full( option[ full_model::twoprime ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::twoprime ].resnum_and_chain() );
 	// Ends up as pairs. Starts as a vector
 	vector1< Size > const fiveprime_cap =
-		full_model_parameters->conventional_to_full( option[ full_model::fiveprime_cap ].resnum_and_chain() );
+		full_model_parameters->conventional_to_full( opts[ full_model::fiveprime_cap ].resnum_and_chain() );
 	vector1< Size > block_stack_above_res  =
 		full_model_parameters->conventional_to_full( opts[ full_model::rna::block_stack_above_res ].resnum_and_chain() );
 	vector1< Size > block_stack_below_res  =
@@ -487,8 +466,8 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	// so there's a mismatch is sequence and secondary structure length
 	// so we need to check against the sequence, minus the last residue
 	bool model_with_density( false );
-	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) model_with_density = true;// we'll stick this in rna_params_ later
-	if ( model_with_density || option[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
+	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) model_with_density = true;// we'll stick this in rna_params_ later
+	if ( model_with_density || opts[ basic::options::OptionKeys::rna::denovo::rna_protein_docking ]() ) {
 		std::string sequence_without_last;
 		for ( core::Size i=0; i<sequence.size()-1; ++i ) {
 			sequence_without_last+=sequence[i];
@@ -710,21 +689,19 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	runtime_assert( obligate_pair_explicit.size() % 5 == 0 );
 	vector1< Size > obligate_pair_explicit_full_model;
 	for ( Size m = 0; m < obligate_pair_explicit.size()/5; m++ ) {
-		std::vector< int > resnum;
-		std::vector< char > chains;
-		std::vector< std::string > segids;
+		vector1< int > resnum;
+		vector1< char > chains;
+		vector1< std::string > segids;
 		vector1< Size > resnum_full;
 
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 1 ], resnum, chains, segids );
-		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1< std::string >( segids ) ) );
+		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( resnum, chains, segids ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos1 = resnum_full[ 1 ];
 
 		resnum.clear(); chains.clear();
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 2 ], resnum, chains, segids );
-		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( vector1<int>( resnum ),
-			vector1<char>( chains ), vector1< std::string >( segids ) ) );
+		resnum_full = full_model_parameters->conventional_to_full( std::make_tuple( resnum, chains, segids ) );
 		runtime_assert( resnum_full.size() == 1 );
 		Size const pos2 = resnum_full[ 1 ];
 
@@ -925,7 +902,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	}
 
 	// Try to set stuff up for density scoring ?
-	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
 		//  pose::addVirtualResAsRoot( full_pose );
 	}
 	TR.Debug << "THE SEQUENCE:" << std::endl;
@@ -943,7 +920,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		core::import_pose::initialize_native_and_align_pose( native_pose_, align_pose, rsd_set_, pose_ );
 
 		// if we're using density, append the virtual residue
-		if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
 			core::pose::addVirtualResAsRoot( *native_pose_ );
 		}
 
@@ -957,7 +934,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		std::string native_pdb_file  = opts[ OptionKeys::rna::denovo::working_native ];
 		native_pose_ = utility::pointer::make_shared< Pose >();
 		core::import_pose::pose_from_file( *native_pose_, *rsd_set_, in_path + native_pdb_file , core::import_pose::PDB_file);
-		if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
 			core::pose::addVirtualResAsRoot( *native_pose_ );
 		}
 	} else {
@@ -972,7 +949,7 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 		pose_ = native_pose_->clone();
 	}
 
-	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+	if ( opts[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
 		//  pose::addVirtualResAsRoot( *pose_ );
 	}
 	TR.Debug << "THE SEQUENCE OF THE POSE:" << std::endl;
@@ -1066,9 +1043,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	runtime_assert( obligate_pair_explicit.size() % 5 == 0 );
 	for ( Size m = 0; m < obligate_pair_explicit.size()/5; m++ ) {
 
-		std::vector< int > resnum;
-		std::vector< char > chains;
-		std::vector< std::string > segids;
+		vector1< int > resnum;
+		vector1< char > chains;
+		vector1< std::string > segids;
 		vector1< Size > resnum_full;
 
 		utility::get_resnum_and_chain_from_one_tag( obligate_pair_explicit[ 5*m + 1 ], resnum, chains, segids );
@@ -1138,9 +1115,9 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 				}
 				runtime_assert( which_set > 0 );
 
-				std::vector< int > resnum;
-				std::vector< char > chains;
-				std::vector< std::string > segids;
+				vector1< int > resnum;
+				vector1< char > chains;
+				vector1< std::string > segids;
 				bool ok = utility::get_resnum_and_chain_from_one_tag( chain_connections[ k ], resnum, chains, segids );
 				runtime_assert( ok );
 				vector1< Size > resnum_full = full_model_parameters->conventional_to_full(
@@ -1235,22 +1212,22 @@ RNA_DeNovoSetup::de_novo_setup_from_options( utility::options::OptionCollection 
 	////////////////
 	bool use_fold_tree_from_silent_file = false;
 	core::kinematics::FoldTree fold_tree_from_silent_file;
-	if ( option[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ].user() ) {
+	if ( opts[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ].user() ) {
 
 		// if this works, unify with the refine silent pose list stuff
 
 		vector1<pose::PoseOP> refine_pose_list;
-		std::string ft_silent_file = option[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ]();
+		std::string ft_silent_file = opts[ OptionKeys::rna::denovo::get_fold_tree_from_silent_file ]();
 
 		if ( !ft_silent_file.empty() ) {
 
 			core::import_pose::pose_stream::SilentFilePoseInputStreamOP input;
 
-			if ( option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ].user() ) {
+			if ( opts[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ].user() ) {
 				utility::vector1< std::string > filename_vector;
 				filename_vector.push_back( ft_silent_file );
 				input = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >( filename_vector,
-					option[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ]() );
+					opts[ OptionKeys::rna::denovo::fold_tree_from_silent_file_tag ]() );
 			} else {
 				input = utility::pointer::make_shared< core::import_pose::pose_stream::SilentFilePoseInputStream >( ft_silent_file );
 			}
@@ -1389,12 +1366,6 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 	using namespace core::pose;
 	using namespace core::import_pose::options;
 
-	if ( options_->rna_params_file().size() > 0 )  {
-		TR << TR.Red << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
-		TR << TR.Red << " -params_file input will be deprecated soon. Use -secstruct_file, -obligate_pair, etc." << std::endl;
-		TR << TR.Red << "WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!" << std::endl;
-	}
-
 	std::string const in_path = option[ in::path::path ]()[1];
 
 	if ( option[ in::file::native ].user() ) {
@@ -1432,7 +1403,7 @@ RNA_DeNovoSetup::de_novo_setup_from_command_line_legacy()
 		rna_data_reader.fill_rna_data_info( *pose_ );
 	}
 
-	rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >( options_->rna_params_file() );
+	rna_params_ = utility::pointer::make_shared< RNA_DeNovoParameters >();
 }
 
 ///////////////////////////////////////////////////////////////

@@ -95,6 +95,11 @@
         "slist": "cpp",
         "cfenv": "cpp",
         "hash_map": "cpp",
-        "hash_set": "cpp"
-    }
+        "hash_set": "cpp",
+        "any": "cpp",
+        "compare": "cpp",
+        "shared_mutex": "cpp",
+        "*.inc": "cpp"
+    },
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/cmake/build_debug/compile_commands.json"
 }

@@ -182,10 +182,6 @@ static MoverRegistrator< evolution::EvolutionaryDynamicsMoverCreator > reg_Evolu
 static MoverRegistrator< evolution::NucleotideMutationCreator > reg_NucleotideMutationCreator;
 
 // F //////////////////////////////////////////////////////////////////////////
-static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
-static MoverRegistrator< rna::movers::ERRASER2ProtocolCreator > reg_ERRASER2ProtocolCreator;
-static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
-
 static MoverRegistrator< farnesyl::SampleFarnesylMoverCreator > reg_SampleFarnesylMoverCreator;
 static MoverRegistrator< farnesyl::InstallFarnesylMoverCreator > reg_InstallFarnesylMoverCreator;
 
@@ -473,6 +469,11 @@ static MoverRegistrator< relax::FastRelaxCreator> reg_FastRelaxCreator;
 static MoverRegistrator< relax::LocalRelaxCreator> reg_LocalRelaxCreator;
 static MoverRegistrator< relax::RepeatProteinRelaxCreator> reg_RepeatProteinRelaxCreator;
 
+static MoverRegistrator< rna::denovo::movers::RNA_DeNovoProtocolMoverCreator > reg_RNA_DeNovoProtocolMoverCreator;
+
+static MoverRegistrator< rna::movers::ErraserMinimizerMoverCreator > reg_ErraserMinimizerMoverCreator;
+static MoverRegistrator< rna::movers::ERRASER2ProtocolCreator > reg_ERRASER2ProtocolCreator;
+static MoverRegistrator< rna::movers::RNAIdealizeMoverCreator > reg_RNAIdealizeMoverCreator;
 
 static MoverRegistrator< relax::membrane::MPFastRelaxMoverCreator > reg_MPFastRelaxMoverCreator;
 

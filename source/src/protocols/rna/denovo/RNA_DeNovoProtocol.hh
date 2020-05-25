@@ -35,6 +35,9 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/vector1.hh>
 
+#include <utility/tag/XMLSchemaGeneration.hh>
+#include <protocols/moves/mover_schemas.hh>
+
 namespace protocols {
 namespace rna {
 namespace denovo {
@@ -52,11 +55,27 @@ public:
 
 	/// @brief Clone this object
 	protocols::moves::MoverOP clone() const override;
+	moves::MoverOP fresh_instance() const override;
+
+	void parse_my_tag(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data
+	) override;
+
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
 
 	/// @brief Apply the RNA denovo modeling protocol to the input pose
 	void apply( core::pose::Pose & pose ) override;
-
-	std::string get_name() const override;
 
 	static void register_options();
 

@@ -387,13 +387,7 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 
 	lores_pose_ = pose.clone();
 
-	// AMW From output...
-	// Don't do this if we had been called in "legacy mode" -- best
-	// clue to this is if there's a params file, as that is the only
-	// circumstance that requires it.
-	if ( options_->rna_params_file().empty() ) {
-		align_pose( *lores_pose_, true );
-	}
+	align_pose( *lores_pose_, true );
 
 	if ( options_->minimize_structure() ) {
 		if ( is_rna_and_protein_ ) {
@@ -442,47 +436,37 @@ RNA_FragmentMonteCarlo::apply( pose::Pose & pose ){
 	final_score( pose ); // may include rna_chem_map score here.
 
 
-
-
-
+	// From pose output
+	align_pose( pose, true /*verbose*/ );
 
 	// From pose output
-	// Similarly, these are code-paths that are also carried out in RNA_DeNovoProtocol,
-	// which at this point is a wrapper only used in the legacy codepath.
-	if ( options_->rna_params_file().empty() ) {
-		align_pose( pose, true /*verbose*/ );
-
-		// From pose output
-		if ( is_rna_and_protein_ && !options_->minimize_structure() ) {
-			// convert back to full atom (should give stupid coords... ok for now b/c protein doesn't move)
-			// if protein sidechains have moved, then the pose should already be in full atom by now (?!)
-			// if the structure is getting minimized, then it should already be converted back to full atom
-			core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false, true, true  );
-			// but as soon as I score again, it tries to recalculate rnp scores (so they get set to 0)
-		}
-
-		if ( get_native_pose() ) {
-			setPoseExtraScore( pose, "rms", get_rmsd_no_superimpose( pose ) );
-			setPoseExtraScore( pose, "rms_stem", get_rmsd_stems_no_superimpose( pose ) );
-			setPoseExtraScore( *lores_pose_, "rms", get_rmsd_no_superimpose( *lores_pose_ ) );
-			setPoseExtraScore( *lores_pose_, "rms_stem", get_rmsd_stems_no_superimpose( *lores_pose_ ) );
-		}
-
-		// hopefully these will end up in silent file...
-		if ( options_->output_filters() ) { //}&& ( rna_fragment_monte_carlo_ != nullptr ) ) {
-			//s.add_energy(  "lores_early", rna_fragment_monte_carlo_->lores_score_early() );
-			setPoseExtraScore( pose, "lores_early", lores_score_early() );
-			setPoseExtraScore( *lores_pose_, "lores_early", lores_score_early() );
-			//if ( options_->minimize_structure() ) s.add_energy( "lores_final", rna_fragment_monte_carlo_->lores_score_final() );
-			if ( options_->minimize_structure() ) setPoseExtraScore( pose, "lores_final", lores_score_final() );
-			if ( options_->minimize_structure() ) setPoseExtraScore( *lores_pose_, "lores_final", lores_score_final() );
-		}
-
-		//TR << "Outputting to silent file: " << silent_file << std::endl;
-		if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
-
+	if ( is_rna_and_protein_ && !options_->minimize_structure() ) {
+		// convert back to full atom (should give stupid coords... ok for now b/c protein doesn't move)
+		// if protein sidechains have moved, then the pose should already be in full atom by now (?!)
+		// if the structure is getting minimized, then it should already be converted back to full atom
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD, false, true, true  );
+		// but as soon as I score again, it tries to recalculate rnp scores (so they get set to 0)
 	}
 
+	if ( get_native_pose() ) {
+		setPoseExtraScore( pose, "rms", get_rmsd_no_superimpose( pose ) );
+		setPoseExtraScore( pose, "rms_stem", get_rmsd_stems_no_superimpose( pose ) );
+		setPoseExtraScore( *lores_pose_, "rms", get_rmsd_no_superimpose( *lores_pose_ ) );
+		setPoseExtraScore( *lores_pose_, "rms_stem", get_rmsd_stems_no_superimpose( *lores_pose_ ) );
+	}
+
+	// hopefully these will end up in silent file...
+	if ( options_->output_filters() ) { //}&& ( rna_fragment_monte_carlo_ != nullptr ) ) {
+		//s.add_energy(  "lores_early", rna_fragment_monte_carlo_->lores_score_early() );
+		setPoseExtraScore( pose, "lores_early", lores_score_early() );
+		setPoseExtraScore( *lores_pose_, "lores_early", lores_score_early() );
+		//if ( options_->minimize_structure() ) s.add_energy( "lores_final", rna_fragment_monte_carlo_->lores_score_final() );
+		if ( options_->minimize_structure() ) setPoseExtraScore( pose, "lores_final", lores_score_final() );
+		if ( options_->minimize_structure() ) setPoseExtraScore( *lores_pose_, "lores_final", lores_score_final() );
+	}
+
+	//TR << "Outputting to silent file: " << silent_file << std::endl;
+	if ( options_->save_times() ) setPoseExtraScore( pose, "time", static_cast< Real >( clock() - start_time ) / CLOCKS_PER_SEC );
 
 
 	//if ( options_->use_chem_shift_data() ) add_chem_shift_info( *s, pose);

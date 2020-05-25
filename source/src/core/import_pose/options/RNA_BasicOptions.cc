@@ -19,6 +19,8 @@
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <utility/options/OptionCollection.hh>
 #include <utility/options/keys/OptionKeyList.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 
 #include <basic/Tracer.hh>
 
@@ -26,6 +28,7 @@ static basic::Tracer TR( "core.import_pose.options.RNA_BasicOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace utility::tag;
 
 namespace core {
 namespace import_pose {
@@ -63,6 +66,32 @@ RNA_BasicOptions::initialize_from_options( utility::options::OptionCollection co
 
 	set_dump_pdb( opts[ basic::options::OptionKeys::rna::denovo::out::dump ] ) ;
 	set_move_first_rigid_body( opts[ basic::options::OptionKeys::rna::denovo::move_first_rigid_body ] );
+}
+
+void
+RNA_BasicOptions::initialize_from_tag( utility::tag::TagCOP const & tag ) {
+
+	// AMW TODO
+	if ( option[ basic::options::OptionKeys::edensity::mapfile ].user() ) {
+		// default false, can only be true if we really have a density map
+		if ( tag->hasOption( "dock_into_density" ) ) {
+			set_dock_into_density( tag->getOption< bool >( "dock_into_density", dock_into_density_ ) );
+		}
+		set_model_with_density( true );
+	}
+
+	set_dump_pdb( false ); // Not in the RS context you don't!
+	if ( tag->hasOption( "move_first_rigid_body" ) ) {
+		set_move_first_rigid_body( tag->getOption< bool >( "move_first_rigid_body", move_first_rigid_body_ ) );
+	}
+}
+
+void
+RNA_BasicOptions::list_attributes( AttributeList & attlist ) {
+
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "dock_into_density", xsct_rosetta_bool, "XRW TODO", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "move_first_rigid_body", xsct_rosetta_bool, "XRW TODO", "false" );
 }
 
 void

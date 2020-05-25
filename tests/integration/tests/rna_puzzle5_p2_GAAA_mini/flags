@@ -4,7 +4,7 @@
 -tag p2_GAAA_mini  
 -include_neighbor_base_stacks 
 -minimize_rna 
--chain_connection 1 12  15 18  
+-chain_connection SET1 A:1-6 B:1-6  SET2 C:3-6
 -cycles 100
 -bps_moves false
 -jump_library_file 1jj2_RNA_jump_library.dat

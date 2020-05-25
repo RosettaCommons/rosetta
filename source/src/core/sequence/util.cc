@@ -240,9 +240,9 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 		while ( ss.good() ) {
 			ss >> tag;
 			bool string_is_ok( false );
-			std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
+			std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain_and_segid = utility::get_resnum_and_chain_and_segid( tag, string_is_ok );
 			if ( !string_is_ok ) continue;
-			for ( Size ii = 0; ii < std::get< 0 >( resnum_and_chain_and_segid ).size(); ++ii ) {
+			for ( Size ii = 1; ii <= std::get< 0 >( resnum_and_chain_and_segid ).size(); ++ii ) {
 				if ( std::get< 1 >( resnum_and_chain_and_segid )[ ii ] == ' ' ) continue; // there better be a chain. accept "A:1" but not just "1"
 				resnum.push_back( std::get< 0 >( resnum_and_chain_and_segid )[ii] );
 				chains.push_back( std::get< 1 >( resnum_and_chain_and_segid )[ii] );

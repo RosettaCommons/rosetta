@@ -169,10 +169,6 @@
 
 
 // F //////////////////////////////////////////////////////////////////////////
-#include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
-#include <protocols/rna/movers/ERRASER2ProtocolCreator.hh>
-#include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
-
 #include <protocols/farnesyl/SampleFarnesylMoverCreator.hh>
 #include <protocols/farnesyl/InstallFarnesylMoverCreator.hh>
 
@@ -467,6 +463,11 @@
 #include <protocols/rigid/RollMoverCreator.hh>
 #include <protocols/rigid/UniformRigidBodyCMCreator.hh>
 #include <protocols/rigid/UniformRigidBodyMoverCreator.hh>
+
+#include <protocols/rna/denovo/movers/RNA_DeNovoProtocolMoverCreator.hh>
+#include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
+#include <protocols/rna/movers/ERRASER2ProtocolCreator.hh>
+#include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>
 
 #include <protocols/rosetta_scripts/ParsedProtocolCreator.hh>
 #include <protocols/rosetta_scripts/SavePoseMoverCreator.hh>

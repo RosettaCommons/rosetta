@@ -22,6 +22,8 @@
 #include <core/types.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <utility/tag/Tag.fwd.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 namespace core {
 namespace import_pose {
@@ -42,6 +44,10 @@ public:
 	initialize_from_command_line();
 	void
 	initialize_from_options( utility::options::OptionCollection const & opts );
+	void
+	initialize_from_tag( utility::tag::TagCOP const & tag );
+	static void
+	list_attributes( utility::tag::AttributeList & attlist );
 	static void
 	list_options_read( utility::options::OptionKeyList & opts );
 

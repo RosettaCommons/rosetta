@@ -24,17 +24,21 @@
 #include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/options/OptionCollection.hh>
+#include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
+#include <utility/tag/Tag.hh>
 
 
 static basic::Tracer TR( "core.import_pose.options.RNA_DeNovoProtocolOptions" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
+using namespace utility::tag;
 
 namespace core {
 namespace import_pose {
 namespace options {
+
 
 //Constructor
 RNA_DeNovoProtocolOptions::RNA_DeNovoProtocolOptions():
@@ -110,6 +114,40 @@ RNA_DeNovoProtocolOptions::initialize_from_options( utility::options::OptionColl
 
 	dump_stems_ = option[ basic::options::OptionKeys::rna::denovo::dump_stems ]();
 }
+
+/// @details I don't really want the RosettaScripts interface to support some
+/// of the "archaic" options that are kind of RosettaScripts antipatterns, like
+/// managing input and output mid protocol... so I just won't.
+void
+RNA_DeNovoProtocolOptions::initialize_from_tag( utility::tag::TagCOP const & tag ) {
+	RNA_FragmentMonteCarloOptions::initialize_from_tag( tag );
+
+	// note that althrough the following variables are held in the base
+	// class RNA_FragmentMonteCarloOptions, they are not initialized from
+	// command-line there.
+	// they really should only be set up for runs using the rna_denovo exectuable -- so they are set up here.
+	if ( tag->hasOption( "lores_scorefxn" ) ) {
+		//parse_score_function(tag, "scorefxn", data
+		// We actually just need the string; we handle sfxn within the mover, separately.
+		// Maybe refactor that later.
+		set_lores_scorefxn( tag->getOption< std::string >( "lores_scorefxn", "farna/rna_lores.wts" ) );
+	}
+
+	if ( tag->hasOption( "cst_gap" ) ) {
+		set_cst_gap( tag->getOption< bool >( "cst_gap", "false" ) );
+	}
+}
+
+void
+RNA_DeNovoProtocolOptions::list_attributes( AttributeList & attlist ) {
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "lores_scorefxn", xs_string, "Name of lores scorefunction", "farna/rna_lores.wts" )
+		+ XMLSchemaAttribute::attribute_w_default( "cst_gap", xsct_rosetta_bool, "Apply constraints to any sequence gaps", "false" );
+
+	RNA_FragmentMonteCarloOptions::list_attributes( attlist );
+}
+
+
 
 void
 RNA_DeNovoProtocolOptions::list_options_read( utility::options::OptionKeyList & opts ) {

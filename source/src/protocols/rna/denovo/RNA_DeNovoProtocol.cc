@@ -15,6 +15,7 @@
 
 // Unit headers
 #include <protocols/rna/denovo/RNA_DeNovoProtocol.hh>
+#include <protocols/rna/denovo/RNA_DeNovoProtocolCreator.hh>
 #include <core/import_pose/options/RNA_DeNovoProtocolOptions.hh>
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
@@ -139,11 +140,7 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoPr
 	rna_params_(std::move( params ))
 {
 	if ( rna_params_ == nullptr ) {
-		if ( !options_->rna_params_file().empty() ) {
-			rna_params_ = utility::pointer::make_shared< core::import_pose::RNA_DeNovoParameters >( options_->rna_params_file() );
-		} else {
-			rna_params_ = utility::pointer::make_shared< core::import_pose::RNA_DeNovoParameters >();
-		}
+		rna_params_ = utility::pointer::make_shared< core::import_pose::RNA_DeNovoParameters >();
 	}
 	Mover::type("RNA_DeNovoProtocol");
 }
@@ -151,6 +148,42 @@ RNA_DeNovoProtocol::RNA_DeNovoProtocol( core::import_pose::options::RNA_DeNovoPr
 /// @brief Clone this object
 protocols::moves::MoverOP RNA_DeNovoProtocol::clone() const {
 	return utility::pointer::make_shared< RNA_DeNovoProtocol >(*this);
+}
+
+moves::MoverOP RNA_DeNovoProtocol::fresh_instance() const {
+	return utility::pointer::make_shared< RNA_DeNovoProtocol >();
+}
+
+void RNA_DeNovoProtocol::parse_my_tag(
+	utility::tag::TagCOP ,//tag,
+	basic::datacache::DataMap & //data
+) {
+	// no options I guess, for now
+}
+
+std::string
+RNA_DeNovoProtocol::get_name() const {
+	return mover_name();
+}
+
+
+std::string
+RNA_DeNovoProtocol::mover_name() {
+	return "RNA_DeNovoProtocol";
+}
+
+void
+RNA_DeNovoProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
+
+	using namespace utility::tag;
+	AttributeList attlist;
+	// attlist
+	// + XMLSchemaAttribute::attribute_w_default( "fasta_files", xs_string, "Input FASTA files", "" )
+
+	protocols::moves::xsd_type_definition_w_attributes(
+		xsd, mover_name(),
+		"Run the RNA denovo protocol",
+		attlist );
 }
 
 //////////////////////////////////////////////////
@@ -191,7 +224,6 @@ RNA_DeNovoProtocol::register_options() {
 	option.add_relevant( basic::options::OptionKeys::rna::denovo::heat );
 	option.add_relevant( basic::options::OptionKeys::rna::denovo::staged_constraints );
 	// option.add_relevant( basic::options::OptionKeys::rna::denovo::jump_library_file );
-	option.add_relevant( basic::options::OptionKeys::rna::denovo::params_file );
 	option.add_relevant( basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs );
 	option.add_relevant( basic::options::OptionKeys::rna::denovo::filter_lores_base_pairs_early );
 	option.add_relevant( basic::options::OptionKeys::rna::denovo::filter_chain_closure );
@@ -408,14 +440,6 @@ void RNA_DeNovoProtocol::apply( core::pose::Pose & pose ) {
 	//} //nstruct
 }
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-std::string
-RNA_DeNovoProtocol::get_name() const {
-	return "RNA_DeNovoProtocol";
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_DeNovoProtocol::show(std::ostream & output) const
@@ -436,7 +460,6 @@ RNA_DeNovoProtocol::show(std::ostream & output) const
 		"\nAllow consecutive bulges:      " << (options_->allow_consecutive_bulges() ? "True" : "False") <<
 		"\nUse chem shift data:           " << (options_->use_chem_shift_data() ? "True" : "False") <<
 		"\nDefault temperature for MC:    " << options_->temperature() <<
-		"\nInput rna params file?:        " << ((options_->rna_params_file() == "" ) ? "No" : "Yes") <<
 		"\nJump library file:             " << options_->jump_library_file() <<
 		"\nOutput lores silent file:      " << (options_->output_lores_silent_file() ? "True" : "False") <<
 		"\nFilter lores base pairs:       " << (options_->filter_lores_base_pairs() ? "True" : "False") <<
@@ -678,6 +701,23 @@ std::ostream & operator<< ( std::ostream &os, RNA_DeNovoProtocol const & mover )
 	mover.show(os);
 	return os;
 }
+
+
+
+std::string RNA_DeNovoProtocolCreator::keyname() const {
+	return RNA_DeNovoProtocol::mover_name();
+}
+
+protocols::moves::MoverOP
+RNA_DeNovoProtocolCreator::create_mover() const {
+	return utility::pointer::make_shared< RNA_DeNovoProtocol >();
+}
+
+void RNA_DeNovoProtocolCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	RNA_DeNovoProtocol::provide_xml_schema( xsd );
+}
+
 
 } //denovo
 } //rna

@@ -732,16 +732,12 @@ set_output_res_and_chain( pose::Pose & extended_pose,
 	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
 	pdb_info->set_numbering( output_res_num );
 
-	bool chain_interesting( false );
-	for ( Size n = 1; n <= output_chain.size(); n++ ) {
-		if ( output_chain[ n ] != ' ' ) chain_interesting = true;
-	}
-	if ( chain_interesting ) pdb_info->set_chains( output_chain );
+	bool chain_interesting = std::any_of( output_chain.begin(), output_chain.end(),
+		[]( char const c ) { return c != ' '; } );
+	bool segid_interesting = std::any_of( output_segid.begin(), output_segid.end(),
+		[]( std::string const & s ) { return s != "    "; } );
 
-	bool segid_interesting( false );
-	for ( Size n = 1; n <= output_segid.size(); n++ ) {
-		if ( output_segid[ n ] != "    " ) segid_interesting = true;
-	}
+	if ( chain_interesting ) pdb_info->set_chains( output_chain );
 	if ( segid_interesting ) pdb_info->set_segment_ids( output_segid );
 
 	extended_pose.pdb_info( pdb_info );

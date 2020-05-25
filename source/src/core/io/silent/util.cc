@@ -94,10 +94,10 @@ figure_out_residue_numbers_from_line( std::istream & line_stream,
 	line_stream >> resnum_string;
 	while ( !line_stream.fail() ) {
 		bool string_ok( false );
-		std::tuple< std::vector< int >, std::vector< char >, std::vector< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
-		std::vector< int >  const & resnums      = std::get< 0 >( resnum_and_chain );
-		std::vector< char > const & chainchars  = std::get< 1 >( resnum_and_chain );
-		std::vector< std::string > const & segidstrs  = std::get< 2 >( resnum_and_chain );
+		std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > resnum_and_chain = utility::get_resnum_and_chain_and_segid( resnum_string, string_ok );
+		utility::vector1< int >  const & resnums      = std::get< 0 >( resnum_and_chain );
+		utility::vector1< char > const & chainchars  = std::get< 1 >( resnum_and_chain );
+		utility::vector1< std::string > const & segidstrs  = std::get< 2 >( resnum_and_chain );
 		if ( string_ok ) {
 			for ( int resnum : resnums ) residue_numbers.push_back( resnum );
 			for ( char chainchar : chainchars ) chains.push_back( chainchar );

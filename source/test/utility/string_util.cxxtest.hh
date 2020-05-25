@@ -99,7 +99,7 @@ public:
 
 	void run_test_of_get_resnum_and_chain( std::string const & tag ) {
 		bool ok;
-		std::tuple< std::vector<int>, std::vector<char>, std::vector<std::string> > resnum_chain = utility::get_resnum_and_chain_and_segid( tag, ok );
+		std::tuple< utility::vector1<int>, utility::vector1<char>, utility::vector1<std::string> > resnum_chain = utility::get_resnum_and_chain_and_segid( tag, ok );
 
 		TS_ASSERT( ok );
 		utility::vector1<int>         resnum( std::get<0>(resnum_chain) );

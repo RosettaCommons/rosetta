@@ -282,10 +282,6 @@ void
 assert_phosphate_nomenclature_matches_mini( core::pose::Pose const & pose);
 
 void
-set_output_res_and_chain( core::pose::Pose & extended_pose,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain_and_segid );
-
-void
 virtualize_free_rna_moieties( core::pose::Pose & pose );
 
 utility::vector1< bool >

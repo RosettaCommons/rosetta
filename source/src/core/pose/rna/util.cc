@@ -1064,9 +1064,9 @@ add_number_base_pairs( pose::Pose & pose )
 	Size N_WC, N_NWC, N_BS;
 	get_number_base_pairs( pose, N_WC, N_NWC, N_BS );
 
-	setPoseExtraScore( pose, "N_WC",  N_WC );
-	setPoseExtraScore( pose, "N_NWC", N_NWC );
-	setPoseExtraScore( pose, "N_BS",  N_BS );
+	setPoseExtraScore( pose, "N_WC",  std::to_string( N_WC ) );
+	setPoseExtraScore( pose, "N_NWC", std::to_string( N_NWC ) );
+	setPoseExtraScore( pose, "N_BS",  std::to_string( N_BS ) );
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -1231,15 +1231,15 @@ add_number_native_base_pairs(pose::Pose & pose, pose::Pose const & native_pose )
 
 	// Adding these here helps control for false positives found in the other function
 	// (Which might count as 'recovered' BPs not found in the native model.
-	setPoseExtraScore( pose, "N_WC",  N_WC );
-	setPoseExtraScore( pose, "N_NWC", N_NWC );
-	setPoseExtraScore( pose, "N_BP",  N_BP );
+	setPoseExtraScore( pose, "N_WC",  std::to_string( N_WC ) );
+	setPoseExtraScore( pose, "N_NWC", std::to_string( N_NWC ) );
+	setPoseExtraScore( pose, "N_BP",  std::to_string( N_BP ) );
 
 	// I would personally like to see the native number esp. of NWC because
 	// otherwise the fraction could be deflated by false 0s.
-	setPoseExtraScore( pose, "natWC" , natWC );
-	setPoseExtraScore( pose, "natNWC", natNWC );
-	setPoseExtraScore( pose, "natBP" , natBP );
+	setPoseExtraScore( pose, "natWC" , std::to_string( natWC ) );
+	setPoseExtraScore( pose, "natNWC", std::to_string( natNWC ) );
+	setPoseExtraScore( pose, "natBP" , std::to_string( natBP ) );
 
 	setPoseExtraScore( pose, "f_natWC" , f_natWC );
 	setPoseExtraScore( pose, "f_natNWC", f_natNWC );
@@ -1891,32 +1891,6 @@ assert_phosphate_nomenclature_matches_mini( pose::Pose const & pose )
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-void
-set_output_res_and_chain( pose::Pose & extended_pose,
-	std::tuple< utility::vector1< int >, utility::vector1< char >, utility::vector1< std::string > > const & output_resnum_and_chain )
-{
-	using namespace pose;
-	utility::vector1< int > const & output_res_num = std::get< 0 >( output_resnum_and_chain );
-	utility::vector1< char > const & output_chain = std::get< 1 >( output_resnum_and_chain );
-	utility::vector1< std::string > const & output_segid = std::get< 2 >( output_resnum_and_chain );
-	if ( output_res_num.size() == 0 ) return;
-	runtime_assert( output_res_num.size() == extended_pose.size() );
-
-	PDBInfoOP pdb_info( new PDBInfo( extended_pose ) );
-	pdb_info->set_numbering( output_res_num );
-
-	bool chain_interesting = std::any_of( output_chain.begin(), output_chain.end(),
-		[]( char const c ) { return c != ' '; } );
-	bool segid_interesting = std::any_of( output_segid.begin(), output_segid.end(),
-		[]( std::string const & s ) { return s != "    "; } );
-
-	if ( chain_interesting ) pdb_info->set_chains( output_chain );
-	if ( segid_interesting ) pdb_info->set_segment_ids( output_segid );
-
-	extended_pose.pdb_info( pdb_info );
-}
 
 //////////////////////////////////////////////////////////////////////
 // this is reasonably sophisticated...

@@ -123,6 +123,7 @@ sources = {
 		"ShuffleJobDistributor",
 		"SilentFileJobInputter",
 		"SilentFileJobOutputter",
+		"RNA_DeNovoJobOutputter",
 		"SingleFileBuffer",
 		"util",
 		"VectorPoseJobDistributor",
