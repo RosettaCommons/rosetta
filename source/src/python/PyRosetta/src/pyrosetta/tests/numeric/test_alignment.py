@@ -23,7 +23,7 @@ class TestAlignment(unittest.TestCase):
             test_coords[1, i] = numpy.dot(test_rotation, test_system[i])
 
         i_rmsd = rmsd_calc.coordinate_array_rmsd(test_coords[0], test_coords[1])
-        numpy.testing.assert_allclose(i_rmsd, 0)
+        numpy.testing.assert_allclose(i_rmsd, 0, atol=1e-7)
 
         aligned, s_rmsd = rmsd_calc.superimpose_coordinate_array(test_coords, test_coords[1], return_rmsd=True)
         numpy.testing.assert_allclose(s_rmsd, 0, atol=1e-6)

@@ -1,10 +1,17 @@
+import sys
+try:
+    import py3Dmol
+except ModuleNotFoundError as ex:
+    print("ModuleNotFoundError: {0}. Skipping pyrosetta.distributed.viewer unit test!".format(ex))
+    sys.exit(0)
+
 import glob
 import os
 import pyrosetta
 import pyrosetta.distributed.io as io
 import pyrosetta.distributed.viewer as viewer
 import tempfile
-import unittest 
+import unittest
 
 
 class TestViewer(unittest.TestCase):

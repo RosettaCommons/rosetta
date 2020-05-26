@@ -11,10 +11,13 @@ import time
 import threading
 import unittest
 
+import pyrosetta.distributed
 import pyrosetta.distributed.io as io
 import pyrosetta.distributed.tasks.rosetta_scripts as rosetta_scripts
 import pyrosetta.distributed.tasks.score as score
 
+pyrosetta.distributed.init(options="-run:constant_seed 1", set_logging_handler=None)
+# TODO: In multithreaded builds the python-based logging handler appears to fail using concurrent.futures...
 
 class TestConcurrentScripts(unittest.TestCase):
 
@@ -61,7 +64,7 @@ class TestConcurrentScripts(unittest.TestCase):
                 </PROTOCOLS>
             </ROSETTASCRIPTS>
             """)
-            
+
             return protocol(test_pose)
 
         import concurrent.futures

@@ -378,11 +378,11 @@ def get_required_pyrosetta_packages_for_platform(platform, conda=False):
         IMPORTANT: there should be no spaces between package name and version number
     '''
     packages = '\
-    blosc==1.7.0         \
-    cloudpickle==0.7.0   \
-    dask>=2.11.0         \
+    blosc>=1.7.0         \
+    cloudpickle>=1.4.1   \
+    dask>=2.16.0         \
     dask-jobqueue>=0.7.0 \
-    distributed>=2.11.0  \
+    distributed>=2.16.0  \
     jupyter>=1.0.0       \
     numpy>=1.17.3        \
     pandas>=0.25.2       \

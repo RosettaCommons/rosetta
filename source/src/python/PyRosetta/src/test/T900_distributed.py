@@ -5,12 +5,10 @@ if tuple(sys.version_info) < (3, 5):
     print("Unsupported python version for pyrosetta.distributed: %s" % sys.version_info)
     sys.exit(0)
 else:
-    print("sys.version_info: %s", sys.version_info)
+    print("sys.version_info: {0}".format(sys.version_info))
 
 import pyrosetta.rosetta
 import subprocess
-import tempfile
-import venv
 
 if not hasattr(pyrosetta.rosetta, "cereal"):
     print("Unsupported non-serialization build for pyrosetta.distributed.")
@@ -36,36 +34,9 @@ test_suites = [
     "pyrosetta.tests.distributed.test_dask",
     "pyrosetta.tests.distributed.test_gil",
     "pyrosetta.tests.distributed.test_smoke",
-    #"pyrosetta.tests.distributed.test_viewer",
+    "pyrosetta.tests.distributed.test_viewer",
     "pyrosetta.tests.numeric.test_alignment",
 ]
 
-
-for test_suite in test_suites: e( "python -m unittest {}".format(test_suite) )
-
-
-# with tempfile.TemporaryDirectory(prefix="tmp_pyrosetta_env") as venv_dir:
-#     venv.create(venv_dir, clear=True, system_site_packages=False, with_pip=True)
-#     packages = " ".join(
-#         [
-#             "blosc==1.8.1",
-#             "cloudpickle==0.7.0",
-#             "dask==2.11.0",
-#             "dask-jobqueue==0.7.0",
-#             "distributed==2.11.0",
-#             "jupyter==1.0.0",
-#             "numpy==1.17.3",
-#             "pandas==0.25.2",
-#             "py3Dmol==0.8.0",
-#             "scipy==1.3.1",
-#             "traitlets==4.3.3",
-#         ]
-#     )
-#     e(". {0}/bin/activate && {0}/bin/pip install {1}".format(venv_dir, packages))
-
-#     for test_suite in test_suites:
-#         e(
-#             ". {0}/bin/activate && {0}/bin/python -m unittest {1}".format(
-#                 venv_dir, test_suite
-#             )
-#         )
+for test_suite in test_suites:
+    e("python -m unittest {0}".format(test_suite))
