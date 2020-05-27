@@ -607,6 +607,9 @@ sources = {
 	"scoring/vdwaals" : [
 		"VDW_Energy",
 	],
+	"select" : [
+		"iterators",
+	],
 	"select/jump_selector" : [
 		"AndJumpSelector",
 		"InterchainJumpSelector",
