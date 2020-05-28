@@ -559,7 +559,7 @@ void FastRelax::do_md(
 	protocols::md::CartesianMD MD_mover( pose, local_scorefxn, local_movemap );
 
 	MD_mover.set_nstep( (core::Size)(nstep) );
-	MD_mover.set_temperature( temp0 );
+	MD_mover.set_temp0( temp0 );
 
 	MD_mover.apply( pose );
 }
