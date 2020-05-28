@@ -74,7 +74,9 @@ def select_compiler_version(supported, compiler, requested, compiler_command):
             actual, actual_full = requested, requested
 
     if not actual or actual == "*":
-        raise RuntimeError("Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % (compiler))
+        print( "Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % (compiler) )
+        sys.exit(1) # making sure that if specified compiler could not be found to terminate with non-zero exit code
+        #raise RuntimeError("Could not determine version for compiler '%s'.  Check whether compiler by that name is installed and on your path." % (compiler))
 
     # if compiler in supported.cxx:
     #     versions = supported.cxx[compiler]
