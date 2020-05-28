@@ -64,6 +64,9 @@ if( ${COMPILER} STREQUAL "gcc" )
 		list( APPEND link
 			-Wl,--no-as-needed
 		)
+		list( REMOVE_ITEM compile
+			-ffor-scope
+		)
 	endif()
 
 endif()
