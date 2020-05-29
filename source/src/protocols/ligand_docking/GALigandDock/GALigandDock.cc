@@ -106,7 +106,7 @@ GALigandDock::GALigandDock() {
 
 	// grid
 	grid_ = 0.25;
-	padding_ = 4.5;
+	padding_ = 4.0;
 	hashsize_ = 8.0;
 	subhash_ = 3;
 	fa_rep_grid_ = 0.2;
@@ -121,7 +121,7 @@ GALigandDock::GALigandDock() {
 	// final relaxation
 	final_exact_minimize_ = "sc";
 	min_neighbor_ = false;
-	cartmin_lig_ = true;
+	cartmin_lig_ = true; //default for all the protocols
 	full_repack_before_finalmin_ = false;
 	final_solvate_ = false;
 	fast_relax_script_file_ = "";
@@ -739,6 +739,7 @@ GALigandDock::calculate_free_receptor_score( core::pose::Pose pose, // call by v
 		relax.set_scorefxn( scfxn_relax_ );
 	}
 	relax.set_movemap( mm );
+	relax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	relax.apply( pose );
 
 	return (*scfxn_relax_)(pose);
@@ -1005,6 +1006,7 @@ GALigandDock::final_exact_cartmin(
 	}
 
 	relax.set_movemap( mm );
+	relax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	relax.apply( pose );
 	TR << "final_cartmin: score after relax: ";
 	TR << (*scfxn_relax_)(pose) <<std::endl;
@@ -1753,7 +1755,7 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 
 		fast_relax_lines_.push_back("switch:cartesian");
 		fast_relax_lines_.push_back("repeat 1");
-		fast_relax_lines_.push_back("ramp_repack_min 1.0   0.001  1.0 200");
+		fast_relax_lines_.push_back("ramp_repack_min 1.0   0.00001  1.0 200");
 		fast_relax_lines_.push_back("accept_to_best");
 		fast_relax_lines_.push_back("endrepeat");
 
@@ -1764,6 +1766,7 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 		estimate_dG_ = true;
 		reference_frac_auto_ = true;
 		premin_ligand_ = true;
+		//padding_ = 4.5; // follow default for now
 
 		if ( runmode.substr(2) == "H" ) { // VS-Hires
 			sidechains_ = "aniso";

@@ -2117,13 +2117,16 @@ init_gen_potential_settings( utility::options::OptionCollection & options ) {
 		options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ].value( false );
 	}
 
+	// hpark: recover original behavior as of May 23 2020
+	/*
 	// hbond params
 	if ( !options[ basic::options::OptionKeys::corrections::score::lj_hbond_hdis ].user() ) {
-		options[ basic::options::OptionKeys::corrections::score::lj_hbond_hdis ].value(2.3);
+	options[ basic::options::OptionKeys::corrections::score::lj_hbond_hdis ].value(2.3);
 	}
 	if ( !options[ basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis ].user() ) {
-		options[ basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis ].value(3.3);
+	options[ basic::options::OptionKeys::corrections::score::lj_hbond_OH_donor_dis ].value(3.3);
 	}
+	*/
 
 	// consistency check
 	{

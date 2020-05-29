@@ -158,6 +158,7 @@ C*  CS ~ CD  C*   wc  0.000  0.000  0.500 0.000 offset -0.308  3     #GUESS #fit
 CD  CS ~ CD  CD  156 -0.250  0.000 -0.650 0.000 offset -0.537  1 3   #CHARMM, default
 CD  CS ~ CD OG2   93 -0.070 -0.307 -0.173 0.000 offset -0.435  1 2 3 #OPLS, aldehyde #fit
 CD  CS ~ CD OG3   55 -0.089  0.041  0.123 0.000 offset -0.232  1 2 3 #OPLS, alcohol #fit
+CR  CS ~ CD Oad   -- -2.000 -1.000  0.000 0.000 offset  0.000  1 2   #ADHOC; cis-preference of amide-ring #CHECK
 CS  CS ~ CD  CD  511 -0.250  0.000 -0.650 0.000 offset -0.537  1 3   #CHARMM, default
 CS  CS ~ CD  CS  113 -0.250  0.000 -0.650 0.000 offset -0.537  1 3   #CHARMM, default
 CS  CS ~ CD  HC  116  0.000  0.000  0.091 0.000 offset -0.000  3     #OPLS, alkane #fit
