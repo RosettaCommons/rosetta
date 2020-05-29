@@ -398,7 +398,6 @@ FastRelax::parse_my_tag(
 	std::string script_file("");
 	if ( tag->hasOption("relaxscript") ) {
 		script_file = tag->getOption< std::string >("relaxscript");
-		script_file_specified_ = true;
 	}
 
 	// Only support single file; is there a way to support multiple input files in rosetta scripts?
@@ -460,7 +459,6 @@ void FastRelax::set_to_default( )
 	ramady_force_ = basic::options::option[ OptionKeys::relax::ramady_force ]();
 	ramady_rms_limit_ = basic::options::option[ OptionKeys::relax::ramady_rms_limit ]();
 	dualspace_ = basic::options::option[ basic::options::OptionKeys::relax::dualspace ]();
-	script_file_specified_ = false;
 
 	// cartesian
 

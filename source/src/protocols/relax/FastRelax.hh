@@ -239,15 +239,6 @@ public: // CitationManager fxns:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
 
-protected: //getters and setters
-	bool script_file_specified() const {
-		return script_file_specified_;
-	}
-
-	void set_script_file_specified( bool setting ){
-		script_file_specified_ = setting;
-	}
-
 private:
 
 	utility::vector1< std::string >
@@ -395,9 +386,6 @@ private:   // options
 
 	/// @brief Do a symmetric RMSD calculation rather then a monomeric one.
 	bool symmetric_rmsd_;
-
-	/// @brief whether user specified script file
-	bool script_file_specified_;
 
 private:   // other data
 	protocols::checkpoint::CheckPointer checkpoints_;
