@@ -607,6 +607,23 @@ void SCS_BlastFilter_by_pdbid::init_from_options() {
     if ( option[ OptionKeys::antibody::exclude_pdbs ].user() ) {
         set_pdb_names( option[ basic::options::OptionKeys::antibody::exclude_pdbs ]() );
     }
+    // note the flag should have space separate PDB IDs (no commas!)
+    // do a quick check and warn if that is not the case
+    // sample case user has given "1abc, 2def" instead of "1abc 2def"
+    if (get_pdb_names().size() >= 1) {
+        if (get_pdb_names()[0].find(',') != std::string::npos) {
+            TR << "Warning: comma detected in the antibody:exclude_pdbs filter! Did you mean to pass a space separated list?" << std::endl; // found
+            TR << "" << std::endl;
+            TR << "Incorrect usage: -antibody:exclude_pdbs 1abc, 2def" << std::endl;
+            TR << "Correct usage: -antibody:exclude_pdbs 1abc 2def" << std::endl;
+            TR << "" << std::endl;
+            TR << "Current list is: " << get_pdb_names() << std::endl;
+            TR << "The filter interprets it as: " << get_pdb_names().size() << " items." << std::endl;
+            throw CREATE_EXCEPTION(_AE_scs_failed_, "Error! Likely incorrect usage of -antibody:exclude_pdbs flag!");
+        }
+    }
+    // maybe later we can check and warn if the filter removes zero items?
+
 
 }
 

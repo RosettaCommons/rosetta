@@ -39,7 +39,7 @@ command_line = '''
 -in:file:native {rosetta_dir}/tests/scientific/data/{testname}/benchmark_crystals/{target}_trunc.pdb
 -database {rosetta_dir}/database/
 -antibody:grafting_database {rosetta_dir}/database/additional_protocol_data/antibody/
--antibody:exclude_pdb {target}
+-antibody:exclude_pdbs {target}
 -antibody:n_multi_templates 1
 -no_relax
 -no_color

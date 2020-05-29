@@ -292,7 +292,8 @@ core::pose::PoseOP graft_cdr_loops(AntibodySequence const &A, SCS_ResultSet cons
 			//TR << "Deleting residues: " << "1:" << pose_n_cdr_first-1 << " from cdr template... [template size: " << cdr->total_residue() << "]" << std::endl;
 			if( pose_n_cdr_first > 1 ) cdr->delete_residue_range_slow(1, pose_n_cdr_first-1);
 
-
+            // we must erase disulfide memory of the input as this break CDR grafting later on...
+            cdr->conformation().detect_disulfides();
 
 			core::Size result_pose_cdr_first = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_first.n, pdb_n_cdr_first.icode);
 			core::Size result_pose_cdr_last  = result->pdb_info()->pdb2pose(g.chain, pdb_n_cdr_last .n, pdb_n_cdr_last .icode);
