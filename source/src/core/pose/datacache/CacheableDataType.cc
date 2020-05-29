@@ -45,6 +45,7 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["JOBDIST_OUTPUT_TAG"] = JOBDIST_OUTPUT_TAG;
 	name2enum_()["ARBITRARY_FLOAT_DATA"] = ARBITRARY_FLOAT_DATA;
 	name2enum_()["ARBITRARY_STRING_DATA"] = ARBITRARY_STRING_DATA;
+	name2enum_()["SIMPLE_METRIC_DATA"] = SIMPLE_METRIC_DATA;
 	name2enum_()["STRING_MAP"] = STRING_MAP;
 	name2enum_()["SCORE_LINE_STRINGS"] = SCORE_LINE_STRINGS;
 	name2enum_()["SCORE_MAP"] = SCORE_MAP;
@@ -98,16 +99,20 @@ CacheableDataType::initialize_name_map() {
 	name2enum_()["LK_BALL_POSE_INFO"] = LK_BALL_POSE_INFO;
 	name2enum_()["PB_LIFETIME_CACHE"] = PB_LIFETIME_CACHE;
 	name2enum_()["FAELEC_CONTEXT_DATA"] = FAELEC_CONTEXT_DATA;
+	name2enum_()["GEN_BONDED_EXCL_INFO"] = GEN_BONDED_EXCL_INFO;
 	name2enum_()["POSE_SEQUENCE"] = POSE_SEQUENCE;
+	name2enum_()["APPROXIMATE_UNSAT_POSE_INFO"] = APPROXIMATE_UNSAT_POSE_INFO;
 	name2enum_()["NMR_PCS_DATA"] = NMR_PCS_DATA;
 	name2enum_()["NMR_RDC_DATA"] = NMR_RDC_DATA;
 	name2enum_()["NMR_PRE_DATA"] = NMR_PRE_DATA;
-	name2enum_()["GEN_BONDED_EXCL_INFO"] = GEN_BONDED_EXCL_INFO;
+	name2enum_()["EPR_DEER_DATA"] = EPR_DEER_DATA;
 	//name2enum_()["STRUCTURAL_CONSERVATION"] = STRUCTURAL_CONSERVATION;
 	//name2enum_()["SURFACE_PARAMS"] = SURFACE_PARAMS;
 	//name2enum_()["FLOATING_POINT_CLOUD_INFO"] = FLOATING_POINT_CLOUD_INFO;
 
-	runtime_assert( name2enum_().size() == CacheableDataType::num_cacheable_data_types );
+	if ( name2enum_().size() != CacheableDataType::num_cacheable_data_types ) {
+		utility_exit_with_message("Expected " + std::to_string( CacheableDataType::num_cacheable_data_types ) + " entries in CacheableDataType name map. Found only " + std::to_string( name2enum_().size() ) );
+	}
 
 	enum2name_().resize( CacheableDataType::num_cacheable_data_types );
 	for ( std::map< std::string, CacheableDataType::Enum >::const_iterator iter = name2enum_().begin(),

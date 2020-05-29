@@ -56,8 +56,6 @@ public:
 		POSITION_CONSERVED_RESIDUES, // a core::pose::datacache::PositionConservedResiduesStore; used by core::pose::is_position_conserved_residue() (currently unused)
 		INTERFACE_DDG_MUTATION, // a InterfaceDDGMutationTask; the mutation to be considered; set by the InterfaceDDGJobInputter (in the interface_ddg_bind app)
 
-		EPR_DEER_DATA, // Used for storing experimental double electron-electron resonance (DEER) data
-
 		// Energy-function information cache (including experimental data)
 		BASE_PARTNER, // a core::scoring::dna::BasePartner; used by DNA energy terms
 		CEN_LIST_INFO, // a core::scoring::CenListInfo; used by EnvPairPotential
@@ -102,6 +100,8 @@ public:
 		NMR_PCS_DATA, // a core::scoring::nmr::pcs::PCSData; stores pseudocontact shift data of the paramagnetic NMR framework (implemented in 2016)
 		NMR_RDC_DATA, // a core::scoring::nmr::rdc::RDCData; stores residual dipolar coupling data of the paramagnetic NMR framework (implemented in 2016)
 		NMR_PRE_DATA, // a core::scoring::nmr::pre::PREData; stores paramagnetic relaxation enhancement data of the paramagnetic NMR framework (implemented in 2016)
+		EPR_DEER_DATA, // Used for storing experimental double electron-electron resonance (DEER) data
+
 
 		// Old, unused terms
 		//  MEMBRANE_POTENTIAL,

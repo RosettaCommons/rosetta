@@ -286,6 +286,9 @@ sources = {
 		"GlycanTreeSetTests",
 		"util",
 	],
+	"pose/datacache" : [
+		"CacheableDataType",
+	],
 	"pose/rna" : [
 		"util",
 	],
