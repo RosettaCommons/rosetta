@@ -5146,6 +5146,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option('suppress_checkpointing','Boolean',default='false',desc="boinc specific options to suppress checkpointing behavior"),
 		Option('wt_only','Boolean',default='false',desc="option added to minirosetta app in order to produce only refinement in wt structures"),
 		Option('mut_only','Boolean',desc="options added to minirosetta app in order to produce refinement in only mutant structure"),
+		Option('optimize_wt','Boolean', default="false", desc="Will optimize the native structure when using the refactored version of the code. This will serve as the new baseline score."),
 		Option('output_silent','Boolean'),
 		Option('minimization_scorefunction','String'),
 		Option('minimization_patch','String'),

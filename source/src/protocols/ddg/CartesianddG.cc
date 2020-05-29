@@ -906,7 +906,9 @@ run(core::pose::Pose & pose){
 		pick_fragments(pose, mutationsets, frag_nbrs);
 	}
 
-	//optimize_native(mutationsets,pose,score_fxn,bbnbrs,cartesian);
+    if ( basic::options::option[ basic::options::OptionKeys::ddg::optimize_wt ].value() ) {
+	    optimize_native(mutationsets,pose,score_fxn,bbnbrs,cartesian);
+    }
 	core::Real native_score = (*score_fxn)(pose);
 	std::string tag  = "WT";
 	nlohmann::json wt_results;
