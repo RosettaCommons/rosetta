@@ -42,9 +42,6 @@ public:
 	/// @brief Default constructor
 	--class--();
 
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	--class--( --class-- const & src );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~--class--() override;
 
@@ -83,6 +80,13 @@ public:
 	/// @brief Name of the metric
 	std::string
 	metric() const override;
+
+	/// @brief This simple metric is unpublished (returns true).
+	bool simple_metric_is_unpublished() const override;
+
+	/// @brief This simple metric is unpublished.  It returns --name--
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
 
 public:
 

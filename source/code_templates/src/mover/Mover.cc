@@ -27,6 +27,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+// Citation Manager
+#include <utility/vector1.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
@@ -38,14 +42,6 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 /// @brief Default constructor
 --class--::--class--():
 	protocols::moves::Mover( --class--::mover_name() )
-{
-
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
---class--::--class--( --class-- const & src ):
-	protocols::moves::Mover( src )
 {
 
 }
@@ -140,16 +136,34 @@ void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	--class--::provide_xml_schema( xsd );
 }
 
+/// @brief Indicate that this mover is unpublished.
+bool
+--class--::mover_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide authorship information for an unpublished Rosetta module.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+--class--::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP moduleinfo =
+		utility::pointer::make_shared< UnpublishedModuleInfo >( "--class--", CitedModuleType::Mover );
+	moduleinfo->add_author( "--name--", "TODO: institution", "--email--" );
+	return utility::vector1< UnpublishedModuleInfoCOP > { moduleinfo };
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 	/// private methods ///
 	///////////////////////
 
 
-	std::ostream &
-	operator<<( std::ostream & os, --class-- const & mover )
-	{
-		mover.show(os);
-		return os;
-	}
+std::ostream &
+operator<<( std::ostream & os, --class-- const & mover )
+{
+	mover.show(os);
+	return os;
+}
+
 
 --end_namespace--

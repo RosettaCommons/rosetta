@@ -39,7 +39,7 @@ public:
 	~--class--();
 
 public:
-	
+
 
 public:
 	bool

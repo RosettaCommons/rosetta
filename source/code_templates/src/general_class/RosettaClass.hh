@@ -32,9 +32,6 @@ public:
 	/// @brief Default constructor.
 	--class--();
 
-	/// @brief Copy constructor.
-	--class--(--class-- const & src);
-
 	/// @brief Destructor.
 	~--class--() override;
 

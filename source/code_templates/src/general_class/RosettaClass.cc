@@ -28,10 +28,6 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 /// @brief Default constructor.
 --class--::--class--() = default;
 
-/// @brief Copy constructor.  Keep default unless deep copying is needed (and in that case,
-/// consider using DeepCopyOPs.)
---class--::--class--( --class-- const & ) = default;
-
 /// @brief Destructor.
 --class--::~--class--() = default;
 

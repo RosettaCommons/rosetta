@@ -45,9 +45,6 @@ public:
 	/// @brief Default constructor
 	--class--();
 
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	--class--( --class-- const & src );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~--class--() override;
 
@@ -67,20 +64,20 @@ public:
 	///            into the score tables/file at pose output.
 	//void
 	//apply( pose::Pose & pose, prefix="", suffix="" ) override;
-	
+
 	///@brief Calculate the metric.
 	std::map< std::string, std::string >
 	calculate( core::pose::Pose const & pose ) const override;
-	
+
 public:
-	
+
 	///@brief Name of the class
 	std::string
 	name() const override;
-	
+
 	///@brief Name of the class for creator.
-	static 
-	std::string 
+	static
+	std::string
 	name_static();
 
 	///@brief Name of the metric
@@ -90,7 +87,14 @@ public:
 	///@brief Get the submetric names that this Metric will calculate
 	utility::vector1< std::string >
 	get_metric_names() const override;
-	
+
+	/// @brief This simple metric is unpublished (returns true).
+	bool simple_metric_is_unpublished() const override;
+
+	/// @brief This simple metric is unpublished.  It returns --name--
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -98,7 +102,7 @@ public:
 	parse_my_tag(
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) override;
-	
+
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -121,8 +125,3 @@ CEREAL_FORCE_DYNAMIC_INIT( --namespace_underscore--_--class-- )
 #endif // SERIALIZATION
 
 #endif //--path_underscore--_--class--_HH
-
-
-
-
-

@@ -48,13 +48,6 @@ TaskOperationOP
 	return TaskOperationOP( new --class--( *this ) );
 }
 
---class--::--class--( --class-- const & src ):
-	TaskOperation(src)
-
-{
-
-}
-
 void
 --class--::parse_tag( utility::tag::TagCOP , basic::datacache::DataMap& ){
 

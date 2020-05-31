@@ -28,6 +28,8 @@
 #include <basic/datacache/DataMap.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
+
 --namespace--
 
 ///@brief --brief--
@@ -41,9 +43,6 @@ public:
 
 	/// @brief Default constructor
 	--class--();
-
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	--class--( --class-- const & src );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~--class--() override;
@@ -96,6 +95,15 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+public: //Function overrides needed for the citation manager:
+
+	/// @brief Indicate that this mover is unpublished.
+	bool mover_is_unpublished() const override;
+
+	/// @brief Provide authorship information for an unpublished Rosetta module.
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+	provide_authorship_info_for_unpublished() const override;
 
 private: // methods
 

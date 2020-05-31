@@ -20,16 +20,16 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Project Headers
-#include <core/scoring/ScoreFunction.hh> 
+#include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.hh>
 
-#include <core/scoring/EnergyMap.hh> 
+#include <core/scoring/EnergyMap.hh>
 
 // Basic/Utility headers
-#include <utility/vector1.hh> 
-#include <core/types.hh> 
-#include <basic/Tracer.hh> 
+#include <utility/vector1.hh>
+#include <core/types.hh>
+#include <basic/Tracer.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
@@ -53,30 +53,30 @@ methods::EnergyMethodOP
 }
 
 /// @brief Indicate required setup steps for scoring
-void 
+void
 --class--::setup_for_scoring( core::pose::Pose & pose, ScoreFunction const & ) const {
 
 }
 
-/// @brief Is the score context dependent or context independent? 
-void 
+/// @brief Is the score context dependent or context independent?
+void
 --class--::indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const {
 
 }
 
 /// @brief Indicates the current version of this score term
-core::Size 
+core::Size
 --class--::version() const {
 
 }
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void 
---class--::finalize_total_energy( 
-	core::pose::Pose & pose, 
-	ScoreFunction const &, 
-	EnergyMap & totals 
+void
+--class--::finalize_total_energy(
+	core::pose::Pose & pose,
+	ScoreFunction const &,
+	EnergyMap & totals
 	) const {
 
 }
@@ -84,7 +84,6 @@ void
 core::Real
 --class--::atomic_interaction_cutoff() const {
 
-} 
+}
 
 --end_namespace--
-

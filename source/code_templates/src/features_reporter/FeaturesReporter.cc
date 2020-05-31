@@ -39,10 +39,6 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --class--::~--class--() {}
 
---class--::--class--( --class-- const & src ) :
-	protocols::features::FeaturesReporter( src )
-{}
-
 --class--OP
 --class--::clone() const {
 	return utility::pointer::make_shared< --class-- >( *this );

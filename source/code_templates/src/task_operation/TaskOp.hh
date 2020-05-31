@@ -31,8 +31,6 @@ public:
 
 	--class--();
 
-	--class--(--class-- const & src);
-
 	~--class--() override;
 
 	core::pack::task::operation::TaskOperationOP

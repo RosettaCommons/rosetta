@@ -35,8 +35,6 @@
 //Destructor
 --class--::~--class--() = default;
 
---class--::--class--( --class-- const & /*src*/ ) = default;
-
 
 /// @brief Mutual comparison of this inner job to the other inner job
 /// so that if either one thinks it's not the same as the other, then

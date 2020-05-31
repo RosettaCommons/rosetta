@@ -29,10 +29,11 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/pointer/memory.hh>
-#include <basic/Tracer.hh>
-
-// C++ headers
 #include <utility/assert.hh>
+
+#include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -114,6 +115,30 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & /*xsd*/ 
 	//core::select::residue_selector::xsd_type_definition_w_attributes( xsd, class_name(), "Description of residue selector here!", attributes );
 
 }
+
+/// @brief Does this residue selector indicate that it is unpublished?
+/// @details Returns true (this residue selector is unpublished).
+bool
+--class--::residue_selector_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+--class--::provide_authorship_info_for_unpublished() const {
+	using namespace basic::citation_manager;
+	utility::vector1< UnpublishedModuleInfoCOP > returnvec{
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		"--class--",
+		CitedModuleType::ResidueSelector,
+		"--name--",
+		"TODO: institution",
+		"--email--"
+		)
+		};
+	return returnvec;
+}
+
 
 core::select::residue_selector::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {

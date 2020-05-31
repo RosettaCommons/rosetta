@@ -31,6 +31,8 @@
 
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -60,10 +62,6 @@ using namespace core::select::residue_selector;
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 --class--::~--class--(){}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
---class--::--class--( --class-- const & ) = default;
 
 core::simple_metrics::SimpleMetricOP
 --class--::clone() const {
@@ -120,6 +118,28 @@ std::map< std::string, std::string >
 --class--::calculate(const pose::Pose & ) const {
 
 
+}
+
+bool
+--class--::simple_metric_is_unpublished() const {
+	return true;
+}
+
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+--class--::provide_authorship_info_for_unpublished() const {
+	basic::citation_manager::UnpublishedModuleInfoOP authors (
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+			name(),
+			basic::citation_manager::CitedModuleType::SimpleMetric,
+			"--name--",
+			"TODO: institution",
+			"--email--",
+			"Wrote the --class--."
+		)
+	);
+
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
+	return returnvec;
 }
 
 void

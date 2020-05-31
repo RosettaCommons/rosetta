@@ -29,7 +29,6 @@ class --class-- : public protocols::features::FeaturesReporter {
 public:
 
 	--class--();
-	--class--(--class-- const & src);
 
 	~--class--() override;
 
