@@ -51,7 +51,7 @@ public:
 
 		// Now check that we can get all of them without erroring out and without getting an empty string.
 		for ( int ii(1); ii <= CacheableDataType::num_cacheable_data_types; ++ii ) {
-			TS_ASSERT_DIFFERS( CacheableDataType::get_name( CacheableDataType::Enum(ii) ), "" )
+			TS_ASSERT_DIFFERS( CacheableDataType::get_name( CacheableDataType::Enum(ii) ), "" );
 		}
 	}
 

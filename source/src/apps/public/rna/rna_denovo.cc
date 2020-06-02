@@ -131,7 +131,6 @@ using namespace core::import_pose;
 using namespace core::import_pose::options;
 // using namespace protocols::jd3;
 // using namespace protocols::jd3::chunk_library;
-using utility::vector1;
 
 #if defined(ZEROMQ)  and  defined(_NLOHMANN_JSON_ENABLED_)
 using namespace utility;
@@ -543,7 +542,7 @@ rna_denovo()
 
 	RNA_DeNovoProtocolMoverOP the_mover = utility::pointer::make_shared< RNA_DeNovoProtocolMover >();
 
-	auto protocol_options = utility::pointer::make_shared< options::RNA_DeNovoProtocolOptions >();
+	auto protocol_options = utility::pointer::make_shared< core::import_pose::options::RNA_DeNovoProtocolOptions >();
 	the_mover->set_protocol_options( protocol_options );
 
 	if ( option[ OptionKeys::in::file::fasta ].user() ) the_mover->set_fasta_files( option[ OptionKeys::in::file::fasta ].value() );
