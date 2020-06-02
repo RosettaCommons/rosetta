@@ -284,7 +284,12 @@ RestrictDesignToProteinDNAInterface::apply(
 				for ( auto
 						allowed_type( toptask.allowed_residue_types_begin() ),
 						end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
-					if ( std::find( name3map.begin(), name3map.end(), *allowed_type ) != name3map.end() ) {
+					
+					//getting base type of allowed_type to allow for iteration without crashing at terminal of DNA molecule
+					ResidueTypeCOP const & basetype = (**allowed_type).get_base_type_cop();
+
+
+					if ( std::find( name3map.begin(), name3map.end(), basetype ) != name3map.end() ) {
 						toptask.target_type( *allowed_type );
 						break;
 						//TR(t_info) << "Setting target type " << (*def)->name3
@@ -304,7 +309,11 @@ RestrictDesignToProteinDNAInterface::apply(
 					for ( auto
 							allowed_type( bottask.allowed_residue_types_begin() ),
 							end( bottask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
-						if ( std::find( name3map_comp.begin(), name3map_comp.end(), *allowed_type ) !=
+
+						//getting base type of allowed_type to allow for iteration without crashing at terminal of DNA molecule
+						ResidueTypeCOP const & basetype = (**allowed_type).get_base_type_cop();
+
+						if ( std::find( name3map_comp.begin(), name3map_comp.end(), basetype ) !=
 								name3map_comp.end() ) {
 							bottask.target_type( *allowed_type );
 							break;
