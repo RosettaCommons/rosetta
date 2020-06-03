@@ -88,6 +88,12 @@ void to_json(nlohmann::json& j, SequenceSpecification const & ss);
 
 void from_json(const json& j, SequenceSpecification & ss);
 
+
+
+std::string
+AlignPDBInfoToSequences_namer( std::string const & name );
+
+
 ///@brief Realign poses to sequences after losing pdb_info
 class AlignPDBInfoToSequences : public protocols::moves::Mover {
 

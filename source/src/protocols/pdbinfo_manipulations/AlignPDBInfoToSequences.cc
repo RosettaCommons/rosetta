@@ -536,6 +536,11 @@ AlignPDBInfoToSequences::parse_my_tag(
 
 }
 
+std::string
+AlignPDBInfoToSequences_namer( std::string const & name ) {
+	return "AlignPDBInfoToSequences_subelement_" + name + "_type";
+}
+
 void AlignPDBInfoToSequences::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 
@@ -547,7 +552,19 @@ void AlignPDBInfoToSequences::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		+ XMLSchemaAttribute::attribute_w_default( "json_fns", xs_string, "The name of the json sequence file(s) (separated by ',')", "")
 		+ XMLSchemaAttribute::attribute_w_default( "throw_on_fail", xsct_rosetta_bool, "throw on failure.", "false" );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
+	AttributeList target_subelement_attributes;
+	target_subelement_attributes
+		+ XMLSchemaAttribute::attribute_w_default( "name", xs_string, "unused but useful for keeping track of what protein you're looking at", "")
+		+ XMLSchemaAttribute::required_attribute( "sequence", xs_string, "sequence of current chain/protein")
+		+ XMLSchemaAttribute::required_attribute( "chains", xs_string, "chains to set with current protein")
+		+ XMLSchemaAttribute::attribute_w_default( "segmentIDs", xs_string, "segmentIDs to set for the current protein", "")
+		+ XMLSchemaAttribute::attribute_w_default( "insCodes", xs_string, "insertion codes to set for the current protein", "");
+
+	XMLSchemaSimpleSubelementList subelements;
+	subelements.complex_type_naming_func( & AlignPDBInfoToSequences_namer );
+	subelements.add_simple_subelement( "Target", target_subelement_attributes, "Targets and settings of the sequences to align to.");
+
+	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(),
 		"Align the PDBInfo of a pose to some given sequences. This mover does not alter"
 		" geometry or sequence of the pose. The only thing that is altered is the PDBInfo."
 		" The goal of this mover is to re-number/re-chain a pose so that its PDBInfo is in"
@@ -563,7 +580,7 @@ void AlignPDBInfoToSequences::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		" WARNING 2: This will most likely not give you the correct results if your pose"
 		" or target sequence contain carbohydrate or other residues that are represented"
 		" using [ ] or ( ).",
-		attlist );
+		attlist, subelements );
 
 	//basic direct attributes
 
