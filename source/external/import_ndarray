@@ -1,10 +1,17 @@
 #!/bin/sh
 
+# NOTE: You will need the following dependencies installed:
+# * Doxygen
+# * Boost libraries and headers
+# * Eigen3 libraries
+# * M4
+# sudo apt-get install doxygen libboost-all-dev libeigen3-dev m4
+
 set -e
 set -x
 
-NDARRAY_EXTERNAL_SRC=https://github.com/asford/ndarray.git
-NDARRAY_EXTERNAL_REVISION=74b5b66
+NDARRAY_EXTERNAL_SRC=https://github.com/ndarray/ndarray.git
+NDARRAY_EXTERNAL_REVISION=tags/1.5.3
 
 INSTALL_LOCATION=`git rev-parse --show-toplevel`/source/external
 
@@ -22,5 +29,13 @@ make test
 rm -rf $INSTALL_LOCATION/include/ndarray*
 make install
 
-rm $INSTALL_LOCATION/include/ndarray/pybind11.h
-rm $INSTALL_LOCATION/include/ndarray/converter.h
+# Remove the GPL pybind11.h and replace with our version
+cd ../..
+rm -rf $INSTALL_LOCATION/include/ndarray/pybind11.h
+git checkout -- $INSTALL_LOCATION/include/ndarray/pybind11.h
+
+# Copy over license
+cp ./ndarray_src/LICENSE $INSTALL_LOCATION/include/ndarray/LICENSE
+
+# Cleanup temp directory
+rm -rf ./ndarray_src

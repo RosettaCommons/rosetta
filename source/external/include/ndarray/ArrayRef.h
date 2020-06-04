@@ -390,7 +390,7 @@ private:
     template <typename T_, int N_, int C_> friend class ArrayRef;
     template <typename T_, int N_, int C_> friend struct ArrayTraits;
     template <typename Derived> friend class ArrayBase;
-    template <typename Array_> friend struct detail::ArrayAccess;
+    template <typename Array_> friend class detail::ArrayAccess;
 
     /// @internal @brief Construct an ArrayRef from a pointer and Core.
     ArrayRef(T * data, CorePtr const & core) : Super(data, core) {}

@@ -12,6 +12,9 @@
 #define NDARRAY_EIGEN_BP_Array_h_INCLUDED
 
 #include "ndarray/eigen/bp/EigenView.h"
+#include "buildOptions.h"
+
+#ifdef NDARRAY_EIGENVIEW
 
 namespace ndarray {
 
@@ -52,4 +55,5 @@ private:
 
 } // namespace ndarray
 
+#endif // NDARRAY_EIGENVIEW
 #endif // !NDARRAY_EIGEN_BP_Matrix_h_INCLUDED

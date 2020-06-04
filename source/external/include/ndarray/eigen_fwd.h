@@ -11,6 +11,8 @@
 #ifndef NDARRAY_eigen_fwd_h_INCLUDED
 #define NDARRAY_eigen_fwd_h_INCLUDED
 
+#include "ndarray/buildOptions.h"
+
 /**
  *  @file ndarray/eigen_fwd.h
  *  @brief Forward declarations for ndarray/eigen interface.
@@ -34,6 +36,8 @@ template <int N, int C, int Rows, int Cols> struct EigenStrideTraits;
 
 } // namespace detail
 
+#ifdef NDARRAY_EIGENVIEW
+
 template <
     typename T, int N, int C, 
     typename XprKind_=Eigen::MatrixXpr,
@@ -41,6 +45,8 @@ template <
     int Cols_=((N == 1) ? 1 : -1)
     >
 class EigenView;
+
+#endif  // NDARRAY_EIGENVIEW
 
 } // namespace ndarray
 

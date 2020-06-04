@@ -288,7 +288,7 @@ std::vector<DirectSegmentLookupResult> DirectSegmentLookup::segment_lookup(
 			bool unique = true;
 			for ( auto & cluster : cluster_indicies ) {
 
-				auto coord_msd = (f_segment_coords[cluster.front()].asEigen() - f_segment_coords[ri].asEigen()).rowwise().squaredNorm().mean();
+				auto coord_msd = (asEigenArray(f_segment_coords[cluster.front()]) - asEigenArray(f_segment_coords[ri])).rowwise().squaredNorm().mean();
 				if ( coord_msd < cluster_tolerance ) {
 					unique = false;
 					cluster.push_back(ri);

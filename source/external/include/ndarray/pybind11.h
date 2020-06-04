@@ -1,3 +1,18 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file   external/include/ndarray/pybind11.h
+/// @brief  PyBind11 bindings for ndarray - this is a re-implementation of the GPL pybind11.h
+/// which is included with ndarray.
+/// @author Alex Ford
+/// @author Daniel Paoliello (danpao@microsoft.com)
+
 #pragma once
 
 #include "pybind11/pybind11.h"
@@ -5,7 +20,25 @@
 
 #include "Python.h"
 #include "ndarray.h"
-#include "ndarray/converter/pointer.h"
+
+// From https://github.com/ndarray/ndarray/blob/1.4.2/include/ndarray/converter/PyConverter.h
+inline void intrusive_ptr_add_ref(PyObject * obj) { Py_INCREF(obj); }
+inline void intrusive_ptr_release(PyObject * obj) { Py_DECREF(obj); }
+NAMESPACE_BEGIN(ndarray)
+typedef boost::intrusive_ptr<PyObject> PyPtr;
+NAMESPACE_END(ndarray)
+
+// From https://github.com/ndarray/ndarray/blob/1.4.2/include/ndarray/converter/PyManager.h
+NAMESPACE_BEGIN(ndarray)
+NAMESPACE_BEGIN(detail)
+inline void destroyCapsule(PyObject * p) {
+    void * m = PyCapsule_GetPointer(p, "ndarray.Manager");
+    Manager::Ptr * b = reinterpret_cast<Manager::Ptr*>(m);
+    delete b;
+};
+NAMESPACE_END(detail)
+NAMESPACE_END(ndarray)
+
 
 NAMESPACE_BEGIN(pybind11)
 NAMESPACE_BEGIN(detail)

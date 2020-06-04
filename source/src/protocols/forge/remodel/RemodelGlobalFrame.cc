@@ -767,7 +767,7 @@ RemodelGlobalFrame::setup_CM_helical_constraint(Pose & pose){
 		}
 
 		// repackage
-		Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
+		core::Vector idealCM_1( COM_target(0,i), COM_target(1,i), COM_target(2,i));
 
 		//constraint
 		input_pose_cst_set->add_constraint( utility::pointer::make_shared< protocols::constraints_additional::COMCoordinateConstraint >( ID_1s, idealCM_1, sd, tolerance ));

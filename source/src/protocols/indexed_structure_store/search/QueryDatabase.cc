@@ -58,7 +58,7 @@ void StructureData::initialize(
 	coordinate_buffer.conservativeResize(3, n_entry * c_per_entry);
 	for ( Index i = 0; i < n_entry; ++i ) {
 		coordinate_buffer.block(0, i * c_per_entry, 3, c_per_entry) =
-			src_coordinates[i].template asEigen<Eigen::MatrixXpr>().transpose();
+			asEigenMatrix(src_coordinates[i]).transpose();
 	}
 
 	chain_endpoints = src_chain_endpoints;
@@ -223,7 +223,7 @@ void StructureDatabase::initialize_structure_data_from_buffer(
 	struct_data.initialize(
 		coordinate_span_start,
 		coordinate_buffer[ndarray::view(coordinate_span_start, coordinate_span_end)],
-		chain_endpoints[ndarray::view(chain_endpoints_start, chain_endpoints_end)].template asEigen<Eigen::ArrayXpr>() - coordinate_span_start
+		asEigenArray(chain_endpoints[ndarray::view(chain_endpoints_start, chain_endpoints_end)]) - coordinate_span_start
 	);
 
 	structure_endpoint_index += 1;
@@ -292,14 +292,14 @@ void StructurePairQuery::init(
 	q_buffer_a.resize(3, n_entry_a * c_per_entry);
 	for ( Index i = 0; i < n_entry_a; ++i ) {
 		q_buffer_a.block(0, i * c_per_entry, 3, c_per_entry) =
-			query_coordinates_a[i].template asEigen<Eigen::MatrixXpr>().transpose();
+			asEigenMatrix(query_coordinates_a[i]).transpose();
 	}
 
 	n_entry_b = query_coordinates_b.template getSize<0>();
 	q_buffer_b.resize(3, n_entry_b * c_per_entry);
 	for ( Index i = 0; i < n_entry_b; ++i ) {
 		q_buffer_b.block(0, i * c_per_entry, 3, c_per_entry) =
-			query_coordinates_b[i].template asEigen<Eigen::MatrixXpr>().transpose();
+			asEigenMatrix(query_coordinates_b[i]).transpose();
 	}
 }
 
@@ -324,7 +324,7 @@ StructureSingleQuery::StructureSingleQuery(
 	q_buffer.resize(3, n_entry * c_per_entry);
 	for ( Index i = 0; i < n_entry; ++i ) {
 		q_buffer.block(0, i * c_per_entry, 3, c_per_entry) =
-			query_coordinates[i].template asEigen<Eigen::MatrixXpr>().transpose();
+			asEigenMatrix(query_coordinates[i]).transpose();
 	}
 }
 

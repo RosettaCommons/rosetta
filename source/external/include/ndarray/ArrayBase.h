@@ -28,7 +28,13 @@
 #include "ndarray/detail/ArrayAccess.h"
 #include "ndarray/detail/ViewBuilder.h"
 #include "ndarray/ArrayTraits.h"
+#include "ndarray/buildOptions.h"
+
+#ifdef NDARRAY_EIGENVIEW
+
 #include "ndarray/eigen_fwd.h"
+
+#endif  // NDARRAY_EIGENVIEW
 
 namespace ndarray {
 
@@ -191,6 +197,8 @@ public:
     /// @brief Return an ArrayRef view to this.
     Deep const deep() const { return Deep(this->getSelf()); }
     
+#ifdef NDARRAY_EIGENVIEW
+
     //@{
     /**
      *  @name Eigen3 Interface
@@ -212,6 +220,8 @@ public:
 
     EigenView<Element,ND::value,RMC::value,Eigen::MatrixXpr> asEigen() const;
     //@}
+
+#endif  // NDARRAY_EIGENVIEW
 
     /// @brief A template metafunction class to determine the result of a view indexing operation.
     template <typename View_>

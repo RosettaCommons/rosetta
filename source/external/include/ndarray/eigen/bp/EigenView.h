@@ -14,6 +14,9 @@
 #include "boost/numpy.hpp"
 #include "ndarray/bp/Array.h"
 #include "ndarray/eigen.h"
+#include "ndarray/buildOptions.h"
+
+#ifdef NDARRAY_EIGENVIEW
 
 namespace ndarray {
 
@@ -77,4 +80,5 @@ private:
 
 } // namespace ndarray
 
+#endif  // NDARRAY_EIGENVIEW
 #endif // !NDARRAY_EIGEN_BP_EigenView_h_INCLUDED
