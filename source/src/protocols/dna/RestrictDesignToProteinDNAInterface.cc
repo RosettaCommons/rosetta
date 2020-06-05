@@ -284,7 +284,7 @@ RestrictDesignToProteinDNAInterface::apply(
 				for ( auto
 						allowed_type( toptask.allowed_residue_types_begin() ),
 						end( toptask.allowed_residue_types_end() ); allowed_type != end; ++allowed_type ) {
-					
+
 					//getting base type of allowed_type to allow for iteration without crashing at terminal of DNA molecule
 					ResidueTypeCOP const & basetype = (**allowed_type).get_base_type_cop();
 
