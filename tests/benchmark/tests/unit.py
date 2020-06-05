@@ -14,6 +14,7 @@
 
 import os, json, functools
 import codecs
+import pprint
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
@@ -104,6 +105,12 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
     #     key = lib[:-5]  # core.test → core
     #     # u'∙'
     #     for t in json_results[lib]['ALL_TESTS']: r[ key.replace('.', '_') + '_' + t.replace(':', '_')] = _S_failed_ if t in json_results[lib]['FAILED_TESTS'] else _S_passed_
+
+    if 'tests' not in json_results or len(json_results['tests']) == 0:
+        with codecs.open(working_dir+'/debug.txt', 'w', encoding='utf-8', errors='replace') as debug_file:
+            print( full_log, file=debug_file );
+            print( '--'*30, file=debug_file );
+            pprint.pprint( json_results, stream=debug_file );
 
     results[_StateKey_]   = functools.reduce(lambda a, b: _S_passed_ if a==_S_passed_ and b==_S_passed_ else _S_failed_, [ json_results['tests'][t][_StateKey_] for t in json_results['tests'] ] )
     results[_LogKey_]     = output  # ommiting compilation log and only including unit tests output

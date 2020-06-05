@@ -19,11 +19,6 @@
 #include <iostream>
 
 // External headers
-#include <boost/accumulators/accumulators.hpp>
-#include <boost/accumulators/statistics/mean.hpp>
-#include <boost/accumulators/statistics/stats.hpp>
-#include <boost/accumulators/statistics/variance.hpp>
-#include <boost/math/distributions/normal.hpp>
 
 // Project headers
 #include <core/types.hh>
@@ -38,28 +33,36 @@ using boost::math::normal;
 using numeric::random::DistributionSampler;
 
 class DistributionSamplerTest : public CxxTest::TestSuite {
- public:
-  // If we draw a sufficient number of samples, can we recover the underlying
-  // distribution's parameters?
-  void test_normal() {
-    using namespace boost::accumulators;
+public:
+	// If we draw a sufficient number of samples, can we recover the underlying
+	// distribution's parameters?
+	void test_normal() {
 
-    // define a normal distribution with mean 0 and std 1
-    normal dist(0, 1);
-    DistributionSampler<normal> sampler(dist);
+		// define a normal distribution with mean 0 and std 1
+		normal dist(0, 1);
+		DistributionSampler<normal> sampler(dist);
 
-    // draw samples from the distribution
-    accumulator_set<core::Real, stats<tag::mean, tag::variance> > acc;
-    for (int i = 0; i < NUM_SAMPLES; ++i)
-      acc(sampler.sample());
+		// draw samples from the distribution
+		// This used to use boost accumulators, but ICC seems to have issues with them.
+		utility::vector1< core::Real > samples;
+		samples.reserve( NUM_SAMPLES );
+		for ( int i = 0; i < NUM_SAMPLES; ++i ) {
+			samples.push_back( sampler.sample() );
+		}
 
-    // calculate population mean and std
-    double population_mean = mean(acc);
-    double population_std  = std::sqrt(variance(acc));
+		// calculate population mean and std
+		core::Real population_mean = std::accumulate( samples.begin(), samples.end(), 0 ) / NUM_SAMPLES;
 
-    TS_ASSERT_DELTA(dist.mean(), population_mean, TOLERANCE);
-    TS_ASSERT_DELTA(dist.standard_deviation(), population_std, TOLERANCE);
-  }
+		core::Real population_std  = 0;
+		for ( core::Real x: samples ) {
+			core::Real const d = x - population_mean;
+			population_std += d * d;
+		}
+		population_std = std::sqrt( population_std / NUM_SAMPLES );
+
+		TS_ASSERT_DELTA(dist.mean(), population_mean, TOLERANCE);
+		TS_ASSERT_DELTA(dist.standard_deviation(), population_std, TOLERANCE);
+	}
 };
 
 }  // anonymous namespace

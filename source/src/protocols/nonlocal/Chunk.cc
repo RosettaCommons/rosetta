@@ -14,12 +14,6 @@
 #include <protocols/nonlocal/Chunk.hh>
 
 // External headers
-#include <boost/scoped_ptr.hpp>
-#include <boost/accumulators/accumulators.hpp>
-#include <boost/accumulators/statistics/mean.hpp>
-#include <boost/accumulators/statistics/stats.hpp>
-#include <boost/accumulators/statistics/variance.hpp>
-#include <boost/math/distributions/normal.hpp>
 
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
@@ -59,17 +53,25 @@ using utility::VirtualBase;
 
 Chunk::Chunk(RegionOP  region, MoveMapOP  movable)
 : VirtualBase(), region_(std::move(region)), movable_(std::move(movable)) {
-	using namespace boost::accumulators;
 
-	// compute normal distribution parameters
-	accumulator_set<core::Size, stats<tag::mean, tag::variance> > acc;
-	for ( core::Size i = start(); i <= stop(); ++i ) {
-		acc(i);
+	/// Closed for solution for the sum of range of consecutive integers (inclusive): N * (A + B) / 2
+	/// Leading the mean to be: (A + B) / 2
+	/// The variance of a set of k consecutive integers: (k-1)(k+1)/12
+	/// Leading to the simplification: (B-A+1-1)(B-A+1+1)/12 = (B-A)*(B-A+2)/12
+
+	core::Real mu = 0;
+	core::Real sd = 0;
+
+	if ( stop() >= start() ) {
+		mu = ( start() + stop() ) / 2.0;
+		core::Size delta = stop() - start();
+		sd = std::sqrt(  delta * (delta+2) / 12.0 );
+	} else {
+		mu = start();
+		sd = 0;
 	}
 
-	core::Real mu = mean(acc);
-	core::Real sigma = (std::sqrt(variance(acc)) * SD_MULTIPLIER) + SALT;
-	Normal dist(mu, sigma);
+	Normal dist(mu, sd * SD_MULTIPLIER + SALT);
 	sampler_.reset(new numeric::random::DistributionSampler<Normal>(dist));
 }
 
