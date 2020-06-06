@@ -38,11 +38,12 @@ def get_platform_release_name(platform):
     return '.'.join([platform['os']]+platform['extras']) + addon[ platform['os'] ]
 
 
-def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None):
+def release(name, package_name, package_dir, working_dir, platform, config, release_as_git_repository=True, file=None, use_rosetta_versioning=True):
     ''' Create a release packge: tar.bz2 + git repository
         name - must be a name of what is released without any suffices: rosetta, PyRosetta etc
         package_name - base name for archive (without tar.bz2) that should include name, os, revision, branch + other relevant platform info
         package_dir - location of prepared package
+        use_rosetta_versioning - if true resulted tar.bz2-archive will be renamed using Rosetta versioning naming
     '''
 
     TR = Tracer(True)
@@ -58,14 +59,20 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         with tarfile.open(archive, "w:bz2") as t: t.add(package_dir, arcname=package_versioning_name)  # , filter=arch_filter
 
     else:
-        assert file.endswith('.tar.bz2')
+        #assert file.endswith('.tar.bz2')
         archive = file
+
+
+    if use_rosetta_versioning:
+        assert archive.endswith('.tar.bz2')
+
 
     release_path = f'{release_root}/{name}/archive/{branch}/{package_name}'
     if not os.path.isdir(release_path): os.makedirs(release_path)
 
     with FileLock( f'{release_path}/.release.lock' ):
-        shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
+        if use_rosetta_versioning: shutil.move(archive, release_path + '/' + package_versioning_name + '.tar.bz2')
+        else: shutil.move(archive, release_path + '/' + os.path.basename(archive) )
 
         # removing old archives and adjusting _latest_html_
         files = [f for f in os.listdir(release_path) if f != _latest_html_  and  f[0] != '.' ]
@@ -101,7 +108,7 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
                 src = package_dir+'/'+f;  dest = working_dir+'/'+git_repository_name+'/'+f
                 if os.path.isfile(src): shutil.copy(src, dest)
                 elif os.path.isdir(src): shutil.copytree(src, dest)
-                execute('Git add {f}...', 'cd {working_dir}/{git_repository_name} && git add {f}'.format(**vars()))
+                execute(f'Git add {f}...', f'cd {working_dir}/{git_repository_name} && git add {f}' )
 
             res, git_output = execute('Git commiting changes...', 'cd {working_dir}/{git_repository_name} && git commit -a -m "{package_name}"'.format(**vars()), return_='tuple')
             if res  and 'nothing to commit, working directory clean' not in git_output: raise BenchmarkError('Could not commit changess to: {}!'.format(git_origin))
@@ -357,6 +364,8 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
+
+        #if debug: res, output = 0, 'Release script was invoked with `--debug` flag, - skipping PyRosetta unit tests run...\n'
         if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
         else: res, output = execute('Running PyRosetta tests...', 'cd {pyrosetta_path}/build && {python} self-test.py {gui_flag} -j{jobs} --timeout {timeout}'.format(pyrosetta_path=pyrosetta_path, python=result.python, jobs=jobs, gui_flag=gui_flag, timeout=timeout), return_='tuple')
 
@@ -390,6 +399,20 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             execute('Creating PyRosetta4 distribution package...', '{build_command_line} -sd --create-package {package_dir}'.format(**vars()))
 
             release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
+
+            # releasing PyMOL-RosettaServer scripts
+            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',         use_rosetta_versioning=False)
+            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python3', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.python3.py', use_rosetta_versioning=False)
+
+            # building and releaseing Wheel archive
+            #if (platform['python'][0] == '2' or platform['python'] == '3.5')  and  platform['os'] == 'mac': pass
+            if platform['python'][0] == '2': pass
+            else:
+                whell_environment = setup_persistent_python_virtual_environment(result.python_environment, 'setuptools wheel')
+
+                execute('Creating PyRosetta4 distribution Wheel package...', f'{whell_environment.activate} && cd {package_dir}/setup && python setup.py sdist bdist_wheel')
+                wheel_file_name = [ f for f in os.listdir( f'{package_dir}/setup/dist' ) if f.endswith('.whl') ][0]
+                release('PyRosetta4', release_name+'.wheel', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/setup/dist/{wheel_file_name}', use_rosetta_versioning=False)
 
             if os.path.isdir(package_dir): shutil.rmtree(package_dir)  # removing package to keep size of database small
 
@@ -617,7 +640,12 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
                     run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_packages_for_platform(platform, conda=True),
                 ),
-                test = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] ),
+
+                # technically there is no need to re-run tests here, since we just have run a full PyRosetta test suite
+                test = dict(
+                    requires = [f'python =={platform["python"]}'],
+                    commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'],
+                ),
 
                 about = dict( home ='http://www.pyrosetta.org' ),
             )

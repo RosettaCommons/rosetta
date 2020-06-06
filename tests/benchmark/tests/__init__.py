@@ -544,6 +544,14 @@ def local_open_ssl_install(prefix, build_prefix, jobs):
     return url
 
 
+def remove_pip_and_easy_install(prefix_root_path):
+    ''' remove `pip` and `easy_install` executable from given Python / virtual-environments install
+    '''
+    for f in os.listdir(prefix_root_path + '/bin'):  # removing all pip's and easy_install's to make sure that environment is immutable
+        for p in ['pip', 'easy_install']:
+            if f.startswith(p): os.remove(prefix_root_path + '/bin/' + f)
+
+
 
 def local_python_install(platform, config):
     ''' Perform local install of given Python version and return path-to-python-interpreter, python_include_dir, python_lib_dir
@@ -579,7 +587,8 @@ def local_python_install(platform, config):
         ('ubuntu', '2.7') : ('', '--enable-unicode=ucs4'),
     }
 
-    packages = None #if python_version.startswith('2.') else 'pydoc'  # Python-2 does not install pip as default
+    #packages = '' if (python_version[0] == '2' or  python_version == '3.5' ) and  platform['os'] == 'mac' else 'pip setuptools wheel' # 2.7 is now deprecated on Mac so some packages could not be installed
+    packages = None
 
     url = python_sources[python_version]
 
@@ -588,8 +597,8 @@ def local_python_install(platform, config):
 
     extra = ('unset __PYVENV_LAUNCHER__ && ' + extra[0], extra[1])
 
-    options = '--without-ensurepip'
-    signature = f'v1.2 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
+    options = '--with-ensurepip' #'--without-ensurepip'
+    signature = f'v1.3.3 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
     root = calculate_unique_prefix_path(platform, config) + '/python-' + python_version + '.' +  compiler
 
@@ -644,7 +653,12 @@ def local_python_install(platform, config):
 
         shutil.rmtree(build_prefix)
 
-        #if packages: execute('Installing packages {}...'.format(packages), 'cd {root} && {root}/bin/pip{python_version} install {packages}'.format(**vars()) )
+        #execute('Updating setuptools...', f'cd {root} && {root}/bin/pip{python_version} install --upgrade setuptools wheel' )
+
+        if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {root}/bin/pip{python_version} install --upgrade {packages}' )
+        #if packages: execute( f'Installing packages {packages}...', f'cd {root} && unset __PYVENV_LAUNCHER__ && {executable} -m pip install --upgrade {packages}' )
+
+        remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
 
         with open(signature_file_name, 'w') as f: f.write(signature)
 
@@ -677,7 +691,7 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     bin=working_dir+'/bin'
 
-    if packages: execute('Installing packages: {}...'.format(packages), '{bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
+    if packages: execute('Installing packages: {}...'.format(packages), 'unset __PYVENV_LAUNCHER__ && {bin}/python {bin}/pip install --upgrade pip && {bin}/python {bin}/pip install --progress-bar off {packages}'.format(**vars()) )
     #if packages: execute('Installing packages: {}...'.format(packages), '{bin}/pip{python_environment.version} install {packages}'.format(**vars()) )
 
     return NT(activate = activate, python = bin + '/python', root = working_dir, bin = bin)
@@ -710,9 +724,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
         else:
             if os.path.isdir(root): shutil.rmtree(root)
             setup_python_virtual_environment(root, python_environment, packages=packages)
-            for f in os.listdir(root + '/bin'):  # removing all pip's and easy_install's to make sure that environment is immutable
-                for p in ['pip', 'easy_install']:
-                    if f.startswith(p): os.remove(root + '/bin/' + f)
+            remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
             with open(signature_file_name, 'w') as f: pass
 
         return NT(activate = activate, python = bin + '/python', root = root, bin = bin)

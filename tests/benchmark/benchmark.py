@@ -311,7 +311,7 @@ def run_test(setup):
         if _DescriptionKey_ not in res: res[_DescriptionKey_] = test_description
 
         if res[_StateKey_] not in _S_Values_: print( 'Warning!!! Test {} failed with unknow result code: {}'.format(test_name, res[_StateKey_]) )
-        else: print( f'Test {test} finished output:\n{res[_LogKey_]}\n----------------------------------------------------------------\nState: {res[_StateKey_]!r} | ', end='')
+        else: print( f'Test {test} finished with output:\n{res[_LogKey_]}\n----------------------------------------------------------------\nState: {res[_StateKey_]!r} | ', end='')
 
         # JSON by default serializes to an ascii-encoded format
         with open(working_dir+'/.execution.results.json', 'w') as f: json.dump(res, f, sort_keys=True, indent=2)

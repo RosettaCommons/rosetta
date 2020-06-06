@@ -23,16 +23,16 @@ def maybe_initialize_handler(mode):
         # A rosetta logging handler is already initialized
         return
 
-    if mode is "logging":
+    if mode == "logging":
         # We're in "quiet mode", handle all logs via the standard logging config.
         return
 
     if logging.root.handlers:
-        if mode is not "interactive":
+        if mode != "interactive":
             # A root logger is already configured and we're in non-interactive mode.
             return
 
-        if mode is "interactive" and logging.root.isEnabledFor(logging.INFO):
+        if mode == "interactive" and logging.root.isEnabledFor(logging.INFO):
             # Default ipython notebook configuration registers a root handler,
             # but does not enable it at the "INFO" level.
 

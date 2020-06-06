@@ -111,6 +111,19 @@ def run_release_test(rosetta_dir, working_dir, platform, config):
 
 
 
+def run_python_test(rosetta_dir, working_dir, platform, config):
+
+    python_environment = local_python_install(platform, config)
+
+    if platform['python'][0] == '2': pass
+    else:
+        #python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, python_packages='colr')
+        setup_python_virtual_environment(working_dir, python_environment, packages='colr')
+
+    return {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : f'Done!'}
+
+
+
 def compare(test, results, files_path, previous_results, previous_files_path):
     """
     Compare the results of two tests run (new vs. previous) for regression test
@@ -167,5 +180,6 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test == 'regression': return run_regression_test (rosetta_dir, working_dir, platform, config)
     elif test == 'subtests':   return run_subtests_test   (rosetta_dir, working_dir, platform, config)
     elif test == 'release':    return run_release_test    (rosetta_dir, working_dir, platform, config)
+    elif test == 'python':     return run_python_test     (rosetta_dir, working_dir, platform, config)
 
     else: raise BenchmarkError(f'Dummy test script does not support run with test={test!r}!')
