@@ -235,7 +235,7 @@ void HybridizeFoldtreeDynamic::initialize(
 	using utility::vector1;
 
 	num_nonvirt_residues_ = pose.size();
-	num_protein_residues_ = pose.size();
+	num_polymer_residues_ = pose.size();
 	saved_n_residue_ = pose.size();
 	saved_ft_ = pose.conformation().fold_tree();
 
@@ -273,10 +273,10 @@ void HybridizeFoldtreeDynamic::initialize(
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
 		symm_info = SymmConf.Symmetry_Info();
 		num_nonvirt_residues_ = symm_info->num_independent_residues();
-		num_protein_residues_ = symm_info->num_independent_residues();
+		num_polymer_residues_ = symm_info->num_independent_residues();
 	}
 	while ( pose.residue_type(num_nonvirt_residues_).aa() == core::chemical::aa_vrt ) num_nonvirt_residues_--;
-	while ( !pose.residue(num_protein_residues_).is_protein() ) num_protein_residues_--;
+	while ( !pose.residue(num_polymer_residues_).is_polymer() ) num_polymer_residues_--;
 
 	// special case for ab initio
 	if ( core_chunks.size() == 0 ) {
@@ -290,8 +290,8 @@ void HybridizeFoldtreeDynamic::initialize(
 
 	// set new
 	choose_anchors();
-	utility::vector1 < core::Size > cut_positions = decide_cuts(pose, num_protein_residues_);
-	make_complete_chunks(cut_positions, num_protein_residues_);
+	utility::vector1 < core::Size > cut_positions = decide_cuts(pose, num_polymer_residues_);
+	make_complete_chunks(cut_positions, num_polymer_residues_);
 
 	debug_assert(chunks_.num_loop());
 

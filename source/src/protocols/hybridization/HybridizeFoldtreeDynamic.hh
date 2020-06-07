@@ -103,8 +103,8 @@ private:
 
 	/// index of the virtual residue we added to the pose in set_up()
 	int virtual_res_;
-	core::Size num_nonvirt_residues_;
-	core::Size num_protein_residues_;
+	core::Size num_nonvirt_residues_ = 0;
+	core::Size num_polymer_residues_ = 0;
 
 	// backup original info
 	core::kinematics::FoldTree initial_asymm_foldtree_;
