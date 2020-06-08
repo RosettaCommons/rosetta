@@ -86,6 +86,12 @@ by using -H).
 
 <targets> are lists of projects or directories you want to build.
 
+The recommended command to build all of Rosetta for production runs is:
+
+    ./scons.py -j 8 mode=release bin
+
+In the above, "8" should be replaced with the number of parallel compilation processes to run (typically, the number of available CPU cores on the node used for compilation).
+
 Examples:
 
     scons
@@ -125,22 +131,50 @@ Examples:
 
 
     scons mode=release
-        Build in release mode (~10x faster executable)
+        Build in release mode (~10x faster executable).  Should be used for
+        production builds!
 
     scons extras=static
-        Static linking instead of shared libraries (more portable)
+        Static linking instead of shared libraries (more portable but bigger
+        compiled binaries).
 
     scons cat=test
     python test/run.py
         Build and run unit tests. (Note the sources must be built first.)
 
     scons -j3
-        Parallelize build into 3 threads (faster on multiproc. machine)
+        Parallelize build into 3 threads (faster on multiproc. machine).  Note
+        that this accelerates the BUILD process, not the EXECUTION of Rosetta
+        applications once built.
+
+    scons extras=mpi,serialization
+        Enable support for MPI-based (process-level) parallelism, with
+        serialization support.  Note that this can accelerate EXECUTION of
+        certain Rosetta applications, not the build process.
+
+    scons extras=cxx11thread
+        Enable support for multi-threading.  (Experimental feature).  Note
+        that this can accelerate EXECUTION of certain Rosetta applications,
+        not the build process.
+
+    scons extras=tensorflow
+        Enable linking against Tensorflow CPU libraries for ML extensions.
+        Can also use extras=tensorflow_gpu for GPU libraries.  (Experimental
+        feature).
 
     scons extras=apbs
 
     scons extras=hdf5
         Enable support for HDF5 datastores.
+
+    scons --nover
+        Build Rosetta, skipping the versioning script and the submodule update
+        script.  The versioning script updates certain files with the Rosetta
+        version, which results in files that depend on these files being
+        re-compiled and much of Rosetta being re-linked.  The git submodule
+        update script updates submodules that are necessary for compilation.
+        For rapid rounds of development, it can speed things up to skip these
+        steps.  This option should NOT be used for production builds.
 """
 
 def main():

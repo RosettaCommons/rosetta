@@ -20,17 +20,27 @@ SetOption('implicit_cache', 1)
 AddOption('--nover',
           dest='nover',
           action="store_true", default=False,
-          help="Don't run the versioning script.")
+          help="Don't run the versioning script or the submodule update script.  Skipping the versioning script saves time recompiling files that depend on it, and re-linking all of the libraries, but this should only be done during rapid cycles of development.  Production builds should not use this option.")
 
 if not GetOption("help"):
+
+    # Decide whether to run the versioning script:
     if GetOption("nover"):
-        print("Skipping versioning script. (Hopefully src/core/svn_version.cc is already up-to-date.)")
+        print("Skipping versioning script since --nover option was used. (Hopefully src/core/svn_version.cc is already up-to-date.)")
     else:
         import version
-
         version.main(['./version.py'])
+
+    # Update options:
     subprocess.check_call(["./update_options.sh"])
-    subprocess.check_call(["./update_submodules.sh"] + str(build.options.extras).split(','))
+
+    # Decide whether to update submodules:
+    if GetOption("nover"):
+        print("Skipping submodule update script since --nover option was used.  (Hopefully all submodules that are needed for compilation are up-to-date.)")
+    else:
+        subprocess.check_call(["./update_submodules.sh"] + str(build.options.extras).split(','))
+
+    # Update residue type enum files:
     subprocess.check_call(["./update_ResidueType_enum_files.sh"])
 
 for kind in build.options.cat:
