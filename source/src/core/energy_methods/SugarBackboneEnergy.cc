@@ -199,6 +199,9 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	// Ignore VIRTUAL residues.
 	if ( rsd.is_virtual_residue() ) { return deriv; }
 
+	// Ignore LIGAND residues, as they cannot have a sugar backbone energy.
+	if ( rsd.is_ligand() ) { return deriv; }
+
 	// This scoring method only considers glycosidic torsions, which may have either BB, CHI, or BRANCH TorsionIDs.
 	if ( ! torsion_id.valid() ) {
 		TR.Debug << "Torsion not valid: " << torsion_id << endl;

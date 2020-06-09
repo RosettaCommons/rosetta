@@ -1,4 +1,4 @@
-NAME UDP
+NAME UDP                   # uridine_diphosphate
 IO_STRING UDP Z
 TYPE POLYMER # POLYMER is selected here, because this is a "cap" for polymers such as UDP-saccharides.
 VARIANT LOWER_TERMINUS_VARIANT

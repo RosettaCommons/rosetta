@@ -389,6 +389,9 @@ TPN
 #residue_types/coenzymes/flavin_mononucleotide.params -- Not active
 ATP
 UDP
+SAM
+SAH
+#FMN
 
 ## Polyaramids
 # No correspondence between Rosetta & CCD for polyaramids

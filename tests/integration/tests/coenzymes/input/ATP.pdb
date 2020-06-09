@@ -1,0 +1,37 @@
+HEADER    IMMUNE SYSTEM/RNA                       07-MAR-19   6O78              
+TITLE     CRYSTAL STRUCTURE OF CSM1-CSM4 CASSETTE IN COMPLEX WITH PPPAPAPA      
+HET    ATP  E   1      31                                                       
+HETNAM     ATP ADENOSINE-5'-TRIPHOSPHATE                                        
+FORMUL   3  ATP    C10 H16 N5 O13 P3                                            
+HETATM 7586  PG  ATP E   1     -16.276 -62.833   1.987  1.00100.55           P  
+HETATM 7587  O1G ATP E   1     -16.345 -64.266   2.339  1.00 97.70           O  
+HETATM 7588  O2G ATP E   1     -15.430 -62.406   0.877  1.00 99.62           O  
+HETATM 7589  O3G ATP E   1     -17.645 -62.557   1.498  1.00100.84           O  
+HETATM 7590  PB  ATP E   1     -15.747 -60.828   3.842  1.00 97.32           P  
+HETATM 7591  O1B ATP E   1     -14.506 -61.605   3.985  1.00 99.53           O  
+HETATM 7592  O2B ATP E   1     -16.448 -60.361   5.052  1.00 98.54           O  
+HETATM 7593  O3B ATP E   1     -16.794 -61.717   2.983  1.00 99.48           O  
+HETATM 7594  PA  ATP E   1     -16.287 -58.261   2.716  1.00101.39           P  
+HETATM 7595  O1A ATP E   1     -17.633 -58.509   3.275  1.00100.38           O  
+HETATM 7596  O2A ATP E   1     -16.151 -57.838   1.307  1.00101.91           O  
+HETATM 7597  O3A ATP E   1     -15.390 -59.591   2.872  1.00100.11           O  
+HETATM 7598  O5' ATP E   1     -15.509 -57.173   3.623  1.00107.85           O  
+HETATM 7599  C5' ATP E   1     -15.199 -57.353   5.015  1.00111.45           C  
+HETATM 7600  C4' ATP E   1     -15.410 -56.012   5.715  1.00114.20           C  
+HETATM 7601  O4' ATP E   1     -14.105 -55.410   5.930  1.00113.34           O  
+HETATM 7602  C3' ATP E   1     -16.204 -54.987   4.894  1.00117.50           C  
+HETATM 7603  O3' ATP E   1     -16.875 -54.052   5.772  1.00126.46           O  
+HETATM 7604  C2' ATP E   1     -15.122 -54.258   4.112  1.00115.11           C  
+HETATM 7605  O2' ATP E   1     -15.543 -52.929   3.782  1.00116.28           O  
+HETATM 7606  C1' ATP E   1     -13.996 -54.199   5.129  1.00113.06           C  
+HETATM 7607  N9  ATP E   1     -12.617 -54.197   4.557  1.00109.50           N  
+HETATM 7608  C8  ATP E   1     -12.153 -54.648   3.397  1.00107.65           C  
+HETATM 7609  N7  ATP E   1     -10.840 -54.435   3.369  1.00105.01           N  
+HETATM 7610  C5  ATP E   1     -10.480 -53.855   4.513  1.00105.37           C  
+HETATM 7611  C6  ATP E   1      -9.297 -53.436   4.990  1.00104.22           C  
+HETATM 7612  N6  ATP E   1      -8.230 -53.602   4.224  1.00102.51           N  
+HETATM 7613  N1  ATP E   1      -9.170 -52.869   6.197  1.00104.44           N  
+HETATM 7614  C2  ATP E   1     -10.310 -52.711   6.984  1.00105.37           C  
+HETATM 7615  N3  ATP E   1     -11.534 -53.153   6.468  1.00107.31           N  
+HETATM 7616  C4  ATP E   1     -11.588 -53.713   5.246  1.00107.10           C  
+END                                                                             

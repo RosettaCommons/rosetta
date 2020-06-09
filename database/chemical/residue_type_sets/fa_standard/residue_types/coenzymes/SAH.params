@@ -1,0 +1,234 @@
+NAME S-adenosyl_homocysteine  # S-adenosyl-L-homocysteine (demethylated SAM)
+IO_STRING SAH Z
+TYPE LIGAND
+AA UNK
+
+# Ligand arbitrarily built to run from N of Met to C1' of the ribose.
+# Main-chain atoms:
+ATOM  N   Nlys NH3  -0.30
+ATOM  CA  CAbb CT1   0.22
+ATOM  CB  CH2  CT2  -0.18
+ATOM  CG  CH2  CT2  -0.12
+ATOM  SD  S    S    -0.18
+ATOM_ALIAS  SD   SE  
+
+ATOM  C5' CH2  CT2  -0.12
+ATOM  C4' CH1  CT1   0.04
+ATOM  C3' CH1  CT1   0.14
+ATOM  C2' CH2  CT1   0.14
+ATOM  C1' CH1  CT1   0.04
+
+# Other backbone heavy atoms:
+ATOM  O4' Oet3 OS   -0.26
+ATOM VO4' VIRT VIRT  0.00  # to O4'; allows for consistent chi angles
+ATOM VC1' VIRT VIRT  0.00  # to C1'; required for ring flipping
+
+# Side-chain heavy atoms:
+ATOM  C   COO  CC    0.52
+ATOM  O   OOC  OC   -0.76
+ATOM  OXT OOC  OC   -0.76
+
+ATOM  O3' OH   OH1  -0.66
+ATOM  O2' OH   OH1  -0.66
+
+ATOM  N9  Ntrp NN3  -0.05
+ATOM  C8  aroC CN4   0.34
+ATOM  N7  Nhis NN4  -0.71
+ATOM  C5  aroC CN5   0.28
+ATOM  C4  aroC CN5   0.43
+ATOM  N3  Nhis NN3A -0.75
+ATOM  C2  aroC CA    0.50  # Should be CNA in CHARMm27
+ATOM  N1  Nhis NN3A -0.74
+ATOM  C6  aroC CA    0.46  # Should be CNA in CHARMm27
+ATOM  N6  NH2O NH2  -0.77  # Should be NN5 in CHARMm27
+
+# Hydrogens:
+ATOM 1H   Hpol HC    0.33
+ATOM 2H   Hpol HC    0.33
+ATOM 3H   Hpol HC    0.33
+ATOM  HA  Hapo HB    0.09
+ATOM 1HB  Hapo HA    0.09
+ATOM_ALIAS 1HB   HB2
+ATOM 2HB  Hapo HA    0.09
+ATOM_ALIAS 2HB   HB3
+ATOM 1HG  Hapo HA    0.09
+ATOM_ALIAS 1HG   HG2
+ATOM 2HG  Hapo HA    0.09
+ATOM_ALIAS 2HG   HG3
+ATOM 1H5' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM 2H5' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM  H4' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM  H3' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM  H2' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM  H1' Hapo HA    0.09  # Should be HN6 in CHARMm27
+ATOM  H8  Haro HN3   0.12
+ATOM  H2  Haro HN3   0.13
+ATOM 1H6  Hpol HN1   0.38
+ATOM_ALIAS 1H6   H61
+ATOM 2H6  Hpol HN1   0.38
+ATOM_ALIAS 2H6   H62
+ATOM HO2' Hpol H     0.43  # Should be HN5 in CHARMm27
+ATOM HO3' Hpol H     0.43  # Should be HN5 in CHARMm27
+
+CHARGE  N   FORMAL +1
+
+BOND  N    CA 
+BOND  CA   CB 
+BOND  CB   CG 
+BOND  CG   SD 
+BOND  SD   C5'
+BOND  C5'  C4'
+BOND  C4'  C3'
+BOND  C3'  C2'
+BOND  C2'  C1'
+BOND  C4'  O4'
+BOND  O4'  C1'               # cyclic bond
+CUT_BOND  O4'  C1'           # cyclic bond
+BOND  O4' VC1'               # cyclic bond
+BOND  C1' VO4'               # cyclic bond
+BOND  CA   C  
+BOND_TYPE  C    O   CARBOXY
+BOND_TYPE  C    OXT CARBOXY
+BOND  C3'  O3'
+BOND  C2'  O2'
+BOND  C1'  N9 
+BOND_TYPE  N9   C8  AROMATIC
+BOND_TYPE  C8   N7  AROMATIC
+BOND_TYPE  N7   C5  AROMATIC
+BOND_TYPE  C5   C4  AROMATIC
+BOND_TYPE  C4   N3  AROMATIC
+BOND_TYPE  N3   C2  AROMATIC
+BOND_TYPE  C2   N1  AROMATIC
+BOND_TYPE  N1   C6  AROMATIC
+BOND_TYPE  C6   N6  CARBOXY  # Not actually a carboxyl
+BOND_TYPE  C4   N9  AROMATIC # cyclic bond
+CUT_BOND  C4   N9            # cyclic bond
+BOND_TYPE  C6   C5  AROMATIC # cyclic bond
+CUT_BOND  C6   C5            # cyclic bond
+BOND  N   1H  
+BOND  N   2H  
+BOND  N   3H  
+BOND  CA   HA 
+BOND  CB  1HB 
+BOND  CB  2HB 
+BOND  CG  1HG 
+BOND  CG  2HG 
+BOND  C5' 1H5'
+BOND  C5' 2H5'
+BOND  C4'  H4'
+BOND  C3'  H3'
+BOND  O3' HO3'
+BOND  C2'  H2'
+BOND  O2' HO2'
+BOND  C1'  H1'
+BOND  C8   H8 
+BOND  C2   H2 
+BOND  N6  1H6 
+BOND  N6  2H6 
+
+VIRTUAL_SHADOW VO4'  O4'
+VIRTUAL_SHADOW VC1'  C1'
+
+CHI 1  N    CA   C   O
+CHI_ROTAMERS 1  0  0
+CHI_ROTAMERS 1  30 0
+CHI_ROTAMERS 1  60 0
+CHI_ROTAMERS 1  90 0
+CHI_ROTAMERS 1 120 0
+CHI_ROTAMERS 1 150 0
+CHI_ROTAMERS 1 180 0        # Going past 180 is pointless, since O and OXT are indistinguishable.
+CHI 2  C2'  C3'  O3'  HO3'  # eta3'
+CHI_ROTAMERS 2  60 0
+CHI_ROTAMERS 2 180 0
+CHI_ROTAMERS 2 300 0
+CHI 3  C1'  C2'  O2'  HO2'  # eta2'
+CHI_ROTAMERS 3  60 0
+CHI_ROTAMERS 3 180 0
+CHI_ROTAMERS 3 300 0
+CHI 4 VO4'  C1'  N9  C8     # cannot use O4' to define torsion, since atom tree doesn't treat it as connected
+CHI_ROTAMERS 4  0  0
+CHI_ROTAMERS 4  60 0
+CHI_ROTAMERS 4 120 0
+CHI_ROTAMERS 4 180 0
+CHI_ROTAMERS 4 240 0
+CHI_ROTAMERS 4 300 0
+CHI_ROTAMERS 4 360 0
+
+ADD_RING 1  C1'  C2'  C3'  C4'  O4'
+
+NU 1 VO4'  C1'  C2'  C3'    # duplicates BB 1, but defined differently
+NU 2  C1'  C2'  C3'  C4'    # duplicates BB 2
+NU 3  C2'  C3'  C4'  O4'    # duplicates BB 3, but defined differently
+NU 4  C3'  C4'  O4'  VC1'
+#NU 5 is across the CUT_BOND
+#LOWEST_RING_CONFORMER 3E
+#LOW_RING_CONFORMERS 3T2 3T4 2T3 2E 2T1
+
+PROPERTIES  POLAR AROMATIC CYCLIC CHARGED PURINE
+
+NBR_ATOM C4'
+NBR_RADIUS 10
+
+MAINCHAIN_ATOMS  N    CA   CB   CG   SD   C5'  C4'  C3'  C2'  C1'  
+FIRST_SIDECHAIN_ATOM  C  
+
+
+# must build main chain 1st!
+ICOOR_INTERNAL    N        0.0         0.0        0.0        N     CA    CB  
+ICOOR_INTERNAL    CA       0.0         0.0        1.47       N     CA    CB  
+ICOOR_INTERNAL    CB       0.0        70.5        1.53       CA    N     CB  
+ICOOR_INTERNAL    CG     -65.0        70.5        1.53       CB    CA    N  
+ICOOR_INTERNAL    SD     180.0        70.5        1.81       CG    CB    CA 
+
+ICOOR_INTERNAL    C5'    180.0        70.0        1.81       SD    CG    CB
+ICOOR_INTERNAL    C4'    180.0        70.5        1.53       C5'   SD    CG
+ICOOR_INTERNAL    C3'   -175.3        70.1        1.54       C4'   C5'   SD
+ICOOR_INTERNAL    C2'   -121.4        76.0        1.55       C3'   C4'   C5'
+ICOOR_INTERNAL    C1'    -21.0        77.9        1.55       C2'   C3'   C4'
+
+# then the rest of the backbone heavy atoms
+ICOOR_INTERNAL    O4'     -1.9        72.6        1.44       C4'   C3'   C2'
+ICOOR_INTERNAL   VO4'     37.1        76.5        1.44       C1'   C2'   C3'  # must build as branch from main chain, unlike O4'
+ICOOR_INTERNAL   VC1'     26.4        73.0        1.44       O4'   C4'   C3'  # must build from end of ring, unlike C1'
+
+# now the side-chain heavy atoms
+ICOOR_INTERNAL    C      175.0        70.5        1.51       CA    CB    CG 
+ICOOR_INTERNAL    O       90.0        60.0        1.22       C     CA    CB 
+ICOOR_INTERNAL    OXT    -90.0        60.0        1.22       C     CA    CB 
+
+ICOOR_INTERNAL    O2'   -139.2        69.2        1.43       C2'   C3'   C4'
+ICOOR_INTERNAL    O3'    120.9        69.2        1.43       C3'   C4'   C5'
+
+ICOOR_INTERNAL    N9     155.7        69.3        1.47       C1'   C2'   C3'
+ICOOR_INTERNAL    C8     -90.8        54.9        1.40       N9    C1'   C2'
+ICOOR_INTERNAL    N7     179.9        69.9        1.28       C8    N9    C1'
+ICOOR_INTERNAL    C5      -0.2        74.5        1.41       N7    C8    N9 
+ICOOR_INTERNAL    C4       0.2        69.4        1.30       C5    N7    C8 
+ICOOR_INTERNAL    N3    -179.6        57.6        1.38       C4    C5    N7 
+ICOOR_INTERNAL    C2       0.0        62.4        1.28       N3    C4    C5 
+ICOOR_INTERNAL    N1      -0.1        58.8        1.45       C2    N3    C4 
+ICOOR_INTERNAL    C6       0.1        59.2        1.23       N1    C2    N3 
+ICOOR_INTERNAL    N6     180.0        58.2        1.39       C6    N1    C2 
+
+# now all the Hs
+ICOOR_INTERNAL   1H       60.0        70.5        1.07       N     CA    CB 
+ICOOR_INTERNAL   2H      -60.0        70.5        1.07       N     CA    CB 
+ICOOR_INTERNAL   3H      180.0        70.5        1.07       N     CA    CB 
+ICOOR_INTERNAL    HA     120.0        70.5        1.09       CA    CB    N 
+ICOOR_INTERNAL   1HB    -120.0        70.5        1.09       CB    CA    CG 
+ICOOR_INTERNAL   2HB     120.0        70.5        1.09       CB    CA    CG 
+ICOOR_INTERNAL   1HG    -120.0        70.5        1.09       CG    CB    SD 
+ICOOR_INTERNAL   2HG     120.0        70.5        1.09       CG    CB    SD 
+
+ICOOR_INTERNAL    H1'    121.5        70.8        0.98       C1'   C2'   N9 
+ICOOR_INTERNAL    H2'   -125.4        68.5        0.98       C2'   C3'   O2'
+ICOOR_INTERNAL    H3'   -121.7        70.8        0.98       C3'   C4'   O3'
+ICOOR_INTERNAL    H4'   -119.1        71.2        0.98       C4'   C5'   O4'
+ICOOR_INTERNAL   1H5'   -120.5        71.0        0.98       C5'   SD    C4'
+ICOOR_INTERNAL   2H5'   -119.0        71.0        0.98       C5'   SD   1H5'
+ICOOR_INTERNAL    H8      -0.3        55.2        1.06       C8    N9    C1'
+ICOOR_INTERNAL    H2     179.9        60.5        1.06       C2    N3    C4 
+ICOOR_INTERNAL   1H6       0.0        59.9        0.99       N6    C6    N1 
+ICOOR_INTERNAL   2H6     180.0        60.1        0.99       N6    C6    N1 
+ICOOR_INTERNAL   HO2'    180.0        71.0        0.98       O2'   C2'   C3'
+ICOOR_INTERNAL   HO3'    -60.0        71.0        0.98       O3'   C3'   C4'

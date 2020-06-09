@@ -1,0 +1,42 @@
+HEADER    UDP-alpha-D-Glcp w/ UDP from 5GVV       14-APR-17   XXXX
+AUTHOR    Labonte
+HETNAM     UDP Uridine diphosphate
+HETNAM     Glc A   2  ->4)-alpha-D-Glcp
+HETATM    1  N1  UDP A   1      24.161 -10.367  17.473  1.00 27.81           N  
+HETATM    2  C2  UDP A   1      23.905 -11.451  16.656  1.00 25.27           C  
+HETATM    3  N3  UDP A   1      24.496 -12.676  16.903  1.00 25.22           N  
+HETATM    4  C4  UDP A   1      25.355 -12.821  17.975  1.00 29.07           C  
+HETATM    5  C5  UDP A   1      25.609 -11.726  18.800  1.00 28.52           C  
+HETATM    6  C6  UDP A   1      25.096 -10.473  18.468  1.00 27.23           C  
+HETATM    7  O2  UDP A   1      23.143 -11.320  15.702  1.00 25.44           O  
+HETATM    8  O4  UDP A   1      25.880 -13.917  18.197  1.00 23.68           O  
+HETATM    9  C1' UDP A   1      23.507  -9.073  17.177  1.00 28.47           C  
+HETATM   10  C2' UDP A   1      22.190  -8.988  17.933  1.00 26.04           C  
+HETATM   11  O2' UDP A   1      21.239  -8.267  17.182  1.00 25.45           O  
+HETATM   12  C3' UDP A   1      22.543  -8.190  19.167  1.00 24.65           C  
+HETATM   13  C4' UDP A   1      23.633  -7.263  18.644  1.00 29.91           C  
+HETATM   14  O4' UDP A   1      24.307  -7.994  17.634  1.00 30.58           O  
+HETATM   15  O3' UDP A   1      21.420  -7.487  19.655  1.00 23.97           O  
+HETATM   16  C5' UDP A   1      24.603  -6.819  19.736  1.00 28.80           C  
+HETATM   17  O5' UDP A   1      24.790  -7.890  20.636  1.00 27.47           O  
+HETATM   18  PA  UDP A   1      24.438  -7.667  22.186  1.00 25.16           P  
+HETATM   19  O1A UDP A   1      23.005  -7.312  22.244  1.00 17.64           O  
+HETATM   20  O2A UDP A   1      24.741  -8.886  22.972  1.00 25.77           O  
+HETATM   21  O3A UDP A   1      25.370  -6.437  22.667  1.00 30.19           O  
+HETATM   22  PB  UDP A   1      25.037  -5.530  23.963  1.00 28.27           P  
+HETATM   23  O3B UDP A   1      25.866  -4.302  23.953  1.00 31.12           O1-
+HETATM   24  O1B UDP A   1      25.374  -6.313  25.174  1.00 21.93           O  
+HETATM   25  O2B UDP A   1      23.598  -5.171  23.975  1.00 19.02           O  
+HETATM   26  C5  Glc A   2      27.000  -3.859  26.540  1.00  0.00           C  
+HETATM   27  O5  Glc A   2      25.638  -3.621  26.100  1.00  0.00           O  
+HETATM   28  C1  Glc A   2      25.460  -3.230  24.710  1.00  0.00           C  
+HETATM   29  C2  Glc A   2      26.248  -1.930  24.424  1.00  0.00           C  
+HETATM   30  O2  Glc A   2      26.179  -1.622  23.051  1.00  0.00           O  
+HETATM   31  C3  Glc A   2      27.726  -2.067  24.861  1.00  0.00           C  
+HETATM   32  O3  Glc A   2      28.378  -0.829  24.732  1.00  0.00           O  
+HETATM   33  C4  Glc A   2      27.867  -2.583  26.316  1.00  0.00           C  
+HETATM   34  O4  Glc A   2      29.225  -2.844  26.587  1.00  0.00           O  
+HETATM   35  C6  Glc A   2      26.942  -4.322  28.023  1.00  0.00           C  
+HETATM   36  O6  Glc A   2      28.205  -4.762  28.475  1.00  0.00           O  
+TER      37      Glc A   2 
+END

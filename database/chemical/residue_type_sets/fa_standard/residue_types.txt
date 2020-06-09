@@ -1646,6 +1646,8 @@ residue_types/coenzymes/flavin_reduced.params
 #residue_types/coenzymes/flavin_mononucleotide.params
 residue_types/coenzymes/ATP.params
 residue_types/coenzymes/UDP.params
+residue_types/coenzymes/SAM.params
+residue_types/coenzymes/SAH.params
 
 ## Polyaramids
 
@@ -1683,7 +1685,7 @@ residue_types/polyaramids/SAD.params
 residue_types/polyaramids/SAE.params
 residue_types/polyaramids/SAF.params
 residue_types/polyaramids/SAG.params
-residue_types/polyaramids/SAH.params
+#residue_types/polyaramids/SAH.params # Rosetta is too stupid and mixes this up with the cofactor SAH.
 residue_types/polyaramids/SAI.params
 residue_types/polyaramids/SAK.params
 residue_types/polyaramids/SAL.params
