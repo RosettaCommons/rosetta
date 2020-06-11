@@ -295,7 +295,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 
 			break;
 		}
-		esum += static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( tbody_emap ) );
+		esum += static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weighted_sum( tbody_emap ) );
 
 	}
 
@@ -313,7 +313,7 @@ OnTheFlyNode::compute_rotamer_pair_energy(
 				get_on_the_fly_owner()->score_function(),
 				emap );
 		}
-		esum += static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weights().dot( emap ) );
+		esum += static_cast< core::PackerEnergy > ( get_on_the_fly_owner()->score_function().weighted_sum( emap ) );
 	}
 
 

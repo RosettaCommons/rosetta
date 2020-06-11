@@ -344,6 +344,22 @@ public:
 		return weights_;
 	}
 
+	/// @brief Returns the weighted sum of the given energy map, given the current set of weights
+	///
+	/// example(s):
+	///     scorefxn.weighted_sum(scores_emap)
+	/// See also:
+	///     ScoreFunction
+	///     ScoreFunction.get_weight
+	///     ScoreFunction.set_weight
+	///     ScoreFunction.weights
+	///
+	Real
+	weighted_sum(EnergyMap const & unweighted) const
+	{
+		return weights_.dot( unweighted, nonzero_weights_ );
+	}
+
 	/// @brief Returns true if the ScoreType  <t>  has a weight of zero,
 	///
 	/// example(s):
@@ -398,15 +414,9 @@ public:
 	///     create_score_function
 	///     name_from_score_type
 	///     score_type_from_name
-	ScoreTypes
+	ScoreTypes const &
 	get_nonzero_weighted_scoretypes() const {
-		ScoreTypes scoretypes;
-		for ( int i=1; i<= n_score_types; ++i ) {
-			if ( has_nonzero_weight( ScoreType(i) ) ) {
-				scoretypes.push_back( ScoreType(i) );
-			}
-		}
-		return scoretypes;
+		return nonzero_weights_;
 	}
 
 	/// @brief Sets the weight for ScoreType  <t>  to  <setting>
@@ -1256,6 +1266,9 @@ private:
 
 	/// the scorefxn weights
 	EnergyMap weights_;
+
+	/// A list of non-zero scoreterms, kept for efficiency purposes.
+	ScoreTypes nonzero_weights_;
 
 	/// @brief  Options that control choice/configuration of EnergyMethods.
 	/// eg etable name

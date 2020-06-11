@@ -179,6 +179,7 @@ ScoreFunction::reset( utility::options::OptionCollection const & options )
 	energy_method_options_ = utility::pointer::make_shared< methods::EnergyMethodOptions >( options );
 	initialize_methods_arrays();
 	weights_.clear();
+	nonzero_weights_.clear();
 }
 
 
@@ -640,6 +641,7 @@ ScoreFunction::assign( ScoreFunction const & src )
 
 	// copy the weights
 	weights_ = src.weights_;
+	nonzero_weights_ = src.nonzero_weights_;
 
 	// deep copy of the energy method options
 	energy_method_options_ = utility::pointer::make_shared< methods::EnergyMethodOptions >( * src.energy_method_options_ );
@@ -2227,6 +2229,7 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 
 	if ( setting == Real(0.0) ) {
 		if ( old_weight != Real(0.0) ) {
+			nonzero_weights_.pop( t ); // Remove value from nonzero weights list
 
 			EnergyMethodCOP method( methods_by_score_type_[t] );
 			debug_assert( method );
@@ -2249,6 +2252,9 @@ ScoreFunction::set_weight( ScoreType const & t, Real const & setting )
 		}
 	} else {
 		if ( old_weight == Real(0.0) ) {
+			nonzero_weights_.push_back( t );
+			std::sort( nonzero_weights_.begin(), nonzero_weights_.end() ); // Old version produced a sorted list - we shouldn't be time limited here.
+
 			// do we already have a method that evaluates this score??
 			if ( ! methods_by_score_type_[ t ] != 0  &&
 					( t != python ) )  { // sheffler
@@ -3289,6 +3295,8 @@ ScoreFunction::add_extra_method(
 		utility_exit_with_message( "bad call to ScoreFunction::add_extra_method" );
 	}
 	weights_[ new_type ] = new_weight;
+	nonzero_weights_.push_back( new_type );
+	std::sort( nonzero_weights_.begin(), nonzero_weights_.end() );
 	add_method( new_method.clone() );
 }
 
@@ -3309,7 +3317,11 @@ ScoreFunction::add_extra_method(
 			utility_exit_with_message( "bad call to ScoreFunction::add_extra_method" );
 		}
 		weights_[ new_type ] = new_weight;
+		if ( new_weight != 0 ) {
+			nonzero_weights_.push_back( new_type );
+		}
 	}
+	std::sort( nonzero_weights_.begin(), nonzero_weights_.end() );
 	add_method( new_method.clone() );
 }
 
@@ -3793,6 +3805,7 @@ core::scoring::ScoreFunction::save( Archive & arc ) const {
 
 	// The following data members are basically derived from the ones above, and
 	// therefore, should not be serialized
+	// EXEMPT nonzero_weights_
 	// EXEMPT ci_2b_methods_ cd_2b_methods_ ci_1b_methods_ cd_1b_methods_
 	// EXEMPT ci_lr_2b_methods_ cd_lr_2b_methods_
 	// EXEMPT lr_2b_methods_ ws_methods_ all_methods_ methods_by_score_type_
@@ -3811,6 +3824,7 @@ core::scoring::ScoreFunction::load( Archive & arc ) {
 
 	// The following data members are basically derived from the ones above, and
 	// therefore, should not be serialized
+	// EXEMPT nonzero_weights_
 	// EXEMPT ci_2b_methods_ cd_2b_methods_ ci_1b_methods_ cd_1b_methods_
 	// EXEMPT ci_lr_2b_methods_ cd_lr_2b_methods_
 	// EXEMPT lr_2b_methods_ ws_methods_ all_methods_ methods_by_score_type_
