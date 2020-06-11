@@ -129,7 +129,7 @@ _index_html_template_ = '''\
 <p>
  To update reference results please copy the files below into the main repository:<br/>
  &nbsp;&nbsp;&nbsp;&nbsp;<a href="reference-results.{mode}.new.json">reference-results.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json</a><br/>
- &nbsp;&nbsp;&nbsp;&nbsp;<a href="blacklist.{mode}.new.json">blacklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json</a><br/>
+ &nbsp;&nbsp;&nbsp;&nbsp;<a href="blocklist.{mode}.new.json">blocklist.{mode}.new.json</a> → <a href="https://github.com/RosettaCommons/main">「main repository」</a> as <a href="https://github.com/RosettaCommons/main/tree/master/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/reference-results.{mode}.json">tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.{mode}.json</a><br/>
 </p>
 </body></html>
 '''
@@ -143,13 +143,13 @@ _code_html_template_ = '''\
 #<pre style="white-space: pre-wrap; word-wrap: break-word;">{command_line}</pre></p>
 
 
-def get_blacklist(rosetta_dir, mode):
-    with open(f'{rosetta_dir}/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blacklist.{mode}.json') as f: blacklist = json.load(f)
-    return blacklist
+def get_blocklist(rosetta_dir, mode):
+    with open(f'{rosetta_dir}/tests/benchmark/tests/scientific/protein_data_bank_diagnostic/blocklist.{mode}.json') as f: blocklist = json.load(f)
+    return blocklist
 
 
-def remove_blacklisted_pdbs(pdbs, rosetta_dir, mode):
-    for p in get_blacklist(rosetta_dir, mode)['ignore']: pdbs.pop(p, None)
+def remove_blocklisted_pdbs(pdbs, rosetta_dir, mode):
+    for p in get_blocklist(rosetta_dir, mode)['ignore']: pdbs.pop(p, None)
 
 
 def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
@@ -191,7 +191,7 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
             #pdbs = { str(i): '_'+str(i)+'_' for i in range(10) }
 
 
-        remove_blacklisted_pdbs(all_pdbs, rosetta_dir, mode)
+        remove_blocklisted_pdbs(all_pdbs, rosetta_dir, mode)
 
 
         hpc_logs = f'{working_dir}/.hpc-logs';  os.makedirs(hpc_logs)
@@ -268,10 +268,10 @@ def protein_data_bank_diagnostic(mode, rosetta_dir, working_dir, platform, confi
         explanation = '' if state == _S_passed_ else '<p>Test marked as <b>FAILED</b> due to following errors:</p>'
 
 
-        # Generating new blacklist based on PDB's in `exceed_timeout` and old blacklist
-        blacklist = get_blacklist(rosetta_dir, mode)['ignore']
-        for p in results['failed'].get('exceed_timeout', []): blacklist.append(p)
-        with open(f'{working_dir}/blacklist.{mode}.new.json', 'w') as f: json.dump( dict(ignore = sorted( set(blacklist) ) ), f, sort_keys=True, indent=2)
+        # Generating new blocklist based on PDB's in `exceed_timeout` and old blocklist
+        blocklist = get_blocklist(rosetta_dir, mode)['ignore']
+        for p in results['failed'].get('exceed_timeout', []): blocklist.append(p)
+        with open(f'{working_dir}/blocklist.{mode}.new.json', 'w') as f: json.dump( dict(ignore = sorted( set(blocklist) ) ), f, sort_keys=True, indent=2)
 
 
         new_passed_pdbs = []

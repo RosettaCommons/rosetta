@@ -14,11 +14,11 @@ The underlying executable has tools to also exercise simple Rosetta machinery li
 ## PERFORMANCE METRICS
 For PDBs that crash Rosetta, the test will attempt to classify why they failed.  It does so with string parsing on the log file.  The test is designed to be easy to extend with more error classifications as new bugs crop up, or as the "unknown" catchall category gets too big.
 
-We don't yet expect every PDB to load successfully - a lot of them do stupid stuff.  Accordingly, the test has a manually maintained expected results list and blacklist.  The blacklist is for the case of "the stupid thing this PDB does is that it's huuuuuuuge" and we just skip checking it for time purposes.  The expected results list lets us check how a known-to-fail PDB is expected to fail.
+We don't yet expect every PDB to load successfully - a lot of them do stupid stuff.  Accordingly, the test has a manually maintained expected results list and blocklist.  The blocklist is for the case of "the stupid thing this PDB does is that it's huuuuuuuge" and we just skip checking it for time purposes.  The expected results list lets us check how a known-to-fail PDB is expected to fail.
 
 The global test passes or fails based on whether any PDBs failed in a way that doesn't match an expected failure.  So 1000 PDBs crashing is not necessarily a failure if those are all crashes we expect, but 1 unexpected failure will turn the test red.
 
-The blacklist and expected failures lists are meant to be updated manually.  Instructions are at the bottom of the results page where links to the updated copies are found.
+The blocklist and expected failures lists are meant to be updated manually.  Instructions are at the bottom of the results page where links to the updated copies are found.
 
 ## KEY RESULTS
 The test sorts out by classification which PDBs failed and why.  You can view lists of all PDBs that failed in a particular category (good for getting samples if you wish to fix the error) and also get log files for each failed case (good for theorizing on the source of the bug).
