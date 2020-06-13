@@ -22,7 +22,7 @@ BOND  CA   HA
 BOND  C    O  
 BOND  B1   B2 
 CHI 1  N    CA   B1   B2 
-PROPERTIES PROTEIN POLAR CHARGED
+PROPERTIES PROTEIN POLAR CHARGED CANONICAL_AA
 NBR_ATOM B1
 # APL B1 to side chain heavyatom distance --  max observed in residue 74 of ubiquitin
 NBR_RADIUS 5.0084

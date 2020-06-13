@@ -124,19 +124,15 @@ public:
 	}
 
 	void test_mmtf_noncanonicals() {
-		utility::vector1< std::string > noncanonical_pdbs({
-			"core/io/mmtf/binselector_input_S_0002.pdb",
-			"core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.pdb",
-			"core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.pdb",
-			"core/io/mmtf/oligourea_predict_native.pdb",
-			});
 		std::map< std::string, std::string > noncanonical_pdb_to_mmtf({
 			{"core/io/mmtf/binselector_input_S_0002.pdb", "core/io/mmtf/binselector_input_S_0002.io.mmtf"},
 			{"core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.pdb", "core/io/mmtf/crosslinkermover_octahedral_s2_symm_S_0008.io.mmtf"},
 			{"core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.pdb", "core/io/mmtf/ncbb_packer_palette_cycpep_pre_stage_3.io.mmtf"},
 			{"core/io/mmtf/oligourea_predict_native.pdb", "core/io/mmtf/oligourea_predict_native.io.mmtf"},
 			});
-		for ( auto const & test_file : noncanonical_pdbs ) {
+		for ( auto const & pair : noncanonical_pdb_to_mmtf ) {
+			std::string const & test_file(pair.first);
+			std::string const & reference_test_file(pair.second);
 			TR << "Working on noncanonical test file: " << test_file << std::endl;
 
 			// 1. load pdb file
@@ -145,14 +141,14 @@ public:
 			og_pose->dump_pdb(test_file + ".io.pdb");
 
 			// 2. create the sfr
-			core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );
+			core::io::StructFileRepOptionsOP options( core::io::StructFileRepOptionsOP( utility::pointer::make_shared< core::io::StructFileRepOptions >() ) );
 			core::io::mmtf::set_mmtf_default_options( *options );
-			core::io::pose_to_sfr::PoseToStructFileRepConverter converter = core::io::pose_to_sfr::PoseToStructFileRepConverter( *options );
+			core::io::pose_to_sfr::PoseToStructFileRepConverter converter( *options );
 			converter.init_from_pose( *og_pose );
 			core::io::StructFileRepOP sfr = converter.sfr();
 
 			// 3. write mmtf via sfr
-			utility::io::ozstream file(noncanonical_pdb_to_mmtf[test_file].c_str(), std::ios::out | std::ios::binary);
+			utility::io::ozstream file(reference_test_file.c_str(), std::ios::out | std::ios::binary);
 			core::io::mmtf::dump_mmtf(file, sfr, *options);
 			file.close();
 

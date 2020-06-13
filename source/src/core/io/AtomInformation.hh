@@ -52,7 +52,8 @@ struct AtomInformation {
 		segmentID( "" ),
 		element( "" ),
 		formalcharge( 0 ),
-		terCount( 0 )
+		terCount( 0 ),
+		chem_comp_type( "" )
 	{}
 
 	// For now, all member names have the same names as fields in PDB standard.

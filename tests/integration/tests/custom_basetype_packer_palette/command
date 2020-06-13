@@ -36,7 +36,7 @@ cd %(workdir)s
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # Check that there's exactly one "601" residue type in the output.  There should be:
-if [ `grep ATOM test_0001.pdb | awk '{if($4=="601" && $3 == "N") print}' | wc -l` == 1 ]; then true; else false; fi
+if [ `grep HETATM test_0001.pdb | awk '{if($4=="601" && $3 == "N") print}' | wc -l` == 1 ]; then true; else false; fi
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 

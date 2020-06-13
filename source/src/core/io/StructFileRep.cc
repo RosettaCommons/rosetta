@@ -112,6 +112,7 @@ operator<<( std::ostream &os, AtomInformation const & ai )
 		<< " element=" << ai.element
 		<< " formalcharge=" << (int)ai.formalcharge
 		<< " terCount=" << ai.terCount
+		<< " chem_comp_type=" << ai.chem_comp_type
 		<< "}";
 	return os;
 }

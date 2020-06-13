@@ -22,7 +22,7 @@ BOND  CA   HA
 BOND  C    O  
 BOND  B1   B2 
 CHI 1  N    CA   B1   B2 
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN CANONICAL_AA
 NBR_ATOM B1
 # APL O to B1 distance; max observed in ubiquitin
 NBR_RADIUS 3.4473

@@ -22,7 +22,7 @@ BOND  CA   HA
 BOND  C    O  
 BOND  B1   B2
 CHI 1  N    CA   B1   B2
-PROPERTIES PROTEIN
+PROPERTIES PROTEIN CANONICAL_AA
 NBR_ATOM B1
 # APL B1 to sidechain heavyatom distance -- max observed on residue 74 of ubiquitin
 NBR_RADIUS 4.1766

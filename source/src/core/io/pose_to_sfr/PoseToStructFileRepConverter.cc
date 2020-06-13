@@ -423,9 +423,9 @@ PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue co
 	chemical::ResidueTypeCOP type_ptr = rsd.type_ptr();
 	if ( type_ptr->has_property(core::chemical::D_AA) ) {
 		if ( type_ptr->base_name() == "GLY" ) {
-			return "PEPTIDE-LINKING";
+			return "PEPTIDE LINKING";
 		} else if ( type_ptr->has_property(core::chemical::BETA_AA) ) {
-			return "D-BETA-PEPTIDE";
+			return "D-BETA-PEPTIDE, C-GAMMA LINKING";
 		} else if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
 			return "D-PEPTIDE COOH CARBOXY TERMINUS";
 		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
@@ -437,14 +437,23 @@ PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue co
 
 	if ( type_ptr->has_property(core::chemical::L_AA) ) {
 		if ( type_ptr->base_name() == "GLY" ) {
-			return "PEPTIDE-LINKING";
+			return "PEPTIDE LINKING";
 		} else if ( type_ptr->has_property(core::chemical::BETA_AA) ) {
-			return "L-BETA-PEPTIDE";
-		} else if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
-			return "L-PEPTIDE COOH CARBOXY TERMINUS";
-		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
-			return "L-PEPTIDE NH3 AMINO TERMINUS";
+			return "L-BETA-PEPTIDE, C-GAMMA LINKING";
+		} else if ( type_ptr->has_property(core::chemical::OLIGOUREA) ) {
+			// Note: This doesn't make much sense, because aren't oligourea's polymers?
+			// The wwpdb does not seem to think so.  ( I believe this is mainly due to
+			// the lack of oligourea's present, and if you publish some they might change
+			// their mind, as of 2020-02 I could only find 1 entry (5N14) with an oligourea.
+			return "NON-POLYMER";
 		} else {
+			// Note: You would think this would make sense, (and maybe someday it will be used)
+			// but the wwpdb currently does NOT consider N-terminal or C-terminal CAAs to have the
+			// chemical composition type of these types.
+			// } else if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
+			//  return "L-PEPTIDE COOH CARBOXY TERMINUS";
+			// } else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
+			//  return "L-PEPTIDE NH3 AMINO TERMINUS";
 			return "L-PEPTIDE LINKING";
 		}
 	}
@@ -453,7 +462,7 @@ PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue co
 		if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
 			return "RNA OH 3 PRIME TERMINUS";
 		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
-			return "RNA OH 3 PRIME TERMINUS";
+			return "RNA OH 5 PRIME TERMINUS";
 		} else if ( type_ptr->has_property(core::chemical::L_RNA) ) {
 			return "L-RNA LINKING";
 		} else {
@@ -465,7 +474,7 @@ PoseToStructFileRepConverter::get_chem_comp_type( core::conformation::Residue co
 		if ( type_ptr->has_variant_type(core::chemical::UPPER_TERMINUS_VARIANT) ) {
 			return "DNA OH 3 PRIME TERMINUS";
 		} else if ( type_ptr->has_variant_type(core::chemical::LOWER_TERMINUS_VARIANT) ) {
-			return "DNA OH 3 PRIME TERMINUS";
+			return "DNA OH 5 PRIME TERMINUS";
 		} else {
 			return "DNA LINKING";
 		}
@@ -499,7 +508,8 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	AtomInformation ai;
 	AtomInformation orb;  //have to initialize this out here.
 
-	ai.isHet = (!rsd.is_polymer() || rsd.is_ligand());
+	ai.isHet = ( ! ( rsd.type().has_property( core::chemical::CANONICAL_AA ) ||
+		rsd.type().has_property( core::chemical::CANONICAL_NUCLEIC ) ) );
 	ai.chainID = res_info.chainID();
 	ai.resSeq = res_info.resSeq();
 	ai.iCode = res_info.iCode();
@@ -553,12 +563,12 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ai.element = ats[atom.type()].element();
 	if ( ai.element.length() == 1 ) ai.element = " "+ai.element;
 
+	// required for next gen pdb formats (mmtf, mmcif, ...)
+	ai.chem_comp_type = get_chem_comp_type(rsd);
+
 	// 'chains' is member data
 	if ( sfr_->chains().size() < rsd.chain() ) sfr_->chains().resize( rsd.chain() );
 	sfr_->chains()[rsd.chain()-1].push_back(ai);
-
-	ai.chem_comp_type = get_chem_comp_type(rsd);
-
 	return true;
 }
 
