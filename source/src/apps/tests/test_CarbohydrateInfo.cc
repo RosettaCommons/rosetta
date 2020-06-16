@@ -29,6 +29,7 @@
 #include <core/import_pose/import_pose.hh>
 
 // Utility headers
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
 #include <utility/vector1.hh>
@@ -91,10 +92,9 @@ main( int argc, char *argv[] )
 
 		// Declare variables.
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
-
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
-			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb;
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb, ligand_sugar;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -443,6 +443,16 @@ main( int argc, char *argv[] )
 		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
 
 		cout << ".pdb file with bad LINK records imported successfully." << endl;
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating a non-polymer linear monosaccharide:" << endl;
+
+		make_pose_from_sequence( ligand_sugar, "X[D-Gly]", *residue_set );
+		ligand_sugar.pdb_info( pointer::make_shared< PDBInfo >( ligand_sugar ) );
+		ligand_sugar.pdb_info()->name( "D-Gly" );
+
+		test_sugar( ligand_sugar );
 
 	} catch ( utility::excn::Exception const & e ) {
 		e.display();

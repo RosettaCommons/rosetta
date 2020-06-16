@@ -145,7 +145,10 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 
 	gws_string << "--";
 
-	core::uint const parent_seqpos( pose.glycan_tree_set()->get_parent( seqpos ) );
+	core::uint parent_seqpos( 0 );
+	if ( ! pose.residue( seqpos ).is_ligand() ) {
+		parent_seqpos = pose.glycan_tree_set()->get_parent( seqpos );
+	}
 	if ( parent_seqpos ) {
 		Residue const & parent( pose.residue( parent_seqpos ) );
 
@@ -171,12 +174,12 @@ residue_gws_string( core::pose::Pose const & pose, core::uint const seqpos )
 				}
 			}
 		}
-	} else /* is lower terminus */ {
+	} else /* is lower terminus or ligand */ {
 		gws_string << '?';
 	}
 	debug_assert( gws_string.str().size() == 3 );  // If this fails, it probably indicates a design flaw; see above.
 
-	gws_string << info->anomer()[ 0 ];
+	gws_string << info->anomer()[ 0 ];  // TODO: What if it is linear?
 	gws_string << info->anomeric_carbon();
 	gws_string << info->stereochem();
 	gws_string << '-';
@@ -275,7 +278,7 @@ chain_gws_string( core::pose::Pose const & pose, core::uint const chain_id )
 		stringstream gws_string( stringstream::out );
 
 		// First, deal with the reducing end.
-		if ( first_res.is_lower_terminus() ) {
+		if ( ( first_res.is_lower_terminus() ) || ( first_res.is_ligand() ) ) {
 			gws_string << "redEnd";
 		} else if ( false ) {
 			; // TODO: Add code to check for glycosides and output the R group.
@@ -343,7 +346,7 @@ dump_gws( core::pose::Pose const & pose, std::string const & filename )
 		}
 
 		Residue const & first_res( pose.residue( begin ) );
-		if ( first_res.is_carbohydrate() ) {
+		if ( ( first_res.is_carbohydrate() ) && ( ! first_res.is_ligand() ) ) {
 			// If the first residue of this chain is a carbohydrate, check its parent to ascertain if it has already
 			// been output.
 			core::uint const parent_seqpos( pose.glycan_tree_set()->get_parent( begin ) );

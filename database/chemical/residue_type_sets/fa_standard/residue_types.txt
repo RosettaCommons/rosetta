@@ -937,6 +937,29 @@ residue_types/beta-peptide/transACPC.params
 #residue_types/gamma-peptide/4L3L_GALA.params
 
 ## Saccharide Types (require -include_sugars flag to be loaded in)
+### Aldotrioses
+#### Glyceraldehydes
+residue_types/carbohydrates/aldoses/trioses/glyceraldehydes/D-Gly.params
+residue_types/carbohydrates/aldoses/trioses/glyceraldehydes/L-Gly.params
+### Aldotetroses
+#### Erythroses
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to2-alpha-D-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to2-alpha-L-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to2-beta-D-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to2-beta-L-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to3-alpha-D-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to3-alpha-L-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to3-beta-D-Eryf.params
+residue_types/carbohydrates/aldoses/tetroses/erythroses/to3-beta-L-Eryf.params
+#### Threoses
+residue_types/carbohydrates/aldoses/tetroses/threoses/to2-alpha-D-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to2-alpha-L-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to2-beta-D-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to2-beta-L-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to3-alpha-D-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to3-alpha-L-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to3-beta-D-Thrf.params
+residue_types/carbohydrates/aldoses/tetroses/threoses/to3-beta-L-Thrf.params
 ### Aldopentoses
 #### Arabanoses
 residue_types/carbohydrates/aldoses/pentoses/arabinoses/to2-alpha-D-Araf.params
@@ -1474,6 +1497,13 @@ residue_types/carbohydrates/aldoses/hexoses/taloses/to4-alpha-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to4-beta-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to6-alpha-L-Talp.params
 residue_types/carbohydrates/aldoses/hexoses/taloses/to6-beta-L-Talp.params
+### Ketotrioses
+#### Dihydroxyacetone
+residue_types/carbohydrates/ketoses/trioses/dihydroxyacetones/DHA.params
+### Ketotetroses
+#### Erythruloses
+residue_types/carbohydrates/ketoses/tetroses/erythruloses/D-Eul.params
+residue_types/carbohydrates/ketoses/tetroses/erythruloses/L-Eul.params
 ### Ketopentoses
 #### Ribuloses
 residue_types/carbohydrates/ketoses/pentoses/ribuloses/to1-alpha-D-Rulf.params

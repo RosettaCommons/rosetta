@@ -438,6 +438,9 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 		return is_glycoside_;
 	}
 
+	/// @brief    Return true if the monosaccharide is a reducing sugar.
+	bool is_reducing_sugar() const;
+
 	/// @brief    Return the attachment point of the downstream saccharide residue of the main chain.
 	/// @return   an integer n of (1->n) of polysaccharide nomenclature, where n specifies the attachment point on the
 	/// upstream monosaccharide residue; e.g., 4 specifies O4; n = 0 specifies an upper terminus
@@ -542,7 +545,7 @@ private: // Private data //////////////////////////////////////////////////////
 	core::uint cyclic_oxygen_index_;  // atom index of anomeric carbon within ResidueType; 0 if linear
 	core::uint virtual_cyclic_oxygen_index_;
 	core::Size n_carbons_;
-	char stereochem_;  // L or D
+	char stereochem_;  // L or D; 0 indicates achiral
 	core::Size ring_size_;  // 0 indicates linear
 	std::string anomer_;  // alpha, beta, or null
 	bool is_glycoside_;

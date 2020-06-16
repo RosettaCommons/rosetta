@@ -107,7 +107,9 @@ CarbohydrateInfo::show( std::ostream & output ) const
 		break;
 	}
 
-	ring_form = CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ ) + "ose";
+	if ( ring_size_ ) {
+		ring_form = CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ ) + "ose";
+	}
 
 	for ( uint position = 1; position <= n_carbons_; ++position ) {
 		if ( modifications_[ position ] != "" ) {
@@ -133,6 +135,7 @@ CarbohydrateInfo::show( std::ostream & output ) const
 	}
 	output << " Modifications: " << endl << modifications;
 	output << " Polymeric Information:" << endl;
+	output << "  Reducing?: " << ( is_reducing_sugar() ? "yes" : "no" ) << endl;
 	if ( mainchain_glycosidic_bond_acceptor_ ) {
 		output << "  Main chain connection: (_->" << mainchain_glycosidic_bond_acceptor_ << ')' << endl;
 	} else {
@@ -181,6 +184,14 @@ CarbohydrateInfo::basic_name() const
 	} else {
 		return root + "ose";
 	}
+}
+
+
+// Return true if the monosaccharide is a reducing sugar.
+bool
+CarbohydrateInfo::is_reducing_sugar() const
+{
+	return ( residue_type_.lock()->is_lower_terminus() && ! is_glycoside() ) || residue_type_.lock()->is_ligand() ;
 }
 
 
@@ -278,7 +289,7 @@ CarbohydrateInfo::init( core::chemical::ResidueTypeCAP residue_type_in )
 	anomeric_sidechain_index_ = 0;
 
 	ResidueTypeCOP residue_type( residue_type_ );
-	if ( residue_type->is_lower_terminus() ) {
+	if ( residue_type->is_lower_terminus() || residue_type->is_ligand() ) {
 		is_glycoside_ = false;  // can be overridden later
 	} else {
 		is_glycoside_ = true;
@@ -376,6 +387,8 @@ CarbohydrateInfo::read_and_set_properties()
 		stereochem_ = 'L';
 	} else if ( properties.has_property( D_SUGAR ) && ! properties.has_property( L_SUGAR ) ) {
 		stereochem_ = 'D';
+	} else if ( properties.has_property( ACHIRAL_BACKBONE ) ) {
+		stereochem_ = 0;
 	} else {
 		utility_exit_with_message( "A sugar must have EITHER L OR D stereochemistry; check the .params file." );
 	}
@@ -536,6 +549,12 @@ CarbohydrateInfo::determine_polymer_connections()
 
 	ResidueTypeCOP residue_type( residue_type_ );
 
+	if ( residue_type->is_ligand() ) {
+		mainchain_glycosidic_bond_acceptor_ = 0;
+		has_exocyclic_linkage_to_child_mainchain_ = false;
+		return;
+	}
+
 	// Main chain connections
 	if ( ! residue_type->is_upper_terminus() ) {
 		uint upper_atom_index = residue_type->upper_connect_atom();
@@ -589,11 +608,13 @@ CarbohydrateInfo::determine_IUPAC_names()
 	stringstream short_prefixes( stringstream::out );
 
 	// Connectivity
-	if ( ! residue_type->is_upper_terminus() ) {
-		linkage_notation << "->" << mainchain_glycosidic_bond_acceptor_ << ')';
+	if ( residue_type->is_polymer() ) {
+		if ( ! residue_type->is_upper_terminus() ) {
+			linkage_notation << "->" << mainchain_glycosidic_bond_acceptor_ << ')';
+		}
+		long_prefixes << anomer_ << '-';
+		short_prefixes << long_prefixes.str();
 	}
-	long_prefixes << anomer_ << '-';
-	short_prefixes << long_prefixes.str();
 
 	// Substitutions
 	// TODO: How do I alphabetize and group substitutions?  I'll need a vector to sort.  For now, order by position.
@@ -616,7 +637,8 @@ CarbohydrateInfo::determine_IUPAC_names()
 	}
 
 	// Stereochemistry
-	if ( CarbohydrateInfoManager::default_stereochem_from_code( code ) != '*' ) {  // (* implies inherent stereochem.)
+	if ( ( CarbohydrateInfoManager::default_stereochem_from_code( code ) != '*' ) && ( stereochem_ ) ) {
+		// (* in the nomenclature table implies inherent stereochem.)
 		long_prefixes << stereochem_ << '-';
 		short_prefixes << stereochem_ << '-';
 	}
@@ -626,12 +648,14 @@ CarbohydrateInfo::determine_IUPAC_names()
 	stringstream short_suffix( stringstream::out );
 
 	// Ring form
-	if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
-		long_suffix << 'o' << CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ );
+	if ( ring_size_ ) {
+		if ( ! is_Neu ) {  // (For some odd reason, "opyran" is not used with Neu, though "p" is....)
+			long_suffix << 'o' << CarbohydrateInfoManager::morpheme_from_ring_size( ring_size_ );
+		}
+		short_suffix << CarbohydrateInfoManager::ring_affix_from_ring_size( ring_size_ );
 	}
-	short_suffix << CarbohydrateInfoManager::ring_affix_from_ring_size( ring_size_ );
 
-	if ( residue_type->is_lower_terminus() ) {
+	if ( residue_type->is_lower_terminus() || residue_type->is_ligand() ) {
 		if ( is_glycoside_ ) {  // TODO: Extract name of R-group.
 			if ( is_uronic_acid() ) {
 				long_suffix << "uronoside";
@@ -652,6 +676,10 @@ CarbohydrateInfo::determine_IUPAC_names()
 			} else {
 				if ( is_Neu ) {
 					long_suffix << "ate";  // TODO: Rework such that all acids get "ate" or "ic acid".
+				} else if ( code == "Gly" ) {
+					long_suffix << "aldehyde";
+				} else if ( code == "DHA" ) {
+					long_suffix << "one";
 				} else {
 					long_suffix << "ose";
 				}

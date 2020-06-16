@@ -122,6 +122,7 @@ public: // Tests //////////////////////////////////////////////////////////////
 		for ( string line : lines ) {
 			if ( line.substr( 0, 27 ) == "residue_types/carbohydrates"  ) {
 				core::uint const start_of_name( line.find( "/to" ) );
+				if ( start_of_name ==  string::npos ) { continue; }  // It's not a polymeric sugar, so don't bother.
 				string const & linkage( line.substr( start_of_name + 3, 1 ) );
 
 				string const & code(
