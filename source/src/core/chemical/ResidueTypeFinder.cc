@@ -459,13 +459,16 @@ ResidueTypeFinder::apply_patches_recursively(
 	PatchCOP patch = residue_type_set_.patches()[ patch_number ];
 
 	for ( auto const & rsd_type : rsd_types ) {
+		if ( TR.Trace.visible() ) {
+			TR.Trace << "Checking if patch " << patch->name() << " applies to residue " << rsd_type->name() << std::endl;
+		}
 
 		// absolute no-no's.
-		if ( !patch->applies_to( *rsd_type ) )             continue;
-		if ( has_disallowed_variant( patch ) )             continue;
-		if ( deletes_any_property(   patch, rsd_type ) )   continue;
-		if ( deletes_any_variant(    patch, rsd_type ) )   continue;
-		if ( changes_to_wrong_aa(    patch, rsd_type ) )   continue;
+		if ( !patch->applies_to( *rsd_type ) ) { continue; }
+		if ( has_disallowed_variant( patch ) ) { continue; }
+		if ( deletes_any_property( patch, rsd_type ) ) { continue; }
+		if ( deletes_any_variant( patch, rsd_type ) ) { continue; }
+		if ( changes_to_wrong_aa( patch, rsd_type ) ) { continue; }
 		// could also add as a no-no: if patch *deletes* an atom in atom_names_.
 
 		// note -- make sure to apply patch if it has a chance of satisfying any of

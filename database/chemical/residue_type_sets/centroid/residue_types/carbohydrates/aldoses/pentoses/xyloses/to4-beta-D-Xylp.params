@@ -3,23 +3,33 @@ IO_STRING Xyl Z            # Note lower case!
 TYPE POLYMER
 AA UNK
 
-# Main-chain atoms:
+# Main-chain atoms:        # XYP in the PDB has awful atom-naming!
 ATOM  C1  CH1  CT1   0.17  # anomeric carbon
+ATOM_ALIAS  C1   C1B
 ATOM  C2  CH1  CT1   0.14
+ATOM_ALIAS  C2   C2B
 ATOM  C3  CH1  CT1   0.14
+ATOM_ALIAS  C3   C3B
 ATOM  C4  CH1  CT1   0.04
+ATOM_ALIAS  C4   C4B
 ATOM  O4  OH    OS  -0.26
+ATOM_ALIAS  O4   O4B
 
 # Other backbone heavy atoms:
 ATOM  C5  CH1  CT1  -0.05
+ATOM_ALIAS  C5   C5B
 ATOM  O5  OOC   OS  -0.26
+ATOM_ALIAS  O5   O5B
 ATOM  VO5 VIRT VIRT  0.00  # to O5; allows for consistent chi angles
 ATOM  VC1 VIRT VIRT  0.00  # to C1; required for ring flipping
 
 # Side-chain heavy atoms:
 ATOM  O1  VIRT VIRT  0.00  # for internal res, virtual to previous residue; allows for consistent chi angles, although that angle will be NaN; replaced with real atoms by patch for lower terminus
+ATOM_ALIAS  O1   O4A
 ATOM  O2  OH   OH1  -0.66
+ATOM_ALIAS  O2   O2B
 ATOM  O3  OH   OH1  -0.66
+ATOM_ALIAS  O3   O3B
 
 # Hydrogens:
 ATOM  H1  Hapo  HA   0.09

@@ -1649,6 +1649,8 @@ residue_types/lipids/oleate.params
 residue_types/lipids/linoleate.params
 ### Synthetic Adducts
 residue_types/lipids/ONonOMe.params
+### Adducts Functioning Somewhat Like Head Groups
+residue_types/lipids/nBuOH.params
 
 ## Terpene types
 residue_types/terpenes/isoprene.params

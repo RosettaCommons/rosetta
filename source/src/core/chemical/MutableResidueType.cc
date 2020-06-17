@@ -719,18 +719,24 @@ MutableResidueType::delete_actcoord_atom(
 	atom( atom_name ).is_actcoord( false );
 }
 
+
 /// @brief Add an alias name for an atom.
 void
 MutableResidueType::add_atom_alias( std::string const & rosetta_atom, std::string const & alias ) {
 	if ( ! has( rosetta_atom ) ) {
-		utility_exit_with_message( "Unable to add atom alias for non-existent atom "+rosetta_atom );
+		utility_exit_with_message( "Unable to add atom alias for non-existent atom " + rosetta_atom );
 	}
-	std::string stripped_alias( utility::stripped_whitespace( alias ) );
+	std::string const stripped_alias( utility::stripped_whitespace( alias ) );
 	if ( stripped_alias.size() == 0 ) {
 		utility_exit_with_message( "Cannot alias atom name to empty or all whitespace string." );
 	}
-	if ( has( stripped_alias ) || atom_aliases().count( stripped_alias ) ) {
-		utility_exit_with_message( "Cannot add atom alias, residue type already has an atom or alias named "+stripped_alias );
+	if ( atom_aliases().count( stripped_alias ) ) {
+		utility_exit_with_message( "Cannot add atom alias; ResidueType " + name() +
+			" already has an alias named " + stripped_alias + " mapped to " + atom_aliases()[ stripped_alias ] );
+	}
+	if ( has( stripped_alias ) ) {
+		utility_exit_with_message( "Cannot add atom alias; ResidueType " + name() +
+			" already has an atom named " + stripped_alias );
 	}
 
 	atom_aliases()[ alias ] = rosetta_atom;
@@ -747,20 +753,20 @@ MutableResidueType::add_canonical_atom_alias( std::string const & rosetta_atom, 
 	canonical_atom_aliases()[ rosetta_atom ] = alias;
 }
 
-
 /// @brief Remove a given alias name for an atom.
 void
 MutableResidueType::delete_atom_alias( std::string const & alias, bool error ) {
 	if ( atom_aliases().count(alias) ) {
 		atom_aliases().erase( atom_aliases().find(alias) );
 	} else if ( error ) {
-		utility_exit_with_message("Cannot remove atom alias "+alias+" as it does not exist as an alias.");
+		utility_exit_with_message( "Cannot remove atom alias " + alias + " as it does not exist as an alias." );
 	}
-	std::string stripped_alias( utility::stripped_whitespace( alias ) );
+	std::string const stripped_alias( utility::stripped_whitespace( alias ) );
 	if ( atom_aliases().count(stripped_alias) ) { // Double check, as it might not be there, or alias==stripped_alias
 		atom_aliases().erase( atom_aliases().find(stripped_alias) );
 	}
 }
+
 
 void
 MutableResidueType::set_shadowing_atom(

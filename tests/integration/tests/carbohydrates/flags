@@ -4,4 +4,5 @@
 -write_pdb_link_records
 -mute all
 -unmute core.chemical.carbohydrates
+#-out:levels core.chemical:500
 -glycam_pdb_format

@@ -35,8 +35,9 @@ ADD_ATOM 3HC4 Hapo HA   0.03
 # These atoms usually are named differently in the PDB, so add aliases.
 # These aliases assume a 6-membered sugar that also has an N2Ac group.
 # This will need to be fixed in the future somehow. ~Labonte
+# The numbering is backwards, because that is how it is in .pdb structures for Bacp2,4Ac.
 ADD_ATOM_ALIAS  CN4  C10
-ADD_ATOM_ALIAS CAN4  C9  # The numbering is backwards, because that is how it is in .pdb structures for Bacp2,4Ac.
+ADD_ATOM_ALIAS CAN4  C9 
 ADD_ATOM_ALIAS OCN4  O10
 
 ADD_BOND_TYPE  N4   CN4 AMIDE
@@ -64,7 +65,7 @@ ADD_CHI_ROTAMER N  180 0
 SET_ICOOR  CN4  -28.295   62.736  1.312  N4    C4    H4
 SET_ICOOR CAN4 -178.271   58.957  1.496  CN4   N4    C4
 SET_ICOOR OCN4    0.654   61.455  1.234  CN4   N4    C4
-SET_ICOOR  HN4  180.000   58.88   0.99   N4    C4   CN4
+SET_ICOOR  HN4  180.000   58.88   0.99   N4    C4   CN4  # improper torsion so that H is placed properly no matter whether the Ac is cis or trans
 SET_ICOOR 1HC4   33.119   70.479  1.099 CAN4   CN4   N4
 SET_ICOOR 2HC4  -84.152   70.479  1.099 CAN4   CN4   N4
 SET_ICOOR 3HC4  157.255   70.479  1.099 CAN4   CN4   N4

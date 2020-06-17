@@ -377,13 +377,13 @@ PatchCase::apply( MutableResidueType const & rsd_in, bool const instantiate /* =
 
 
 /// @details Go through patch operations in this PatchCase, and compile list of any atom names that are added.
+/// Also, add any atom aliases for those atoms.
 utility::vector1< std::string >
 PatchCase::adds_atoms() const
 {
 	utility::vector1< std::string > atom_names;
 	for ( auto const & operation : operations_ ) {
-		std::string const atom_name = operation->adds_atom();
-		if ( atom_name.size() > 0 ) atom_names.push_back( atom_name );
+		atom_names.append( operation->adds_atoms() );
 	}
 	return atom_names;
 }
@@ -649,6 +649,8 @@ Patch::apply( MutableResidueType const & rsd_type, bool const instantiate /* = t
 	for ( auto const & iter : cases_ ) {
 		if ( iter->applies_to( rsd_type ) ) {
 			// this patch case applies to this rsd_type
+			tr.Trace << "Attempting to patch: " << rsd_type.name() << " with: " << name() << std::endl;
+
 			MutableResidueTypeOP patched_rsd_type;
 			try {
 				patched_rsd_type = iter->apply( rsd_type, instantiate );
@@ -750,16 +752,12 @@ utility::vector1< std::string >
 Patch::adds_atoms( ResidueType const & rsd_type ) const
 {
 	utility::vector1< std::string > atom_names;
-	if ( !applies_to( rsd_type ) ) return atom_names;  // I don't know how to patch this residue.
+	if ( ! applies_to( rsd_type ) ) { return atom_names; }  // I don't know how to patch this residue.
 
-	for ( auto const & iter : cases_ ) {
-
-		if ( iter->applies_to( rsd_type ) ) {
-			// this patch case applies to this rsd_type
-			utility::vector1< std::string > atom_names_for_patch_case = iter->adds_atoms();
-			for ( Size n = 1; n <= atom_names_for_patch_case.size(); n++ ) {
-				atom_names.push_back(  atom_names_for_patch_case[ n ] );
-			}
+	for ( auto const & patch_case : cases_ ) {
+		if ( patch_case->applies_to( rsd_type ) ) {
+			// This patch case applies to this rsd_type.
+			atom_names.append( patch_case->adds_atoms() );
 		}
 	}
 

@@ -1,0 +1,65 @@
+NAME n-butanol                  # This is a topology file for n-butylated glycosides.
+IO_STRING NBU Z                 # NBU in the PDB is for n-butane, not n-butanol; however, the code is also wrongly used for n-butylated cases, as if n-butane could serve as a residue, which it can't.
+TYPE POLYMER                    # POLYMER is selected here, because this is a "cap" for polymers such as glycolipids.
+VARIANT LOWER_TERMINUS_VARIANT
+AA UNK
+
+# Main-chain atoms:
+ATOM  C4  CH3  CT3  -0.27       # This residue will always be treated as a LOWER_TERMINUS, hence beginning at C4 and running "backwards".
+ATOM  C3  CH2  CT2  -0.18
+ATOM  C2  CH2  CT2  -0.18
+ATOM  C1  CH2  CT2  -0.05
+ATOM  O1  OH    OS  -0.26       # need a better mm atom type -- not an ester!
+# Hydrogens:
+ATOM 1H4  Hapo  HA   0.09
+ATOM 2H4  Hapo  HA   0.09
+ATOM 3H4  Hapo  HA   0.09
+ATOM 1H3  Hapo  HA   0.09
+ATOM 2H3  Hapo  HA   0.09
+ATOM 1H2  Hapo  HA   0.09
+ATOM 2H2  Hapo  HA   0.09
+ATOM 1H1  Hapo  HA   0.09
+ATOM 2H1  Hapo  HA   0.09
+
+UPPER_CONNECT O1                # An alcohol is always the LOWER_TERMINUS; there is no LOWER_CONNECT.
+
+BOND  C4   C3 
+BOND  C3   C2 
+BOND  C2   C1 
+BOND  C1   O1 
+BOND  C4  1H4 
+BOND  C4  2H4 
+BOND  C4  3H4 
+BOND  C3  1H3 
+BOND  C3  2H3 
+BOND  C2  1H2 
+BOND  C2  2H2 
+BOND  C1  1H1 
+BOND  C1  2H1 
+
+PROPERTIES  LIPID LOWER_TERMINUS  # not technically a lipid, but it functions in a similar way, so for now I'm keeping it here
+
+NBR_ATOM  C2 
+NBR_RADIUS 4.0                  # assuming ~1.5 angstroms per bond +1 ansgstrom
+
+MAINCHAIN_ATOMS  C4  C3  C2  C1  O1
+FIRST_SIDECHAIN_ATOM  NONE
+
+# must build main chain 1st!
+ICOOR_INTERNAL    C4     0.0         0.0         0.00       C4    C3    C2 
+ICOOR_INTERNAL    C3     0.0         0.0         1.54       C4    C3    C2 
+ICOOR_INTERNAL    C2     0.0        70.5         1.54       C3    C4    C2 
+ICOOR_INTERNAL    C1   180.0        70.5         1.54       C2    C3    C4 
+ICOOR_INTERNAL    O1   180.0        70.5         1.43       C1    C2    C3 
+ICOOR_INTERNAL  UPPER  180.0        70.5         1.43       O1    C1    C2
+
+# now all the Hs
+ICOOR_INTERNAL   1H4   120.0        71.0         1.10       C4    C3    C2
+ICOOR_INTERNAL   2H4  -120.0        71.0         1.10       C4    C3    C2
+ICOOR_INTERNAL   3H4     0.0        71.0         1.10       C4    C3    C2
+ICOOR_INTERNAL   1H3  -120.0        71.0         1.10       C3    C2    C1
+ICOOR_INTERNAL   2H3   120.0        71.0         1.10       C3    C2    C1
+ICOOR_INTERNAL   1H2  -120.0        71.0         1.10       C2    C1    O1
+ICOOR_INTERNAL   2H2   120.0        71.0         1.10       C2    C1    O1
+ICOOR_INTERNAL   1H1  -120.0        71.0         1.10       C1    C2    C3
+ICOOR_INTERNAL   2H1   120.0        71.0         1.10       C1    C2    C3

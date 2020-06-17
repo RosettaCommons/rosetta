@@ -9,6 +9,7 @@ PROPERTY ALDOSE
 NOT UPPER_ATOM O2
 NOT VARIANT_TYPE C2_BRANCH_POINT
 NOT PROPERTY C2_MODIFIED
+NOT VARIANT_TYPE METHYL_GLYCOSIDE  # Because of atom alias conflicts, a methyl glycoside patch must be applied second.
 END_SELECTOR
 
 BEGIN_CASE
@@ -74,7 +75,7 @@ SET_ICOOR  N2     0.00    69.235  1.45   C2    H2    O2
 SET_ICOOR  CN2  -28.295   62.736  1.312  N2    C2    H2
 SET_ICOOR CAN2 -178.271   58.957  1.496  CN2   N2    C2
 SET_ICOOR OCN2    0.654   61.455  1.234  CN2   N2    C2
-SET_ICOOR  HN2  179.661   58.4    0.99   N2    CN2  OCN2
+SET_ICOOR  HN2  179.661   58.4    0.99   N2    CN2   C2  # improper torsion so that H is placed properly no matter whether the Ac is cis or trans
 SET_ICOOR 1HC2   33.119   70.479  1.099 CAN2   CN2   N2
 SET_ICOOR 2HC2  -84.152   70.479  1.099 CAN2   CN2   N2
 SET_ICOOR 3HC2  157.255   70.479  1.099 CAN2   CN2   N2

@@ -605,11 +605,13 @@ AddAtom::apply( MutableResidueType & rsd ) const
 
 // AddAtomAlias ///////////////////////////////////////////////////////////////
 
-AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in, std::string const & rosetta_atom_name_full, std::string const & alias_full ) :
+AddAtomAlias::AddAtomAlias(
+	std::string const & rosetta_atom_name_in,
+	utility::vector1< std::string > const & aliases_in,
+	std::string const & preferred_alias_in ) :
 	rosetta_atom_name_( rosetta_atom_name_in ),
-	alias_( alias_in ),
-	rosetta_atom_name_full_( rosetta_atom_name_full ),
-	alias_full_( alias_full )
+	aliases_( aliases_in ),
+	preferred_alias_( preferred_alias_in )
 {}
 
 /// @return  true on failure
@@ -618,8 +620,10 @@ AddAtomAlias::AddAtomAlias( std::string const & rosetta_atom_name_in, std::strin
 bool
 AddAtomAlias::apply( MutableResidueType & rsd ) const
 {
-	rsd.add_atom_alias( rosetta_atom_name_, alias_ );
-	rsd.add_canonical_atom_alias( rosetta_atom_name_full_, alias_full_ );
+	for ( auto alias : aliases_ ) {
+		rsd.add_atom_alias( rosetta_atom_name_, alias );
+	}
+	rsd.add_canonical_atom_alias( rosetta_atom_name_, preferred_alias_ );
 	return false;  // success
 }
 
@@ -2740,15 +2744,19 @@ patch_operation_from_patch_file_line(
 		return utility::pointer::make_shared< DeleteAtom >( atom_name );
 
 	} else if ( tag == "ADD_ATOM_ALIAS" ) {
-		//std::string atom1,atom2 = "";
-		atom1 = line.substr( 15, 4 ); // Rosetta atom
-		atom2 = line.substr( 20, 4);
+		utility::vector1< std::string > atom_aliases;
+		std::string const atom_name_full( line.substr( 15, 4 ) );  // Rosetta atom, including whitespace
+		std::string const primary_alias( line.substr( 20, 4) );  // The preferred alias used in most cases by the PDB.
 		l >> atom_name >> atom_alias;
 		if ( l.fail() ) {
 			utility_exit_with_message( "Failed to parse ADD_ATOM_ALIAS patch operation." );
 			return nullptr;
 		}
-		return utility::pointer::make_shared< AddAtomAlias >( atom_name, atom_alias, atom1, atom2 );
+		while ( ! l.fail() ) {
+			atom_aliases.push_back( atom_alias );
+			l >> atom_alias;
+		}
+		return utility::pointer::make_shared< AddAtomAlias >( atom_name_full, atom_aliases, primary_alias );
 
 	} else if ( tag == "SET_BACKBONE_HEAVYATOM" ) {
 		l >> atom_name;
@@ -4280,9 +4288,8 @@ void
 core::chemical::AddAtomAlias::save( Archive & arc ) const {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( CEREAL_NVP( rosetta_atom_name_ ) ); // std::string
-	arc( CEREAL_NVP( alias_ ) ); // std::string
-	arc( CEREAL_NVP( rosetta_atom_name_full_ ) ); // std::string
-	arc( CEREAL_NVP( alias_full_ ) ); // std::string
+	arc( CEREAL_NVP( aliases_ ) ); // utility::vector1< std::string >
+	arc( CEREAL_NVP( preferred_alias_ ) ); // std::string
 }
 
 /// @brief Automatically generated deserialization method
@@ -4291,9 +4298,8 @@ void
 core::chemical::AddAtomAlias::load( Archive & arc ) {
 	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
 	arc( rosetta_atom_name_ ); // std::string
-	arc( alias_ ); // std::string
-	arc( rosetta_atom_name_full_ ); // std::string
-	arc( alias_full_ ); // std::string
+	arc( aliases_ ); // utility::vector1< std::string >
+	arc( preferred_alias_ ); // std::string
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::AddAtomAlias );

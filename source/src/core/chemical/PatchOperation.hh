@@ -56,10 +56,9 @@ public:
 	bool
 	apply( MutableResidueType & rsd ) const = 0;
 
-	/// @brief Which atom, if any, is added. Used for fast matching of ResidueType/Patches to PDB residues.
-	virtual
-	std::string
-	adds_atom(){ return ""; }
+	/// @brief   Which atom(s), if any, is/are added. Used for fast matching of ResidueType/Patches to PDB residues.
+	/// @details This includes both atoms and all possible aliases for those atoms.
+	virtual utility::vector1< std::string > adds_atoms() { return utility::vector1< std::string >(); }
 
 	/// @brief Which atom, if any, is deleted. Used for fast matching of ResidueType/Patches to PDB residues.
 	virtual
@@ -741,9 +740,7 @@ public:
 	bool
 	apply( MutableResidueType & rsd ) const override;
 
-
-	std::string
-	adds_atom() override{ return atom_name_; }
+	utility::vector1< std::string > adds_atoms() override { return utility::vector1< std::string >( 1, atom_name_ ); }
 
 private:
 	std::string atom_name_;
@@ -772,24 +769,26 @@ public:
 class AddAtomAlias : public PatchOperation {
 public:
 	// Constructor
-	AddAtomAlias( std::string const & rosetta_atom_name_in, std::string const & alias_in, std::string const & rosetta_atom_name_full, std::string const & alias_full );
+	AddAtomAlias(
+		std::string const & rosetta_atom_name_in,
+		utility::vector1< std::string > const & aliases_in,
+		std::string const & preferred_alias_in );
 
 	/// @brief  Apply this patch to the given ResidueType.
 	bool apply( MutableResidueType & rsd ) const override;
 
 	/// @brief Return the name of this PatchOperation ("AddAtomAlias").
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
-	std::string
-	name() const override;
+	std::string name() const override;
 
-	std::string
-	adds_atom() override{ return alias_; }
+	/// @brief   Return a list of all atom names that this operation adds (as aliases).
+	/// @details All of the aliases for an atom must be offered as options to the ResidueTypeFinder.
+	utility::vector1< std::string > adds_atoms() override { return aliases_; }
 
 private:
 	std::string rosetta_atom_name_;
-	std::string alias_;
-	std::string rosetta_atom_name_full_;
-	std::string alias_full_;
+	utility::vector1< std::string > aliases_;
+	std::string preferred_alias_;
 #ifdef    SERIALIZATION
 protected:
 	friend class cereal::access;
