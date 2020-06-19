@@ -51,7 +51,7 @@ public:
 		TS_ASSERT( histogram_2.size() > 0 );
 
 		// spot check
-		TS_ASSERT_EQUALS( sl.normalize_distribution( histogram_1 )[ 49 ], sl.normalize_distribution( histogram_2 )[ 49 ] );
+		TS_ASSERT_DELTA( sl.normalize_distribution( histogram_1 )[ 49 ], sl.normalize_distribution( histogram_2 )[ 49 ], 1e-6 );
 
 		sl.label( 123, "DEFAULT", test_pose );
 		TS_ASSERT_EQUALS( sl[ std::make_pair( 123, "DEFAULT" ) ].size(), 50 );
