@@ -1,0 +1,82 @@
+## full-atom 3-lactyl sugar patch
+## partial charges from charmm 27
+
+NAME 3-Lac
+TYPES O3_LACTYL_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+NOT UPPER_ATOM O3
+NOT VARIANT_TYPE C3_BRANCH_POINT
+NOT PROPERTY C3_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make the H invisible
+SET_ATOM_TYPE HO3 VIRT
+SET_MM_ATOM_TYPE HO3 VIRT
+SET_ATOMIC_CHARGE HO3 0.00
+
+# Next, change the oxygen atom type
+SET_ATOM_TYPE O3 OOC
+SET_MM_ATOM_TYPE O3 OS
+SET_ATOMIC_CHARGE O3 -0.30   # estimated average value
+
+# Next, add the new atoms
+ADD_ATOM  CO3 CH1  CT1  0.11
+ADD_ATOM HCO3 Hapo HA   0.07
+ADD_ATOM  CM3 CH3  CT3  0.11
+ADD_ATOM 1HM3 Hapo HA   0.06
+ADD_ATOM 2HM3 Hapo HA   0.06
+ADD_ATOM 3HM3 Hapo HA   0.06
+ADD_ATOM  CC3 COO  C    0.52
+ADD_ATOM 1OC3 OOC  O   -0.76
+ADD_ATOM 2OC3 OOC  O   -0.76
+
+# Now, the bonds
+ADD_BOND  O3   CO3
+ADD_BOND CO3   CM3
+ADD_BOND CO3   CC3
+ADD_BOND_TYPE  CC3  1OC3 CARBOXY
+ADD_BOND_TYPE  CC3  2OC3 CARBOXY
+ADD_BOND CO3  HCO3
+ADD_BOND CM3  1HM3
+ADD_BOND CM3  2HM3
+ADD_BOND CM3  3HM3
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C3  O3  CO3  CC3
+ADD_CHI_ROTAMER N   60 0
+ADD_CHI_ROTAMER N  180 0
+ADD_CHI_ROTAMER N  -60 0
+
+ADD_CHI N+1  O3  CO3  CC3  1OC3
+ADD_CHI_ROTAMER N  -30 0
+ADD_CHI_ROTAMER N   60 0
+
+# First, heavy atoms
+SET_ICOOR  CO3   -90.3    73.1   1.4    O3   C3    C2
+SET_ICOOR  CM3   -90.0    70.5   1.5   CO3   O3    C3
+SET_ICOOR  CC3   150.0    70.5   1.5   CO3   O3    C3
+SET_ICOOR 1OC3    -0.0    60.0   1.3   CC3  CO3    O3
+SET_ICOOR 1OC3   120.0    60.0   1.3   CC3  CO3   CM3
+SET_ICOOR 2OC3   180.0    60.0   1.3   CC3  CO3    O3
+SET_ICOOR 2OC3    60.0    60.0   1.3   CC3  CO3   CM3
+# Then, all the Hs
+SET_ICOOR HCO3    29.9    70.5   1.1   CO3   O3    C3
+SET_ICOOR 1OC3   120.0    60.0   1.3   CC3  CO3  HCO3
+SET_ICOOR 2OC3   -60.0    59.9   1.3   CC3  CO3  HCO3
+SET_ICOOR 1HM3    59.9    70.5   1.1   CM3  CO3    O3
+SET_ICOOR CC3    180.0    70.6   1.5   CO3  CM3  1HM3
+SET_ICOOR 2HM3   -60.0    70.5   1.1   CM3  CO3    O3
+SET_ICOOR 3HM3   180.0    70.5   1.1   CM3  CO3    O3
+SET_ICOOR CC3    -60.0    70.6   1.5   CO3  CM3  3HM3
+
+ADD_PROPERTY C3_MODIFIED
+ADD_PROPERTY LACTYL_SUGAR
+
+END_CASE

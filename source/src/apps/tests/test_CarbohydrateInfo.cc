@@ -94,7 +94,7 @@ main( int argc, char *argv[] )
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
-			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb, ligand_sugar;
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb, lactyl_sugar, ligand_sugar;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -435,6 +435,15 @@ main( int argc, char *argv[] )
 		pose_from_file( pdb_code_pdb, PATH + "pdb_w_pdb_3_letter_codes.pdb", PDB_file );
 
 		test_sugar( pdb_code_pdb );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating lactyl sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( lactyl_sugar, "->4)-alpha-d-Glcp3Lac", *residue_set );
+		lactyl_sugar.pdb_info()->name( "Glcp3Lac" );
+
+		test_sugar( lactyl_sugar );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;

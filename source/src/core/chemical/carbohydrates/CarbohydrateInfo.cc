@@ -634,6 +634,9 @@ CarbohydrateInfo::determine_IUPAC_names()
 		if ( modifications_[ position ] == "acetyl sugar" ) {
 			long_prefixes << position << "-acetyl-";
 		}
+		if ( modifications_[ position ] == "lactyl sugar" ) {
+			long_prefixes << position << "-O-[(R)-1-carboxyethyl]-";
+		}
 	}
 
 	// Stereochemistry

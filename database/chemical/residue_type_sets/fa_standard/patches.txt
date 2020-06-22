@@ -187,6 +187,11 @@ patches/carbohydrates/2-sulfamidation.txt
 patches/carbohydrates/omega-oxidation.txt
 patches/carbohydrates/2-reduction.txt
 patches/carbohydrates/4-reduction.txt
+patches/carbohydrates/O1-lactylation.txt
+patches/carbohydrates/O2-lactylation.txt
+patches/carbohydrates/O3-lactylation.txt
+patches/carbohydrates/O4-lactylation.txt
+patches/carbohydrates/O6-lactylation.txt
 
 ## Coenzyme patches
 patches/coenzymes/non-conjugated_nucleotide_diphosphate.txt
