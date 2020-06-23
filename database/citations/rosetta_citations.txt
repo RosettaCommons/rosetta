@@ -108,7 +108,7 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
-        "Gordon" "Lemmin" "G"
+        "Gordon" "Lemmon" "G"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
     [END_COAUTHORS]
