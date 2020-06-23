@@ -252,7 +252,7 @@ get_conventional_chains_and_numbering( utility::vector1< SequenceCOP > const & f
 		}
 		tr.Trace << "Resnums thus far: " << resnum << std::endl;
 		tr.Trace << "Chains thus far: " << chains << std::endl;
-		tr.Trace << "Segids thus far: " << segids << std::endl; 
+		tr.Trace << "Segids thus far: " << segids << std::endl;
 		// this condition used to enforce that if one sequence had blank chains, all sequences should have blank chains. seems unnecessary now -- let's just fix the rest of the code. -- rhiju, 2019
 		// if ( n > 1 ) runtime_assert( found_info == found_info_in_previous_sequence );
 
