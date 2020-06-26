@@ -128,7 +128,6 @@ getRG()
 	return RG;
 }
 
-
 UDPSocketClient::UDPSocketClient(std::string const & address, unsigned int port, unsigned int max_packet_size) : max_packet_size_(max_packet_size), sentCount_(0)
 {
 	if ( port < 1  or  port > 65535 ) utility_exit_with_message("UDPSocketClient::UDPSocketClient: Invalid value for port:" + std::to_string(port) + " expected value must be in [1, 65535] range!");
@@ -174,6 +173,18 @@ UDPSocketClient::UDPSocketClient( UDPSocketClient const & other ) :
 	// reinit connection using coppied info
 	socket_h_ = socket(AF_INET, SOCK_DGRAM, 0);
 #endif
+}
+
+std::string
+UDPSocketClient::get_address() const {
+	char ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &(socket_addr_.sin_addr), ip, sizeof(ip));
+	return std::string(ip);
+}
+
+unsigned int
+UDPSocketClient::get_port() const {
+	return static_cast<unsigned int>(htons(socket_addr_.sin_port));
 }
 
 
@@ -270,8 +281,8 @@ UDPSocketClient::show(std::ostream & output) const
 	// output << std::endl;
 
 	output << "socket address family: " << socket_addr_.sin_family << std::endl;
-	output << "socket address address: " << socket_addr_.sin_addr.s_addr << std::endl;
-	output << "socket address port: " << socket_addr_.sin_port << std::endl;
+	output << "socket address address: " << socket_addr_.sin_addr.s_addr << " : " << this->get_address() << std::endl;
+	output << "socket address port: " << socket_addr_.sin_port << " : " << this->get_port() << std::endl;
 	output << "socket max_packet_size: " << max_packet_size_ << std::endl;
 #endif
 }

@@ -260,6 +260,14 @@ public:
 
 	void show(std::ostream & output) const;
 
+	std::string
+	get_address() const;
+
+	unsigned int
+	get_port() const;
+
+	unsigned int get_max_packet_size() const {return max_packet_size_;}
+
 private:
 
 	void sendRAWMessage(int globalPacketID, int packetI, int packetCount, char * msg_begin, char *msg_end);
@@ -394,6 +402,12 @@ public:
 	///@brief Set the pymol model name
 	void
 	set_PyMOL_model_name( std::string name);
+
+	void
+	set_link(UDPSocketClient const & link) { link_ = link; }
+
+	UDPSocketClient const &
+	get_link() const { return link_; }
 
 	std::string
 	get_PyMOL_model_name(Pose const & pose) const;
