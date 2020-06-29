@@ -66,6 +66,7 @@ HelicalBundlePredictApplication_MPI::HelicalBundlePredictApplication_MPI(
 	core::Real const &lambda,
 	core::Real const &kbt,
 	bool const compute_rmsd_to_lowest,
+	core::Real const & compute_pnear_to_lowest_fract,
 	bool const compute_sasa_metrics,
 	core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 ) :
@@ -73,7 +74,7 @@ HelicalBundlePredictApplication_MPI::HelicalBundlePredictApplication_MPI(
 		TR, TR_summary, MPI_rank, MPI_n_procs, centroid_sfxn_in, total_hierarchy_levels,
 		procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest,
 		output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
-		compute_sasa_metrics, threads_per_slave_proc
+		compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave_proc
 	),
 	centroid_move_generator_(nullptr),
 	sfxn_fullatom_(fullatom_sfxn_in->clone()),

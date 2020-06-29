@@ -128,9 +128,11 @@ sources = {
 	"protocols/cyclic_peptide_predict" : [
 		"HierarchicalHybridJDApplication",
 		"HierarchicalHybridJD_JobResultsSummary",
+		"HierarchicalHybridJD_PNearToArbitraryStateSummary",
 		"HierarchicalHybridJD_ResultsSummaryBase",
 		"HierarchicalHybridJD_RMSDToBestSummary",
 		"HierarchicalHybridJD_SASASummary",
+		"PNearCalculator",
 		"SimpleCycpepPredictApplication",
 		"SimpleCycpepPredictApplication_MPI",
 		"util",

@@ -98,6 +98,7 @@ set_MPI_vars(
 	core::Real &lambda,
 	core::Real &kbt,
 	bool &compute_rmsd_to_lowest,
+	core::Real &compute_pnear_to_this_fract,
 	bool &compute_sasa_metrics,
 	core::Size &threads_per_slave,
 	std::string const & app_name
@@ -170,6 +171,8 @@ set_MPI_vars(
 		runtime_assert_string_msg( kbt > 0, errormsg + "The -cyclic_peptide:MPI_pnear_kbt option must be greater than zero." );
 	}
 	compute_rmsd_to_lowest = option[cyclic_peptide::compute_rmsd_to_lowest].value();
+	compute_pnear_to_this_fract = option[ cyclic_peptide::compute_pnear_to_this_fract ].value();
+	runtime_assert_string_msg( compute_pnear_to_this_fract >= 0.0 && compute_pnear_to_this_fract <= 1.0, errormsg + "The -cyclic_peptide:compute_pnear_to_this_fract option must be accompanied by a floating-point number between 0 and 1 inclusive.  Value " + std::to_string(compute_pnear_to_this_fract) + " is invalid." );
 	compute_sasa_metrics = option[cyclic_peptide::compute_ensemble_sasa_metrics].value();
 
 #ifdef MULTI_THREADED

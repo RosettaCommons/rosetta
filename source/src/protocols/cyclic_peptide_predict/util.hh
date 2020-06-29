@@ -74,6 +74,7 @@ set_MPI_vars(
 	core::Real &lambda,
 	core::Real &kbt,
 	bool &compute_rmsd_to_lowest,
+	core::Real &compute_pnear_to_lowest_fract,
 	bool &compute_sasa_metrics,
 	core::Size &threads_per_slave,
 	std::string const & app_name

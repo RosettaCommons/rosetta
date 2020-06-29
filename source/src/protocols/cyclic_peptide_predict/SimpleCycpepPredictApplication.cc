@@ -240,6 +240,7 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_lambda                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::MPI_pnear_kbt                        );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_rmsd_to_lowest               );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_pnear_to_this_fract          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_ensemble_sasa_metrics        );
 #ifdef MULTI_THREADED //Options that are only needed in the MPI+threads version:
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_slave                    );

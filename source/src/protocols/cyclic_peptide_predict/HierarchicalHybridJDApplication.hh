@@ -28,6 +28,7 @@
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_JobResultsSummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_RMSDToBestSummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_SASASummary.fwd.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_PNearToArbitraryStateSummary.fwd.hh>
 #include <protocols/cyclic_peptide_predict/util.hh>
 
 // Package Headers
@@ -73,12 +74,19 @@ enum HIERARCHICAL_MPI_COMMUNICATION_TYPE {
 	OFFER_NEW_JOBS_BATCH_DOWNWARD,
 	REQUEST_NEW_POSE_BATCH_DOWNWARD,
 	REQUEST_SASA_SUMMARIES_DOWNWARD, // The emperor is asking that all slaves transmit SASA summaries upward.
+
+	BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The emperor is indicating that we're going to compute the PNear values to the lowest fraction of states found.
+	SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The emperor is indicating that we're NOT going to compute the PNear values to the lowest fraction of states found (because no states were sampled).
+	REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD, //The emperor is requesting data for a PNear computation to a particular sample, and is about to transmit the information for the sample.
+	END_PNEAR_TO_LOWEST_FRACT_DOWNWARD, //The emperor is indicating that we're finished computing the PNear values to the lowest fraction of states found.
+
 	HALT_SIGNAL
 };
 
 enum HIERARCHICAL_HYBRID_JD_MPI_TAG_TYPE {
 	GENERAL_REQUEST=1,
 	NEW_JOBS_DOWNWARD,
+	JOB_NODE_AND_INDEX_DOWNWARD,
 	RESULTS_SUMMARY_UPWARD,
 	JOBS_ATTEMPTED_COUNT_UPWARD
 };
@@ -116,11 +124,12 @@ public:
 		utility::vector1 < core::Size > const &batchsize_per_level,
 		std::string const &sort_type,
 		bool const select_highest,
-		core::Real const &output_fraction,
+		core::Real const output_fraction,
 		std::string const &output_filename,
-		core::Real const &lambda,
-		core::Real const &kbt,
+		core::Real const lambda,
+		core::Real const kbt,
 		bool const compute_rmsd_to_lowest,
+		core::Real const compute_pnear_to_this_fract,
 		bool const compute_sasa_metrics,
 		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 	);
@@ -283,7 +292,7 @@ private:
 	/// @details Following the stop signal, HierarchicalHybridJDApplication::run() terminates.
 	void stop_signal() const;
 
-	/// @brief Any non-slave node can wait for a node, above or below in the hierarchy, to send it some sort of request.
+	/// @brief Any node can wait for a node, above or below in the hierarchy, to send it some sort of request.
 	/// @details Only messags with tag GENERAL_REQUEST.
 	/// @param[out] requesting_node The node from which the request came.
 	/// @param[out] message The type of request received.
@@ -311,9 +320,11 @@ private:
 	/// @param[in,out] njobs The number of jobs held on this node that are to be done.  Incremented by this function with however many are received from above.
 	void receive_njobs_from_above( core::Size &njobs ) const;
 
-	/// @brief Non-emperor nodes must call this when the emperor calls emperor_broadcast_silent_struct.
+	/// @brief Non-originating nodes must call this when the originating node calls broadcast_silent_struct_from_this_node.
 	/// @details This will build a pose and return an owning pointer to it.
-	core::pose::PoseCOP receive_broadcast_silent_struct_and_build_pose() const;
+	/// @note If skip_pose_build is true, we don't bother to convert the structure into a pose; we just participate in the
+	/// broadcast.  In that case, this function returns nullptr.
+	core::pose::PoseCOP receive_broadcast_silent_struct_and_build_pose( int node_to_receive_from = 0, bool const skip_pose_build = false ) const;
 
 	/// @brief Convert a vector of silent structs into a character string and send it to a node.
 	/// @details Intended to be used with receive_pose_batch_as_string() to allow another node to receive the transmission.
@@ -453,7 +464,7 @@ private:
 
 	/// @brief Convert a silent struct into a character string and broadcast it to all nodes.
 	/// @details Intended to be used with receive_broadcast_silent_struct_and_build_pose() to allow all other nodes to receive the broadcast.
-	void emperor_broadcast_silent_struct( core::io::silent::SilentStructOP ss ) const;
+	void broadcast_silent_struct_from_this_node( core::io::silent::SilentStructOP ss ) const;
 
 	/// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
 	/// @details The RMSD to best pose vector will only be populated if the -compute_rmsd_to_lowest option is used.
@@ -461,7 +472,8 @@ private:
 	emperor_write_summaries_to_tracer(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
 		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose,
-		utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries
+		utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries,
+		utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > const & pnear_to_lowest_fract_summaries
 	) const;
 
 	/// @brief Based on the sorted list of summaries, populate a short list of jobs, the results of which will be collected from below for output to disk.
@@ -482,6 +494,21 @@ private:
 
 	/// @brief The emperor is asking for SASA metrics to be sent up the hierarchy.
 	void emperor_send_request_for_sasa_summaries_downward() const;
+
+	/// @brief The emperor is asking for data with which to compute PNear values from below.
+	/// @details The steps are:
+	///     - Sends a request for each state in turn from the emperor node to all slave nodes.
+    ///     - Each slave node broadcasts that state to all other slave nodes.
+    ///     - All slave nodes compute RMSD to that state.
+    ///     - Emperor collects RMSDs up the hierarchy and carries out PNear calculation.
+    ///     - Repeat for each relevant state.
+	/// @note The pnears_to_lowest_fract vector is cleared and populated by this operation.
+ 	void
+	emperor_compute_pnear_to_lowest_fract(
+		core::Real const & fraction,
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const & results_summary,
+		utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > & pnears_to_lowest_fract
+	) const;
 
 	/// ------------- Intermediate Master Methods --------
 
@@ -507,6 +534,13 @@ private:
 	/// @details This function expects that the only possible message that can be received
 	/// at this point is the request for SASA summaries!
 	void intermediate_master_relay_request_for_sasa_summaries_downward() const;
+
+	/// @brief Send requests for PNear data for the lowest-energy N% of structures down
+	/// the hierarchy, and facilitate results going up the hierarchy.
+	void
+	intermediate_master_compute_pnear_to_lowest_fract(
+		utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > const & jobsummaries
+	) const;
 
 	/// ------------- Slave Methods ----------------------
 
@@ -557,6 +591,14 @@ private:
 		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > & rmsds_to_best_summaries,
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
 		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+	) const;
+
+	/// @brief Wait for requests from the emperor for RMSDs to a given structure, participate in a broadcast of
+	/// that structure, and compute RMSDs for all output to that structure to send up the hierarchy.
+	void
+	slave_compute_pnear_to_lowest_fract(
+		utility::vector1< HierarchicalHybridJD_JobResultsSummaryCOP > const & jobsummaries,
+		utility::vector1 < core::io::silent::SilentStructCOP > const & all_output 
 	) const;
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
@@ -666,6 +708,10 @@ private:
 
 	/// @brief If true, the RMSD to the lowest-energy state found is computed.  False by default.
 	bool compute_rmsd_to_lowest_ = false;
+
+	/// @brief If nonzero, the PNear to the lowest energy N% of states is computed.  If set
+	/// to zero, this doesn't happen.
+	core::Real compute_pnear_to_this_fract_ = 0.0;
 
 	/// @brief If true, sasa, polar sasa, and hydrophobic sasa are computed for each structure and for
 	/// the ensemble.  False by default.

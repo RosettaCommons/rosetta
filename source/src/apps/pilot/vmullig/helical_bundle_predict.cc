@@ -140,11 +140,12 @@ main( int argc, char * argv [] )
 		core::Real kbt( 1.0 );
 		core::Size threads_per_slave(1);
 		bool compute_rmsd_to_lowest( false );
+		core::Real compute_pnear_to_lowest_fract(0.0);
 		bool compute_sasa_metrics( false );
 		protocols::cyclic_peptide_predict::set_MPI_vars(
 			MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level,
 			sort_by, select_highest, output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
-			compute_sasa_metrics, threads_per_slave, "helical_bundle_predict"
+			compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave, "helical_bundle_predict"
 		); //Get the values of these vars (only used in MPI mode).
 #endif
 
@@ -153,7 +154,7 @@ main( int argc, char * argv [] )
 			MPI_rank, MPI_n_procs, HelicalBundlePredictApplication::create_centroid_scorefunction(),
 			HelicalBundlePredictApplication::create_fullatom_scorefunction(), total_hierarchy_levels,
 			procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction,
-			output_filename, lambda, kbt, compute_rmsd_to_lowest, compute_sasa_metrics,
+			output_filename, lambda, kbt, compute_rmsd_to_lowest, compute_pnear_to_lowest_fract, compute_sasa_metrics,
 			threads_per_slave
 		);
 		application.set_options( options );

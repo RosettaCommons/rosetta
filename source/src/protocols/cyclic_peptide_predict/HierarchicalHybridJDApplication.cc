@@ -26,6 +26,8 @@
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_RMSDToBestSummary.hh>
 #include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_SASASummary.hh>
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
+#include <protocols/cyclic_peptide_predict/HierarchicalHybridJD_PNearToArbitraryStateSummary.hh>
+#include <protocols/cyclic_peptide_predict/PNearCalculator.hh>
 
 // Basic Headers
 #include <basic/Tracer.hh>
@@ -89,9 +91,16 @@
 
 // C++ headers
 #include <stdio.h>
+#include <chrono>
 
 #ifdef MULTI_THREADED
 #include <thread>
+#endif
+
+#if defined(MAC) || defined(__APPLE__)  ||  defined(__OSX__)
+typedef std::chrono::system_clock HHJDA_CLOCK;
+#else
+typedef std::chrono::high_resolution_clock HHJDA_CLOCK;
 #endif
 
 namespace protocols {
@@ -124,6 +133,7 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	lambda_(0.5),
 	kbt_(1.0),
 	compute_rmsd_to_lowest_(false),
+	compute_pnear_to_this_fract_(0.0),
 	compute_sasa_metrics_(false)
 #ifdef MULTI_THREADED
 	,
@@ -135,7 +145,7 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	random_seed_(11111111),
 	rgtype_("")
 #endif
-	//TODO -- Initialize vars here.
+	//TODO -- Initialize vars here as they are added.
 {
 
 	scorefxn_ = core::scoring::get_score_function(); //Reads from file.
@@ -157,11 +167,12 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	utility::vector1< core::Size > const &batchsize_per_level,
 	std::string const &sort_type,
 	bool const select_highest,
-	core::Real const &output_fraction,
+	core::Real const output_fraction,
 	std::string const &output_filename,
-	core::Real const &lambda,
-	core::Real const &kbt,
+	core::Real const lambda,
+	core::Real const kbt,
 	bool const compute_rmsd_to_lowest,
+	core::Real const compute_pnear_to_this_fract,
 	bool const compute_sasa_metrics,
 #ifdef MULTI_THREADED
 	core::Size const threads_per_slave_proc
@@ -190,6 +201,7 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	lambda_(lambda),
 	kbt_(kbt),
 	compute_rmsd_to_lowest_( compute_rmsd_to_lowest ),
+	compute_pnear_to_this_fract_(compute_pnear_to_this_fract),
 	compute_sasa_metrics_( compute_sasa_metrics )
 #ifdef MULTI_THREADED
 	,
@@ -210,7 +222,9 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	set_procs_per_hierarchy_level( procs_per_hierarchy_level );
 	assign_level_children_and_parent();
 	set_batchsize( batchsize_per_level );
-	runtime_assert_string_msg( output_filename_ != "", "Error in constructor for HierarchicalHybridJDApplication class: The output filename cannot be empty." );
+	std::string const errmsg( "Error in constructor for HierarchicalHybridJDApplication class:  " );
+	runtime_assert_string_msg( output_filename_ != "", errmsg + "The output filename cannot be empty." );
+	runtime_assert_string_msg( compute_pnear_to_this_fract_ == 0.0 || !compute_rmsd_to_lowest_, errmsg  + "The -compute_pnear_to_this_fract option cannot be used with the -compute_rmsd_to_lowest option." );
 }
 
 /// @brief Explicit virtual destructor.
@@ -245,6 +259,7 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	lambda_(src.lambda_),
 	kbt_(src.kbt_),
 	compute_rmsd_to_lowest_( src.compute_rmsd_to_lowest_ ),
+	compute_pnear_to_this_fract_( src.compute_pnear_to_this_fract_ ),
 	compute_sasa_metrics_( src.compute_sasa_metrics_ )
 #ifdef MULTI_THREADED
 	,
@@ -256,7 +271,7 @@ HierarchicalHybridJDApplication::HierarchicalHybridJDApplication(
 	random_seed_(src.random_seed_),
 	rgtype_(src.rgtype_)
 #endif
-	//TODO -- copy variables here.
+	//TODO -- copy variables here as they are added.
 {
 	set_procs_per_hierarchy_level( src.procs_per_hierarchy_level_ );
 	assign_level_children_and_parent();
@@ -619,7 +634,7 @@ HierarchicalHybridJDApplication::get_native() {
 		core::io::silent::SilentStructOP native_ss( core::io::silent::SilentStructFactory::get_instance()->get_silent_struct( "binary", opts ) );
 		native_ss->fill_struct(*native, "native");
 
-		emperor_broadcast_silent_struct( native_ss );
+		broadcast_silent_struct_from_this_node( native_ss );
 
 		native_ = native; //Store the pose (though maybe the emperor should discard it at this point to free memory).
 		derivedTR_ << "Read " << native_->size() << "-residue pose from disk and broadcasted it to all other nodes." << std::endl;
@@ -698,7 +713,7 @@ HierarchicalHybridJDApplication::stop_signal() const {
 	MPI_Bcast( &mybuf, 1, MPI_CHAR, 0, MPI_COMM_WORLD );
 }
 
-/// @brief Any non-slave node can wait for a node, above or below in the hierarchy, to send it some sort of request.
+/// @brief Any node can wait for a node, above or below in the hierarchy, to send it some sort of request.
 /// @details Only messags with tag GENERAL_REQUEST.
 /// @param[out] requesting_node The node from which the request came.
 /// @param[out] message The type of request received.
@@ -773,14 +788,21 @@ HierarchicalHybridJDApplication::receive_njobs_from_above(
 	njobs += static_cast<core::Size>(buf);
 }
 
-/// @brief Non-emperor nodes must call this when the emperor calls emperor_broadcast_silent_struct.
+/// @brief Non-originating nodes must call this when the originating node calls broadcast_silent_struct_from_this_node.
 /// @details This will build a pose and return an owning pointer to it.
+/// @note If skip_pose_build is true, we don't bother to convert the structure into a pose; we just participate in the
+/// broadcast.  In that case, this function returns nullptr.
 core::pose::PoseCOP
-HierarchicalHybridJDApplication::receive_broadcast_silent_struct_and_build_pose() const {
+HierarchicalHybridJDApplication::receive_broadcast_silent_struct_and_build_pose(
+	int node_to_receive_from /*=0*/,
+	bool const skip_pose_build /*=false*/
+) const {
 	int strlen(0);
-	MPI_Bcast( &strlen, 1, MPI_INT, 0, MPI_COMM_WORLD); //Receive the length of the string.
+	MPI_Bcast( &strlen, 1, MPI_INT, node_to_receive_from, MPI_COMM_WORLD); //Receive the length of the string.
 	utility::vector0< char > inchar( strlen );
-	MPI_Bcast( inchar.data(), strlen, MPI_CHAR, 0, MPI_COMM_WORLD); //Receive the string.
+	MPI_Bcast( inchar.data(), strlen, MPI_CHAR, node_to_receive_from, MPI_COMM_WORLD); //Receive the string.
+
+	if( skip_pose_build ) return nullptr;
 
 	std::string instring( inchar.data() );
 
@@ -932,7 +954,7 @@ HierarchicalHybridJDApplication::receive_and_sort_job_summaries(
 	mergesort_jobsummaries_list( original_summary_list, summary_list, sort_type_ );
 }
 
-/// @brief Recieve a list of job summaries.
+/// @brief Send a list of job summaries.
 /// @details To be used in conjunction with receive_and_sort_job_summaries().  Sending and receiving procs must send messages to synchronize, first.
 void
 HierarchicalHybridJDApplication::send_job_summaries(
@@ -1466,6 +1488,8 @@ HierarchicalHybridJDApplication::run_emperor() const {
 	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsds_to_best_pose; //Only computed if compute_rmsd_to_lowest_ is true.
 	utility::vector1< HierarchicalHybridJD_SASASummaryOP > sasa_summaries; //Only computed if compute_sasa_metrics_ is true.
 
+	utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > pnears_to_lowest_fract; //Only computed if compute_pnear_to_this_fract_ is true.
+
 	clock_t start_time( clock() ); //The start of the run, for timing information.
 	go_signal(); //Send signal to everyone that it's time to start.
 
@@ -1497,10 +1521,10 @@ HierarchicalHybridJDApplication::run_emperor() const {
 				break;
 			case GIVE_COMPLETION_SIGNAL_UPWARD:
 				++n_children_done;
-			//TODO -- cover other communications here.
+				//TODO -- cover other communications here as other options are added.
 				break;
 			default:
-				//TODO
+				utility_exit_with_message( "Unknown signal (" + std::to_string(message_from_below) + ") received from below!" );
 				break;
 		}
 	} while( n_summaries_received < n_children || n_children_done < n_children || children_reporting_job_counts < n_children );  //Keep looping until all children have reported that they're done and have sent summaries.
@@ -1519,6 +1543,11 @@ HierarchicalHybridJDApplication::run_emperor() const {
 		}
 	}
 
+	// If we're computing the PNears to the lowest-energy fraction of structures, do so here:
+	if( compute_pnear_to_this_fract_ > 0.0 ) {
+		emperor_compute_pnear_to_lowest_fract( compute_pnear_to_this_fract_, results_summary_from_below, pnears_to_lowest_fract );
+	}
+
 	if( compute_sasa_metrics_ ) {
 		if( !results_summary_from_below.empty() ) {
 			if(derivedTR_.Debug.visible()) derivedTR_.Debug << "Empreror node (" << MPI_rank_ << ") is requesting SASA summaries from nodes below." << std::endl;
@@ -1530,7 +1559,7 @@ HierarchicalHybridJDApplication::run_emperor() const {
 		}
 	}
 
-	emperor_write_summaries_to_tracer( results_summary_from_below, rmsds_to_best_pose, sasa_summaries );
+	emperor_write_summaries_to_tracer( results_summary_from_below, rmsds_to_best_pose, sasa_summaries, pnears_to_lowest_fract );
 
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > summary_shortlist;
 	emperor_select_best_summaries( summary_shortlist, results_summary_from_below, output_fraction_, select_highest_ );  //This populates summary_shortlist.
@@ -1578,7 +1607,7 @@ HierarchicalHybridJDApplication::run_emperor() const {
 /// @brief Convert a silent struct into a character string and broadcast it to all nodes.
 /// @details Intended to be used with receive_broadcast_silent_struct_and_build_pose() to allow all other nodes to receive the broadcast.
 void
-HierarchicalHybridJDApplication::emperor_broadcast_silent_struct(
+HierarchicalHybridJDApplication::broadcast_silent_struct_from_this_node(
 	core::io::silent::SilentStructOP ss
 ) const {
 	core::io::silent::SilentFileOptions opts;
@@ -1594,8 +1623,8 @@ HierarchicalHybridJDApplication::emperor_broadcast_silent_struct(
 	utility::vector0< char > outchar( strlen );
 	sprintf( outchar.data(), "%s", outstring.c_str() );
 
-	MPI_Bcast( &strlen, 1, MPI_INT, 0, MPI_COMM_WORLD); //Broadcast the length of the string.
-	MPI_Bcast( outchar.data(), strlen, MPI_CHAR, 0, MPI_COMM_WORLD); //Broadcast the string.
+	MPI_Bcast( &strlen, 1, MPI_INT, MPI_rank_, MPI_COMM_WORLD); //Broadcast the length of the string.
+	MPI_Bcast( outchar.data(), strlen, MPI_CHAR, MPI_rank_, MPI_COMM_WORLD); //Broadcast the string.
 }
 
 /// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
@@ -1604,7 +1633,8 @@ void
 HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
 	utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose,
-	utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries
+	utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries,
+	utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > const & pnear_to_lowest_fract_summaries
 ) const {
 	if( !derivedTR_summary_.visible() ) return; //Do nothing if the tracer is off.
 	bool const write_rmsds_to_best( !rmsds_to_best_pose.empty() );
@@ -1623,11 +1653,12 @@ HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 
 	derivedTR_summary_ << "MPI_slave_node\tJobindex_on_node\tRMSD" << (write_rmsds_to_best ? "\tRMSD_to_best" : "" ) << "\tEnergy\tHbonds\tCisPepBonds" << ( write_sasa_summaries ? "\tSASA\tPolarSASA\tApolarSASA\tPolarSASAFract\tApolarSASAFract" : "") << "\tNode_path_to_emperor\n";
 
-	core::Real numerator(0), denominator(0); //For calculating PNear.
-	core::Real numerator_tobest(0), denominator_tobest(0); //For calculating PNear to best.
 	core::Real numerator_sasa(0), partfxn_sasa(0);
 	core::Real numerator_polar_sasa(0), numerator_hydrophobic_sasa(0);
 	core::Real numerator_fraction_polar_sasa(0), numerator_fraction_hydrophobic_sasa(0);
+
+	PNearCalculator pnear_native( lambda(), kbt() );
+	PNearCalculator pnear_lowest( lambda(), kbt() );
 
 	for( core::Size i=1, imax=summary_list.size(); i<=imax; ++i ) {
 		derivedTR_summary_ << summary_list[i]->originating_node_MPI_rank() << "\t" << summary_list[i]->jobindex_on_originating_node() << "\t"
@@ -1647,16 +1678,14 @@ HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 
 		//Calculations for PNear and other ensemble metrics:
 		if( native_ != nullptr || write_rmsds_to_best || write_sasa_summaries ) {
-			core::Real const Pcurrent(  std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
 			if(native_ != nullptr) {
-				denominator += Pcurrent;
-				numerator += std::exp( -1.0 * std::pow(-summary_list[i]->rmsd() / lambda() , 2.0 ) ) * Pcurrent;
+				pnear_native.add_data_point( summary_list[i]->pose_energy(), summary_list[i]->rmsd() );
 			}
 			if( write_rmsds_to_best ) {
-				denominator_tobest += Pcurrent;
-				numerator_tobest += std::exp( -1.0 * std::pow(-rmsds_to_best_pose[i]->rmsd_to_best() / lambda() , 2.0 ) ) * Pcurrent;
+				pnear_lowest.add_data_point( summary_list[i]->pose_energy(), rmsds_to_best_pose[i]->rmsd_to_best() );
 			}
 			if( write_sasa_summaries ) {
+				core::Real const Pcurrent(  std::exp( -1.0*summary_list[i]->pose_energy()/kbt() ) );
 				numerator_sasa += ( sasa_summaries[i]->sasa() * Pcurrent );
 				numerator_polar_sasa += ( sasa_summaries[i]->polar_sasa() * Pcurrent );
 				numerator_hydrophobic_sasa += ( sasa_summaries[i]->hydrophobic_sasa() * Pcurrent );
@@ -1667,12 +1696,26 @@ HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 			}
 		}
 	}
+	derivedTR_summary_ << "End summary for " << summary_list.size() << " job(s) returning results.\n";
 
-	if(native_ && summary_list.size() > 0 && denominator > 1e-14) {
-		core::Real const PNear( numerator/denominator );
-		core::Real Keq( PNear < 0.999999999 ? PNear/(1.0-PNear) : 0.999999999/(1.0-0.999999999) );
-        if ( Keq < 1.0e-10 ) Keq = 1.0e-10;
-        core::Real const minus_kbt_ln_Keq( -kbt()*std::log( Keq ) );
+	if( pnear_to_lowest_fract_summaries.size() > 0 ) {
+		derivedTR_summary_ << "\nSummary of PNear values for lowest-energy " << pnear_to_lowest_fract_summaries.size() << " job(s) returning results:\n";
+		derivedTR_summary_ << "MPI_slave_node\tJobindex_on_node\tPNear\tKeq\t-kbt*ln(Keq)\n";
+		for( core::Size i(1), imax(pnear_to_lowest_fract_summaries.size()); i<=imax; ++i ) {
+			HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP const & current( pnear_to_lowest_fract_summaries[i] );
+			derivedTR_summary_ << current->originating_mpi_node() << "\t";
+			derivedTR_summary_ << current->jobindex_on_originating_node() << "\t";
+			derivedTR_summary_ << current->pnear() << "\t";
+			derivedTR_summary_ << current->Keq() << "\t";
+			derivedTR_summary_ << current->deltaG_folding() << "\n";
+			if( i % 128 == 0 ) derivedTR_summary_.flush();
+		}
+		derivedTR_summary_ << "End summary of PNear values for lowest-energy " << pnear_to_lowest_fract_summaries.size() << " job(s) returning results.\n";
+	}
+
+	if(native_ && summary_list.size() > 0 ) {
+		core::Real PNear(0.0), Keq(0.0), minus_kbt_ln_Keq(0.0);
+		pnear_native.compute_pnear_and_dgfolding(PNear,Keq,minus_kbt_ln_Keq);
 
 		derivedTR_summary_ << "\nPNear:\t" << PNear << "\n";
 		derivedTR_summary_ << "\nKeq:\t" << Keq << "\n";
@@ -1681,11 +1724,9 @@ HierarchicalHybridJDApplication::emperor_write_summaries_to_tracer(
 		derivedTR_summary_ << "kB*T:\t" << kbt() << "\n";
 	}
 
-	if( write_rmsds_to_best && denominator_tobest > 1e-14 ) {
-		core::Real const PNearBest( numerator_tobest/denominator_tobest );
-		core::Real KeqBest( PNearBest < 0.999999999 ? PNearBest/(1.0-PNearBest) : 0.999999999/(1.0-0.999999999) );
-        if ( KeqBest < 1.0e-10 ) KeqBest = 1.0e-10;
-        core::Real const minus_kbt_ln_KeqBest( -kbt()*std::log( KeqBest ) );
+	if( write_rmsds_to_best ) {
+		core::Real PNearBest(0.0), KeqBest(0.0), minus_kbt_ln_KeqBest(0.0);
+		pnear_lowest.compute_pnear_and_dgfolding( PNearBest, KeqBest, minus_kbt_ln_KeqBest );
 
 		derivedTR_summary_ << "\nPNearLowest:\t" << PNearBest << "\n";
 		derivedTR_summary_ << "\nKeqLowest:\t" << KeqBest << "\n";
@@ -1785,6 +1826,101 @@ HierarchicalHybridJDApplication::emperor_send_request_for_sasa_summaries_downwar
 	}
 }
 
+/// @brief The emperor is asking for data with which to compute PNear values from below.
+/// @details The steps are:
+///     - Sends a request for each state in turn from the emperor node to all slave nodes.
+///     - Each slave node broadcasts that state to all other slave nodes.
+///     - All slave nodes compute RMSD to that state.
+///     - Emperor collects RMSDs up the hierarchy and carries out PNear calculation.
+///     - Repeat for each relevant state.
+/// @note The pnears_to_lowest_fract vector is cleared and populated by this operation.
+void
+HierarchicalHybridJDApplication::emperor_compute_pnear_to_lowest_fract(
+	core::Real const & fraction,
+	utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const & results_summary_sorted,
+	utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > & pnears_to_lowest_fract
+) const {
+	std::chrono::time_point<HHJDA_CLOCK> const starttime( HHJDA_CLOCK::now() );
+
+	runtime_assert( fraction > 0.0 && fraction <= 1.0 ); //Should be guaranteed true.
+	pnears_to_lowest_fract.clear();
+
+	//If there were no samples, we're done:
+	if( results_summary_sorted.empty() ) {
+		if( derivedTR_.Debug.visible() ) derivedTR_.Debug << "Emperor node (" << MPI_rank_ << ") is signalling that we have no samples, and can skip the PNear calculation to the lowest N% of samples." << std::endl;
+		for( core::Size i : my_children_ ) {
+			send_request( i, SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+		}
+		//Block until everything reaches here.
+		MPI_Barrier( MPI_COMM_WORLD );
+		return;
+	}
+
+	// If we reach here, there were samples.
+	for( int i : my_children_ ) {
+		if( derivedTR_.Debug.visible() ) derivedTR_.Debug << "Emperor node (" << MPI_rank_ << ") is signalling that we are starting the PNear calculation to the lowest N% of samples." << std::endl;
+		send_request( i, BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+	}
+
+	// Number of PNears to compute:
+	core::Size const num_to_compute(
+		std::min(
+			std::max(
+				core::Size(1),
+				static_cast< core::Size >( std::round( fraction * static_cast< core::Real >( results_summary_sorted.size() ) ) )
+			),
+			results_summary_sorted.size()
+		)
+	);
+	pnears_to_lowest_fract.reserve( num_to_compute );
+	for( core::Size j(1); j<= num_to_compute; ++j ) {
+		if( derivedTR_.Debug.visible() ) derivedTR_.Debug << "Emperor node (" << MPI_rank_ << ") is requesting PNear data for sample " << j << "." << std::endl;
+
+		for( int i : my_children_ ) {
+			send_request( i, REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD );
+			//Send node index and job index downward:
+			unsigned long sizebuf[2] = { static_cast< core::Size>(results_summary_sorted[j]->originating_node_MPI_rank()), results_summary_sorted[j]->jobindex_on_originating_node() };
+			MPI_Send( &sizebuf, 2, MPI_UNSIGNED_LONG, i, static_cast<int>(JOB_NODE_AND_INDEX_DOWNWARD), MPI_COMM_WORLD );
+		}
+
+		//Participate of broadcast of relevant structure:
+		receive_broadcast_silent_struct_and_build_pose( static_cast<int>(results_summary_sorted[j]->originating_node_MPI_rank()), true );
+
+		//Receive results summary from below:
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsds_to_best_summaries;
+		receive_and_sort_all_rmsd_to_best_summaries( rmsds_to_best_summaries, results_summary_sorted, true );
+
+		//Compute PNear and store:
+		PNearCalculator pnear_calc( lambda(), kbt() );
+		runtime_assert( rmsds_to_best_summaries.size() == results_summary_sorted.size() );
+		for( core::Size i(1), imax(rmsds_to_best_summaries.size()); i<=imax; ++i ) {
+			pnear_calc.add_data_point( results_summary_sorted[i]->pose_energy(), rmsds_to_best_summaries[i]->rmsd_to_best() );
+		}
+		core::Real pnear, kbt, dgfolding;
+		pnear_calc.compute_pnear_and_dgfolding( pnear, kbt, dgfolding );
+		pnears_to_lowest_fract.push_back(
+			utility::pointer::make_shared< HierarchicalHybridJD_PNearToArbitraryStateSummary >(
+				pnear, kbt, dgfolding,
+				static_cast< core::Size>(results_summary_sorted[j]->originating_node_MPI_rank()),
+				static_cast<core::Size>(results_summary_sorted[j]->jobindex_on_originating_node()
+		) ) );
+	}
+
+	// And we're done.
+	for( int i : my_children_ ) {
+		if( derivedTR_.Debug.visible() ) derivedTR_.Debug << "Emperor node (" << MPI_rank_ << ") is signalling that we have completed the PNear calculation to the lowest N% of samples." << std::endl;
+		send_request( i, END_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+	}
+
+	//Block until everything reaches here.
+	MPI_Barrier( MPI_COMM_WORLD );
+
+	//Report end time.
+	if( derivedTR_.visible() ) {
+		std::chrono::time_point<HHJDA_CLOCK> const endtime( HHJDA_CLOCK::now() );
+		derivedTR_ << "Completed PNear computation to lowest " << fraction * 100 << "% of samples in " << std::chrono::duration_cast< std::chrono::microseconds >( endtime-starttime ).count() << " microseconds." << std::endl;
+	}
+}
 
 /// ------------- Intermediate Master Methods --------
 
@@ -1877,9 +2013,14 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 				break;
 			case OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD:
 				utility_exit_with_message( "Error!  Intermediate master " + std::to_string(MPI_rank_) + " received an offer of RMSD-to-best summaries from node " + std::to_string( requesting_node ) + ", but we're still collecting job summaries!  This should not be possible.");
-				//TODO other cases
+			case BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD:
+			case SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD:
+			case REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD:
+			case END_PNEAR_TO_LOWEST_FRACT_DOWNWARD:
+				utility_exit_with_message( "Error!  Intermediate master " + std::to_string(MPI_rank_) + " received a message related to PNear computation to the lowest energy N% of structures, but we're not yet at that stage of the protocol.  We're still collecting job summaries!  This should not be possible." );
+				//TODO Handle other cases here as they are added.
 			default:
-				//TODO
+				utility_exit_with_message( "Unknown signal (" + std::to_string( message_from_above_or_below ) + ") received!" );
 				break;
 		}
 	} while( n_children_done < n_children || n_summaries_received < n_children || children_reporting_job_counts < n_children );
@@ -1890,6 +2031,11 @@ HierarchicalHybridJDApplication::run_intermediate_master() const {
 			receive_and_sort_all_rmsd_to_best_summaries( rmsd_to_best_summaries, jobsummaries, true );
 			send_rmsds_to_best_summaries_upward( rmsd_to_best_summaries, my_parent_ );
 		}
+	}
+
+	// If we're computing the PNears to the lowest-energy fraction of structures, do so here:
+	if( compute_pnear_to_this_fract_ ) {
+		intermediate_master_compute_pnear_to_lowest_fract(jobsummaries);
 	}
 
 	// Relay information about SASA, if we're computing SASA metrics:
@@ -1963,6 +2109,69 @@ HierarchicalHybridJDApplication::intermediate_master_relay_request_for_sasa_summ
 	for( core::Size i(1), imax(my_children_.size()); i<=imax; ++i ) {
 		send_request( my_children_[i], REQUEST_SASA_SUMMARIES_DOWNWARD );
 	}
+}
+
+/// @brief Send requests for PNear data for the lowest-energy N% of structures down
+/// the hierarchy, and facilitate results going up the hierarchy.
+void
+HierarchicalHybridJDApplication::intermediate_master_compute_pnear_to_lowest_fract(
+	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > const & jobsummaries
+) const {
+	HIERARCHICAL_MPI_COMMUNICATION_TYPE request( NULL_MESSAGE );
+	int requesting_node(0);
+
+	//First, we get a request either to skip this phase or to perform this phase.
+	wait_for_request( requesting_node, request );
+	if( request == SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD ) {
+		for( int i : my_children_ ) {
+			send_request( i, SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+		}
+		//Block until everything reaches here.
+		MPI_Barrier( MPI_COMM_WORLD );
+		return;
+	} else if ( request == BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD ) {
+		for( int i : my_children_ ) {
+			send_request( i, BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+		}
+	} else {
+		utility_exit_with_message( "Intermediate master node " + std::to_string( MPI_rank_ ) + " recieved signal " + std::to_string( static_cast<int>(request) ) + ".  This was unexpected." );
+	}
+
+	//If we reach here, there were samples.  Loop until we get a message indicating that we've done them all.
+	do {
+		// Receive and send a request for a sample OR a requeset to end.
+		wait_for_request( requesting_node, request );
+		if( request == END_PNEAR_TO_LOWEST_FRACT_DOWNWARD ) {
+			for( int i: my_children_ ) {
+				send_request( i, END_PNEAR_TO_LOWEST_FRACT_DOWNWARD );
+			}
+			break;
+		}
+		runtime_assert_string_msg( request == REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD, "Intermediate master node " + std::to_string( MPI_rank_ ) + " recieved signal " + std::to_string( static_cast<int>(request) ) + ".  This was unexpected." );
+		for( int i: my_children_ ) {
+			send_request( i, REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD );
+		}
+
+		//Receive and retransmit node index and job index downard.
+		unsigned long sizebuf[2] = { 0, 0 };
+		MPI_Status mpi_status;
+		MPI_Recv( &sizebuf, 2, MPI_UNSIGNED_LONG, requesting_node, static_cast<int>(JOB_NODE_AND_INDEX_DOWNWARD), MPI_COMM_WORLD, &mpi_status );
+		for( int i : my_children_ ) {
+			MPI_Send( &sizebuf, 2, MPI_UNSIGNED_LONG, i, static_cast<int>(JOB_NODE_AND_INDEX_DOWNWARD), MPI_COMM_WORLD );
+		}
+
+		//Participate in broadcast of relevant structure:
+		receive_broadcast_silent_struct_and_build_pose( static_cast<int>(sizebuf[0]), true );
+
+		//Receive results summary from below:
+		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsds_to_best_summaries;
+		receive_and_sort_all_rmsd_to_best_summaries( rmsds_to_best_summaries, jobsummaries, true );
+		send_rmsds_to_best_summaries_upward( rmsds_to_best_summaries, my_parent_ );
+
+	} while(true);
+
+	//Block until everything reaches here.
+	MPI_Barrier( MPI_COMM_WORLD );
 }
 
 
@@ -2076,6 +2285,11 @@ HierarchicalHybridJDApplication::run_slave() const {
 			slave_compute_sorted_rmsds_to_best( *top_pose_silentstruct, rmsds_to_best_summaries, jobsummaries, all_output );
 			send_rmsds_to_best_summaries_upward( rmsds_to_best_summaries, my_parent_ );
 		}
+	}
+
+	// If we're computing the PNears to the lowest-energy fraction of structures, do so here:
+	if( compute_pnear_to_this_fract_ ) {
+		slave_compute_pnear_to_lowest_fract( jobsummaries, all_output );
 	}
 
 	//If we're computing SASA metrics, receive the go signal and proceed:
@@ -2264,6 +2478,84 @@ HierarchicalHybridJDApplication::slave_compute_sorted_rmsds_to_best(
 			derivedTR_.Debug << "Computed RMSD of " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->rmsd_to_best() << " to best structure for job " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->jobindex_on_originating_node() << " on node " << rmsds_to_best_summaries[rmsds_to_best_summaries.size()]->originating_node_MPI_rank() << "." << std::endl;
 		}
 	}
+}
+
+/// @brief Wait for requests from the emperor for RMSDs to a given structure, participate in a broadcast of
+/// that structure, and compute RMSDs for all output to that structure to send up the hierarchy.
+void
+HierarchicalHybridJDApplication::slave_compute_pnear_to_lowest_fract(
+	utility::vector1< HierarchicalHybridJD_JobResultsSummaryCOP > const & jobsummaries,
+	utility::vector1 < core::io::silent::SilentStructCOP > const & all_output 
+) const {
+	// Receive instruction from up the hierarchy to either skip this step or begin this step:
+	HIERARCHICAL_MPI_COMMUNICATION_TYPE message( NULL_MESSAGE );
+	int requesting_node(0);
+	wait_for_request( requesting_node, message );
+	runtime_assert( requesting_node >= 0 && static_cast<core::Size>(requesting_node) == my_parent_ );
+	if( message == SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD ) {
+		//Block until everything reaches here.
+		MPI_Barrier( MPI_COMM_WORLD );
+		return;
+	}
+	runtime_assert( message == BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD ); //Should be true.
+
+	core::chemical::ResidueTypeSet const & restypeset( *( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FULL_ATOM_t ) ) );
+
+	//If we reach here, we are go to do the comparisons.  Loop until we're done.
+	do {
+		wait_for_request( requesting_node, message );
+		runtime_assert( requesting_node >= 0 && static_cast<core::Size>(requesting_node) == my_parent_ );
+		if( message == REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD ) {
+			unsigned long sizebuf[2] = {0, 0};
+			MPI_Status status;
+			MPI_Recv( &sizebuf, 2, MPI_UNSIGNED_LONG, my_parent_, static_cast<int>(JOB_NODE_AND_INDEX_DOWNWARD), MPI_COMM_WORLD, &status ); //Recive node and job index.
+
+			core::pose::PoseCOP comparison_pose;
+			if( static_cast<core::Size>(MPI_rank_) == sizebuf[0] ) {
+				// This node should send out the structure.
+				runtime_assert( sizebuf[1] <= all_output.size() );
+				core::io::silent::SilentStructOP ss_copy( all_output[ sizebuf[1] ]->clone() ); //Cloned because for some reason the functions that this calls have to take a nonconst silent struct, and I don't want the silent struct changed.
+				broadcast_silent_struct_from_this_node( ss_copy );
+				core::pose::PoseOP comparison_pose_nonconst( utility::pointer::make_shared< core::pose::Pose >() );
+				ss_copy->fill_pose( *comparison_pose_nonconst, restypeset );
+				comparison_pose = comparison_pose_nonconst;
+			} else {
+				// This node should receive the structure.
+				comparison_pose = receive_broadcast_silent_struct_and_build_pose( static_cast<int>(sizebuf[0]), false );
+			}
+
+			// Compute RMSD to all other structures.
+			utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > rmsd_summaries;
+			for( core::Size isummary(1), isummarymax(jobsummaries.size()); isummary<=isummarymax; ++isummary ) { //Loop through all job summaries.
+				core::Size const cur_job_index( jobsummaries[isummary]->jobindex_on_originating_node() );
+				core::pose::PoseOP slave_pose( utility::pointer::make_shared< core::pose::Pose >() );
+				all_output[ cur_job_index ]->fill_pose( *slave_pose, restypeset );
+
+				rmsd_summaries.push_back(
+					utility::pointer::make_shared< HierarchicalHybridJD_RMSDToBestSummary >(
+						MPI_rank_, cur_job_index,
+						derived_slave_compute_rmsd( *slave_pose, *comparison_pose, sequence_ )
+					)
+				);
+				if( derivedTR_.Debug.visible() ) {
+					derivedTR_.Debug << "Computed RMSD of " << rmsd_summaries[rmsd_summaries.size()]->rmsd_to_best() << " to best structure for job " << rmsd_summaries[rmsd_summaries.size()]->jobindex_on_originating_node() << " on node " << rmsd_summaries[rmsd_summaries.size()]->originating_node_MPI_rank() << "." << std::endl;
+				}
+			}
+
+			// Send RMSDs up the hierarchy.
+			send_rmsds_to_best_summaries_upward( rmsd_summaries, my_parent_ );
+
+		} else if ( message == END_PNEAR_TO_LOWEST_FRACT_DOWNWARD ) {
+			//We're done, so break out of this loop.
+			break;
+		} else {
+			utility_exit_with_message( "Program error in HierarchicalHybridJDApplication::slave_compute_pnear_to_lowest_fract(): Received signal " + std::to_string( message ) + ", but this is meaningless in this context.  Please consult a developer." );
+		}
+	} while( true );
+
+	//Block until everything reaches here.
+	MPI_Barrier( MPI_COMM_WORLD );
+
 }
 
 /// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.

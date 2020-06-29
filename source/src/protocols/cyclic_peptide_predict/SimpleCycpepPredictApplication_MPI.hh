@@ -50,6 +50,7 @@ public:
 		core::Real const &lambda,
 		core::Real const &kbt,
 		bool const compute_rmsd_to_lowest,
+		core::Real const & compute_pnear_to_lowest_fract,
 		bool const compute_sasa_metrics,
 		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
 	);
