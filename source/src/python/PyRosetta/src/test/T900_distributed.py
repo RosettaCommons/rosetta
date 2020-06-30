@@ -38,5 +38,8 @@ test_suites = [
     "pyrosetta.tests.numeric.test_alignment",
 ]
 
+
 for test_suite in test_suites:
-    e("python -m unittest {0}".format(test_suite))
+    e("{python} -m unittest {test_suite}".format(python=sys.executable, test_suite=test_suite))
+    #import unittest
+    #unittest.main(test_suite)

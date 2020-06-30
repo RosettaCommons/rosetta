@@ -8,43 +8,38 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-## @file   tests/PyRosetta.py
+## @file   tests/PyRosetta4.py
 ## @brief  PyRosetta binding self tests
 ## @author Sergey Lyskov
 
-import os, os.path, json, commands, shutil
+import os, os.path, json, shutil, distutils.dir_util
 import codecs
 
 import imp
 imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py')  # A bit of Python magic here, what we trying to say is this: from __init__ import *, but init is calculated from file location
 
-_api_version_ = '1.0'  # api version
+_api_version_ = '1.0'
+
 
 def run_build_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     memory = config['memory'];  jobs = config['cpu_count']
-    if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
 
     TR = Tracer(verbose)
 
     TR('Running PyRosetta build test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    compiler = platform['compiler']
-    extras   = ','.join(platform['extras'])
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=debug)
 
-    command_line = 'cd {rosetta_dir}/source && BuildPyRosetta.sh -u --monolith -j{jobs}'.format(rosetta_dir=rosetta_dir, compiler=compiler, jobs=jobs, extras=extras)
+    for f in os.listdir(result.pyrosetta_path + '/source'):
+        if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
-
-    if res  and  platform['os'] != 'windows':  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
-
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
-
-    res_code = _S_failed_ if res else _S_passed_
-    if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-    output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
-    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+    res_code = _S_failed_ if result.exitcode else _S_passed_
+    if not result.exitcode: result.output = '...\n'+'\n'.join( result.output.split('\n')[-32:] )  # truncating log for passed builds.
+    result.output = 'Running: {}\n'.format(result.command_line) + result.output + '\nPyRosetta build path: ' + result.pyrosetta_path + '\n'  # Making sure that exact command line used is stored
+    r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
     # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-    json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:r[_ResultsKey_], _StateKey_:r[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return r
 
@@ -57,58 +52,116 @@ def run_unit_tests(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
 
     TR('Running PyRosetta unit tests: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={jobs}, memory={memory}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
 
-    compiler = platform['compiler']
-    extras   = ','.join(platform['extras'])
-    command_line = 'cd {rosetta_dir}/source && BuildPyRosetta.sh -u --monolith -j{jobs}'.format(rosetta_dir=rosetta_dir, compiler=compiler, jobs=jobs, extras=extras)
+    result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode='MinSizeRel', skip_compile=debug)
 
-    if debug: res, output = 0, 'build.py: debug is enabled, skippig build phase...\n'
-    else:
-        res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line), return_='tuple')
-        if res:  res, output = execute('Compiling...', 'cd {}/source && {}'.format(rosetta_dir, command_line.format(compiler=compiler, jobs=1, extras=extras)), return_='tuple')
+    for f in os.listdir(result.pyrosetta_path + '/source'):
+        if os.path.islink(result.pyrosetta_path + '/source/' + f): os.remove(result.pyrosetta_path + '/source/' + f)
+    distutils.dir_util.copy_tree(result.pyrosetta_path + '/source', working_dir + '/source', update=False)
 
-    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='replace').write(output)
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(result.output)
 
-    if res:
+    if result.exitcode:
         res_code = _S_build_failed_
-        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+        results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : result.output }
+        with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     else:
-        buildings_path_output = execute('Getting buindings build path...', command_line + ' --print-build-path', return_='tuple')
-        buildings_path = buildings_path_output[1].split()[-1]
-        if not (buildings_path  and  os.path.isdir(buildings_path) ): raise BenchmarkError('Could not retrieve valid PyRosetta bindings binary path!\nCommand line:{}\nResult:{}\n'.format(command_line, buildings_path_output))
-        TR('Bindings build path is:{}'.format(buildings_path))
 
-        shutil.copy(config['boost_python_library'], buildings_path)  # Copying boost python library
+        distr_file_list = os.listdir(result.pyrosetta_path+'/build')
 
-        memory = config['memory'];  jobs = config['cpu_count']
-        if platform['os'] != 'windows': jobs = jobs if memory/jobs >= PyRosetta_unix_unit_test_memory_requirement_per_cpu else max(1, int(memory/PyRosetta_unix_unit_test_memory_requirement_per_cpu) )  # PyRosetta require at least X Gb per memory per thread
+        packages = ' '.join( get_required_pyrosetta_packages_for_platform(platform) ).replace('>', '=').replace('<', '=')
 
-        distr_file_list = os.listdir(buildings_path)
+        python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
-        gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
-        if not res: res, output = execute('Running PyRosetta tests...', 'cd {buildings_path} && python TestBindings.py {gui_flag} -j{jobs}'.format(buildings_path=buildings_path, jobs=jobs, gui_flag=gui_flag), return_='tuple')
+        #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
+        gui_flag, res, output = '', result.exitcode, result.output
+        command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}'
+        output += '\nRunning PyRosetta tests: ' + command_line + '\n'
 
-        json_file = buildings_path + '/.test.output/.test.results.json'
-        results = json.load( file(json_file) )
+        res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
+        output += o
 
-        execute('Deleting PyRosetta tests output...', 'cd {buildings_path} && python TestBindings.py --delete-tests-output'.format(buildings_path=buildings_path), return_='tuple')
-        extra_files = [f for f in os.listdir(buildings_path) if f not in distr_file_list]  # not f.startswith('.test.')  and
-        if extra_files:
-            results['results']['tests']['TestBindings'] = dict(state='failed', log='TestBindings.py scripts failed to delete files: ' + ' '.join(extra_files))
-            results[_StateKey_] = 'failed'
+        if res:
+            results = {_StateKey_ : _S_script_failed_,  _ResultsKey_ : {},  _LogKey_ : f'{output}\n\nPyRosetta self-test.py script terminated with non-zero exit code, terminating with script failure!\n' }
 
-        if not res: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
-        output = 'Running: {}\n'.format(command_line) + output  # Making sure that exact command line used is stored
+        else:
+            json_file = result.pyrosetta_path + '/build/.test.output/.test.results.json'
+            with open(json_file) as f: results = json.load(f)
 
-        #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
-        results[_LogKey_] = output
+            execute('Deleting PyRosetta tests output...', 'cd {pyrosetta_path}/build && unset PYTHONPATH && unset __PYVENV_LAUNCHER__ && {python} self-test.py --delete-tests-output'.format(pyrosetta_path=result.pyrosetta_path, python=result.python), return_='tuple')
+            extra_files = [f for f in os.listdir(result.pyrosetta_path+'/build') if f not in distr_file_list]  # not f.startswith('.test.')  and
+            if extra_files:
+                results['results']['tests']['self-test'] = dict(state='failed', log='self-test.py scripts failed to delete files: ' + ' '.join(extra_files))
+                results[_StateKey_] = 'failed'
 
-        # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
-        json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, file(working_dir+'/output.json', 'w'), sort_keys=True, indent=2)
+            if results[_StateKey_] == _S_passed_: output = '...\n'+'\n'.join( output.split('\n')[-32:] )  # truncating log for passed builds.
+            output = 'Running: {}\n'.format(result.command_line) + output  # Making sure that exact command line used is stored
+
+            #r = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : output }
+            results[_LogKey_] = output
+
+            # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+            with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)
 
     return results
 
+
+
+def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug):
+    memory = config['memory'];  jobs = config['cpu_count'];  skip_compile = config.get('skip_compile', False)
+    TR = Tracer(verbose)
+
+    packages = 'ipython nbconvert'  # base packages for test
+    packages += ' matplotlib biopython blosc dask distributed jupyter numpy pandas py3Dmol scipy traitlets graphviz seaborn dask-jobqueue' # extra packages for various notebooks
+
+    P = build_and_install_pyrosetta(working_dir, rosetta_dir, platform, jobs, config, mode='MinSizeRel', packages=packages, skip_compile=skip_compile)
+
+    codecs.open(working_dir+'/build-log.txt', 'w', encoding='utf-8', errors='backslashreplace').write(P.output)
+
+    if P.exitcode:
+        results = {_StateKey_ : _S_build_failed_,  _ResultsKey_ : {},  _LogKey_ : P.output }
+
+    else:
+        notebooks_source_prefix = f'{rosetta_dir}/PyRosetta.notebooks/notebooks'
+        notebooks_path = f'{working_dir}/notebooks'
+        shutil.copytree(notebooks_source_prefix, notebooks_path)
+
+        notebooks = [ f[:-len('.ipynb')] for f in os.listdir(notebooks_path) if f.endswith('.ipynb') and f not in ('index.ipynb', 'toc.ipynb') ]
+        TR(f'notebooks: {notebooks}')
+
+        jobs = {}
+        for n in notebooks:
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.bin}/ipython --HistoryManager.enabled=False {n}.py'
+            jobs[n] = command_line
+
+        notebook_test_results = parallel_execute('notebook_tests', jobs, rosetta_dir, working_dir, config['cpu_count'], time=60)
+
+        sub_tests = {}
+        test_state = False
+        for n, d in notebook_test_results.items():
+            res = d['result']
+            output = d['output']
+
+            output = jobs[n] + '\n' + output
+            sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
+            test_state |= res
+            with open(f'{notebooks_path}/{n}.output', 'w') as f: f.write(output)
+
+
+        # for n in notebooks:
+        #     command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && {rosetta_dir}/source/test/timelimit.py 8 {P.python_virtual_environment.python} {n}.py'
+        #     res, output = execute(f'Running converting and running notebook {n}...', command_line, return_='tuple', add_message_and_command_line_to_output=True)
+        #     sub_tests[n] = {_StateKey_ : _S_failed_ if res else _S_passed_, _LogKey_ : output }
+        #     test_state |= res
+        #     with open(f'{notebooks_path}/{n}.output', 'w') as f: f.write(output)
+
+        results = {_StateKey_ : _S_failed_ if test_state else _S_passed_, _ResultsKey_: {_TestsKey_ : sub_tests}, _LogKey_ : P.output }
+
+    if not config['emulation'] and os.path.isdir(P.python_virtual_environment.root): shutil.rmtree(P.python_virtual_environment.root)
+
+    with open(working_dir+'/output.json', 'w') as f: json.dump(results, f, sort_keys=True, indent=2)
+
+    return results
 
 
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
@@ -117,4 +170,5 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     '''
     if   test =='build': return run_build_test(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='unit':  return run_unit_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='notebook':  return run_notebook_tests(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Unknow PyRosetta test: {}!'.format(test))

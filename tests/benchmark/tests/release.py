@@ -600,7 +600,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
             #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
             gui_flag, res, output = '', result.exitcode, result.output
             if False  and  kind == 'Debug': res, output = 0, 'Debug build, skipping PyRosetta unit tests run...\n'
-            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {rosetta_dir}/source/test/timelimit.py 32 {result.python} self-test.py {gui_flag} -j{jobs}', return_='tuple')
+            else: res, output = execute('Running PyRosetta tests...', f'{python_virtual_environment.activate} && cd {pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}', return_='tuple')
 
             json_file = pyrosetta_path + '/build/.test.output/.test.results.json'
             with open(json_file) as f: results = json.load(f)
@@ -939,21 +939,22 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     '''
     if 'mounts' in config: config['release_root'] = config['mounts']['release_root']
 
+    test = test.replace('PyRosetta4', 'PyRosetta')
 
     if   test =='source': return rosetta_source_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test =='binary': return rosetta_source_and_binary_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta4.Debug':          return py_rosetta4_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.Release':        return py_rosetta4_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Debug':          return py_rosetta4_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.Release':        return py_rosetta4_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.MinSizeRel':     return py_rosetta4_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.RelWithDebInfo': return py_rosetta4_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta4.conda.Debug':          return py_rosetta4_conda_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.conda.Release':        return py_rosetta4_conda_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test =='PyRosetta4.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Debug':          return py_rosetta4_conda_release('Debug',          rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.Release':        return py_rosetta4_conda_release('Release',        rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.MinSizeRel':     return py_rosetta4_conda_release('MinSizeRel',     rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.conda.RelWithDebInfo': return py_rosetta4_conda_release('RelWithDebInfo', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
-    elif test =='PyRosetta4.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test =='PyRosetta.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='ui': return ui_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 

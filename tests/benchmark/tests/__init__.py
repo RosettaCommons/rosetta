@@ -571,12 +571,12 @@ def local_python_install(platform, config):
 
     # for security reasons we only allow installs for version listed here with hand-coded URL's
     python_sources = {
-        '2.7' : 'https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tgz',
+        '2.7' : 'https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz',
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
         '3.6' : 'https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz',
-        '3.7' : 'https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz',
-        '3.8' : 'https://www.python.org/ftp/python/3.8.2/Python-3.8.2.tgz',
+        '3.7' : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
+        '3.8' : 'https://www.python.org/ftp/python/3.8.3/Python-3.8.3.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')
@@ -600,7 +600,9 @@ def local_python_install(platform, config):
     options = '--with-ensurepip' #'--without-ensurepip'
     signature = f'v1.3.3 url: {url}\noptions: {options}\ncompiler: {compiler}\nextra: {extra}\npackages: {packages}\n'
 
-    root = calculate_unique_prefix_path(platform, config) + '/python-' + python_version + '.' +  compiler
+    h = hashlib.md5(); h.update( signature.encode('utf-8', errors='backslashreplace') ); hash = h.hexdigest()
+
+    root = calculate_unique_prefix_path(platform, config) + '/python-' + python_version + '.' +  compiler + '/' + hash
 
     signature_file_name = root + '/.signature'
 
@@ -675,6 +677,7 @@ def local_python_install(platform, config):
         url=url,
         platform=platform,
         config=config,
+        hash=hash,
     )
 
 
@@ -685,9 +688,9 @@ def setup_python_virtual_environment(working_dir, python_environment, packages='
 
     python = python_environment.python
 
-    execute('Setting up Python virtual environment...', '{python} -m venv --clear {working_dir}'.format(**vars()) )
+    execute('Setting up Python virtual environment...', 'unset __PYVENV_LAUNCHER__ && {python} -m venv --clear {working_dir}'.format(**vars()) )
 
-    activate = f'. {working_dir}/bin/activate'
+    activate = f'unset __PYVENV_LAUNCHER__ && . {working_dir}/bin/activate'
 
     bin=working_dir+'/bin'
 
@@ -709,15 +712,15 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
     else:
 
         h = hashlib.md5()
-        h.update(f'platform: {python_environment.platform} python_source_url: {python_environment.url} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
-        hash =h.hexdigest()
+        h.update(f'v1.0.0 platform: {python_environment.platform} python_source_url: {python_environment.url} python-hash: {python_environment.hash} packages: {packages}'.encode('utf-8', errors='backslashreplace') )
+        hash = h.hexdigest()
 
         prefix = calculate_unique_prefix_path(python_environment.platform, python_environment.config)
 
         root = os.path.abspath( prefix + '/python_virtual_environments/' + '/python-' + python_environment.version + '/' + hash )
         signature_file_name = root + '/.signature'
 
-        activate = f'. {root}/bin/activate'
+        activate = f'unset __PYVENV_LAUNCHER__ && . {root}/bin/activate'
         bin = f'{root}/bin'
 
         if os.path.isfile(signature_file_name): pass
@@ -727,7 +730,7 @@ def setup_persistent_python_virtual_environment(python_environment, packages):
             remove_pip_and_easy_install(root)  # removing all pip's and easy_install's to make sure that environment is immutable
             with open(signature_file_name, 'w') as f: pass
 
-        return NT(activate = activate, python = bin + '/python', root = root, bin = bin)
+        return NT(activate = activate, python = bin + '/python', root = root, bin = bin, hash = hash)
 
 
 
