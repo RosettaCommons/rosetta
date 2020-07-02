@@ -474,6 +474,7 @@ optimize_structure(
 	}
 
 	fastrelax.set_movemap( movemap );
+	fastrelax.set_movemap_disables_packing_of_fixed_chi_positions( true );
 	fastrelax.apply(pose);
 	pose.remove_constraints();
 
