@@ -1,0 +1,18 @@
+#input pdb
+-s 1UBQ.pdb
+
+#suggested minimum extra rotamers for a real design run
+#-packing:ex1
+#-packing:ex2
+-packing:use_input_sc
+
+#It is absolutely necessary to uncomment this (remove #) and supply a valid database path
+#-database /path/to/rosetta_database
+
+#useful for bookkeeping; deactivated for test
+#-run:version
+#-options:user
+
+#input script
+-linmem_ig 5
+-parser:protocol favor_coupling_tensor.xml

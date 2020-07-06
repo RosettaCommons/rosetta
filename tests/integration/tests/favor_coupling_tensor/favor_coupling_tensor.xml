@@ -1,0 +1,25 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="scorefxn_cst" weights="ref2015.wts">
+	      		<Reweight scoretype="res_type_linking_constraint" weight="1.0"/>
+		</ScoreFunction>
+		<ScoreFunction name="scorefxn" weights="ref2015.wts"/>
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name="ifcl"/>
+        	<ReadResfile name="rrf" filename="resfile"/>
+	</TASKOPERATIONS>
+	<MOVERS>
+		<AddResidueCouplingConstraint name="favor" tensor_file="tensorBinaryRaw.bin" index_file="indexList" strength="1.0" alphabet="ARNDCQEGHILKMFPSTWYV-"/>
+		<PackRotamersMover name="design" scorefxn="scorefxn_cst" task_operations="ifcl,rrf" />
+	</MOVERS>
+	<FILTERS>
+	</FILTERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="favor" />
+		<Add mover="design" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="scorefxn" />
+</ROSETTASCRIPTS>

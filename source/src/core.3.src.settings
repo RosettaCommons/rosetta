@@ -374,6 +374,7 @@ sources = {
 		"NamedAtomPairConstraint",
 		"NamedDihedralConstraint",
 		"NonResidueTypeConstraint",
+        	"ResidueCouplingConstraint",
 		"ResidueTypeConstraint",
 		"ResidueTypeLinkingConstraint",
 		"RTConstraint",

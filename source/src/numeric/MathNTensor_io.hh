@@ -109,7 +109,7 @@ read_tensor_from_file( std::string const & filename_input,
 		tensor_stream.close();
 	}
 
-	tensor = numeric::MathNTensor< double, 6 >( nbinsarray, data );
+	tensor = numeric::MathNTensor< double, N >( nbinsarray, data );
 	delete[] data;
 
 	if ( !use_binary ) {

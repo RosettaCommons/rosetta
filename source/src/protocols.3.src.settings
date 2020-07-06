@@ -628,7 +628,6 @@ sources = {
 		"TaskAwareSymMinMover",
 	],
 	"protocols/simple_moves": [
-
 		# Chain manipulations
 		"CutChainMover",
 		"DeleteChainMover",
@@ -655,6 +654,7 @@ sources = {
 
 		# Stuff info into pose
 		"AddJobPairData",
+		"AddResidueCouplingConstraint",		
 		"AddResidueLabelMover",
 		"AddPDBInfoMover",
 		"ReportXYZ",
@@ -695,6 +695,7 @@ sources = {
 		"DumpSingleResidueRotamers",
 
 		"ExplicitWaterMover",
+		
 		"FavorSequenceProfile",
 		"FavorSymmetricSequence",
 
