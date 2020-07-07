@@ -274,7 +274,7 @@ core::Size RemodelAccumulator::recover_checkpoint()
 			core::Size segment_length = (dummyPose.size())/repeat_number;
 			for ( core::Size rep = 1; rep < repeat_number; rep++ ) { // from 1 since first segment don't need self-linking
 				for ( core::Size res = 1; res <= segment_length; res++ ) {
-					dummyPose.add_constraint( utility::pointer::make_shared< ResidueTypeLinkingConstraint >(dummyPose, res, res+(segment_length*rep), bonus) );
+					dummyPose.add_constraint( utility::pointer::make_shared< ResidueTypeLinkingConstraint >(res, res+(segment_length*rep), bonus) );
 					count++;
 				}
 			}
