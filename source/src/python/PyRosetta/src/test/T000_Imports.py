@@ -10,13 +10,16 @@
 from __future__ import print_function
 
 import pyrosetta
-from pyrosetta import Vector1, version
+from pyrosetta import Vector1, Set, version
 
 
 print( Vector1([1, 2, 3, 4]) )
 print( Vector1([1, 2, 3, 4.5]) )
 print( Vector1(['a', 'b', 'c', 'd']) )
 
+print( Set([1, 2, 3, 4]) )
+print( Set([1, 2, 3, 4.5]) )
+print( Set(['a', 'b', 'c', 'd']) )
 
 print('Testing Python bindings for Rosetta...')
 print('Init...')

@@ -239,11 +239,11 @@ def Vector1(list_in):
 def Set(list_in):
     """Creates a std::set object, deducing type from the given list."""
     if all([isinstance(x, int) for x in list_in]):
-        t = rosetta.utility.set_int
+        t = rosetta.std.set_int_t
     elif all([isinstance(x, float) or isinstance(x, int) for x in list_in]):
-        t = rosetta.utility.set_double
+        t = rosetta.std.set_double_t
     elif all([isinstance(x, str) for x in list_in]):
-        t = rosetta.utility.set_string
+        t = rosetta.std.set_std_string_std_less_std_string_std_allocator_std_string_t
     else:
         raise Exception('Set: attemting to create vector of unknow type ' +
                         'or mixed type vector init_list = ' + str(list_in))
