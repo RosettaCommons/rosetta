@@ -23,6 +23,8 @@ from BasicClasses import AtomClass, RingClass
 from AtomTypeClassifier import AtomTypeClassifier
 from utils import dihedral
 
+CUTOFF_PLANAR = 40.0 # GZ: this is just a guess
+
 def setup(mol,option): # mol: Molecule type
     '''Main function setting up all the toplogy-related things of the input Molecule(=="mol") '''
     mol.vatms = []
@@ -724,9 +726,36 @@ def assign_bond_conjugation(mol):
         if ACLASS_ID[mol.atms[bond.atm1].aclass] not in CONJUGATING_ACLASSES or \
            ACLASS_ID[mol.atms[bond.atm2].aclass] not in CONJUGATING_ACLASSES: continue
 
-        if ((bond.atm1,bond.atm2) not in mol.biaryl_pivots) and \
-           ((bond.atm2,bond.atm1) not in mol.biaryl_pivots):
-            mol.bonds[ibond].is_conjugated = True
+        if ((bond.atm1,bond.atm2) in mol.biaryl_pivots) or \
+           ((bond.atm2,bond.atm1) in mol.biaryl_pivots):
+           continue      
+        
+        #Note: we need to be careful about assigning conjugated type to a single bond.
+        # especially for (C=O)-NH-CR cases, in some cases NH is conjugated with C=O but 
+        # NH-CR is not conjugated. e.g. APAJIL from CSD.
+        # Use the dihedral angle as a second check, if the angle is clearly not planar,
+        # don't assign it as conjugated bond.
+        # GZ, July,6,2020
+        is_not_conjugated_single_bond = False
+        if bond.order == 1:
+            for itor,(a1,a2,a3,a4) in enumerate(mol.torsions):
+                if ( bond.atm1 == a2 and bond.atm2 == a3 ) or \
+                    ( bond.atm1 == a3 and bond.atm2 == a2 ):
+                    xyz0 = mol.xyz[a1]
+                    xyz1 = mol.xyz[a2]
+                    xyz2 = mol.xyz[a3]
+                    xyz3 = mol.xyz[a4]
+                    dihe = dihedral(xyz0,xyz1,xyz2,xyz3)
+                    break
+            if abs(dihe) >= CUTOFF_PLANAR and abs(dihe) <= (180-CUTOFF_PLANAR) :
+                is_not_conjugated_single_bond = True #don't assign it conjugated 
+        if is_not_conjugated_single_bond:
+            mol.bonds[ibond].is_conjugated = False
+            continue
+
+        #Note: any bond reaches at this point will be assigned as conjugated. 
+        #GZ, July,6,2020
+        mol.bonds[ibond].is_conjugated = True
 
 # Define "CHI"s
 def define_rotable_torsions(mol):

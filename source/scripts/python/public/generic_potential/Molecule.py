@@ -15,6 +15,7 @@ import sys,os,math
 import json
 import operator
 import importlib
+from copy import copy
 from importlib import util
 from Types import *
 from BasicClasses import OptionClass, AtomClass, BondClass, FunctionalGroupClass
@@ -25,10 +26,55 @@ if NUMBA_INSTALLED: import AM1
 
 import SetupTopology
 
+def rename_atoms(atms, bonds):
+    atomnames = {}
+    new_atms = copy(atms)
+    #rename heavy atom first
+    for i, atm in enumerate(new_atms):
+        if atm.is_H:
+            continue
+        atype_char = ATYPES[atm.atype]
+        if atype_char in atomnames:
+            atomnames[atype_char] += 1
+            atm.name = atype_char+"%d"%atomnames[atype_char]
+        else:
+            atomnames[atype_char] = 1
+            atm.name = atype_char + "1"
+        new_atms[i] = atm
+
+    #rename hydrogen atom based on the heavy atom
+    atomnames = {}
+    for bond in bonds:
+        n1, n2, _ = bond
+        if new_atms[n1].is_H:
+            pass
+        elif new_atms[n2].is_H:
+            n = n1
+            n1 = n2
+            n2 = n
+        else:
+            continue
+        heavy_atype_char = ATYPES[new_atms[n2].atype]
+        H_name = "H"+heavy_atype_char
+        if H_name in atomnames:
+            atomnames[H_name] += 1
+        else:
+            atomnames[H_name] = 1
+        atm = new_atms[n1]
+        atm.name = H_name+"%d"%atomnames[H_name]
+        new_atms[n1] = atm
+
+    return new_atms
+
+        
+
+
 class MoleculeClass:
     def __init__(self,mol2file, option=None, mol2fileobj=None):
         self.name = ''
         #self.resname = 'LG1' # goes to option
+        if not os.path.exists(mol2file):
+            raise IOError("Cannot find %s"%mol2file)
         self.mol2file = mol2file
         self.mol2fileobj = mol2fileobj
         #read from mol2
@@ -118,7 +164,7 @@ class MoleculeClass:
                 l = l.decode()
             except AttributeError:
                 pass
-            words = l[:-1].split()
+            words = l.strip().split()
             if l.startswith('@<TRIPOS>MOLECULE'):
                 mode = 1
                 if len(atms) > 0:
@@ -139,7 +185,8 @@ class MoleculeClass:
                 i_mode1 += 1
                 if i_mode1 == 1:
                     self.name = words[0]
-
+            if mode == 2 and len(words) < 9:
+                raise Exception("mol2 format is invalid, probably missing partial charges!")
             if mode == 2 and len(words) == 9:
                 i = int(words[0])
                 atype1 = words[5].split('.')[0].upper()
@@ -202,7 +249,8 @@ class MoleculeClass:
             elif mode == 4:
                 self.parse_crystinfo(l)
                 mode = 0
-
+                
+        atms = rename_atoms(atms, bonds)
         # Re-ordering scheme for Rosetta
         # add up here with new index based on heavy or H
         newindex.sort()
@@ -304,7 +352,8 @@ class MoleculeClass:
                             
             l = form%(atm.name,dih_i,180.0-ang_i,len_i,
                       self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
-            outstream.write(l)
+            icoordcont.append(l)
+            #outstream.write(l)
 
         # Hydrogens: define improper torsion relation if root has >= 2 hvyatm connections (thus improper can be defined)
         for i,iatm in enumerate(self.ATorder):
@@ -341,8 +390,8 @@ class MoleculeClass:
                             
                 l = form%(atm.name,dih_i,180.0-ang_i,len_i,
                           self.atms[atm.root].name,self.atms[atm.groot[0]].name,self.atms[atm.groot[1]].name)
-            outstream.write(l)
-
+            #outstream.write(l)
+            icoordcont.append(l)
         # virtual atms
         if self.option.opt.report_puckering_chi:
             for i,atm in enumerate(self.vatms):
@@ -359,7 +408,9 @@ class MoleculeClass:
                 l = form%(atm.name,dih_i,180.0-ang_i,len_i,
                     self.atms[atm.root].name,self.atms[atm.groot[0]].name,
                     self.atms[atm.groot[1]].name)
-                outstream.write(l)
+                #outstream.write(l)
+                icoordcont.append(l)
+        outstream.writelines(icoordcont)
                         
     def parse_crystinfo(self,l):
         self.crystinfo = ''

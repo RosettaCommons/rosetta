@@ -44,18 +44,16 @@ def run_mol2(mol2file,option):
         prefix = option.opt.prefix
 
     molecule = MoleculeClass(mol2file,option)
+    if option.opt.outdir:
+        outdir = option.opt.outdir
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+    else:
+        outdir="./"
 
     if not option.opt.no_output:
-        if option.opt.outdir:
-            outdir = option.opt.outdir
-            if not os.path.exists(outdir):
-                os.makedirs(outdir)
-            params_outfn = os.path.join(outdir, '%s.params'%prefix)
-            pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
-        else:
-             params_outfn = '%s.params'%prefix
-             pdb_outfn = '%s_0001.pdb'%prefix
-             
+        params_outfn = os.path.join(outdir, '%s.params'%prefix)
+        pdb_outfn = os.path.join(outdir, '%s_0001.pdb'%prefix)
         molecule.report_paramsfile(params_outfn)
         molecule.report_pdbfile(pdb_outfn)
 
