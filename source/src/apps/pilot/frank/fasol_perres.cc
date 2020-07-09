@@ -132,10 +132,10 @@ public:
 		core::scoring::lkball::LK_BallEnergy lkb(e_opts);
 
 		// atomtype used for burial calcs
-		int bur_type=1;
-		while ( etable.lk_dgfree( bur_type ) == 0 || etable.lk_lambda( bur_type ) != 3.5 ) {
-			bur_type++;
-		}
+		// kind of hacky but use "Bsp2" as generic atom
+		//   (typically not optimized, lambda=3.5, dgfree=-4, small vdw radius~2)
+		core::chemical::AtomTypeSetCOP atom_set_ac( etable.atom_set() );
+		int bur_type=atom_set_ac->atom_type_index("Bsp2");
 
 		// weights
 		core::Real weightS=sf->get_weight( core::scoring::fa_sol );
@@ -254,7 +254,8 @@ public:
 							}
 
 							etable.analytic_lk_energy(a_i, rsd2.atom(jatm), fasol1,fasol2 );
-							burial_i += weight*fasol1; ///etable.lk_dgfree( bur_type );
+							burial_i += weight*fasol1 / -etable.lk_dgfree( bur_type );
+							//TR << etable.lk_dgfree( bur_type ) << " " << fasol1 << std::endl;
 						}
 					}
 				}
@@ -279,7 +280,7 @@ public:
 							etable.analytic_lk_energy(rsd1.atom(iatm), rsd1.atom(jatm), fasol1,fasol2 );
 							fa_sol_i += weight*weightS*fasol1;
 							etable.analytic_lk_energy(a_i, rsd1.atom(jatm), fasol1,fasol2 );
-							burial_i += weight*weightS*fasol1; ///etable.lk_dgfree( bur_type );
+							burial_i += weight*fasol1 / -etable.lk_dgfree( bur_type );
 						}
 					}
 				}
