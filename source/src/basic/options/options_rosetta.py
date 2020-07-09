@@ -6125,7 +6125,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 
 ## --------------------------  FRAGMENT PICKING --------------
 	Option_Group( 'frags',
-		Option( 'j', 'Integer', desc='Number of threads to use'),
+		Option( 'j', 'Integer', desc='Number of threads to use.  The default, 0, means use all available threads.  Note that total threads must be set with -multithreading:total_threads.  (The fragment picker cannot use more threads than have been launched).', default='0' ),
 		Option( 'filter_JC', 'Boolean',
 			desc='Filter J-coupling values in the dynamic range ', default='false'),
 

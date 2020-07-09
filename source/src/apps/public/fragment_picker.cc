@@ -22,6 +22,9 @@
 #include <basic/options/keys/frags.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#ifdef MULTI_THREADED
+#include <basic/options/keys/multithreading.OptionKeys.gen.hh>
+#endif
 
 #include <protocols/frag_picker/FragmentPicker.hh>
 #include <protocols/frag_picker/VallProvider.hh>
@@ -86,6 +89,11 @@ void register_options() {
 	OPT(frags::contacts::dist_cutoffs);
 	OPT(frags::contacts::centroid_distance_scale_factor);
 	OPT(frags::contacts::type);
+
+#ifdef MULTI_THREADED
+	OPT( frags::j );
+	OPT( multithreading::total_threads );
+#endif
 
 }
 

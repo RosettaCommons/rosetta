@@ -444,6 +444,17 @@ settings = {
         },
     },
 
+    "gcc, 9.3" : {
+        "removes" : {
+            "flags" : {
+                "cxx" : [
+                    "ffor-scope",
+                ],
+            },
+        },
+    },
+
+
     "gcc, 9.2" : {
         "removes" : {
             "flags" : {
@@ -1137,26 +1148,6 @@ settings = {
                     "flto",
                     "fwhole-program"
                 ],
-            },
-        },
-    },
-
-
-    "gcc, boost_thread" : {
-        "appends" : {
-            "defines" : [
-                "USE_BOOST_THREAD",
-            ],
-            "libraries" : [
-                "pthread",
-                "boost_thread"
-            ],
-            "library_path" : [
-                "/usr/local/lib",
-                "/opt/boost/lib"
-            ],
-            "flags"         : {
-                "compile" : [ "pthread" ],
             },
         },
     },

@@ -139,9 +139,6 @@ get_extras() {
 #ifdef USEBOOSTMPI
 	extras += "boost_mpi ";
 #endif
-#ifdef USE_BOOST_THREAD
-	extras += "boost_thread ";
-#endif
 #ifdef USECUDA
 	extras += "cuda ";
 #endif

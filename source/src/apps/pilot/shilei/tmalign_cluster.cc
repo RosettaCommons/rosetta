@@ -59,10 +59,11 @@
 #include <protocols/hybridization/util.hh>
 #include <boost/lexical_cast.hpp>
 
-//using boost threads
-#ifdef USE_BOOST_THREAD
-#include <boost/thread.hpp>
-#include <functional>
+// VKM, 4 Jun 2020: Boost thread support has been deprecated.  Adding
+// support for std::thread instead.
+#ifdef MULTI_THREADED
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 #endif
 
 using namespace core;
@@ -166,19 +167,20 @@ int main(int argc, char *argv[])
 		//use boost threads frank/rr_opt.cc
 		//protocols/frag_picker/FragmentPicker.cc
 		ObjexxFCL::FArray2D< core::Real > sc_matrix( PoseVec.size(),PoseVec.size(), 1.0 );
-#ifdef USE_BOOST_THREAD
-		TR << " Running multi-thread version " << std::endl;
-	boost::thread_group threads;
-	for ( Size i = 1; i <= PoseVec.size(); ++i ) {
-    		for ( Size j = i ; j <= PoseVec.size(); ++j ) {
-			TR << "i " << i << " j " << j << " ";
-			//boost::thread*  threadij = new boost::thread( &do_tmscore, std::cref(*PoseVec[i]), std::cref(*PoseVec[j]), std::ref(sc_matrix(i,j)));
-			//threads.add_thread(threadij);
-			threads.create_thread( std::bind( &do_tmscore, std::cref(*PoseVec[i]), std::cref(*PoseVec[j]), std::ref(sc_matrix(i,j)) )) ;
-			TR << "thread created"<< std::endl;
+#ifdef MULTI_THREADED
+		TR << "Running multi-threaded version." << std::endl;
+		basic::thread_manager::RosettaThreadManager * rtm( basic::thread_manager::RosettaThreadManager::get_instance() );
+		utility::vector1< basic::thread_manager::RosettaThreadFunction > vector_of_work;
+		vector_of_work.reserve(PoseVec.size());
+		for ( Size i = 1; i <= PoseVec.size(); ++i ) {
+			for ( Size j = i ; j <= PoseVec.size(); ++j ) {
+				TR << "i " << i << " j " << j << " ";
+				vector_of_work.push_back( std::bind( &do_tmscore, std::cref(*PoseVec[i]), std::cref(*PoseVec[j]), std::ref(sc_matrix(i,j)) ) );
+				TR << "task created"<< std::endl;
+			}
 		}
-	}
-        threads.join_all();
+		basic::thread_manager::RosettaThreadAssignmentInfo thread_assignment( basic::thread_manager::RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS );
+		rtm->do_work_vector_in_threads( vector_of_work, rtm->total_threads(), thread_assignment );
 #else
 		//TR << " use extras=boost_thread to compile boost version, seg fault, why? " << endl;
 		for ( Size i = 1; i <= PoseVec.size(); ++i ) {

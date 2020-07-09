@@ -10,6 +10,7 @@
 /// @file   protocols/frag_picker/FragmentPicker.cc
 /// @brief  Fragment picker - the core part of picking machinery
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Modernized multithreading support.
 
 // unit headers
 #include <protocols/frag_picker/FragmentPicker.hh>
@@ -75,6 +76,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 
+#include <basic/thread_manager/RosettaThreadManager.hh>
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 #include <basic/prof.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
@@ -91,15 +94,6 @@
 #include <fstream>
 
 #include <ObjexxFCL/format.hh>
-
-
-#if defined MULTI_THREADED
-#include <thread>
-#elif defined USE_BOOST_THREAD
-// Boost headers
-#include <boost/thread.hpp>
-#include <functional>
-#endif
 
 namespace protocols {
 namespace frag_picker {
@@ -127,7 +121,7 @@ void FragmentPicker::quota_protocol() {
 	tr.Info << "pick fragments using quota protocol..." << std::endl;
 	pick_candidates();
 
-	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
+	const bool skip_merge(candidates_sinks_.size() == 1);
 	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
 		core::Size fragment_size = frag_sizes_[iFragSize];
 		quota::QuotaCollectorOP c = (skip_merge) ?
@@ -408,80 +402,81 @@ void FragmentPicker::fragment_contacts( core::Size const fragment_size, utility:
 }
 
 
-// should be thread safe
-void FragmentPicker::nonlocal_pairs_at_positions( utility::vector1<core::Size> const & positions, core::Size const & fragment_size, utility::vector1<bool> const & skip,
-	utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs ) {
+/// @note Should be threadsafe.
+void FragmentPicker::nonlocal_pairs_at_position(
+	core::Size const position,
+	core::Size const & fragment_size,
+	utility::vector1<bool> const & skip,
+	utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs
+) {
 
 	core::Size const maxjqpos = size_of_query()-fragment_size+1;
 
-	// loop through query positions, qPosi
-	for ( core::Size p = 1; p <= positions.size(); ++p ) {
-		core::Size const qPosi = positions[p];
-		Candidates const & outi = fragment_set[qPosi];  // candidates at i
-		core::Size const minjqpos = qPosi+fragment_size+contacts_min_seq_sep_-1;
-		// loop through nonlocal query positions, qPosj
-		for ( core::Size jqpos = 1; jqpos <= query_positions_.size(); ++jqpos ) {
-			core::Size qPosj = query_positions_[jqpos];
-			if ( qPosj > maxjqpos || qPosj < minjqpos ) continue;
-			bool skip_it = true;
-			for ( core::Size i=0; i<fragment_size; ++i ) {
-				if ( !skip[qPosi+i] || !skip[qPosj+i] ) {
-					skip_it = false;
-					break;
-				}
+	core::Size const qPosi = position;
+	Candidates const & outi = fragment_set[qPosi];  // candidates at i
+	core::Size const minjqpos = qPosi+fragment_size+contacts_min_seq_sep_-1;
+	// loop through nonlocal query positions, qPosj
+	for ( core::Size jqpos = 1; jqpos <= query_positions_.size(); ++jqpos ) {
+		core::Size qPosj = query_positions_[jqpos];
+		if ( qPosj > maxjqpos || qPosj < minjqpos ) continue;
+		bool skip_it = true;
+		for ( core::Size i=0; i<fragment_size; ++i ) {
+			if ( !skip[qPosi+i] || !skip[qPosj+i] ) {
+				skip_it = false;
+				break;
 			}
-			if ( skip_it ) continue;
-			Candidates const & outj = fragment_set[qPosj]; // candidates at j
-			for ( core::Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
-				for ( core::Size fj = 1; fj <= outj.size(); ++fj ) { // loop through selected fragments at qPosj
-					if ( !outi[fi].first->same_chain( outj[fj].first ) ) continue; // skip if not from same pdb chain
-					//if (outi[fi].first->get_residue(1)->resi() >= outj[fj].first->get_residue(1)->resi()) continue; // skip inverse pairs
-					//if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < min_pdb_seq_sep) continue; // skip if too local in PDB
-					if ( std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < (int)fragment_size ) continue; // skip overlapping fragments in PDB
-					core::Size qpi = qPosi; // query position i in fragment
-					utility::vector1<ContactOP> contacts;
-					bool skip2 = false;
-					bool has_good_constraint = false;
-					bool has_constraints = (atom_pair_constraint_contact_map_.size() > 0) ? true : false;
-					for ( core::Size i=1; i<=fragment_size; ++i ) {
-						VallResidueOP ri = outi[fi].first->get_residue(i);
-						core::Size qpj = qPosj; // query position j in fragment
-						for ( core::Size j=1; j<=fragment_size; ++j ) {
-							if ( skip2 ) continue;
-							if ( std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_ ) continue;
-							// skip2 local contacts relative to fragments
-							if ( std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
-							std::set<ContactType>::iterator it, ctend;
-							for ( it=contact_types_.begin(); it != ctend; ++it ) {
-								// contact distance cutoff
-								core::Real cutoff_dist_squared = (*it == CEN) ?
-									sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outj[fj].first->get_residue(j)->aa() ) :
-									contacts_dist_cutoff_squared_;
-								// contact distance
-								core::Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
-								if ( has_constraints && atom_pair_constraint_contact_map_[qpi][qpj] > 0 ) {
-									if ( dist_squared > atom_pair_constraint_contact_map_[qpi][qpj] ) {
-										skip2 = true;
-										continue;
-									} else {
-										has_good_constraint = true;
-									}
+		}
+		if ( skip_it ) continue;
+		Candidates const & outj = fragment_set[qPosj]; // candidates at j
+		for ( core::Size fi = 1; fi <= outi.size(); ++fi ) { // loop through selected fragments at qPosi
+			for ( core::Size fj = 1; fj <= outj.size(); ++fj ) { // loop through selected fragments at qPosj
+				if ( !outi[fi].first->same_chain( outj[fj].first ) ) continue; // skip if not from same pdb chain
+				//if (outi[fi].first->get_residue(1)->resi() >= outj[fj].first->get_residue(1)->resi()) continue; // skip inverse pairs
+				//if (std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < min_pdb_seq_sep) continue; // skip if too local in PDB
+				if ( std::abs(int(outi[fi].first->get_residue(1)->resi()-outj[fj].first->get_residue(1)->resi())) < (int)fragment_size ) continue; // skip overlapping fragments in PDB
+				core::Size qpi = qPosi; // query position i in fragment
+				utility::vector1<ContactOP> contacts;
+				bool skip2 = false;
+				bool has_good_constraint = false;
+				bool has_constraints = (atom_pair_constraint_contact_map_.size() > 0) ? true : false;
+				for ( core::Size i=1; i<=fragment_size; ++i ) {
+					VallResidueOP ri = outi[fi].first->get_residue(i);
+					core::Size qpj = qPosj; // query position j in fragment
+					for ( core::Size j=1; j<=fragment_size; ++j ) {
+						if ( skip2 ) continue;
+						if ( std::abs(int(qpi-qpj)) < (int)contacts_min_seq_sep_ ) continue;
+						// skip2 local contacts relative to fragments
+						if ( std::abs(int( ri->resi()-outj[fj].first->get_residue(j)->resi() )) < (int)contacts_min_seq_sep_ ) continue;
+						std::set<ContactType>::iterator it, ctend;
+						for ( it=contact_types_.begin(); it != ctend; ++it ) {
+							// contact distance cutoff
+							core::Real cutoff_dist_squared = (*it == CEN) ?
+								sidechain_contact_dist_cutoff_->get_cutoff_squared( ri->aa(), outj[fj].first->get_residue(j)->aa() ) :
+								contacts_dist_cutoff_squared_;
+							// contact distance
+							core::Real dist_squared = ri->distance_squared(outj[fj].first->get_residue(j), *it);
+							if ( has_constraints && atom_pair_constraint_contact_map_[qpi][qpj] > 0 ) {
+								if ( dist_squared > atom_pair_constraint_contact_map_[qpi][qpj] ) {
+									skip2 = true;
+									continue;
+								} else {
+									has_good_constraint = true;
 								}
-								if ( dist_squared <= cutoff_dist_squared ) contacts.push_back(utility::pointer::make_shared< Contact >( qpi, qpj, dist_squared, *it ));
 							}
-							qpj++;
+							if ( dist_squared <= cutoff_dist_squared ) contacts.push_back(utility::pointer::make_shared< Contact >( qpi, qpj, dist_squared, *it ));
 						}
-						qpi++;
+						qpj++;
 					}
-					if ( !skip2 && contacts.size() > 0 && (!has_constraints || has_good_constraint) ) {
-						// save all fragment pairs with contacts
-						nonlocal::NonlocalPairOP pair( new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts ) );
-						pairs.push_back(pair);
-					} // contact
-				} // fi
-			} // fj
-		} // jqpos
-	}
+					qpi++;
+				}
+				if ( !skip2 && contacts.size() > 0 && (!has_constraints || has_good_constraint) ) {
+					// save all fragment pairs with contacts
+					nonlocal::NonlocalPairOP pair( new nonlocal::NonlocalPair( qPosi, qPosj, outi[fi], outj[fj], fi, fj, contacts ) );
+					pairs.push_back(pair);
+				} // contact
+			} // fi
+		} // fj
+	} // jqpos
 
 }
 
@@ -604,65 +599,33 @@ void FragmentPicker::nonlocal_pairs( core::Size const fragment_size, utility::ve
 
 	time_t time_start = time(nullptr);
 
-	utility::vector1<utility::vector1<core::Size> > qPosi_to_run( max_threads_ );
-	core::Size positions_cnt = 0;
+	core::Size const threadcount( max_threads_ == 0 ? basic::thread_manager::RosettaThreadManager::total_threads() : max_threads_ );
+
+	utility::vector1< core::Size > qPosi_to_run;
 	for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
 		core::Size qPosi = query_positions_[iqpos];
 		if ( qPosi > maxiqpos ) continue;
-		positions_cnt++;
+		qPosi_to_run.push_back( qPosi );
 	}
-	const core::Size qPosi_per_thread = positions_cnt/max_threads_;
-	core::Size thread = 1;
-	for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) {
-		core::Size qPosi = query_positions_[iqpos];
-		if ( qPosi > maxiqpos ) continue;
-		qPosi_to_run[thread].push_back( qPosi );
-		if ( qPosi_to_run[thread].size() >= qPosi_per_thread && thread < max_threads_ ) ++thread;
+	utility::vector1<utility::vector1<nonlocal::NonlocalPairOP> > thread_pairs(threadcount);
+
+	//basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector;
+	for ( core::Size j = 1, jmax = qPosi_to_run.size() ; j <= jmax; ++j ) {
+		work_vector.push_back( std::bind(
+			&FragmentPicker::nonlocal_pairs_at_position,
+			this,
+			qPosi_to_run[j],
+			fragment_size,
+			std::ref(skip_position),
+			std::ref(fragment_set),
+			std::ref(thread_pairs[j])
+			) );
 	}
-	utility::vector1<utility::vector1<nonlocal::NonlocalPairOP> > thread_pairs(max_threads_);
-
-#if defined MULTI_THREADED || defined USE_BOOST_THREAD
-
-#if defined MULTI_THREADED
-	utility::vector1<std::thread> threads;
-#elif defined USE_BOOST_THREAD
-	boost::thread_group threads;
-#endif
-	basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
-	for ( core::Size j = 1; j <= max_threads_; ++j ) {
-		if ( qPosi_to_run[j].size() > 0 ) {
-			std::cout << "thread: " << j << " - " << qPosi_to_run[j].size() << " positions -";
-			for ( core::Size pos = 1; pos <= qPosi_to_run[j].size(); ++pos ) std::cout << " " << qPosi_to_run[j][pos];
-			std::cout << std::endl;
-#if defined MULTI_THREADED
-			threads.push_back( std::thread( std::bind(
-				&FragmentPicker::nonlocal_pairs_at_positions,
-				this,
-				std::ref(qPosi_to_run[j]),
-				fragment_size,
-				std::ref(skip_position),
-				std::ref(fragment_set),
-				std::ref(thread_pairs[j]))));
-			//&FragmentPicker::nonlocal_pairs_at_positions, this, qPosi_to_run[j], fragment_size, skip_position, fragment_set, thread_pairs[j]));
-#elif defined USE_BOOST_THREAD
-			threads.create_thread(std::bind(&FragmentPicker::nonlocal_pairs_at_positions, this, std::ref(qPosi_to_run[j]), fragment_size, std::ref(skip_position),
-				std::ref(fragment_set), std::ref(thread_pairs[j])));
-#endif
-		}
-	}
-#if defined MULTI_THREADED
-	for ( auto& th : threads ) th.join();
-#elif defined USE_BOOST_THREAD
-	threads.join_all();
-#endif
-	basic::TracerImpl::super_mute(false);
-
-#else // defined MULTI_THREADED || defined USE_BOOST_THREAD
-
-	// single thread
-	nonlocal_pairs_at_positions( qPosi_to_run[1], fragment_size, skip_position, fragment_set, thread_pairs[1] );
-
-#endif
+	// Do the work in threads.  (Also handles single-threaded case):
+	basic::thread_manager::RosettaThreadAssignmentInfo assignments( basic::thread_manager::RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS );
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threadcount, assignments );
+	//basic::TracerImpl::super_mute(false);
 
 	// silent output
 	std::string scale_factor = "0";
@@ -982,30 +945,40 @@ FragmentPicker::output_pair_counts(
 }
 
 // should be thread safe
-void FragmentPicker::pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, core::Size const & index) {
-	for ( core::Size i=1; i<=chunks.size(); ++i ) {
-		VallChunkOP chunk = chunks[i];
-		scores_[index]->do_caching(chunk);
-		scores::FragmentScoreMapOP empty_map = scores_[index]->create_empty_map();
-		for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-			core::Size fragment_size = frag_sizes_[iFragSize];
-			if ( chunk->size() < fragment_size ) continue; // This fragment is too short
-			CandidatesCollectorOP sink = candidates_sinks_[index][fragment_size];
-			for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
-				core::Size iPos = query_positions_[iqpos];
-				if ( iPos > size_of_query() - fragment_size + 1 ) continue;
-				// split chunk into fragment candidates and score them
-				for ( core::Size j = 1; j <= chunk->size() - fragment_size + 1; j++ ) {
-					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
-					if ( scores_[index]->score_fragment_from_cache(f, empty_map) ) {
-						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
-						if ( sink->add(p) ) empty_map  = scores_[index]->create_empty_map();
-					}
+void FragmentPicker::pick_chunk_candidates(
+	VallChunkOP chunk,
+#ifdef MULTI_THREADED
+	basic::thread_manager::RosettaThreadAssignmentInfo const & assignments
+#else
+	basic::thread_manager::RosettaThreadAssignmentInfo const &
+#endif
+) {
+#ifdef MULTI_THREADED
+	core::Size const index( assignments.get_this_thread_index_in_assigned_set() );
+#else
+	core::Size const index(1);
+#endif
+
+	scores_[index]->do_caching(chunk);
+	scores::FragmentScoreMapOP empty_map = scores_[index]->create_empty_map();
+	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
+		core::Size fragment_size = frag_sizes_[iFragSize];
+		if ( chunk->size() < fragment_size ) continue; // This fragment is too short
+		CandidatesCollectorOP sink = candidates_sinks_[index][fragment_size];
+		for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
+			core::Size iPos = query_positions_[iqpos];
+			if ( iPos > size_of_query() - fragment_size + 1 ) continue;
+			// split chunk into fragment candidates and score them
+			for ( core::Size j = 1; j <= chunk->size() - fragment_size + 1; j++ ) {
+				FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
+				if ( scores_[index]->score_fragment_from_cache(f, empty_map) ) {
+					std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
+					if ( sink->add(p) ) empty_map  = scores_[index]->create_empty_map();
 				}
-			} // all query positions done
-		} // all fragment sizes done
-		scores_[index]->clean_up();
-	} // all chunks
+			}
+		} // all query positions done
+	} // all fragment sizes done
+	scores_[index]->clean_up();
 }
 
 void FragmentPicker::pick_candidates() {
@@ -1017,105 +990,30 @@ void FragmentPicker::pick_candidates() {
 
 	time_t time_start = time(nullptr);
 
-#if defined MULTI_THREADED || defined USE_BOOST_THREAD
+	core::Size const threadcount( max_threads_ == 0 ? basic::thread_manager::RosettaThreadManager::total_threads() : max_threads_ );
 
-	if ( max_threads_ > 1 ) {
-		utility::vector1<utility::vector1<VallChunkOP> > chunks_to_run( max_threads_ );
-		core::Size valid_chunks_cnt = 0;
-		for ( core::Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
-			VallChunkOP chunk = chunks_->at(i);
-			if ( !is_valid_chunk( chunk ) ) continue;
-			valid_chunks_cnt++;
-		}
-		const core::Size chunks_per_thread = valid_chunks_cnt/max_threads_;
-		core::Size thread = 1;
-		for ( core::Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
-			VallChunkOP chunk = chunks_->at(i);
-			if ( !is_valid_chunk( chunk ) ) continue;
-			chunks_to_run[thread].push_back( chunk );
-			if ( chunks_to_run[thread].size() >= chunks_per_thread && thread < max_threads_ ) ++thread;
-		}
-#if defined MULTI_THREADED
-		utility::vector1<std::thread> threads;
-#elif defined USE_BOOST_THREAD
-		boost::thread_group threads;
-#endif
-		basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
-		for ( core::Size j = 1; j <= max_threads_; ++j ) {
-			if ( chunks_to_run[j].size() > 0 ) {
-				std::cout << "thread: " << j << " - " << chunks_to_run[j].size() << " chunks" << std::endl;
-#if defined MULTI_THREADED
-				threads.push_back(std::thread(&FragmentPicker::pick_chunk_candidates,this,chunks_to_run[j],j));
-#elif defined USE_BOOST_THREAD
-				threads.create_thread(std::bind(&FragmentPicker::pick_chunk_candidates, this, std::ref(chunks_to_run[j]), j));
-#endif
-			}
-		}
-#if defined MULTI_THREADED
-		for ( auto& th : threads ) th.join();
-#elif defined USE_BOOST_THREAD
-		threads.join_all();
-#endif
-		basic::TracerImpl::super_mute(false);
-
-		time_t time_end = time(NULL);
-		tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
-			<< (time_end - time_start) << " seconds." << std::endl;
-		tr.flush();
-
-		PROF_STOP( basic::FRAGMENTPICKING );
-
-		return;
-	}
-
-#endif  // defined MULTI_THREADED || defined USE_BOOST_THREAD
-
-	scores::FragmentScoreMapOP empty_map = scores_[1]->create_empty_map();
-
-	for ( core::Size i = 1; i <= chunks_->size(); i++ ) { // loop over provided chunks
-		VallChunkOP chunk = chunks_->at(i); // For each chunk from a provider...
+	utility::vector1< VallChunkOP > chunks_to_run;
+	for ( core::Size i = 1; i <= chunks_->size(); ++i ) { // loop over provided chunks
+		VallChunkOP chunk = chunks_->at(i);
 		if ( !is_valid_chunk( chunk ) ) continue;
-		tr.Trace << "Processing sequence from vall: " << chunk->get_sequence() << std::endl;
+		chunks_to_run.push_back( chunk );
+	}
+	utility::vector1< basic::thread_manager::RosettaThreadFunction > work_vector;
+	//basic::TracerImpl::super_mute(true); // lets suppress tracer output when running multi threads
+	basic::thread_manager::RosettaThreadAssignmentInfo assignments( basic::thread_manager::RosettaThreadRequestOriginatingLevel::APPLICATIONS_OR_APPLICATION_PROTOCOLS );
+	for ( core::Size j = 1, jmax = chunks_to_run.size(); j <= jmax; ++j ) {
+		work_vector.push_back(std::bind(&FragmentPicker::pick_chunk_candidates,this,chunks_to_run[j],std::cref(assignments)));
+	}
+	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threadcount, assignments );
+	//basic::TracerImpl::super_mute(false);
 
-		// cache the new chunk
-		scores_[1]->do_caching(chunk);
-
-		for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
-			core::Size fragment_size = frag_sizes_[iFragSize];
-			if ( chunk->size() < fragment_size ) continue; // This fragment is too short
-
-			core::Size maxqpos = size_of_query() - fragment_size + 1;
-			CandidatesCollectorOP sink = candidates_sinks_[1][fragment_size];
-			tr.Trace << "Picking fragments of size "<<fragment_size<<
-				" at "<<query_positions_.size()<<" query positions"<<std::endl;
-			for ( core::Size iqpos = 1; iqpos <= query_positions_.size(); ++iqpos ) { // loop over positions in a query
-				core::Size iPos = query_positions_[iqpos];
-				if ( iPos > maxqpos ) continue;
-
-				// split chunk into fragment candidates and score them
-				for ( core::Size j = 1; j <= chunk->size() - fragment_size + 1; ++j ) {
-					FragmentCandidateOP f( new FragmentCandidate(iPos, j, chunk, fragment_size) );
-					if ( scores_[1]->score_fragment_from_cache(f, empty_map) ) {
-						std::pair<FragmentCandidateOP,scores::FragmentScoreMapOP> p(f,empty_map);
-						if ( sink->add(p) ) empty_map  = scores_[1]->create_empty_map();
-					}
-				}
-			} // all query positions done
-		} // all fragment sizes done
-		scores_[1]->clean_up();
-		tr.Trace << chunk->get_pdb_id() << " done" << std::endl;
-		if ( (i*100) % (chunks_->size()/100*100) == 0 ) {
-			tr.Info << (i*100) / chunks_->size()
-				<< "% done at "<< chunk->get_pdb_id() << std::endl;
-		}
-	} // all chunks done
-
-	time_t time_end = time(nullptr);
+	time_t time_end = time(NULL);
 	tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
 	tr.flush();
 
 	PROF_STOP( basic::FRAGMENTPICKING );
+
 }
 
 core::Real FragmentPicker::total_score(scores::FragmentScoreMapOP f, core::Size index) {
@@ -1307,7 +1205,7 @@ void FragmentPicker::add_query_ss(std::string query_secondary,
 void FragmentPicker::save_fragments() {
 	using namespace ObjexxFCL;
 	tr.Info << "Saving Fragments..." << std::endl;
-	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
+	const bool skip_merge(candidates_sinks_.size() == 1);
 	tr.Debug << "skip_merge: " << ( skip_merge ? "true" : "false" ) << std::endl;
 	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
 		core::Size fragment_size = frag_sizes_[iFragSize];
@@ -1347,7 +1245,7 @@ void FragmentPicker::save_fragments() {
 
 void FragmentPicker::save_candidates() {
 	using namespace ObjexxFCL;
-	const bool skip_merge = (candidates_sinks_.size() == 1) ? true : false;
+	const bool skip_merge(candidates_sinks_.size() == 1);
 	for ( core::Size iFragSize = 1; iFragSize <= frag_sizes_.size(); ++iFragSize ) { // Loop over various sizes of fragments
 		core::Size fragment_size = frag_sizes_[iFragSize];
 		core::Size maxqpos = size_of_query() - fragment_size + 1;
@@ -1463,14 +1361,15 @@ core::Size FragmentPicker::get_n_candidates() const{
 // called in main
 void FragmentPicker::parse_command_line() {
 
-#if defined MULTI_THREADED || defined USE_BOOST_THREAD
 	//## multi-threaded?
-	if ( option[ frags::j ].user() ) max_threads_ = option[ frags::j ]();
-#endif
+	runtime_assert_string_msg( option[ frags::j ]() >= 0, "Error in FragmentPicker::parse_command_line(): The -frags:j flag must be accompanied by a non-negative integer." );
+	set_max_threads( static_cast< core::Size >( option[ frags::j ]() ) );
+
 	// score with multiple threads
-	while ( max_threads_ > scores_.size() )
+	core::Size const actual_max_threads( max_threads_ == 0 ? basic::thread_manager::RosettaThreadManager::total_threads() : max_threads_ );
+	while ( actual_max_threads > scores_.size() )
 			scores_.push_back(utility::pointer::make_shared< scores::FragmentScoreManager >());
-	while ( max_threads_ > candidates_sinks_.size() ) {
+	while ( actual_max_threads > candidates_sinks_.size() ) {
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 	}
@@ -1626,7 +1525,7 @@ void FragmentPicker::parse_command_line() {
 			}
 		} else {
 			for ( core::Size i = 1; i <= frag_sizes_.size(); ++i ) {
-				for ( core::Size j = 0; j <= max_threads_; ++j ) {  // 0 for merged collector
+				for ( core::Size j = 0; j <= actual_max_threads; ++j ) {  // 0 for merged collector
 					CandidatesCollectorOP collector( new BoundedCollector<CompareTotalScore> (size_of_query(), n_candidates_,
 						comparator,get_score_manager()->count_components()) );
 					set_candidates_collector(frag_sizes_[i], collector, j);
@@ -1683,6 +1582,22 @@ void FragmentPicker::parse_command_line() {
 
 	show_scoring_methods(tr);
 	tr << std::endl;
+}
+
+/// @brief Set the number of threads to use.
+/// @details A value of zero means use all available threads.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+void
+FragmentPicker::set_max_threads(
+	core::Size const setting
+) {
+#ifndef MULTI_THREADED
+	runtime_assert_string_msg( setting <= 1, "Error in FragmentPicker::set_max_threads(): In the single-threaded build of Rosetta, the -frag:j option must be set to 0 (use all threads) or 1.  To use " + std::to_string( setting ) + " threads, build with the \"extras=cxx11thread\" option." );
+#endif //MULTI_THREADED
+	max_threads_ = setting;
+	if ( max_threads_ > basic::thread_manager::RosettaThreadManager::total_threads() ) {
+		tr.Warning << "Warning: " << max_threads_ << " threads were requested for fragment picking with the -frags:j option, but the Rosetta thread manager is set to launch only " << basic::thread_manager::RosettaThreadManager::total_threads() << " thread(s).  Use the -multithreading:total_threads flag to increase this." << std::endl;
+	}
 }
 
 /// @brief Sets the query surface area
@@ -1788,8 +1703,9 @@ void FragmentPicker::set_up_ss_abego_quota() {
 	}
 	tr.Debug<<std::endl;
 	core::Size buffer_factor = 5;
+	core::Size const actual_max_threads( max_threads_ == 0 ? basic::thread_manager::RosettaThreadManager::total_threads() : max_threads_ );
 	for ( core::Size f=1; f<=frag_sizes_.size(); f++ ) {
-		for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+		for ( core::Size j = 0; j <= actual_max_threads; ++j ) { // 0 for the merged collector
 			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f],collector, j);
 		}
@@ -1799,7 +1715,7 @@ void FragmentPicker::set_up_ss_abego_quota() {
 			tr.Debug<<"Creating "<<q_config.n_columns()<<" quota pools at pos "<<j<<std::endl;
 			for ( core::Size i=1; i<=q_config.n_columns(); i++ ) {
 				core::Real prob = q_config.probability(j+middle-1,i);
-				for ( core::Size k = 0; k <= max_threads_; ++k ) {  // 0 for the merged collector
+				for ( core::Size k = 0; k <= actual_max_threads; ++k ) {  // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], k);
 					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
 					quota::QuotaPoolOP p( new quota::ABEGO_SS_Pool(n_candidates_,q_config.get_pool_name(i),
@@ -1870,9 +1786,9 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 		ss_weights.push_back(weight);
 	}
 	// core::fragment::SecondaryStructureOP avg_ss = new core::fragment::SecondaryStructure(predictions,ss_weights);
-
+	core::Size const actual_max_threads( max_threads_ == 0 ? basic::thread_manager::RosettaThreadManager::total_threads() : max_threads_ );
 	for ( core::Size f=1; f<=frag_sizes_.size(); f++ ) {
-		for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+		for ( core::Size j = 0; j <= actual_max_threads; ++j ) { // 0 for the merged collector
 			quota::QuotaCollectorOP collector( new quota::QuotaCollector( size_of_query(), frag_sizes_[f] ) );
 			set_candidates_collector(frag_sizes_[f], collector, j);
 		}
@@ -1915,7 +1831,7 @@ void FragmentPicker::set_up_quota_nnmake_style() {
 					continue;
 				}
 
-				for ( core::Size j = 0; j <= max_threads_; ++j ) { // 0 for the merged collector
+				for ( core::Size j = 0; j <= actual_max_threads; ++j ) { // 0 for the merged collector
 					CandidatesCollectorOP storage = get_candidates_collector(frag_sizes_[f], j);
 					quota::QuotaCollectorOP collector = utility::pointer::dynamic_pointer_cast< quota::QuotaCollector > ( storage );
 

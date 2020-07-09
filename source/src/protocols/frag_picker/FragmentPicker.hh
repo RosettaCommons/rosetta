@@ -10,6 +10,7 @@
 /// @file   protocols/frag_picker/FragmentPicker.hh
 /// @brief  Fragment picker - the core part of picking machinery
 /// @author Dominik Gront (dgront@chem.uw.edu.pl)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Modernized multithreading support.
 
 #ifndef INCLUDED_protocols_frag_picker_FragmentPicker_hh
 #define INCLUDED_protocols_frag_picker_FragmentPicker_hh
@@ -45,6 +46,9 @@
 // utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+
+// Basic headers
+#include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
 
 // C++
 #include <string>
@@ -93,7 +97,7 @@ public:
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 		max_frag_size_ = 0;
-		max_threads_ = 1;
+		max_threads_ = 0;
 		prefix_ = "frags"; // umm... let's not make hidden files
 		contacts_min_seq_sep_ = 12;
 		contacts_dist_cutoff_squared_ = 81;
@@ -109,7 +113,7 @@ public:
 		CandidatesSink storage;
 		candidates_sinks_.push_back(storage);
 		max_frag_size_ = 0;
-		max_threads_ = 1;
+		max_threads_ = 0;
 		prefix_ = "frags"; // umm... let's not make hidden files
 		contacts_min_seq_sep_ = 12;
 		contacts_dist_cutoff_squared_ = 81;
@@ -132,6 +136,11 @@ public:
 
 	// Command line processing and high-level stuff -----------------
 	void parse_command_line();
+
+	/// @brief Set the number of threads to use.
+	/// @details A value of zero means use all available threads.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	void set_max_threads( core::Size const setting );
 
 	/// @brief Picks fragments and saves them into proper files - independently for each query position.
 	/// @details This protocol scores all vall data against a given position
@@ -158,7 +167,7 @@ public:
 
 
 	// multi-threaded task
-	void nonlocal_pairs_at_positions( utility::vector1<core::Size> const & positions, core::Size const & fragment_size, utility::vector1<bool> const & skip,
+	void nonlocal_pairs_at_position( core::Size const position, core::Size const & fragment_size, utility::vector1<bool> const & skip,
 		utility::vector1<Candidates> const & fragment_set, utility::vector1<nonlocal::NonlocalPairOP> & pairs );
 
 	void nonlocal_pairs( core::Size const fragment_size, utility::vector1<Candidates> const & fragment_set );
@@ -333,7 +342,7 @@ public:
 	/// Fragment candidates are stored in a container that a user must plug into the picker
 
 	/// multi-threaded task
-	void pick_chunk_candidates(utility::vector1<VallChunkOP> const & chunks, core::Size const & index);
+	void pick_chunk_candidates(VallChunkOP chunk, basic::thread_manager::RosettaThreadAssignmentInfo const & assignments);
 
 	void pick_candidates();
 
@@ -440,7 +449,10 @@ public:
 	FragmentSelectingRuleOP selector_;
 
 private:
-	core::Size max_threads_;
+
+	/// @brief Number of threads to use.  Default value is zero, meaning use all available threads.  Must be set to
+	/// zero or one in single-threaded build.
+	core::Size max_threads_ = 0;
 
 	core::Size max_frag_size_;
 
