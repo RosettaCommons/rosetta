@@ -107,9 +107,10 @@ Residue::Residue( ResidueTypeCOP rsd_type_in, bool const /*dummy_arg*/ ):
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
 	// Assign atoms.
+	atoms_.reserve( rsd_type_.natoms() );
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
-			rsd_type_.mm_atom_type_index(i) ) );
+		atoms_.emplace_back( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
+			rsd_type_.mm_atom_type_index(i) );
 	}
 
 	update_nus();
@@ -137,9 +138,10 @@ Residue::Residue( ResidueType const & rsd_type_in, bool const /*dummy_arg*/ ):
 	connect_map_( rsd_type_.n_possible_residue_connections() )
 {
 	// Assign atoms.
+	atoms_.reserve( rsd_type_.natoms() );
 	for ( Size i=1; i<= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
-			rsd_type_.mm_atom_type_index(i) ) );
+		atoms_.emplace_back( rsd_type_.ideal_xyz(i), rsd_type_.atom_type_index(i),
+			rsd_type_.mm_atom_type_index(i) );
 	}
 
 	update_nus();
@@ -183,9 +185,10 @@ Residue::Residue(
 	pseudobonds_( current_rsd.pseudobonds_ )
 {
 	// Assign atoms.
+	atoms_.reserve( rsd_type_.natoms() );
 	for ( Size i = 1; i <= rsd_type_.natoms(); ++i ) {
-		atoms_.push_back( Atom( rsd_type_.ideal_xyz( i ), rsd_type_.atom_type_index( i ),
-			rsd_type_.mm_atom_type_index( i ) ) );
+		atoms_.emplace_back( rsd_type_.ideal_xyz( i ), rsd_type_.atom_type_index( i ),
+			rsd_type_.mm_atom_type_index( i ) );
 	}
 
 	if ( current_rsd.mainchain_torsions().size() == rsd_type_.mainchain_atoms().size() ) {

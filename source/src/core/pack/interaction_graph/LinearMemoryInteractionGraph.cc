@@ -1043,8 +1043,11 @@ LinearMemEdge::reset_state_energies(
 		row_to_wipe = NOT_YET_COMPUTED_ENERGY;
 	}
 
-	for ( unsigned int ii = 1; ii <= stored_rpes_[ other ].size2(); ++ii ) {
-		stored_rpes_[ other ]( state, ii ) = NOT_YET_COMPUTED_ENERGY;
+	// This loop accounts for a substantial portion of the linmem_ig performance test - try to limit unneccesary work.
+	// In particular, the size2() call is non-trivial, so only do it once.
+	auto & stored_rpes_other = stored_rpes_[ other ];
+	for ( unsigned int ii = 1, end_ii = stored_rpes_other.size2(); ii <= end_ii; ++ii ) {
+		stored_rpes_other( state, ii ) = NOT_YET_COMPUTED_ENERGY;
 	}
 
 }

@@ -884,29 +884,26 @@ Etable::analytic_etable_evaluation(
 {
 	using namespace core;
 	using namespace core::scoring::etable;
-	dis2 = at1.xyz().distance_squared( at2.xyz() );
 
-	int atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
-	int atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
 	lj_atrE = 0; lj_repE = 0; fa_solE = 0;
-
-	// locals
-	Real ljE;
-
-	Real atrE = 0.;
-	Real repE = 0.;
+	dis2 = at1.xyz().distance_squared( at2.xyz() );
 
 	//  ctsa - epsilon allows final bin value to be calculated
 	if ( dis2 > max_dis2_ + epsilon_ ) return;
 
+
+	int atype1 = at1.type() < at2.type() ? at1.type() : at2.type();
+	int atype2 = at1.type() < at2.type() ? at2.type() : at1.type();
+
 	EtableParamsOnePair const & p = analytic_params_for_pair( atype1, atype2 );
+	if ( dis2 > p.maxd2 ) return;
 	if ( dis2 < min_dis2_ ) dis2 = min_dis2_;
 
-	if ( dis2 > p.maxd2 ) return;
 
 	Real const dis = std::sqrt(dis2);
-	Real const inv_dis = 1.0/dis;
-	Real const inv_dis2 = inv_dis * inv_dis;
+	Real const inv_dis2 = 1.0/dis2; // inv_dis * inv_dis;
+
+	Real ljE;
 
 	if ( dis2 < p.ljrep_linear_ramp_d2_cutoff ) { // dis * p.inv_lj_sigma < lj_switch_dis2sigma ) {
 		//  ctsa - use linear ramp instead of lj when the dis/sigma  ratio drops below theshold
@@ -924,6 +921,8 @@ Etable::analytic_etable_evaluation(
 	/// Divvy up the lennard-jones energies into attractive and repulsive components;
 	/// for most atom pairs, the attractive component goes smoothly to a constant,
 	/// as the atoms approach, and then the repulsive component takes over from there.
+	Real atrE = 0.;
+	Real repE = 0.;
 	if ( p.ljrep_from_negcrossing ) {
 		// only for the REPLS and HREPS atom types: start repelling when the lennard-jones term
 		// goes from being attractive to repulsive.

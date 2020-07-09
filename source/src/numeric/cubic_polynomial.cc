@@ -38,14 +38,6 @@ cubic_polynomial_from_spline(
 }
 
 platform::Real
-eval_cubic_polynomial(
-	platform::Real const x,
-	CubicPolynomial const & cp
-) {
-	return ((cp.c3*x+cp.c2)*x+cp.c1)*x + cp.c0;
-}
-
-platform::Real
 cubic_polynomial_deriv(
 	platform::Real const x,
 	CubicPolynomial const & cp

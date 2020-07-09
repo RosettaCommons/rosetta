@@ -1275,10 +1275,8 @@ FA_ElecEnergy::evaluate_rotamer_pair_energies(
 
 	using namespace methods;
 	using namespace trie;
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
-
-	temp_table1 = 0; temp_table2 = 0;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table, 0 ); // Filled copy
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table, 0 );
 
 	// save weight information so that its available during tvt execution
 	core::Real wt_bb_bb = sfxn.weights()[ fa_elec ] + sfxn.weights()[ fa_elec_bb_bb ];

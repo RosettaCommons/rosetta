@@ -812,12 +812,11 @@ BaseEtableEnergy< Derived >::residue_pair_energy_ext(
 	debug_assert( utility::pointer::dynamic_pointer_cast< ResiduePairNeighborList const > (min_data.get_data( min_pair_data_type() ) ));
 	ResiduePairNeighborList const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( min_pair_data_type() ) ) );
 	Real dsq;
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
-	for ( Size ii = 1, iiend = neighbs.size(); ii <= iiend; ++ii ) {
-		conformation::Atom const & atom1( rsd1.atom( neighbs[ ii ].atomno1() ) );
-		conformation::Atom const & atom2( rsd2.atom( neighbs[ ii ].atomno2() ) );
+	for ( auto const & nbr: nblist.atom_neighbors() ) {
+		conformation::Atom const & atom1( rsd1.atom( nbr.atomno1() ) );
+		conformation::Atom const & atom2( rsd2.atom( nbr.atomno2() ) );
 
-		static_cast< Derived const & > (*this).interres_evaluator().atom_pair_energy( atom1, atom2, neighbs[ ii ].weight(), emap, dsq );
+		static_cast< Derived const & > (*this).interres_evaluator().atom_pair_energy( atom1, atom2, nbr.weight(), emap, dsq );
 #ifdef APL_TEMP_DEBUG
 		++mingraph_n_atpairE_evals();
 #endif
@@ -1171,10 +1170,8 @@ BaseEtableEnergy< Derived >::evaluate_rotamer_pair_energies(
 	using namespace trie;
 	using namespace etrie;
 
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
-
-	temp_table1 = 0; temp_table2 = 0;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table, 0 ); // Fill with zeros
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table, 0 );
 
 	// save weight information so that its available during tvt execution
 	//weights_ = weights; <--- getting rid of this non-bitwise-const data.

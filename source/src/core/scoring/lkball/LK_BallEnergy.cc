@@ -1910,10 +1910,8 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 
 	using namespace methods;
 	using namespace trie;
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table );
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table );
-
-	temp_table1 = 0; temp_table2 = 0;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table1( energy_table, 0 ); // Filled copy
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table2( energy_table, 0 );
 
 	RotamerTrieBaseCOP trie1( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set1.get_trie(  methods::lkball_method ) ));
 	RotamerTrieBaseCOP trie2( utility::pointer::static_pointer_cast< trie::RotamerTrieBase const > ( set2.get_trie(  methods::lkball_method ) ));
@@ -1942,8 +1940,7 @@ LK_BallEnergy::evaluate_rotamer_pair_energies(
 	// TO DO:
 	// Turn this into a unit test
 	/*
-	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table );
-	temp_table3 = 0;
+	ObjexxFCL::FArray2D< core::PackerEnergy > temp_table3( energy_table, 0 ); // Filled copy
 	EnergyMap emap;
 	for ( Size ii = 1, ii_end = set1.num_rotamers(); ii <= ii_end; ++ii ) {
 	for ( Size jj = 1, jj_end = set2.num_rotamers(); jj <= jj_end; ++jj ) {

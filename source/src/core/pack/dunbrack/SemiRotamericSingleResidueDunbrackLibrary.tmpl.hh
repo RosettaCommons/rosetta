@@ -354,7 +354,7 @@ SemiRotamericSingleResidueDunbrackLibrary< T, N >::bbdep_nrchi_score(
 		interp_indices[ ii ] = make_conditional_index< N >( parent::N_BB_BINS, ii, bb_bin_next, bb_bin );
 	}
 
-	utility::vector1< BBDepScoreInterpData< N > > bbdep_interp_data( ( 1 << ( N + 1 ) ), BBDepScoreInterpData<N>() );
+	utility::fixedsizearray1< BBDepScoreInterpData< N >, ( 1 << ( N + 1 ) )  > bbdep_interp_data;
 
 	for ( Size dati = 1; dati <= ( 1 << ( N + 1 ) ); ++dati ) {
 		Size i = ( dati + 1 ) / 2;

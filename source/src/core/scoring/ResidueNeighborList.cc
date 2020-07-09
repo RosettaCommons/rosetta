@@ -118,7 +118,7 @@ ResiduePairNeighborList::initialize_from_residues(
 				/// << " d2: " << d2 << " d " << std::sqrt( d2 ) <<  " cutoff2:" <<  cutoffs[ ii_isH + jj_isH ]
 				/// << " cutoff " << std::sqrt( cutoffs[ ii_isH + jj_isH ] ) << std::endl;
 				if ( d2 < cutoffs[ ii_isH + jj_isH ] ) {
-					atom_neighbors_.push_back( SmallAtNb( ii, jj, path_dist, weight ) );
+					atom_neighbors_.emplace_back( ii, jj, path_dist, weight ); // SmallAtNb
 				}
 			}
 		}

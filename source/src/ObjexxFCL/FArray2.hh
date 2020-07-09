@@ -117,6 +117,14 @@ protected: // Creation
 	{}
 
 
+	/// @brief Filled Copy Constructor - use the other data from the array, but fill with the given value
+	inline
+	FArray2( FArray2 const & a, T const & v ) :
+		Super( a, v ),
+		s1_( a.s1_ )
+	{}
+
+
 	/// @brief Copy Constructor Template
 	template< typename U >
 	inline

@@ -114,6 +114,18 @@ public: // Creation
 	}
 
 
+	/// @brief Filled Copy Constructor. Use the dimensions and other data from the array, but fill with the value given.
+	inline
+	FArray2D( FArray2D const & a, T const & v ) :
+		Super( a, v ),
+		ObserverMulti(),
+		I1_( a.I1_ ),
+		I2_( a.I2_ )
+	{
+		insert_as_observer();
+	}
+
+
 	/// @brief Copy Constructor Template
 	template< typename U >
 	inline

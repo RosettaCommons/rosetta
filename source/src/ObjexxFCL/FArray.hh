@@ -134,6 +134,25 @@ protected: // Creation
 	}
 
 
+	/// @brief Filled Copy Constructor - use the other data from the array, but fill with the given value
+	inline
+	FArray( FArray const & a, T const & v ) :
+		array_size_( size_of( a.size_ ) ),
+		array_( array_size_ > 0 ? new T[ array_size_ ] : nullptr ),
+		size_( array_size_ ),
+		owner_( true ),
+#ifdef OBJEXXFCL_PROXY_CONST_CHECKS
+		const_proxy_( false ),
+#endif // OBJEXXFCL_PROXY_CONST_CHECKS
+		shift_( a.shift_ ),
+		sarray_( array_ - shift_ )
+	{
+		std::fill_n( array_, size_, v );
+#ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
+		size_report();
+#endif // OBJEXXFCL_FARRAY_SIZE_REPORT
+	}
+
 	/// @brief Copy Constructor Template
 	template< typename U >
 	inline

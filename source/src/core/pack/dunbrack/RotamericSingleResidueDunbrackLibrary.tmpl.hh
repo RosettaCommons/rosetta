@@ -1114,7 +1114,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 	using namespace basic;
 	interpolated_rotamer.packed_rotno() = packed_rotno;
 	utility::fixedsizearray1< Size, ( 1 << N ) > sorted_rotno;
-	utility::vector1< PackedDunbrackRotamer< T, N > > rot( 1 << N );
+	utility::fixedsizearray1< PackedDunbrackRotamer< T, N >, 1 << N > rot;
 	utility::fixedsizearray1< utility::fixedsizearray1< Real, ( 1 << N ) >, ( 1 << N ) > n_derivs;
 	utility::fixedsizearray1< Real, ( 1 << N ) > rotprob;
 
@@ -1124,7 +1124,7 @@ RotamericSingleResidueDunbrackLibrary< T, N >::interpolate_rotamers(
 		Size const index( make_conditional_index< N >( N_BB_BINS, sri, bb_bin_next, bb_bin ) );
 		Size const packed_rotno_next( ( canonical_aa_ && canonicals_use_voronoi_ ) || ( !canonical_aa_ && noncanonicals_use_voronoi_ ) ? make_conditional_packed_rotno_index( this_bb_index, index, packed_rotno, chi, use_chi ) : packed_rotno );
 		sorted_rotno[ sri ] = packed_rotno_2_sorted_rotno_( index, packed_rotno_next );
-		rot.push_back( rotamers_( index, sorted_rotno[ sri ] ) );
+		// rot.push_back( rotamers_( index, sorted_rotno[ sri ] ) ); // RM - This may be a bug from SHA1 38188ffecf06, but ignoring this preserves behavior because this copy was "off the end" of anything actually used
 		for ( Size i = 1; i <= T; ++i ) rot[ sri ].chi_mean( i ) = rotamers_( index, sorted_rotno[ sri ] ).chi_mean( i );
 		for ( Size i = 1; i <= T; ++i ) rot[ sri ].chi_sd(   i ) = rotamers_( index, sorted_rotno[ sri ] ).chi_sd(   i );
 		rot[ sri ].rotamer_probability() = rotamers_( index, sorted_rotno[ sri ] ).rotamer_probability();

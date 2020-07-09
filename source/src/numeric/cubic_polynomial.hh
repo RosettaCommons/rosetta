@@ -60,11 +60,15 @@ cubic_polynomial_from_spline(
 
 
 /// @brief Evaluate cubic polynomial at value x given polynomial coefficients
+inline
 platform::Real
 eval_cubic_polynomial(
 	platform::Real const x,
 	CubicPolynomial const & cp
-);
+) {
+	// inlined, as this accounts for ~1.6% of the runtime of Relax on top7
+	return ((cp.c3*x+cp.c2)*x+cp.c1)*x + cp.c0;
+}
 
 /// @brief Evaluate derivative of cubic polynomial given x and polynomial coefficients
 platform::Real
