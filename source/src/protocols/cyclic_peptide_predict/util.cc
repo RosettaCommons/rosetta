@@ -100,7 +100,7 @@ set_MPI_vars(
 	bool &compute_rmsd_to_lowest,
 	core::Real &compute_pnear_to_this_fract,
 	bool &compute_sasa_metrics,
-	core::Size &threads_per_slave,
+	core::Size &threads_per_worker,
 	std::string const & app_name
 ) {
 	using namespace basic::options;
@@ -120,7 +120,7 @@ set_MPI_vars(
 	if(MPI_rank == 0 ) {
 		runtime_assert_string_msg( user_specified_hierarchy_levels.size() > 1, errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be greater than one." );
 		runtime_assert_string_msg( user_specified_hierarchy_levels.size() <= static_cast<core::Size>(MPI_n_procs), errormsg + "The number of communication levels specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must be less than or equal to the number of processes launched." );
-		runtime_assert_string_msg( user_specified_hierarchy_levels[1] == 1, errormsg + "The first communication level must have a single, master process.");
+		runtime_assert_string_msg( user_specified_hierarchy_levels[1] == 1, errormsg + "The first communication level must have a single director process.  This will control intermediate managers and front-line workers.");
 		core::Size proccount(0);
 		for(core::Size i=1; i<=user_specified_hierarchy_levels.size(); ++i) {
 			runtime_assert_string_msg( user_specified_hierarchy_levels[i] > 0, errormsg + "Each level of communication specified with the \"-cyclic_peptide:MPI_processes_by_level\" flag must have at least one process associated with it." );
@@ -176,10 +176,10 @@ set_MPI_vars(
 	compute_sasa_metrics = option[cyclic_peptide::compute_ensemble_sasa_metrics].value();
 
 #ifdef MULTI_THREADED
-	runtime_assert_string_msg( option[cyclic_peptide::threads_per_slave]() > 0, errormsg + "The -cyclic_peptide:threads_per_slave option's value must be greater than zero." );
-	threads_per_slave = static_cast<core::Size>( option[cyclic_peptide::threads_per_slave]() );
+	runtime_assert_string_msg( option[cyclic_peptide::threads_per_worker]() > 0, errormsg + "The -cyclic_peptide:threads_per_worker option's value must be greater than zero." );
+	threads_per_worker = static_cast<core::Size>( option[cyclic_peptide::threads_per_worker]() );
 #else
-	threads_per_slave = 1;
+	threads_per_worker = 1;
 #endif
 	wait_for_proc_zero();
 }

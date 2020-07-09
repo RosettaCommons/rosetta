@@ -743,7 +743,7 @@ private:
 	///
 	int my_rank_;
 
-	/// @brief The number of jobs that this slave process has already completed.  Only used in MPI mode; zero otherwise.
+	/// @brief The number of jobs that this worker process has already completed.  Only used in MPI mode; zero otherwise.
 	///
 	core::Size already_completed_job_count_;
 

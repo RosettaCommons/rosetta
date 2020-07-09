@@ -76,7 +76,7 @@ set_MPI_vars(
 	bool &compute_rmsd_to_lowest,
 	core::Real &compute_pnear_to_lowest_fract,
 	bool &compute_sasa_metrics,
-	core::Size &threads_per_slave,
+	core::Size &threads_per_worker,
 	std::string const & app_name
 );
 #endif //USEMPI

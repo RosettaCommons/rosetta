@@ -16,6 +16,7 @@
 /// jobs over many threads (hierarchical process-level parallelism plus thread-level parallelism).
 /// On 29 Oct 2018, this code was moved to the HierarchicalHybridJDApplication base class, from which both the SimpleCycpepPredictApplication_MPI and
 /// HelicalBundlePredictApplication_MPI classes derive.
+/// On 16 June 2020, this code was updated to replace "emperor"/"master"/"slave", which some people found objectionable.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
 #ifdef USEMPI
@@ -63,7 +64,7 @@ namespace cyclic_peptide_predict {
 enum HIERARCHICAL_MPI_COMMUNICATION_TYPE {
 	NULL_MESSAGE = 1,
 	REQUEST_NEW_JOBS_BATCH_UPWARD,
-	REQUEST_TOP_POSE_BCAST, // The emperor is asking that the top pose be shared with all nodes.
+	REQUEST_TOP_POSE_BCAST, // The director is asking that the top pose be shared with all nodes.
 	OFFER_NEW_JOBRESULTSSUMMARY_BATCH_UPWARD,
 	OFFER_NEW_RMSD_TO_BEST_SUMMARY_BATCH_UPWARD,
 	OFFER_NEW_SASA_SUMMARY_BATCH_UPWARD,
@@ -73,12 +74,12 @@ enum HIERARCHICAL_MPI_COMMUNICATION_TYPE {
 	GIVE_COMPLETION_SIGNAL_UPWARD,
 	OFFER_NEW_JOBS_BATCH_DOWNWARD,
 	REQUEST_NEW_POSE_BATCH_DOWNWARD,
-	REQUEST_SASA_SUMMARIES_DOWNWARD, // The emperor is asking that all slaves transmit SASA summaries upward.
+	REQUEST_SASA_SUMMARIES_DOWNWARD, // The director is asking that all workers transmit SASA summaries upward.
 
-	BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The emperor is indicating that we're going to compute the PNear values to the lowest fraction of states found.
-	SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The emperor is indicating that we're NOT going to compute the PNear values to the lowest fraction of states found (because no states were sampled).
-	REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD, //The emperor is requesting data for a PNear computation to a particular sample, and is about to transmit the information for the sample.
-	END_PNEAR_TO_LOWEST_FRACT_DOWNWARD, //The emperor is indicating that we're finished computing the PNear values to the lowest fraction of states found.
+	BEGIN_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The director is indicating that we're going to compute the PNear values to the lowest fraction of states found.
+	SKIP_PNEAR_TO_LOWEST_FRACT_DOWNWARD, // The director is indicating that we're NOT going to compute the PNear values to the lowest fraction of states found (because no states were sampled).
+	REQUEST_PNEAR_TO_PARTICULAR_SAMPLE_DOWNWARD, //The director is requesting data for a PNear computation to a particular sample, and is about to transmit the information for the sample.
+	END_PNEAR_TO_LOWEST_FRACT_DOWNWARD, //The director is indicating that we're finished computing the PNear values to the lowest fraction of states found.
 
 	HALT_SIGNAL
 };
@@ -99,6 +100,7 @@ enum HIERARCHICAL_HYBRID_JD_MPI_TAG_TYPE {
 /// jobs over many threads (hierarchical process-level parallelism plus thread-level parallelism).
 /// On 29 Oct 2018, this code was moved to the HierarchicalHybridJDApplication base class, from which both the SimpleCycpepPredictApplication_MPI and
 /// HelicalBundlePredictApplication_MPI classes derive.
+/// On 16 June 2020, this code was updated to replace "emperor"/"master"/"slave", which some people found objectionable.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 class HierarchicalHybridJDApplication : public utility::VirtualBase
 {
@@ -131,7 +133,7 @@ public:
 		bool const compute_rmsd_to_lowest,
 		core::Real const compute_pnear_to_this_fract,
 		bool const compute_sasa_metrics,
-		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
+		core::Size const threads_per_worker_proc //Only used in multi-threaded build.
 	);
 
 	/// @brief Explicit virtual destructor.
@@ -152,10 +154,10 @@ public:
 #endif
 
 	/// @brief Actually run the application.
-	/// @details On slave nodes, this creates an instance of the relevant application and runs that.  Nodes higher
+	/// @details On worker nodes, this creates an instance of the relevant application and runs that.  Nodes higher
 	/// in the communications hierarchy are just involved in sending out jobs and pulling in results.
 	/// @note The run() function is nonconst due to some setup steps that it performs.  It then calls const run functions
-	/// for emperor, master, and slave nodes.
+	/// for director, manager, and worker nodes.
 	void run();
 
 public:
@@ -176,7 +178,7 @@ public:
 protected:
 
 	/// @brief Get the protocol-specific settings.
-	/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
+	/// @details The director reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	/// @note Pure virtual.  Must be implemented by derived classes.
 	virtual void get_protocol_specific_settings() = 0;
@@ -185,7 +187,7 @@ protected:
 	/// @details This code is called in a single thread in multi-threaded mode, and is used in the single-threaded version too.
 	/// @note Pure virutal function must be implemented by derived classes.
 	virtual
-	void derived_slave_carry_out_n_jobs(
+	void derived_worker_carry_out_n_jobs(
 		core::Size const njobs_from_above,
 		utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries,
 		utility::vector1 < core::io::silent::SilentStructOP > &all_output,
@@ -198,7 +200,7 @@ protected:
 	/// @details Must be implemented by derived classes, since this might be done differently for
 	/// different classes of molecule.
 	virtual core::Real
-	derived_slave_compute_rmsd(
+	derived_worker_compute_rmsd(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & reference_pose,
 		std::string const &sequence
@@ -228,7 +230,7 @@ protected:
 	inline int MPI_rank() const { return MPI_rank_; }
 
 	/// @brief Get the already-completed job count.
-	inline core::Size slave_job_count() const { return slave_job_count_; }
+	inline core::Size worker_job_count() const { return worker_job_count_; }
 
 private:
 	/// ------------- Methods ----------------------------
@@ -268,12 +270,12 @@ private:
 	void assign_level_children_and_parent();
 
 	/// @brief Get the amino acid sequence of the peptide we're going to predict; set the sequence_ private member variable.
-	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
+	/// @details The director reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	void get_sequence();
 
 	/// @brief Get the native structure of the peptide we're going to predict (if the user has specified one with the -in:file:native flag).
-	/// @details The emperor reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
+	/// @details The director reads this from disk and broadcasts it to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	void get_native();
 
@@ -284,11 +286,11 @@ protected:
 
 private:
 
-	/// @brief The emperor sends a message to everyone letting them know it's time to start.
-	/// @details Following the go signal, slaves send requests for jobs upward.
+	/// @brief The director sends a message to everyone letting them know it's time to start.
+	/// @details Following the go signal, workers send requests for jobs upward.
 	void go_signal() const;
 
-	/// @brief The emperor sends a message to everyone letting them know it's time to stop.
+	/// @brief The director sends a message to everyone letting them know it's time to stop.
 	/// @details Following the stop signal, HierarchicalHybridJDApplication::run() terminates.
 	void stop_signal() const;
 
@@ -298,7 +300,7 @@ private:
 	/// @param[out] message The type of request received.
 	void wait_for_request( int &requesting_node, HIERARCHICAL_MPI_COMMUNICATION_TYPE &message ) const;
 
-	/// @brief Send a signal to stop job distribution to a set of intermediate masters.
+	/// @brief Send a signal to stop job distribution to a set of intermediate managers.
 	///
 	void send_halt_signal( utility::vector1 < int > const &ranks_to_target ) const;
 
@@ -365,16 +367,16 @@ private:
 	/// @param[out] summary_shortlist The job summaries list, cleared and populated by this function.
 	void receive_pose_requests_from_above( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > &summary_shortlist ) const;
 
-	/// @brief The emperor is sending out a request that the slave that produced the top pose broadcast
+	/// @brief The director is sending out a request that the worker that produced the top pose broadcast
 	/// that pose to all other nodes.  All nodes participate in the broadcast.  At the end of this operation,
 	/// all nodes know:
 	/// - The node index that produced the top structure.
 	/// - The index of the top structure on that node index.
 	/// - The top structure (the pose), as a binary silent structure.
 	/// They can then compare the top structure to all of their structures and compute an RMSD for each.
-	/// @note If broadcast_no_poses_found is true, the emperor announces to all processes that there is no best
+	/// @note If broadcast_no_poses_found is true, the director announces to all processes that there is no best
 	/// pose with which to compare.
-	/// @returns TRUE for FAILURE (Emperor reports no poses found), FALSE for SUCCESS.
+	/// @returns TRUE for FAILURE (Director reports no poses found), FALSE for SUCCESS.
 	bool
 	top_pose_bcast(
 		HierarchicalHybridJD_JobResultsSummaryOP top_summary=nullptr,
@@ -384,10 +386,10 @@ private:
 
 protected:
 
-	/// @brief Given a string on the emperor node, send it to all nodes.
-	/// @details The "mystring" string is the input on the emperor node, and the output on all other nodes.
+	/// @brief Given a string on the director node, send it to all nodes.
+	/// @details The "mystring" string is the input on the director node, and the output on all other nodes.
 	/// @note Protected, not private.
-	void broadcast_string_from_emperor( std::string &mystring ) const;
+	void broadcast_string_from_director( std::string &mystring ) const;
 
 	/// @brief Given a string on a given node, send it to all nodes.
 	/// @details The "mystring" string is the input on the originating node, and the output on all other nodes.
@@ -449,18 +451,18 @@ protected:
 		bool const append_to_handler_list
 	) const;
 
-	/// ------------- Emperor Methods --------------------
+	/// ------------- Director Methods --------------------
 
-	/// @brief Is this an emperor (root) node?
-	/// @details The emperor is responsible for sending out and retrieving all jobs, and for all file output.
+	/// @brief Is this an director (root) node?
+	/// @details The director is responsible for sending out and retrieving all jobs, and for all file output.
 	/// @note Protected, not private.
-	bool i_am_emperor() const;
+	bool i_am_director() const;
 
 private:
 
-	/// @brief The jobs done by the emperor during parallel execution.
-	/// @details The emperor is responsible for sending out and retrieving all jobs, and for all file output.
-	void run_emperor() const;
+	/// @brief The jobs done by the director during parallel execution.
+	/// @details The director is responsible for sending out and retrieving all jobs, and for all file output.
+	void run_director() const;
 
 	/// @brief Convert a silent struct into a character string and broadcast it to all nodes.
 	/// @details Intended to be used with receive_broadcast_silent_struct_and_build_pose() to allow all other nodes to receive the broadcast.
@@ -469,7 +471,7 @@ private:
 	/// @brief Write out a summary of the jobs completed (node, job index on node, total energy, rmsd, handler path) to the summary tracer.
 	/// @details The RMSD to best pose vector will only be populated if the -compute_rmsd_to_lowest option is used.
 	void
-	emperor_write_summaries_to_tracer(
+	director_write_summaries_to_tracer(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_list,
 		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > const &rmsds_to_best_pose,
 		utility::vector1< HierarchicalHybridJD_SASASummaryOP > const &sasa_summaries,
@@ -481,7 +483,7 @@ private:
 	/// @param[in] summary_full_sorted_list The full list of job summaries collected from below, sorted.
 	/// @param[in] output_fraction The fraction of total jobs to collect.
 	/// @param[in] select_highest Should we select from the top of the summary list (lowest values) or from the bottom (highest)?
-	void emperor_select_best_summaries(
+	void director_select_best_summaries(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > &summary_shortlist,
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &summary_full_sorted_list,
 		core::Real const &output_fraction,
@@ -490,86 +492,86 @@ private:
 
 	/// @brief Write all the collected results from below to disk.
 	/// @details Assumes silent output.
-	void emperor_write_to_disk( std::string const &output ) const;
+	void director_write_to_disk( std::string const &output ) const;
 
-	/// @brief The emperor is asking for SASA metrics to be sent up the hierarchy.
-	void emperor_send_request_for_sasa_summaries_downward() const;
+	/// @brief The director is asking for SASA metrics to be sent up the hierarchy.
+	void director_send_request_for_sasa_summaries_downward() const;
 
-	/// @brief The emperor is asking for data with which to compute PNear values from below.
+	/// @brief The director is asking for data with which to compute PNear values from below.
 	/// @details The steps are:
-	///     - Sends a request for each state in turn from the emperor node to all slave nodes.
-    ///     - Each slave node broadcasts that state to all other slave nodes.
-    ///     - All slave nodes compute RMSD to that state.
-    ///     - Emperor collects RMSDs up the hierarchy and carries out PNear calculation.
+	///     - Sends a request for each state in turn from the director node to all worker nodes.
+    ///     - Each worker node broadcasts that state to all other worker nodes.
+    ///     - All worker nodes compute RMSD to that state.
+    ///     - Director collects RMSDs up the hierarchy and carries out PNear calculation.
     ///     - Repeat for each relevant state.
 	/// @note The pnears_to_lowest_fract vector is cleared and populated by this operation.
  	void
-	emperor_compute_pnear_to_lowest_fract(
+	director_compute_pnear_to_lowest_fract(
 		core::Real const & fraction,
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const & results_summary,
 		utility::vector1< HierarchicalHybridJD_PNearToArbitraryStateSummaryCOP > & pnears_to_lowest_fract
 	) const;
 
-	/// ------------- Intermediate Master Methods --------
+	/// ------------- Intermediate Manager Methods --------
 
 protected:
 
-	/// @brief Is this an intermediate master node?
-	/// @details The masters are responsible for distributing jobs to other masters lower in the hierarchy, and/or to slaves, and for
-	/// collecting results from masters/slaves lower in the hierarchy and sending them up to the emperor.
-	bool i_am_intermediate_master() const;
+	/// @brief Is this an intermediate manager node?
+	/// @details The managers are responsible for distributing jobs to other managers lower in the hierarchy, and/or to workers, and for
+	/// collecting results from managers/workers lower in the hierarchy and sending them up to the director.
+	bool i_am_intermediate_manager() const;
 
 private:
 
-	/// @brief The jobs done by the intermediate masters during parallel execution.
-	/// @details The masters are responsible for distributing jobs to other masters lower in the hierarchy, and/or to slaves, and for
-	/// collecting results from masters/slaves lower in the hierarchy and sending them up to the emperor.
-	void run_intermediate_master() const;
+	/// @brief The jobs done by the intermediate managers during parallel execution.
+	/// @details The managers are responsible for distributing jobs to other managers lower in the hierarchy, and/or to workers, and for
+	/// collecting results from managers/workers lower in the hierarchy and sending them up to the director.
+	void run_intermediate_manager() const;
 
 	/// @brief Relay the jobs received from below, held as a concatenated string, up the hierarchy.
 	/// @details Transmission to be received with receive_pose_batch_as_string().
-	void intermediate_master_send_poses_as_string_upward( std::string const &results, int const target_node ) const;
+	void intermediate_manager_send_poses_as_string_upward( std::string const &results, int const target_node ) const;
 
 	/// @brief Receive a request for SASA summaries from above, and send it to all children.
 	/// @details This function expects that the only possible message that can be received
 	/// at this point is the request for SASA summaries!
-	void intermediate_master_relay_request_for_sasa_summaries_downward() const;
+	void intermediate_manager_relay_request_for_sasa_summaries_downward() const;
 
 	/// @brief Send requests for PNear data for the lowest-energy N% of structures down
 	/// the hierarchy, and facilitate results going up the hierarchy.
 	void
-	intermediate_master_compute_pnear_to_lowest_fract(
+	intermediate_manager_compute_pnear_to_lowest_fract(
 		utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > const & jobsummaries
 	) const;
 
-	/// ------------- Slave Methods ----------------------
+	/// ------------- Worker Methods ----------------------
 
 protected:
 
-	/// @brief Is this a slave (or worker) node?
-	/// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
-	bool i_am_slave() const;
+	/// @brief Is this a worker (or worker) node?
+	/// @details The workers receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
+	bool i_am_worker() const;
 
 private:
 
-	/// @brief The jobs done by the slaves during parallel execution.
-	/// @details The slaves receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
-	/// @note In multi-threaded mode, if threads_per_slave_process_ is greater than 1, then the slaves launch threads
-	/// to do the work.  Only the master thread does MPI calls.
-	void run_slave() const;
+	/// @brief The jobs done by the workers during parallel execution.
+	/// @details The workers receive jobs from higher in the hierarchy, do them, and send results back up the hierarchy.
+	/// @note In multi-threaded mode, if threads_per_worker_process_ is greater than 1, then the workers launch threads
+	/// to do the work.  Only the manager thread does MPI calls.
+	void run_worker() const;
 
 	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
 	///
-	void slave_carry_out_njobs( core::Size &njobs_from_above, utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries, utility::vector1 < core::io::silent::SilentStructOP > &all_output ) const;
+	void worker_carry_out_njobs( core::Size &njobs_from_above, utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries, utility::vector1 < core::io::silent::SilentStructOP > &all_output ) const;
 
 #ifdef MULTI_THREADED
 	/// @brief Decrement the job counter.  Return true if the job counter was greater than zero.
 	/// @details Does this with proper locking to prevent threads from stepping on one another.
-	bool slave_decrement_jobcount_multithreaded( core::Size * available_job_count, core::Size &already_completed_job_count, core::Size const jobs_in_this_batch, core::Size const thread_index ) const;
+	bool worker_decrement_jobcount_multithreaded( core::Size * available_job_count, core::Size &already_completed_job_count, core::Size const jobs_in_this_batch, core::Size const thread_index ) const;
 
 	/// @brief Actually carry out the jobs.  This is where SimpleCycpepPredictApplication is created and invoked.
 	/// @details This is the multi-threaded version, which locks the job count to decrement it, and locks the jobsummaries and all_output vectors to add to them.
-	void slave_carry_out_njobs_in_thread(
+	void worker_carry_out_njobs_in_thread(
 		core::Size const thread_index,
 		core::Size * njobs_from_above,
 		core::Size const jobs_in_this_batch,
@@ -586,37 +588,37 @@ private:
 	/// @details This function clears and populates the rmsds_to_best_summaries vector, ensuring that RMSDs to the
 	/// pose represented by top_pose_silentstruct are computed in the order that matches jobsummaries.
 	void
-	slave_compute_sorted_rmsds_to_best(
+	worker_compute_sorted_rmsds_to_best(
 		core::io::silent::SilentStruct const &top_pose_silentstruct,
 		utility::vector1< HierarchicalHybridJD_RMSDToBestSummaryOP > & rmsds_to_best_summaries,
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
-		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_worker
 	) const;
 
-	/// @brief Wait for requests from the emperor for RMSDs to a given structure, participate in a broadcast of
+	/// @brief Wait for requests from the director for RMSDs to a given structure, participate in a broadcast of
 	/// that structure, and compute RMSDs for all output to that structure to send up the hierarchy.
 	void
-	slave_compute_pnear_to_lowest_fract(
+	worker_compute_pnear_to_lowest_fract(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryCOP > const & jobsummaries,
 		utility::vector1 < core::io::silent::SilentStructCOP > const & all_output 
 	) const;
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
-	/// @details Throws an error if any jbo was completed on a different node than this slave.
-	void slave_send_poses_upward( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &requested_jobs, utility::vector1 < core::io::silent::SilentStructOP > const &all_output ) const;
+	/// @details Throws an error if any jbo was completed on a different node than this worker.
+	void worker_send_poses_upward( utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &requested_jobs, utility::vector1 < core::io::silent::SilentStructOP > const &all_output ) const;
 
 
 	/// @brief Receive a request for SASA metrics from above.
-	/// @details This must be the ONLY type of request that this slave can receive at this time!
-	void slave_receive_request_for_sasa_summaries() const;
+	/// @details This must be the ONLY type of request that this worker can receive at this time!
+	void worker_receive_request_for_sasa_summaries() const;
 
 	/// @brief Generate SASA metrics, and sort these for transmission up the hierarchy.
 	/// @details Sort order matches the order of jobsummaries.
 	void
-	slave_generate_and_sort_sasa_summaries(
+	worker_generate_and_sort_sasa_summaries(
 		utility::vector1< HierarchicalHybridJD_SASASummaryOP > & sasa_summaries,
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryOP > const &jobsummaries,
-		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_slave
+		utility::vector1< core::io::silent::SilentStructOP > const &poses_from_this_worker
 	) const;
 
 private:
@@ -638,9 +640,9 @@ private:
 	///
 	int MPI_n_procs_;
 
-	/// @brief The number of jobs that have been assigned to this process and completed, if it is a slave process.
+	/// @brief The number of jobs that have been assigned to this process and completed, if it is a worker process.
 	/// @details Must be mutable since it's incremented as jobs are assigned.
-	mutable core::Size slave_job_count_;
+	mutable core::Size worker_job_count_;
 
 	/// @brief The default scorefunction to use.
 	/// @details The high-hbond version is constructed from this one. 
@@ -649,11 +651,11 @@ private:
 	core::scoring::ScoreFunctionOP scorefxn_;
 
 	/// @brief The level in the communications hierarchy of this process.
-	/// @details One-based: the emperor is level 1, and the slaves are level total_hierarchy_levels_.
+	/// @details One-based: the director is level 1, and the workers are level total_hierarchy_levels_.
 	core::Size hierarchy_level_;
 
 	/// @brief The total number of levels in the communication.
-	/// @details Note that the slaves are total_hierarchy_levels_, and the emperor is level 1.
+	/// @details Note that the workers are total_hierarchy_levels_, and the director is level 1.
 	core::Size total_hierarchy_levels_;
 
 	/// @brief The number of processes at each level of the communications hierarchy.
@@ -665,19 +667,19 @@ private:
 	core::Size batchsize_;
 
 	/// @brief The process indices of the children of the current process.
-	/// @details Will be empty for slave processes.	
+	/// @details Will be empty for worker processes.	
 	utility::vector1 < int > my_children_;
 
 	/// @brief The process index of the parent of the current process.
-	/// @details Will be 0 for emperor.
+	/// @details Will be 0 for director.
 	core::Size my_parent_;
 
 	/// @brief The amino acid sequence.
-	/// @details Read by emperor and transmitted to all other processes.
+	/// @details Read by director and transmitted to all other processes.
 	std::string sequence_;
 
 	/// @brief The native pose.
-	/// @details Will be null if one is not provided.  Read by emperor and transmitted to all
+	/// @details Will be null if one is not provided.  Read by director and transmitted to all
 	/// other processes.
 	core::pose::PoseCOP native_;
 
@@ -721,9 +723,9 @@ private:
 // Private member variables only used in multi-threaded build.
 private:
 
-	/// @brief The number of threads per slave process.  Setting this to 1 (the default)
+	/// @brief The number of threads per worker process.  Setting this to 1 (the default)
 	/// reproduces the same behaviour as the non-threaded build.
-	core::Size threads_per_slave_proc_;
+	core::Size threads_per_worker_proc_;
 
 	/// @brief Lock the results list for read or for write.
 	mutable std::mutex results_mutex_;

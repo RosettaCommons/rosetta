@@ -38,9 +38,9 @@ if( os.path.exists( f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log' ) == 
 else:
 	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.log'
 print ( "Reading data from " + logfile + "." )
-rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
-rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
-energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
+rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
+rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
+energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
 minenergy = min(energy_vals)
 maxrms = max( rmsd_vals )
 maxrms_to_lowest = max( rmsd_vals_to_lowest )

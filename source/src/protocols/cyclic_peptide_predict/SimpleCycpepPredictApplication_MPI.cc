@@ -90,13 +90,13 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	bool const compute_rmsd_to_lowest,
 	core::Real const & compute_pnear_to_lowest_fract,
 	bool const compute_sasa_metrics,
-	core::Size const threads_per_slave_proc //Only used in multi-threaded build.
+	core::Size const threads_per_worker_proc //Only used in multi-threaded build.
 ) :
 	HierarchicalHybridJDApplication(
 		TR, TR_summary, MPI_rank, MPI_n_procs, sfxn_in, total_hierarchy_levels,
 		procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest,
 		output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
-		compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave_proc
+		compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_worker_proc
 	),
 	allowed_canonicals_(),
 	allowed_noncanonicals_(),
@@ -139,7 +139,7 @@ SimpleCycpepPredictApplication_MPI::clone() const {
 //////////////////////////////////////////////////////////////// PROTECTED FUNCTIONS ////////////////////////////////////////////////////////////////
 
 /// @brief Get the protocol-specific settings.
-/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
+/// @details The director reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
 /// it figures out which behaviour it should be performing.
 /// @note Pure virtual in base class; implemented here.
 void
@@ -149,32 +149,32 @@ using namespace basic::options;
 
 	if( !option[basic::options::OptionKeys::cyclic_peptide::design_peptide]() ) return; //Do nothing if we're not designing.
 
-	if( i_am_emperor() ) {
-		//The emperor reads from disk and broadcasts to everyone else.
+	if( i_am_director() ) {
+		//The director reads from disk and broadcasts to everyone else.
 		if( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
 			read_peptide_design_file( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position](), allowed_canonicals_, allowed_noncanonicals_ );
 		}
 		read_file_into_string( abba_bins_, "protocol_data/generalizedKIC/bin_params/ABBA.bin_params", true /*from database*/);
-		if(TR.Debug.visible()) TR.Debug << "Emperor read protocol_data/generalizedKIC/bin_params/ABBA.bin_params from disk." << std::endl;
+		if(TR.Debug.visible()) TR.Debug << "Director read protocol_data/generalizedKIC/bin_params/ABBA.bin_params from disk." << std::endl;
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) {
 			read_file_into_string( comp_file_contents_L_alpha_, option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file](), false /*not from database*/);
 			L_alpha_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file]() << " from disk." << std::endl;
+			if(TR.Debug.visible()) TR.Debug << "Director read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file]() << " from disk." << std::endl;
 		}
 		if( option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ) {
 			read_file_into_string( comp_file_contents_D_alpha_, option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file](), false /*not from database*/);
 			D_alpha_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file]() << " from disk." << std::endl;
+			if(TR.Debug.visible()) TR.Debug << "Director read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file]() << " from disk." << std::endl;
 		}
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ) {
 			read_file_into_string( comp_file_contents_L_beta_, option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file](), false /*not from database*/);
 			L_beta_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file]() << " from disk." << std::endl;
+			if(TR.Debug.visible()) TR.Debug << "Director read " <<  option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file]() << " from disk." << std::endl;
 		}
 		if( option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file].user() ) {
 			read_file_into_string( comp_file_contents_D_beta_, option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file](), false /*not from database*/);
 			D_beta_comp_file_exists_=true;
-			if(TR.Debug.visible()) TR.Debug << "Emperor read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file]() << " from disk." << std::endl;
+			if(TR.Debug.visible()) TR.Debug << "Director read " <<  option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file]() << " from disk." << std::endl;
 		}
 	}
 
@@ -183,13 +183,13 @@ using namespace basic::options;
 		broadcast_res_list( allowed_canonicals_ );
 		broadcast_res_list( allowed_noncanonicals_ );
 	}
-	broadcast_string_from_emperor( comp_file_contents_L_alpha_ );
-	broadcast_string_from_emperor( comp_file_contents_D_alpha_ );
-	broadcast_string_from_emperor( comp_file_contents_L_beta_ );
-	broadcast_string_from_emperor( comp_file_contents_D_beta_ );
-	broadcast_string_from_emperor( abba_bins_ );
+	broadcast_string_from_director( comp_file_contents_L_alpha_ );
+	broadcast_string_from_director( comp_file_contents_D_alpha_ );
+	broadcast_string_from_director( comp_file_contents_L_beta_ );
+	broadcast_string_from_director( comp_file_contents_D_beta_ );
+	broadcast_string_from_director( abba_bins_ );
 
-	if( !i_am_emperor() ) {
+	if( !i_am_director() ) {
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) L_alpha_comp_file_exists_=true;
 		if( option[basic::options::OptionKeys::cyclic_peptide::D_alpha_comp_file].user() ) D_alpha_comp_file_exists_=true;
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_beta_comp_file].user() ) L_beta_comp_file_exists_=true;
@@ -225,7 +225,7 @@ using namespace basic::options;
 /// @details This code is called in a single thread in multi-threaded mode, and is used in the single-threaded version too.
 /// @note This implements a function that is pure virutal function in the base class.
 void
-SimpleCycpepPredictApplication_MPI::derived_slave_carry_out_n_jobs(
+SimpleCycpepPredictApplication_MPI::derived_worker_carry_out_n_jobs(
 	core::Size const njobs_from_above,
 	utility::vector1 < HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries,
 	utility::vector1 < core::io::silent::SilentStructOP > &all_output,
@@ -242,7 +242,7 @@ SimpleCycpepPredictApplication_MPI::derived_slave_carry_out_n_jobs(
 	predict_app->set_silentstructure_outputlist( &all_output, &jobsummaries );
 	predict_app->set_suppress_checkpoints( true );
 	predict_app->set_my_rank( MPI_rank() );
-	predict_app->set_already_completed_job_count( slave_job_count() );
+	predict_app->set_already_completed_job_count( worker_job_count() );
 	predict_app->set_allowed_residues_by_position( allowed_canonicals_, allowed_noncanonicals_ );
 	if( L_alpha_comp_file_exists_ ) predict_app->set_L_alpha_compfile_contents( comp_file_contents_L_alpha_ );
 	if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
@@ -257,7 +257,7 @@ SimpleCycpepPredictApplication_MPI::derived_slave_carry_out_n_jobs(
 /// @details Must be implemented by derived classes, since this might be done differently for
 /// different classes of molecule.
 core::Real
-SimpleCycpepPredictApplication_MPI::derived_slave_compute_rmsd(
+SimpleCycpepPredictApplication_MPI::derived_worker_compute_rmsd(
 	core::pose::Pose const & pose,
 	core::pose::Pose const & reference_pose,
 	std::string const &sequence

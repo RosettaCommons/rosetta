@@ -68,7 +68,7 @@ public:
 		bool const compute_rmsd_to_lowest,
 		core::Real const & compute_pnear_to_lowest_fract,
 		bool const compute_sasa_metrics,
-		core::Size const threads_per_slave_proc //Only used in multi-threaded build.
+		core::Size const threads_per_worker_proc //Only used in multi-threaded build.
 	);
 
 	/// @brief Copy constructor.
@@ -86,7 +86,7 @@ public:
 protected: //Methods
 
 	/// @brief Get the protocol-specific settings.
-	/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
+	/// @details The director reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
 	/// it figures out which behaviour it should be performing.
 	/// @note Pure virtual.  Must be implemented by derived classes.
 	void get_protocol_specific_settings() override;
@@ -94,7 +94,7 @@ protected: //Methods
 	/// @brief Create an instance of the appropriate app class, and carry out N jobs on a single process.
 	/// @details This code is called in a single thread in multi-threaded mode, and is used in the single-threaded version too.
 	/// @note Pure virutal function must be implemented by derived classes.
-	void derived_slave_carry_out_n_jobs(
+	void derived_worker_carry_out_n_jobs(
 		core::Size const njobs_from_above,
 		utility::vector1 < protocols::cyclic_peptide_predict::HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries,
 		utility::vector1 < core::io::silent::SilentStructOP > &all_output,
@@ -107,7 +107,7 @@ protected: //Methods
 	/// @details Must be implemented by derived classes, since this might be done differently for
 	/// different classes of molecule.
 	core::Real
-	derived_slave_compute_rmsd(
+	derived_worker_compute_rmsd(
 		core::pose::Pose const & pose,
 		core::pose::Pose const & reference_pose,
 		std::string const &sequence

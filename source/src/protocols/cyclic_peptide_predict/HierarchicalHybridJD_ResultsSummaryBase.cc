@@ -60,7 +60,7 @@ HierarchicalHybridJD_ResultsSummaryBase::set_jobindex_on_originating_node(
 }
 
 /// @brief Add a proc that handled this message to the list of procs that transmitted this JobResultsSummary.
-/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the emperor
+/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the director
 /// node to address an output request to the correct proc.
 void
 HierarchicalHybridJD_ResultsSummaryBase::add_MPI_rank_handling_message(

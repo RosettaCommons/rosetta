@@ -57,9 +57,9 @@ with open( logfile ) as f:
         raise ValueError( "Logfile `" + logfile + "` is empty, but it shouldn't be." )
 
 # read relevant data:
-rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
-rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
-energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_slave " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
+rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
+rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
+energy_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $5} }'" ) ).split() ]
 pnear = float( str( subprocess.getoutput( "grep PNear: " + logfile + " | awk '{print $2}'" ) ) )
 pnear_to_lowest = float( str( subprocess.getoutput( "grep PNearLowest: " + logfile + " | awk '{print $2}'" ) ) )
 

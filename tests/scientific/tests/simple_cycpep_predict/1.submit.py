@@ -45,7 +45,7 @@ command_line = '''
 -cyclic_peptide:MPI_auto_2level_distribution true
 -out:file:silent out.silent
 -multithreading:total_threads 1
--threads_per_slave 1
+-threads_per_worker 1
 -cyclic_peptide:compute_rmsd_to_lowest true
 -cyclic_peptide:compute_ensemble_sasa_metrics true
 -cyclic_peptide:MPI_stop_after_time {run_time}

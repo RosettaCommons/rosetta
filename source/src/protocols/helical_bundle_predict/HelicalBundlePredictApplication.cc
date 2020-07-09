@@ -135,7 +135,7 @@ HelicalBundlePredictApplicationOptions::register_options() {
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_pnear_to_this_fract          );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::compute_ensemble_sasa_metrics        );
 #ifdef MULTI_THREADED //Options that are only needed in the MPI+threads version:
-	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_slave                    );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::threads_per_worker                    );
 #endif //ifdef MULTI_THREADED
 #endif //ifdef USEMPI
 

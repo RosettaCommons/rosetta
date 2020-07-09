@@ -68,13 +68,13 @@ HelicalBundlePredictApplication_MPI::HelicalBundlePredictApplication_MPI(
 	bool const compute_rmsd_to_lowest,
 	core::Real const & compute_pnear_to_lowest_fract,
 	bool const compute_sasa_metrics,
-	core::Size const threads_per_slave_proc //Only used in multi-threaded build.
+	core::Size const threads_per_worker_proc //Only used in multi-threaded build.
 ) :
 	protocols::cyclic_peptide_predict::HierarchicalHybridJDApplication(
 		TR, TR_summary, MPI_rank, MPI_n_procs, centroid_sfxn_in, total_hierarchy_levels,
 		procs_per_hierarchy_level, batchsize_per_level, sort_type, select_highest,
 		output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
-		compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave_proc
+		compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_worker_proc
 	),
 	centroid_move_generator_(nullptr),
 	sfxn_fullatom_(fullatom_sfxn_in->clone()),
@@ -116,7 +116,7 @@ HelicalBundlePredictApplication_MPI::set_options(
 //////////////////////////////////////////////////////////////// PROTECTED FUNCTIONS ////////////////////////////////////////////////////////////////
 
 /// @brief Get the protocol-specific settings.
-/// @details The emperor reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
+/// @details The director reads these from disk and broadcasts them to all other nodes.  This function should be called from all nodes;
 /// it figures out which behaviour it should be performing.
 /// @note Implements a pure virtual function in the base class.
 void
@@ -132,7 +132,7 @@ HelicalBundlePredictApplication_MPI::get_protocol_specific_settings() {
 /// @details This code is called in a single thread in multi-threaded mode, and is used in the single-threaded version too.
 /// @note Implements a pure virtual function in the base class.
 void
-HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(
+HelicalBundlePredictApplication_MPI::derived_worker_carry_out_n_jobs(
 	core::Size const njobs_from_above,
 	utility::vector1 < protocols::cyclic_peptide_predict::HierarchicalHybridJD_JobResultsSummaryOP > &jobsummaries,
 	utility::vector1 < core::io::silent::SilentStructOP > &all_output,
@@ -153,7 +153,7 @@ HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(
 #ifdef MULTI_THREADED
 	sfxn_fullatom_mutex_.lock();
 #endif //MULTI_THREADED
-	runtime_assert_string_msg( sfxn_fullatom_  != nullptr, "Error in HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(): No fullatom scoring function was provided." );
+	runtime_assert_string_msg( sfxn_fullatom_  != nullptr, "Error in HelicalBundlePredictApplication_MPI::derived_worker_carry_out_n_jobs(): No fullatom scoring function was provided." );
 	core::scoring::ScoreFunctionOP sfxn_fullatom_local( sfxn_fullatom_->clone() );
 #ifdef MULTI_THREADED
 	sfxn_fullatom_mutex_.unlock();
@@ -163,7 +163,7 @@ HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(
 	predict_app->set_output( &jobsummaries, &all_output );
 	predict_app->set_my_rank( MPI_rank() );
 	predict_app->set_nstruct( njobs_from_above );
-	predict_app->set_already_completed_job_count( slave_job_count() );
+	predict_app->set_already_completed_job_count( worker_job_count() );
 	predict_app->set_native( native );
 	predict_app->run();
 }
@@ -172,7 +172,7 @@ HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(
 /// @details Must be implemented by derived classes, since this might be done differently for
 /// different classes of molecule.
 core::Real
-HelicalBundlePredictApplication_MPI::derived_slave_compute_rmsd(
+HelicalBundlePredictApplication_MPI::derived_worker_compute_rmsd(
 	core::pose::Pose const & pose,
 	core::pose::Pose const & reference_pose,
 	std::string const &//sequence
@@ -189,7 +189,7 @@ HelicalBundlePredictApplication_MPI::derived_slave_compute_rmsd(
 #ifdef MULTI_THREADED
 	sfxn_fullatom_mutex_.lock();
 #endif //MULTI_THREADED
-	runtime_assert_string_msg( sfxn_fullatom_  != nullptr, "Error in HelicalBundlePredictApplication_MPI::derived_slave_carry_out_n_jobs(): No fullatom scoring function was provided." );
+	runtime_assert_string_msg( sfxn_fullatom_  != nullptr, "Error in HelicalBundlePredictApplication_MPI::derived_worker_carry_out_n_jobs(): No fullatom scoring function was provided." );
 	core::scoring::ScoreFunctionOP sfxn_fullatom_local( sfxn_fullatom_->clone() );
 #ifdef MULTI_THREADED
 	sfxn_fullatom_mutex_.unlock();

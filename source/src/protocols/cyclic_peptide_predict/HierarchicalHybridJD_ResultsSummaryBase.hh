@@ -64,7 +64,7 @@ public:
 	inline core::Size jobindex_on_originating_node() const { return jobindex_on_originating_node_; }
 
 	/// @brief Get the list of procs that transmitted this JobResultsSummary.
-	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the emperor
+	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the director
 	/// node to address an output request to the correct proc.
 	inline utility::vector1 <int> const & MPI_ranks_handling_message() const { return mpi_ranks_handling_message_; }
 
@@ -80,7 +80,7 @@ public:
 	void set_jobindex_on_originating_node( core::Size const index);
 
 	/// @brief Add a proc that handled this message to the list of procs that transmitted this JobResultsSummary.
-	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the emperor
+	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the director
 	/// node to address an output request to the correct proc.
 	void add_MPI_rank_handling_message( int const new_proc );
 
@@ -95,7 +95,7 @@ private:
 	core::Size jobindex_on_originating_node_ = 0;
 
 	/// @brief The list of procs that transmitted this JobResultsSummary.
-	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the emperor
+	/// @details Whenever a proc sends it to someone else, the receiving proc appends the sender's rank here.  This allows the director
 	/// node to address an output request to the correct proc.
 	utility::vector1 < int > mpi_ranks_handling_message_;
 
