@@ -93,7 +93,7 @@ public:
 			)
 		);
 
-		core::pose::PoseOP bad_aln_pdb_pose(
+		core::pose::PoseOP const bad_aln_pdb_pose(
 			core::import_pose::pose_from_file(
 			*residue_set,
 			"protocols/pdbinfo_manipulations/aln6q6h.pdb.gz",
@@ -137,7 +137,7 @@ public:
 				{"H", "H", "H", "H"},
 				{"H", "H", "H", "H"}
 			);
-			TS_ASSERT_THROWS_NOTHING(ss.check_format());
+			TS_ASSERT_THROWS_NOTHING(ss.check_single_format());
 		}
 		{
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss(
@@ -145,20 +145,20 @@ public:
 				{"H", "H"},
 				{"H", "H"},
 				{"H", "H", "H", "H", "U"});
-			TS_ASSERT_THROWS(ss.check_format(), utility::excn::BadInput&);
+			TS_ASSERT_THROWS(ss.check_single_format(), utility::excn::BadInput&);
 		}
 		{
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss(
 				"AGGY",
 				{"H", "H", "H", "H", "U"});
-			TS_ASSERT_THROWS(ss.check_format(), utility::excn::BadInput&);
+			TS_ASSERT_THROWS(ss.check_single_format(), utility::excn::BadInput&);
 		}
 		{
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss(
 				"AGGY",
 				{"H", "H", "H", "H"},
 				{"H", "H", "H", "H", "U"});
-			TS_ASSERT_THROWS(ss.check_format(), utility::excn::BadInput&);
+			TS_ASSERT_THROWS(ss.check_single_format(), utility::excn::BadInput&);
 		}
 		{
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss(
@@ -166,7 +166,7 @@ public:
 				{"H", "H", "H", "H"},
 				{"H", "H", "H", "H"},
 				{"H", "H", "H", "H", "U"});
-			TS_ASSERT_THROWS(ss.check_format(), utility::excn::BadInput&);
+			TS_ASSERT_THROWS(ss.check_single_format(), utility::excn::BadInput&);
 		}
 	}
 
@@ -254,15 +254,33 @@ public:
 				"PGKAPKLLIYSASSLYSGVPSRFSGSRSGTDFTLTISSLQPEDFATYYCQQSSSSLITFGQGTKVEIK");
 			utility::vector1<std::string> const chain_L_chains({"Z"});
 
+			utility::vector1<int> const L_residue_numbers = [&chain_L](){
+				utility::vector1<int> ret;
+				for ( int i = 0; i<int(chain_L.size()); ++i ) {
+					if ( i < (int(chain_L.size())/2) ) { ret.push_back(i+1); }
+					else { ret.push_back(i+100); }
+				}
+				return ret;
+			}();
+
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss_A(
 				chain_A,
 				{"X"});
+			std::cout << ss_A << std::endl;
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss_H(
 				chain_H,
-				{"Y"});
+				{"Y"},
+				utility::vector1<std::string>(),
+				utility::vector1<std::string>(),
+				{33});  // numbering should start at 33
+			std::cout << ss_H << std::endl;
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss_L(
 				chain_L,
-				{"Z"});
+				{"Z"},
+				utility::vector1<std::string>(),
+				utility::vector1<std::string>(),
+				L_residue_numbers);
+			std::cout << ss_L << std::endl;
 
 			utility::vector1<protocols::pdbinfo_manipulations::SequenceSpecification> ss_inputs({
 				ss_A, ss_H, ss_L});
@@ -271,19 +289,32 @@ public:
 			apts.set_mode_from_string("multiple");
 			apts.set_target_sequences(ss_inputs);
 			apts.apply(*pose);
+			std::cout << apts.get_target_sequences() << std::endl;
 			std::map<std::string, std::string> const old_to_new({{"A", "X"}, {"H", "Y"}, {"L", "Z"}});
 
 			TS_ASSERT_EQUALS(pose->size(), og_pdb_pose->size());
-			for ( core::Size i=1; i<=pose->size(); ++i ) {
+			for ( core::Size i=1, X_count=0, Y_count=0, Z_count=0; i<=pose->size(); ++i ) {
 				TS_ASSERT_EQUALS(
 					std::string(1, pose->pdb_info()->chain(i)),
 					old_to_new.at(std::string(1, og_pdb_pose->pdb_info()->chain(i)))
 				);
-
 				TS_ASSERT_DIFFERS(
 					pose->pdb_info()->chain(i),
 					og_pdb_pose->pdb_info()->chain(i)
 				);
+				if ( pose->pdb_info()->chain(i) == 'X' ) {
+					++X_count;
+					// this starts alignment at residue 7
+					TS_ASSERT_EQUALS(X_count+6, pose->pdb_info()->number(i));
+				} else if ( pose->pdb_info()->chain(i) == 'Y' ) {
+					++Y_count;
+					// this starts alignment at residue 2
+					// so Y_count + 33(set start number)
+					TS_ASSERT_EQUALS(Y_count+33, pose->pdb_info()->number(i));
+				} else if ( pose->pdb_info()->chain(i) == 'Z' ) {
+					++Z_count;
+					TS_ASSERT_EQUALS(L_residue_numbers[Z_count], pose->pdb_info()->number(i));
+				}
 			}
 		} // test no doublers
 		{ // now try doubler
@@ -393,10 +424,33 @@ public:
 		{
 			protocols::pdbinfo_manipulations::SequenceSpecification const t_ss(
 				"MKVKIKCWNGVATWLWVANDENCGICRMAFNGCCPDCKVPGDDCPLVWGQCSHCFHMHCILKWLHAQQVQQHCPMCRQEWKFKE",
-				{"C", "D"}, {"yyY", "XSd"}, {"A"});
-			utility::tag::TagCOP const tag = tagptr_from_string("<Target sequence=\"MKVKIKCWNGVATWLWVANDENCGICRMAFNGCCPDCKVPGDDCPLVWGQCSHCFHMHCILKWLHAQQVQQHCPMCRQEWKFKE\" chains=\"C,D\" segmentIDs=\"yyY,XSd\" insCodes=\"A\" />\n");
+				{"C", "D"}, {"yyY", "XSd"}, {"A"}, {22,33,44});
+			utility::tag::TagCOP const tag = tagptr_from_string("<Target sequence=\"MKVKIKCWNGVATWLWVANDENCGICRMAFNGCCPDCKVPGDDCPLVWGQCSHCFHMHCILKWLHAQQVQQHCPMCRQEWKFKE\" chains=\"C,D\" segmentIDs=\"yyY,XSd\" insCodes=\"A\" residue_numbers=\"22,33, 44\" />\n");
 			protocols::pdbinfo_manipulations::SequenceSpecification const ss(apts.parse_target_tag(tag));
 			TS_ASSERT_EQUALS(t_ss, ss);
 		}
+	}
+
+	void test_dna_align() {
+		core::pose::PoseOP const pose(
+			core::import_pose::pose_from_file(
+			"protocols/pdbinfo_manipulations/4gatA.pdb",
+			false,
+			core::import_pose::PDB_file
+			)
+		);
+
+		// this should trigger a failure to align instance (a throw in source/src/core/sequence/Aligner.cc) which we should handle gracefully
+		// I'm not sure if there's a way to prove that this is happening... but it is if you check the debug logs I swear!
+		protocols::pdbinfo_manipulations::SequenceSpecification const ss(
+			"MKVKIKCWNGVATWLWVANDENCGICRMAFNGCCPDCKVPGDDCPLVWGQCSHCFHMHCILKWLHAQQVQQHCPMCRQEWKFKE",
+			{"C", "D"},
+			utility::vector1<std::string>(),
+			utility::vector1<std::string>(),
+			{100});
+		protocols::pdbinfo_manipulations::AlignPDBInfoToSequences apts;
+		apts.set_mode_from_string("multiple");
+		apts.set_target_sequences({ss});
+		TS_ASSERT_THROWS_NOTHING(apts.apply(*pose));
 	}
 };

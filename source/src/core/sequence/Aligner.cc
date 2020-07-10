@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include <utility/exit.hh>
+#include <utility/excn/Exceptions.hh>
 
 #include <utility/vector1.hh>
 
@@ -82,14 +82,15 @@ SequenceAlignment Aligner::traceback(
 			aligned_seq_y = (*seq_y)[current_y] + aligned_seq_y;
 			seq_x->insert_gap( current_x + 1 );
 		} else {
-			//std::string const msg(
-			// "Unhandled case in traceback, not pointing to anything (" +
-			// "\n"
-			// //string_of(current_x) + "," +
-			// //string_of(current_y) + ")!\n"
-			//);
-			//utility_exit_with_message( msg );
-			utility_exit_with_message( "Error in traceback: pointer doesn't go anywhere!\n" );
+			std::stringstream ss;
+			ss << "Error in Aligner::traceback: pointer doesn't go anywhere!\n";
+			ss << "input seq_x: " << seq_x << "\n";
+			ss << "input seq_y: " << seq_y << "\n";
+			ss << "current_x: " << current_x << "\n";
+			ss << "current_y: " << current_y << "\n";
+			ss << "aligned_seq_x: " << aligned_seq_x << "\n";
+			ss << "aligned_seq_y: " << aligned_seq_y;
+			throw CREATE_EXCEPTION(utility::excn::NullPointerError,  ss.str() );
 		}
 
 		if ( current_cell->next()->came_from() == end ) {

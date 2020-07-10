@@ -1236,6 +1236,7 @@ testinputfiles = [
 	"pdbinfo_manipulations/aln6q6h.pdb.gz",
 	"pdbinfo_manipulations/6q6h.pdb.gz",
 	"pdbinfo_manipulations/6q6h_seqs.json.gz",
+	"pdbinfo_manipulations/4gatA.pdb",
 	"pmut_scan/mutants.txt",
 	"pmut_scan/shortloop.01.pdb.gz",
 	"pmut_scan/shortloop.02.pdb.gz",

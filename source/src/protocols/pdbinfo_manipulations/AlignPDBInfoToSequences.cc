@@ -78,7 +78,7 @@ alignpdbinfotosequencesmode_to_string(AlignPDBInfoToSequencesMode const & mode) 
 ///@brief make sure none of the non-sequence elements are larger than
 ///       the sequence_.
 void
-SequenceSpecification::check_format() const {
+SequenceSpecification::check_single_format() const {
 	// 1. check for bad settings
 	if ( chains_.size() > sequence_.size() ) {
 		std::stringstream ss;
@@ -100,6 +100,35 @@ SequenceSpecification::check_format() const {
 			<< insCodes_.size() << " > s: " << sequence_.size() << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
 	}
+
+	if ( residue_numbers_.size() > sequence_.size() ) {
+		std::stringstream ss;
+		ss << "SequenceSpecification residue_numbers size was larger than the sequence ins: "
+			<< residue_numbers_.size() << " > s: " << sequence_.size() << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
+	}
+}
+
+///@brief make sure none of the non-sequence elements are larger than
+///       the sequence_.
+void
+SequenceSpecification::update_multiple_format_residue_numbering() {
+	if ( residue_numbers_.empty() ) {
+		for ( int i = 1; i <= int(sequence_.size()); ++i ) {
+			residue_numbers_.push_back(i);
+		}
+	} else if ( residue_numbers_.size() == core::Size(1) ) {
+		// skip seed number
+		for ( int i = 1; i < int(sequence_.size()); ++i ) {
+			residue_numbers_.push_back(i+residue_numbers_[1]);
+		}
+	} else if ( residue_numbers_.size() != sequence_.size() ) {
+		std::stringstream ss;
+		ss << "SequenceSpecification residue_numbers set and found to not have the same size"
+			<< " as the sequence (they must have the same size if set): "
+			<< residue_numbers_.size() << " > s: " << sequence_.size() << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::BadInput,  ss.str() );
+	}
 }
 
 
@@ -107,17 +136,22 @@ SequenceSpecification::check_format() const {
 ///       pad chains_, segmentIDs_, and insCodes_ to be the same length as
 ///       the sequence_.
 void
-SequenceSpecification::set_1_to_1_format() {
+SequenceSpecification::set_1_to_1_format(int const starting_number) {
 	while ( chains_.size() <= sequence_.size() ) chains_.push_back(chains_.back());
 	if ( segmentIDs_.size() == 0 ) segmentIDs_.push_back("    ");
 	while ( segmentIDs_.size() <= sequence_.size() ) segmentIDs_.push_back(segmentIDs_.back());
 	if ( insCodes_.size() == 0 ) insCodes_.push_back(" ");
 	while ( insCodes_.size() <= sequence_.size() ) insCodes_.push_back(insCodes_.back());
+	if ( residue_numbers_.size() == 0 ) {
+		for ( int i = 0; i < int(sequence_.size()); ++i ) {
+			residue_numbers_.push_back(starting_number + i);
+		}
+	}
 }
 
 bool
 SequenceSpecification::operator==(SequenceSpecification const & alt_ss) const {
-	return std::tie(sequence_, chains_, segmentIDs_, insCodes_) == std::tie(alt_ss.sequence_, alt_ss.chains_, alt_ss.segmentIDs_, alt_ss.insCodes_);
+	return std::tie(sequence_, chains_, segmentIDs_, insCodes_, residue_numbers_) == std::tie(alt_ss.sequence_, alt_ss.chains_, alt_ss.segmentIDs_, alt_ss.insCodes_, alt_ss.residue_numbers_);
 }
 
 
@@ -130,6 +164,7 @@ operator<<( std::ostream & os, SequenceSpecification const & ss ) {
 		<< "chains: " << ss.chains_.size() << " : " << ss.chains_ << "\n"
 		<< "insCodes_: " << ss.insCodes_.size() << " : " << ss.insCodes_ << "\n"
 		<< "segmentIDs_: " << ss.segmentIDs_.size() << " : " << ss.segmentIDs_ << "\n"
+		<< "residue_numbers_: " << ss.residue_numbers_.size() << " : " << ss.residue_numbers_ << "\n"
 		<< "current_idx: " << ss.current_idx_ << std::endl;
 	return os;
 }
@@ -142,6 +177,7 @@ void to_json(nlohmann::json& j, SequenceSpecification const & ss) {
 		{"chains", ss.chains_.vector()},
 		{"insCodes", ss.insCodes_.vector()},
 		{"segmentIDs", ss.segmentIDs_.vector()},
+		{"residue_numbers", ss.residue_numbers_.vector()},
 		{"current_idx", ss.current_idx_}
 		};
 }
@@ -152,6 +188,7 @@ void from_json(const json& j, SequenceSpecification & ss) {
 	if ( j.find("insCodes") != j.end() ) j.at("insCodes").get_to(ss.insCodes_);
 	if ( j.find("segmentIDs") != j.end() ) j.at("segmentIDs").get_to(ss.segmentIDs_);
 	if ( j.find("current_idx") != j.end() ) j.at("current_idx").get_to(ss.current_idx_);
+	if ( j.find("residue_numbers") != j.end() ) j.at("residue_numbers").get_to(ss.residue_numbers_);
 }
 
 
@@ -201,22 +238,23 @@ AlignPDBInfoToSequences::apply_single_sequence( core::pose::Pose& pose ) {
 		utility::pointer::make_shared< core::sequence::Sequence >(pose.sequence(), "query", 1));
 
 	std::string target_combo_str("");
-	utility::vector1<core::Size> linear_residue_numbers;
+	utility::vector1<int> linear_residue_numbers;
 	utility::vector1<std::string> linear_chains;
 	utility::vector1<std::string> linear_insCodes;
 	utility::vector1<std::string> linear_segmentIDs;
-	for ( core::Size j=1; j<=target_sequences_.size(); ++j ) {
-		target_sequences_[j].check_format();
-		target_sequences_[j].set_1_to_1_format();
-		target_combo_str += target_sequences_[j].sequence_;
-		linear_chains.insert(linear_chains.end(), target_sequences_[j].chains_.begin(), target_sequences_[j].chains_.end());
+	{
+		int starting_number(1);
+		for ( core::Size j=1; j<=target_sequences_.size(); ++j ) {
+			target_sequences_[j].check_single_format();
+			target_sequences_[j].set_1_to_1_format(starting_number);
+			starting_number += target_sequences_[j].sequence_.size();
+			target_combo_str += target_sequences_[j].sequence_;
+			linear_chains.insert(linear_chains.end(), target_sequences_[j].chains_.begin(), target_sequences_[j].chains_.end());
 
-		linear_insCodes.insert(linear_insCodes.end(), target_sequences_[j].insCodes_.begin(), target_sequences_[j].insCodes_.end());
-		linear_segmentIDs.insert(linear_segmentIDs.end(), target_sequences_[j].segmentIDs_.begin(), target_sequences_[j].segmentIDs_.end());
-
-		utility::vector1<core::Size> current_numbers(target_sequences_[j].sequence_.size());
-		std::iota(current_numbers.begin(), current_numbers.end(), 1);
-		linear_residue_numbers.insert(linear_residue_numbers.end(), current_numbers.begin(), current_numbers.end());
+			linear_insCodes.insert(linear_insCodes.end(), target_sequences_[j].insCodes_.begin(), target_sequences_[j].insCodes_.end());
+			linear_segmentIDs.insert(linear_segmentIDs.end(), target_sequences_[j].segmentIDs_.begin(), target_sequences_[j].segmentIDs_.end());
+			linear_residue_numbers.insert(linear_residue_numbers.end(), target_sequences_[j].residue_numbers_.begin(), target_sequences_[j].residue_numbers_.end());
+		}
 	}
 
 	core::sequence::SequenceOP const target_seq(
@@ -302,14 +340,35 @@ AlignPDBInfoToSequences::apply_multi_sequence( core::pose::Pose& pose ) {
 		core::sequence::SequenceOP current_aln(nullptr), target_aln(nullptr);
 		utility::vector1<core::sequence::SequenceAlignment> seen_alignments;
 
-		// pass 0 == perfect matches, pass 1 == matches with 1 jump, etc
-		for ( core::Size j=1, current_pass=0; j<=target_sequences_.size() && correct_seq_idx == 0; ++j ) {
+		// current_pass 0 == perfect matches, current_pass 1 == matches with 1 jump, etc
+		// try all sequences -- if no alignment found try all sequences again with +1 gap allowed
+		for ( core::Size j=1, current_pass=0; j<=target_sequences_.size() && correct_seq_idx == 0 && current_pass <= sequence_alignment_cut_max_; ++j ) {
 			core::sequence::SequenceOP const current_target_seq(
 				utility::pointer::make_shared< core::sequence::Sequence >( target_sequences_[j].sequence_, std::to_string(1000+j), 1 )
 			);
-			core::sequence::SequenceAlignment const chainSeq_to_target(
-				sw_align.align( current_pose_seq, current_target_seq, ss )
-			);
+
+			// Since sw_align can throw an error if you're making a really bad alignment
+			// (which this function is basically doing -- ie trying alignments until they work)
+			// we can use a lambda to properly init chainSeq_to_target and keep track if
+			// it failed or not inside a try/catch.
+			bool failed_alignment(false);
+			core::sequence::SequenceAlignment const chainSeq_to_target = [&](){
+				try {
+					return sw_align.align( current_pose_seq, current_target_seq, ss );
+				} catch ( utility::excn::NullPointerError const & ) {
+					TR.Debug << "caught thrown align excn: " << *current_pose_seq  << " : " << *current_target_seq << std::endl;
+					failed_alignment = true;
+					return core::sequence::SequenceAlignment();
+				}
+			}();
+			if ( failed_alignment ) {
+				if ( j == target_sequences_.size() ) {
+					j=0;  // will get incremented to 1 on loop end
+					++current_pass;
+				}
+				continue;
+			}
+
 			seen_alignments.push_back(chainSeq_to_target);
 			current_aln = chainSeq_to_target.sequence(1);
 			// Start must be 1 for pad sequences to work.
@@ -416,6 +475,7 @@ AlignPDBInfoToSequences::apply_multi_sequence( core::pose::Pose& pose ) {
 			char const & insCode(current_seqSpec.insCodes_.size() >= current_idx ? current_seqSpec.insCodes_[current_idx].at(0) : ' ');
 			std::string const & seg_id(current_seqSpec.segmentIDs_.size() >= current_idx ? current_seqSpec.segmentIDs_[current_idx] : "    ");
 			std::tuple< std::string, char, std::string > const current_id(std::tie(current_chain, insCode, seg_id));
+			utility::vector1<int> const & residue_numbers(current_seqSpec.residue_numbers_);
 			for ( core::Size j=0, found_count=0; j<current_aln->length(); ++j ) {
 				if ( current_aln->sequence()[j] == '-' ) continue;
 				if ( seen_resIDs.count(current_id) == 0 ) {
@@ -427,7 +487,7 @@ AlignPDBInfoToSequences::apply_multi_sequence( core::pose::Pose& pose ) {
 				pose.pdb_info()->set_resinfo(
 					current_pose_seq->start() + found_count,
 					current_chain.at(0),
-					j+1,
+					residue_numbers[j+1],
 					insCode,
 					seg_id
 				);
@@ -448,10 +508,11 @@ AlignPDBInfoToSequences::apply( core::pose::Pose& pose ) {
 
 	switch (this->get_mode()) {
 	case AlignPDBInfoToSequencesMode::single :
-		for ( auto & seq : this->get_target_sequences() ) seq.check_format();
+		for ( auto & seq : this->get_target_sequences() ) seq.check_single_format();
 		apply_single_sequence(pose);
 		break;
 	case AlignPDBInfoToSequencesMode::multiple :
+		for ( auto & seq : this->get_target_sequences() ) seq.update_multiple_format_residue_numbering();
 		apply_multi_sequence(pose);
 		break;
 		// This will happen if mode_ is unset or if someone adds another mode and forgets to update this
@@ -490,15 +551,22 @@ AlignPDBInfoToSequences::parse_target_tag( utility::tag::TagCOP const & tag ) co
 	std::string const chains_raw(tag->getOption< std::string >("chains"));
 	std::string const segmentIDs_raw(tag->getOption< std::string >("segmentIDs", ""));
 	std::string const insCodes_raw(tag->getOption< std::string >("insCodes", ""));
+	std::string const residue_numbers_raw(tag->getOption< std::string >("residue_numbers", ""));
 	auto set_str_vec = [](std::string const & str) {
 		utility::vector1<std::string> ret;
 		if ( !str.empty() ) ret = utility::string_split(str, ',');
 		return ret;
 	};
+	auto set_int_vec = [](std::string const & str) {
+		nlohmann::json json = nlohmann::json::parse("[" + str + "]");
+		utility::vector1<int> const ret(json.get<utility::vector1<int>>());
+		return ret;
+	};
 	utility::vector1<std::string> const chains(set_str_vec(chains_raw));
 	utility::vector1<std::string> const segmentIDs(set_str_vec(segmentIDs_raw));
 	utility::vector1<std::string> const insCodes(set_str_vec(insCodes_raw));
-	return SequenceSpecification(sequence, chains, segmentIDs, insCodes);
+	utility::vector1<int> const residue_numbers(set_int_vec(residue_numbers_raw));
+	return SequenceSpecification(sequence, chains, segmentIDs, insCodes, residue_numbers);
 }
 
 
@@ -527,11 +595,17 @@ AlignPDBInfoToSequences::parse_my_tag(
 
 	// ok to throw early!
 	if ( this->get_mode() == AlignPDBInfoToSequencesMode::single ) {
-		for ( auto seq : this->get_target_sequences() ) seq.check_format();
+		for ( auto seq : this->get_target_sequences() ) seq.check_single_format();
+	} else if ( this->get_mode() == AlignPDBInfoToSequencesMode::multiple ) {
+		for ( auto seq : this->get_target_sequences() ) seq.update_multiple_format_residue_numbering();
 	}
 
 	if ( tag->hasOption( "throw_on_fail" ) ) {
 		this->set_throw_on_fail(tag->getOption<bool>("throw_on_fail"));
+	}
+
+	if ( tag->hasOption( "sequence_alignment_cut_max" ) ) {
+		this->set_sequence_alignment_cut_max(tag->getOption<core::Size>("sequence_alignment_cut_max"));
 	}
 
 }
@@ -550,7 +624,8 @@ void AlignPDBInfoToSequences::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "mode", xs_string, "Which mode to run in. options: ['single', 'multiple']")
 		+ XMLSchemaAttribute::attribute_w_default( "json_fns", xs_string, "The name of the json sequence file(s) (separated by ',')", "")
-		+ XMLSchemaAttribute::attribute_w_default( "throw_on_fail", xsct_rosetta_bool, "throw on failure.", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "throw_on_fail", xsct_rosetta_bool, "throw on failure.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "sequence_alignment_cut_max", xsct_positive_integer, "Maximum number of cuts to allow when doing the sequence alignment.", "10" );
 
 	AttributeList target_subelement_attributes;
 	target_subelement_attributes
@@ -558,7 +633,8 @@ void AlignPDBInfoToSequences::provide_xml_schema( utility::tag::XMLSchemaDefinit
 		+ XMLSchemaAttribute::required_attribute( "sequence", xs_string, "sequence of current chain/protein")
 		+ XMLSchemaAttribute::required_attribute( "chains", xs_string, "chains to set with current protein")
 		+ XMLSchemaAttribute::attribute_w_default( "segmentIDs", xs_string, "segmentIDs to set for the current protein", "")
-		+ XMLSchemaAttribute::attribute_w_default( "insCodes", xs_string, "insertion codes to set for the current protein", "");
+		+ XMLSchemaAttribute::attribute_w_default( "insCodes", xs_string, "insertion codes to set for the current protein", "")
+		+ XMLSchemaAttribute::attribute_w_default( "residue_numbers", xs_string, "Residue numbers to set for current chain (must be of size 1 (used as a starting number), or the size of 'sequence', or empty)", "");
 
 	XMLSchemaSimpleSubelementList subelements;
 	subelements.complex_type_naming_func( & AlignPDBInfoToSequences_namer );

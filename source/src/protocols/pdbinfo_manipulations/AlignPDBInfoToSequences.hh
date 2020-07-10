@@ -54,19 +54,25 @@ struct SequenceSpecification {
 		std::string const & sequence,
 		utility::vector1<std::string> const & chains,
 		utility::vector1<std::string> const & segmentIDs = utility::vector1<std::string>(),
-		utility::vector1<std::string> const & insCodes = utility::vector1<std::string>()) :
-		sequence_(sequence), chains_(chains), segmentIDs_(segmentIDs), insCodes_(insCodes), current_idx_(1) {;}
+		utility::vector1<std::string> const & insCodes = utility::vector1<std::string>(),
+		utility::vector1<int> const & residue_numbers = utility::vector1<int>()) :
+		sequence_(sequence), chains_(chains), segmentIDs_(segmentIDs), insCodes_(insCodes), residue_numbers_(residue_numbers), current_idx_(1) {;}
 
 	///@brief make sure none of the non-sequence elements are larger than
 	///       the sequence_.
 	void
-	check_format() const;
+	check_single_format() const;
+
+	///@brief make sure residue numbering is set to be the same size as the sequence_
+	//        or set the residue_numbering to start from 1 -> sequence.size()
+	void
+	update_multiple_format_residue_numbering();
 
 	///@brief duplicate the last element (or default last element if not set) to
-	///       pad chains_, segmentIDs_, and insCodes_ to be the same length as
+	///       pad chains_, segmentIDs_, insCodes_, residue_numbers_,  to be the same length as
 	///       the sequence_.
 	void
-	set_1_to_1_format();
+	set_1_to_1_format(int const starting_number);
 
 	///@brief This ignores current_idx_ because that is just a way to track how many times
 	///       This has been used.
@@ -77,6 +83,7 @@ struct SequenceSpecification {
 	utility::vector1<std::string> chains_;
 	utility::vector1<std::string> segmentIDs_;
 	utility::vector1<std::string> insCodes_;
+	utility::vector1<int> residue_numbers_;
 	core::Size current_idx_;
 };
 
@@ -162,6 +169,14 @@ public:
 	bool
 	get_throw_on_fail() const { return throw_on_fail_; }
 
+	void
+	set_sequence_alignment_cut_max(core::Size const sequence_alignment_cut_max) {
+		sequence_alignment_cut_max_ = sequence_alignment_cut_max;
+	}
+
+	core::Size
+	get_sequence_alignment_cut_max() const { return sequence_alignment_cut_max_; }
+
 public:
 
 	///////////////////////////////
@@ -216,6 +231,7 @@ private: // data
 	utility::vector1<SequenceSpecification> target_sequences_;
 	AlignPDBInfoToSequencesMode mode_;
 	bool throw_on_fail_ = false;
+	core::Size sequence_alignment_cut_max_ = 10;
 };
 
 std::ostream &

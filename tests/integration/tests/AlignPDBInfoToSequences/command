@@ -39,3 +39,6 @@ cd %(workdir)s
     | egrep -vf ../../ignore_list \
     > log_c2
 
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -s 1PEF.pdb -overwrite -out:prefix t3_ -parser:protocol rosetta_script3.xml -testing:INTEGRATION_TEST 2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_c3
