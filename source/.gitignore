@@ -25,7 +25,6 @@ external/DAlpahBall/DAlphaBall.*
 /tools/build/user.options
 /tools/build/site.settings
 /tools/build/site.options
-/.vscode
 /xcode/build
 /xcode/Rosetta.xcodeproj/project.xcworkspace/
 /xcode/Rosetta.xcodeproj/xcuserdata
@@ -52,7 +51,6 @@ get_commit_id.sh
 /diffs*
 /compile*
 .vscode/
-.vscode/c_cpp_properties.json
 .unit_test_results.json
 _performance_
 *~
