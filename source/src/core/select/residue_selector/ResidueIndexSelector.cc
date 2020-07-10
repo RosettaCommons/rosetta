@@ -96,6 +96,13 @@ ResidueSubset
 ResidueIndexSelector::apply( core::pose::Pose const & pose ) const
 {
 	runtime_assert_string_msg( !index_str_.empty(), "A residue index string must be supplied to the ResidueIndexSelector." );
+	if ( reverse_ ) {
+		if ( std::any_of(index_str_.begin(), index_str_.end(), ::isalpha) ) { // Do we have letters in the selection string?
+			TR.Warning << "It looks like you're combining the `reverse` (count-from-end) option of the Index selector with PDB numbering. This is almost certainly not what you want." << std::endl;
+		} else {
+			TR << "Reversing the pose orientation (count-from-end, not inverting the true/false status) of the selection `" << index_str_ << "`" << std::endl;
+		}
+	}
 	ResidueSubset subset( pose.size(), false );
 	std::set< Size > const res_set( get_resnum_list( index_str_, pose ) );
 
