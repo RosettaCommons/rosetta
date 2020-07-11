@@ -40,6 +40,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/sequence/Sequence.hh>
 #include <utility/file/file_sys_util.hh>
+#include <fstream>
 
 static basic::Tracer TR( "protocols.tcr.util" );
 /// @brief MINSCORE const value with large negative number

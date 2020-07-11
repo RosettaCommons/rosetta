@@ -22,6 +22,8 @@
 
 #include <utility/excn/Exceptions.hh>
 
+#include <iostream>
+
 using namespace std;
 using namespace core;
 using namespace pose;

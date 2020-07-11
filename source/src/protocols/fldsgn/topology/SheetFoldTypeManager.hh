@@ -18,7 +18,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <map>
 
 #include <utility/vector1_bool.hh>

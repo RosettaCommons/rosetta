@@ -18,7 +18,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 class XMLParseBenchmark : public PerformanceBenchmark
 {

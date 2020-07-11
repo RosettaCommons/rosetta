@@ -17,6 +17,7 @@
 
 // C++ headers
 #include <iomanip>
+#include <ostream>
 
 namespace numeric {
 

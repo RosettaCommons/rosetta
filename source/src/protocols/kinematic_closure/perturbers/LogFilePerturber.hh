@@ -16,7 +16,7 @@
 #include <protocols/kinematic_closure/perturbers/LogFilePerturber.fwd.hh>
 
 // C++ headers
-#include <ostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace kinematic_closure {

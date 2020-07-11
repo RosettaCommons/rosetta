@@ -14,17 +14,15 @@
 #ifndef INCLUDED_protocols_pockets_GenPharmacophore_hh
 #define INCLUDED_protocols_pockets_GenPharmacophore_hh
 
-#include <sstream>
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/Pose.hh>
 #include <utility/VirtualBase.hh>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <vector>
-#include <fstream>
 #include <cmath>
 
 namespace protocols {

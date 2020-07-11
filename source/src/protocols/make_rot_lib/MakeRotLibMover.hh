@@ -30,7 +30,7 @@
 
 // c++ headers
 #include <string>
-#include <ostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace make_rot_lib {

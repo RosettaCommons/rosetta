@@ -51,7 +51,7 @@
 #include <cmath>
 #include <cstdlib> // atoi
 #include <algorithm> // for sort
-#include <fstream> // for ifstream
+#include <iosfwd> // for ifstream
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 

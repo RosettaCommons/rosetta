@@ -1,7 +1,6 @@
 #include <core/types.hh>
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 #include <string>
 #include <map>
 #include <cmath>

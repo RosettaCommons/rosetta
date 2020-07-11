@@ -12,7 +12,7 @@
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <core/conformation/util.hh>
-#include <sstream>
+#include <iosfwd>
 #include <utility/graph/Graph.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

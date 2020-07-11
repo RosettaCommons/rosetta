@@ -24,8 +24,8 @@
 #include <core/fragment/picking_old/vall/VallSection.hh>
 
 // C++ headers
-#include <ostream>
 #include <sstream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

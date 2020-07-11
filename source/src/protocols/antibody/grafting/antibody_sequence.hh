@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
+#include <iosfwd>
 #include <limits>
 
 namespace protocols {

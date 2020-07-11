@@ -30,10 +30,8 @@
 #include <cstdio>
 #include <cstring>
 #include <algorithm>
-#include <sstream>
-#include <iostream>
 #include <map>
-#include <ostream>
+#include <iosfwd>
 #include <cstdlib>
 #include <cstdio>
 

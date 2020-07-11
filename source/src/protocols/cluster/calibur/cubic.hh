@@ -20,7 +20,7 @@
 #include <sys/resource.h>
 #endif
 #include <stdlib.h>
-#include <iostream>
+#include <iosfwd>
 #include <cmath>
 #include <core/types.hh>
 

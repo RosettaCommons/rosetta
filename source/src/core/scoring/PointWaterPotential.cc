@@ -396,7 +396,7 @@ PointWaterPotential::setup_interpolation(
 
 void
 PointWaterPotential::read_table_from_stream(
-	utility::io::izstream &stream,
+	std::istream &stream,
 	ObjexxFCL::FArray2D< Real > &table
 ) {
 	table.dimension(26,26);

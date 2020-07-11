@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <utility/io/ozstream.hh>
+#include <fstream>
 
 namespace protocols {
 namespace recces {

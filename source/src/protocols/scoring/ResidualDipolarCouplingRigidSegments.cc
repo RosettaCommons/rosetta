@@ -37,6 +37,7 @@
 //C++ headers
 #include <iostream>
 #include <string>
+#include <fstream>
 //#include <iostream.h>
 
 /// Utility headers

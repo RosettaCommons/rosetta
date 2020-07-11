@@ -32,7 +32,7 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <utility/vector1.fwd.hh>
 namespace protocols {
 namespace sewing {
@@ -57,7 +57,7 @@ public:
 	bool edge_exists(data_storage::SmartSegmentCOP seg1, data_storage::SmartSegmentCOP seg2, HasherOP hasher);
 
 	/// @brief Method called by each individual processor to write to its edge file
-	void write_edges_for_segment(core::Size current_n_segment, HasherOP hasher, utility::io::ozstream & output_file, utility::vector1< core::Size > const & c_segs );
+	void write_edges_for_segment(core::Size current_n_segment, HasherOP hasher, std::ostream & output_file, utility::vector1< core::Size > const & c_segs );
 
 	/// @brief Generate vectors of IDs of N-terminal and C-terminal segments
 	std::pair< utility::vector1< core::Size >, utility::vector1< core::Size > > get_terminal_segments();

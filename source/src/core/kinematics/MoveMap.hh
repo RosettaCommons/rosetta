@@ -805,13 +805,13 @@ public: // status
 	/// @brief Give the TorsionType bool values up to a given residue number.
 	/// wrapper for PyRosetta
 	void
-	show( Size i) const { show(std::cout, i);};
+	show( Size i) const;
 
 	void
 	show( std::ostream & out) const;
 
 	void
-	show() const { show(std::cout);};
+	show() const;
 
 private: // movemap-movemap functionality
 

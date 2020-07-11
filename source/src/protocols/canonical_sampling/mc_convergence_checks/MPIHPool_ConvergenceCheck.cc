@@ -47,9 +47,9 @@
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 
-
 #include <utility/vector1.hh>
 
+#include <fstream>
 
 static basic::Tracer tr( "MPIHPool_ConvergenceCheck" );
 

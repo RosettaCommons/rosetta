@@ -15,7 +15,7 @@
 #ifndef DEVEL_INVKINLIGLOOPDESIGN_RESID_HH
 #define DEVEL_INVKINLIGLOOPDESIGN_RESID_HH
 
-#include <iostream>
+#include <iosfwd>
 #include <map>
 
 #include <core/conformation/Residue.fwd.hh>

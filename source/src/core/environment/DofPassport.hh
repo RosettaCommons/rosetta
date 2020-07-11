@@ -37,7 +37,7 @@
 #include <utility/vector1.fwd.hh>
 
 // C++ Headers
-#include <ostream>
+#include <iosfwd>
 #include <set>
 
 // ObjexxFCL Headers

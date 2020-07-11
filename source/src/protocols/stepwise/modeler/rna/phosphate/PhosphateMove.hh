@@ -20,7 +20,7 @@
 #include <protocols/stepwise/modeler/rna/phosphate/PhosphateMove.fwd.hh>
 #include <core/types.hh>
 #include <string>
-#include <ostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace stepwise {

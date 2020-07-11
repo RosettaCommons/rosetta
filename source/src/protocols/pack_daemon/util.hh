@@ -27,7 +27,7 @@
 #include <protocols/genetic_algorithm/EntityRandomizer.fwd.hh>
 
 // C++ headers
-#include <istream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

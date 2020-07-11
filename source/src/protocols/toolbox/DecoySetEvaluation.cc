@@ -48,6 +48,7 @@
 #include <string>
 #include <iostream>
 #include <cstdio>
+#include <fstream>
 
 #include <core/id/NamedStubID.hh>
 #include <utility/vector1.hh>

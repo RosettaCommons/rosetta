@@ -28,7 +28,7 @@
 
 #include <utility/vector1.hh>
 #include <map>
-#include <ostream>
+#include <iosfwd>
 
 
 namespace core {

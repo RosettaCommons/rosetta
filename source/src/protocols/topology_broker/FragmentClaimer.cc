@@ -47,6 +47,7 @@
 
 #include <utility/vector1.hh>
 #include <sstream>
+#include <fstream>
 
 //#include <basic/options/option.hh>
 

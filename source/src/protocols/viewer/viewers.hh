@@ -59,9 +59,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
-#include <iomanip>
 #include <iosfwd>
-#include <iostream>
 #include <limits>
 #include <vector>
 

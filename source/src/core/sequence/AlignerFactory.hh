@@ -21,7 +21,7 @@
 
 // C++ Headers
 
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

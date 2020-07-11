@@ -24,7 +24,6 @@
 
 // C++ headers
 #include <iostream>
-#include <iomanip>
 
 namespace protocols {
 namespace mean_field {

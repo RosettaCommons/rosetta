@@ -22,7 +22,7 @@
 
 // C++ headers
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 namespace protocols {
 namespace residue_optimization {

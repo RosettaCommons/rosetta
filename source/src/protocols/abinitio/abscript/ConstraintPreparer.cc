@@ -41,6 +41,7 @@
 #include <basic/Tracer.hh>
 
 // C++ Headers
+#include <fstream>
 
 // ObjexxFCL Headers
 

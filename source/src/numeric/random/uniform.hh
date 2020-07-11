@@ -24,7 +24,7 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <cstdlib> //required by GCC 4.3.2
 

@@ -27,7 +27,7 @@
 // C++ Headers
 #include <algorithm>
 #ifdef OBJEXXFCL_FARRAY_SIZE_REPORT
-#include <iostream>
+#include <iosfwd>
 #include <typeinfo>
 #endif // OBJEXXFCL_FARRAY_SIZE_REPORT
 

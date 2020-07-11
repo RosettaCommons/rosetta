@@ -17,6 +17,8 @@
 #include <core/types.hh>
 #include <utility/exit.hh>
 
+#include <ostream>
+
 namespace core {
 namespace pose {
 namespace rna {
@@ -31,6 +33,12 @@ BasePairStep::BasePairStep( Size const i, Size const i_next,
 
 //Destructor
 BasePairStep::~BasePairStep() = default;
+
+std::ostream &
+operator <<( std::ostream & os, BasePairStep const & bps ){
+	os << bps.base_pair_step_.first.first << "-" << bps.base_pair_step_.first.second << " " << bps.base_pair_step_.second.first << "-" << bps.base_pair_step_.second.second;
+	return os;
+}
 
 } //denovo
 } //rna

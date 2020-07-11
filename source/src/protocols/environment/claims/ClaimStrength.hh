@@ -29,7 +29,7 @@
 
 //C++ headers
 #include <string>
-#include <ostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace environment {

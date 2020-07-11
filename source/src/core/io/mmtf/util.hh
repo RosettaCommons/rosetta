@@ -20,8 +20,7 @@
 #include <utility/vector0.hh>
 #include <core/types.hh>
 
-#include <ostream>
-#include <sstream>
+#include <iosfwd>
 #include <tuple>
 #include <mmtf.hpp>
 

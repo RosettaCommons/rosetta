@@ -134,7 +134,7 @@ core::io::StructFileRepOP
 dump_mmtf(
 	core::pose::Pose const & pose,
 	std::string const & jd2_job_data,
-	utility::io::ozstream & out)
+	std::ostream & out)
 
 {
 	core::io::StructFileRepOptionsOP options =  core::io::StructFileRepOptionsOP( new core::io::StructFileRepOptions );

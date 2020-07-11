@@ -26,7 +26,7 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector0.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

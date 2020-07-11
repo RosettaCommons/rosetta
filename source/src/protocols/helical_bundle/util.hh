@@ -28,7 +28,7 @@
 #include <core/id/AtomID.hh>
 #include <core/conformation/Residue.hh>
 #include <utility/io/ozstream.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 
 #include <set>
 

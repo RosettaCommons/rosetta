@@ -22,7 +22,7 @@
 #include <core/id/TorsionID.hh>
 
 // C++ header
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

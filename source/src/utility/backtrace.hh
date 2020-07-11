@@ -64,7 +64,7 @@ bool maybe_throw_on_next_assertion_failure( char const * condition );
 #include <string>
 #include <cstdio>
 #include <stdlib.h>
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/CSI_Sequence.hh>
 
@@ -146,15 +146,8 @@ backtrace_string(int skip=0) {
 	return bt_str;
 }
 
-inline
 bool
-print_backtrace( char const * /*unused*/ ) {
-	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
-	std::cerr << "BACKTRACE:\n";
-	std::cerr <<  backtrace_string();
-	std::cerr << utility::CSI_Reset();
-	return false; // allows use in debug_assert
-}
+print_backtrace( char const * /*unused*/ );
 
 #else
 // _WIN32, etc.

@@ -28,7 +28,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <istream>
+#include <iosfwd>
 #include <map>
 
 #ifdef    SERIALIZATION

@@ -41,7 +41,7 @@
 #include <string>
 
 #include <utility/vector1.hh>
-#include <iostream>
+#include <iosfwd>
 
 #ifdef PYROSETTA
 #include <core/scoring/ScoreFunction.hh>

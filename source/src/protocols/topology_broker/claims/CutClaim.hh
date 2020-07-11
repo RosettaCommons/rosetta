@@ -48,7 +48,7 @@
 //// C++ headers
 #include <utility>
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 
 // option key includes

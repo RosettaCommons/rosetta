@@ -27,7 +27,7 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

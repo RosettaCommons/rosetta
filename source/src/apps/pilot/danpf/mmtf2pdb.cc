@@ -26,6 +26,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/io/ozstream.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

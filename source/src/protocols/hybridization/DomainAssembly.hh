@@ -31,7 +31,7 @@
 #include <protocols/moves/CompositionMover.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 #include <core/types.hh>

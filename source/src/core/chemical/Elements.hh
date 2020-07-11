@@ -14,7 +14,7 @@
 
 #ifndef INCLUDED_core_chemical_Elements_hh
 #define INCLUDED_core_chemical_Elements_hh
-#include <ostream>
+#include <iosfwd>
 #include <map>
 #include <string>
 #include <utility/vector1.hh>

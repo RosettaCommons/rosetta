@@ -41,7 +41,7 @@
 //// C++ headers
 #include <string>
 #include <map>
-#include <iostream>
+#include <iosfwd>
 
 #include <core/scoring/func/Func.hh>
 

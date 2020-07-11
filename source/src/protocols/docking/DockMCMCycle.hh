@@ -36,7 +36,7 @@
 
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <utility/vector1.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 // option key includes

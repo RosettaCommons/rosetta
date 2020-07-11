@@ -19,6 +19,8 @@
 // ObjexxFCL headers
 #include <ObjexxFCL/char.functions.hh>
 
+#include <iostream>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>

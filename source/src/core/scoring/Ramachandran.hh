@@ -27,7 +27,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 #include <utility/vector1.hh>
 
 // Numeric headers
@@ -342,9 +342,9 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void symmetrize_gly_table( bool const dont_use_shap );
 
-	void read_rama_map_file ( utility::io::izstream * iunit );
+	void read_rama_map_file ( std::istream & iunit );
 	//MaximCode
-	void read_rama_map_file_shapovalov ( utility::io::izstream * iunit );
+	void read_rama_map_file_shapovalov ( std::istream & iunit );
 	void initialize_rama_sampling_tables();
 
 	void init_rama_sampling_table( conformation::ppo_torsion_bin torsion_bin );

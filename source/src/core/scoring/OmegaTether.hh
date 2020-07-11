@@ -28,7 +28,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -102,7 +102,7 @@ public:
 private:
 
 	void read_omega_tables();
-	void read_table_from_stream( utility::io::izstream &, ObjexxFCL::FArray2D< Real > &, ObjexxFCL::FArray2D< Real > &);
+	void read_table_from_stream( std::istream &, ObjexxFCL::FArray2D< Real > &, ObjexxFCL::FArray2D< Real > &);
 	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &);
 
 	// phi-psi dependent only

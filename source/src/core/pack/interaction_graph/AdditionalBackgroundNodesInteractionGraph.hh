@@ -19,7 +19,7 @@
 //STL Headers
 #include <list>
 
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1_bool.hh>
 

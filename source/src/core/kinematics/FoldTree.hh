@@ -39,7 +39,7 @@
 
 // C++ Headers
 #include <vector>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION

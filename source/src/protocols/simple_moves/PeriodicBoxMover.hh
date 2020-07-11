@@ -41,7 +41,7 @@
 
 // C++ Headers
 #include <string>
-#include <fstream>
+#include <iosfwd>
 
 namespace protocols {
 namespace simple_moves {

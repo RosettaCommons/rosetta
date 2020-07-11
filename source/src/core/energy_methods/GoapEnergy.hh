@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 #include <stdio.h>
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace scoring {

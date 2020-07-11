@@ -14,6 +14,9 @@
 
 
 #include <core/scoring/loop_graph/Loop.hh>
+
+#include <iostream>
+
 namespace core {
 namespace scoring {
 namespace loop_graph {
@@ -57,6 +60,15 @@ Loop::operator=( Loop const & src ){
 	landing_domain_ = src.landing_domain_;
 
 	return *this;
+}
+
+std::ostream & operator << ( std::ostream & os, Loop const & loop){
+	os << "LOOP ";
+	os << "TAKEOFF:  ";
+	os << loop.takeoff_pos_ << " from domain " << loop.takeoff_domain_ << "; ";
+	os << "LANDING:  ";
+	os << loop.landing_pos_ << " from domain " << loop.landing_domain_;
+	return os;
 }
 
 } //loop_graph

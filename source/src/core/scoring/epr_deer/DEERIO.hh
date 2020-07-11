@@ -27,7 +27,7 @@
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 #include <utility/fixedsizearray1.hh>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

@@ -27,7 +27,7 @@
 #include <utility/vector1.fwd.hh>
 
 // STL headers:
-#include <sstream>
+#include <iosfwd>
 
 
 namespace core {

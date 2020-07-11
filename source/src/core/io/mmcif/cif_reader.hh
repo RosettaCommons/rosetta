@@ -36,7 +36,7 @@ typedef utility::pointer::shared_ptr< CifFile > CifFileOP;
 
 #include <map>
 #include <vector>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

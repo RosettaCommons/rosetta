@@ -20,7 +20,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <utility/vector1.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <stdio.h>
 
 namespace myspace {

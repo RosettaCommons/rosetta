@@ -37,7 +37,7 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace scoring {

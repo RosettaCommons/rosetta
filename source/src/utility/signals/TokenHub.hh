@@ -32,7 +32,7 @@
 #include <boost/function.hpp>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 
 

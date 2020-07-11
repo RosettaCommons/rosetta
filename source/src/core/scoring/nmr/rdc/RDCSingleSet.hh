@@ -34,7 +34,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

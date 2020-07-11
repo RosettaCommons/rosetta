@@ -20,7 +20,7 @@
 
 
 #include <utility/vector1.hh>
-#include <ostream>
+#include <iosfwd>
 #include <basic/MetricValue.fwd.hh>
 
 

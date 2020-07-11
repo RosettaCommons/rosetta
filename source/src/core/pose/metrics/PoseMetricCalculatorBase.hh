@@ -24,7 +24,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

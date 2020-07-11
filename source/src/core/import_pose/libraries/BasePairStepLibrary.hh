@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace import_pose {
@@ -75,14 +75,7 @@ public:
 
 	friend
 	std::ostream &
-	operator <<( std::ostream & os, BasePairStepSequence const & bps ){
-		os << bps.base_pair_step_sequence_.first.first << "-" << bps.base_pair_step_sequence_.first.second;
-		os << " ";
-		os << bps.base_pair_step_sequence_.second.first;
-		for ( core::Size n = 1; n <= core::Size(bps.num_bulge_); n++ ) os << "-n";
-		os << "-" << bps.base_pair_step_sequence_.second.second;
-		return os;
-	}
+	operator <<( std::ostream & os, BasePairStepSequence const & bps );
 
 	std::string
 	tag() const {

@@ -20,7 +20,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.fwd.hh>
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace constel {

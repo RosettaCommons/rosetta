@@ -35,7 +35,7 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

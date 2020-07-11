@@ -220,6 +220,16 @@ BasePairStepLibrary::scratch_pose( BasePairStepSequence const & base_pair_step_s
 	return scratch_poses_[ base_pair_step_sequence ];
 }
 
+std::ostream &
+operator <<( std::ostream & os, BasePairStepSequence const & bps ){
+	os << bps.base_pair_step_sequence_.first.first << "-" << bps.base_pair_step_sequence_.first.second;
+	os << " ";
+	os << bps.base_pair_step_sequence_.second.first;
+	for ( core::Size n = 1; n <= core::Size(bps.num_bulge_); n++ ) os << "-n";
+	os << "-" << bps.base_pair_step_sequence_.second.second;
+	return os;
+}
+
 } //libraries
 } //rna
 } //protocols

@@ -891,7 +891,7 @@ Ramachandran::symmetrize_gly_table(
 
 void
 Ramachandran::read_rama_map_file (
-	utility::io::izstream * iunit
+	std::istream & iunit
 ) {
 	int aa_num,phi_bin,psi_bin,ss_type;
 	Real check,min_prob,max_prob;
@@ -908,11 +908,11 @@ Ramachandran::read_rama_map_file (
 			max_prob = -min_prob;
 			for ( int j = 1; j <= 36; ++j ) {
 				for ( int k = 1; k <= 36; ++k ) {
-					iunit->getline( line, 60 );
-					if ( iunit->eof() ) {
+					iunit.getline( line, 60 );
+					if ( iunit.eof() ) {
 						return;
-					} else if ( iunit->fail() ) { // Clear and continue: NO ERROR DETECTION
-						iunit->clear();
+					} else if ( iunit.fail() ) { // Clear and continue: NO ERROR DETECTION
+						iunit.clear();
 					}
 					std::sscanf( line, "%5d", &aa_num );
 					std::sscanf( line+6, "%5d", &ss_type );
@@ -989,9 +989,9 @@ Ramachandran::read_rama(
 	bool const symm_gly( basic::options::option[ basic::options::OptionKeys::score::symmetric_gly_tables ]() );
 
 	if ( dont_use_shap ) {
-		read_rama_map_file(&iunit);
+		read_rama_map_file(iunit);
 	} else {
-		read_rama_map_file_shapovalov(&iunit);
+		read_rama_map_file_shapovalov(iunit);
 	}
 
 	iunit.close();
@@ -1300,7 +1300,7 @@ Ramachandran::generate_custom_rama_cdf(
 //MaximCode
 void
 Ramachandran::read_rama_map_file_shapovalov (
-	utility::io::izstream * iunit
+	std::istream & iunit
 ) {
 	//...
 	//# Analysis      dataPoints-adaptive KDE
@@ -1323,9 +1323,9 @@ Ramachandran::read_rama_map_file_shapovalov (
 	core::Real phi, psi, prob, minusLogProb;
 
 	do {
-		iunit->getline( line, 255 );
+		iunit.getline( line, 255 );
 
-		if ( iunit->eof() ) {
+		if ( iunit.eof() ) {
 			break;
 		}
 

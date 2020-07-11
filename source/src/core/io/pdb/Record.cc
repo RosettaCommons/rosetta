@@ -17,6 +17,7 @@
 #include <core/io/pdb/Field.hh>
 #include <core/io/pdb/Record.hh>
 
+#include <iostream>
 
 namespace core {
 namespace io {

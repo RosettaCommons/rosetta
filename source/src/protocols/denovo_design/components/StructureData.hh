@@ -89,12 +89,9 @@ public:
 		if ( atom2 != other.atom2 ) return false;
 		return true;
 	}
-	friend std::ostream & operator<<( std::ostream & os, BondInfo const & b ) {
-		os << "\t<CovalentBond segment1=\"" << b.seg1 << "\" segment2=\"" << b.seg2
-			<< "\" residue1=\"" << b.res1 << "\" residue2=\"" << b.res2
-			<< "\" atom1=\"" << b.atom1 << "\" atom2=\"" << b.atom2 << "\" />";
-		return os;
-	}
+
+	friend std::ostream & operator<<( std::ostream & os, BondInfo const & b );
+
 	std::string seg1, seg2;
 	core::Size res1, res2;
 	std::string atom1, atom2;

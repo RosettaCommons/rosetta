@@ -147,7 +147,7 @@ StructFileRepOP
 dump_cif(
 	core::pose::Pose const & pose,
 	std::string const & jd2_job_data,
-	utility::io::ozstream & out)
+	std::ostream & out)
 
 {
 	StructFileRepOptionsOP options =  utility::pointer::make_shared< StructFileRepOptions >();

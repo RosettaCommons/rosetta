@@ -26,7 +26,7 @@
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
 
 //C++ headers
-#include <istream>
+#include <iosfwd>
 
 namespace basic {
 namespace resource_manager {

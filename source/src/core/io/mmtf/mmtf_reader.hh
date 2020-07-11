@@ -27,9 +27,8 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 #include <numeric/random/random.hh>
 
 #include <core/pose/PDBInfo.hh>

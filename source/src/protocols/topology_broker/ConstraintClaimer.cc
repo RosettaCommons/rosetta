@@ -46,6 +46,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 //// C++ headers
+#include <fstream>
 
 #include <core/id/SequenceMapping.hh>
 #include <utility/vector1.hh>

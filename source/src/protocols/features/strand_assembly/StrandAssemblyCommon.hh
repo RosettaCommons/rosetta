@@ -31,8 +31,7 @@
 // c++
 #include <algorithm> // for avg,min,max
 #include <cmath> // for std::abs    // reference: http://www.cplusplus.com/reference/cmath/abs/
-#include <fstream>
-#include <iostream>
+#include <iosfwd>
 #include <numeric>
 //#include <stdio.h>     //for remove( ) and rename( )
 #include <stdlib.h> // for std::abs()

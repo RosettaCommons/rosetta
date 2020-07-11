@@ -22,7 +22,7 @@
 
 #include <core/chemical/sdf/MolFileIOData.hh>
 
-#include <istream>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

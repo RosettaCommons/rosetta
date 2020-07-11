@@ -157,6 +157,17 @@ HbondsToResidueFilter::HbondsToResidueFilter( HbondsToResidueFilter const &src )
 	}
 }
 
+
+void
+HbondsToResidueFilter::set_resnum( core::Size const val ) {
+	runtime_assert(val>0);
+	std::stringstream ss("");
+	ss << val;
+	set_resnum(ss.str());
+	return;
+}
+
+
 bool
 HbondsToResidueFilter::apply( Pose const & pose ) const {
 	core::Size const resnum_rosetta( core::pose::parse_resnum( resnum_, pose, true ) );

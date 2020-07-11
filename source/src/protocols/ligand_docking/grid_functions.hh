@@ -17,7 +17,7 @@
 #define INCLUDED_protocols_ligand_docking_grid_functions_hh
 
 
-#include <iostream>
+#include <iosfwd>
 
 #include <core/conformation/Residue.fwd.hh>
 #include <core/grid/CartGrid.hh>

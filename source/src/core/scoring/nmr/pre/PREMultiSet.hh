@@ -43,7 +43,7 @@
 #include <numeric/xyz.functions.fwd.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

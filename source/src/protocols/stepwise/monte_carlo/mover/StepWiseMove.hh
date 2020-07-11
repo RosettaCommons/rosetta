@@ -22,7 +22,7 @@
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
-#include <ostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace stepwise {

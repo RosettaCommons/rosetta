@@ -15,11 +15,9 @@
 
 #include <core/types.hh>
 
-#include <fstream>
-#include <iostream>
 #include <cmath>
 
-#include <sstream>
+#include <iosfwd>
 #include <string>
 
 #include <numeric/xyzMatrix.hh>

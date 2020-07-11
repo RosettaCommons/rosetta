@@ -62,6 +62,7 @@
 #include <utility>
 #include <cstdio>
 #include <cmath>
+#include <fstream>
 
 static basic::Tracer TR( "protocols.jd3.job_distributors.MPIWorkPoolJobDistributor" );
 

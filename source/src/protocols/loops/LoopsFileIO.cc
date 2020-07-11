@@ -30,6 +30,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/string.functions.hh>
 
+#include <fstream>
 
 namespace protocols {
 namespace loops {

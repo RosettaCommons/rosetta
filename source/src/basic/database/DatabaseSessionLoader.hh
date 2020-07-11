@@ -23,7 +23,7 @@
 #include <basic/resource_manager/types.hh>
 
 //C++ headers
-#include <istream>
+#include <iosfwd>
 
 namespace basic {
 namespace database {

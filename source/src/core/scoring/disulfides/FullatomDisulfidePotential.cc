@@ -42,6 +42,7 @@
 #include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
+#include <utility/io/izstream.hh>
 
 
 static basic::Tracer TR( "core.scoring.disulfides.FullatomDisulfidePotential" );

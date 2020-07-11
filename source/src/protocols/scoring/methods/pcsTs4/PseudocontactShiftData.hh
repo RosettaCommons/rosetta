@@ -48,7 +48,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

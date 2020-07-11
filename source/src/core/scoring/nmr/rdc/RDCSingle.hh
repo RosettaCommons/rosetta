@@ -38,7 +38,7 @@
 #include <utility/json_spirit/json_spirit_value.h>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

@@ -28,8 +28,6 @@
 #include <protocols/moves/MoverContainer.hh>
 
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/io/mpistream.hh>
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
@@ -52,11 +50,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 
-#include <fstream>
-#include <iostream>
 #include <math.h>
 
-#include <sstream>
+#include <iosfwd>
 #include <string>
 #include <queue>
 

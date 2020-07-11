@@ -42,7 +42,7 @@
 
 // C++ headers
 #include <math.h>
-#include <iostream>
+#include <iosfwd>
 #include <utility/assert.hh>
 
 namespace numeric {

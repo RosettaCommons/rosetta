@@ -24,7 +24,7 @@
 // Project header
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 
 namespace core {
 namespace io {
@@ -56,7 +56,7 @@ StructFileRepOP
 dump_cif(
 	core::pose::Pose const & pose,
 	std::string const &jd2_job_data,
-	utility::io::ozstream & out);
+	std::ostream & out);
 
 
 

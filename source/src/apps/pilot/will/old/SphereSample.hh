@@ -1,7 +1,6 @@
 #include <core/types.hh>
 #include <basic/database/open.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
@@ -26,7 +25,7 @@ public:
 	void add_parent  (SphereNode const * p) { parents_.push_back(p); }
 	core::Size num_children()    const { return children_.size(); }
 	core::Size num_neighbor() const { return neighbors_.size(); }
-	core::Size num_parents()  const { return parents_.size(); }	
+	core::Size num_parents()  const { return parents_.size(); }
 	SphereNode const & child   (core::Size i) const { return *(children_[i]); }
 	SphereNode const & neighbor(core::Size i) const { return *(neighbors_[i]); }
 	SphereNode const & parent  (core::Size i) const { return *(parents_[i]); }
@@ -91,8 +90,8 @@ public:
 			for(utility::vector1<int>::iterator ic = children[i].begin(); ic != children[i].end(); ++ic) {
 				allnodes_[ i ]->add_child ( allnodes_[*ic] );
 				allnodes_[*ic]->add_parent( allnodes_[ i ] );
-			}			
-		}		
+			}
+		}
 	}
 
 	inline core::Real covering_radius_degrees(int level) {
@@ -103,7 +102,7 @@ public:
 			case 4: return  5.814062961918;
 			case 5: return  2.902260274250;
 			case 6: return  1.449774552065;
-			case 7: return  0.724517158473;																		
+			case 7: return  0.724517158473;
 			default: utility_exit_with_message("bad level");
 		}
 	}
@@ -120,11 +119,11 @@ public:
 		}
 		out.close();
 	}
-	
+
 	bool sanity_check() {
 		int n5=0,n6=0;
 		for(utility::vector1<SphereNode*>::iterator i = allnodes_.begin(); i != allnodes_.end(); ++i) {
-			SphereNode const & n(**i);			
+			SphereNode const & n(**i);
 			if(n.level()==7) {
 				assert(n.num_children()==0);
 			} else {
@@ -134,7 +133,7 @@ public:
 			assert( n.num_neighbor() == 5 || n.num_neighbor() == 6);
 			n5 += n.num_neighbor()==5;
 			for(core::Size in = 1; in <= n.num_neighbor(); ++in) {
-				SphereNode const & b(n.neighbor(in));				
+				SphereNode const & b(n.neighbor(in));
 				assert(n.level()==b.level());
 				bool is_neighbor = false;
 				for(core::Size ib = 1; ib <= b.num_neighbor(); ++ib) {
@@ -143,7 +142,7 @@ public:
 				assert(is_neighbor);
 			}
 			for(core::Size ic = 1; ic <= n.num_children(); ++ic) {
-				SphereNode const & c(n.child(ic));							
+				SphereNode const & c(n.child(ic));
 				assert(n.level()+1==c.level());
 				bool is_parent = false;
 				for(core::Size ip = 1; ip <= c.num_parents(); ++ip) {
@@ -213,7 +212,7 @@ public:
 	SphereNode const & sample4(int i) { return sample(4,i); }
 	SphereNode const & sample5(int i) { return sample(5,i); }
 	SphereNode const & sample6(int i) { return sample(6,i); }
-	SphereNode const & sample7(int i) { return sample(7,i); }						
+	SphereNode const & sample7(int i) { return sample(7,i); }
 
 };
 

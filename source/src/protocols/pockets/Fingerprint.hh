@@ -27,7 +27,7 @@
 #include <utility/vector1_bool.hh>
 #include <list>
 #include <cmath>
-#include <iostream>
+#include <iosfwd>
 #include <utility/vector1.hh>
 #include <basic/gpu/GPU.hh>
 

@@ -18,8 +18,7 @@
 
 #include <protocols/loop_grower/SheetSampler.fwd.hh>
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 
 #include <core/fragment/FragData.fwd.hh>
 #include <core/fragment/FrameList.hh>

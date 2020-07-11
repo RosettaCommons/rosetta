@@ -26,7 +26,7 @@
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 
 // C++ headers
 #include <string>

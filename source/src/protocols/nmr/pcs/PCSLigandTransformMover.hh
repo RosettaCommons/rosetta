@@ -45,7 +45,7 @@
 #include <numeric/geometry/BoundingBox.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <map>
 

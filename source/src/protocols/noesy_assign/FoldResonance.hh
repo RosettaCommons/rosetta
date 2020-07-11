@@ -28,7 +28,7 @@
 // C++ headers
 #include <string>
 #include <cmath>
-#include <iostream>
+#include <ostream>
 
 namespace protocols {
 namespace noesy_assign {

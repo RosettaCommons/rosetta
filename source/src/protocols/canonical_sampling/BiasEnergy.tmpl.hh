@@ -20,7 +20,6 @@
 #include <ObjexxFCL/string.functions.hh>
 #include <utility/exit.hh>
 #include <cmath>
-#include <iomanip>
 
 
 namespace protocols {

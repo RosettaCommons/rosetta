@@ -535,6 +535,11 @@ MoveMap::show( std::ostream & out, Size n_residues_to_show ) const
 }
 
 void
+MoveMap::show( Size i) const {
+	show(std::cout, i);
+}
+
+void
 MoveMap::show( std::ostream & out ) const
 {
 	out << "\n";
@@ -650,6 +655,11 @@ MoveMap::show( std::ostream & out ) const
 	}
 	out << "-------------------------------\n";
 	out << std::endl;
+}
+
+void
+MoveMap::show() const {
+	show(std::cout);
 }
 
 /// @brief import settings from another MoveMap

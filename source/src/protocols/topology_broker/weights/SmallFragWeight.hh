@@ -41,7 +41,7 @@
 //#include <basic/options/option_macros.hh>
 
 //// C++ headers
-//#include <fstream>
+//#include <iosfwd>
 
 
 // option key includes

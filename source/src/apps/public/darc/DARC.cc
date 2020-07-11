@@ -47,6 +47,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <utility/numbers.hh>
 
+#include <fstream>
+
 using namespace std;
 using namespace core;
 using namespace basic::options;

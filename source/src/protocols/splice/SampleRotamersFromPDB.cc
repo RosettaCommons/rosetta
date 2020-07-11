@@ -57,6 +57,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/PoseResidueTypeSet.hh>
 #include <boost/algorithm/string.hpp> //using this to parse up the rotamer db
+#include <utility/io/izstream.hh>
 
 
 

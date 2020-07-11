@@ -45,7 +45,7 @@
 
 // Utility Headers
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 
 //Auto Headers
 #include <core/pack/task/TaskFactory.fwd.hh>

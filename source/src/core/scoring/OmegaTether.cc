@@ -343,7 +343,7 @@ OmegaTether::setup_interpolation(
 
 void
 OmegaTether::read_table_from_stream(
-	utility::io::izstream &stream,
+	std::istream &stream,
 	ObjexxFCL::FArray2D< Real > &mus,
 	ObjexxFCL::FArray2D< Real > &sigmas
 ) {

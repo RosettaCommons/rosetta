@@ -32,8 +32,7 @@
 #include <protocols/task_operations/SeqprofConsensusOperation.fwd.hh>
 #include <basic/database/open.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <utility/io/izstream.hh>
-#include <iostream>
+#include <iosfwd>
 #include <protocols/moves/Mover.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/protein_interface_design/movers/LoopLengthChange.hh>

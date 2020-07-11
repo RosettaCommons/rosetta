@@ -79,7 +79,6 @@
 #include <utility/assert.hh>
 #include <cstddef>
 #include <iosfwd>
-#include <iostream>
 #include <limits>
 #include <map>
 #include <vector>

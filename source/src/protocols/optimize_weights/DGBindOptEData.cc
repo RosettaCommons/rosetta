@@ -19,7 +19,7 @@
 #include <protocols/optimize_weights/DGBindOptEData.hh>
 
 #include <utility/vector1.hh>
-
+#include <iostream>
 
 namespace protocols {
 namespace optimize_weights {
@@ -83,6 +83,24 @@ DGBindOptEData::do_score(
 	}
 
 	return component_weights[ type() ] * sq_err;
+}
+
+
+core::Real
+DGBindOptEData::get_score(
+	Multivec const & component_weights,
+	Multivec const & vars,
+	Multivec & dE_dvars,
+	/// Basically, turn over all the private data from OptEMultiFunc
+	core::Size const num_energy_dofs,
+	int const num_ref_dofs,
+	int const num_total_dofs,
+	EnergyMap const & fixed_terms,
+	ScoreTypes const & score_list,
+	ScoreTypes const & fixed_score_list
+) const
+{
+	return do_score(std::cout, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, false /* don't print */);
 }
 
 

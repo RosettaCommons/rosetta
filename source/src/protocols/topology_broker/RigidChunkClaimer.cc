@@ -49,6 +49,7 @@
 #include <basic/options/keys/loops.OptionKeys.gen.hh>
 
 #include <vector>
+#include <fstream>
 
 #include <protocols/jd2/Job.hh>
 #include <utility/vector1.hh>

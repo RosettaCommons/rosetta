@@ -53,7 +53,7 @@
 // C++
 #include <string>
 #include <map>
-#include <sstream>
+#include <iosfwd>
 #include <set>
 
 namespace protocols {

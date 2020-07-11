@@ -17,8 +17,7 @@
 
 #include <protocols/loop_grower/DensSkeleton.fwd.hh>
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 
 #include <protocols/moves/Mover.hh>
 

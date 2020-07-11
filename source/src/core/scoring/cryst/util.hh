@@ -19,7 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

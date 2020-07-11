@@ -22,7 +22,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 
 // C++ headers
-#include <istream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

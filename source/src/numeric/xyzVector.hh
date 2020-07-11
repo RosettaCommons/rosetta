@@ -49,6 +49,7 @@
 
 // C++ headers
 #include <cstdlib>
+#include <iosfwd>
 
 #ifdef PYROSETTA
 	#include <numeric/xyz.functions.hh>

@@ -20,7 +20,7 @@
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <string>
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace constel {

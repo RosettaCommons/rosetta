@@ -30,7 +30,7 @@
 // Utility headers
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace loops {

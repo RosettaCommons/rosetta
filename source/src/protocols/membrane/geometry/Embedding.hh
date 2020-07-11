@@ -39,7 +39,7 @@
 // C++ Headers
 #include <string>
 #include <cstdlib>
-// #include <iostream> WHOA
+// #include <iosfwd> WHOA
 
 namespace protocols {
 namespace membrane {

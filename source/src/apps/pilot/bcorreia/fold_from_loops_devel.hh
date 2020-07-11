@@ -22,11 +22,7 @@
 #include <string>
 #include <list>
 #include <iosfwd>
-#include <iostream>
-#include <sstream>
 
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
 using namespace core;

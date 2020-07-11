@@ -64,6 +64,11 @@ AtomSelection & AtomSelection::operator=(AtomSelection const & rhs) {
 
 AtomSelection::~AtomSelection() {}
 
+void
+AtomSelection::show(std::ostream & TR) const {
+	TR << rsd_ << " " << atom_ << " " << chain_ << std::endl;
+}
+
 bool operator<(AtomSelection const & lhs, AtomSelection const & rhs) {
 	if ( lhs.rsd_   < rhs.rsd_   ) return true;
 	if ( lhs.rsd_   > rhs.rsd_   ) return false;

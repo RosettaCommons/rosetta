@@ -18,7 +18,7 @@
 
 #include <utility/stream_util.fwd.hh>
 
-#include <ostream>
+#include <iosfwd>
 #include <utility>
 
 namespace utility {

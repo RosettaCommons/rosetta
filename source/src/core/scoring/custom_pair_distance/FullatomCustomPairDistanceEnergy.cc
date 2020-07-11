@@ -35,6 +35,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
+#include <utility/io/izstream.hh>
+
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>
 #include <utility/OrderedTuple.hh>

@@ -490,6 +490,14 @@ StructureData::covalent_bonds_end() const
 	return covalent_bonds_.end();
 }
 
+std::ostream & operator<<( std::ostream & os, BondInfo const & b ) {
+	os << "\t<CovalentBond segment1=\"" << b.seg1 << "\" segment2=\"" << b.seg2
+		<< "\" residue1=\"" << b.res1 << "\" residue2=\"" << b.res2
+		<< "\" atom1=\"" << b.atom1 << "\" atom2=\"" << b.atom2 << "\" />";
+	return os;
+}
+
+
 /// @brief given an input stream, substitute all variables
 /// @details variables are of the form: %%SEGMENTNAME#residue%%
 /// SEGMENTNAME = name of the segment

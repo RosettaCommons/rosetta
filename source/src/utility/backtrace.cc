@@ -62,3 +62,19 @@ handle_assert_failure( char const * condition, std::string const & file, int con
 	return false;
 #endif
 }
+
+
+#if defined(__GNUC__)  &&  !defined(WIN32)  &&  !defined(__CYGWIN__) && MY__has_include( <cxxabi.h> ) && !defined(ANDROID)
+
+bool
+print_backtrace( char const * /*unused*/ ) {
+	std::cerr << utility::CSI_Magenta(); // set color of cerr to magenta
+	std::cerr << "BACKTRACE:\n";
+	std::cerr <<  backtrace_string();
+	std::cerr << utility::CSI_Reset();
+	return false; // allows use in debug_assert
+}
+
+#else // _WIN32, etc.
+
+#endif

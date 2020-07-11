@@ -17,6 +17,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 namespace utility {
 

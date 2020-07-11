@@ -30,7 +30,7 @@
 #include <utility/graph/Graph.hh>
 
 #include <utility/vector1.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION

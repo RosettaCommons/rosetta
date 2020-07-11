@@ -24,6 +24,7 @@
 #include <utility/exit.hh>
 
 // C++ headers
+#include <ostream>
 
 // Operating system headers
 

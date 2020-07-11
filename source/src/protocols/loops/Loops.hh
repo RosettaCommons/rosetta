@@ -39,7 +39,7 @@
 #include <utility/vector1.fwd.hh>
 
 // C/C++ headers
-#include <ostream>
+#include <iosfwd>
 #include <string>
 
 #ifdef    SERIALIZATION

@@ -44,7 +44,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace core {

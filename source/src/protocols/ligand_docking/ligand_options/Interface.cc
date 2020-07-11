@@ -15,6 +15,8 @@
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <core/types.hh>
 
+#include <sstream>
+
 namespace protocols {
 namespace ligand_docking {
 namespace ligand_options {

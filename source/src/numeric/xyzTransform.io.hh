@@ -22,7 +22,7 @@
 #include <numeric/xyzVector.io.hh>
 #include <ObjexxFCL/format.hh>
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 
 namespace numeric {

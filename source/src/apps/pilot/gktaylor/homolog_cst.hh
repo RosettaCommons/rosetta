@@ -30,14 +30,11 @@
 
 #include <basic/options/option.hh>
 
-#include <utility/io/izstream.hh>
-
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
 // C++ headers
-#include <fstream>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 // option key includes

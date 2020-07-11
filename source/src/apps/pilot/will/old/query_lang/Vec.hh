@@ -18,7 +18,7 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
+#include <iosfwd>
 
 #include <core/types.hh>
 #include <utility/query/types.hh>

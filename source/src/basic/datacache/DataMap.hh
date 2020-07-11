@@ -19,7 +19,7 @@
 #include <map>                                        // for map, __map_cons...
 #include <memory>                                     // for shared_ptr, dyn...
 #include <platform/types.hh>                          // for Size
-#include <sstream>                                    // for string, operator<<
+#include <iosfwd>                                    // for string, operator<<
 #include <string>                                     // for char_traits
 #include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
 #include <utility>                                    // for pair

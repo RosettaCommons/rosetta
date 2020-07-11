@@ -23,7 +23,7 @@
 // Package Headers
 #include <utility>
 #include <string>
-#include <ostream>
+#include <iosfwd>
 #include <exception>
 
 namespace utility {

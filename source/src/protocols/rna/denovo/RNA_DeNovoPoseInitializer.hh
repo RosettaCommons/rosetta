@@ -26,7 +26,7 @@
 // C++ Headers
 #include <string>
 #include <map>
-#include <iostream>
+#include <iosfwd>
 #include <list>
 
 #include <utility/vector1.hh>

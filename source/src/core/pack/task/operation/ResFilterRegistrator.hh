@@ -20,7 +20,7 @@
 
 #include <core/pack/task/operation/ResFilterFactory.fwd.hh>
 #include <utility/vector0.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

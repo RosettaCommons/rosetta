@@ -28,7 +28,7 @@
 // C++ headers
 #include <map>
 #include <string>
-#include <istream>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

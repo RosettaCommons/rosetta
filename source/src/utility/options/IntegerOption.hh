@@ -29,7 +29,7 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION

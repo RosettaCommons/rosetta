@@ -29,7 +29,7 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION
@@ -126,8 +126,8 @@ protected: // Methods
 	value_of( std::string const & value_str ) const override
 	{
 		if ( ( value_str.empty() ) || ( ! ObjexxFCL::is_int( value_str ) ) ) {
-			std::cerr << "ERROR: Illegal value for integer option -" << id()
-				<< " specified: " << value_str << std::endl;
+			print_error_message( "Illegal value for integer option -" + id()
+				+ " specified: " + value_str );
 			std::exit( EXIT_FAILURE );
 		}
 		return ObjexxFCL::int_of( value_str );
@@ -139,8 +139,8 @@ protected: // Methods
 	values_of( std::string const & value_str ) const override
 	{
 		if ( value_str.empty() || ( ! ObjexxFCL::is_ints( value_str ) ) ) {
-			std::cerr << "ERROR: Illegal value for integer option -" << id()
-				<< " specified: " << value_str << std::endl;
+			print_error_message( "Illegal value for integer option -" + id()
+				+ " specified: " + value_str );
 			std::exit( EXIT_FAILURE );
 		}
 		std::vector< int > std_vector_ints =  ObjexxFCL::ints_of( value_str );

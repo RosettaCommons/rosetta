@@ -26,6 +26,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 
+#include <ostream>
 
 namespace core {
 namespace io {

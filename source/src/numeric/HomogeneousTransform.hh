@@ -27,8 +27,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <iostream>
-#include <ostream>
+#include <iosfwd>
 
 namespace numeric {
 

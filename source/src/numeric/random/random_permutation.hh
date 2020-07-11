@@ -29,7 +29,7 @@
 // C++ Headers
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <iosfwd>
 
 namespace numeric {
 namespace random {

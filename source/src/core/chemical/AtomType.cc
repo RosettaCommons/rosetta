@@ -33,6 +33,8 @@
 // Utility headers
 #include <utility/exit.hh>
 
+#include <ostream>
+
 #ifdef    SERIALIZATION
 
 // Utility serialization headers

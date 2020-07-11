@@ -488,6 +488,13 @@ public: // Comparison
 		return ( a.key() < b.key() );
 	}
 
+public:
+
+	/// @brief Print an error message. As a separate function to keep stream handling
+	/// from being part of the header files.
+	static
+	void
+	print_error_message( std::string const & message );
 
 private: // Private data members
 

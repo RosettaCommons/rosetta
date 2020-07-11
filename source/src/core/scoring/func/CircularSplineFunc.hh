@@ -34,7 +34,7 @@
 #include <numeric/interpolation/spline/CubicSpline.hh>
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

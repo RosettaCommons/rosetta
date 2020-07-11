@@ -97,7 +97,7 @@
 
 #include <algorithm>
 #include <cmath>
-#include <iostream>
+#include <iosfwd>
 #include <list>
 #include <string>
 #include <utility>

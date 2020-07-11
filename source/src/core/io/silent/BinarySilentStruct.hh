@@ -24,7 +24,7 @@
 #include <core/kinematics/Jump.hh>
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 #include <core/conformation/symmetry/SymDof.hh>

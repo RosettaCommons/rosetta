@@ -33,7 +33,7 @@
 
 #include <utility>
 #include <utility/vector1_bool.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace devel {

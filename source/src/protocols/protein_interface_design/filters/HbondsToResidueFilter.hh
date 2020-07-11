@@ -141,13 +141,7 @@ public :
 	inline void set_resnum( std::string const &input ) { resnum_=input; return; }
 
 	/// @brief Set the residue number (as an integer -- Rosetta numbering).
-	inline void set_resnum( core::Size const val ) {
-		runtime_assert(val>0);
-		std::stringstream ss("");
-		ss << val;
-		set_resnum(ss.str());
-		return;
-	}
+	void set_resnum( core::Size const val );
 
 	/// @brief Get the residue number (a string to be parsed at apply time).
 	///

@@ -45,7 +45,7 @@
 
 #include <map>
 #include <set>
-#include <sstream>
+#include <iosfwd>
 #include <string>
 
 

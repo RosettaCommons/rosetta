@@ -20,8 +20,7 @@
 #include <core/scoring/packing/HolesParams.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 //#include <core/scoring/ScoringManager.hh>
-#include <iomanip>
-#include <iostream>
+#include <iosfwd>
 #include <numeric/numeric.functions.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>

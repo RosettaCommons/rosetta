@@ -17,7 +17,7 @@
 #include <devel/init.hh>
 
 #include <cstring>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 

@@ -28,7 +28,7 @@
 #include <numeric/angle.functions.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace make_rot_lib {

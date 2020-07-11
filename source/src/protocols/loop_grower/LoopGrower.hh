@@ -18,8 +18,7 @@
 
 #include <protocols/loop_grower/LoopGrower.fwd.hh>
 
-#include <fstream>
-#include <iostream>
+#include <iosfwd>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
@@ -163,9 +162,9 @@ public:
 		sheets_.push_back( SheetPositions( pose, rangelo, rangehi, jumpid, basres ));
 	}
 
-	void write_beam_lps(std::ofstream &lpsfile);
+	void write_beam_lps(std::ostream &lpsfile);
 
-	void write_beam(std::ofstream &outbeam);
+	void write_beam(std::ostream &outbeam);
 
 	void apply( core::pose::Pose &pose, int range1lo, int range1hi, int range2lo, int range2hi ) {
 		int ctr = 0;
@@ -387,17 +386,7 @@ public:
 	}
 
 
-	void writelpsstore(core::Size loopid, core::Size jobid){
-		std::ofstream lpsfile;
-		std::string filename = "lpsfile_"+utility::to_string(loopid)+"."+utility::to_string(jobid)+".txt";
-		lpsfile.open( filename.c_str() );
-		lpsfile << lower_fasta_ << " " << upper_fasta_ << " " << lower_pose_ << " " << upper_pose_ << " " << cutpoint_ << std::endl;
-		for ( core::Size i=1; i<=solutions_.size(); i++ ) {
-			LoopPartialSolution beam = solutions_[i];
-			beam.write_beam_lps(lpsfile);
-		}
-		lpsfile.close();
-	}
+	void writelpsstore(core::Size loopid, core::Size jobid);
 
 private:
 	core::Real rmscutoff_ = 0.0; // or 1.2 ??

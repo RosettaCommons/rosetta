@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <iostream>
+#include <iosfwd>
 
 // Numceric Headers
 #include <numeric/xyzVector.hh>

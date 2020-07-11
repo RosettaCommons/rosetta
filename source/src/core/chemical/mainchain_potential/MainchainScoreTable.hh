@@ -24,7 +24,6 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/deep_copy.hh>
 
@@ -35,7 +34,7 @@
 #include <numeric/interpolation/spline/CubicSpline.fwd.hh>
 
 // C++ Headers
-#include <sstream>
+#include <iosfwd>
 #include <string> //getline overload
 
 namespace core {

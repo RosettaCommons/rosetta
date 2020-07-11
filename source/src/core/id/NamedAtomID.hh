@@ -26,7 +26,7 @@
 
 
 #include <core/types.hh>
-#include <ostream>
+#include <iosfwd>
 #include <utility>
 #include <type_traits>
 namespace core {

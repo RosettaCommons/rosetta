@@ -22,6 +22,7 @@
 
 #include <utility/vector1.hh>
 
+#include <iostream>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -42,6 +43,27 @@ EMapVector::print() const
 		if ( ii % 3 == 2 && ii != n_score_types ) std::cout << std::endl;
 	}
 	std::cout << ")" << std::endl;
+}
+
+void
+EMapVector::show_nonzero( std::ostream & out ) const
+{
+	//out << "EnergyMap::show_nonzero():";
+	for ( int ii = 1; ii <= n_score_types; ++ii ) {
+		Real const val( operator[]( ScoreType(ii) ) );
+		if ( val != 0.0 ) {
+			out << ' ' << ScoreType(ii) << ": " << val;
+		}
+	}
+	//out << '\n';
+}
+
+std::string
+EMapVector::show_nonzero() const
+{
+	std::ostringstream os;
+	show_nonzero(os);
+	return os.str();
 }
 
 
@@ -76,6 +98,15 @@ EMapVector::weighted_string_of( EMapVector const & weights ) const
 	std::ostringstream os;
 	show_weighted( os, weights );
 	return os.str();
+}
+
+std::ostream &
+operator << ( std::ostream & ost, EMapVector const &  emap )
+{
+	for ( int ii = 1; ii <= n_score_types; ++ii ) {
+		ost << "( " << ScoreType(ii) << "; " << emap[ ScoreType (ii) ] << ") ";
+	}
+	return ost;
 }
 
 

@@ -30,7 +30,7 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <utility/vector1.hh> // need for template definition...
 
 

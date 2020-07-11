@@ -31,7 +31,7 @@
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace loops {

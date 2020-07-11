@@ -63,6 +63,7 @@
 
 // C++ Headers
 #include <algorithm>
+#include <fstream>
 
 // ObjexxFCL Headers
 

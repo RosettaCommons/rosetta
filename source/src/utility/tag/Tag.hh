@@ -21,7 +21,6 @@
 #include <iosfwd>
 #include <map>
 #include <string>
-#include <iostream>
 
 // Utility headers
 #include <utility/tag/AutoBool.hh>

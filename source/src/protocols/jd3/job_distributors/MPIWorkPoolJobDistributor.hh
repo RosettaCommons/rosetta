@@ -50,7 +50,7 @@
 #include <map>
 #include <set>
 #include <string>
-#include <fstream>
+#include <iosfwd>
 #include <chrono>
 
 namespace protocols {

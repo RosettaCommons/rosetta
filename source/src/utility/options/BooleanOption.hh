@@ -27,7 +27,7 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION
@@ -176,8 +176,8 @@ protected: // Methods
 		} else if ( is_false_value( value_str ) ) {
 			return false;
 		} else { // Illegal
-			std::cerr << "ERROR: Illegal value for boolean option -" << id()
-				<< " specified: " << value_str << std::endl;
+			print_error_message( "Illegal value for boolean option -" + id()
+				+ " specified: " + value_str );
 			std::exit( EXIT_FAILURE );
 			return false; // Keep compiler happy
 		}

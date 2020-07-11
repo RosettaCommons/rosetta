@@ -30,7 +30,7 @@
 #include <basic/Tracer.hh>
 // C++ headers
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 namespace protocols {
 namespace ncbb {

@@ -16,7 +16,7 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 
-#include <fstream>
+#include <iosfwd>
 
 #include <core/types.hh>
 #include <core/chemical/AA.hh>

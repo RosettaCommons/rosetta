@@ -15,7 +15,7 @@
 
 #include <ObjexxFCL/ObjexxFCL.hh>
 #include "pathways.h"
-#include <iostream>
+#include <iosfwd>
 #include <map>
 #include <set>
 #include <vector>

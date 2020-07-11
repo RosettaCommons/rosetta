@@ -1,6 +1,5 @@
 #include <numeric/IOTraits.hh>
-#include <iostream>
-#include <iomanip>
+#include <iosfwd>
 
 typedef cl_float16 float16;
 typedef cl_float8  float8;
@@ -95,7 +94,7 @@ struct XFORM {
   struct MAT R;
   struct VEC t;
 #ifdef __cplusplus
-  // XFORM(core::pose::Pose const & p, Size rsd) {    
+  // XFORM(core::pose::Pose const & p, Size rsd) {
   // }
   core::kinematics::Stub stub() const { return core::kinematics::Stub(R.xyzMatrix(),t.xyzVector()); }
   void apply(core::pose::Pose & p) { xform_pose(p,stub());  }

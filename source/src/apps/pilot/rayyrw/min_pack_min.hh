@@ -43,12 +43,10 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <algorithm>
 

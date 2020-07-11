@@ -20,7 +20,7 @@
 #include <utility/file/FileName.fwd.hh>
 
 // C++ headers
-#include <fstream>
+#include <ios>
 
 #include <utility/vector1.fwd.hh>
 

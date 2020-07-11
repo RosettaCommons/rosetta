@@ -32,7 +32,7 @@
 
 // C++ Headers
 #include <map>
-#include <sstream>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

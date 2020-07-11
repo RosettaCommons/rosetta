@@ -21,9 +21,7 @@
 #include <numeric/IOTraits.hh>
 
 // C++ headers
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+#include <iosfwd>
 
 
 namespace numeric {

@@ -16,16 +16,15 @@
 
 #define LONGEST_CHAIN 4000
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <iomanip>
 
 #include <map>
 #include <vector>
+#include <string>
 
 #include <protocols/cluster/calibur/SimPDB.fwd.hh>
 #include <protocols/cluster/calibur/PreloadedPDB.fwd.hh>

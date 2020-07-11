@@ -21,6 +21,8 @@
 // Utility headers
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <ios>
+
 namespace basic {
 namespace resource_manager {
 namespace locator {

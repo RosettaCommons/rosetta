@@ -17,6 +17,8 @@
 #include <protocols/loop_grower/util.hh>
 
 #include <iostream>
+#include <fstream>
+
 #include <basic/datacache/BasicDataCache.hh>
 #include <basic/datacache/DataMap.hh>
 
@@ -1421,7 +1423,7 @@ LoopPartialSolution::add_sheets(core::pose::Pose & pose, core::Size takeoffres, 
 
 }
 void
-LoopPartialSolution::write_beam_lps(std::ofstream &lpsfile){
+LoopPartialSolution::write_beam_lps(std::ostream &lpsfile){
 	core::Size n = ids_.size();
 	lpsfile << score_ << std::endl;
 	lpsfile << n << std::endl;
@@ -1437,7 +1439,7 @@ LoopPartialSolution::write_beam_lps(std::ofstream &lpsfile){
 	lpsfile << std::endl;
 }
 void
-LoopPartialSolution::write_beam(std::ofstream &outbeam){
+LoopPartialSolution::write_beam(std::ostream &outbeam){
 	for ( core::Size i=1; i<=residues_.size(); i++ ) {
 		ResTorsions storeres = residues_[i];
 		outbeam << storeres.phi_ << " ";
@@ -2455,6 +2457,19 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 		}
 		exit(1);
 	}
+}
+
+void
+LoopPartialSolutionStore::writelpsstore(core::Size loopid, core::Size jobid){
+	std::ofstream lpsfile;
+	std::string filename = "lpsfile_"+utility::to_string(loopid)+"."+utility::to_string(jobid)+".txt";
+	lpsfile.open( filename.c_str() );
+	lpsfile << lower_fasta_ << " " << upper_fasta_ << " " << lower_pose_ << " " << upper_pose_ << " " << cutpoint_ << std::endl;
+	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
+		LoopPartialSolution beam = solutions_[i];
+		beam.write_beam_lps(lpsfile);
+	}
+	lpsfile.close();
 }
 
 void LoopGrower::read_coordfile(){

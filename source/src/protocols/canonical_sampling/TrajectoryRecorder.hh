@@ -23,7 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 // C++ headers

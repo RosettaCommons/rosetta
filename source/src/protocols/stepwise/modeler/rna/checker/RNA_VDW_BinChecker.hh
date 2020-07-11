@@ -40,7 +40,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <set>
-#include <fstream>
+#include <iosfwd>
 typedef  numeric::xyzMatrix< core::Real > Matrix;
 
 namespace protocols {

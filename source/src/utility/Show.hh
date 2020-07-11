@@ -16,7 +16,7 @@
 #define INCLUDED_utility_Show_hh
 
 // C++ headers
-#include <istream>
+#include <iosfwd>
 #include <vector>
 
 namespace utility {

@@ -18,8 +18,7 @@
 
 #include <protocols/loop_grower/FragmentExtension.fwd.hh>
 
-#include <iostream>
-#include <fstream>
+#include <iosfwd>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

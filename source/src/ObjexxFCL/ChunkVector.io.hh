@@ -21,7 +21,7 @@
 
 // C++ Headers
 #include <iomanip>
-#include <ostream>
+#include <iosfwd>
 
 
 namespace ObjexxFCL {

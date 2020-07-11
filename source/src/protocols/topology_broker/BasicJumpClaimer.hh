@@ -26,7 +26,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 namespace protocols {
 namespace topology_broker {

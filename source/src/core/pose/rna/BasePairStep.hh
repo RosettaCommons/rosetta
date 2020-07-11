@@ -19,7 +19,7 @@
 #include <utility/VirtualBase.hh>
 #include <core/pose/rna/BasePairStep.fwd.hh>
 #include <core/types.hh>
-#include <ostream>
+#include <iosfwd>
 
 namespace core {
 namespace pose {
@@ -55,10 +55,7 @@ public:
 
 	friend
 	std::ostream &
-	operator <<( std::ostream & os, BasePairStep const & bps ){
-		os << bps.base_pair_step_.first.first << "-" << bps.base_pair_step_.first.second << " " << bps.base_pair_step_.second.first << "-" << bps.base_pair_step_.second.second;
-		return os;
-	}
+	operator <<( std::ostream & os, BasePairStep const & bps );
 
 	friend
 	bool operator == (BasePairStep const & lhs, BasePairStep const & rhs )

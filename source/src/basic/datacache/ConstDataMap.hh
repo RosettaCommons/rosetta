@@ -18,7 +18,7 @@
 
 // Project headers
 #include <platform/types.hh>
-#include <sstream>
+#include <iosfwd>
 // ObjexxFCL Headers
 
 // C++ Headers

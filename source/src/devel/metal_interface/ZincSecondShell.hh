@@ -21,7 +21,7 @@
 #include <utility/vector1.hh>
 //#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <sstream>
+#include <iosfwd>
 #include <basic/MetricValue.hh>
 #include <set>
 #include <core/id/AtomID.hh>

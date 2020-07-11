@@ -33,10 +33,10 @@
 
 //#include <basic/Tracer.hh>
 
-
 #include <core/fragment/FrameIterator.hh>
 #include <utility/vector1.hh>
 
+#include <iostream>
 
 namespace core {
 namespace fragment {

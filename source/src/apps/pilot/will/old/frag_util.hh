@@ -10,11 +10,10 @@
 #include <basic/database/open.hh>
 
 // Utility headers
-#include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 void read_fragdata( core::fragment::FragDataCOPs & fds, std::istream & in ) {
 	using namespace core::fragment;

@@ -32,7 +32,7 @@
 
 // C++ Headers
 #include <map>
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

@@ -15,7 +15,7 @@
 #ifndef INCLUDED_core_scoring_ScoreType_hh
 #define INCLUDED_core_scoring_ScoreType_hh
 
-#include <iostream>
+#include <iosfwd>
 #include <utility/vector1.hh>
 
 namespace core {

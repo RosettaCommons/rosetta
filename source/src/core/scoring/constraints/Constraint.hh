@@ -44,7 +44,7 @@
 #include <numeric/random/random.fwd.hh>
 
 // C++ Headers
-#include <sstream>
+#include <iosfwd>
 
 #ifdef WIN32
 #include <core/id/SequenceMapping.hh>

@@ -38,7 +38,7 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.fwd.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace antibody {

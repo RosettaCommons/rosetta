@@ -12,7 +12,7 @@
 /// @author Jack Maguire, jackmaguire1444@gmail.com
 
 #include <utility/tag/Tag.hh>
-#include <sstream>
+#include <iosfwd>
 
 inline
 void add_protocols(

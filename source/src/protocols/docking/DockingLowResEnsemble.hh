@@ -40,7 +40,7 @@
 
 
 #include <utility/vector1.hh>
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace docking {

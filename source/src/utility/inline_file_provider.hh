@@ -19,7 +19,7 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 
 

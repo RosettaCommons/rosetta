@@ -18,7 +18,7 @@
 #include <utility/FixedSizeLexicographicalIterator.hh>
 
 // C++ headers
-///#include <iostream> // debug only
+///#include <iosfwd> // debug only
 
 namespace utility {
 

@@ -24,7 +24,7 @@
 #include <core/pose/Pose.hh>
 #include <core/io/mmtf/util.hh>
 
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 
 #include <mmtf.hpp>
 
@@ -59,7 +59,7 @@ StructFileRepOP
 dump_mmtf(
 	core::pose::Pose const & pose,
 	std::string const &jd2_job_data,
-	utility::io::ozstream & out);
+	std::ostream & out);
 
 
 /// @brief dump_mmtf function.

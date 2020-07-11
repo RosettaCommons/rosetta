@@ -52,7 +52,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 

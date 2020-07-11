@@ -31,7 +31,7 @@
 #include <core/chemical/AA.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <map>
 
 //Auto Headers

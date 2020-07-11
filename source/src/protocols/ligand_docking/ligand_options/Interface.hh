@@ -23,7 +23,7 @@
 #include <core/types.hh>
 
 // STL Headers
-#include <sstream>
+#include <iosfwd>
 
 #include <utility/vector1_bool.hh>
 

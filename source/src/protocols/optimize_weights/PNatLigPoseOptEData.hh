@@ -21,6 +21,7 @@
 
 #include <utility/vector1.hh>
 
+#include <iosfwd>
 
 namespace protocols {
 namespace optimize_weights {
@@ -69,8 +70,7 @@ public:
 		EnergyMap const & fixed_terms,
 		ScoreTypes const & score_list,
 		ScoreTypes const & fixed_score_list
-	) const override
-	{ return do_score(std::cout, component_weights, vars, dE_dvars, num_energy_dofs, num_ref_dofs, num_total_dofs, fixed_terms, score_list, fixed_score_list, false /* don't print */); }
+	) const override;
 
 
 	void

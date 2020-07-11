@@ -28,7 +28,7 @@
 
 // C++ headers
 #include <string>
-#include <istream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -24,10 +24,10 @@
 
 // C++ Headers
 #include <map>
+#include <iostream>
 
 #if defined(WIN32) || defined(ANDROID)
 #include <core/id/AtomID.hh>
-#include <iostream>
 #endif
 
 namespace core {

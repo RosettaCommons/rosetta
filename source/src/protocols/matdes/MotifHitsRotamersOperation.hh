@@ -26,7 +26,7 @@
 //#include <core/io/pdb/pose_io.hh>
 
 
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 
 #ifdef WIN32
 #include <utility/graph/Graph.hh>

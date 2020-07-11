@@ -28,9 +28,6 @@
 #include <cstddef>
 #include <iosfwd>
 
-#include <istream>
-#include <ostream>
-
 
 #ifdef    SERIALIZATION
 // Cereal headers

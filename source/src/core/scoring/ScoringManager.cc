@@ -116,6 +116,7 @@
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/io/izstream.hh>
 
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <utility/vector1.hh>

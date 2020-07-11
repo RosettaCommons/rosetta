@@ -24,7 +24,7 @@
 
 #include <utility/VirtualBase.fwd.hh>
 
-#include <iostream>
+#include <iosfwd>
 
 namespace numeric {
 namespace kdtree {

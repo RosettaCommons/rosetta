@@ -26,6 +26,7 @@
 
 #include <utility/exit.hh>
 #include <utility/string_util.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.hh>

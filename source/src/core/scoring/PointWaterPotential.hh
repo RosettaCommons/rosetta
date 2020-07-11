@@ -25,7 +25,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.fwd.hh>
@@ -77,7 +77,7 @@ public:
 protected:
 
 	void read_pointwater_tables();
-	void read_table_from_stream( utility::io::izstream &, ObjexxFCL::FArray2D< Real > &);
+	void read_table_from_stream( std::istream &, ObjexxFCL::FArray2D< Real > &);
 	void setup_interpolation( ObjexxFCL::FArray2D< Real > &, numeric::interpolation::spline::BicubicSpline  &);
 
 	void dampen_longrange_energies( ObjexxFCL::FArray2D< Real > &table );

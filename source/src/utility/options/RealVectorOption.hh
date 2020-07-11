@@ -28,8 +28,7 @@
 
 // C++ headers
 #include <cstdlib>
-#include <iomanip>
-#include <iostream>
+#include <iosfwd>
 
 
 #ifdef    SERIALIZATION
@@ -126,8 +125,8 @@ protected: // Methods
 	value_of( std::string const & value_str ) const override
 	{
 		if ( ( value_str.empty() ) || ( ! ObjexxFCL::is_double( value_str ) ) ) {
-			std::cerr << "ERROR: Illegal value for real option -" << id()
-				<< " specified: " << value_str << std::endl;
+			print_error_message( "Illegal value for real option -" + id()
+				+ " specified: " + value_str );
 			std::exit( EXIT_FAILURE );
 		}
 		return ObjexxFCL::double_of( value_str );

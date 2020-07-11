@@ -23,7 +23,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace io {

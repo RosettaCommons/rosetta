@@ -34,7 +34,7 @@
 
 // C++ headers
 #include <math.h>
-#include <iostream>
+#include <iosfwd>
 #include <memory>
 
 namespace numeric {

@@ -29,7 +29,7 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #include <core/scoring/mm/MMLJEnergyTable.fwd.hh>
 #include <utility/vector1.hh>

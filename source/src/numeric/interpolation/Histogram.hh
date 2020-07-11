@@ -27,7 +27,7 @@
 #include <numeric/types.hh>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
+#include <iostream>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 

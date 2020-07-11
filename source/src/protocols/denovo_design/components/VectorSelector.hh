@@ -25,6 +25,8 @@
 #include <numeric/random/random_permutation.hh>
 #include <utility/vector1.hh>
 
+#include <iostream>
+
 namespace protocols {
 namespace denovo_design {
 namespace components {

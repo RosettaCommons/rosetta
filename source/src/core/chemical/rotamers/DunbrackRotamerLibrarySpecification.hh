@@ -23,7 +23,7 @@
 #include <core/chemical/AA.hh>
 
 // C++ headers
-#include <istream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

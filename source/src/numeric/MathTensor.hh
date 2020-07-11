@@ -40,7 +40,7 @@
 
 // C++ headers
 #include <math.h>
-#include <iostream>
+#include <iosfwd>
 
 namespace numeric {
 

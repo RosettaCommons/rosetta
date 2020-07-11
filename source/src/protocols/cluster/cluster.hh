@@ -23,7 +23,7 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <deque>
 #include <utility>

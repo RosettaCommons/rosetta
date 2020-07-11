@@ -19,6 +19,8 @@
 #include <utility>
 #include <utility/exit.hh>
 
+#include <istream>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

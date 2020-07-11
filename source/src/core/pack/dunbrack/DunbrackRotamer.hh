@@ -39,7 +39,7 @@
 #include <utility/vector1_bool.hh>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {

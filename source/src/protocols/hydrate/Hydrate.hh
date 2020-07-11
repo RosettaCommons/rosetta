@@ -34,7 +34,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

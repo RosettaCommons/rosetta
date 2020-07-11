@@ -43,6 +43,7 @@
 #include <iostream>
 #include <algorithm>
 #include <string.h>
+#include <fstream>
 
 // Platforms headers
 #include <sys/stat.h>

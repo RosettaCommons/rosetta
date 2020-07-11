@@ -56,7 +56,7 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
+#include <iosfwd>
 #include <map>
 #include <set>
 

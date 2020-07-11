@@ -19,7 +19,6 @@
 
 #include <utility/VirtualBase.hh>
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -44,10 +43,7 @@ public:
 	String value;
 
 	/// @brief Debug printing, serializing to Tracer like object.
-	friend std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri) {
-		os << "<RemarkInfo>{" << "num=" << ri.num << " value=" << ri.value << "}";
-		return os;
-	}
+	friend std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri);
 
 #ifdef    SERIALIZATION
 public:

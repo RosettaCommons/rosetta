@@ -22,7 +22,7 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <map>
-#include <sstream>
+#include <iosfwd>
 
 
 namespace protocols {

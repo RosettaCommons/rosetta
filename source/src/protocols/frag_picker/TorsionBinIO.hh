@@ -16,7 +16,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1_bool.hh>
 

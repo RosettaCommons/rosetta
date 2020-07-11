@@ -31,7 +31,7 @@
 // C++ headers
 #include <list>
 #include <set>
-#include <sstream>
+#include <iosfwd>
 #include <string>
 #include <vector>
 #include <tuple>

@@ -36,7 +36,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace scoring {

@@ -17,6 +17,8 @@
 //Devel
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
+#include <fstream>
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {

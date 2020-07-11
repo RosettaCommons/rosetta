@@ -22,7 +22,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 
 // C++ headers
 #include <string>

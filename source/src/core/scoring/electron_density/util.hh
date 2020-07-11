@@ -29,7 +29,7 @@
 
 #include <basic/Tracer.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <complex>
 #include <map>
 

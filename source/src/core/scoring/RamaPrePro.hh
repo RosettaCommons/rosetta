@@ -25,7 +25,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>

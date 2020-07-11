@@ -25,7 +25,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/io/orstream.hh>
-#include <utility/io/ozstream.hh>
 
 // RosettaScripts header
 #include <basic/datacache/DataMap.hh>

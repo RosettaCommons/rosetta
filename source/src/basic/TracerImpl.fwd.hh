@@ -16,7 +16,7 @@
 #ifndef INCLUDED_basic_TracerImpl_fwd_hh
 #define INCLUDED_basic_TracerImpl_fwd_hh
 
-#include <ostream>
+#include <iosfwd>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace basic {

@@ -22,7 +22,7 @@
 #include <core/id/types.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {
@@ -133,16 +133,11 @@ public: // Properties
 public: // Friends
 
 	friend
-	inline
 	std::ostream &
 	operator <<(
 		std::ostream & os,
 		TorsionID const & a
-	)
-	{
-		os << "TorsionID " << a.rsd_ << ' ' << to_string( a.type_ ) << ' ' << a.torsion_;
-		return os;
-	}
+	);
 
 	friend
 	inline

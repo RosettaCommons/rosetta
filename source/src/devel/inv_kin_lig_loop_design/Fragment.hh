@@ -17,9 +17,10 @@
 
 #include <devel/inv_kin_lig_loop_design/Fragment.fwd.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 #include <map>
+#include <string>
 
 namespace devel {
 

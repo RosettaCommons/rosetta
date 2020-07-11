@@ -114,12 +114,10 @@
 
 // C++ headers
 //#include <cstdlib>
-#include <fstream>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <set>
 #include <cstdlib>
-#include <sstream>
 #include <math.h>
 
 //silly using/typedef

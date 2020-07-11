@@ -14,6 +14,24 @@
 // Unit headers
 #include <core/id/JumpID.hh>
 
+#include <iostream>
+
+namespace core {
+namespace id {
+
+std::ostream &
+operator <<(
+	std::ostream & os,
+	JumpID const & a
+)
+{
+	os << "JumpID " << a.rsd1_ << ' ' << a.rsd2_;
+	return os;
+}
+
+} // namespace id
+} // namespace core
+
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

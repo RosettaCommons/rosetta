@@ -15,6 +15,18 @@
 // Unit headers
 #include <utility/options/Option.hh>
 
+#include <iostream>
+
+namespace utility {
+namespace options {
+
+void
+Option::print_error_message( std::string const & message ) {
+	std::cerr << "Error: " << message << std::endl;
+}
+
+} // namespace options
+} // namespace utility
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

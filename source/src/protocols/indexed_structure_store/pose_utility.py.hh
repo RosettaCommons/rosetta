@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_pose_utility_PY_HH
 #define INCLUDED_protocols_indexed_structure_store_pose_utility_PY_HH
 #include "stdint.h"
-#include <iostream>
+#include <iosfwd>
 
 #include "pybind11/pybind11.h"
 #include "pybind11/numpy.h"

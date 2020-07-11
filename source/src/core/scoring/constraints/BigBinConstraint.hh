@@ -29,7 +29,7 @@
 //Utility Headers
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

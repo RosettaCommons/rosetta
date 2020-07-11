@@ -54,12 +54,14 @@
 #include <core/simple_metrics/test_classes.fwd.hh>
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 
 #include <mmtf.hpp>
 #include <cifparse/CifFile.h>
 #include <cifparse/CifParserBase.h>
 #include <utility/string_util.hh>
+#include <utility/io/ozstream.hh>
 
 #include <utility/version.hh>
 

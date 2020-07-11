@@ -16,9 +16,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <string.h>
-#include <fstream>
-#include <iostream>
-#include <iomanip>
+#include <iosfwd>
 #include <math.h>
 #include <assert.h>
 #ifndef PYROSETTA

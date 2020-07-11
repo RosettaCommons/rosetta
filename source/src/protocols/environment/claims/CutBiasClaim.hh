@@ -38,7 +38,7 @@
 
 //// C++ headers
 #include <string>
-#include <sstream>
+#include <iosfwd>
 #include <utility>
 #include <map>
 

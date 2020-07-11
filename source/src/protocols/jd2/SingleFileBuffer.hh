@@ -29,7 +29,7 @@
 //utility headers
 #include <utility>
 #include <utility/exit.hh>
-#include <utility/io/ozstream.hh>
+#include <fstream>
 #include <utility/VirtualBase.hh>
 
 //C++ headers

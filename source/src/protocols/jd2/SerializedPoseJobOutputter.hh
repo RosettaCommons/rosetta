@@ -27,7 +27,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.fwd.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace protocols {

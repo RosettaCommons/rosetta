@@ -13,7 +13,7 @@
 
 #include <core/scoring/rms_util.tmpl.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 #include <utility/vector1.hh>

@@ -14,7 +14,7 @@
 #define INCLUDED_NUMERIC_PROB_UTIL_hh
 
 // C/C++ headers
-#include <iostream>
+#include <iosfwd>
 
 // Utility headers
 #include <utility/vector1.hh>

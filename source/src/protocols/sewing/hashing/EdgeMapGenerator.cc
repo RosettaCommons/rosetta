@@ -30,6 +30,8 @@
 #include <utility/mpi_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
+#include <utility/io/ozstream.hh>
+
 static basic::Tracer TR( "protocols.sewing.hashing.EdgeMapGenerator" );
 
 
@@ -255,7 +257,7 @@ void EdgeMapGenerator::append_to_edge_map( core::Size base_seg_id ){
 
 
 
-void EdgeMapGenerator::write_edges_for_segment(core::Size current_n_segment, HasherOP hasher, utility::io::ozstream & output_file, utility::vector1< core::Size > const & c_segments ) {
+void EdgeMapGenerator::write_edges_for_segment(core::Size current_n_segment, HasherOP hasher, std::ostream & output_file, utility::vector1< core::Size > const & c_segments ) {
 
 	//New function is simple--just score current_n_segment against all c_segments
 	//Iterate over all segments in c_segments

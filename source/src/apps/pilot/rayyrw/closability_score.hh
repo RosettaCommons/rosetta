@@ -43,8 +43,7 @@
 #include <utility/string_util.hh>
 
 #include <ObjexxFCL/format.hh>
-#include <utility/io/izstream.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <utility/pointer/owning_ptr.hh>
 
 // data structure

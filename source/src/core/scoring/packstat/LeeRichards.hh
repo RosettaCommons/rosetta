@@ -32,7 +32,7 @@
 
 #include <numeric/constants.hh>
 
-#include <iostream>
+#include <iosfwd>
 
 #include <core/kinematics/Jump.hh>
 #include <utility/vector1.hh>

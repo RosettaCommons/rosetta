@@ -1,7 +1,6 @@
 #include <utility/string_util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/io/ozstream.hh>
 
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/util.hh>
@@ -53,9 +52,7 @@
 #include <basic/Tracer.hh>
 
 #include <map>
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <iosfwd>
 
 using utility::vector1;
 using namespace core::sequence;

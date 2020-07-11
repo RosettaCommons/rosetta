@@ -26,7 +26,7 @@
 #include <utility/tag/Tag.hh>
 
 //C++ headers
-#include <istream>
+#include <iosfwd>
 
 namespace basic {
 namespace resource_manager {

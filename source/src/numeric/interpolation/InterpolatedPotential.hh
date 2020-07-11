@@ -25,7 +25,7 @@
 #include <numeric/interpolation/spline/SplineGenerator.hh>
 
 // Utility Headers
-#include <utility/io/izstream.hh>
+#include <iosfwd>
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector0.hh>

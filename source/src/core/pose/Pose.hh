@@ -104,7 +104,7 @@ namespace core { namespace chemical { namespace rings { struct RingConformer; } 
 #include <boost/iterator/indirect_iterator.hpp>
 
 // C++ Headers
-#include <iostream>
+#include <iosfwd>
 
 #ifdef    SERIALIZATION
 // Cereal headers

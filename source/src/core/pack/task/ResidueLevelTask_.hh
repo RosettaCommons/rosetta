@@ -39,7 +39,6 @@
 
 // STL Headers
 #include <iosfwd>
-#include <iostream>
 
 
 #ifdef    SERIALIZATION

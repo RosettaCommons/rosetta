@@ -30,7 +30,7 @@
 #include <utility/signals/Link.hh>
 
 #include <utility/vector1.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace protocols {

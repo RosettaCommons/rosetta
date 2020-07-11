@@ -15,6 +15,7 @@
 // Unit header
 #include <core/id/TorsionID.hh>
 
+#include <iostream>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -24,6 +25,16 @@
 
 namespace core {
 namespace id {
+
+std::ostream &
+operator <<(
+	std::ostream & os,
+	TorsionID const & a
+)
+{
+	os << "TorsionID " << a.rsd_ << ' ' << to_string( a.type_ ) << ' ' << a.torsion_;
+	return os;
+}
 
 } // namespace id
 } // namespace core

@@ -26,7 +26,6 @@
 #include <utility/VirtualBase.hh>
 
 // C++ headers
-#include <istream>
 #include <iosfwd>
 
 #ifdef    SERIALIZATION

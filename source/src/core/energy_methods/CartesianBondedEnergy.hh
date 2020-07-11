@@ -38,7 +38,7 @@
 #include <boost/tuple/tuple.hpp>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <map>
 
 #include <utility/VirtualBase.hh>

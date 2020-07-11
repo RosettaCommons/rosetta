@@ -21,7 +21,7 @@
 // Package Headers
 #include <core/scoring/ScoreType.hh>
 
-#include <sstream>
+#include <iosfwd>
 
 #include <core/types.hh>
 #include <utility/vector1.hh>
@@ -345,26 +345,11 @@ public:
 	///     ScoreFunction
 	///     create_score_function
 	void
-	show_nonzero( std::ostream & out ) const
-	{
-		//out << "EnergyMap::show_nonzero():";
-		for ( int ii = 1; ii <= n_score_types; ++ii ) {
-			Real const val( operator[]( ScoreType(ii) ) );
-			if ( val != 0.0 ) {
-				out << ' ' << ScoreType(ii) << ": " << val;
-			}
-		}
-		//out << '\n';
-	}
+	show_nonzero( std::ostream & out ) const;
 
 	/// @brief convert the non-zero positions of the energy map to a string
 	std::string
-	show_nonzero() const
-	{
-		std::ostringstream os;
-		show_nonzero(os);
-		return os.str();
-	}
+	show_nonzero() const;
 
 	/// @brief write the energies in this energy map to the output stream for those
 	/// score types that have non-zero values in the "weights" energy map.
@@ -398,15 +383,8 @@ public:
 
 
 /// output operator (index;value)
-inline
 std::ostream &
-operator << ( std::ostream & ost, EMapVector const &  emap )
-{
-	for ( int ii = 1; ii <= n_score_types; ++ii ) {
-		ost << "( " << ScoreType(ii) << "; " << emap[ ScoreType (ii) ] << ") ";
-	}
-	return ost;
-}
+operator << ( std::ostream & ost, EMapVector const &  emap );
 
 
 } // namespace scoring

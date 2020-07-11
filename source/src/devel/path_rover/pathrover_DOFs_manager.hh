@@ -24,7 +24,7 @@
 //#include "symmetry_info.h"
 // #include <ObjexxFCL/ObjexxFCL.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <map>
 #include <set>
 

@@ -23,7 +23,7 @@
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
-#include <istream>
+#include <iosfwd>
 
 namespace core {
 namespace chemical {

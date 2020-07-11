@@ -48,7 +48,7 @@
 #include <boost/functional/hash.hpp>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 #include <map>
 

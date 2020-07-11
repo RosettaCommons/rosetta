@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_indexed_structure_store_StructureStore_PY_HH
 
 #include "stdint.h"
-#include <iostream>
+#include <iosfwd>
 
 #include "pybind11/pybind11.h"
 #include "pybind11/numpy.h"

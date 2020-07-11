@@ -33,7 +33,7 @@
 
 // C++ headers
 #include <fstream>
-#include <istream>
+#include <iosfwd>
 #include <limits>
 
 namespace utility {

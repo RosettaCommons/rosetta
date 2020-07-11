@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
 #define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_HH
 
-#include <iostream>
+#include <iosfwd>
 
 #include <cstdlib>
 #include <cmath>

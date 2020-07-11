@@ -30,7 +30,7 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

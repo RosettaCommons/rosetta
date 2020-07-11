@@ -19,7 +19,7 @@
 #include <utility/VirtualBase.hh>
 #include <core/scoring/loop_graph/Loop.fwd.hh>
 #include <core/scoring/types.hh>
-#include <iostream>
+#include <iosfwd>
 
 namespace core {
 namespace scoring {
@@ -81,14 +81,7 @@ public:
 
 	/// @brief Test IO operator for debug and Python bindings
 	friend
-	std::ostream & operator << ( std::ostream & os, Loop const & loop){
-		os << "LOOP ";
-		os << "TAKEOFF:  ";
-		os << loop.takeoff_pos_ << " from domain " << loop.takeoff_domain_ << "; ";
-		os << "LANDING:  ";
-		os << loop.landing_pos_ << " from domain " << loop.landing_domain_;
-		return os;
-	}
+	std::ostream & operator << ( std::ostream & os, Loop const & loop);
 
 private:
 

@@ -49,7 +49,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #ifdef PYROSETTA
 #include <protocols/scoring/methods/pcsTs3/PseudocontactShiftInput.hh>

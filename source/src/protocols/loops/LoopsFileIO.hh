@@ -32,7 +32,7 @@
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <fstream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

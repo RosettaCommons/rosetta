@@ -24,7 +24,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <protocols/jd2/JobOutputter.fwd.hh>
 
 // C++ headers

@@ -27,7 +27,7 @@
 #include <protocols/recces/sampler/MC_OneTorsion.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

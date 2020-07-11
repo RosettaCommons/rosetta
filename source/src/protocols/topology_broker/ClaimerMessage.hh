@@ -43,7 +43,7 @@
 //#include <basic/options/option_macros.hh>
 
 //// C++ headers
-//#include <fstream>
+//#include <iosfwd>
 #include <string>
 #include <typeinfo>
 

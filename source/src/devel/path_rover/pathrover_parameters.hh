@@ -18,8 +18,7 @@
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/ObjexxFCL.hh>
-#include <fstream>
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 

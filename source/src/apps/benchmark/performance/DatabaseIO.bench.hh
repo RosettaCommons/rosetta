@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <fstream>
+#include <iosfwd>
 
 #include <numeric/random/random.hh>
 

@@ -17,7 +17,7 @@
 
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <iostream>
+#include <iosfwd>
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // A collection of Enumerators + TypeDefs to the Antibody Namespace.

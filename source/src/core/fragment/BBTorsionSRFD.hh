@@ -32,7 +32,7 @@
 #include <utility/VirtualBase.hh>
 
 // C/C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

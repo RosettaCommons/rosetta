@@ -41,7 +41,7 @@
 // Utility headers
 
 /// STL Headers
-//#include <map>
+#include <iostream>
 
 //Auto Headers
 #include <core/pose/Pose.fwd.hh>

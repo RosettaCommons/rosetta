@@ -24,7 +24,7 @@
 
 // C++ headers
 #include <string>
-#include <iostream>
+#include <iosfwd>
 
 
 namespace core {
@@ -62,7 +62,7 @@ public: // Methods
 	void set_rsd(Size const residue) { rsd_ = residue; }
 	void set_atom(std::string const & atom) { atom_ = atom; }
 	void set_chain(char const & chain) { chain_ = toupper(chain); }
-	void show(std::ostream & TR) const { TR << rsd_ << " " << atom_ << " " << chain_ << std::endl; }
+	void show(std::ostream & TR) const;
 
 	friend bool operator<(AtomSelection const & lhs, AtomSelection const & rhs);
 	friend bool operator>(AtomSelection const & lhs, AtomSelection const & rhs);

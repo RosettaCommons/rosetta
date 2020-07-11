@@ -42,7 +42,7 @@
 
 //// C++ headers
 #include <string>
-#include <sstream>
+#include <iosfwd>
 #include <utility>
 
 namespace protocols {

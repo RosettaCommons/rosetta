@@ -44,7 +44,7 @@
 
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <utility/vector1.hh>
-#include <ostream>
+#include <iosfwd>
 
 
 namespace protocols {

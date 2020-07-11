@@ -32,7 +32,7 @@
 // C++ headers
 #include <set>
 #include <list>
-#include <iostream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzMatrix.hh>

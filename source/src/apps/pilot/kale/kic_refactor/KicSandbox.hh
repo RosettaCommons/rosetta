@@ -22,7 +22,7 @@
 #include <devel/init.hh>
 
 // C++ headers {{{1
-#include <iostream>
+#include <iosfwd>
 // }}}1
 
 // Options {{{1

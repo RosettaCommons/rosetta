@@ -25,7 +25,7 @@
 #include <utility/vector1.hh>
 
 // C/C++ headers
-#include <iostream>
+#include <iosfwd>
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

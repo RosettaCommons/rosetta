@@ -25,7 +25,7 @@
 #include <core/conformation/Atom.hh>
 
 // STL Headers
-#include <iostream>
+#include <iosfwd>
 
 // Numceric Headers
 #include <numeric/xyzVector.hh>

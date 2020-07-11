@@ -14,6 +14,19 @@
 // Unit headers
 #include <core/io/Remarks.hh>
 
+#include <iostream>
+
+namespace core {
+namespace io {
+
+std::ostream& operator <<(std::ostream &os, RemarkInfo const & ri) {
+	os << "<RemarkInfo>{" << "num=" << ri.num << " value=" << ri.value << "}";
+	return os;
+}
+
+} // namespace io
+} // namespace core
+
 #ifdef    SERIALIZATION
 
 // Utility serialization headers

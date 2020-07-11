@@ -24,7 +24,7 @@
 #include <protocols/moves/Mover.hh>
 
 // C++ header
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

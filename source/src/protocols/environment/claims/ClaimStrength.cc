@@ -20,7 +20,7 @@
 #include <core/types.hh>
 
 // C++ Headers
-
+#include <ostream>
 
 namespace protocols {
 namespace environment {

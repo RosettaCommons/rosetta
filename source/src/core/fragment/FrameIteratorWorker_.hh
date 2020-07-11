@@ -33,7 +33,7 @@
 // std Headers
 
 #include <core/fragment/Frame.fwd.hh>
-#include <iostream>
+#include <iosfwd>
 
 
 /* Just a mad thought: with fragments becoming ever more "Residue" like one might want to use the

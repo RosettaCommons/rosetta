@@ -21,7 +21,7 @@
 #include <utility/json_spirit/json_spirit_writer_options.h>
 
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 namespace basic {
 

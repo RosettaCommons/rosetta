@@ -22,7 +22,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 #include <core/types.hh>
 
@@ -85,16 +85,11 @@ public: // Properties
 public: // Friends
 
 	friend
-	inline
 	std::ostream &
 	operator <<(
 		std::ostream & os,
 		JumpID const & a
-	)
-	{
-		os << "JumpID " << a.rsd1_ << ' ' << a.rsd2_;
-		return os;
-	}
+	);
 
 	friend
 	inline

@@ -24,7 +24,7 @@
 #include <protocols/hybridization/util.hh>
 #include <protocols/hybridization/CartesianSampler.fwd.hh>
 
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <utility/json_utilities.hh>
 
 //Auto Headers

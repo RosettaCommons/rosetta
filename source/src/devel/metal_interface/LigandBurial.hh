@@ -20,7 +20,7 @@
 #include <core/types.hh>
 //#include <core/pose/Pose.fwd.hh>
 #include <core/pose/Pose.hh>
-#include <sstream>
+#include <iosfwd>
 #include <basic/MetricValue.hh>
 #include <set>
 

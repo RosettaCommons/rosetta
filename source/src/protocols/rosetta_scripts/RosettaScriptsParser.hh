@@ -42,7 +42,7 @@
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <set>
 
 namespace protocols {

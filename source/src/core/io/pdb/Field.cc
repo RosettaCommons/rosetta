@@ -16,6 +16,7 @@
 // Unit header
 #include <core/io/pdb/Field.hh>
 
+#include <iostream>
 
 namespace core {
 namespace io {

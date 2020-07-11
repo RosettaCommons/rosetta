@@ -57,6 +57,7 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <utility/vector0.hh>
 
+#include <fstream>
 
 #ifdef WIN32
 #include <core/scoring/constraints/Constraint.hh>

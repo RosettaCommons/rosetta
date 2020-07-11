@@ -28,9 +28,8 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <ctime>
-#include <iostream>
 #include <string>
-#include <sstream>
+#include <iosfwd>
 
 //fragment
 #include <core/fragment/FragSet.hh>

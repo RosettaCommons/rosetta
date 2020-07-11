@@ -31,7 +31,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <functional>
 
 // Boost headers

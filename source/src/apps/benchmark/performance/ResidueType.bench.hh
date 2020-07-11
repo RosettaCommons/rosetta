@@ -22,7 +22,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
 
-#include <fstream>
+#include <iosfwd>
 
 #include <utility/vector1.hh>
 

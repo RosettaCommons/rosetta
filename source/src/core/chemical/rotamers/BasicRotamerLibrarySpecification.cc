@@ -17,6 +17,8 @@
 
 // Utility headers
 
+#include <ostream>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>

@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 // C++ headers
-#include <ostream>
+#include <iosfwd>
 #include <set>
 
 namespace numeric {

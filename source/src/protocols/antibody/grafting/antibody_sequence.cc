@@ -21,7 +21,7 @@
 
 #include <protocols/antibody/grafting/exception.hh>
 
-
+#include <ostream>
 
 namespace protocols {
 namespace antibody {

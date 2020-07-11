@@ -22,6 +22,7 @@
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
+#include <utility/io/izstream.hh>
 
 //Numeric includes
 #include <numeric/angle.functions.hh>

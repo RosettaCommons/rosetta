@@ -21,7 +21,7 @@
 
 // Utility headers
 #include <utility/io/orstream.hh>
-#include <utility/io/ozstream.hh>
+#include <iosfwd>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 

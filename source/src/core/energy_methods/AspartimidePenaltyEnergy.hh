@@ -33,7 +33,7 @@
 #include <core/types.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <map>
 
 #include <utility/VirtualBase.hh>

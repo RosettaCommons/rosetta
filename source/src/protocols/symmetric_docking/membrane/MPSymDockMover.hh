@@ -45,7 +45,7 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace symmetric_docking {

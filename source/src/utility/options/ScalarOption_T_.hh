@@ -32,9 +32,8 @@
 // C++ headers
 #include <utility/assert.hh>
 #include <cstdlib>
-#include <iostream>
 #include <set>
-#include <sstream>
+#include <iosfwd>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -504,8 +503,8 @@ public: // Methods
 				if ( lower_() > upper_() ) error = true;
 			}
 			if ( error ) {
-				std::cerr << "ERROR: Inconsistent lower and upper limits in option -" << id()
-					<< " : " << legal_string( true ) << std::endl;
+				print_error_message( "Inconsistent lower and upper limits in option -" + id()
+					+ " : " + legal_string( true ) );
 			}
 		}
 		return ( ! error );
@@ -528,8 +527,8 @@ public: // Methods
 	{
 		bool error( false );
 		if ( ! legal_default() ) {
-			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << default_string() << std::endl;
+			print_error_message( "Illegal default value in option -" + id()
+				+ " : " + default_string() );
 			error = true;
 		}
 		return ( ! error );
@@ -543,8 +542,8 @@ private:
 	legal_default_check_write_locked() const
 	{
 		if ( ! legal_default_write_locked() ) {
-			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << default_string_write_locked() << std::endl;
+			print_error_message( "Illegal default value in option -" + id()
+				+ " : " + default_string_write_locked() );
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -557,8 +556,8 @@ public:
 	legal_default_check() const override
 	{
 		if ( ! legal_default() ) {
-			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << default_string() << std::endl;
+			print_error_message( "Illegal default value in option -" + id()
+				+ " : " + default_string() );
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -570,8 +569,8 @@ public:
 	legal_default_check( Value const & value_a ) const
 	{
 		if ( ! legal_value( value_a ) ) {
-			std::cerr << "ERROR: Illegal default value in option -" << id()
-				<< " : " << value_string_of( value_a ) << std::endl;
+			print_error_message( "Illegal default value in option -" + id()
+				+ " : " + value_string_of( value_a ) );
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -636,7 +635,7 @@ public:
 	specified_check() const override
 	{
 		if ( ! user() ) {
-			std::cerr << "ERROR: Unspecified option -" << id() << " is required" << std::endl;
+			print_error_message( "Unspecified option -" + id() + " is required" );
 			std::exit( EXIT_FAILURE );
 		}
 	}
@@ -1211,7 +1210,7 @@ protected: // Methods
 	default_inactive_error() const
 	{
 		debug_assert( default_state_ == INACTIVE ); // Or else why are we here
-		std::cerr << "ERROR: Inactive default value of option accessed: -" << key_.id() << std::endl;
+		print_error_message( "Inactive default value of option accessed: -" + key_.id() );
 		std::exit( EXIT_FAILURE );
 	}
 
@@ -1223,7 +1222,7 @@ protected: // Methods
 	inactive_error() const
 	{
 		debug_assert( state_ == INACTIVE ); // Or else why are we here
-		std::cerr << "ERROR: Value of inactive option accessed: -" << key_.id() << std::endl;
+		print_error_message( "Value of inactive option accessed: -" + key_.id() );
 		std::exit( EXIT_FAILURE );
 	}
 

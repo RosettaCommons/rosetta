@@ -22,13 +22,12 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <utility>
 #include <vector>
 #include <list>
 #include <string>
 #include <map>
-#include <sstream>
+#include <iosfwd>
 
 // mini headers
 #include <basic/Tracer.hh>

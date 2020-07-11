@@ -17,7 +17,6 @@
 #include <utility/fixedsizearray1.hh>
 // Rosetta Headers
 #include <numeric/types.hh>
-#include <iostream>
 
 #define SMALL 0.00001  // small epsilon to test for equality
 

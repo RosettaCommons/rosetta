@@ -30,7 +30,7 @@
 
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 
 namespace protocols {
 namespace mean_field {

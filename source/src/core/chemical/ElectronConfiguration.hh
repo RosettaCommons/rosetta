@@ -19,7 +19,7 @@
 
 #include <core/types.hh>
 
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 #include <algorithm>
 

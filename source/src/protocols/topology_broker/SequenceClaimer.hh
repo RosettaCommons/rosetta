@@ -33,7 +33,7 @@
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
-//#include <fstream>
+//#include <iosfwd>
 #include <string>
 
 #include <utility/vector1.hh>

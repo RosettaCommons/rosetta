@@ -49,7 +49,7 @@
 #include <numeric/xyzMatrix.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <string>
 
 namespace protocols {

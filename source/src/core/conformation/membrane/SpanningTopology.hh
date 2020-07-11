@@ -28,7 +28,6 @@
 
 // This ifdef is failing for Windows PyRosetta builds. Anyone with expertise?
 //#ifdef WIN32
-#include <iostream>
 #include <core/conformation/membrane/Span.hh>
 //#endif
 
@@ -42,6 +41,7 @@
 // C++ Headers
 #include <string>
 #include <map>
+#include <iostream>
 
 #ifdef    SERIALIZATION
 // Cereal headers

@@ -22,7 +22,7 @@
 
 // C++ headers
 #include <algorithm>
-#include <iostream>
+#include <iosfwd>
 #include <vector>
 #include <sstream>
 #include <ios>

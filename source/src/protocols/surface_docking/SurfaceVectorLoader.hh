@@ -29,7 +29,7 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 //C++ headers
-#include <istream>
+#include <iosfwd>
 
 namespace protocols {
 namespace surface_docking {

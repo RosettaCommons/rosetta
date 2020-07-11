@@ -41,7 +41,7 @@
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
-#include <iostream>
+#include <iosfwd>
 #include <set>
 
 namespace protocols {

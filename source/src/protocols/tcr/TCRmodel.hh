@@ -22,9 +22,7 @@
 #include <utility/vector1.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <iostream>
-#include <sstream>
-#include <fstream>
+#include <iosfwd>
 #include <protocols/antibody/grafting/antibody_sequence.hh>
 #include <set>
 ///////////////////////////////////////////////////////////////////////////////

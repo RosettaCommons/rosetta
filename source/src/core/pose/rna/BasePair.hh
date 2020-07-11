@@ -29,9 +29,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-#ifdef WIN32
 #include <iostream>  // for cout
-#endif
 
 namespace core {
 namespace pose {
