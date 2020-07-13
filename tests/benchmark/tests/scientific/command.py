@@ -84,7 +84,7 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
     scripts = sorted( f for f in os.listdir(working_dir) if f[0].isdigit() and f.endswith('.py') )
     for script in scripts:
         #print(script)
-        res, output = execute(f'Running {script}...', f'cd {working_dir} && {python_virtual_environment.python} {script}', return_=tuple, add_message_and_command_line_to_output=True)  # source {ve.activate}
+        res, output = execute(f'Running {script}...', f'cd {working_dir} && {python_virtual_environment.activate} && python {script}', return_=tuple, add_message_and_command_line_to_output=True)  # source {ve.activate}
 
         if res:
             result = { _StateKey_ : _S_script_failed_,  _ResultsKey_ : {},

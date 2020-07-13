@@ -48,6 +48,9 @@ _timeout_factors_ = {
     "core:AtomicDepthTests" : 2,
     "protocols:MembraneUtil" : 2,
     "protocols:AddMembraneMoverTest" : 2,
+
+    'core:ContactOrderEnergy_Tests' : 2,
+    'core:RotamerSetsTests' : 2,
 }
 
 def to_unicode(b):
