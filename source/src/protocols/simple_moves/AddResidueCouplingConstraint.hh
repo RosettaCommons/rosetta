@@ -37,16 +37,16 @@ public:
 	AddResidueCouplingConstraint();
 	AddResidueCouplingConstraint(std::string const& tensor_file, std::string const& index_file, core::Real strength, std::string const& alphabet);
 	AddResidueCouplingConstraint(AddResidueCouplingConstraint const &) = default;
-	virtual ~AddResidueCouplingConstraint() {}
+	~AddResidueCouplingConstraint() override {}
 
-	protocols::moves::MoverOP clone() const;
+	protocols::moves::MoverOP clone() const override;
 
-	virtual void apply(core::pose::Pose & pose);
-	virtual std::string get_name() const;
+	void apply(core::pose::Pose & pose) override;
+	std::string get_name() const override;
 
-	virtual void parse_my_tag(
+	void parse_my_tag (
 		utility::tag::TagCOP tag,
-		basic::datacache::DataMap & data);
+		basic::datacache::DataMap & data) override;
 
 	static std::string mover_name();
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );

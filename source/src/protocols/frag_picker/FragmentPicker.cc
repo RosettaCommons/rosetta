@@ -1007,7 +1007,7 @@ void FragmentPicker::pick_candidates() {
 	basic::thread_manager::RosettaThreadManager::get_instance()->do_work_vector_in_threads( work_vector, threadcount, assignments );
 	//basic::TracerImpl::super_mute(false);
 
-	time_t time_end = time(NULL);
+	time_t time_end = time(nullptr);
 	tr.Info << "... done.  Processed " << chunks_->size() << " chunks.  Time elapsed: "
 		<< (time_end - time_start) << " seconds." << std::endl;
 	tr.flush();

@@ -56,7 +56,7 @@ public:
 		std::string const& alphabet
 	);
 
-	virtual ~ResidueCouplingConstraint();
+	~ResidueCouplingConstraint() override;
 
 	Size
 	natoms() const override;
