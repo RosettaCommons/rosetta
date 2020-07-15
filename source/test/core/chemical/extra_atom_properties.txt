@@ -1,0 +1,8 @@
+NAME  ATOM LJ_RADIUS LJ_WDEPTH LK_DGFREE LK_LAMBDA LK_VOLUME
+CX       C    2.0000    0.1000    0.0000    3.5000   14.7000
+CY       C    2.5000    0.1000    0.0000    3.5000   14.7000
+CZ       C    3.0000    0.1000    0.0000    3.5000   14.7000
+Mg2p    MG    1.1850    0.0150   -5.0000    3.5000    7.0000 SP3_HYBRID  # radius/wdepth: ion radius CHARMM27; LK vol wild guess 4/3 pi r^3; LK dgfree wild guess
+CG1      O    1.5500    0.3000    0.0000    6.0000   14.7000
+CG2      O    1.5500    0.3000    0.0000    6.0000   14.7000
+CG3      H    1.0000    0.3000    0.0000    6.0000   14.7000

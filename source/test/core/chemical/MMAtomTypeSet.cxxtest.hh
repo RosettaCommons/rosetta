@@ -117,7 +117,7 @@ public:
 
 	void test_add_mm_atom_type_set_parameters_from_the_commandline() {
 
-		// load core with flag options
+		// add extra mm parameters to MMAtomTypeSet
 		core::chemical::add_mm_atom_type_set_parameters_from_command_line("fa_standard", *mmatomtypeset);
 
 		// test extra atomtypes are present in mm_atomtypeset
@@ -128,8 +128,5 @@ public:
 		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG1"), true);
 		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG2"), true);
 		TS_ASSERT_EQUALS(mmatomtypeset->contains_atom_type("CG3"), true);
-
 	}
-
-
 };

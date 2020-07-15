@@ -133,6 +133,8 @@ ChemicalManager::create_atom_type_set(
 	AtomTypeSetOP new_set( new AtomTypeSet( directory, tag ) );
 	// optionally add extra parameters from files given on the command line (see util.hh)
 	modify_atom_properties_from_command_line( tag, *new_set );
+	// optionally add extra atom types from the files given on the command line (see util.hh)
+	add_atom_types_from_command_line(tag, *new_set);
 	// optionally add extra parameters from files given on the command line (see util.hh)
 	add_atom_type_set_parameters_from_command_line( tag, *new_set );
 	return new_set;

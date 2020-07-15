@@ -41,6 +41,12 @@ void add_atom_type_set_parameters_from_command_line(
 	std::string const & atom_type_set_tag,
 	AtomTypeSet & atom_type_set );
 
+/// @brief Add additional atomy types not present in <atom-set-name>/atom_properties.txt.
+void add_atom_types_from_command_line(
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set );
+
+/// @brief Add additional mm atom parameters not present in <mm-atom-type-set-name>/mm_atom_properties.txt
 void add_mm_atom_type_set_parameters_from_command_line(
 	std::string const & mm_atom_type_set_tag,
 	MMAtomTypeSet & atom_type_set );

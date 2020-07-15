@@ -18,7 +18,9 @@
 // Unit headers
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/util.hh>
 #include <core/types.hh>
+
 
 // Project headers
 #include <test/core/init_util.hh>
@@ -45,7 +47,7 @@ public:
 	AtomTypeSetTests() {
 		//std::string commandline = "core.test -mute all";
 		//initialize_from_commandline( commandline );
-		core_init();
+		core_init_with_additional_options( "-add_atom_types chemical core/chemical/extra_atom_properties.txt" );
 
 
 		// Want to read the properties file in only once for all the tests in this suite
@@ -54,6 +56,8 @@ public:
 		// note this reads the atom properties in the unit test directory
 		// not the rosetta_database
 		atomtypeset = utility::pointer::make_shared< AtomTypeSet >( "core/chemical/");
+		core::chemical::add_atom_types_from_command_line("chemical", *atomtypeset);
+
 		//atomtypeset->read_file( "core/chemical/atom_properties.txt" );
 	}
 
@@ -91,7 +95,7 @@ public:
 	}
 
 	void test_n_atomtypes() {
-		TS_ASSERT_EQUALS( atomtypeset->n_atomtypes(), 7 );
+		TS_ASSERT_EQUALS( atomtypeset->n_atomtypes(), 14 );
 	}
 
 	void test_atom_type_index() {
@@ -124,7 +128,18 @@ public:
 	}
 
 	// Should there be more tests for AtomType set_parameter() and set_property()??
+	void test_add_atom_types_from_command_line() {
 
+		// test extra atom types are present in atomtypeset
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CX"), 8);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CY"), 9);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CZ"), 10);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("Mg2p"), 11);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CG1"), 12);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CG2"), 13);
+		TS_ASSERT_EQUALS(atomtypeset->atom_type_index("CG3"), 14);
+
+	}
 };
 
 

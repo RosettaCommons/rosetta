@@ -737,6 +737,7 @@ testinputfiles = [
 	"chemical/carbohydrates/ring_size_to_morphemes.bad_map",
 	"chemical/carbohydrates/ring_size_to_morphemes.map",
 	"chemical/carbohydrates/stereochem_test.key",
+	"chemical/extra_atom_properties.txt",
 	"chemical/extra_mm_atom_properties.txt",
     "chemical/gasteiger/AZO.params",
 	"chemical/gasteiger/GST.params",

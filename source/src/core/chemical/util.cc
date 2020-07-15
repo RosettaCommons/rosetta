@@ -98,7 +98,8 @@ add_atom_type_set_parameters_from_command_line(
 	}
 }
 
-
+// Add additional mm atom parameters not present in <mm-atom-type-set-name>/mm_atom_properties.txt
+/// @details Called by ChemicalManager at time of MMAtomTypeSet creation.
 void
 add_mm_atom_type_set_parameters_from_command_line(
 	std::string const & mm_atom_type_set_tag,
@@ -131,6 +132,42 @@ add_mm_atom_type_set_parameters_from_command_line(
 		}
 	}
 }
+
+
+
+void
+add_atom_types_from_command_line(
+	std::string const & atom_type_set_tag,
+	AtomTypeSet & atom_type_set )
+{
+	using namespace std;
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys::chemical;
+
+	if ( ! ( option[ add_atom_types ].user() ) ) {
+		return;
+	}
+	utility::vector1< std::string > paramstring( option[ add_atom_types ]() );
+	if ( paramstring.size() % 2 != 0 ) {
+		utility_exit_with_message( "bad format for -add_atom_types;"
+			"should be: -add_atom_types <tag1> <filename1> <tag2> <filename2> ..." );
+	}
+	Size const nparams( paramstring.size() / 2 );
+	for ( core::uint i = 0; i < nparams; ++i ) {
+		string const tag( paramstring[ 2 * i + 1] ), filename( paramstring[ 2 * i + 2] );
+		TR.Trace << "add_atom_types_from_command_line: desired_tag= " << atom_type_set_tag <<
+			" cmdline-tag= " << tag << " filename= " << filename << endl;
+		if ( tag == atom_type_set_tag ) {
+			if ( ! utility::file::file_exists( filename ) ) {
+				utility_exit_with_message( "unable to locate/open file: " + filename );
+			}
+			TR.Trace << "add_atom_types_from_command_line: tag= " << tag << " filename=" << filename <<
+				endl;
+			atom_type_set.read_file( filename );
+		}
+	}
+}
+
 
 // Modify atom_type properties from the command line.
 /// @details  Called by ChemicalManager at time of AtomTypeSet creation.
