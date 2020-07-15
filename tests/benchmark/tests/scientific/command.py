@@ -120,7 +120,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         stepwise_rna_favorites = 'numpy matplotlib',
         rna_denovo_favorites   = 'numpy matplotlib',
         simple_cycpep_predict  = 'numpy matplotlib',
-
+	peptide_pnear_vs_ic50  = 'numpy scipy matplotlib',
 
         enzyme_design          = 'numpy matplotlib',
         fragments_picking      = 'numpy matplotlib',
