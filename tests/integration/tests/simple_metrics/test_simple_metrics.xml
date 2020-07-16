@@ -35,10 +35,11 @@
 		<SequenceRecoveryMetric name="seqrec" residue_selector="L1" use_native="true" />
 		<TotalEnergyMetric name="total_energy" residue_selector="L1" scoretype="fa_atr"/>
 		<CompositeEnergyMetric name="composite_energy" residue_selector="L1" use_native="1"/>
+		<HbondMetric name="hbond" residue_selector="L1" residue_selector2="not_L1" include_self="false"/>
 	</SIMPLE_METRICS>
 	<MOVERS>
 		<MinMover name="min_mover" movemap_factory="movemap_L1" tolerance=".1" /> 
-		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection" prefix="m1_" />
+		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection,hbond" prefix="m1_" />
 		<RunSimpleMetrics name="run_metrics1.1" metrics="sasa,pymol_selection,sequence,ss,total_energy,rosetta_sele,selection" prefix="m1_" override="1"/>
 		<RunSimpleMetrics name="run_metrics2" metrics="sasa,sequenceSim,ss,total_energy,rmsd,dihedral,composite_energy,seqrec,L3_interactions,L3_no_sol,L3_fa_rep" prefix="m2_" />
 	</MOVERS>
