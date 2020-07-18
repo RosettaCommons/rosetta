@@ -27,6 +27,8 @@ working_dir = config['working_dir']
 hpc_driver  = benchmark.hpc_driver()
 extension   = benchmark.calculate_extension()
 
+maybe_beta  = '--beta' if 'beta' in config['variants'] else ''
+
 samples = 2000 if debug else 80000
 nodes_to_request = 1 if debug else 2
 node_time_to_request = 1.0 if debug else 4.0
@@ -38,7 +40,7 @@ command_line = '''
 -ex2
 -MPI_pnear_lambda 1.5
 -MPI_pnear_kbt 0.62
--nstruct {samples} 
+-nstruct {samples}
 -cyclic_peptide:MPI_batchsize_by_level 1
 -cyclic_peptide:MPI_auto_2level_distribution true
 -multithreading:total_threads 1
@@ -54,8 +56,9 @@ command_line = '''
 -cyclic_peptide:rama_cutoff 3.0
 -cyclic_peptide:min_genkic_hbonds 2
 -cyclic_peptide:min_final_hbonds 2
+{maybe_beta}
 -mute all
--unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI 
+-unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 

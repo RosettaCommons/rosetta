@@ -56,7 +56,7 @@ def symlink_tree(source, dest):
         for f in files: symlink(source + prefix + f, dest + prefix + f)
 
 
-def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, debug, python_packages):
+def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, variants, python_packages):
     test_source_dir = f'{rosetta_dir}/tests/scientific/tests/{test}'
 
     symlink_tree(test_source_dir, working_dir)
@@ -74,8 +74,9 @@ def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_dr
                               working_dir = working_dir,
                               platform = platform,
                               python_virtual_environment = python_virtual_environment._as_dict,
-                              verbose=verbose,
-                              debug=debug,
+                              verbose = verbose,
+                              variants = variants,
+                              debug = 'debug' in variants,
     )
 
     #print('multi_step_config:', multi_step_config)
@@ -157,13 +158,14 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         ddg_ala_scan           = 'numpy matplotlib pandas==0.24.2 scipy==1.1.0',
     )
 
-    if test.endswith('.debug'): test = test[:-len('.debug')];  debug = True
+    test, _, variants = test.partition('.')
+    variants = list( set( variants.split('.') ) )
 
     if test in tests:
         return run_multi_step_test(
             test = test, python_packages = tests[test],
             rosetta_dir=rosetta_dir, working_dir=working_dir, platform=platform,
-            config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug
+            config=config, hpc_driver=hpc_driver, verbose=verbose, variants=variants,
         )
 
     else: raise BenchmarkError(f'Unknown scripts test: {test}!')

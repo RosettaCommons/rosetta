@@ -177,9 +177,9 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
 
         clang_path = "{prefix}/tools/clang".format(**locals())
 
-        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxo && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
+        if not os.path.isfile(prefix + '/CMakeLists.txt'): execute('Download LLVM source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/llvm-{llvm_version}.src.tar.xz | tar -Jxom && mv llvm-{llvm_version}.src {prefix}'.format(**locals()) )
 
-        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxo && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
+        if not os.path.isdir(clang_path): execute('Download Clang source...', 'cd {prefix_root} && curl https://releases.llvm.org/{llvm_version}/cfe-{llvm_version}.src.tar.xz | tar -Jxom && mv cfe-{llvm_version}.src {clang_path}'.format(**locals()) )
 
         if not os.path.isdir(prefix+'/tools/clang/tools/extra'): os.makedirs(prefix+'/tools/clang/tools/extra')
 
