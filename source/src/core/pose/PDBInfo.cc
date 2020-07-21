@@ -618,7 +618,8 @@ PDBInfo::set_resinfo(
 	char const chain_id,
 	int const pdb_res,
 	char const ins_code,
-	std::string const & segmentID
+	std::string const & segmentID,
+	bool const clear_labels
 )
 {
 	ResidueRecord & rr = residue_rec_[ res ];
@@ -632,7 +633,8 @@ PDBInfo::set_resinfo(
 	rr.resSeq = pdb_res;
 	rr.iCode = ins_code;
 	rr.segmentID = segmentID;
-	rr.label.clear();
+
+	if ( clear_labels ) rr.label.clear();
 }
 
 

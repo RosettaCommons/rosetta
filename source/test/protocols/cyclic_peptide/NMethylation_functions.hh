@@ -59,7 +59,7 @@ public:
 
 		PeptideStubMoverOP maker( new PeptideStubMover );
 		maker->set_reset_mode(true);
-		maker->add_residue("Append", "ALA", 0, false, "", 15, 0, "");
+		maker->add_residue("Append", "ALA", 0, false, "", 15, 0, nullptr, "");
 		maker->apply(*mypose);
 
 		MutateResidueOP mutres5( new MutateResidue( 5, "TRP:N_Methylation" ) );

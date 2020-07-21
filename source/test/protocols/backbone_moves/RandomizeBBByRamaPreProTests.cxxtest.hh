@@ -66,11 +66,11 @@ public:
 
 		// Mover for building peptide:
 		PeptideStubMover stubmover;
-		stubmover.add_residue( PSM_append, "GLY", 1, true, "", 1, 0, "" );
+		stubmover.add_residue( PSM_append, "GLY", 1, true, "", 1, 0, nullptr, "" );
 		for ( core::Size j(2); j<=21; ++j ) {
-			stubmover.add_residue( PSM_append, "ALA", 1, false, "", 1, 0, "" );
+			stubmover.add_residue( PSM_append, "ALA", 1, false, "", 1, 0, nullptr, "" );
 		}
-		stubmover.add_residue( PSM_append, "GLY", 1, false, "", 1, 0, "" );
+		stubmover.add_residue( PSM_append, "GLY", 1, false, "", 1, 0, nullptr, "" );
 
 		// Mover to test:
 		RandomizeBBByRamaPrePro rand_bb;
@@ -131,11 +131,11 @@ public:
 
 		// Mover for building peptide:
 		PeptideStubMover stubmover;
-		stubmover.add_residue( PSM_append, "GLY", 1, true, "", 1, 0, "" );
+		stubmover.add_residue( PSM_append, "GLY", 1, true, "", 1, 0, nullptr, "" );
 		for ( core::Size j(2); j<=21; ++j ) {
-			stubmover.add_residue( PSM_append, "DALA", 1, false, "", 1, 0, "" );
+			stubmover.add_residue( PSM_append, "DALA", 1, false, "", 1, 0, nullptr, "" );
 		}
-		stubmover.add_residue( PSM_append, "GLY", 1, false, "", 1, 0, "" );
+		stubmover.add_residue( PSM_append, "GLY", 1, false, "", 1, 0, nullptr, "" );
 
 		// Mover to test:
 		RandomizeBBByRamaPrePro rand_bb;

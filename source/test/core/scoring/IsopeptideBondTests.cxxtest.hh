@@ -63,9 +63,9 @@ public:
 
 		{
 			protocols::cyclic_peptide::PeptideStubMover builder1;
-			builder1.add_residue( "Append", "ALA", 1, true, "", 0, 1, "" );
-			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, "" );
-			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, "" );
+			builder1.add_residue( "Append", "ALA", 1, true, "", 0, 1, nullptr, "" );
+			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
+			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, nullptr, "" );
 			builder1.apply(pose1);
 			protocols::cyclic_peptide::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
@@ -73,9 +73,9 @@ public:
 		}
 		{
 			protocols::cyclic_peptide::PeptideStubMover builder2;
-			builder2.add_residue( "Append", "ALA", 1, true, "", 0, 1, "" );
-			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, "" );
-			builder2.add_residue( "Append", "GLU:SidechainConjugation", 3, false, "CD", 0, 1, "N" );
+			builder2.add_residue( "Append", "ALA", 1, true, "", 0, 1, nullptr, "" );
+			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
+			builder2.add_residue( "Append", "GLU:SidechainConjugation", 3, false, "CD", 0, 1, nullptr, "N" );
 			builder2.apply(pose2);
 			protocols::cyclic_peptide::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
@@ -110,9 +110,9 @@ public:
 
 		{
 			protocols::cyclic_peptide::PeptideStubMover builder1;
-			builder1.add_residue( "Append", "ALA", 1, true, "", 0, 1, "" );
-			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, "" );
-			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, "" );
+			builder1.add_residue( "Append", "ALA", 1, true, "", 0, 1, nullptr, "" );
+			builder1.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
+			builder1.add_residue( "Append", "ALA", 3, false, "", 0, 2, nullptr, "" );
 			builder1.apply(pose1);
 			protocols::cyclic_peptide::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );
@@ -120,9 +120,9 @@ public:
 		}
 		{
 			protocols::cyclic_peptide::PeptideStubMover builder2;
-			builder2.add_residue( "Append", "ALA", 1, true, "", 0, 1, "" );
-			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, "" );
-			builder2.add_residue( "Append", "DPP:SidechainConjugation", 3, false, "NG", 0, 2, "C" );
+			builder2.add_residue( "Append", "ALA", 1, true, "", 0, 1, nullptr, "" );
+			builder2.add_residue( "Append", "ALA", 2, false, "", 0, 1, nullptr, "" );
+			builder2.add_residue( "Append", "DPP:SidechainConjugation", 3, false, "NG", 0, 2, nullptr, "C" );
 			builder2.apply(pose2);
 			protocols::cyclic_peptide::DeclareBond fix_termini;
 			fix_termini.set( 1, "C", 2, "N", true );

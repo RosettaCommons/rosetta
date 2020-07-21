@@ -19,6 +19,7 @@
 #include <protocols/helical_bundle/MakeBundle.hh>
 #include <protocols/helical_bundle/MakeBundleCreator.hh>
 #include <protocols/helical_bundle/BundleParametrizationCalculator.hh>
+#include <protocols/cyclic_peptide/PeptideStubMover.hh>
 #include <numeric/crick_equations/BundleParams.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -190,7 +191,7 @@ void MakeBundle::apply (core::pose::Pose & pose)
 
 	if ( TR.Debug.visible() ) TR.Debug << "Finished apply function." << std::endl;
 
-	return;
+	cyclic_peptide::PeptideStubMover::assign_chain_ids( pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

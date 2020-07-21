@@ -2092,7 +2092,7 @@ SimpleCycpepPredictApplication::build_polymer(
 	stubmover.set_reset_mode(true);
 	stubmover.reset_mover_data();
 	for ( core::Size i=1; i<=nres; ++i ) {
-		stubmover.add_residue( "Append", restypes[i], 0, false, "", 1, 0, "" );
+		stubmover.add_residue( "Append", restypes[i], 0, false, "", 1, 0, nullptr, "" );
 	}
 
 	stubmover.apply(*pose);

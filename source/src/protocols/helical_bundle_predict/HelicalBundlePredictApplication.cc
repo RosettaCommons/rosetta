@@ -779,10 +779,10 @@ HelicalBundlePredictApplication::make_pose_from_sequence_file_contents() const {
 		runtime_assert( resnames.size() > 0 ); //Should be true.
 		protocols::cyclic_peptide::PeptideStubMover stubmover;
 		stubmover.set_reset_mode(true);
-		stubmover.add_residue( "Append", resnames[1], 1, true, "", 0, 0, "" );
+		stubmover.add_residue( "Append", resnames[1], 1, true, "", 0, 0, nullptr, "" );
 		if ( resnames.size() > 1 ) {
 			for ( core::Size i(2), imax(resnames.size()); i<=imax; ++i ) {
-				stubmover.add_residue( "Append", resnames[i], i-1, false, "", 0, 0, "" );
+				stubmover.add_residue( "Append", resnames[i], i-1, false, "", 0, 0, nullptr, "" );
 			}
 		}
 		stubmover.apply(*pose);

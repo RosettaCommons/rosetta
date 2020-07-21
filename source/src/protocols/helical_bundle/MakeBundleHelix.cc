@@ -159,7 +159,7 @@ MakeBundleHelix::apply (
 	for ( core::Size i=1, imax=helix_length(); i<=imax; ++i ) {
 		++repeat_index;
 		if ( repeat_index > residues_per_repeat ) repeat_index=1;
-		stubmover.add_residue ("Append", residue_name(repeat_index), 0, (i==1 ? true : false), "", 1, 0, "");
+		stubmover.add_residue ("Append", residue_name(repeat_index), 0, (i==1 ? true : false), "", 1, 0, nullptr, "");
 	}
 	stubmover.apply(helixpose);
 

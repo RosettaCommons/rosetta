@@ -54,9 +54,9 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	void test_perturb_oligourea(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 

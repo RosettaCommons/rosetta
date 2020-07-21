@@ -668,7 +668,7 @@ Pose::append_pose_by_jump(
 		jump_anchor_atom,
 		jump_root_atom);
 
-	if ( pdb_info().get() != nullptr && src.pdb_info().get() != nullptr ) {
+	if ( pdb_info() != nullptr && src.pdb_info() != nullptr ) {
 		pdb_info()->copy(
 			*src.pdb_info(),
 			1,

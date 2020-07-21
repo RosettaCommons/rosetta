@@ -678,7 +678,7 @@ void BackboneGridSampler::set_up_peptide_stub_mover()
 	peptide_stub_mover_->reset_mover_data();
 	for ( core::Size i=1, imax=nres(); i<=imax; ++i ) {
 		for ( core::Size j=1, jmax=residues_per_repeat(); j<=jmax; ++j ) {
-			peptide_stub_mover_->add_residue( "Append", resname(j), 0, false, "", 1, 0, "" );
+			peptide_stub_mover_->add_residue( "Append", resname(j), 0, false, "", 1, 0, nullptr, "" );
 		}
 	}
 

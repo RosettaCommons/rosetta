@@ -135,14 +135,14 @@ void build_polymer(
 
 	stubmover.set_reset_mode(true);
 	stubmover.reset_mover_data();
-	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, "");
+	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, nullptr, "");
 	for ( core::Size i=1; i<=repeats; ++i ) {
 		for ( core::Size j=1; j<=residues_per_repeat; ++j ) {
-			stubmover.add_residue( "Append", restypes[j], 0, false, "", 1, 0, "" );
+			stubmover.add_residue( "Append", restypes[j], 0, false, "", 1, 0, nullptr, "" );
 		}
 	}
 
-	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, "");
+	stubmover.add_residue ("Append", "GLY", 0, false, "", 1, 0, nullptr, "");
 
 	stubmover.apply(pose);
 
@@ -263,6 +263,7 @@ void add_Cu_chains(
 			"",
 			1,
 			0,
+			nullptr,
 			""
 		);
 	}

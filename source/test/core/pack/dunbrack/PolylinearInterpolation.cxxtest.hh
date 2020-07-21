@@ -75,9 +75,9 @@ public:
 		{
 			protocols::cyclic_peptide::PeptideStubMover make_pep;
 			make_pep.set_reset_mode(true);
-			make_pep.add_residue( "Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "" );
-			make_pep.add_residue( "Append", "LYS", 2, false, "", 0, 1, "" );
-			make_pep.add_residue( "Append", "GLY:CtermProteinFull", 3, false, "", 0, 2, "" );
+			make_pep.add_residue( "Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "" );
+			make_pep.add_residue( "Append", "LYS", 2, false, "", 0, 1, nullptr, "" );
+			make_pep.add_residue( "Append", "GLY:CtermProteinFull", 3, false, "", 0, 2, nullptr, "" );
 			make_pep.apply(pose);
 		}
 

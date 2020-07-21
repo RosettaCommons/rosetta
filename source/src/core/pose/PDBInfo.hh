@@ -825,7 +825,8 @@ public: // single residue mutators
 		char const chain_id,
 		int const pdb_res,
 		char const ins_code = ' ',
-		std::string const & segmentID = "    "
+		std::string const & segmentID = "    ",
+		bool clear_labels = true
 	);
 
 	/// @brief adds a label associated to a pose resid.

@@ -8,11 +8,12 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file protocols/cyclic_peptide/PeptideStubMover.hh
-/// @brief Add constraints to the current pose conformation.
+/// @brief The PeptideStubMover prepends, appends, or inserts residues into an existing pose, or builds a new polymeric chain
 /// @author Yifan Song
 /// @modified Vikram K. Mulligan (vmulligan@flatironinstitute.org): Added support for stripping
 /// N-acetylation and C-methylamidation when appending residues, preserving phi and the previous
 /// omega in the first case and psi and the following omega in the second.
+/// @modified Jack Maguire, jackmaguire1444@gmail.com: breaking apply() into smaller methods
 
 #ifndef INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
 #define INCLUDED_protocols_cyclic_peptide_PeptideStubMover_hh
@@ -20,8 +21,19 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/cyclic_peptide/PeptideStubMover.fwd.hh>
 
+#include <core/chemical/ResidueTypeSet.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
 namespace protocols {
 namespace cyclic_peptide {
+
+constexpr char DEFAULT_LABEL[] = "PEPTIDE_STUB_EXTENSION";
+
+///@brief This type alias is meant to clarify certain return types.
+using FirstResidAdded = core::Size;
 
 enum PSM_StubMode {
 	PSM_append,
@@ -55,7 +67,6 @@ public:
 		stub_rsd_connecting_atom_.clear();
 		stub_anchor_rsd_.clear();
 		stub_anchor_rsd_connecting_atom_.clear();
-		return;
 	}
 
 
@@ -63,7 +74,6 @@ public:
 	void set_reset_mode( bool reset_mode )
 	{
 		reset_ = reset_mode;
-		return;
 	}
 
 
@@ -71,7 +81,6 @@ public:
 	void set_update_pdb_numbering_mode( bool mode )
 	{
 		update_pdb_numbering_ = mode;
-		return;
 	}
 
 
@@ -85,6 +94,7 @@ public:
 		std::string const &connecting_atom,
 		core::Size const repeat,
 		core::Size const anchor_rsd,
+		core::select::residue_selector::ResidueSelectorCOP anchor_rsd_selector,
 		std::string const &anchor_atom
 	);
 
@@ -99,6 +109,7 @@ public:
 		std::string const &connecting_atom,
 		core::Size const repeat,
 		core::Size const anchor_rsd,
+		core::select::residue_selector::ResidueSelectorCOP anchor_rsd_selector,
 		std::string const &anchor_atom
 	);
 
@@ -112,6 +123,103 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	/// @brief add label to residues that are created with this mover
+	/// @author Jack Maguire, jackmaguire1444@gmail.com
+	void
+	set_residue_label( std::string const & label ){
+		residue_label_ = label;
+	}
+
+	static
+	std::string
+	default_label(){
+		return DEFAULT_LABEL;
+	}
+
+	static
+	void
+	assign_chain_ids( core::pose::Pose & pose );
+
+protected:
+	// These are all helper functions intended to make apply() smaller
+	// The contexts of these functions and their arguments may not be clear in the .hh file but hopefully they are reasonable in the context of the .cc file. I was not the original author of this code so my goal was to keep veriable names unchanged, even if they are unclear as arguments.
+
+	///@brief this performs the inner loop logic of apply()
+	///@returns returns resid of the first new residue
+	FirstResidAdded perform_single_iteration(
+		core::pose::Pose & pose,
+		core::chemical::ResidueTypeSet const & standard_residues,
+		core::Size istub
+	);
+
+	///@brief this function performs the early logic of append_by_bond()
+	///@details call handle_upper_terminus and handle_lower_terminus
+	void handle_termini_and_store_terminal_dihedrals(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::Size const istub,
+		core::Size const connecting_id,
+		core::Size & anchor_connecting_id,
+		core::Real & old_omega_minus1,
+		core::Real & old_phi,
+		core::Real & old_psi,
+		core::Real & old_omega,
+		bool & replace_upper_terminal_type,
+		bool & replace_lower_terminal_type
+	);
+
+	///@brief determine how residues should connect when being appended by bond
+	core::Size
+	get_connecting_id_for_append_by_bond(
+		core::conformation::Residue const & new_rsd,
+		core::Size const istub
+	);
+
+	///@brief Handle the case where the new residues start a new chain
+	///@returns returns resid of the first new residue added
+	FirstResidAdded
+	append_by_jump(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::conformation::Residue & new_rsd,
+		core::Size const istub
+	);
+
+	///@brief Handle the case where the input pose has zero residues
+	///@returns returns resid of the first new residue
+	FirstResidAdded
+	add_residue_to_empty_pose(
+		core::pose::Pose & pose,
+		core::conformation::Residue & new_rsd,
+		core::Size const istub
+	);
+
+	///@brief queries stub_anchor_rsd_ and anchor_rsd_selectors_ to find the residue to use as an achor
+	///@returns resid of anchor residue residue
+	core::Size
+	get_anchor_rsd(
+		core::pose::Pose const & pose,
+		core::Size const istub
+	);
+
+	///@returns returns resid of the first new residue
+	FirstResidAdded
+	append_by_bond(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::conformation::Residue & new_rsd,
+		core::Size const istub
+	);
+
+	///@brief add additional residues if needed
+	void
+	handle_repeats_in_append_by_bond(
+		core::pose::Pose & pose,
+		core::Size const anchor_rsd,
+		core::conformation::Residue & new_rsd,
+		core::Size const istub
+	);
 
 private: //Functions
 
@@ -173,7 +281,10 @@ private:
 	utility::vector1<core::Size> stub_rsd_repeat_;
 	utility::vector1<core::Size> stub_insert_pos_;
 	utility::vector1<core::Size> stub_anchor_rsd_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> anchor_rsd_selectors_;
 	utility::vector1<std::string> stub_anchor_rsd_connecting_atom_;
+
+	std::string residue_label_ = DEFAULT_LABEL;
 
 	//Private functions:
 
@@ -183,7 +294,10 @@ private:
 
 
 	/// @brief Updates the PDB numbering (PDB number/chain ID) as residues are added.
-	virtual void update_pdb_numbering ( core::pose::Pose &pose ) const;
+	void update_pdb_numbering (
+		core::pose::Pose &pose,
+		utility::vector1< core::Size > & resids_that_we_added
+	) const;
 
 };
 

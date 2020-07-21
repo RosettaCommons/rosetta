@@ -59,12 +59,12 @@ public:
 
 		PeptideStubMover stubmover;
 		stubmover.set_reset_mode(true);
-		stubmover.add_residue( "Append", "GLY", 1, true, "", 0, 0, "" );
-		stubmover.add_residue( "Append", "ORN", 1, false, "", 0, 0, "" );
-		stubmover.add_residue( "Append", "DAB", 1, false, "", 0, 0, "" );
-		stubmover.add_residue( "Append", "DPP", 1, false, "", 0, 0, "" );
-		stubmover.add_residue( "Append", "AIB", 1, false, "", 0, 0, "" );
-		stubmover.add_residue( "Append", "GLY", 1, false, "", 0, 0, "" );
+		stubmover.add_residue( "Append", "GLY", 1, true, "", 0, 0, nullptr, "" );
+		stubmover.add_residue( "Append", "ORN", 1, false, "", 0, 0, nullptr, "" );
+		stubmover.add_residue( "Append", "DAB", 1, false, "", 0, 0, nullptr, "" );
+		stubmover.add_residue( "Append", "DPP", 1, false, "", 0, 0, nullptr, "" );
+		stubmover.add_residue( "Append", "AIB", 1, false, "", 0, 0, nullptr, "" );
+		stubmover.add_residue( "Append", "GLY", 1, false, "", 0, 0, nullptr, "" );
 
 		core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );
 		stubmover.apply(*pose);

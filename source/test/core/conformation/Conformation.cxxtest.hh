@@ -450,9 +450,9 @@ public:
 	/// @author Vikram K. Mulligan();
 	void test_Conformation_backbone_torsion_angle_atoms_oligourea() {
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_ALA", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_ALA", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 

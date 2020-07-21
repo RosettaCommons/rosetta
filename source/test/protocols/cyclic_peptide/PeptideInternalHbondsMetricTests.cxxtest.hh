@@ -118,16 +118,16 @@ public:
 		TR << "Starting PeptideInternalHbondsMetricTests:test_generate_allowed_partners." << std::endl;
 		using namespace protocols::cyclic_peptide;
 		PeptideStubMover builder;
-		builder.add_residue( "Append", "ALA", 1, true, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 2, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 3, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 4, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 5, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 6, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 7, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 8, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 9, false, "", 0, 0, "" );
-		builder.add_residue( "Append", "ALA", 10, false, "", 0, 0, "" );
+		builder.add_residue( "Append", "ALA", 1, true, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 2, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 3, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 4, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 5, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 6, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 7, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 8, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 9, false, "", 0, 0, nullptr, "" );
+		builder.add_residue( "Append", "ALA", 10, false, "", 0, 0, nullptr, "" );
 		core::pose::Pose pose;
 		builder.apply(pose);
 

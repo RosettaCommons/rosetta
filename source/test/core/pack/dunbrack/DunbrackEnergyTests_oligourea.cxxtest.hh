@@ -66,9 +66,9 @@ public:
 
 	void test_beta_aa_dunbrack_scoring(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "B3C", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "B3C", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -119,9 +119,9 @@ public:
 
 	void test_oligourea_dunbrack_scoring(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -179,9 +179,9 @@ public:
 
 	void test_oligourea_dunbrack_scoring2(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_DUMMYTYPE", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_DUMMYTYPE", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -239,9 +239,9 @@ public:
 
 	void test_oligourea_dunbrack_derivs(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_VAL", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -280,9 +280,9 @@ public:
 
 	void test_oligourea_dunbrack_derivs2(){
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_DUMMYTYPE", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_DUMMYTYPE", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -322,9 +322,9 @@ public:
 	/// @brief Test fa_dun scoring of oligourea-proline.
 	void test_oligourea_proline_score() {
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 
@@ -374,9 +374,9 @@ public:
 	/// @brief Test FastRelax with oligourea-proline, confirming that pro_close keeps the proline ring closed.
 	void test_oligourea_proline_pack() {
 		protocols::cyclic_peptide::PeptideStubMover builder;
-		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, "");
-		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, "C");
-		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, "C");
+		builder.add_residue("Append", "ALA:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "OU3_PRO", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "ALA:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
 		core::pose::Pose pose;
 		builder.apply(pose); //Build the peptide.
 

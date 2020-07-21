@@ -56,10 +56,10 @@ public:
 		core::pose::Pose pose;
 		protocols::cyclic_peptide::PeptideStubMover pepstub;
 		pepstub.set_reset_mode(true);
-		pepstub.add_residue("Append","ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",1,true,"",0,0,"");
-		pepstub.add_residue("Append","TMA",2,false,"CM1",0,1,"NE");
-		pepstub.add_residue("Append", "ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",3,false,"NE",0,2,"CM2");
-		pepstub.add_residue("Append", "ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",4,false,"NE",0,2,"CM3");
+		pepstub.add_residue("Append","ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",1,true,"",0,0,nullptr,"");
+		pepstub.add_residue("Append","TMA",2,false,"CM1",0,1,nullptr,"NE");
+		pepstub.add_residue("Append", "ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",3,false,"NE",0,2,nullptr,"CM2");
+		pepstub.add_residue("Append", "ORN:SidechainConjugation:NtermProteinFull:CtermProteinFull",4,false,"NE",0,2,nullptr,"CM3");
 		pepstub.apply(pose);
 
 		//pose.dump_pdb("vtemp1.pdb"); //DELETE ME
