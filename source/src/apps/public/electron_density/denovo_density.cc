@@ -31,6 +31,7 @@
 #include <core/sequence/Sequence.hh>
 
 #include <core/conformation/ResidueFactory.hh>
+#include <core/util/SwitchResidueTypeSet.hh>
 
 // minimize pose into density
 #include <protocols/electron_density/util.hh>
@@ -1455,6 +1456,8 @@ ConsensusFragmentMover::run() {
 			core::Size resid_tgt=iter->first;
 			for ( int i=1; i<=(int)iter->second.size() && !done; ++i ) {
 				core::pose::PoseOP frag_i = iter->second[i];
+				core::util::switch_to_residue_type_set( *frag_i, core::chemical::FULL_ATOM_t );
+
 				debug_assert( frag_i );
 				for ( int j=1; j<=(int)frag_i->size() && !done; ++j ) {
 					if ( !frag_i->residue(j).is_protein() ) continue;
