@@ -60,6 +60,8 @@ template< typename T, typename Key >
 struct StrongT {
 	T value;
 
+	StrongT(){}
+
 	explicit StrongT( T v ):
 		value( v )
 	{}
@@ -72,6 +74,10 @@ struct StrongT {
 		return value;
 	}
 
+	T const & operator() () const {
+		return value;
+	}
+
 	//Operator overloads to make common functions easier:
 
 	StrongT< T, Key > &
@@ -80,6 +86,15 @@ struct StrongT {
 		return *this;
 	}
 
+	StrongT< T, Key > &
+	operator-= ( T other ){
+		value -= other;
+		return *this;
+	}
+
+	//NOTE:
+	// + and - operators work implicitly
+
 	//Prefix increment operator
 	StrongT< T, Key > &
 	operator++ (){
@@ -87,6 +102,12 @@ struct StrongT {
 		return *this;
 	}
 
+	//Prefix decrement operator
+	StrongT< T, Key > &
+	operator-- (){
+		--value;
+		return *this;
+	}
 };
 
 
