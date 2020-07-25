@@ -383,7 +383,7 @@ set_xyzvector_value_private(
     v->y_ = value; break;
   case 2:
     v->z_ = value; break;
-  } 
+  }
 }
 
 /// get a value out of an xyzvector, indexing from 0
@@ -419,7 +419,7 @@ set_xyzvector_value_local(
     v->y_ = value; break;
   case 2:
     v->z_ = value; break;
-  } 
+  }
 }
 
 /// get a value out of an xyzvector, indexing from 0
@@ -455,7 +455,7 @@ set_xyzvector_value_global(
     v->y_ = value; break;
   case 2:
     v->z_ = value; break;
-  } 
+  }
 }
 
 /// get a value out of an xyzvector, indexing from 0
@@ -815,7 +815,7 @@ findUU(
     }
     *sigma3 = sqrt( get_xyzvector_value_private( &w_w, sort[0] ));
 
-    return; // make like a prom dress and slip off
+    return;
   }
 
   // sort eigen values
@@ -1005,7 +1005,7 @@ findUU_no_translation_to_origin(
     }
     *sigma3 = sqrt( get_xyzvector_value_private( &w_w, sort[0] ));
 
-    return; // make like a prom dress and slip off
+    return;
   }
 
   /// before sorting the eigenvectors
@@ -1127,7 +1127,7 @@ calculate_rmsd_fast(
 }
 
 float
-calculate_helix_clash_score( 
+calculate_helix_clash_score(
   __global struct xyzvector * node1_other_coords,
   int node1_n_other_coords,
   __global int * node1_center_coords,
@@ -1262,7 +1262,7 @@ compute_rmsd_and_clash_scores(
       &rmsd_coords_2[ n2 * n_atoms_in_rms_calc ], &rmsd_coords_moment_of_inertia_2[ n2 ],
       n_atoms_in_rms_calc,
       &col_coords_1[ col_coords_offsets_1[ n1 ] ], n_coords_for_col_calc_1[ n1 ],
-      &comparison_coord_ind_list_1[ comparison_coord_ind_offset_1[ n1 ] ], n_comparison_coords_1[ n1 ], 
+      &comparison_coord_ind_list_1[ comparison_coord_ind_offset_1[ n1 ] ], n_comparison_coords_1[ n1 ],
       &col_coords_2[ col_coords_offsets_2[ n2 ] ], n_coords_for_col_calc_2[ n2 ],
       &comparison_coord_ind_list_2[ comparison_coord_ind_offset_2[ n2 ] ], n_comparison_coords_2[ n2 ],
       &rms, &collision
@@ -1567,7 +1567,7 @@ test_jacobi_xyzmatrix(
     }
   }
 }
-  
+
 /// Test eigenvect_jacobi
 __kernel
 void

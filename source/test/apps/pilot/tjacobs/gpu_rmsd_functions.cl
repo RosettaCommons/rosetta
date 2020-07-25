@@ -300,9 +300,9 @@ findUU(
     }
     *sigma3 = sqrt( get_xyzvector_value_private( &w_w, sort[0] ));
 
-    return; // make like a prom dress and slip off
+    return;
   }
-  
+
   // sort the eigenvalues, and also sort the first two eigenvectors
   sort_eigenvectors_and_eigenvalues( sort, &w_w, &eVec );
 
@@ -432,7 +432,7 @@ findUU_no_translation_to_origin(
     }
     *sigma3 = sqrt( get_xyzvector_value_private( &w_w, sort[0] ));
 
-    return; // make like a prom dress and slip off
+    return;
   }
 
   /// before sorting the eigenvectors
@@ -533,4 +533,3 @@ calculate_rmsd_fast(
   float rms_sum = *node1_coord_at_origin_moment_of_inertia + *node2_coord_at_origin_moment_of_inertia - 2*sigma3;
   return sqrt( fabs( rms_sum / node_npoints ));
 }
-

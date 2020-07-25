@@ -1305,7 +1305,7 @@ public:
 			}
 			sigma3 = std::sqrt(w_w(sort(1)));
 
-			return; // make like a prom dress and slip off
+			return;
 		}
 
 		// sort eigen values
@@ -3578,5 +3578,3 @@ public:
 
 
 };
-
-
