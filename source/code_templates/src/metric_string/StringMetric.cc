@@ -78,6 +78,7 @@ std::string
 std::string
 --class--::metric() const {
 
+	return "SHORT_NAME_FOR_SCOREFILE_HEADER_DEFAULT";
 }
 
 void

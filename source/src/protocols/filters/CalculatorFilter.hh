@@ -22,10 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/moves/Mover.fwd.hh>
-
-#include <numeric/Calculator.fwd.hh>
-#include <utility/vector1.hh>
+#include <core/simple_metrics/metrics/CalculatorMetric.fwd.hh>
 
 #include <string>
 
@@ -38,9 +35,7 @@ class CalculatorFilter : public protocols::filters::Filter
 {
 public:
 	CalculatorFilter();
-	CalculatorFilter(std::string equation);
-	CalculatorFilter(CalculatorFilter const & other);
-	~CalculatorFilter() override;
+	CalculatorFilter(std::string const & equation);
 
 	bool apply( core::pose::Pose const & pose ) const override;
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
@@ -60,11 +55,11 @@ public:
 
 	void threshold( core::Real threshold) { threshold_ = threshold; }
 
-	void add_filter( std::string name, protocols::filters::FilterOP filter );
+	void add_filter( std::string const & name, protocols::filters::FilterOP filter );
 
-	void add_reported_value( std::string name, std::string report_key );
+	void add_reported_value( std::string const & name, std::string const & report_key );
 
-	void add_constant( std::string name, core::Real value );
+	void add_constant( std::string const & name, core::Real value );
 
 	std::string
 	name() const override;
@@ -79,10 +74,7 @@ public:
 
 
 private:
-	numeric::CalculatorOP calc_;
-	std::map<std::string, core::Real> values_;
-	std::map<std::string, protocols::filters::FilterOP> filters_;
-	std::map<std::string, std::string> reported_values_;
+	core::simple_metrics::metrics::CalculatorMetricOP metric_;
 	core::Real threshold_;
 
 };

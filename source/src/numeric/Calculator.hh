@@ -39,6 +39,9 @@ public:
 	/// Return true if the computation failed.
 	bool compute( std::map<std::string, Real> & values, Real & output ) const;
 
+	/// @brief Get access to the equation held in this object.
+	std::string const & equation() const { return equation_; }
+
 private:
 
 	std::string equation_;

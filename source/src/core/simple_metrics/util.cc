@@ -130,6 +130,26 @@ xsd_simple_metric_type_definition_w_attributes(
 }
 
 void
+xsd_simple_metric_type_definition_w_attributes_and_repeatable_subelements(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & rs_type,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes,
+	utility::tag::XMLSchemaSimpleSubelementList const & subelements
+)
+{
+	utility::tag::XMLSchemaComplexTypeGeneratorOP ct_gen = SimpleMetric::complex_type_generator_for_simple_metric(xsd);
+
+	ct_gen->complex_type_naming_func( & complex_type_name_for_simple_metric )
+		.element_name( rs_type )
+		.description( description )
+		.add_attributes( attributes )
+		.set_subelements_repeatable( subelements )
+		.add_optional_name_attribute()
+		.write_complex_type_to_schema( xsd );
+}
+
+void
 xsd_per_residue_real_metric_type_definition_w_attributes(
 	utility::tag::XMLSchemaDefinition & xsd,
 	std::string const & rs_type,
@@ -226,7 +246,11 @@ get_metric_from_datamap_and_subtags(
 	}
 
 	if ( metrics.size() > 1 ) {
+		TR.Error << "Too many SimpleMetrics in tag:\n\t" << *tag << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "This class only accepts a single SimpleMetric as a subtag.");
+	} else if ( metrics.empty() ) {
+		TR.Error << "SimpleMetric not found in tag:\t\n" << *tag << std::endl;
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "No suitable SimpleMetric found in entry.");
 	} else {
 		return metrics[1];
 	}

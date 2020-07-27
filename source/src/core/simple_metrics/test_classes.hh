@@ -92,12 +92,14 @@ class TestRealMetric : public RealMetric {
 
 public:
 
-	TestRealMetric():
-		RealMetric(){};
+	TestRealMetric( core::Real value = 1.0):
+		RealMetric(),
+		value_( value )
+	{}
 
 	core::Real
 	calculate(pose::Pose const &  ) const override{
-		return 1.0;
+		return value_;
 	};
 
 	std::string
@@ -132,6 +134,9 @@ public:
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap & data ) override;
 
+public:
+
+	core::Real value_ = 1.0;
 };
 
 

@@ -82,6 +82,7 @@ std::string
 std::string
 --class--::metric() const {
 
+	return "SHORT_NAME_FOR_SCOREFILE_HEADER_DEFAULT";
 }
 
 void
@@ -93,7 +94,7 @@ void
 	SimpleMetric::parse_base_tag( tag );
 	PerResidueRealMetric::parse_per_residue_tag( tag, datamap );
 
-	
+
 	if (tag->hasOption("bogus_option")){
 		return;
 	}

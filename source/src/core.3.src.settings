@@ -215,6 +215,7 @@ sources = {
 		"WaterMediatedHbondMetric",
 	],
 	"core/simple_metrics/metrics": [
+		"CalculatorMetric",
 		"DihedralDistanceMetric",
 		"InteractionEnergyMetric",
 		"ResidueSummaryMetric",

@@ -69,6 +69,15 @@ xsd_simple_metric_type_definition_w_attributes(
 	std::string const & description,
 	utility::tag::AttributeList const & attributes);
 
+void
+xsd_simple_metric_type_definition_w_attributes_and_repeatable_subelements(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & simple_metric_name,
+	std::string const & description,
+	utility::tag::AttributeList const & attributes,
+	utility::tag::XMLSchemaSimpleSubelementList const & subelements
+);
+
 ///@brief Generate the ComplexTypeGenerator from the SimpleMetric and PerResidueRealMetric base classes.
 ///  Add any additional schema options from sub-derived classes
 void

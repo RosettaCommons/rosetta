@@ -14,19 +14,14 @@
 #include <protocols/filters/CalculatorFilter.hh>
 #include <protocols/filters/CalculatorFilterCreator.hh>
 
+#include <protocols/filters/FilterValueMetric.hh>
+#include <core/simple_metrics/metrics/CalculatorMetric.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/extra_pose_info_util.hh>
 #include <utility/tag/Tag.hh>
-#include <protocols/filters/Filter.hh>
-#include <protocols/moves/Mover.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <protocols/rosetta_scripts/util.hh>
-
-#include <utility/vector1.hh>
-#include <numeric/Calculator.hh>
-#include <numeric/random/random.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -41,26 +36,16 @@ static basic::Tracer TR( "protocols.filters.CalculatorFilter" );
 /// @brief default ctor
 CalculatorFilter::CalculatorFilter() :
 	Filter( "CalculatorFilter" ),
+	metric_( nullptr ),
 	threshold_(0)
 {}
 
-CalculatorFilter::CalculatorFilter(std::string equation) :
+CalculatorFilter::CalculatorFilter(std::string const & equation) :
 	Filter( "CalculatorFilter" ),
+	metric_( utility::pointer::make_shared< core::simple_metrics::metrics::CalculatorMetric >(equation) ),
 	threshold_(0)
 {
-	calc_ = utility::pointer::make_shared< numeric::Calculator >(equation);
 }
-
-CalculatorFilter::CalculatorFilter(CalculatorFilter const & other) :
-	Filter( "CalculatorFilter" ),
-	calc_(other.calc_),
-	values_(other.values_),
-	filters_(other.filters_),
-	threshold_(other.threshold_)
-{}
-
-
-CalculatorFilter::~CalculatorFilter() = default;
 
 bool
 CalculatorFilter::apply(core::pose::Pose const & pose) const
@@ -82,43 +67,27 @@ CalculatorFilter::report( std::ostream & out, core::pose::Pose const & pose) con
 }
 
 void
-CalculatorFilter::add_filter( std::string name, protocols::filters::FilterOP filter ) {
+CalculatorFilter::add_filter( std::string const & name, protocols::filters::FilterOP filter ) {
 	if ( ! filter ) {
 		utility_exit_with_message("Calculator filter can't use non-existant (null pointer) filter.");
 	}
-	filters_[name] = filter;
+	metric_->add_simple_metric( name, utility::pointer::make_shared< FilterValueMetric >( filter ) );
 }
 
 void
-CalculatorFilter::add_reported_value( std::string name, std::string report_key ) {
-	reported_values_[name] = report_key;
+CalculatorFilter::add_reported_value( std::string const & name, std::string const & report_key ) {
+	metric_->add_reported_value( name, report_key );
 }
 
 void
-CalculatorFilter::add_constant( std::string name, core::Real value ) {
-	values_[name] = value;
+CalculatorFilter::add_constant( std::string const & name, core::Real value ) {
+	metric_->add_constant( name, value );
 }
 
 core::Real
 CalculatorFilter::compute(core::pose::Pose const & pose) const {
-	debug_assert(calc_);
-
-	std::map< std::string, core::Real > vars(values_);
-	for ( auto & filter : filters_ ) {
-		debug_assert(filter.second);
-		vars[ filter.first ] = (filter.second)->report_sm( pose );
-	}
-	for ( auto & reported : reported_values_ ) {
-		if ( !getPoseExtraScore(pose, reported.second, vars[reported.first]) ) {
-			utility_exit_with_message("CalculatorFilter required reported value not yet present in pose.");
-		}
-	}
-
-	numeric::Real value(999999);
-	if ( calc_->compute(vars, value) ) {
-		TR.Error << "Problem calculating equation in CalculatorFilter - resultant value likely garbage." << std::endl;
-	}
-	return value;
+	debug_assert(metric_);
+	return metric_->calculate( pose );
 }
 
 void
@@ -127,6 +96,8 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 )
 {
 	std::string equation = tag_ptr->getOption< std::string >( "equation" );
+	metric_ = utility::pointer::make_shared< core::simple_metrics::metrics::CalculatorMetric  >( equation );
+
 	threshold_ = tag_ptr->getOption<core::Real>( "threshold", 0.0 );
 
 	for ( utility::tag::TagCOP sub_tag_ptr : tag_ptr->getTags() ) {
@@ -162,17 +133,7 @@ CalculatorFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 		}
 	}
 
-	// Now do a quick sanity check for the equation parsing.
-	calc_ = utility::pointer::make_shared< numeric::Calculator >( equation );
-	std::map< std::string, core::Real > vars(values_);
-	for ( auto & filter : filters_ ) {
-		vars[ filter.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
-	}
-	for ( auto & report : reported_values_ ) {
-		vars[ report.first ] = 1.0 + 0.00001 * numeric::random::uniform(); // Additional random to avoid "1/(alpha - beta)" type situations.
-	}
-	numeric::Real dummy;
-	if ( calc_->compute(vars, dummy) ) {
+	if ( ! metric_->check_equation() ) {
 		utility_exit_with_message("Bad equation in CalculatorFilter: " + equation);
 	}
 }
@@ -209,7 +170,7 @@ void CalculatorFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute::required_attribute( "equation", xs_string, "Equation to evaluate filter value." )
 		+ XMLSchemaAttribute::attribute_w_default( "threshold", xsct_real, "Filter passes if equation value less than threshold, fails otherwise.", "0.0" );
 
-	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "XRW TO DO", attlist, subelements );
+	protocols::filters::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, class_name(), "Filter based on an equation and the results of other filters.", attlist, subelements );
 }
 
 std::string CalculatorFilterCreator::keyname() const {

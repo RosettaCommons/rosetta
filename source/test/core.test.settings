@@ -666,6 +666,7 @@ sources = {
 		"WaterMediatedHbondMetricTests",
 	],
 	"simple_metrics/metrics" : [
+		"CalculatorMetric",
 		"SelectedResidueCountMetricTests",
 		"SequenceMetricTests",
 		"SequenceSimilarityMetricTests",

@@ -23,31 +23,51 @@
 #include <functional>
 
 #include <protocols/moves/mover_schemas.hh> // For check_if_mover_tag_validates()
-
+#include <core/simple_metrics/util.hh> // For check_if_metric_tag_validates()
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR2( "schema_utilities" );
 
 /// @brief Check if the provided tag validates against the schema for the given class
 /// (It's assumed that the templated class has a static provide_xml_schema() function which provides the schema for the class.)
-/// @details - The restriction for Mover only is due soley to the need for the top-level element addition. If we could abstract that ...
+/// `name` is the XML name of the class, and `type_name` is the schema typename for that class
 template< class C >
-void check_if_mover_tag_validates( std::string const & tag ) {
-	utility::tag::XMLSchemaDefinition xsd;
+void check_if_tag_validates( std::string const & tag, utility::tag::XMLSchemaDefinition & xsd, std::string const & name, std::string const & type_name ) {
 	C::provide_xml_schema( xsd );
 
 	// Now need to add a top-level element
 	utility::tag::XMLSchemaElement top_element;
-	top_element.name( C::mover_name() )
-		.type_name( protocols::moves::complex_type_name_for_mover( C::mover_name() ));
+	top_element.name( name )
+		.type_name( type_name );
 	xsd.add_top_level_element( top_element );
 
 	utility::tag::XMLValidationOutput validator_output;
 	utility::tag::XMLValidator validator;
 	validator_output = validator.set_schema(xsd.full_definition());
 	TSM_ASSERT( "Issue building schema for " + tag, validator_output.valid() );
+	if ( ! validator_output.valid() ) {
+		TR2 << "Error messages were:\n" << validator_output.error_messages();;
+		TR2 << "------------------------------------------------------------\n";
+		TR2 << "Warning messages were:\n" << validator_output.warning_messages();
+		TR2 << "------------------------------------------------------------\n";
+		TR2 << std::endl;
+	}
 	validator_output = validator.validate_xml_against_schema( tag );
 	TSM_ASSERT( "Issue validating " + tag, validator_output.valid() );
+	if ( ! validator_output.valid() ) {
+		TR2 << "Error messages were:\n" << validator_output.error_messages();;
+		TR2 << "------------------------------------------------------------\n";
+		TR2 << "Warning messages were:\n" << validator_output.warning_messages();
+		TR2 << "------------------------------------------------------------\n";
+		TR2 << std::endl;
+	}
+}
+
+/// @brief Check if the provided tag validates against the schema for the given class, specialization for Movers.
+template< class C >
+void check_if_mover_tag_validates( std::string const & tag ) {
+	utility::tag::XMLSchemaDefinition xsd;
+	check_if_tag_validates<C>( tag, xsd, C::mover_name(), protocols::moves::complex_type_name_for_mover( C::mover_name() ) );
 }
 
 inline

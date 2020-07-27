@@ -103,6 +103,7 @@ TestRealMetric::parse_my_tag(
 	basic::datacache::DataMap & )
 {
 	SimpleMetric::parse_base_tag( tag );
+	value_ = tag->getOption< core::Real >("value", 1.0 );
 }
 
 void
@@ -111,6 +112,8 @@ TestRealMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace core::select::residue_selector;
 
 	AttributeList attlist;
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "value", xsct_real, "The value reported by the metric", "1.0" );
 	xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"Test class for RealMetrics", attlist);
 }
