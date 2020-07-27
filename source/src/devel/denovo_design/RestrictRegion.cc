@@ -206,7 +206,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	}
 
 	if ( permanently_restricted_residues_.size() != pose.size() ) {
-		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.size() ) + ", cache size=" + boost::lexical_cast< std::string >( permanently_restricted_residues_.size() ) );
+		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + std::to_string( pose.size() ) + ", cache size=" + std::to_string( permanently_restricted_residues_.size() ) );
 	}
 
 	// initialize the restricted residue list if necessary
@@ -217,7 +217,7 @@ RestrictRegion::apply( core::pose::Pose & pose )
 	}
 
 	if ( restricted_residues_.size() != pose.size() ) {
-		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + boost::lexical_cast< std::string >( pose.size() ) + ", cache size=" + boost::lexical_cast< std::string >( restricted_residues_.size() ) );
+		utility_exit_with_message( "WARNING: pose size changed! Pose size=" + std::to_string( pose.size() ) + ", cache size=" + std::to_string( restricted_residues_.size() ) );
 	}
 
 	// set up the packer task

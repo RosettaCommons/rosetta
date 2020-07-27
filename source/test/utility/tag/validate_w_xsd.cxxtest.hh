@@ -34,8 +34,6 @@
 
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
-#include <boost/bind.hpp>
-
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "XMLSchemaValidationTests" );

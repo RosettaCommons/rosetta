@@ -34,7 +34,6 @@ static basic::Tracer TR( "protocols.splice.RBInMover" );
 #include <algorithm>
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string.hpp>
 #include <protocols/simple_moves/CutChainMover.hh>
 

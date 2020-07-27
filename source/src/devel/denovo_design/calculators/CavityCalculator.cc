@@ -28,7 +28,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/lexical_cast.hpp>
 
 //// C++ headers
 #include <ObjexxFCL/format.hh>
@@ -86,7 +85,7 @@ CavityCalculator::print( std::string const & key ) const
 {
 	std::string result;
 	if ( key == "volume" ) {
-		result += boost::lexical_cast<std::string>( total_volume_ ) + " ";
+		result += std::to_string( total_volume_ ) + " ";
 	} else {
 		basic::Error() << "CavityCalculator cannot compute metric " << key << std::endl;
 	}

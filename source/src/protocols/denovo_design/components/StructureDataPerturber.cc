@@ -30,7 +30,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.components.StructureDataPerturber" );
 
@@ -221,7 +220,7 @@ ConnectionPerturber::enumerate( StructureData const & sd ) const
 	for ( auto const & all_arch_motif : all_arch_motifs ) {
 		if ( all_arch_motif->lower_segment() != target_motif.lower_segment() ) continue;
 		if ( all_arch_motif->upper_segment() != target_motif.upper_segment() ) continue;
-		all_motifs.push_back( boost::assign::list_of (all_arch_motif) );
+		all_motifs.push_back( { all_arch_motif } );
 	}
 	return all_motifs;
 }
@@ -260,7 +259,7 @@ HelixPerturber::enumerate( StructureData const & sd ) const
 		if ( ignored( (*m)->id() ) ) continue;
 		if ( !sd.has_segment( (*m)->id() ) ) continue;
 		debug_assert( *m );
-		motifs.push_back( boost::assign::list_of(*m) );
+		motifs.push_back( {*m} );
 	}
 	return motifs;
 }

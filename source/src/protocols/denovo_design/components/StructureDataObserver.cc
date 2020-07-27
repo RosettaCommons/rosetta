@@ -29,7 +29,6 @@
 
 // Boost/ObjexxFCL headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <set>

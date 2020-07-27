@@ -49,8 +49,6 @@
 
 #include <map>
 
-#include <boost/foreach.hpp>
-#define foreach_         BOOST_FOREACH
 #include <utility>
 
 
@@ -192,7 +190,7 @@ public:
 		ScoreFunction sfxn;
 		sfxn.set_weight( aa_repeat, 1 );
 
-		foreach_ ( ScoreMap::value_type &i, expected_scores ) {
+		for ( ScoreMap::value_type &i: expected_scores ) {
 			Pose test_pose;
 			make_pose_from_sequence( test_pose, i.first, "fa_standard");
 

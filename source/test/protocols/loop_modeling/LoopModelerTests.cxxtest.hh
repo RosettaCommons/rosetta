@@ -38,7 +38,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/exit.hh>
-#include <boost/foreach.hpp>
 
 // Basic headers
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
@@ -49,7 +48,6 @@
 #include <iostream>
 #include <fstream>
 
-#define foreach BOOST_FOREACH
 
 // Namespaces {{{1
 using namespace std;
@@ -307,7 +305,7 @@ public:
 			modeler->fullatom_stage_,
 			};
 
-		foreach ( LoopMoverOP mover, movers ) {
+		for ( LoopMoverOP mover: movers ) {
 			TS_ASSERT_EQUALS(mover->get_loops()->size(), 3);
 			TS_ASSERT_EQUALS(mover->get_loop(1).start(), 30);
 			TS_ASSERT_EQUALS(mover->get_loop(1).cut(), 41);

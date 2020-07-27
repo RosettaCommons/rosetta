@@ -34,7 +34,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 //External headers
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 #include <string>
@@ -250,7 +249,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			}
 
@@ -294,13 +293,13 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for semirotameric NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			}
 		} break;
 		default :
 			utility_exit_with_message( "ERROR: too many chi angles desired for semirotameric NCAA library: " +
-				boost::lexical_cast<std::string>(n_rotlib_chi) );
+				std::to_string(n_rotlib_chi) );
 			break;
 		}
 	} else {
@@ -345,7 +344,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			}
 
@@ -389,7 +388,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			}
 		} break;
@@ -432,7 +431,7 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			};
 		} break;
@@ -475,13 +474,13 @@ SingleNCAARotamerLibraryCreator::create( core::chemical::ResidueType const & res
 			}
 			default :
 				utility_exit_with_message( "ERROR: too many bb angles desired for NCAA library: " +
-					boost::lexical_cast<std::string>(n_rotlib_bb) );
+					std::to_string(n_rotlib_bb) );
 				break;
 			}
 		} break;
 		default :
 			utility_exit_with_message( "ERROR: too many chi angles desired for NCAA library: " +
-				boost::lexical_cast<std::string>(n_rotlib_chi) );
+				std::to_string(n_rotlib_chi) );
 			break;
 		}
 	}

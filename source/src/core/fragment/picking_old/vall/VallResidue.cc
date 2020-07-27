@@ -19,7 +19,6 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 
 // boost headers
-#include <boost/type_traits.hpp>
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -27,6 +26,7 @@
 // C++ headers
 #include <cstdio>
 #include <iostream>
+#include <sstream>
 
 #include <utility/vector1.hh>
 
@@ -257,11 +257,10 @@ utility::vector1< core::chemical::AA > VallResidue::order_vector() {
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string() {
-	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same< Size, unsigned long >::value;
-	bool const is_double = is_same< Real, double >::value;
+	bool const is_ulong = std::is_same< Size, unsigned long >::value;
+	bool const is_double = std::is_same< Real, double >::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -295,11 +294,9 @@ VallResidue::String VallResidue::format_string() {
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string_2011() {
-	using boost::is_same;
-
 	// resolve types
-	bool const is_ulong = is_same< Size, unsigned long >::value;
-	bool const is_double = is_same< Real, double >::value;
+	bool const is_ulong = std::is_same< Size, unsigned long >::value;
+	bool const is_double = std::is_same< Real, double >::value;
 	// format w/ the following order:
 	std::ostringstream s;
 	s << "%s" << " "; // (string) id

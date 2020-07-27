@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_environment_LocalPosition_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 #include <utility/vector1.hh>
 
 // Package headers

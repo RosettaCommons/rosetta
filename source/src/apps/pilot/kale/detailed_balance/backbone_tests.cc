@@ -51,7 +51,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <numeric/random/random.hh>
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <iostream>

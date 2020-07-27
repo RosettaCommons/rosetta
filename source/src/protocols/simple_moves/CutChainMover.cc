@@ -15,7 +15,6 @@
 // unit headers
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <protocols/simple_moves/CutChainMoverCreator.hh>
-#include <boost/foreach.hpp>
 
 // type headers
 #include <core/types.hh>

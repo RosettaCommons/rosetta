@@ -42,7 +42,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
 // Boost Headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR("ExtendedPoseBuilderTests");
 

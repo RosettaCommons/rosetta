@@ -69,6 +69,9 @@ public: // typedefs
 protected: // typedefs
 
 
+	// We need to use boost::functions here, as there's issues with std::functions and comparisons in find_connection()
+	//  (Techincally, you can't compare boost::functions either, but find_connection() somehow gets around that.
+
 	// typedef boost::function< ReturnType ( Signal ) > Function; // preferred boost::function syntax
 	typedef boost::function1< ReturnType, Signal > Function; // portable boost::function syntax
 	typedef std::vector< LinkUnitOP > LinkUnits;

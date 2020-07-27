@@ -14,20 +14,6 @@
 #ifndef INCLUDED_protocols_moves_PyMOLMover_CC
 #define INCLUDED_protocols_moves_PyMOLMover_CC
 
-/*
-/// Workaround for:
-/// external/boost_submod/boost/bind/mem_fn_template.hpp:156:30: error: no matching function for call to 'get_pointer'
-///   BOOST_MEM_FN_RETURN (get_pointer(u)->*f_)(b1);
-/// Get pointer of owning_ptr: needed by boost::mem_fn
-#ifdef __clang__
-#include <memory>
-namespace boost {
-template<typename T>
-inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
-}
-#endif
-*/
-
 // protocol headers
 #include <protocols/moves/PyMOLMover.hh>
 #include <protocols/moves/PyMOLMoverCreator.hh>
@@ -79,8 +65,6 @@ inline T* get_pointer(const std::shared_ptr<T>& p) { return p.get(); }
 #include <sstream>      // std::stringstream, std::stringbuf
 
 // boost headers
-//#include <boost/iostreams/filtering_streambuf.hpp>
-//#include <boost/iostreams/copy.hpp>
 
 //#ifndef WIN_PYROSETTA  // CL compiler got horribly confused if our numeric header got included after <winsock2.h>
 //#endif

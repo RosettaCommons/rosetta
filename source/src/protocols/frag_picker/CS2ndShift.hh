@@ -24,7 +24,6 @@
 #include <map>
 
 // boost headers
-#include <boost/tuple/tuple.hpp>
 
 namespace protocols {
 namespace frag_picker {

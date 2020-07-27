@@ -20,7 +20,6 @@
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/pose/PDBInfo.hh>

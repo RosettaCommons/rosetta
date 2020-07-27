@@ -98,7 +98,6 @@
 
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {
@@ -367,11 +366,11 @@ vector1<core::Size> RepeatPropagationMover::initial_constrained_residues(const P
 	using namespace core::scoring::constraints;
 	vector1<core::Size> constrained_residues;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
-	BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+	for ( ConstraintCOP const c: constraints ) {
 		if ( c->type() == "MultiConstraint" ) {
 			MultiConstraintCOP multi_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 			ConstraintCOPs constraints_l2=multi_cst->member_constraints();
-			BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
+			for ( ConstraintCOP const c_l2: constraints_l2 ) {
 				if ( c_l2->type() == "AtomPair" ) {
 					AtomPairConstraintCOP cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 					core::Size res1  =  cst->atom1().rsd();
@@ -427,11 +426,11 @@ void RepeatPropagationMover::repeat_ligand_constraints(Pose & pose, Pose & repea
 	core::Size repeat_length = last_res_ - first_res_+1;
 	ConstraintCOPs constraints = pose.constraint_set()->get_all_constraints();
 	for ( core::Size ii=1; ii<=numb_repeats_-1; ++ii ) {
-		BOOST_FOREACH ( ConstraintCOP const c, constraints ) {
+		for ( ConstraintCOP const c: constraints ) {
 			if ( c->type() == "MultiConstraint" ) {
 				MultiConstraintCOP multi_cst_old( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::MultiConstraint const > ( c ) );
 				ConstraintCOPs constraints_l2=multi_cst_old->member_constraints();
-				BOOST_FOREACH ( ConstraintCOP const c_l2, constraints_l2 ) {
+				for ( ConstraintCOP const c_l2: constraints_l2 ) {
 					if ( c_l2->type() == "AtomPair" ) { //it seemed like the wrong residue numbering was stored in the top level multi-constraint
 						AtomPairConstraintCOP old_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::AtomPairConstraint const > ( c_l2 ) );
 						core::id::SequenceMapping seq_map;

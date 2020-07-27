@@ -29,8 +29,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 
 namespace protocols {

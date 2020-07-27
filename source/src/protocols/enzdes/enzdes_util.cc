@@ -53,7 +53,6 @@
 // Utility Headers
 #include <utility/VirtualBase.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>

@@ -27,7 +27,6 @@
 #include <platform/types.hh>
 
 // Boost Headers
-#include <boost/scoped_ptr.hpp>
 
 // C++ Headers
 #include <string>

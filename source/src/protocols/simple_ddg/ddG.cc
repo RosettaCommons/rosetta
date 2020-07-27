@@ -93,7 +93,6 @@
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
-#include <boost/functional/hash.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

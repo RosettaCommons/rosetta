@@ -34,7 +34,6 @@
 #include <basic/Tracer.hh>
 
 // Boost Headers
-#include <boost/assign.hpp>
 
 // C++ Headers
 #include <set>
@@ -84,7 +83,7 @@ public:
 		FoldGraph fg( sd );
 
 		// list existing loops
-		SegmentNames const staple_loops = boost::assign::list_of ("l1");
+		SegmentNames const staple_loops = { "l1" };
 
 		// should create a loop between end of h1 and start of h2 with no cuts
 		protocols::loops::LoopsOP remodel_regions = fg.create_loops( staple_loops );
@@ -136,7 +135,7 @@ public:
 
 		// root fold tree at h2
 		std::string root = "h2";
-		SegmentNames const roots = boost::assign::list_of (root);
+		SegmentNames const roots = { root };
 		core::kinematics::FoldTree const ft = fg.fold_tree( roots );
 
 		TS_ASSERT( ft.check_fold_tree() );
@@ -161,12 +160,12 @@ public:
 
 		// root fold tree at h2
 		std::string const root = "h2";
-		SegmentNames const roots = boost::assign::list_of (root);
+		SegmentNames const roots = { root };
 		core::kinematics::FoldTree const ft = fg.fold_tree( roots );
 
 		// TODO: Figure out what to do with cutpoints in fold trees
 		/*
-		std::set< int > const wanted_cuts = boost::assign::list_of (sd.segment(root).upper())(sd.segment("l1").cutpoint());
+		std::set< int > const wanted_cuts = { sd.segment(root).upper(), sd.segment("l1").cutpoint() };
 
 		TS_ASSERT( ft.check_fold_tree() );
 		TS_ASSERT_EQUALS( ft.num_jump(), 2 );

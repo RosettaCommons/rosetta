@@ -41,7 +41,6 @@
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.components.StructureDataFactory" );
 

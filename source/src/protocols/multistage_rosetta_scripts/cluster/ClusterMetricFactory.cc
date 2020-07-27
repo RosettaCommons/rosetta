@@ -26,7 +26,6 @@
 #include <utility/tag/xml_schema_group_initialization.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

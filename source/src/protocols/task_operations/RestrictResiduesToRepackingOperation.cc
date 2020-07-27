@@ -43,7 +43,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <boost/functional/hash.hpp>
 
 
 static basic::Tracer TR( "protocols.TaskOperations.RestrictResiduesToRepackingOperation" );

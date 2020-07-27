@@ -50,7 +50,6 @@
 #include <numeric/xyz.functions.hh>
 
 
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <core/pose/Pose.hh>

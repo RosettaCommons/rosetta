@@ -103,8 +103,6 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 
 /// We want to isolate static instances of DummyMover so we put it inside privet namespace.

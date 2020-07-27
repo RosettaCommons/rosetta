@@ -14,7 +14,6 @@
 #include <algorithm>
 #include <iterator>
 
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include <utility/string_util.hh>
 

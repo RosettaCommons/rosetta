@@ -16,13 +16,14 @@
 #include <test/core/init_util.hh>
 
 // External headers
-#include <boost/scoped_ptr.hpp>
 
 // Project headers
 #include <core/types.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <protocols/nonlocal/Chunk.hh>
 #include <protocols/nonlocal/Region.hh>
+
+#include <memory>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -39,8 +40,8 @@ using protocols::nonlocal::RegionOP;
 class ChunkTest : public CxxTest::TestSuite {
 public:
 	MoveMapOP movable_;
-	boost::scoped_ptr<Chunk> valid_chunk_;
-	boost::scoped_ptr<Chunk> invalid_chunk_;
+	std::unique_ptr<Chunk> valid_chunk_;
+	std::unique_ptr<Chunk> invalid_chunk_;
 
 	void setUp() {
 		core_init();

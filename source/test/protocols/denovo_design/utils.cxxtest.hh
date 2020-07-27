@@ -32,8 +32,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 
@@ -52,15 +50,15 @@ structuredata_from_motifs( Motifs const & motifs )
 	Motifs::const_iterator prev = motifs.end();
 	Motifs::const_iterator next = ++motifs.begin();
 	for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
-		std::string const segment_name = boost::lexical_cast< std::string >( segment_num );
+		std::string const segment_name = std::to_string( segment_num );
 
 		std::string lower = "";
 		if ( prev != motifs.end() ) {
-			lower = boost::lexical_cast< std::string >( segment_num - 1 );
+			lower = std::to_string( segment_num - 1 );
 		}
 		std::string upper = "";
 		if ( next != motifs.end() ) {
-			upper = boost::lexical_cast< std::string >( segment_num + 1 );
+			upper = std::to_string( segment_num + 1 );
 		}
 
 		Segment newsegment;
@@ -105,8 +103,7 @@ public:
 	void test_bulge_strandpairing() {
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
-		Motifs const motifs = boost::assign::list_of
-			("1LX")("5EB")("2LG")("4EB")("1LX");
+		Motifs const motifs = { "1LX", "5EB", "2LG", "4EB", "1LX" };
 		TR << motifs << std::endl;
 		StructureDataOP perm = structuredata_from_motifs( motifs );
 		TS_ASSERT( perm );

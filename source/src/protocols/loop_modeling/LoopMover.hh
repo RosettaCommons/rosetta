@@ -28,7 +28,6 @@
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <basic/datacache/HierarchicalDataMap.hh>
-#include <boost/utility.hpp>
 
 // RosettaScripts headers
 #include <utility/tag/Tag.fwd.hh>

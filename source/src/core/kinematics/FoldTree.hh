@@ -35,7 +35,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
-#include <boost/functional/hash/hash.hpp>         // for hash
+#include <boost/functional/hash.hpp>         // for hash
 
 // C++ Headers
 #include <vector>

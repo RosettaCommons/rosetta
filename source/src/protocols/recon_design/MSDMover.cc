@@ -52,7 +52,6 @@
 #include <utility/mpi_util.hh>
 
 #include <protocols/recon_design/recon_util.hh>
-#include <boost/foreach.hpp>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -195,7 +194,7 @@ MSDMover::apply( core::pose::Pose & pose ) {
 	if ( debug_ ) {
 		utility::vector1< ConstraintCOP > constraint_set = pose.constraint_set()->get_all_constraints();
 		TR << "this pose has " << constraint_set.size() << " constraints." << std::endl;
-		BOOST_FOREACH ( ConstraintCOP constraint, constraint_set ) {
+		for ( ConstraintCOP constraint: constraint_set ) {
 			TR << constraint->to_string() << std::endl;
 		}
 	}
@@ -306,7 +305,7 @@ MSDMover::apply_mpi( core::pose::Pose & pose ) {
 	/// Let the master make sure all the sequences are the same length,
 	/// i.e. all the states have same number of designable residues
 	if ( master ) {
-		BOOST_FOREACH ( std::string sequence, other_pose_sequences ) {
+		for ( std::string const & sequence: other_pose_sequences ) {
 			if ( sequence.size() != my_sequence.size() ) {
 				utility_exit_with_message( "Error: all states must have the same number of designable residues" );
 			}

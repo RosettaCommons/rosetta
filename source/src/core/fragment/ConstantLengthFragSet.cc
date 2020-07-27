@@ -47,7 +47,6 @@
 #include <ostream>
 #include <sstream>
 #include <string>
-#include <boost/foreach.hpp>
 
 namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
 

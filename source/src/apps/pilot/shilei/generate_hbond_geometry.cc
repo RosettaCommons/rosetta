@@ -80,7 +80,6 @@
 #include <numeric/conversions.hh>
 
 //boost
-#include <boost/lexical_cast.hpp>
 
 //Tracer
 #include <basic/basic.hh>

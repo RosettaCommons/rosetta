@@ -103,7 +103,7 @@ HelixPairing::HelixPairing( String const & hp ):
 void HelixPairing::initialize()
 {
 	using namespace boost;
-	name_ = lexical_cast<String>(h1_) + '-' + lexical_cast<String>(h2_) + '.' + orient_ ;
+	name_ = std::to_string(h1_) + '-' + std::to_string(h2_) + '.' + orient_ ;
 }
 
 /// @brief copy constructor

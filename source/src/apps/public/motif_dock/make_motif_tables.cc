@@ -72,7 +72,6 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 #include <numeric/HomogeneousTransform.hh>
 
-#include <boost/foreach.hpp>
 
 
 static basic::Tracer TR( "motif_hash_util" );
@@ -141,7 +140,7 @@ inline void merge_motifs(){
 	}
 
 	TR << "write to disk" << endl;
-	BOOST_FOREACH ( ResPairMotifsMap::value_type const & p,mmap ) {
+	for ( ResPairMotifsMap::value_type const & p: mmap ) {
 		std::string label = binner.hash_to_labal(p.first);
 		write_motifs_binary(option[mh::motif_out_file]()+(label.size()?"_":"")+label,p.second);
 	}
@@ -311,7 +310,7 @@ inline void harvest_scores(){
 
 	if ( option[mh::harvest::min_bin_val].user() ) {
 		TR << "prune" << endl;
-		BOOST_FOREACH ( XformScoreMap::value_type& v,xscoremap_joint ) v.second->prune_small_bins(option[mh::harvest::min_bin_val]());
+		for ( XformScoreMap::value_type& v: xscoremap_joint ) v.second->prune_small_bins(option[mh::harvest::min_bin_val]());
 	}
 
 	TR << xscoremap_joint;
@@ -319,7 +318,7 @@ inline void harvest_scores(){
 	TR << "write to disk" << endl;
 	string PATH = option[mh::motif_out_file]();
 	utility::file::create_directory_recursive(PATH);
-	BOOST_FOREACH ( XformScoreMap::value_type const & p,xscoremap_joint ) {
+	for ( XformScoreMap::value_type const & p: xscoremap_joint ) {
 		std::string label = binner.hash_to_labal(p.first);
 		p.second->write_binary(PATH+"/"+PATH+(label.size()?"_":"")+label+".xh.bin.gz");
 	}

@@ -27,9 +27,6 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>
 
-#include <boost/iterator/indirect_iterator.hpp>
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
 /// @detailed
 ///

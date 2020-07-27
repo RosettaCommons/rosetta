@@ -40,7 +40,6 @@
 // C++ Headers
 
 // Boost Headers
-#include <boost/bind.hpp>
 
 namespace core {
 namespace pack {

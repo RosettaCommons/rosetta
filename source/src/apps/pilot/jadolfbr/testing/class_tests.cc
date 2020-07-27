@@ -57,7 +57,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 #include <limits>
 
 // External Headers

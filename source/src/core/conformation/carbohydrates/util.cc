@@ -52,7 +52,6 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 
 // External Headers
-#include <boost/lexical_cast.hpp>
 #include <basic/basic.hh>
 
 // C++ Header

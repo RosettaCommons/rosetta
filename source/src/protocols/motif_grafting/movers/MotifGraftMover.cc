@@ -32,7 +32,6 @@
 
 //Include Rosetta boost c_ap
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 
 //Include Rosetta XML tag reader
 #include <utility/tag/Tag.hh>

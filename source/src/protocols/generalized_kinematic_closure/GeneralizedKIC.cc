@@ -50,7 +50,6 @@
 #include <numeric/kinematic_closure/kinematic_closure_helpers.hh>
 #include <numeric/conversions.hh>
 
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

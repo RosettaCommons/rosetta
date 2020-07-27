@@ -38,13 +38,11 @@
 #include <numeric/HomogeneousTransform.fwd.hh>
 #include <boost/unordered_map.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
 
 //C++ headers
 #include <map>
 #include <set>
-
+#include <tuple>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
@@ -140,7 +138,7 @@ struct Basis {
 
 		//return false;
 
-		return boost::tie(a.model_id, a.resnum) < boost::tie(b.model_id, b.resnum);
+		return std::tie(a.model_id, a.resnum) < std::tie(b.model_id, b.resnum);
 	}
 
 	int model_id;

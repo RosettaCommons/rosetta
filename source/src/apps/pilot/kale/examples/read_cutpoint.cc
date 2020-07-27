@@ -19,7 +19,6 @@
 // Utility headers
 #include <devel/init.hh>
 #include <utility/exit.hh>
-#include <boost/foreach.hpp>
 #include <iostream>
 
 using namespace std;
@@ -37,8 +36,8 @@ using protocols::kinematic_closure::ParameterList;
 
 AtomID id_from_index(Size index, Size first_residue) {
 	return AtomID(
-			((index - 1) % 3) + 1,
-			((index - 1) / 3) + first_residue - 1);
+		((index - 1) % 3) + 1,
+		((index - 1) / 3) + first_residue - 1);
 }
 
 int main(int argc, char** argv) {
@@ -89,62 +88,62 @@ int main(int argc, char** argv) {
 	Size index = 1;
 
 	for (Size i = first_residue - 1; i <= last_residue + 1; i++) {
-		core::conformation::Residue const &residue = pose.residue(i);
+	core::conformation::Residue const &residue = pose.residue(i);
 
-		for (Size j = 1; j <= 3; j++) {
-			atom_xyzs[index].resize(3);
-			atom_xyzs[index][1] = residue.xyz(j).x();
-			atom_xyzs[index][2] = residue.xyz(j).y();
-			atom_xyzs[index][3] = residue.xyz(j).z();
-			index++;
-		}
+	for (Size j = 1; j <= 3; j++) {
+	atom_xyzs[index].resize(3);
+	atom_xyzs[index][1] = residue.xyz(j).x();
+	atom_xyzs[index][2] = residue.xyz(j).y();
+	atom_xyzs[index][3] = residue.xyz(j).z();
+	index++;
+	}
 	}
 
 	// Read the internal coordinates.
 
 	for (Size index = 1; index <= num_atoms; index++) {
-		ids[0] = id_from_index(index + 0, first_residue);
-		ids[1] = id_from_index(index + 1, first_residue);
-		ids[2] = id_from_index(index + 2, first_residue);
-		ids[3] = id_from_index(index + 3, first_residue);
+	ids[0] = id_from_index(index + 0, first_residue);
+	ids[1] = id_from_index(index + 1, first_residue);
+	ids[2] = id_from_index(index + 2, first_residue);
+	ids[3] = id_from_index(index + 3, first_residue);
 
-		bond_lengths[index] = (index > num_bond_lengths) ?
-			0 : conformation.bond_length(ids[0], ids[1]);
+	bond_lengths[index] = (index > num_bond_lengths) ?
+	0 : conformation.bond_length(ids[0], ids[1]);
 
-		bond_angles[(index % num_atoms) + 1] = (index > num_bond_angles) ?
-			0 : conformation.bond_angle(ids[0], ids[1], ids[2]);
+	bond_angles[(index % num_atoms) + 1] = (index > num_bond_angles) ?
+	0 : conformation.bond_angle(ids[0], ids[1], ids[2]);
 
-		torsion_angles[(index % num_atoms) + 1] = (index > num_torsion_angles) ?
-			0 : conformation.torsion_angle(ids[0], ids[1], ids[2], ids[3]);
+	torsion_angles[(index % num_atoms) + 1] = (index > num_torsion_angles) ?
+	0 : conformation.torsion_angle(ids[0], ids[1], ids[2], ids[3]);
 	}
 
 	// Set the internal coordinates.
 
 	for (Size index = 1; index <= num_bond_lengths; index++) {
-		ids[0] = id_from_index(index + 0, first_residue);
-		ids[1] = id_from_index(index + 1, first_residue);
+	ids[0] = id_from_index(index + 0, first_residue);
+	ids[1] = id_from_index(index + 1, first_residue);
 
-		conformation.set_bond_length(
-				ids[0], ids[1], bond_lengths[index]);
+	conformation.set_bond_length(
+	ids[0], ids[1], bond_lengths[index]);
 	}
 
 	for (Size index = 1; index <= num_bond_angles; index++) {
-		ids[0] = id_from_index(index + 0, first_residue);
-		ids[1] = id_from_index(index + 1, first_residue);
-		ids[2] = id_from_index(index + 2, first_residue);
+	ids[0] = id_from_index(index + 0, first_residue);
+	ids[1] = id_from_index(index + 1, first_residue);
+	ids[2] = id_from_index(index + 2, first_residue);
 
-		conformation.set_bond_angle(
-				ids[0], ids[1], ids[2], bond_angles[index + 1]);
+	conformation.set_bond_angle(
+	ids[0], ids[1], ids[2], bond_angles[index + 1]);
 	}
 
 	for (Size index = 1; index <= num_torsion_angles; index++) {
-		ids[0] = id_from_index(index + 0, first_residue);
-		ids[1] = id_from_index(index + 1, first_residue);
-		ids[2] = id_from_index(index + 2, first_residue);
-		ids[3] = id_from_index(index + 3, first_residue);
+	ids[0] = id_from_index(index + 0, first_residue);
+	ids[1] = id_from_index(index + 1, first_residue);
+	ids[2] = id_from_index(index + 2, first_residue);
+	ids[3] = id_from_index(index + 3, first_residue);
 
-		conformation.set_torsion_angle(
-					ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1] + 1);
+	conformation.set_torsion_angle(
+	ids[0], ids[1], ids[2], ids[3], torsion_angles[index + 1] + 1);
 	}
 
 	// Dump the final structure.

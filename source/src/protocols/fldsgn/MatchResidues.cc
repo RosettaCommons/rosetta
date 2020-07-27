@@ -43,8 +43,6 @@
 // Boost Headers
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
-#include <boost/lexical_cast.hpp>
-#include "boost/assign.hpp"
 
 
 static basic::Tracer TR( "protocols.fldsgn.MatchResidues" );
@@ -238,7 +236,7 @@ std::map< std::string, boost::tuple< core::Size, core::Size> >
 MatchResidues::map_ss_segments( std::string const & ss) const
 {
 	std::map< std::string, boost::tuple<core::Size, core::Size> > ss_map;
-	std::map< char, core::Size > ss_seg_count = boost::assign::map_list_of ( 'L', 0 ) ( 'H', 0 ) ( 'E', 0 );
+	std::map< char, core::Size > ss_seg_count = { { 'L', 0 }, { 'H', 0 }, { 'E', 0 } };
 	char last = ss[0];
 	ss_seg_count[ last ] += 1;
 	core::Size start = 1;
@@ -248,12 +246,12 @@ MatchResidues::map_ss_segments( std::string const & ss) const
 		if ( ss[i] == last ) {
 			// push if last element
 			if ( i + 1 == ss.size() ) {
-				ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, i) ) );
+				ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + std::to_string( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, i) ) );
 			}
 			continue;
 		} else {
 			end = i ;
-			ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + boost::lexical_cast< std::string >( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, end) ) );
+			ss_map.insert( std::make_pair< std::string, boost::tuple<core::Size, core::Size> >( last + std::to_string( ss_seg_count[ss[i - 1] ] ), boost::make_tuple(start, end) ) );
 			ss_seg_count[ ss[i] ] += 1;
 			start = end + 1;
 			last = ss[i +  1];

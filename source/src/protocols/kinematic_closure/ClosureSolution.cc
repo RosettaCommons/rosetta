@@ -37,7 +37,6 @@
 // Utility headers
 #include <utility>
 #include <utility/exit.hh>
-#include <boost/foreach.hpp>
 
 // External headers
 #include <Eigen/Dense>

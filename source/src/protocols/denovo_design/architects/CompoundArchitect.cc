@@ -28,7 +28,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.architects.CompoundArchitect" );
 
@@ -233,10 +232,11 @@ CompoundArchitect::define_pairing_group( utility::tag::XMLSchemaDefinition & xsd
 	//  .write_complex_type_to_schema( xsd );
 
 
-	utility::vector1< std::string > pairing_names = boost::assign::list_of
-		(components::StrandPairing::class_name())
-		(components::HelixPairing::class_name())
-		(components::HelixSheetPairing::class_name());
+	utility::vector1< std::string > pairing_names = {
+		components::StrandPairing::class_name(),
+		components::HelixPairing::class_name(),
+		components::HelixSheetPairing::class_name()
+		};
 
 	XMLSchemaModelGroupOP pairing_choice( new XMLSchemaModelGroup );
 	pairing_choice->type( xsmgt_choice );

@@ -23,7 +23,6 @@
 #include <utility/vector1.hh>
 #include <utility/tools/make_vector1.hh>
 #include <devel/init.hh>
-#include <boost/foreach.hpp>
 
 #include <sstream>
 
@@ -61,7 +60,7 @@ int main(int argc, char** argv) {
 	cout << silent_pose << endl;
 
 	// Read pose from silent
-	{	
+	{
 		Pose temp_pose;
 		SilentFileData silent_file;
 		stringstream string_stream(silent_pose);

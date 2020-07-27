@@ -28,8 +28,6 @@
 #include <utility>
 
 // External headers
-#include <boost/assign.hpp>
-#include <boost/assign/std/vector.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Project headers
@@ -85,31 +83,31 @@ core::Real gdtsc(const core::pose::Pose& ref,
 	using std::map;
 	using std::string;
 
-	static const map<char, string> gdtsc_atom = boost::assign::map_list_of
-		('A',  "CA")
-		('C',  "SG")
-		('D', "OD2")
-		('E', "OE2")
-		('F',  "CZ")
-		('G',  "CA")
-		('H', "NE2")
-		('I', "CD1")
-		('K',  "NZ")
-		('L', "CD1")
-		('M',  "CE")
-		('N', "OD1")
-		('P',  "CG")
-		('Q', "OE1")
-		('R', "NH2")
-		('S',  "OG")
-		('T', "OG1")
-		('V', "CG1")
-		('W', "CH2")
-		('Y',  "OH")
-		('a', "C4'")
-		('c', "C4'")
-		('g', "C4'")
-		('u', "C4'");
+	static const map<char, string> gdtsc_atom = {
+		{'A',  "CA"},
+		{'C',  "SG"},
+		{'D', "OD2"},
+		{'E', "OE2"},
+		{'F',  "CZ"},
+		{'G',  "CA"},
+		{'H', "NE2"},
+		{'I', "CD1"},
+		{'K',  "NZ"},
+		{'L', "CD1"},
+		{'M',  "CE"},
+		{'N', "OD1"},
+		{'P',  "CG"},
+		{'Q', "OE1"},
+		{'R', "NH2"},
+		{'S',  "OG"},
+		{'T', "OG1"},
+		{'V', "CG1"},
+		{'W', "CH2"},
+		{'Y',  "OH"},
+		{'a', "C4'"},
+		{'c', "C4'"},
+		{'g', "C4'"},
+		{'u', "C4'"} };
 
 	if ( !ref.is_fullatom() || !mod.is_fullatom() ) {
 		tr.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;

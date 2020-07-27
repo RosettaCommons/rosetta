@@ -11,17 +11,17 @@
 /// @brief  Test the algorithms that drive the KinematicMover.
 /// @author Kale Kundert
 ///
-/// Each of the tests in this suite exercises one of the helper functions used 
-/// by the Kinematic Mover.  In most of the tests, the helper function in 
-/// question is provided with one set of input data.  The resulting output data 
-/// is then exhaustively checked, either against hand-calculated results or 
-/// results from Dan Mandell's KinematicMover implementation.  
-/// 
-/// The input data is taken from the ``loop.pdb`` file located in this 
-/// directory.  It is a 5-residue segment of an ideal alpha-helix, build using 
-/// Pymol, with pivots in the 2, 3, and 4 positions.  Two closure solutions 
-/// exist for this configuration, but one has a near-infinite jacobian weight.  
-/// In the future, I'd like to find a different input structure that has two 
+/// Each of the tests in this suite exercises one of the helper functions used
+/// by the Kinematic Mover.  In most of the tests, the helper function in
+/// question is provided with one set of input data.  The resulting output data
+/// is then exhaustively checked, either against hand-calculated results or
+/// results from Dan Mandell's KinematicMover implementation.
+///
+/// The input data is taken from the ``loop.pdb`` file located in this
+/// directory.  It is a 5-residue segment of an ideal alpha-helix, build using
+/// Pymol, with pivots in the 2, 3, and 4 positions.  Two closure solutions
+/// exist for this configuration, but one has a near-infinite jacobian weight.
+/// In the future, I'd like to find a different input structure that has two
 /// closure solutions with more reasonable jacobian weights.
 
 #ifndef INCLUDED_devel_balanced_kic_algorithm_tests_CXXTEST_HH
@@ -37,7 +37,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 using namespace core;
 using namespace devel::balanced_kic;
@@ -86,19 +85,19 @@ public:
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 1],  -2.614, -3.357, -1.789,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 2],  -1.165, -3.357, -1.789,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 3],  -0.641, -1.928, -1.789,  1e-3);
-                                 
+
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 4],  -1.201, -1.087, -2.662,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 5],  -0.790,  0.300, -2.759,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 6],  -0.945,  0.987, -1.410,  1e-3);
-                                 
+
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 7],  -2.097,  0.789, -0.767,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 8],  -2.366,  1.389,  0.525,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[ 9],  -1.293,  0.981,  1.524,  1e-3);
-                                 
+
 		TS_ASSERT_VECTOR (problem.atom_xyzs[10],  -0.975, -0.315,  1.564,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[11],   0.031, -0.829,  2.472,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[12],   1.355, -0.116,  2.243,  1e-3);
-                                 
+
 		TS_ASSERT_VECTOR (problem.atom_xyzs[13],   1.757,  0.008,  0.976,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[14],   2.999,  0.667,  0.627,  1e-3);
 		TS_ASSERT_VECTOR (problem.atom_xyzs[15],   3.010,  2.087,  1.175,  1e-3);
@@ -124,7 +123,7 @@ public:
 		TS_ASSERT_DELTA (problem.bond_lengths[15], 8.370, 1e-3);
 
 		// Test Bond Angles {{{2
-		
+
 		TS_ASSERT_EQUALS (problem.bond_angles.size(), 15);
 
 		TS_ASSERT_DELTA (problem.bond_angles[ 1],  47.782, 1e-3);
@@ -164,7 +163,7 @@ public:
 		TS_ASSERT_DELTA (problem.torsion_angles[15], 348.880, 1e-3);
 
 		// }}}2
-	
+
 	}
 
 	void test_perturb_loop_coordinates() { // {{{1
@@ -173,16 +172,16 @@ public:
 		bool exhausted;
 
 		TS_ASSERT_DIFFERS (problem.bond_lengths[1], -1)
-		TS_ASSERT_DIFFERS (problem.bond_angles[1], -1)
-		TS_ASSERT_DIFFERS (problem.torsion_angles[1], -1)
+			TS_ASSERT_DIFFERS (problem.bond_angles[1], -1)
+			TS_ASSERT_DIFFERS (problem.torsion_angles[1], -1)
 
-		perturb_loop_coordinates(problem, perturber, exhausted);
+			perturb_loop_coordinates(problem, perturber, exhausted);
 
 		TS_ASSERT_EQUALS (problem.bond_lengths[1], -1)
-		TS_ASSERT_EQUALS (problem.bond_angles[1], -1)
-		TS_ASSERT_EQUALS (problem.torsion_angles[1], -1)
+			TS_ASSERT_EQUALS (problem.bond_angles[1], -1)
+			TS_ASSERT_EQUALS (problem.torsion_angles[1], -1)
 
-		TS_ASSERT (exhausted);
+			TS_ASSERT (exhausted);
 
 	}
 
@@ -246,7 +245,7 @@ public:
 		TS_ASSERT_DELTA (solutions[2].bond_lengths[15], 8.370, 1e-3);
 
 		// Test Bond Angles {{{2
-		
+
 		TS_ASSERT_EQUALS (solutions[1].bond_angles.size(), 15);
 		TS_ASSERT_EQUALS (solutions[2].bond_angles.size(), 15);
 
@@ -320,7 +319,7 @@ public:
 		TS_ASSERT_DELTA (solutions[2].torsion_angles[15], 348.880, 1e-3);
 
 		// }}}2
-		
+
 	}
 
 	void test_perform_sanity_check() { // {{{1
@@ -349,7 +348,7 @@ public:
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 4],  -1.201, -1.087, -2.662,  1e-3);
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 5],  -0.790,  0.300, -2.759,  1e-3);
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 6],  -0.945,  0.987, -1.410,  1e-3);
-		
+
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 7],  -2.097,  0.789, -0.767,  1e-3);
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 8],  -2.366,  1.389,  0.525,  1e-3);
 		TS_ASSERT_VECTOR (atom_xyzs_1[ 9],  -1.293,  0.981,  1.524,  1e-3);
@@ -400,7 +399,7 @@ public:
 		TS_ASSERT_VECTOR (pose_1, 2, "N",   -1.201, -1.087, -2.662,  1e-3);
 		TS_ASSERT_VECTOR (pose_1, 2, "CA",  -0.790,  0.300, -2.759,  1e-3);
 		TS_ASSERT_VECTOR (pose_1, 2, "C",   -0.945,  0.987, -1.410,  1e-3);
-		
+
 		TS_ASSERT_VECTOR (pose_1, 3, "N",   -2.097,  0.789, -0.767,  1e-3);
 		TS_ASSERT_VECTOR (pose_1, 3, "CA",  -2.366,  1.389,  0.525,  1e-3);
 		TS_ASSERT_VECTOR (pose_1, 3, "C",   -1.293,  0.981,  1.524,  1e-3);
@@ -443,8 +442,8 @@ public:
 
 		TS_ASSERT_DELTA (solutions[1].jacobian, 1.550, 1e-3);
 
-		// The jacobian for the second solution is on the order of 10^100.  Since I 
-		// don't actually know if this result is correct, I feel uncomfortable 
+		// The jacobian for the second solution is on the order of 10^100.  Since I
+		// don't actually know if this result is correct, I feel uncomfortable
 		// explicitly testing for it.
 
 		//TS_ASSERT_DELTA (solutions[2].jacobian, 1, 1e-3);
@@ -457,7 +456,7 @@ public:
 		SolutionList const &c = a, &d = b;
 		ChainedSolutionList solutions(c, d);
 
-		for (int i = 0; i < 3; i++) {
+		for ( int i = 0; i < 3; i++ ) {
 			ClosureSolution x;
 			ClosureSolution y;
 
@@ -470,7 +469,7 @@ public:
 
 		Size expected_id = 0;
 
-		BOOST_FOREACH (ClosureSolution const &solution, solutions) {
+		for ( ClosureSolution const &solution: solutions ) {
 			TS_ASSERT_EQUALS (solution.id, expected_id);
 			expected_id += 1;
 		}
@@ -485,42 +484,42 @@ public:
 		float iterations = 1e4;
 		utility::vector1<int> pick_counter(2);
 
-		for (int i = 1; i <= iterations; i++) {
+		for ( int i = 1; i <= iterations; i++ ) {
 			pick_random_solution(solutions, solution);
 			pick_counter[solution.id]++;
 		}
 
 		TS_ASSERT_DELTA (pick_counter[1] / iterations, 0.5, 0.1)
-		TS_ASSERT_DELTA (pick_counter[2] / iterations, 0.5, 0.1)
+			TS_ASSERT_DELTA (pick_counter[2] / iterations, 0.5, 0.1)
 
 	}
 
 	void test_pick_balanced_solution() { // {{{1
- 
+
 		ClosureSolution solution;
 		Real total_jacobian = solutions[1].jacobian + solutions[2].jacobian;
 		float iterations = 1e4;
 		utility::vector1<int> pick_counter(2);
 
-		for (int i = 1; i <= iterations; i++) {
+		for ( int i = 1; i <= iterations; i++ ) {
 			pick_balanced_solution(solutions, solutions, solution);
 			pick_counter[solution.id]++;
 		}
 
 		TS_ASSERT_DELTA (
-				pick_counter[1] / iterations, 
-				solutions[1].jacobian / total_jacobian, 0.1)
+			pick_counter[1] / iterations,
+			solutions[1].jacobian / total_jacobian, 0.1)
 
-		TS_ASSERT_DELTA (
-				pick_counter[2] / iterations, 
-				solutions[2].jacobian / total_jacobian, 0.1)
+			TS_ASSERT_DELTA (
+			pick_counter[2] / iterations,
+			solutions[2].jacobian / total_jacobian, 0.1)
 
 	}
 	// }}}1
 
 	// Untested algorithms.
 
-	void idealize_loop_coordinates() {	// {{{1
+	void idealize_loop_coordinates() { // {{{1
 
 		//ClosureProblem problem;
 		//idealize_loop_coordinates(problem);

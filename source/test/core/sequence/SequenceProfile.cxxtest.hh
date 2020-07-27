@@ -74,7 +74,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <boost/functional/hash.hpp>
 
 
 class SequenceProfile_Tests : public CxxTest::TestSuite {

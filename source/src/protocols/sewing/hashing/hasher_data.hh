@@ -19,8 +19,6 @@
 //External headers
 #include <boost/unordered_map.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
 #include <map>
 #include <set>
 // Utility headers

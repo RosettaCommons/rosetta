@@ -38,8 +38,6 @@
 #include <utility/vector1.hh>
 
 // Boost headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 
 
@@ -84,7 +82,7 @@ core::Vector centroid_by_residues(core::conformation::ResidueCOPs residue_c_poin
 	core::Vector centroid_sum(0);
 	core::Size atom_count=0;
 
-	foreach ( core::conformation::ResidueCOP residue_pointer, residue_c_pointers ) {
+	for ( core::conformation::ResidueCOP residue_pointer: residue_c_pointers ) {
 		atom_count = atom_count + residue_pointer->natoms();
 
 		for (

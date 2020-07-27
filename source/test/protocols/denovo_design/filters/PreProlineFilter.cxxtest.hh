@@ -35,7 +35,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 
@@ -93,7 +92,7 @@ public:
 		// now select chain a
 		core::select::residue_selector::ChainSelectorOP selchain(
 			new core::select::residue_selector::ChainSelector() );
-		utility::vector1< std::string > const chains = boost::assign::list_of ("A");
+		utility::vector1< std::string > const chains = { "A" };
 		selchain->set_chain_strings( chains );
 		prepro.set_selector( selchain );
 		core::Real const sel_bad = prepro.compute( input_pose );

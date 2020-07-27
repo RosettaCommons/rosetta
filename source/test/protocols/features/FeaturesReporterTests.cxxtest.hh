@@ -71,8 +71,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <limits>
 
 // External Headers
@@ -166,7 +164,7 @@ public:
 
 		structure_reporter_->write_schema_to_db(db_session);
 
-		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP const & reporter: features_reporters_ ) {
 			tr << "Writing schema for '" << reporter->type_name() << "'" << std::endl;
 			reporter->write_schema_to_db(db_session);
 		}
@@ -174,7 +172,7 @@ public:
 
 	void do_test_type_name() {
 		using protocols::features::FeaturesReporterOP;
-		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP const & reporter: features_reporters_ ) {
 			TS_ASSERT_DIFFERS(reporter->type_name(), "Unknown_FeaturesReporter");
 		}
 	}
@@ -187,7 +185,7 @@ public:
 		StructureID parent_id = structure_reporter_->report_features(batch_id_, db_session_, output_tag_, input_tag_);
 		tr << "Created structure id:" << parent_id << std::endl;
 
-		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP const & reporter: features_reporters_ ) {
 			tr << "Reporting features for '" << reporter->type_name() << "'" << std::endl;
 			reporter->report_features(*pose_1ten_, batch_id_, db_session_);
 		}

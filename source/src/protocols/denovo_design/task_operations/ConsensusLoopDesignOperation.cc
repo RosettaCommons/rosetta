@@ -38,7 +38,6 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 
 // boost headers
-#include <boost/assign.hpp>
 
 // c++ headers
 
@@ -672,7 +671,7 @@ ConsensusLoopDatabase::read_db()
 {
 	// constants
 	static std::string const db_file = "protocol_data/denovo_design/aa_abego_frequencies.gz";
-	static std::map< char, char > const ss_to_abego = boost::assign::map_list_of ('E', 'B')('H', 'A');
+	static std::map< char, char > const ss_to_abego = { {'E', 'B'}, {'H', 'A'} };
 
 	utility::io::izstream infile;
 	basic::database::open( infile, db_file );

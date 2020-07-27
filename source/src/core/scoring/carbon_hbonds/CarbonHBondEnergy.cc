@@ -40,7 +40,6 @@
 
 #include <core/scoring/DerivVectorPair.hh>
 #include <utility/vector1.hh>
-#include <boost/bind.hpp>
 
 //Auto Headers
 #include <core/scoring/EnergyMap.hh>

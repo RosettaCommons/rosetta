@@ -43,8 +43,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 
@@ -93,9 +91,9 @@ public:
 
 		SheetDB db;
 		db.set_idealize( false );
-		Lengths const lengths = boost::assign::list_of (5)(6)(6);
-		StrandOrientations const orientations = boost::assign::list_of (UP)(DOWN)(UP);
-		RegisterShifts const register_shifts = boost::assign::list_of (0)(-1)(0);
+		Lengths const lengths = { 5, 6, 6 };
+		StrandOrientations const orientations = { UP, DOWN, UP };
+		RegisterShifts const register_shifts = { 0,-1, 0 };
 
 		core::Size const nstrands = 3;
 		std::string const orientation_str = "101";
@@ -124,8 +122,8 @@ public:
 
 		// now add test2 as a different length
 		std::string const new_lengths_str = "5:0,5:0,5:0";
-		Lengths const new_lengths = boost::assign::list_of(5)(5)(5);
-		RegisterShifts const new_shifts = boost::assign::list_of(0)(0)(0);
+		Lengths const new_lengths = { 5, 5, 5};
+		RegisterShifts const new_shifts = { 0, 0, 0 };
 		db.add_sheet( testpose, nstrands, orientation_str, new_lengths_str, false );
 		SheetList const & p3 = db.sheet_list( new_lengths, orientations, new_shifts );
 		TS_ASSERT_EQUALS( p3.size(), 1 );
@@ -236,9 +234,9 @@ public:
 		SheetDB db;
 		db.set_db_path( "/work/tlinsky/sheet_db/clustered" );
 
-		Lengths const lengths = boost::assign::list_of (5)(5)(5)(5);
-		StrandOrientations const orientations = boost::assign::list_of (UP)(UP)(UP)(UP);
-		RegisterShifts const shifts = boost::assign::list_of (0)(0)(0)(0);
+		Lengths const lengths = { 5, 5, 5, 5 };
+		StrandOrientations const orientations = { UP, UP, UP, UP };
+		RegisterShifts const shifts = { 0, 0, 0, 0 };
 		SheetList list = db.sheet_list( lengths, orientations, shifts );
 		TR << " Loaded " << list.size() << " sheets." << std::endl;
 		TS_ASSERT( list.size() );
@@ -308,9 +306,9 @@ public:
 		core::Size const nstrands = 3;
 		std::string const orientations_str = "101";
 		std::string const lengths_str = "7:0,7:0,5:0";
-		Lengths const lengths = boost::assign::list_of (7)(7)(5);
-		StrandOrientations const orientations = boost::assign::list_of (UP)(DOWN)(UP);
-		RegisterShifts const shifts = boost::assign::list_of (0)(0)(0);
+		Lengths const lengths = { 7, 7, 5 };
+		StrandOrientations const orientations = { UP, DOWN, UP };
+		RegisterShifts const shifts = { 0, 0, 0 };
 
 		std::string const id = "testsheet";
 		std::string const ids[] = { "s1", "s2", "s3" };

@@ -29,7 +29,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR("PairedSheetResidueSelectorTests");
 
@@ -80,7 +79,7 @@ public:
 
 		// strand 1 is 2-6, but only 3-6 should be paired
 		// strand 2 is 32-38, but only 32-35 should be paired
-		ResidueVector should_be_paired = boost::assign::list_of (3)(4)(5)(6)(32)(33)(34)(35);
+		ResidueVector should_be_paired = { 3, 4, 5, 6, 32, 33, 34, 35 };
 		check_true( subset, should_be_paired );
 
 		// changing the register shift should change the paired residues
@@ -90,7 +89,7 @@ public:
 
 		// strand 1 is 2-6, and 2-6 should be paired
 		// strand 2 is 32-38, and 33-37 should be paired
-		should_be_paired = boost::assign::list_of (2)(3)(4)(5)(6)(33)(34)(35)(36)(37).convert_to_container< ResidueVector >();
+		should_be_paired = { 2, 3, 4, 5, 6, 33, 34, 35, 36, 37 };
 		check_true( subset, should_be_paired );
 
 		// new secondary structure adds a strand residue to E1
@@ -101,7 +100,7 @@ public:
 
 		// strand 1 is 2-7, and 2-7 should be paired
 		// strand 2 is 32-38, and 33-38 should be paired
-		should_be_paired = boost::assign::list_of (2)(3)(4)(5)(6)(7)(33)(34)(35)(36)(37)(38).convert_to_container< ResidueVector >();
+		should_be_paired = { 2, 3, 4, 5, 6, 7, 33, 34, 35, 36, 37, 38 };
 		check_true( subset, should_be_paired );
 
 		/// try adding both strands
@@ -113,7 +112,7 @@ public:
 		// strand 1 is 2-6, and 3-6 should be paired
 		// strand 2 is 32-38, and 32-38 should be paired
 		// strand 3 is 63-69 and all should be paired
-		should_be_paired = boost::assign::list_of (3)(4)(5)(6)(32)(33)(34)(35)(36)(37)(38)(63)(64)(65)(66)(67)(68)(69).convert_to_container< ResidueVector >();
+		should_be_paired = { 3, 4, 5, 6, 32, 33, 34, 35, 36, 37, 38, 63, 64, 65, 66, 67, 68, 69 };
 		check_true( subset, should_be_paired );
 	}
 

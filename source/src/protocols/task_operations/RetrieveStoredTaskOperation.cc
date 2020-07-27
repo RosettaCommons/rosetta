@@ -35,8 +35,6 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <protocols/task_operations/STMStoredTask.hh>
 
-#include <boost/foreach.hpp>
-
 // C++ Headers
 #include <utility/string_util.hh>
 #include <utility/vector0.hh>
@@ -46,7 +44,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
-#include <boost/functional/hash.hpp>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <core/pack/task/operation/task_op_schemas.hh>
 

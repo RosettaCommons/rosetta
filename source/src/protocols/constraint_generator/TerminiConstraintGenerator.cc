@@ -29,7 +29,6 @@
 #include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.constraint_generator.TerminiConstraintGenerator" );
 
@@ -118,7 +117,7 @@ TerminiConstraintGenerator::apply( core::pose::Pose const & pose ) const
 		<< " max_distance=" << max_distance_ << std::endl;
 	core::scoring::constraints::ConstraintOP const cst( new core::scoring::constraints::AtomPairConstraint( atom1, atom2, cstfunc ) );
 
-	return boost::assign::list_of( cst );
+	return { cst };
 }
 
 void

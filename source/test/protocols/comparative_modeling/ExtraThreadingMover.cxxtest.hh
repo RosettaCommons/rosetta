@@ -144,9 +144,6 @@
 #include <basic/MetricValue.fwd.hh>
 #include <basic/Tracer.fwd.hh>
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/functional/hash.hpp>
 
 
 class ExtraThreadingMover_Tests : public CxxTest::TestSuite {

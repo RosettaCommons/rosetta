@@ -52,8 +52,6 @@
 #include <protocols/toolbox/superimpose.hh>
 
 //Include Boost
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
 //Include ObjexxFCL

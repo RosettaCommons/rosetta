@@ -29,8 +29,6 @@
 #include <utility/assert.hh>
 
 // boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <iostream>

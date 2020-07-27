@@ -36,8 +36,6 @@
 #include <iostream>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 namespace core {
 namespace pack {

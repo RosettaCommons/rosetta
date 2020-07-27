@@ -94,7 +94,6 @@
 
 // External headers
 #include <ObjexxFCL/format.hh>
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 #include <fstream>

@@ -38,7 +38,6 @@
 #include <basic/Tracer.hh>
 
 // Boost
-#include <boost/assign.hpp>
 
 // C++ headers
 
@@ -161,8 +160,7 @@ public:
 		ConsensusLoopDesignOperation loopdesign;
 		loopdesign.set_enrichment_threshold( 0.0 );
 
-		utility::vector1< ConsensusLoopDesignOperation::AAs > const allowed_aas = boost::assign::list_of
-			("CDHIMPV")("DGNV")("CDHLNT")("AEIPW");
+		utility::vector1< ConsensusLoopDesignOperation::AAs > const allowed_aas = { "CDHIMPV", "DGNV", "CDHLNT", "AEIPW" };
 
 		for ( core::Size loop_res=1; loop_res<=loop_abego.size(); ++loop_res ) {
 			TR << "Loop res " << loop_res << std::endl;
@@ -258,11 +256,9 @@ public:
 		ConsensusLoopDatabase & db = *ConsensusLoopDatabase::get_instance();
 
 		// just look at alanine frequency data
-		utility::vector1< core::Real > const ala_freqs = boost::assign::list_of
-			(0.152334152334)(0.012285012285)(0.044226044226)(0.0405405405405);
+		utility::vector1< core::Real > const ala_freqs = { 0.152334152334, 0.012285012285, 0.044226044226, 0.0405405405405 };
 
-		utility::vector1< core::Real > const ala_enrichment = boost::assign::list_of
-			(0.886730581866)(-1.63096589075)(-0.350032045283)(-0.437043422273);
+		utility::vector1< core::Real > const ala_enrichment = { 0.886730581866, -1.63096589075, -0.350032045283, -0.437043422273 };
 
 		// get stats from a known motif -- GB connecting two helices
 		for ( core::Size lres=1; lres<=4; ++lres ) {

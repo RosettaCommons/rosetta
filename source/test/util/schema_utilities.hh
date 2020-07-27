@@ -18,9 +18,9 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
-#include <boost/function.hpp>
 #include <map>
 #include <string>
+#include <functional>
 
 #include <protocols/moves/mover_schemas.hh> // For check_if_mover_tag_validates()
 
@@ -81,7 +81,7 @@ void
 ensure_all_cts_for_creators_have_documentation_strings(
 	std::map< std::string, CreatorOP > const & creator_map,
 	std::string const & name_of_base_class,
-	boost::function< std::string ( std::string const & ) > ct_naming_function
+	std::function< std::string ( std::string const & ) > ct_naming_function
 )
 {
 	using namespace utility::tag;

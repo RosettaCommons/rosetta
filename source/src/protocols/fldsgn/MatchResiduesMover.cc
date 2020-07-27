@@ -38,9 +38,6 @@
 
 
 // Boost Headers
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
-#include <boost/lexical_cast.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

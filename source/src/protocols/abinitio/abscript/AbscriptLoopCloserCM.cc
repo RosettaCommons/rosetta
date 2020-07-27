@@ -60,9 +60,6 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 
-#include <boost/functional/hash.hpp>
-#include <boost/foreach.hpp>
-
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes

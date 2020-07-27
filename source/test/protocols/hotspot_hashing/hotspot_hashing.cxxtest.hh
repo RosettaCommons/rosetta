@@ -43,9 +43,6 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/pack/task/TaskFactory.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
 
@@ -553,7 +550,7 @@ public:
 		TS_ASSERT_EQUALS(points_zero.size(), 4 /*angles*/ * 13 /*trans*/ * 3 /*dist*/);
 
 		// Assert on location
-		foreach ( Stub transform, points_zero ) {
+		for ( Stub transform: points_zero ) {
 			TS_ASSERT_LESS_THAN_EQUALS(lsm_zero.position.distance(transform.v), std::sqrt( max_radius * max_radius + max_distance * max_distance));
 		}
 
@@ -571,7 +568,7 @@ public:
 		utility::vector1<Stub> points_test = test_pattern.Searchpoints();
 		TS_ASSERT_EQUALS(points_test.size(), 4 /*angles*/ * 13 /*trans*/ * 3 /*dist*/);
 
-		foreach ( Stub transform, points_test ) {
+		for ( Stub transform: points_test ) {
 			TS_ASSERT_LESS_THAN_EQUALS(lsm_test.position.distance(transform.v), std::sqrt( max_radius * max_radius + max_distance * max_distance));
 		}
 	}
@@ -628,7 +625,7 @@ public:
 	2);
 	utility::vector1<Stub> points_test = test_pattern.Searchpoints();
 
-	foreach(Stub transform, points_test)
+	for(Stub transform: points_test)
 	{
 	core::pose::Pose testPose(targetPose);
 
@@ -702,7 +699,7 @@ public:
 		Stub slide_stub(numeric::y_rotation_matrix_degrees(rotation_degrees - 180.), Vector(0));
 		StubGenerator::placeResidueOnPose(mobile_residue_pose, residue);
 
-		residue_pose.dump_pdb("sic_residue_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
+		residue_pose.dump_pdb("sic_residue_pose_" + std::to_string(rotation_degrees) + ".pdb");
 
 		SearchPatternOP slide_pattern( new ConstPattern(slide_stub) );
 
@@ -713,7 +710,7 @@ public:
 			StubGenerator::moveIntoStubFrame(pre_slide_residue, slide_stub);
 			StubGenerator::placeResidueOnPose(pre_slide, pre_slide_residue);
 
-			pre_slide.dump_pdb("sic_pre_slide_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
+			pre_slide.dump_pdb("sic_pre_slide_pose_" + std::to_string(rotation_degrees) + ".pdb");
 		}
 
 		core::Real clash_distance = basic::options::option[basic::options::OptionKeys::sicdock::clash_dis]();
@@ -731,7 +728,7 @@ public:
 			StubGenerator::moveIntoStubFrame(post_slide_residue, searchpoints[1]);
 			StubGenerator::placeResidueOnPose(post_slide, post_slide_residue);
 
-			post_slide.dump_pdb("sic_post_slide_pose_" + boost::lexical_cast<std::string>(rotation_degrees) + ".pdb");
+			post_slide.dump_pdb("sic_post_slide_pose_" + std::to_string(rotation_degrees) + ".pdb");
 			// Expected distance between CB atoms is 2*clash_distance
 			// Calculate global residue position in the slide frame (rotated)
 			// and the post-slide frame

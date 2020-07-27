@@ -17,8 +17,6 @@
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 namespace protocols {
 namespace noesy_assign {

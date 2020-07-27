@@ -44,7 +44,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 static basic::Tracer TR("protocols.denovo_design.StructureData.cxxtest");
@@ -189,7 +188,7 @@ public:
 
 		// Foldgraph should be able to handle non-peptide bonds
 		FoldGraph fg( sd );
-		core::kinematics::FoldTree const ft = fg.fold_tree( boost::assign::list_of("1") );
+		core::kinematics::FoldTree const ft = fg.fold_tree( { "1" } );
 		TS_ASSERT( ft.check_fold_tree() );
 		input_pose.fold_tree( ft );
 
@@ -270,7 +269,7 @@ public:
 		utility::io::izstream xml( "protocols/denovo_design/test_sd.xml" );
 		StructureData sd = StructureDataFactory::get_instance()->create_from_xml( xml );
 
-		SegmentNameSet const slice_segments = boost::assign::list_of("bb.sheet.s1")("bb.sheet_h1")("bb.h1")("bb.h1_sheet")("bb.sheet.s2");
+		SegmentNameSet const slice_segments = { "bb.sheet.s1", "bb.sheet_h1", "bb.h1", "bb.h1_sheet", "bb.sheet.s2" };
 		StructureData const sliced = sd.slice( slice_segments, false );
 
 		for ( SegmentNameList::const_iterator s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {

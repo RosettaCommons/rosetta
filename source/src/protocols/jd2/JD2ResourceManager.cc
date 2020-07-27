@@ -49,7 +49,6 @@
 #include <utility/sql_database/DatabaseSessionManager.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 // External Headers
 #include <cppdb/frontend.h>

@@ -38,7 +38,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/assign/list_of.hpp>
 
 // C++ Headers
 #include <string>

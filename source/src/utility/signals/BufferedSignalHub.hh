@@ -30,8 +30,6 @@
 #include <utility/assert.hh>
 /// #include <core/pose/signals/DestructionEvent.hh> -- Illegal and unneccessary
 // boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <vector>

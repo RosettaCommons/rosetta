@@ -51,8 +51,6 @@
 
 // Boost headers
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 static basic::Tracer TR_DS( "core.pack.interaction_graph.RotamerDots.DotSphere" );
 static basic::Tracer TR_RD( "core.pack.interaction_graph.RotamerDots.RotamerDots" );

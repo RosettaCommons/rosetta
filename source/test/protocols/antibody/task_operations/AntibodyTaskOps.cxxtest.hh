@@ -41,11 +41,9 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 #include <utility/vector1.hh>
 
-#define BFE BOOST_FOREACH
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::clusters;

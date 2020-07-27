@@ -50,7 +50,6 @@
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

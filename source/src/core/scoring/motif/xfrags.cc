@@ -63,7 +63,6 @@
 
 #include <boost/unordered_set.hpp>
 
-#include <boost/foreach.hpp>
 #include <bitset>
 
 #ifndef _WIN32

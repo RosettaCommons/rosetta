@@ -19,7 +19,6 @@
 #include <utility/VirtualBase.hh>
 
 // Boost headers
-//#include <boost/function.hpp>
 
 // C++ headers
 //#include <list>

@@ -23,8 +23,6 @@
 #include <utility/mpi_util.hh>
 #include <basic/Tracer.hh>
 
-#include <boost/foreach.hpp>
-
 namespace protocols {
 namespace recon_design {
 
@@ -52,7 +50,7 @@ get_designable_residues( core::pose::Pose & pose, std::string resfile ) {
 std::string
 get_designable_sequence ( core::pose::Pose & pose, utility::vector1< core::Size > designable_residues ) {
 	std::string sequence = "";
-	BOOST_FOREACH ( core::Size seqpos, designable_residues ) {
+	for ( core::Size seqpos: designable_residues ) {
 		sequence += pose.residue( seqpos ).name1();
 	}
 	return sequence;
@@ -67,7 +65,7 @@ get_candidate_AAs( utility::vector1< std::string > other_pose_sequences,
 	utility::vector1< std::string > candidate_AAs;
 
 	// Iterate through all poses in my collection and find their AA at this position
-	BOOST_FOREACH ( std::string sequence, other_pose_sequences ) {
+	for ( std::string const & sequence: other_pose_sequences ) {
 		char current_AA = sequence[ position_no-1 ]; // string is zero indexed
 		std::string current_AA_3letter = core::chemical::name_from_aa( core::chemical::aa_from_oneletter_code( current_AA ) );
 		if ( std::find( candidate_AAs.begin(), candidate_AAs.end(), current_AA_3letter ) == candidate_AAs.end() ) {

@@ -39,7 +39,6 @@
 
 // Boost Headers
 #include <boost/algorithm/string/replace.hpp>
-#include <boost/lexical_cast.hpp>
 
 static basic::Tracer TR("StructureDataFactoryTests");
 
@@ -133,7 +132,7 @@ public:
 		for ( core::Size z=1; z<=1; ++z ) {
 			core::io::silent::SilentStructOP silent =
 				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct_out( input_pose, opts );
-			silent->fill_struct( input_pose, '_' + boost::lexical_cast< std::string >( z ) );
+			silent->fill_struct( input_pose, '_' + std::to_string( z ) );
 			sfd.add_structure( *silent );
 		}
 		sfd.write_all( "test.silent" );

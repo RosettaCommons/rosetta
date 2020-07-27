@@ -34,8 +34,6 @@
 #include <utility/vector1.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 // C++ Headers
 #include <map>
@@ -92,18 +90,18 @@ public:
 
 		// create atom type sets from the rosetta_database
 		vector1<AtomTypeSetOP> atss;  // "Atom Type SetS"
-		foreach ( string ats_directory, ats_directories ) {
+		for ( string const & ats_directory: ats_directories ) {
 			atss.push_back(utility::pointer::make_shared< AtomTypeSet >(ats_directory));
 		}
 
 		// save atom type set to ats_test_database.db3
-		foreach ( AtomTypeSetOP ats, atss ) {
+		for ( AtomTypeSetOP ats: atss ) {
 			atom_type_dbio_.write_atom_type_set_to_database(*ats, db_session_);
 		}
 
 		// create atom type sets from ats_test_database.db3
 		vector1<AtomTypeSetOP> atss_from_db;
-		foreach ( AtomTypeSetOP ats, atss ) {
+		for ( AtomTypeSetOP ats: atss ) {
 			string const & ats_name(ats->name());
 			atss_from_db.push_back(utility::pointer::make_shared< AtomTypeSet >(ats_name, db_session_));
 		}

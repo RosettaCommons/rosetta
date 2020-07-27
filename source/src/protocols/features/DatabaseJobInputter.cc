@@ -235,7 +235,7 @@ DatabaseJobInputter::set_struct_ids_from_sql(
 					utility_exit_with_message("You have specified non-unque input tags which can cause ambigous output. Please make input tags unique");
 				}
 			} else {
-				tag = boost::lexical_cast<std::string>(struct_id);
+				tag = std::to_string(struct_id);
 			}
 			tag_structures_[tag] = struct_id;
 
@@ -315,7 +315,7 @@ void protocols::features::DatabaseJobInputter::fill_jobs( protocols::jd2::JobsCo
 		while ( res.next() ) {
 			StructureID struct_id;
 			res >> struct_id;
-			tag_structures_[boost::lexical_cast<std::string>(struct_id)]=struct_id;
+			tag_structures_[std::to_string(struct_id)]=struct_id;
 		}
 		tr << tag_structures_.size() << " struct_ids found." << endl;
 	}

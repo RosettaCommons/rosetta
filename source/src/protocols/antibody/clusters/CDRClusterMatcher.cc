@@ -40,7 +40,6 @@
 // Boost headers
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/lexical_cast.hpp>
 
 static basic::Tracer TR( "protocols.antibody.cluster.CDRClusterMatcher" );
 

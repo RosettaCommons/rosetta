@@ -56,7 +56,6 @@
 #include <numeric/interpolation/spline/CubicSpline.hh>
 #include <numeric/MathMatrix.hh>
 #include <numeric/MathVector.srlz.hh>
-#include <boost/lexical_cast.hpp>
 #include <map>
 #include <math.h>
 #include <set>

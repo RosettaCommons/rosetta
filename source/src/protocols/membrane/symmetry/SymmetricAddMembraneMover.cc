@@ -82,7 +82,6 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
-#include <boost/foreach.hpp>
 
 static basic::Tracer TR( "protocols.membrane.symmetry.SymmetricAddMembraneMover" );
 

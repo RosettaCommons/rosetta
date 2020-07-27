@@ -39,7 +39,6 @@
 
 // C++ headers
 #include <ObjexxFCL/FArray1D.hh>
-#include <boost/lexical_cast.hpp>
 #include <iostream>
 
 static basic::Tracer TR("devel.denovo_design.BuildSheet.cxxtest");
@@ -104,7 +103,7 @@ public:
 		builder.twist( 0.0 );
 		utility::vector1< StrandData > strand_data;
 		for ( core::Size i=1; i<=4; ++i ) {
-			strand_data.push_back( StrandData( "S" + boost::lexical_cast< std::string >( i ),
+			strand_data.push_back( StrandData( "S" + std::to_string( i ),
 				6,
 				0,
 				"P" ) );

@@ -31,8 +31,6 @@
 #include <utility/vector1.hh>
 
 // Boost Headers
-//#include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
 
 #include <vector>
 
@@ -110,7 +108,6 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 	using namespace basic::database;
-	using namespace boost::assign;
 
 	Column property("property", utility::pointer::make_shared< DbText >(32));
 
@@ -126,17 +123,17 @@ AtomTypeDatabaseIO::write_atom_type_property_values_table_schema(
 	string const table_name("atom_type_property_values");
 	std::vector<string> column_names;
 	column_names.emplace_back("property");
-	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ACCEPTOR"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("DONOR"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("POLAR_HYDROGEN"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("AROMATIC"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("H2O"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ORBITALS"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("VIRTUAL"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("SP2_HYBRID"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("SP3_HYBRID"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("RING_HYBRID"), db_session);
+	insert_or_ignore(table_name, column_names, {"ACCEPTOR"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ACCEPTOR"}, db_session);
+	insert_or_ignore(table_name, column_names, {"DONOR"}, db_session);
+	insert_or_ignore(table_name, column_names, {"POLAR_HYDROGEN"}, db_session);
+	insert_or_ignore(table_name, column_names, {"AROMATIC"}, db_session);
+	insert_or_ignore(table_name, column_names, {"H2O"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ORBITALS"}, db_session);
+	insert_or_ignore(table_name, column_names, {"VIRTUAL"}, db_session);
+	insert_or_ignore(table_name, column_names, {"SP2_HYBRID"}, db_session);
+	insert_or_ignore(table_name, column_names, {"SP3_HYBRID"}, db_session);
+	insert_or_ignore(table_name, column_names, {"RING_HYBRID"}, db_session);
 
 }
 

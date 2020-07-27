@@ -33,8 +33,6 @@
 #include <utility/tag/Tag.hh>
 #include <numeric/random/random.hh>
 
-#include <boost/foreach.hpp>
-
 // tracer
 #include <basic/Tracer.hh>
 

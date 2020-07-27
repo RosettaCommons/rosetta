@@ -56,7 +56,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // External headers
-#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <string>
@@ -1439,7 +1438,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 2 : {
@@ -1476,7 +1475,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 3 : {
@@ -1513,7 +1512,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 4 : {
@@ -1550,7 +1549,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 5 : {
@@ -1587,12 +1586,12 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	default :
 		utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
-			boost::lexical_cast<std::string>(n_chi) );
+			std::to_string(n_chi) );
 		break;
 	}
 	return rotlib;
@@ -1644,7 +1643,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 2 : {
@@ -1671,7 +1670,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 3 : {
@@ -1698,7 +1697,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 4 : {
@@ -1725,7 +1724,7 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	case 5 : {
@@ -1752,12 +1751,12 @@ RotamerLibrary::create_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(n_bb) );
+				std::to_string(n_bb) );
 		}
 	} break;
 	default :
 		utility_exit_with_message( "ERROR: too many chi angles desired for Dunbrack library: " +
-			boost::lexical_cast<std::string>(n_chi) );
+			std::to_string(n_chi) );
 		break;
 	}
 	return rotlib;
@@ -1823,7 +1822,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(nbb) );
+				std::to_string(nbb) );
 		}
 	} break;
 	case 2 : {
@@ -1865,14 +1864,14 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(nbb) );
+				std::to_string(nbb) );
 		}
 	} break;
 
 	default :
 		utility_exit_with_message(
 			"ERROR: too many chi angles desired for semi-rotameric Dunbrack library: "
-			+ boost::lexical_cast<std::string>(nchi));
+			+ std::to_string(nchi));
 		break;
 	}
 	return rotlib;
@@ -1947,7 +1946,7 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(nbb) );
+				std::to_string(nbb) );
 		}
 	} break;
 	case 2 : {
@@ -1984,14 +1983,14 @@ RotamerLibrary::create_semi_rotameric_dunlib(
 		}
 		default :
 			utility_exit_with_message( "ERROR: too many bb angles desired for Dunbrack library: " +
-				boost::lexical_cast<std::string>(nbb) );
+				std::to_string(nbb) );
 		}
 	} break;
 
 	default :
 		utility_exit_with_message(
 			"ERROR: too many chi angles desired for semi-rotameric Dunbrack library: "
-			+ boost::lexical_cast<std::string>(nchi));
+			+ std::to_string(nchi));
 		break;
 	}
 	return rotlib;

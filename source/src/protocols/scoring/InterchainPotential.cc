@@ -46,8 +46,6 @@
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 #if (defined WIN32) && (!defined WIN_PYROSETTA)
 #undef interface

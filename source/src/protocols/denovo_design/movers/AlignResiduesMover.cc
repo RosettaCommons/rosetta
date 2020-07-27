@@ -43,7 +43,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -279,8 +278,7 @@ AlignResiduesMover::align_residues(
 	components::StructureData sd = factory.get_from_pose( pose );
 	std::string const template_segment = sd.segment_name( template_resid );
 	std::string const target_segment = sd.segment_name( target_resid );
-	SegmentNames const roots = boost::assign::list_of
-		(template_segment)(target_segment);
+	SegmentNames const roots = { template_segment, target_segment };
 
 	FoldTreeFromFoldGraphMover create_ft( roots, protocols::loops::Loops() );
 	create_ft.apply( pose );

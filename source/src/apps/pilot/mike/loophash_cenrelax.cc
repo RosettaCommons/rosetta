@@ -14,7 +14,6 @@
 // libRosetta headers
 #include <protocols/jd2/JobDistributor.hh>
 
-#include <boost/cstdint.hpp>
 #include <boost/unordered_map.hpp>
 #include <core/fragment/picking/VallChunk.hh>
 #include <core/chemical/ResidueTypeSet.hh>

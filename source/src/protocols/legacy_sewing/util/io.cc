@@ -30,7 +30,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>
 
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace legacy_sewing  {

@@ -46,7 +46,6 @@
 #include <cppdb/frontend.h>
 
 //C++ Headers
-#include <boost/assign/list_of.hpp>
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -171,7 +170,6 @@ RRReporterSQLite::write_nchi_table_schema(
 ) const {
 	using namespace basic::database::schema_generator;
 	using namespace basic::database;
-	using namespace boost::assign;
 
 	Column name3("name3", utility::pointer::make_shared< DbText >());
 	Column nchi("nchi", utility::pointer::make_shared< DbInteger >());
@@ -190,26 +188,26 @@ RRReporterSQLite::write_nchi_table_schema(
 	std::vector<string> column_names;
 	column_names.emplace_back("name3");
 	column_names.emplace_back("nchi");
-	insert_or_ignore(table_name, column_names, list_of("ARG")("4"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("LYS")("4"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("MET")("3"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("GLN")("3"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("GLU")("3"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("TYR")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ILE")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ASP")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("TRP")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("PHE")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("HIS")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ASN")("2"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("THR")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("SER")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("PRO")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("CYS")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("VAL")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("LEU")("1"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("ALA")("0"), db_session);
-	insert_or_ignore(table_name, column_names, list_of("GLY")("0"), db_session);
+	insert_or_ignore(table_name, column_names, {"ARG","4"}, db_session);
+	insert_or_ignore(table_name, column_names, {"LYS","4"}, db_session);
+	insert_or_ignore(table_name, column_names, {"MET","3"}, db_session);
+	insert_or_ignore(table_name, column_names, {"GLN","3"}, db_session);
+	insert_or_ignore(table_name, column_names, {"GLU","3"}, db_session);
+	insert_or_ignore(table_name, column_names, {"TYR","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ILE","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ASP","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"TRP","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"PHE","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"HIS","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ASN","2"}, db_session);
+	insert_or_ignore(table_name, column_names, {"THR","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"SER","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"PRO","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"CYS","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"VAL","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"LEU","1"}, db_session);
+	insert_or_ignore(table_name, column_names, {"ALA","0"}, db_session);
+	insert_or_ignore(table_name, column_names, {"GLY","0"}, db_session);
 }
 
 void

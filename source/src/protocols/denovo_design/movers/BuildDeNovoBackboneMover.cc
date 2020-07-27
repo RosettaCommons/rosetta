@@ -63,7 +63,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 #include <ctime>
@@ -694,7 +693,7 @@ BuildDeNovoBackboneMover::create_constraint_generators( ResidueVector const & re
 	if ( residues.empty() ) {
 		return BuildDeNovoBackboneMover::ConstraintGeneratorCOPs();
 	}
-	return boost::assign::list_of (create_overlap_constraint_generator( residues ));
+	return { create_overlap_constraint_generator( residues ) };
 }
 
 /// @brief builds a constraint generator for residues that overlap between phases

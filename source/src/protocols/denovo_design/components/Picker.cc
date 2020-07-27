@@ -37,7 +37,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost/ObjexxFCL Headers
-#include <boost/lexical_cast.hpp>
 
 //C++ Headers
 

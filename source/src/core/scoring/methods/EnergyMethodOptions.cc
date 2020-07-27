@@ -47,8 +47,6 @@
 
 #include <cppdb/frontend.h>
 
-#include <boost/lexical_cast.hpp>
-
 using std::string;
 using utility::vector1;
 
@@ -2104,10 +2102,10 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(split_unfolded_value_type_);
 
 	option_keys.push_back("covalent_labeling_input");
-	option_values.push_back(boost::lexical_cast<std::string>(covalent_labeling_input_));
+	option_values.push_back(covalent_labeling_input_);
 
 	option_keys.push_back("covalent_labeling_fa_input");
-	option_values.push_back(boost::lexical_cast<std::string>(covalent_labeling_fa_input_));
+	option_values.push_back(covalent_labeling_fa_input_);
 
 	option_keys.push_back("exclude_protein_protein_fa_elec");
 	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");
@@ -2122,25 +2120,25 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(exclude_monomer_fa_elec_ ? "1" : "0");
 
 	option_keys.push_back("elec_max_dis");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_max_dis_));
+	option_values.push_back(std::to_string(elec_max_dis_));
 
 	option_keys.push_back("elec_min_dis");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_min_dis_));
+	option_values.push_back(std::to_string(elec_min_dis_));
 
 	option_keys.push_back("elec_die");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_die_));
+	option_values.push_back(std::to_string(elec_die_));
 
 	option_keys.push_back("elec_sigmoidal_die");
 	option_values.push_back(elec_sigmoidal_die_ ? "1" : "0");
 
 	option_keys.push_back("elec_sigmoidal_D");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_D_));
+	option_values.push_back(std::to_string(elec_sigmoidal_D_));
 
 	option_keys.push_back("elec_sigmoidal_D0");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_D0_));
+	option_values.push_back(std::to_string(elec_sigmoidal_D0_));
 
 	option_keys.push_back("elec_sigmoidal_S");
-	option_values.push_back(boost::lexical_cast<std::string>(elec_sigmoidal_S_));
+	option_values.push_back(std::to_string(elec_sigmoidal_S_));
 
 	option_keys.push_back("elec_no_dis_dep_die");
 	option_values.push_back(elec_no_dis_dep_die_ ? "1" : "0");
@@ -2152,10 +2150,10 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(use_gen_kirkwood_ ? "1" : "0");
 
 	option_keys.push_back("protein_dielectric");
-	option_values.push_back(boost::lexical_cast<std::string>(protein_dielectric_));
+	option_values.push_back(std::to_string(protein_dielectric_));
 
 	option_keys.push_back("water_dielectric");
-	option_values.push_back(boost::lexical_cast<std::string>(water_dielectric_));
+	option_values.push_back(std::to_string(water_dielectric_));
 
 	option_keys.push_back("exclude_DNA_DNA");
 	option_values.push_back(exclude_DNA_DNA_ ? "1" : "0");
@@ -2185,22 +2183,22 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(envsmooth_zero_negatives_ ? "1" : "0");
 
 	option_keys.push_back("cst_max_seq_sep");
-	option_values.push_back(boost::lexical_cast<std::string>(cst_max_seq_sep_));
+	option_values.push_back(std::to_string(cst_max_seq_sep_));
 
 	option_keys.push_back("cartbonded_len");
-	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_len_));
+	option_values.push_back(std::to_string(cartbonded_len_));
 
 	option_keys.push_back("cartbonded_ang");
-	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_ang_));
+	option_values.push_back(std::to_string(cartbonded_ang_));
 
 	option_keys.push_back("cartbonded_tors");
-	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_tors_));
+	option_values.push_back(std::to_string(cartbonded_tors_));
 
 	option_keys.push_back("cartbonded_improper");
-	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_improper_));
+	option_values.push_back(std::to_string(cartbonded_improper_));
 
 	option_keys.push_back("cartbonded_proton");
-	option_values.push_back(boost::lexical_cast<std::string>(cartbonded_proton_));
+	option_values.push_back(std::to_string(cartbonded_proton_));
 
 	option_keys.push_back("cartbonded_linear");
 	option_values.push_back(cartbonded_linear_ ? "1" : "0");
@@ -2215,10 +2213,10 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(genbonded_score_hybrid_ ? "1" : "0");
 
 	option_keys.push_back("ordered_wat_penalty");
-	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
+	option_values.push_back(std::to_string(ordered_wat_penalty_));
 
 	option_keys.push_back("ordered_pt_wat_penalty");
-	option_values.push_back(boost::lexical_cast<std::string>(ordered_wat_penalty_));
+	option_values.push_back(std::to_string(ordered_wat_penalty_));
 
 	string statement_string;
 	switch(db_session->get_db_mode()){

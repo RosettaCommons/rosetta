@@ -47,7 +47,6 @@
 #include <fstream>
 #include <sys/param.h>
 #include <unistd.h>
-#include <boost/lexical_cast.hpp>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
@@ -202,7 +201,7 @@ void run_command( std::string const & cmd ){
 	core::Size retval = system( cmd.c_str() );
 #endif
 	if ( retval != 0 ) {
-		utility_exit_with_message( "Failed to run command \"" + cmd + "\". Make sure you specify the full path to the relevant command in your XML file, and make sure the command works outside of Rosetta. Return code was " + boost::lexical_cast<std::string>( retval ) );
+		utility_exit_with_message( "Failed to run command \"" + cmd + "\". Make sure you specify the full path to the relevant command in your XML file, and make sure the command works outside of Rosetta. Return code was " + std::to_string( retval ) );
 	}
 
 }

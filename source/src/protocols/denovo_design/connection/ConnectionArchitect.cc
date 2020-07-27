@@ -34,7 +34,6 @@
 
 // Boost headers
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/assign.hpp>
 #include <numeric/random/random.hh>
 
 static basic::Tracer TR( "protocols.denovo_design.connection.ConnectionArchitect" );
@@ -623,24 +622,24 @@ core::Real
 calc_approx_loop_length( std::string const & abego )
 {
 	// these values are based on SIN(ANGLECHANGE/2)*3.8
-	static std::map< std::string, core::Real > const distmap =
-		boost::assign::map_list_of
-		("AA",2.18)
-		("AB",1.90)
-		("AE",3.79)
-		("AG",3.67)
-		("BA",3.44)
-		("BB",3.57)
-		("BE",0.98)
-		("BG",0.33)
-		("EA",0.33)
-		("EB",0.66)
-		("EE",2.91)
-		("EG",3.57)
-		("GA",3.74)
-		("GB",3.67)
-		("GE",2.91)
-		("GG",1.90);
+	static std::map< std::string, core::Real > const distmap = {
+		{"AA",2.18},
+		{"AB",1.90},
+		{"AE",3.79},
+		{"AG",3.67},
+		{"BA",3.44},
+		{"BB",3.57},
+		{"BE",0.98},
+		{"BG",0.33},
+		{"EA",0.33},
+		{"EB",0.66},
+		{"EE",2.91},
+		{"EG",3.57},
+		{"GA",3.74},
+		{"GB",3.67},
+		{"GE",2.91},
+		{"GG",1.90}
+		};
 	core::Real max_dist = 0.0;
 	std::string::const_iterator next = abego.begin() + 1;
 	for ( std::string::const_iterator a=abego.begin(); next!=abego.end(); ++a, ++next ) {

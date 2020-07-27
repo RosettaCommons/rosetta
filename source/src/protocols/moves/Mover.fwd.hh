@@ -16,8 +16,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
 
 #include <map>
 

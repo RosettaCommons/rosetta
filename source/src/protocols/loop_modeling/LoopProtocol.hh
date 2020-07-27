@@ -31,7 +31,6 @@
 
 // Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <boost/utility.hpp>
 #include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {

@@ -48,7 +48,7 @@ using utility::VirtualBase;
 
 // -- Construction and Assignment -- //
 //
-// Remember: scoped_ptr's aren't copyable. We need to allocate new memory for
+// Remember: unique_ptr's aren't copyable. We need to allocate new memory for
 // <sampler_> in the copy constructor and assignment operator.
 
 Chunk::Chunk(RegionOP  region, MoveMapOP  movable)

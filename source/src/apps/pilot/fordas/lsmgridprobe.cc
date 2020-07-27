@@ -56,7 +56,6 @@
 #include <numeric/xyz.functions.hh>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <basic/options/keys/out.OptionKeys.gen.hh>

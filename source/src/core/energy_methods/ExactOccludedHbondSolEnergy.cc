@@ -83,8 +83,6 @@
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 static basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 

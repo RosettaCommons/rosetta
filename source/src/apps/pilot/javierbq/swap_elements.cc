@@ -20,7 +20,6 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <boost/lexical_cast.hpp>
 #include <utility/exit.hh>
 // Utility headers
 #include <protocols/jd2/JobDistributor.hh>

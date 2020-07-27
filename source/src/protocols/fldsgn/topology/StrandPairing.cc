@@ -142,7 +142,7 @@ void
 StrandPairing::initialize()
 {
 	using namespace boost;
-	name_ = lexical_cast<String>(s1_) + '-' + lexical_cast<String>(s2_) + '.' + orient_ + '.'+ lexical_cast<String>(rgstr_shift_);
+	name_ = std::to_string(s1_) + '-' + std::to_string(s2_) + '.' + orient_ + '.'+ std::to_string(rgstr_shift_);
 }
 
 

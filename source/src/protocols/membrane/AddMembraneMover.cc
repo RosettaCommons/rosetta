@@ -97,7 +97,6 @@
 
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 #include <core/pose/util.hh>
 #include <utility/string_util.hh>

@@ -37,7 +37,6 @@
 #include <numeric/conversions.hh>
 
 // External headers
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 #include <string>
@@ -228,10 +227,10 @@ MMTorsionLibrary::lookup(
 
 	/// Arriving here, we've failed to find essential parameters
 	utility_exit_with_message("COULD NOT FIND TORSION PARAMS FOR " +
-		boost::lexical_cast<std::string>(atom1) + " " +
-		boost::lexical_cast<std::string>(atom2) + " " +
-		boost::lexical_cast<std::string>(atom3) + " " +
-		boost::lexical_cast<std::string>(atom4) );
+		std::to_string(atom1) + " " +
+		std::to_string(atom2) + " " +
+		std::to_string(atom3) + " " +
+		std::to_string(atom4) );
 	return mm_torsion_library_citer_pair();  //< meaningless, just for removing gcc warning.
 }
 

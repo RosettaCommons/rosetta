@@ -164,7 +164,7 @@ GenMeanFieldMover::report_aa_matrix() const
 				for ( core::Size bb = 1; bb <= sps.size(); ++bb ) {
 					std::string filename = basic::options::option[ basic::options::OptionKeys::mean_field::dump_transfac ];
 					filename += "_";
-					filename += boost::lexical_cast<std::string>(bb);
+					filename += std::to_string(bb);
 					filename += ".transfac";
 					sps[bb].dump_transfac( filename );
 				}

@@ -29,7 +29,6 @@
 #include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

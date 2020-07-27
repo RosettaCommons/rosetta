@@ -71,7 +71,6 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 
 //boost
-#include <boost/lexical_cast.hpp>
 
 //docking metrics
 #include <protocols/docking/metrics.hh>

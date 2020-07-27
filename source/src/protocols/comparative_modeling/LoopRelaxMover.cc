@@ -26,7 +26,6 @@
 #ifdef BOINC_GRAPHICS
 #include <protocols/boinc/boinc.hh>
 #endif // BOINC_GRAPHICS
-#include <boost/foreach.hpp>
 
 // Project Headers
 #include <core/pack/task/operation/TaskOperations.hh>

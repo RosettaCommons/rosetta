@@ -50,7 +50,7 @@
 
 //C++ headers
 #include <iostream>
-#include <boost/bind/bind.hpp>
+#include <functional>
 
 static basic::Tracer TR("protocols.environment.EnvironmentJump.cxxtest");
 
@@ -142,15 +142,15 @@ public:
 			new_jump.gaussian_move( 1, 10, 10 );
 
 			//Verify invalid movers cannot move the jump, and do not change the conformation.
-			TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
+			TS_ASSERT_THROWS( no_claim_mover->apply( protected_pose, std::bind( set_jump_, &protected_pose, 1, new_jump ) ),
 				EXCN_Env_Security_Exception & );
-			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ),
+			TS_ASSERT_THROWS( unreg_mover->apply( protected_pose, std::bind( set_jump_, &protected_pose, 1, new_jump ) ),
 				utility::excn::NullPointerError & );
 			TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
 			TS_ASSERT_EQUALS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
 
 			//Verify allowed movers are allowed
-			TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose, boost::bind( set_jump_, &protected_pose, 1, new_jump ) ) );
+			TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( protected_pose, std::bind( set_jump_, &protected_pose, 1, new_jump ) ) );
 			TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_translation(), init_jump.get_translation() );
 			TS_ASSERT_DIFFERS( protected_pose.jump( 1 ).get_rotation(), init_jump.get_rotation() );
 
@@ -201,7 +201,7 @@ public:
 		core::kinematics::Jump new_jump = old_jump;
 		new_jump.gaussian_move( 1, 10.0, 10.0 );
 
-		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, boost::bind( set_jump_, &ppose, 1, new_jump ) ) );
+		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, std::bind( set_jump_, &ppose, 1, new_jump ) ) );
 		TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_translation(), old_jump.get_translation() );
 		TS_ASSERT_DIFFERS( ppose.jump( 1 ).get_rotation(), old_jump.get_rotation() );
 		TS_ASSERT_THROWS_NOTHING( pose = env.end( ppose ) );
@@ -250,7 +250,7 @@ public:
 		core::kinematics::Jump new_jump( orig_jump );
 		new_jump.gaussian_move( 1, 10.0, 10.0 );
 
-		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, boost::bind( set_jump_, &ppose, 1, new_jump ) ) );
+		TS_ASSERT_THROWS_NOTHING( allowed_mover->apply( ppose, std::bind( set_jump_, &ppose, 1, new_jump ) ) );
 		TS_ASSERT_DIFFERS( ppose.jump( 1 ), orig_jump );
 
 		//Verify pose closable.
@@ -336,7 +336,7 @@ public:
 		core::kinematics::Jump new_jump( old_jump );
 		new_jump.gaussian_move( 1, 2.0, 2.0 );
 
-		TS_ASSERT_THROWS_NOTHING( tester->apply( ppose, boost::bind( boost::bind( set_jump_, &ppose, 1, new_jump ) ) ) );
+		TS_ASSERT_THROWS_NOTHING( tester->apply( ppose, std::bind( set_jump_, &ppose, 1, new_jump ) ) );
 
 	}
 };

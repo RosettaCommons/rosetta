@@ -23,7 +23,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
 
 // C++ headers
 #include <sstream>
@@ -552,21 +551,21 @@ public:
 	}
 
 	//void dont_test_xml_schema_element_w_restriction_type() {
-	//	XMLSchemaElement element;
-	//	element.name( "residues" );
-	//	XMLSchemaRestrictionOP cs_intlist( new XMLSchemaRestriction );
-	//	cs_intlist->base_type( xs_string );
-	//	cs_intlist->add_restriction( xsr_pattern, "[0-9]+(,[0-9]+)*" );
-	//	element.restriction_type_def( cs_intlist );
+	// XMLSchemaElement element;
+	// element.name( "residues" );
+	// XMLSchemaRestrictionOP cs_intlist( new XMLSchemaRestriction );
+	// cs_intlist->base_type( xs_string );
+	// cs_intlist->add_restriction( xsr_pattern, "[0-9]+(,[0-9]+)*" );
+	// element.restriction_type_def( cs_intlist );
 	//
-	//	std::ostringstream oss;
-	//	element.write_definition( 0, oss );
+	// std::ostringstream oss;
+	// element.write_definition( 0, oss );
 	//
-	//	std::string definition = "<xs:element name=\"residues\">\n <xs:simpleType>\n  <xs:restriction base=\"xs:string\">\n"
-	//		"   <xs:pattern value=\"[0-9]+(,[0-9]+)*\"/>\n"
-	//		"  </xs:restriction>\n </xs:simpleType>\n</xs:element>\n";
+	// std::string definition = "<xs:element name=\"residues\">\n <xs:simpleType>\n  <xs:restriction base=\"xs:string\">\n"
+	//  "   <xs:pattern value=\"[0-9]+(,[0-9]+)*\"/>\n"
+	//  "  </xs:restriction>\n </xs:simpleType>\n</xs:element>\n";
 	//
-	//	TS_ASSERT_EQUALS( definition, oss.str() );
+	// TS_ASSERT_EQUALS( definition, oss.str() );
 	//}
 
 	void test_xml_schema_definition_detect_name_collision() {
@@ -759,10 +758,10 @@ public:
 			// std::cout << expected_message << std::endl << std::endl;
 			// platform::Size first_diff = first_difference( e.msg(), expected_message );
 			// if ( first_diff < e.msg().size() && first_diff < expected_message.size() ) {
-			// 	std::cout << "first difference between messages: pos " << first_diff+1 << " '" << e.msg()[ first_diff ] << "' vs '"
-			// 						<< expected_message[ first_diff ] << "'" << std::endl;
+			//  std::cout << "first difference between messages: pos " << first_diff+1 << " '" << e.msg()[ first_diff ] << "' vs '"
+			//       << expected_message[ first_diff ] << "'" << std::endl;
 			// } else {
-			// 	std::cout << "first diff pos " << first_diff << " vs sizes " << e.msg().size() << " and " << expected_message.size() << std::endl;
+			//  std::cout << "first diff pos " << first_diff << " vs sizes " << e.msg().size() << " and " << expected_message.size() << std::endl;
 			// }
 		}
 	}
@@ -774,7 +773,7 @@ public:
 	void test_xml_complex_type_schema_generator_simple_ct() {
 		XMLSchemaComplexTypeGenerator ctgen;
 		ctgen.element_name( "Simple" );
-		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		ctgen.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func );
 		AttributeList attributes;
 		attributes.push_back( XMLSchemaAttribute( "name", xs_string , "" ));
 		attributes.push_back( XMLSchemaAttribute( "chains", xs_string , "" ));
@@ -801,11 +800,11 @@ public:
 	void test_xml_complex_type_schema_generator_subelement_ctref() {
 		XMLSchemaComplexTypeGenerator ctgen;
 		ctgen.element_name( "Testing123" );
-		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		ctgen.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func );
 
 		XMLSchemaSimpleSubelementList subelements;
-		subelements.add_already_defined_subelement( "Helix", boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
-		subelements.add_already_defined_subelement( "Sheet", boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		subelements.add_already_defined_subelement( "Helix", XMLSchemaGenerationTests::dummy_ct_naming_func );
+		subelements.add_already_defined_subelement( "Sheet", XMLSchemaGenerationTests::dummy_ct_naming_func );
 		ctgen.set_subelements_single_appearance_required( subelements );
 		ctgen.description( "" );
 
@@ -832,7 +831,7 @@ public:
 	void test_xml_complex_type_schema_generator_group_ct() {
 		XMLSchemaComplexTypeGenerator ctgen;
 		ctgen.element_name( "Group" );
-		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		ctgen.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func );
 
 		AttributeList attributes;
 		attributes.push_back( XMLSchemaAttribute( "name", xs_string , "" ));
@@ -852,7 +851,7 @@ public:
 		subelements.add_simple_subelement( "HelixCTerm", subelement_attributes , "" );
 		subelements.add_simple_subelement( "Loop", subelement_attributes , "" );
 		subelements.add_simple_subelement( "all", subelement_attributes , "" );
-		subelements.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func2, _1 ));
+		subelements.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func2 );
 
 		ctgen.set_subelements_repeatable( subelements );
 
@@ -921,7 +920,7 @@ public:
 	void test_xml_complex_type_schema_generator_group_ct_no_inner_naming_func() {
 		XMLSchemaComplexTypeGenerator ctgen;
 		ctgen.element_name( "Group" );
-		ctgen.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func, _1 ) );
+		ctgen.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func );
 
 		AttributeList attributes;
 		attributes.push_back( XMLSchemaAttribute( "name", xs_string , "" ));
@@ -942,7 +941,7 @@ public:
 		subelements.add_simple_subelement( "Loop", subelement_attributes , "" );
 		subelements.add_simple_subelement( "all", subelement_attributes , "" );
 		// do not set a naming function for the subelements
-		// subelements.complex_type_naming_func( boost::bind( XMLSchemaGenerationTests::dummy_ct_naming_func2, _1 ));
+		// subelements.complex_type_naming_func( XMLSchemaGenerationTests::dummy_ct_naming_func2 );
 
 		ctgen.set_subelements_repeatable( subelements );
 

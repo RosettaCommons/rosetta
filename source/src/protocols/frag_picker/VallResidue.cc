@@ -20,7 +20,6 @@
 #include <protocols/frag_picker/Faraggi_SA.hh>
 
 // boost headers
-#include <boost/type_traits.hpp>
 
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -315,11 +314,9 @@ utility::vector1<core::chemical::AA> VallResidue::order_vector() {
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string() {
-	using boost::is_same;
-
 	// resolve types
-	bool const is_ulong = is_same<core::Size, unsigned long>::value;
-	bool const is_double = is_same<core::Real, double>::value;
+	bool const is_ulong = std::is_same<core::Size, unsigned long>::value;
+	bool const is_double = std::is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -351,11 +348,10 @@ VallResidue::String VallResidue::format_string() {
 }
 
 VallResidue::String VallResidue::format_string_cs() {
-	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<core::Size, unsigned long>::value;
-	bool const is_double = is_same<core::Real, double>::value;
+	bool const is_ulong = std::is_same<core::Size, unsigned long>::value;
+	bool const is_double = std::is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -393,11 +389,10 @@ VallResidue::String VallResidue::format_string_cs() {
 /// @remarks This is necessary for sscanf; wrong type can give wrong
 ///  input.
 VallResidue::String VallResidue::format_string_version1() {
-	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<core::Size, unsigned long>::value;
-	bool const is_double = is_same<core::Real, double>::value;
+	bool const is_ulong = std::is_same<core::Size, unsigned long>::value;
+	bool const is_double = std::is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;
@@ -439,11 +434,10 @@ VallResidue::String VallResidue::format_string_version1() {
 }
 
 VallResidue::String VallResidue::format_string_residue_depth_version1() {
-	using boost::is_same;
 
 	// resolve types
-	bool const is_ulong = is_same<core::Size, unsigned long>::value;
-	bool const is_double = is_same<core::Real, double>::value;
+	bool const is_ulong = std::is_same<core::Size, unsigned long>::value;
+	bool const is_double = std::is_same<core::Real, double>::value;
 
 	// format w/ the following order:
 	std::ostringstream s;

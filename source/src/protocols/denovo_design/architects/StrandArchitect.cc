@@ -27,7 +27,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.architects.StrandArchitect" );
 

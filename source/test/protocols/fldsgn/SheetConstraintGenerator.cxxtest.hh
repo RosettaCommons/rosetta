@@ -44,8 +44,6 @@
 #include <utility/stream_util.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 
@@ -66,15 +64,15 @@ structuredata_from_motifs( Motifs const & motifs )
 	Motifs::const_iterator prev = motifs.end();
 	Motifs::const_iterator next = ++motifs.begin();
 	for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m, ++segment_num, ++next ) {
-		std::string const segment_name = boost::lexical_cast< std::string >( segment_num );
+		std::string const segment_name = std::to_string( segment_num );
 
 		std::string lower = "";
 		if ( prev != motifs.end() ) {
-			lower = boost::lexical_cast< std::string >( segment_num - 1 );
+			lower = std::to_string( segment_num - 1 );
 		}
 		std::string upper = "";
 		if ( next != motifs.end() ) {
-			upper = boost::lexical_cast< std::string >( segment_num + 1 );
+			upper = std::to_string( segment_num + 1 );
 		}
 
 		Segment newsegment( segment_name );
@@ -168,8 +166,7 @@ public:
 
 		core::pose::Pose pose = create_trpcage_ideal_pose();
 
-		mytest::Motifs const motifs = boost::assign::list_of
-			("1LX")("8EB")("2LG")("8EB")("1LX");
+		mytest::Motifs const motifs = {"1LX", "8EB", "2LG", "8EB", "1LX" };
 
 		StructureDataOP perm = mytest::structuredata_from_motifs( motifs );
 		TS_ASSERT( perm );
@@ -199,8 +196,7 @@ public:
 		using namespace protocols::denovo_design;
 		using namespace protocols::denovo_design::components;
 
-		mytest::Motifs const motifs = boost::assign::list_of
-			("1LX")("5EB")("2LG")("4EB")("1LX");
+		mytest::Motifs const motifs = { "1LX", "5EB", "2LG", "4EB", "1LX" };
 
 		TR << motifs << std::endl;
 		StructureDataOP perm = mytest::structuredata_from_motifs( motifs );
@@ -261,11 +257,12 @@ public:
 		TR << pairs << std::endl;
 
 		std::set< protocols::fldsgn::ResiduePair > const respairset( pairs.begin(), pairs.end() );
-		protocols::fldsgn::ResiduePairs const correct_pairs = boost::assign::list_of
-			( protocols::fldsgn::ResiduePair( 2, 12, 'A' ) )
-			( protocols::fldsgn::ResiduePair( 3, 11, 'A' ) )
-			( protocols::fldsgn::ResiduePair( 5, 10, 'A' ) )
-			( protocols::fldsgn::ResiduePair( 6, 9, 'A' ) );
+		protocols::fldsgn::ResiduePairs const correct_pairs = {
+			protocols::fldsgn::ResiduePair( 2, 12, 'A' ),
+			protocols::fldsgn::ResiduePair( 3, 11, 'A' ),
+			protocols::fldsgn::ResiduePair( 5, 10, 'A' ),
+			protocols::fldsgn::ResiduePair( 6, 9, 'A' )
+			};
 		for ( protocols::fldsgn::ResiduePairs::const_iterator p=correct_pairs.begin(); p!=correct_pairs.end(); ++p ) {
 			TR << "Comparing " << *p << " with set" << std::endl;
 			TS_ASSERT_DIFFERS( respairset.find( *p ), respairset.end() );
@@ -317,11 +314,12 @@ public:
 		TR << pairs2 << std::endl;
 
 		std::set< protocols::fldsgn::ResiduePair > const respairset2( pairs2.begin(), pairs2.end() );
-		protocols::fldsgn::ResiduePairs const correct_pairs2 = boost::assign::list_of
-			( protocols::fldsgn::ResiduePair( 2, 9, 'P' ) )
-			( protocols::fldsgn::ResiduePair( 3, 10, 'P' ) )
-			( protocols::fldsgn::ResiduePair( 5, 11, 'P' ) )
-			( protocols::fldsgn::ResiduePair( 6, 12, 'P' ) );
+		protocols::fldsgn::ResiduePairs const correct_pairs2 = {
+			protocols::fldsgn::ResiduePair( 2, 9, 'P' ),
+			protocols::fldsgn::ResiduePair( 3, 10, 'P' ),
+			protocols::fldsgn::ResiduePair( 5, 11, 'P' ),
+			protocols::fldsgn::ResiduePair( 6, 12, 'P' )
+			};
 		for ( protocols::fldsgn::ResiduePairs::const_iterator p=correct_pairs2.begin(); p!=correct_pairs2.end(); ++p ) {
 			TS_ASSERT_DIFFERS( respairset2.find( *p ), respairset2.end() );
 		}

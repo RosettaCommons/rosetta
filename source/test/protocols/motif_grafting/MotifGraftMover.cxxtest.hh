@@ -37,9 +37,6 @@
 //Include Rosetta numeric
 #include <numeric/xyz.functions.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
 //My own class headers

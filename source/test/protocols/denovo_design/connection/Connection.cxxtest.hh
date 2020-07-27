@@ -49,7 +49,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 static basic::Tracer TR( "protocols.denovo_design.Connection.cxxtest" );
@@ -218,7 +217,7 @@ public:
 				TS_ASSERT_EQUALS( sd->pose().chain( i ), 2 );
 			}
 		}
-		sd->consolidate_movable_groups( boost::assign::list_of ("UnitTest.1") ("UnitTest.2") );
+		sd->consolidate_movable_groups( { "UnitTest.1", "UnitTest.2" } );
 
 		conn.apply_connection( *sd );
 		TS_ASSERT_THROWS_NOTHING( sd->check_consistency() );
@@ -418,9 +417,8 @@ public:
 		}
 
 		// select some idealized motifs
-		std::set< core::Size > const length_set = boost::assign::list_of (3)(4);
-		std::set< std::string > const expected = boost::assign::list_of
-			("GBB")("BAB")("BGBB")("ABA")("GBBA")("BABA")("ABAA");
+		std::set< core::Size > const length_set = { 3, 4 };
+		std::set< std::string > const expected = { "GBB", "BAB", "BGBB", "ABA", "GBBA", "BABA", "ABAA" };
 
 		Motifs motifs = conn->calc_idealized_motifs( 'B', 'A', length_set );
 		for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {
@@ -430,8 +428,7 @@ public:
 
 		// now don't do extension
 		conn->set_extend_ss( false );
-		std::set< std::string > const expected_noextend = boost::assign::list_of
-			("GBB");
+		std::set< std::string > const expected_noextend = { "GBB" };
 		motifs = conn->calc_idealized_motifs( 'B', 'A', length_set );
 		TS_ASSERT_EQUALS( motifs.size(), 1 );
 		for ( Motifs::const_iterator m=motifs.begin(); m!=motifs.end(); ++m ) {

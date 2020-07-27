@@ -53,7 +53,6 @@
 
 // Boost/ObjexxFCL Headers
 #include <boost/algorithm/string.hpp>
-#include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
 
 //Auto Headers

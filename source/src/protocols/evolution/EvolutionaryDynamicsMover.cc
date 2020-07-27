@@ -25,9 +25,6 @@
 #include <string>
 
 // External headers
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <boost/function.hpp>
 #include <algorithm>
 
 // Utility headers

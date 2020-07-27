@@ -68,8 +68,6 @@
 #include <iomanip>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 namespace protocols {
 namespace scoring {

@@ -18,7 +18,6 @@
 #include <vector>
 #include <map>
 
-#include <boost/foreach.hpp>
 
 #include <boost/geometry.hpp>
 #include <boost/geometry/index/rtree.hpp>

@@ -47,7 +47,7 @@
 #include <utility/options/OptionCollection.fwd.hh>
 
 #include <unordered_map>
-#include <boost/functional/hash/hash.hpp>
+#include <boost/functional/hash.hpp>
 
 #ifdef    SERIALIZATION
 // Cereal headers

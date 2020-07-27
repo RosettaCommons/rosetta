@@ -10,7 +10,6 @@
 /// @file /src/apps/pilat/will/genmatch.cc
 /// @brief ???
 
-#include <boost/tuple/tuple.hpp>
 #include <basic/database/open.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>

@@ -18,8 +18,6 @@
 
 
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <basic/options/option.hh>
 #include <basic/options/util.hh>

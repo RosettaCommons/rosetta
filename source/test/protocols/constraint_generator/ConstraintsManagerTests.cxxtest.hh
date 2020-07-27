@@ -30,7 +30,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR("ConstraintsManagerTests");
 
@@ -82,7 +81,7 @@ public:
 		// should be able to add second set, and not disrupt the first
 		std::string const csts_name2 = "TestNullConstraints2";
 
-		ConstraintCOPs const csts2 = boost::assign::list_of(ConstraintOP())(ConstraintOP())(ConstraintOP());
+		ConstraintCOPs const csts2 = { ConstraintOP(), ConstraintOP(), ConstraintOP() };
 
 		// first, try to get things from pose. This should throw an error because there are no csts with that name
 		TS_ASSERT( !manager.has_stored_constraints( pose, csts_name2 ) );

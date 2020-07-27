@@ -16,7 +16,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <boost/bind/bind.hpp>
+#include <functional>
 
 namespace protocols {
 namespace environment {
@@ -24,41 +24,41 @@ namespace environment {
 class Tester : public protocols::environment::ClientMover {
 public:
 
-  Tester() : claim_( /* NULL */ ) {}
+	Tester() : claim_( /* NULL */ ) {}
 
-  void init( protocols::environment::claims::EnvClaimOP claim ) {
-	claim_ = claim;
-    claim_->set_owner( utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()) );
-  }
+	void init( protocols::environment::claims::EnvClaimOP claim ) {
+		claim_ = claim;
+		claim_->set_owner( utility::pointer::dynamic_pointer_cast< protocols::environment::ClientMover >(get_self_ptr()) );
+	}
 
-  virtual void apply( core::pose::Pose& ){}
+	virtual void apply( core::pose::Pose& ){}
 
-  // This use of bool apply allows us to apply an aribtrary functi
+	// This use of bool apply allows us to apply an aribtrary functi
 	using ClientMover::apply;
-  virtual void apply( core::pose::Pose& pose, boost::function< void() > f ) {
-    protocols::environment::DofUnlock activation( pose.conformation(), passport() );
-    f();
-  }
+	virtual void apply( core::pose::Pose& pose, std::function< void() > f ) {
+		protocols::environment::DofUnlock activation( pose.conformation(), passport() );
+		f();
+	}
 
-  virtual protocols::environment::claims::EnvClaims yield_claims( core::pose::Pose const&,
-                                                                  basic::datacache::WriteableCacheableMapOP ) {
-    protocols::environment::claims::EnvClaims claims;
-    if( claim_ ) claims.push_back( claim_ );
-    return claims;
-  }
+	virtual protocols::environment::claims::EnvClaims yield_claims( core::pose::Pose const&,
+		basic::datacache::WriteableCacheableMapOP ) {
+		protocols::environment::claims::EnvClaims claims;
+		if ( claim_ ) claims.push_back( claim_ );
+		return claims;
+	}
 
-  void claim( protocols::environment::claims::EnvClaimOP claim ){
-    claim_ = claim;
-  }
+	void claim( protocols::environment::claims::EnvClaimOP claim ){
+		claim_ = claim;
+	}
 
 	protocols::environment::claims::EnvClaimOP claim() {
 		return claim_;
 	}
 
-  virtual std::string get_name() const { return "TESTER"; }
+	virtual std::string get_name() const { return "TESTER"; }
 
 private:
-  protocols::environment::claims::EnvClaimOP claim_;
+	protocols::environment::claims::EnvClaimOP claim_;
 };
 
 typedef utility::pointer::shared_ptr< Tester > TesterOP;

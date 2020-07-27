@@ -50,7 +50,6 @@
 
 // External headers
 #include <ObjexxFCL/string.functions.hh>
-#include <boost/functional/hash.hpp>
 
 namespace core {
 namespace pose {

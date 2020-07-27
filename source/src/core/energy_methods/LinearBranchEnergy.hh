@@ -31,10 +31,8 @@
 // Project headers
 
 // Third-party headers
-#include <boost/scoped_ptr.hpp>
 
 // C++ headers
-
 #include <utility/vector1.hh>
 
 

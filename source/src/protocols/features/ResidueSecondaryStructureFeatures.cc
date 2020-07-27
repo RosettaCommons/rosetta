@@ -15,7 +15,6 @@
 #include <protocols/features/ResidueSecondaryStructureFeatures.hh>
 
 //External
-#include <boost/assign/list_of.hpp>
 
 // Project Headers
 #include <basic/Tracer.hh>
@@ -65,7 +64,6 @@ void
 ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::sessionOP db_session) const{
 	using namespace basic::database::schema_generator;
 	using namespace basic::database;
-	using namespace boost::assign;
 
 	Column code("code", utility::pointer::make_shared< DbText >(1), false);
 	Column label("label", utility::pointer::make_shared< DbText >(), false);
@@ -74,15 +72,15 @@ ResidueSecondaryStructureFeatures::write_schema_to_db(utility::sql_database::ses
 
 	dssp_codes.write(db_session);
 
-	std::vector<std::string> dssp_cols = list_of("code")("label");
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("H")("H: a-Helix"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("E")("E: b-Sheet"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("T")("T: HB Turn"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("G")("G: 3/10 Helix"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("B")("B: b-Bridge"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("S")("S: Bend"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of("I")("I: pi-Helix"), db_session);
-	insert_or_ignore("dssp_codes", dssp_cols, list_of(" ")("Irregular"), db_session);
+	std::vector<std::string> dssp_cols = {"code","label"};
+	insert_or_ignore("dssp_codes", dssp_cols, {"H","H: a-Helix"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"E","E: b-Sheet"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"T","T: HB Turn"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"G","G: 3/10 Helix"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"B","B: b-Bridge"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"S","S: Bend"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {"I","I: pi-Helix"}, db_session);
+	insert_or_ignore("dssp_codes", dssp_cols, {" ","Irregular"}, db_session);
 
 	/******residue_secondary_structure******/
 	Column struct_id("struct_id", utility::pointer::make_shared< DbBigInt >(), false);

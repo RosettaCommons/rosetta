@@ -47,8 +47,6 @@
 #include <iostream>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 static basic::Tracer TR_PcsGridSearchParameterManager( "protocols.scoring.methods.pcs.PcsGridSearchParameterManager" );
 

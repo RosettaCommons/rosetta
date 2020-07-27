@@ -54,7 +54,6 @@
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // C++ headers
-#include <boost/assign.hpp>
 #include <cmath>
 
 static basic::Tracer TR( "protocols.fldsgn.SheetConstraintGenerator" );
@@ -554,9 +553,10 @@ SheetConstraintGenerator::create_bb_dihedral_constraint(
 	core::id::AtomID const resi_c( pose.residue_type( res1 ).atom_index( "C" ), res1 );
 	core::id::AtomID const resi_o( pose.residue_type( res1 ).atom_index( "O" ), res1 );
 	core::id::AtomID const resj_c( pose.residue_type( res2 ).atom_index( "C" ), res2 );
-	ConstraintCOPs const csts = boost::assign::list_of
-		( utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func1 ) )
-		( utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func2 ) );
+	ConstraintCOPs const csts = {
+		utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func1 ),
+		utility::pointer::make_shared< DihedralConstraint >( resi_o, resi_n, resi_c, resj_c, func2 )
+		};
 	return utility::pointer::make_shared< AmbiguousConstraint >( csts );
 }
 

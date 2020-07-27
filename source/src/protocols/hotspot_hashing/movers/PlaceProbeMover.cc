@@ -16,7 +16,6 @@
 #include <basic/Tracer.hh>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -155,7 +154,7 @@ void PlaceProbeMover::execute_one_search(core::pose::Pose & pose, core::Size sea
 		"placeprobe_residue_name", post_refinement_residue->name());
 
 	protocols::jd2::add_string_string_pair_to_current_job(
-		"placeprobe_residue_number", boost::lexical_cast<std::string>(residueindex));
+		"placeprobe_residue_number", std::to_string(residueindex));
 }
 
 void PlaceProbeMover::check_and_initialize(core::pose::Pose const & target_pose)

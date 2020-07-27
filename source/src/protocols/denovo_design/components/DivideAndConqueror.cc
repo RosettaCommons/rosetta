@@ -26,7 +26,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 #include <utility>
 
 static basic::Tracer TR( "protocols.denovo_design.components.DivideAndConqueror" );
@@ -98,7 +97,7 @@ DivideAndConqueror::divide_and_conquer( StructureData const & sd ) const
 	// catch case where we are only building one segment
 	auto next = ++sd.segments_begin();
 	if ( next == sd.segments_end() ) {
-		StructureSlices const slices = boost::assign::list_of (StructureSlice( sd.segments_begin(), sd.segments_end()));
+		StructureSlices const slices = { StructureSlice( sd.segments_begin(), sd.segments_end()) };
 		return BuildPhases( slices );
 	}
 
@@ -151,7 +150,7 @@ DivideAndConqueror::all_permutations(
 	StructureSlices const & slices,
 	StructureSlices::const_iterator chosen_item ) const
 {
-	if ( slices.size() == 1 ) return boost::assign::list_of (slices);
+	if ( slices.size() == 1 ) return { slices };
 
 	// make a copy of list without the chosen item
 	StructureSlices slices_copy;
@@ -237,10 +236,10 @@ DivideAndConqueror::compute_all_units(
 		--next_start_segment;
 		FoldingSolutions solutions_from_me = compute_all_units( sd, paired_segments, next_start_segment );
 		if ( solutions_from_me.empty() ) {
-			retval.push_back( boost::assign::list_of (*slice) );
+			retval.push_back( { *slice } );
 		} else {
 			for ( FoldingSolutions::const_iterator sol=solutions_from_me.begin(); sol!=solutions_from_me.end(); ++sol ) {
-				StructureSlices my_solution = boost::assign::list_of (*slice);
+				StructureSlices my_solution = { *slice };
 				my_solution.insert( my_solution.end(), sol->begin(), sol->end() );
 				retval.push_back( my_solution );
 			}

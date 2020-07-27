@@ -50,8 +50,6 @@
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 static basic::Tracer tr( "core.scoring.constraints.ConstraintsIO" );
 

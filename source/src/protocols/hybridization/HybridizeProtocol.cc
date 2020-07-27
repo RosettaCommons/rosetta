@@ -140,7 +140,6 @@
 #include <basic/Tracer.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <ObjexxFCL/format.hh>
-#include <boost/foreach.hpp>
 
 #include <numeric/random/random.hh>
 #include <numeric/random/random.functions.hh>

@@ -39,7 +39,6 @@
 #include <utility/vector1.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace ligand_docking {

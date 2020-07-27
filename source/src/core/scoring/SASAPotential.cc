@@ -54,8 +54,6 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>
 
-#include <boost/lexical_cast.hpp>
-
 #include <cmath>
 #include <algorithm>
 #include <string>

@@ -51,7 +51,6 @@
 #include <numeric>
 
 // External headers
-#include <boost/functional/hash.hpp>
 
 namespace core {
 namespace pose {

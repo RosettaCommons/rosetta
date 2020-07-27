@@ -35,7 +35,7 @@
 
 //C++ headers
 #include <iostream>
-#include <boost/bind/bind.hpp>
+#include <functional>
 
 // --------------- Test Class --------------- //
 
@@ -98,15 +98,15 @@ public:
 			AtomPairVector const& ) = &core::pose::Pose::replace_residue;
 
 		//Verify: if we don't chage anything with this call, we pass
-		TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_same_rsd, ap_vect ) ) );
-		TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_same_rsd, true ) ) );
+		TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, std::bind( repres_apvect, &prot_pose, SEQPOS, new_same_rsd, ap_vect ) ) );
+		TS_ASSERT_THROWS_NOTHING( noclaim_test->apply( prot_pose, std::bind( repres_bool, &prot_pose, SEQPOS, new_same_rsd, true ) ) );
 
 		//Verify: if we change something without claiming, we get an exception
 		core::conformation::Residue new_diff_rsd( pose.residue( SEQPOS ) );
 		new_diff_rsd.set_xyz( 1, numeric::xyzVector< core::Real >( 1.0, 1.0, 1.0 ) );
 		new_diff_rsd.set_xyz( 2, numeric::xyzVector< core::Real >( 2.0, 2.0, 2.0 ) );
 
-		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_apvect, &prot_pose, SEQPOS, new_diff_rsd, ap_vect ) ),
+		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, std::bind( repres_apvect, &prot_pose, SEQPOS, new_diff_rsd, ap_vect ) ),
 			protocols::environment::EXCN_Env_Security_Exception & );
 
 		for ( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ) {
@@ -114,7 +114,7 @@ public:
 			TS_ASSERT_EQUALS( prot_pose.fold_tree(), pose.fold_tree() );
 		}
 
-		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ),
+		TS_ASSERT_THROWS( noclaim_test->apply( prot_pose, std::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ),
 			protocols::environment::EXCN_Env_Security_Exception & );
 		for ( core::Size i = 1; i <= prot_pose.residue( SEQPOS ).natoms(); ++i ) {
 			TS_ASSERT_LESS_THAN( ( new_same_rsd.xyz( i ) - pose.residue( SEQPOS ).xyz( i ) ).length(), 1e-6 );
@@ -122,6 +122,6 @@ public:
 		}
 
 		//Verify: if we change something WITH claiming, we pass
-		TS_ASSERT_THROWS_NOTHING( xyzclaim_test->apply( prot_pose, boost::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ) );
+		TS_ASSERT_THROWS_NOTHING( xyzclaim_test->apply( prot_pose, std::bind( repres_bool, &prot_pose, SEQPOS, new_diff_rsd, true ) ) );
 	}
 };

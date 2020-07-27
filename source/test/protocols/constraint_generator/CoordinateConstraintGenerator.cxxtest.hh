@@ -41,7 +41,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 

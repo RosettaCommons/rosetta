@@ -59,8 +59,6 @@
 
 #include <basic/datacache/DataMap.hh>
 
-#include <boost/functional/hash.hpp>
-
 // tracer
 #include <basic/Tracer.hh>
 // XSD XRW Includes

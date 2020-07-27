@@ -40,8 +40,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <limits>
 
 // External Headers
@@ -105,7 +103,7 @@ public:
 
 		structure_reporter_->write_schema_to_db(db_session);
 
-		foreach ( FeaturesReporterOP const & reporter, features_reporters_ ) {
+		for ( FeaturesReporterOP const & reporter: features_reporters_ ) {
 			tr << "Writing schema for '" << reporter->type_name() << "'" << std::endl;
 			reporter->write_schema_to_db(db_session);
 		}

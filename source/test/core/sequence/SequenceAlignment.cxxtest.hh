@@ -66,7 +66,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include <boost/functional/hash.hpp>
 
 
 static basic::Tracer TR("test.core.sequence.SequenceAlignment");

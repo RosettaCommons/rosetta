@@ -26,7 +26,6 @@
 #include <libxml/xmlerror.h>
 
 // Boost headers
-//#include <boost/function.hpp>
 
 // C++ headers
 #include <list>

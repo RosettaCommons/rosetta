@@ -35,7 +35,6 @@
 #include <utility/string_util.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/jd2/util.hh>
-#include <boost/foreach.hpp>
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
@@ -608,12 +607,12 @@ PointMutationCalculator::calc_point_mut_filters(
 		using ResidueTypeCOPList = std::list<ResidueTypeCOP>;
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		vector1< AA > allow_temp;
-		BOOST_FOREACH ( ResidueTypeCOP const t, allowed ) {
+		for ( ResidueTypeCOP const t: allowed ) {
 			if ( std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end() ) continue;
 			allow_temp.push_back( t->aa() );
 		}
 		//for each allowed AA
-		BOOST_FOREACH ( AA const target_aa, allow_temp ) {
+		for ( AA const target_aa: allow_temp ) {
 			all_muts.push_back( pair< core::Size, AA >( resi, target_aa ) );
 		}
 	}

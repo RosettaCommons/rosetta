@@ -21,7 +21,6 @@
 #include <utility/SingletonBase.hh>
 
 // External headers
-#include <boost/utility.hpp>
 
 // C/C++ headers
 #include <map>

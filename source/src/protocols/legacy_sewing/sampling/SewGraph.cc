@@ -43,7 +43,6 @@
 #include <utility/io/ozstream.hh>
 
 // Boost Headers
-#include <boost/cstdint.hpp>
 #include <boost/pool/pool.hpp>
 #include <utility/graph/unordered_object_pool.hpp>
 
@@ -483,14 +482,14 @@ SewGraph::generate_binary_score_file(
 
 	EdgeList edges;
 
-	boost::uint32_t n_segs_per_edge = 0;
+	std::uint32_t n_segs_per_edge = 0;
 	std::string line;
 	while ( getline( file, line ) ) {
 		utility::vector1<std::string> tokens = utility::string_split(line);
 		debug_assert(tokens.size() >= 7);
 
 		if ( n_segs_per_edge == 0 ) {
-			n_segs_per_edge = (boost::int32_t)((tokens.size() - 5)/2);
+			n_segs_per_edge = (std::int32_t)((tokens.size() - 5)/2);
 		} else {
 			debug_assert(n_segs_per_edge == (tokens.size() - 5)/2);
 		}
@@ -523,7 +522,7 @@ SewGraph::generate_binary_score_file(
 		utility_exit_with_message("Couldn't open " + binary_filename + " for writing!");
 	}
 
-	auto n_nodes_with_edges = (boost::uint32_t)edges.size();
+	auto n_nodes_with_edges = (std::uint32_t)edges.size();
 
 	// if(num_models > num_nodes()) {
 	//  utility_exit_with_message("Error converting scores to binary! There are more nodes in the score file than contained in the graph!");
@@ -542,7 +541,7 @@ SewGraph::generate_binary_score_file(
 			}
 		}
 	}
-	n_nodes_with_edges = (boost::uint32_t)edges.size();
+	n_nodes_with_edges = (std::uint32_t)edges.size();
 
 	if ( n_nodes_with_edges != num_nodes() ) {
 		TR << "n_nodes_with_edges: " << n_nodes_with_edges << std::endl;
@@ -551,16 +550,16 @@ SewGraph::generate_binary_score_file(
 	runtime_assert(n_nodes_with_edges == num_nodes());
 
 	//First write the number of models for validation later
-	binary_file.write( (char*) & n_nodes_with_edges, sizeof( boost::uint32_t ));
+	binary_file.write( (char*) & n_nodes_with_edges, sizeof( std::uint32_t ));
 
 	//Next write the number of segments per edge
-	binary_file.write( (char*) & n_segs_per_edge, sizeof( boost::uint32_t ));
+	binary_file.write( (char*) & n_segs_per_edge, sizeof( std::uint32_t ));
 
 	//Next write the number edges for each score node
 	EdgeList::const_iterator it = edges.begin();
 	EdgeList::const_iterator it_end = edges.end();
 	for ( ; it != it_end; ++it ) {
-		auto num = (boost::uint32_t)it->second.size();
+		auto num = (std::uint32_t)it->second.size();
 		if ( TR.Debug.visible() ) {
 			TR << "model " << it->first.first << " segments ";
 			auto seg_it = it->first.second.begin();
@@ -570,7 +569,7 @@ SewGraph::generate_binary_score_file(
 			}
 			TR << "has " << num << " edges" << std::endl;
 		}
-		binary_file.write( (char*) & num , sizeof( boost::uint32_t ));
+		binary_file.write( (char*) & num , sizeof( std::uint32_t ));
 	}
 
 	//Finally, write all the edges
@@ -583,16 +582,16 @@ SewGraph::generate_binary_score_file(
 			auto seg_it = edge_it->first.second.begin();
 			auto seg_it_end = edge_it->first.second.end();
 			for ( ; seg_it != seg_it_end; ++seg_it ) {
-				auto seg_id = (boost::int32_t)*seg_it;
-				binary_file.write( (char*) & seg_id , sizeof( boost::int32_t ));
+				auto seg_id = (std::int32_t)*seg_it;
+				binary_file.write( (char*) & seg_id , sizeof( std::int32_t ));
 			}
 
-			boost::int32_t other_model_id = edge_it->first.first;
-			auto resnum_1 = (boost::int32_t)edge_it->second.first;
-			auto resnum_2 = (boost::int32_t)edge_it->second.second;
-			binary_file.write( (char*) & other_model_id , sizeof( boost::int32_t ));
-			binary_file.write( (char*) & resnum_1 , sizeof( boost::int32_t ));
-			binary_file.write( (char*) & resnum_2 , sizeof( boost::int32_t ));
+			std::int32_t other_model_id = edge_it->first.first;
+			auto resnum_1 = (std::int32_t)edge_it->second.first;
+			auto resnum_2 = (std::int32_t)edge_it->second.second;
+			binary_file.write( (char*) & other_model_id , sizeof( std::int32_t ));
+			binary_file.write( (char*) & resnum_1 , sizeof( std::int32_t ));
+			binary_file.write( (char*) & resnum_2 , sizeof( std::int32_t ));
 		}
 	}
 
@@ -612,15 +611,15 @@ SewGraph::report_binary_stats(
 	}
 
 	//First, read the number of nodes for this binary file
-	boost::uint32_t n_nodes;
-	binary_file.read( (char*) &n_nodes, sizeof( boost::uint32_t )  );
+	std::uint32_t n_nodes;
+	binary_file.read( (char*) &n_nodes, sizeof( std::uint32_t )  );
 	TR << "There are " << models.size() << " models in the model file and " << n_nodes << " nodes for the binary file" << std::endl;
 
-	boost::uint32_t n_segments_per_node;
-	binary_file.read( (char*) &n_segments_per_node, sizeof( boost::uint32_t )  );
+	std::uint32_t n_segments_per_node;
+	binary_file.read( (char*) &n_segments_per_node, sizeof( std::uint32_t )  );
 	TR << "There are " << n_segments_per_node << " matching segments for each edge" << std::endl;
 
-	boost::uint32_t n_edges;
+	std::uint32_t n_edges;
 	auto it = models.begin();
 	auto it_end = models.end();
 	for ( ; it != it_end; ++it ) {
@@ -628,7 +627,7 @@ SewGraph::report_binary_stats(
 		auto n_it = nodes.begin();
 		auto n_it_end = nodes.end();
 		for ( ; n_it != n_it_end; ++n_it ) {
-			binary_file.read( (char*) &n_edges, sizeof( boost::uint32_t )  );
+			binary_file.read( (char*) &n_edges, sizeof( std::uint32_t )  );
 			ModelNode const * const node = get_model_node(*n_it);
 			TR << "Model " << it->first << ", Segments ";
 			std::set<core::Size> const & segs = node->segment_ids();
@@ -712,8 +711,8 @@ SewGraph::add_edges_from_binary(
 	}
 
 	//First, read the number of nodes for this binary file
-	boost::uint32_t n_nodes;
-	binary_file.read( (char*) &n_nodes, sizeof( boost::uint32_t )  );
+	std::uint32_t n_nodes;
+	binary_file.read( (char*) &n_nodes, sizeof( std::uint32_t )  );
 	//if(TR.Debug.visible()) {
 	// TR << "There are " << n_nodes << " nodes in this file " << std::endl;
 	//}
@@ -727,18 +726,18 @@ SewGraph::add_edges_from_binary(
 	runtime_assert(n_nodes <= num_nodes());
 
 	//Next, read the number of segments per node
-	boost::uint32_t n_segments_per_node;
-	binary_file.read( (char*) &n_segments_per_node, sizeof( boost::uint32_t )  );
+	std::uint32_t n_segments_per_node;
+	binary_file.read( (char*) &n_segments_per_node, sizeof( std::uint32_t )  );
 	//TR << "There are " << n_segments_per_node << " matching segments for each edge" << std::endl;
 
 	//Advance past the number of nodes, n_segments/node and the counts for previous nodes
-	long long advance = sizeof(boost::uint32_t) + sizeof(boost::uint32_t);
-	advance += (node_id-1) * sizeof(boost::uint32_t);
+	long long advance = sizeof(std::uint32_t) + sizeof(std::uint32_t);
+	advance += (node_id-1) * sizeof(std::uint32_t);
 
 	//Now, read how many edges our target node has
-	boost::uint32_t num_scores;
+	std::uint32_t num_scores;
 	binary_file.seekg(advance, std::ios::beg);
-	binary_file.read( (char*) &num_scores, sizeof( boost::uint32_t )  );
+	binary_file.read( (char*) &num_scores, sizeof( std::uint32_t )  );
 
 	if ( TR.Debug.visible() ) {
 		TR << "Reading " << num_scores << " edges" <<  std::endl;
@@ -750,11 +749,11 @@ SewGraph::add_edges_from_binary(
 	}
 
 	//Now, count up the edges for nodes prior to this node
-	binary_file.seekg(sizeof(boost::uint32_t) + sizeof(boost::uint32_t));
+	binary_file.seekg(sizeof(std::uint32_t) + sizeof(std::uint32_t));
 	core::Size sum = 0;
 	for ( core::Size i=1; i<node_id; ++i ) {
-		boost::uint32_t cur_node_count;
-		binary_file.read( (char*) &cur_node_count, sizeof( boost::uint32_t )  );
+		std::uint32_t cur_node_count;
+		binary_file.read( (char*) &cur_node_count, sizeof( std::uint32_t )  );
 		sum += cur_node_count;
 	}
 
@@ -763,28 +762,28 @@ SewGraph::add_edges_from_binary(
 	}
 
 	//Now, set advance past nodes count, and all the edge counts
-	advance = sizeof(boost::uint32_t) + sizeof(boost::uint32_t);
-	advance += n_nodes * sizeof(boost::uint32_t);
+	advance = sizeof(std::uint32_t) + sizeof(std::uint32_t);
+	advance += n_nodes * sizeof(std::uint32_t);
 
 	//Now, advance past all the actual edges prior to the edges we are interested in
-	core::Size edge_size = (3 * sizeof(boost::int32_t)) + (n_segments_per_node * sizeof(boost::int32_t));
+	core::Size edge_size = (3 * sizeof(std::int32_t)) + (n_segments_per_node * sizeof(std::int32_t));
 	advance += sum * edge_size;
 	binary_file.seekg(advance);
 
 	for ( core::Size i=1; i<= num_scores; ++i ) {
 		std::set<core::Size> segments;
 		for ( core::Size j=1; j<= n_segments_per_node; ++j ) {
-			boost::int32_t seg_id;
-			binary_file.read( (char*) & seg_id, sizeof(boost::int32_t) );
+			std::int32_t seg_id;
+			binary_file.read( (char*) & seg_id, sizeof(std::int32_t) );
 			segments.insert(seg_id);
 		}
 
-		boost::int32_t other_model_id;
-		boost::int32_t resnum_1;
-		boost::int32_t resnum_2;
-		binary_file.read( (char*) & other_model_id, sizeof(boost::int32_t) );
-		binary_file.read( (char*) & resnum_1, sizeof(boost::int32_t) );
-		binary_file.read( (char*) & resnum_2, sizeof(boost::int32_t) );
+		std::int32_t other_model_id;
+		std::int32_t resnum_1;
+		std::int32_t resnum_2;
+		binary_file.read( (char*) & other_model_id, sizeof(std::int32_t) );
+		binary_file.read( (char*) & resnum_1, sizeof(std::int32_t) );
+		binary_file.read( (char*) & resnum_2, sizeof(std::int32_t) );
 
 		ModelNode const * const node = get_model_node(node_id);
 

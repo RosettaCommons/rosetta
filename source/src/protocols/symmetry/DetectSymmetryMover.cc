@@ -30,7 +30,6 @@
 #include <utility/tag/Tag.hh>
 
 // Utility headers
-#include <boost/lexical_cast.hpp>
 #include <utility/exit.hh>
 #include <basic/Tracer.hh>
 
@@ -116,7 +115,7 @@ DetectSymmetry::apply(Pose & pose) {
 	//check that the com of all subunits is in the xy-plane
 	for ( core::Size i = 0; i < symmetric_type; i++ ) {
 		xyzVector cm_chain = core::pose::center_of_mass(pose, i*seq1.size()+1, i * seq1.size() + seq1.size());
-		runtime_assert_msg(cm_chain[2] > -1*plane_tolerance_ && cm_chain[2] < plane_tolerance_, "com of chain " + boost::lexical_cast< std::string >( i ) +  " is not properly aligned to the x-y plane");
+		runtime_assert_msg(cm_chain[2] > -1*plane_tolerance_ && cm_chain[2] < plane_tolerance_, "com of chain " + std::to_string( i ) +  " is not properly aligned to the x-y plane");
 	}
 
 	// if C2 check that the vector formed my the middle point between a point and the symmetric counterpart is aligned to the z-axis
@@ -141,7 +140,7 @@ DetectSymmetry::apply(Pose & pose) {
 
 
 	// set up for symmetry
-	std::string db_file = "symmetry/cyclic/C" + boost::lexical_cast< std::string >( symmetric_type ) + "_Z.sym";
+	std::string db_file = "symmetry/cyclic/C" + std::to_string( symmetric_type ) + "_Z.sym";
 	std::string path_to_symdef = basic::database::full_name(db_file);
 	core::conformation::symmetry::SymmData symmdef;
 	symmdef.read_symmetry_data_from_file( path_to_symdef );

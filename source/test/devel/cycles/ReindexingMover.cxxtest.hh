@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   test/devel/cycles/ReindexingMover.cxxtest.hh
-/// @brief  
+/// @brief
 /// @author Kale Kundert
 
 #ifndef INCLUDED_devel_cycles_reindexing_mover_CXXTEST_HH
@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 using namespace core;
 using namespace devel;

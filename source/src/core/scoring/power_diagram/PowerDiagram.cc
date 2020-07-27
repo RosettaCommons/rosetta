@@ -17,8 +17,6 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/power_diagram/PowerDiagram.hh>
 
-#include <boost/bind.hpp>
-
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
 

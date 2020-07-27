@@ -35,7 +35,6 @@
 
 #include <iterator>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
 #include <ctime>
@@ -175,7 +174,7 @@ void FragmentLookupFilter::report( std::ostream & os, core::pose::Pose const & )
 			result_object.push_back(Pair("match_rmsd", r.second.match_rmsd));
 		}
 
-		result_container.push_back(Pair( boost::lexical_cast<std::string>(r.first), Value(result_object) ));
+		result_container.push_back(Pair( std::to_string(r.first), Value(result_object) ));
 	}
 	os << "\n";
 	utility::json_spirit::write(result_container, os, utility::json_spirit::pretty_print);
@@ -209,7 +208,7 @@ core::Real FragmentLookupFilter::report_sm( core::pose::Pose const & pose ) cons
 			result_object.push_back(Pair("match_rmsd", r.second.match_rmsd));
 		}
 
-		result_container.push_back(Pair( boost::lexical_cast<std::string>(r.first), Value(result_object) ));
+		result_container.push_back(Pair( std::to_string(r.first), Value(result_object) ));
 	}
 	TR << "\n";
 	utility::json_spirit::write(result_container, TR, utility::json_spirit::pretty_print);

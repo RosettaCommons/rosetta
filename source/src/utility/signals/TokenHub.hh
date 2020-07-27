@@ -28,8 +28,6 @@
 #include <utility/signals/BufferedSignalHub.hh>
 
 // boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <iosfwd>

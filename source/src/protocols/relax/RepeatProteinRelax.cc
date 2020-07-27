@@ -53,7 +53,6 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 
 
 namespace protocols {

@@ -43,7 +43,6 @@
 #include <numeric/constants.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 
@@ -538,8 +537,8 @@ HydrogenBondInfo::HydrogenBondInfo():
 	utility::SingletonBase< HydrogenBondInfo >(),
 	atoms_()
 {
-	HydrogenBondingAtom::Dihedrals const zero_and_180 = boost::assign::list_of (0.0) (180.0);
-	HydrogenBondingAtom::Dihedrals const extended = boost::assign::list_of (180.0);
+	HydrogenBondingAtom::Dihedrals const zero_and_180 = { 0.0, 180.0};
+	HydrogenBondingAtom::Dihedrals const extended = { 180.0 };
 	HydrogenBondingAtom::Dihedrals const none;
 
 	HydrogenBondingAtoms & arg = create_residue( "ARG" );

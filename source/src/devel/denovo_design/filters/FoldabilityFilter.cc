@@ -443,7 +443,7 @@ FoldabilityFilter::fragment_insertion(
 		core::pose::Pose posecopy( pose );
 		fragment_mover.apply( posecopy );
 		if ( output_poses_ ) {
-			posecopy.dump_pdb( "foldability" + boost::lexical_cast< std::string >( i ) + ".pdb" );
+			posecopy.dump_pdb( "foldability" + std::to_string( i ) + ".pdb" );
 		}
 		core::Real const distance = end_res.xyz( "N" ).distance( posecopy.residue( end ).xyz( "N" ) );
 		TR << "Trial " << i << " : distance is " << distance << ", success threshold=" << distance_threshold_ << std::endl;

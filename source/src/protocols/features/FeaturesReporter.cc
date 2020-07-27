@@ -30,12 +30,10 @@
 #include <basic/database/sql_utils.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 #include <boost/tokenizer.hpp>
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <string>
@@ -183,7 +181,7 @@ FeaturesReporter::check_relevant_residues(
 		return relevant_residues[res1];
 	default :
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-			boost::lexical_cast<std::string>(relevant_residues_mode_));
+			std::to_string(relevant_residues_mode_));
 	}
 }
 
@@ -200,7 +198,7 @@ FeaturesReporter::check_relevant_residues(
 		return relevant_residues[res1] || relevant_residues[res2];
 	default :
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-			boost::lexical_cast<std::string>(relevant_residues_mode_));
+			std::to_string(relevant_residues_mode_));
 	}
 }
 
@@ -229,7 +227,7 @@ FeaturesReporter::check_relevant_residues_range(
 	}
 	default :
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-			boost::lexical_cast<std::string>(relevant_residues_mode_));
+			std::to_string(relevant_residues_mode_));
 	}
 }
 
@@ -258,7 +256,7 @@ FeaturesReporter::check_relevant_residues(
 	}
 	default :
 		utility_exit_with_message("Unrecognized relevant_residues_mode: " +
-			boost::lexical_cast<std::string>(relevant_residues_mode_));
+			std::to_string(relevant_residues_mode_));
 	}
 }
 

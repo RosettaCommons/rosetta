@@ -197,26 +197,27 @@ vsasa_bunsats(
 		}
 	}
 
-	boost::unordered_map<std::string, Size> res_counts;
-	res_counts["ALA"] = 0;
-	res_counts["CYS"] = 0;
-	res_counts["ASP"] = 0;
-	res_counts["GLU"] = 0;
-	res_counts["PHE"] = 0;
-	res_counts["GLY"] = 0;
-	res_counts["HIS"] = 0;
-	res_counts["ILE"] = 0;
-	res_counts["LYS"] = 0;
-	res_counts["LEU"] = 0;
-	res_counts["MET"] = 0;
-	res_counts["PRO"] = 0;
-	res_counts["GLN"] = 0;
-	res_counts["ARG"] = 0;
-	res_counts["SER"] = 0;
-	res_counts["THR"] = 0;
-	res_counts["VAL"] = 0;
-	res_counts["TRP"] = 0;
-	res_counts["TYR"] = 0;
+	boost::unordered_map<std::string, Size> res_counts = {
+		{"ALA", 0},
+		{"CYS", 0},
+		{"ASP", 0},
+		{"GLU", 0},
+		{"PHE", 0},
+		{"GLY", 0},
+		{"HIS", 0},
+		{"ILE", 0},
+		{"LYS", 0},
+		{"LEU", 0},
+		{"MET", 0},
+		{"PRO", 0},
+		{"GLN", 0},
+		{"ARG", 0},
+		{"SER", 0},
+		{"THR", 0},
+		{"VAL", 0},
+		{"TRP", 0},
+		{"TYR", 0}
+		};
 
 	core::Size buns = 0;
 	const pose::PDBInfo& pdb_info = *(pose.pdb_info());

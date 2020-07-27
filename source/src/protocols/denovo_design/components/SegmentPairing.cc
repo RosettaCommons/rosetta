@@ -30,7 +30,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.components.SegmentPairing" );
 
@@ -311,7 +310,7 @@ HelixPairing::HelixPairing():
 }
 
 HelixPairing::HelixPairing( SegmentName const & h1, SegmentName const & h2, bool const is_parallel ):
-	SegmentPairing( boost::assign::list_of (h1)(h2).convert_to_container< SegmentNames >() ),
+	SegmentPairing( { h1, h2 } ),
 	parallel_( is_parallel )
 {
 }
@@ -390,7 +389,7 @@ StrandPairing::StrandPairing(
 	StrandOrientation const & orient1,
 	StrandOrientation const & orient2,
 	RegisterShift const & shift ):
-	SegmentPairing( boost::assign::list_of (s1)(s2).convert_to_container< SegmentNames >() ),
+	SegmentPairing( {s1, s2} ),
 	orient1_( orient1 ),
 	orient2_( orient2 ),
 	shift_( shift )
@@ -545,7 +544,7 @@ HelixSheetPairing::HelixSheetPairing(
 	SegmentName const & helix,
 	SegmentName const & s1,
 	SegmentName const & s2 ):
-	SegmentPairing( boost::assign::list_of(helix)(s1)(s2).convert_to_container< SegmentNames >() )
+	SegmentPairing( { helix, s1, s2 } )
 {}
 
 SegmentPairingOP

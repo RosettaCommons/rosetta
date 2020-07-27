@@ -41,7 +41,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.movers.RotateSegmentMover" );
 
@@ -156,8 +155,7 @@ RotateSegmentMover::apply( core::pose::Pose & pose, core::Real const random ) co
 	core::Vector const center = (atom_xyzs[2] + atom_xyzs[3]) / 2;
 
 	// prepare FoldTree for rotation
-	SegmentNames const fg_roots = boost::assign::list_of
-		(sd.segment_name( atom_ids[4].rsd() ))(sd.segment_name( atom_ids[1].rsd() ));
+	SegmentNames const fg_roots = { sd.segment_name( atom_ids[4].rsd() ), sd.segment_name( atom_ids[1].rsd() ) };
 	FoldTreeFromFoldGraphMover make_ft( fg_roots, protocols::loops::Loops() );
 	make_ft.apply( pose );
 

@@ -38,7 +38,6 @@
 
 // C/C++ headers
 #include <fstream>
-#include <boost/foreach.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
@@ -418,13 +417,13 @@ GenericSimulatedAnnealer::save_checkpoint_file() const
 		utility_exit_with_message( "Error: The GenericSimulatedAnnealerMover could not open " + tmp_checkpoint + " for writing." );
 	}
 	// save trial number
-	saved_file << boost::lexical_cast< std::string >( current_trial_ );
+	saved_file << std::to_string( current_trial_ );
 	// save annealing step
-	saved_file << " " << boost::lexical_cast< std::string >( anneal_step_ );
+	saved_file << " " << std::to_string( anneal_step_ );
 	// save # acceptances at this annealing step
-	saved_file << " " << boost::lexical_cast< std::string >( temp_step_ );
+	saved_file << " " << std::to_string( temp_step_ );
 	// save total # of accepted scores
-	saved_file << " " << boost::lexical_cast< std::string >( accepted_scores_.size() ) << std::endl;
+	saved_file << " " << std::to_string( accepted_scores_.size() ) << std::endl;
 	// save accepted score list
 	for ( auto const & accepted_score : accepted_scores_ ) {
 		saved_file << accepted_score << std::endl;

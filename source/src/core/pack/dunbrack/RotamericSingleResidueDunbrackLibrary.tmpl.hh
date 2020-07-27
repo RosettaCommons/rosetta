@@ -54,7 +54,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // Boost Headers
-#include <boost/cstdint.hpp>
 
 //Auto Headers
 #include <platform/types.hh>

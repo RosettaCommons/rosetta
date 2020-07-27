@@ -19,8 +19,6 @@
 #include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
-#include <boost/functional/hash.hpp> // hash_range
-
 #include <ObjexxFCL/format.hh>
 using namespace ObjexxFCL;
 
@@ -31,8 +29,6 @@ using namespace ObjexxFCL;
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 using core::Size;
 

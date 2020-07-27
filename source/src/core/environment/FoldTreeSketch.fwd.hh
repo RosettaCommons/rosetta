@@ -15,7 +15,6 @@
 #define INCLUDED_core_environment_FoldTreeSketch_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 
 // Package headers
 

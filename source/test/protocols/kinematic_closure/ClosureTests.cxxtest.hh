@@ -27,9 +27,7 @@
 #include <protocols/loops/loops_main.hh>
 
 // Utility headers
-#include <boost/foreach.hpp>
 #include <numeric/xyzVector.hh>
-#define foreach BOOST_FOREACH
 
 // C++ headers
 #include <vector>
@@ -58,7 +56,7 @@ public:
 	}
 
 	void test_with_simple_fold_tree() {
-		foreach ( ClosureTestOP helper, test_helpers ) {
+		for ( ClosureTestOP helper: test_helpers ) {
 			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
@@ -78,7 +76,7 @@ public:
 	void test_with_cut_fold_tree() {
 		using protocols::loops::set_single_loop_fold_tree;
 
-		foreach ( ClosureTestOP helper, test_helpers ) {
+		for ( ClosureTestOP helper: test_helpers ) {
 			ClosureProblemOP problem( new ClosureProblem );
 			SolutionList solutions;
 
@@ -109,7 +107,7 @@ public:
 	}
 
 	void test_kic_mover() {
-		foreach ( ClosureTestOP helper, test_helpers ) {
+		for ( ClosureTestOP helper: test_helpers ) {
 			KicMoverOP mover( new KicMover );
 
 			mover->add_perturber(helper);

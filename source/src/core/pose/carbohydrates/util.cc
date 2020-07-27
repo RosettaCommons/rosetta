@@ -63,7 +63,6 @@
 #include <numeric/random/random.hh>
 
 // External Headers
-#include <boost/lexical_cast.hpp>
 #include <basic/basic.hh>
 
 // C++ Header

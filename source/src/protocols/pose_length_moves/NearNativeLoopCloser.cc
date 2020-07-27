@@ -105,7 +105,6 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <boost/assign/list_of.hpp>
 #include <ctime>
 //output
 #include <utility/io/ozstream.hh>

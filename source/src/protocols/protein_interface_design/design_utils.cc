@@ -54,7 +54,6 @@
 #include <map>
 
 #include <utility/vector0.hh>
-#include <boost/lexical_cast.hpp>
 
 // option key includes
 
@@ -212,7 +211,6 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 	std::string done_resids( "select resi " );
 	bool first_pass_ignored( true ), first_pass_done( true );
 	for ( auto const & it2 : *energy_map2 ) {
-		using boost::lexical_cast;
 		using std::string;
 		core::Size const seqpos( it2.first );
 
@@ -228,7 +226,7 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 			} else {
 				done_resids += "+";
 			}
-			done_resids += lexical_cast< string >( seqpos );
+			done_resids += std::to_string( seqpos );
 			revert_positions.push_back( seqpos );
 			++count_changes_orig;
 		} else {
@@ -239,7 +237,7 @@ Revert::apply( pose::Pose & pose_wt, pose::Pose & pose_des ) const
 			} else {
 				ignored_resids += "+";
 			}
-			ignored_resids += lexical_cast< string >( seqpos );
+			ignored_resids += std::to_string( seqpos );
 
 			if ( it2.second > 0 ) {
 				TR<<"but the total energy for "<<pose_des.residue(seqpos).name3()<<seqpos<<" is "<<it2.second<<" testing an Ala substitution\n";

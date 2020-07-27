@@ -43,7 +43,6 @@
 
 // External Headers
 #include <cppdb/frontend.h>
-#include <boost/lexical_cast.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/features/feature_schemas.hh>
@@ -417,7 +416,7 @@ ProteinBondGeometryFeatures::report_intrares_angles(
 				Ktheta << " " << 0.5*Ktheta*(angle-theta0) * (angle-theta0) << std::endl;*/
 			}
 
-			//const std::string tmp = boost::lexical_cast<std::string>(struct_id);
+			//const std::string tmp = std::to_string(struct_id);
 
 			//report results here
 			stmt.bind(1,struct_id);

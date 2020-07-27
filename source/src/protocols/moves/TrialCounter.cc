@@ -21,7 +21,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 static basic::Tracer tr( "protocols.moves.TrialCounter" );
 

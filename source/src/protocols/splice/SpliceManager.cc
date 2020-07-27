@@ -15,7 +15,6 @@
 #include <protocols/splice/SpliceManager.hh>
 #include <protocols/splice/Splice.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <boost/foreach.hpp>
 #include <protocols/splice/util.hh>
 #include <protocols/splice/SpliceSegment.hh>
 #include <basic/Tracer.hh>

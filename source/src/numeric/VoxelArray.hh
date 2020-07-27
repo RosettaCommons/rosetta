@@ -20,9 +20,6 @@
 
 #include <utility/exit.hh>
 
-#include <boost/type_traits.hpp>
-#include <boost/assert.hpp>
-
 #include <vector>
 #include <array>
 
@@ -198,7 +195,7 @@ public:
 #endif
 
 	template<class Archive> void save(Archive & ar, const unsigned int ) const {
-		BOOST_VERIFY( boost::is_pod<Float>::type::value );
+		static_assert( std::is_pod<Float>::type::value, "VoxelArray type is not POD." );
 		ar & lb_;
 		ar & ub_;
 		ar & cs_;
@@ -206,7 +203,7 @@ public:
 		for ( size_t i = 0; i < this->num_elements(); ++i ) ar & this->data()[i];
 	}
 	template<class Archive> void load(Archive & ar, const unsigned int ){
-		BOOST_VERIFY( boost::is_pod<Float>::type::value );
+		static_assert( std::is_pod<Float>::type::value, "VoxelArray type is not POD." );
 		ar & lb_;
 		ar & ub_;
 		ar & cs_;
@@ -216,7 +213,7 @@ public:
 		for ( size_t i = 0; i < this->num_elements(); ++i ) ar & this->data()[i];
 	}
 	void save( std::ostream & out ) const {
-		BOOST_VERIFY( boost::is_pod<Float>::type::value );
+		static_assert( std::is_pod<Float>::type::value, "VoxelArray type is not POD." );
 		out.write( (char*)&lb_, sizeof(Bounds) );
 		out.write( (char*)&ub_, sizeof(Bounds) );
 		out.write( (char*)&cs_, sizeof(Bounds) );
@@ -226,7 +223,7 @@ public:
 		for ( size_t i = 0; i < this->num_elements(); ++i ) out.write( (char*)(&(this->data()[i])), sizeof(Float) );
 	}
 	void load( std::istream & in ){
-		BOOST_VERIFY( boost::is_pod<Float>::type::value );
+		static_assert( std::is_pod<Float>::type::value, "VoxelArray type is not POD." );
 		runtime_assert( in.good() );
 		in.read( (char*)&lb_, sizeof(Bounds) );
 		runtime_assert( in.good() );

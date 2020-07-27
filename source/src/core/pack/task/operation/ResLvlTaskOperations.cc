@@ -31,8 +31,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 
-#include <boost/foreach.hpp>
-
 #include <sstream>
 
 

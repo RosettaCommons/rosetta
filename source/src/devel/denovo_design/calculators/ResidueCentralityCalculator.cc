@@ -25,7 +25,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/lexical_cast.hpp>
 
 //// C++ headers
 #include <ObjexxFCL/format.hh>
@@ -88,13 +87,13 @@ ResidueCentralityCalculator::print( std::string const & key ) const
 	if ( key == "centrality" ) {
 		result += "[ ";
 		for ( core::Size i=1; i<=centralities_.size(); ++i ) {
-			result += boost::lexical_cast<std::string>( centralities_[i] ) + " ";
+			result += std::to_string( centralities_[i] ) + " ";
 		}
 		result += "]";
 	} else if ( key == "excluded_residues" ) {
 		result += "[ ";
 		for ( core::Size i=1; i<=excluded_residues_.size(); ++i ) {
-			result += boost::lexical_cast<std::string>( excluded_residues_[i] ) + " ";
+			result += std::to_string( excluded_residues_[i] ) + " ";
 		}
 		result += "]";
 	} else {
@@ -238,7 +237,7 @@ generate_nodes( core::pose::Pose const & pose )
 
 	// populate lists of nodes and edges
 	for ( core::Size i=1; i<=pose.size(); i++ ) {
-		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
+		std::string resname = pose.residue( i ).name3() + std::to_string( i );
 		TR.Debug << "Adding node " << resname << std::endl;
 		nodes.push_back( utility::pointer::make_shared< Node >( resname, i ) );
 	} // for each residue

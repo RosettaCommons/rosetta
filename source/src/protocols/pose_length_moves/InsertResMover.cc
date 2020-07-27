@@ -53,7 +53,6 @@
 #include <sstream>
 #include <map>
 #include <set>
-#include <boost/assign/list_of.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

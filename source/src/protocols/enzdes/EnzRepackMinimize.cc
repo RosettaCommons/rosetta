@@ -47,7 +47,6 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <boost/functional/hash.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

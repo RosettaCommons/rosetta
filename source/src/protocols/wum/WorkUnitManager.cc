@@ -29,7 +29,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <boost/function.hpp>
 
 
 namespace protocols {

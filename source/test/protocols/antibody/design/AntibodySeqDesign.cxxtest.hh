@@ -47,11 +47,8 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 #include <utility/vector1.hh>
 #include <iostream>
-
-#define BFE BOOST_FOREACH
 
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;

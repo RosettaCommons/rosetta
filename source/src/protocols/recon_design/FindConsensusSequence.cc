@@ -42,8 +42,6 @@
 #include <utility/mpi_util.hh>
 #include <utility/string_util.hh>
 
-#include <boost/foreach.hpp>
-
 #include <protocols/recon_design/recon_util.hh>
 
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -287,7 +285,7 @@ void FindConsensusSequence::pick_consensus_AA_mpi(
 
 	initialize_packer();
 
-	BOOST_FOREACH ( std::string trial_AA, candidate_AAs ) {
+	for ( std::string const & trial_AA: candidate_AAs ) {
 		candidate_AA_scores.push_back( test_AA( pose.clone(), trial_AA, pose_position) );
 	}
 

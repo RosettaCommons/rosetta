@@ -38,7 +38,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <boost/bind.hpp>
 
 namespace core {
 namespace scoring {

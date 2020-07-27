@@ -32,9 +32,6 @@
 #include <sstream>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/foreach.hpp>
 
 namespace protocols {
 namespace evaluation {

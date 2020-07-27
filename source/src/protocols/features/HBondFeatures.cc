@@ -66,7 +66,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/assign/list_of.hpp>
 
 // C++ Headers
 #include <cmath>
@@ -168,7 +167,6 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	sessionOP db_session
 ) const {
 	using namespace basic::database::schema_generator;
-	using boost::assign::list_of;
 
 	Column chem_type("chem_type", utility::pointer::make_shared< DbText >(255));
 	Column label("label", utility::pointer::make_shared< DbText >(255));
@@ -186,42 +184,42 @@ HBondFeatures::write_hbond_chem_types_table_schema(
 	std::vector< string > c;
 	c.emplace_back("chem_type");
 	c.emplace_back("label");
-	insert_or_ignore(t, c, list_of("hbacc_NONE")("aNONE"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_PBA")("aPBA: bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_CXA")("aCXA: n,q"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_CXL")("aCXL: d,e"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_IMD")("aIMD: h"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_IME")("aIME: h"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_AHX")("aAHX: t"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_HXL")("aHXL: s,t"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_PCA_DNA")("aPCA_DNA: O{1,2}P"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_PES_DNA")("aPES_DNA: O{3,5}*"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_RRI_DNA")("aRRI_DNA: O4'"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_PCA_RNA")("aPCA_RNA: O{1,2}P"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_PES_RNA")("aPES_RNA: O{3,5}*"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_RRI_RNA")("aRRI_RNA: O4'"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_H2O")("aH2O"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP2BB")("aGEN: sp2 bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP2SC")("aGEN: sp2 sc"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP3BB")("aGEN: sp3 bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_SP3SC")("aGEN: sp3 sc"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_RINGBB")("aGEN: ring bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbacc_GENERIC_RINGSC")("aGEN: ring sc"), db_session);
+	insert_or_ignore(t, c, {"hbacc_NONE","aNONE"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_PBA","aPBA: bb"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_CXA","aCXA: n,q"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_CXL","aCXL: d,e"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_IMD","aIMD: h"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_IME","aIME: h"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_AHX","aAHX: t"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_HXL","aHXL: s,t"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_PCA_DNA","aPCA_DNA: O{1,2}P"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_PES_DNA","aPES_DNA: O{3,5}*"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_RRI_DNA","aRRI_DNA: O4'"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_PCA_RNA","aPCA_RNA: O{1,2}P"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_PES_RNA","aPES_RNA: O{3,5}*"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_RRI_RNA","aRRI_RNA: O4'"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_H2O","aH2O"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_SP2BB","aGEN: sp2 bb"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_SP2SC","aGEN: sp2 sc"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_SP3BB","aGEN: sp3 bb"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_SP3SC","aGEN: sp3 sc"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_RINGBB","aGEN: ring bb"}, db_session);
+	insert_or_ignore(t, c, {"hbacc_GENERIC_RINGSC","aGEN: ring sc"}, db_session);
 
-	insert_or_ignore(t, c, list_of("hbdon_NONE")("dNONE"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_PBA")("dPBA: bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_CXA")("dCXA: n,q"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_IMD")("dIMD: h"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_IME")("dIME: h"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_IND")("dIND: w"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_AMO")("dAMO: k"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_GDE")("dGDE: r"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_GDH")("dGDH: r"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_AHX")("dAHX: s,t"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_HXL")("dHXL: y"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_H2O")("dH2O"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_GENERIC_BB")("dGEN: bb"), db_session);
-	insert_or_ignore(t, c, list_of("hbdon_GENERIC_SC")("dGEN: sc"), db_session);
+	insert_or_ignore(t, c, {"hbdon_NONE","dNONE"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_PBA","dPBA: bb"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_CXA","dCXA: n,q"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_IMD","dIMD: h"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_IME","dIME: h"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_IND","dIND: w"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_AMO","dAMO: k"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_GDE","dGDE: r"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_GDH","dGDH: r"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_AHX","dAHX: s,t"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_HXL","dHXL: y"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_H2O","dH2O"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_GENERIC_BB","dGEN: bb"}, db_session);
+	insert_or_ignore(t, c, {"hbdon_GENERIC_SC","dGEN: sc"}, db_session);
 }
 
 void

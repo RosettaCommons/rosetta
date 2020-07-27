@@ -25,7 +25,6 @@
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 
-#include <boost/lexical_cast.hpp>
 #include <utility/exit.hh>
 // Utility headers
 #include <protocols/jd2/JobDistributor.hh>
@@ -137,7 +136,7 @@ public:
 		Pose new_pose( pose, 1, seq1.size() );
 
 		// set up for symmetry
-		std::string db_file = "symmetry/cyclic/C" + boost::lexical_cast< std::string >( symmetric_type ) + "_Z.sym";
+		std::string db_file = "symmetry/cyclic/C" + std::to_string( symmetric_type ) + "_Z.sym";
 		std::string path_to_symdef = basic::database::full_name(db_file);
 		core::conformation::symmetry::SymmData symmdef;
 		symmdef.read_symmetry_data_from_file( path_to_symdef );

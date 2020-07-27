@@ -38,7 +38,6 @@
 //Auto Headers
 #include <utility/vector1.hh>
 #include <utility/inline_file_provider.hh>
-#include <boost/function.hpp>
 
 #include <utility/json_spirit/json_spirit_value.h>
 #include <utility/json_spirit/json_spirit_reader.h>

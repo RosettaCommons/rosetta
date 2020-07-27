@@ -50,7 +50,6 @@
 
 #include <basic/options/option_macros.hh>
 #include <map>
-#include <boost/lexical_cast.hpp>
 #include <sstream>
 #include <iomanip>
 
@@ -321,7 +320,7 @@ int main(int argc, char *argv[])
 			ss << score;
 			std::string out_prefix = prefix+"_"+scorecolumn+"_"+ss.str()+"_";
 			//std::string out_prefix = prefix+"_ddg_"+ss.str()+"_";
-			//std::string out_prefix = prefix+"_ddg_"+boost::lexical_cast<std::string>(score)+"_";
+			//std::string out_prefix = prefix+"_ddg_"+std::to_string(score)+"_";
 			std::string fn( out_prefix + tag + ".pdb" );
 			pose.dump_pdb(fn);
 		}

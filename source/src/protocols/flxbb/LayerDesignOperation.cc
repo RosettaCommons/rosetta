@@ -67,18 +67,13 @@
 #include <string>
 #include <algorithm>
 
-
+#include <boost/foreach.hpp>
 
 #include <utility/vector0.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>
 #include <ObjexxFCL/format.hh>
 #include <basic/options/keys/OptionKeys.hh>
-
-#include <boost/assign/list_inserter.hpp>
-#include <boost/assign/list_of.hpp>
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys;
@@ -94,8 +89,7 @@ static basic::Tracer TR( "protocols.flxbb.LayerDesignOperation" );
 namespace protocols {
 namespace flxbb {
 
-utility::vector1< std::string > const LayerDesignOperation::SS_TYPES =
-boost::assign::list_of ("all")("Helix")("HelixCapping")("HelixStart")("Loop")("Strand");
+utility::vector1< std::string > const LayerDesignOperation::SS_TYPES = { "all", "Helix", "HelixCapping", "HelixStart", "Loop", "Strand" };
 
 //bool
 //valid_ss_type( std::string const & query ) {
@@ -128,7 +122,7 @@ CombinedTaskOperation::CombinedTaskOperation( VecTaskOP const & ops ):
 void
 CombinedTaskOperation::apply(core::pose::Pose const & pose, core::pack::task::PackerTask & task) const {
 	using core::pack::task::operation::TaskOperationOP;
-	BOOST_FOREACH ( TaskOperationOP t_op, task_operations_ ) {
+	for ( TaskOperationOP t_op: task_operations_ ) {
 		t_op->apply( pose, task );
 	}
 }
@@ -285,10 +279,10 @@ LayerDesignOperation::pos2select( utility::vector1< core::Size > const & pos ) c
 	if ( pos.empty() ) {
 		return str;
 	} else {
-		str = boost::lexical_cast< std::string >( pos[1] );
+		str = std::to_string( pos[1] );
 	}
 	for ( core::Size i = 2; i <= pos.size(); i++ ) {
-		str += "+" + boost::lexical_cast< std::string >( pos[i] );
+		str += "+" + std::to_string( pos[i] );
 	}
 	return str;
 }
@@ -361,60 +355,62 @@ makeMap( T const & map_initializer )
 void
 LayerDesignOperation::set_default_layer_residues() {
 	TR << "Initializing the layers with the default residues" << std::endl;
-	boost::assign::insert(layer_residues_)
-		(std::string("core"), makeMap( boost::assign::map_list_of
-		(std::string("all"),            std::string("AFILPVWYDNST"))
-		(std::string("Loop"),            std::string("AFILPVWY"))
-		(std::string("Strand"),           std::string("FILVWY"))
-		(std::string("Helix"),            std::string("AFILVWY"))
-		(std::string("HelixStart"),       std::string("AFILVWYP"))
-		(std::string("HelixCapping"),     std::string("DNST"))
-		))
-		(std::string("boundary"), makeMap( boost::assign::map_list_of
-		(std::string("all"),              std::string("ADEFGIKLNPQRSTVWY"))
-		(std::string("Loop"),             std::string("ADEFGIKLNPQRSTVWY"))
-		(std::string("Strand"),           std::string("DEFIKLNQRSTVWY"))
-		(std::string("Helix"),            std::string("ADEIKLNQRSTVWY"))
-		(std::string("HelixStart"),       std::string("ADEIKLNQRSTVWYP"))
-		(std::string("HelixCapping"),     std::string("DNST"))
-		))
-		(std::string("surface"), makeMap( boost::assign::map_list_of
-		(std::string("all"),              std::string("DEGHKNPQRST"))
-		(std::string("Loop"),             std::string("DEGHKNPQRST"))
-		(std::string("Strand"),           std::string("DEHKNQRST"))
-		(std::string("Helix"),            std::string("DEHKNQRST"))
-		(std::string("HelixStart"),       std::string("DEHKNQRSTP"))
-		(std::string("HelixCapping"),     std::string("DNST"))
-		))
-		(std::string("Nterm"), makeMap( boost::assign::map_list_of
-		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
-		//(std::string("all"),     std::string("DNST"))
-		))
-		(std::string("Cterm"), makeMap( boost::assign::map_list_of
-		(std::string("all"),              std::string("ACDEFGHIKLMNPQRSTVWY"))
-		//(std::string("all"),              std::string("DEGNPQRK"))
-		));
+	layer_residues_ = {
+		{"core", {
+		{"all",          "AFILPVWYDNST"},
+		{"Loop",         "AFILPVWY"},
+		{"Strand",       "FILVWY"},
+		{"Helix",        "AFILVWY"},
+		{"HelixStart",   "AFILVWYP"},
+		{"HelixCapping", "DNST"}
+		}},
+		{"boundary", {
+		{"all",              "ADEFGIKLNPQRSTVWY"},
+		{"Loop",             "ADEFGIKLNPQRSTVWY"},
+		{"Strand",           "DEFIKLNQRSTVWY"},
+		{"Helix",            "ADEIKLNQRSTVWY"},
+		{"HelixStart",       "ADEIKLNQRSTVWYP"},
+		{"HelixCapping",     "DNST"}
+		}},
+		{"surface", {
+		{"all",              "DEGHKNPQRST"},
+		{"Loop",             "DEGHKNPQRST"},
+		{"Strand",           "DEHKNQRST"},
+		{"Helix",            "DEHKNQRST"},
+		{"HelixStart",       "DEHKNQRSTP"},
+		{"HelixCapping",     "DNST"}
+		}},
+		{"Nterm", {
+		{"all",              "ACDEFGHIKLMNPQRSTVWY"}
+		}},
+		{"Cterm", {
+		{"all",              "ACDEFGHIKLMNPQRSTVWY"}
+		}}
+		};
 
-	boost::assign::insert(design_layer_)
-		(std::string("core"), false )
-		(std::string("boundary"), false )
-		(std::string("surface"), false )
-		(std::string("Nterm"), false )
-		(std::string("Cterm"), false );
+	design_layer_ = {
+		{"core", false },
+		{"boundary", false },
+		{"surface", false },
+		{"Nterm", false },
+		{"Cterm", false }
+		};
 
-	boost::assign::insert(layer_specification_)
-		(std::string("core"), DESIGNABLE)
-		(std::string("boundary"), DESIGNABLE)
-		(std::string("surface"), DESIGNABLE)
-		(std::string("Nterm"), DESIGNABLE)
-		(std::string("Cterm"), DESIGNABLE);
+	layer_specification_ = {
+		{"core", DESIGNABLE},
+		{"boundary", DESIGNABLE},
+		{"surface", DESIGNABLE},
+		{"Nterm", DESIGNABLE},
+		{"Cterm", DESIGNABLE}
+		};
 
-	boost::assign::insert(layer_operation_)
-		(std::string("core"), DESIGN)
-		(std::string("boundary"), DESIGN)
-		(std::string("surface"), DESIGN)
-		(std::string("Nterm"), DESIGN)
-		(std::string("Cterm"), DESIGN);
+	layer_operation_ = {
+		{"core", DESIGN},
+		{"boundary", DESIGN},
+		{"surface", DESIGN},
+		{"Nterm", DESIGN},
+		{"Cterm", DESIGN}
+		};
 }
 
 utility::vector1<bool>
@@ -430,7 +426,7 @@ LayerDesignOperation::get_restrictions( std::string const & layer, std::string c
 void
 LayerDesignOperation::set_design_layers( utility::vector1< std::string > const & layers )
 {
-	BOOST_FOREACH ( std::string const & layer, layers ) {
+	for ( std::string const & layer: layers ) {
 		design_layer_[ layer ] = true;
 	}
 }

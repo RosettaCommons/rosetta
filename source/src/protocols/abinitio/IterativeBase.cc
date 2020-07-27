@@ -104,7 +104,6 @@
 #include <basic/options/keys/cluster.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 // Third-party Headers
-#include <boost/functional/hash.hpp>
 
 //// C++ headers
 #include <cstdlib>

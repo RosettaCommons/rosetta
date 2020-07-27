@@ -41,9 +41,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#ifndef __native_client__
-#include <boost/lexical_cast.hpp>
-#endif
 
 // C++
 #include <string>

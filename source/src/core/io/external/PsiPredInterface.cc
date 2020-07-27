@@ -30,7 +30,6 @@
 #include <utility/file/file_sys_util.hh> //file_exists()
 
 // boost
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 
@@ -340,7 +339,7 @@ PsiPredInterface::run_psipred( core::pose::Pose const & pose, std::string const 
 		core::Size retval = system( command.c_str() );
 #endif
 		if ( retval != 0 ) {
-			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
+			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + std::to_string( retval ) );
 		}
 
 		TR.Debug << "target psipred filename and psipred_horiz filename " << psipred_filename << " " << psipred_horiz_filename << std::endl;
@@ -430,7 +429,7 @@ utility::vector1<utility::vector1< utility::vector1< core::Real > > > PsiPredInt
 		core::Size retval = system( command.c_str() );
 #endif
 		if ( retval != 0 ) {
-			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + boost::lexical_cast<std::string>( retval ) );
+			utility_exit_with_message( "Failed to run the psipred command, which was \"" + command + "\". Something went wrong. Make sure you specified the full path to the psipred command in your XML file. Return code=" + std::to_string( retval ) );
 		}
 
 		// open and read psipred output into a stringstream buffer

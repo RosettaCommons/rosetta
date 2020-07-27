@@ -33,7 +33,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/fixedsizearray1.hh>
-#include <boost/foreach.hpp>
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 #include <basic/Tracer.hh>

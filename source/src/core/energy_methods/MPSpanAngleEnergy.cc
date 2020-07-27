@@ -24,7 +24,6 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/interpolation/spline/CubicSpline.hh>
-#include <boost/lexical_cast.hpp>
 #include <map>
 
 //utility headers

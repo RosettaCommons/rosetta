@@ -34,7 +34,6 @@
 #include <utility/io/izstream.hh>
 
 #include <utility/vector1.hh>
-#include <boost/bind.hpp>
 
 
 namespace core {

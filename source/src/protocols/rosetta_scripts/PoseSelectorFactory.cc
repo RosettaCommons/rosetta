@@ -27,8 +27,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 namespace protocols {
 namespace rosetta_scripts {

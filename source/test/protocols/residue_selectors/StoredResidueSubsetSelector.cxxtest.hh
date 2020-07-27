@@ -34,7 +34,6 @@
 #include <basic/datacache/DataMap.hh>
 
 // C++ headers
-#include <boost/assign.hpp>
 #include <string>
 
 using namespace core::select::residue_selector;

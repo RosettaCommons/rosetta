@@ -52,7 +52,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <string>

@@ -36,9 +36,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
 #include <vector>

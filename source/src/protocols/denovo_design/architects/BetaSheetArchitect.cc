@@ -34,7 +34,6 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.architects.BetaSheetArchitect" );
 
@@ -307,7 +306,7 @@ fill_orientation_info( BetaSheetArchitect::PairingsInfoVector const & by_strand 
 	if ( combos.empty() ) {
 		BetaSheetArchitect::PairingsInfoVector retval;
 		for ( components::StrandPairingCOP const & pinfo : *by_strand.begin() ) {
-			retval.push_back( boost::assign::list_of (pinfo) );
+			retval.push_back( { pinfo } );
 		}
 		return retval;
 	}
@@ -316,7 +315,7 @@ fill_orientation_info( BetaSheetArchitect::PairingsInfoVector const & by_strand 
 	BetaSheetArchitect::PairingsInfoVector retval;
 	for ( components::StrandPairingCOP const & pinfo : *by_strand.begin() ) {
 		for ( BetaSheetArchitect::PairingsInfo const & prev : combos ) {
-			BetaSheetArchitect::PairingsInfo newval = boost::assign::list_of (pinfo);
+			BetaSheetArchitect::PairingsInfo newval ={ pinfo };
 			for ( components::StrandPairingCOP const & pinfo2 : prev ) {
 				newval.push_back( pinfo2 );
 			}
@@ -497,7 +496,7 @@ BetaSheetArchitect::retrieve_register_shifts( StructureData const & perm ) const
 		if ( c == strands_.begin() ) {
 			shifts.push_back( 0 );
 		} else {
-			components::SegmentPairingCOP pair = perm.pairing( boost::assign::list_of ((*prev)->id())((*c)->id()) );
+			components::SegmentPairingCOP pair = perm.pairing( { (*prev)->id(), (*c)->id() } );
 			if ( !pair ) {
 				std::stringstream msg;
 				msg << "Pairing not found!!!" << (*prev)->id() << " <--> " << (*c)->id() << std::endl;

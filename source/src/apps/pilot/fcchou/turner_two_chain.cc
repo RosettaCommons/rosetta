@@ -87,7 +87,7 @@
 #include <iostream>
 #include <string>
 #include <math.h>
-#include <boost/array.hpp>
+#include <array>
 
 // option key includes
 #include <basic/options/keys/out.OptionKeys.gen.hh>
@@ -116,8 +116,8 @@ typedef  numeric::xyzMatrix< Real > Matrix;
 static const chemical::rna::RNA_FittedTorsionInfo rna_fitted_torsion_info;
 
 typedef utility::vector1<float> float_vec;
-typedef boost::array<float,5> Backbone_Torsion;
-typedef boost::array<float,2> Nucleoside_Torsion;
+typedef std::array<float,5> Backbone_Torsion;
+typedef std::array<float,2> Nucleoside_Torsion;
 
 OPT_KEY( String, force_field )
 OPT_KEY( String, seq1 )

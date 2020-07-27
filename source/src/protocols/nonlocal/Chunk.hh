@@ -17,7 +17,6 @@
 #include <protocols/nonlocal/Chunk.fwd.hh>
 
 // External headers
-#include <boost/scoped_ptr.hpp>
 #include <boost/math/distributions/normal.hpp>
 
 // Package headers
@@ -30,6 +29,8 @@
 // Utility headers
 #include <numeric/random/DistributionSampler.hh>
 #include <utility/VirtualBase.hh>
+
+#include <memory>
 
 namespace protocols {
 namespace nonlocal {
@@ -86,7 +87,7 @@ public:
 private:
 	RegionOP region_;
 	MoveMapOP movable_;
-	boost::scoped_ptr<numeric::random::DistributionSampler<Normal> > sampler_;
+	std::unique_ptr<numeric::random::DistributionSampler<Normal> > sampler_;
 };
 
 }  // namespace nonlocal

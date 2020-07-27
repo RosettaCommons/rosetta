@@ -33,7 +33,6 @@
 #include <utility/tag/xml_schema_group_initialization.hh>
 // Boost headers
 #include <functional>
-#include <boost/foreach.hpp>
 
 
 
@@ -105,7 +104,7 @@ AssemblyScorerFactory::get_assembly_scorer(
 			<< "register a new AssemblyScorer in the AssemblyScorerFactory" << std::endl
 			<< "known AssemblyScorer types are:" << std::endl;
 
-		BOOST_FOREACH ( const AssemblyScorerCreatorMap::value_type& type, assembly_scorer_types_ ) {
+		for ( const AssemblyScorerCreatorMap::value_type& type: assembly_scorer_types_ ) {
 			error_msg << "\t" << type.first << std::endl;
 		}
 		utility_exit_with_message(error_msg.str());

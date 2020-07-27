@@ -104,7 +104,6 @@
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
-#include <boost/lexical_cast.hpp>
 
 
 using namespace core;
@@ -835,7 +834,7 @@ void GenPharmacophore::cluster_KeyFeatures(std::string const & input_filename, s
 		}
 
 		if ( numRng >= num_ring ) {
-			ofstream output((output_filename + "_" + boost::lexical_cast<string>(counter++) + ".pdb").c_str());
+			ofstream output((output_filename + "_" + std::to_string(counter++) + ".pdb").c_str());
 			for ( s = 0; s < current.size(); s++ ) {
 				output << current[s]->getContent();
 			}

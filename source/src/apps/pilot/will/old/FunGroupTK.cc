@@ -80,9 +80,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/functional/hash.hpp>
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

@@ -90,9 +90,6 @@
 #include <vector>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/functional/hash.hpp>
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

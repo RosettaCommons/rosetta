@@ -26,7 +26,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.constraint_generator.MembraneSpanConstraintGenerator" );
 
@@ -74,7 +73,6 @@ MembraneSpanConstraintGenerator::apply( core::pose::Pose const & pose ) const
 {
 	//using core::scoring::constraints::ConstraintOP;
 	//ConstraintOP amb_cst( new core::scoring::constraints::MembraneSpanConstraint( pose ) );
-	//return boost::assign::list_of (amb_cst);
 	//
 	core::scoring::constraints::ConstraintCOPs csts;
 	csts.push_back( utility::pointer::make_shared< core::scoring::constraints::MembraneSpanConstraint >( pose ) );

@@ -40,8 +40,6 @@
 #include <basic/Tracer.hh>
 
 // C++ headers
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 
 static basic::Tracer TR( "protocols.denovo_design.DisulfidizeMover.cxxtest" );
 
@@ -108,7 +106,7 @@ public:
 
 		// each should have disulfides
 		std::set< core::Size > num_disulf;
-		BOOST_FOREACH ( core::pose::PoseOP p, poses ) {
+		for ( core::pose::PoseOP p: poses ) {
 			core::Size cyd_count = 0;
 			for ( core::Size i=1; i<=p->size(); ++i ) {
 				TS_ASSERT( p );

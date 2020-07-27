@@ -14,7 +14,7 @@
 #define INCLUDED_NUMERIC_RANDOM_DISTRIBUTIONSAMPLER_HH
 
 // External headers
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 #include <boost/math/distributions.hpp>
 

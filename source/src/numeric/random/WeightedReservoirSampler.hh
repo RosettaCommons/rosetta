@@ -18,7 +18,7 @@
 #include <queue>
 
 // External headers
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 // Utility headers
 #include <utility/vector1.hh>

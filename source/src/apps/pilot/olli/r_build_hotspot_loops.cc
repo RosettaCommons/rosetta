@@ -112,7 +112,6 @@
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
-#include <boost/foreach.hpp>
 #include <devel/init.hh>
 
 

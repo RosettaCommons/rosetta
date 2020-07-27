@@ -48,8 +48,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
-//#include <boost/bind.hpp>
-//#include <boost/function.hpp>
 
 // C++ headers
 #include <sstream>

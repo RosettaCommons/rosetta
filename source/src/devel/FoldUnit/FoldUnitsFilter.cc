@@ -20,7 +20,6 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
-#include <boost/foreach.hpp>
 #include <cstdio>
 #include <fstream>
 #include <protocols/simple_filters/StemFinderFilter.hh>

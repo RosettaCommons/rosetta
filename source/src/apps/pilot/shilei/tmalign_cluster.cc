@@ -57,7 +57,6 @@
 //use TM align for sequence independent
 #include <protocols/hybridization/TMalign.hh>
 #include <protocols/hybridization/util.hh>
-#include <boost/lexical_cast.hpp>
 
 // VKM, 4 Jun 2020: Boost thread support has been deprecated.  Adding
 // support for std::thread instead.
@@ -275,7 +274,7 @@ int main(int argc, char *argv[])
 					TR.Info << j << " " ;
 					//std::string tag( tag_from_pose( *PoseVec[j+1] ) );
 					std::string tag=basic::options::option[ basic::options::OptionKeys::in::file::s ]()[j+1];
-					std::string fn( "c_"+boost::lexical_cast<std::string>(i)+"_" + boost::lexical_cast<std::string>(j) +"_" + tag );
+					std::string fn( "c_"+std::to_string(i)+"_" + std::to_string(j) +"_" + tag );
 					do_tmalign(*PoseVec[j+1],*PoseVec[clustercentre[i]+1]);
 					PoseVec[j+1]->dump_pdb(fn);
 				}

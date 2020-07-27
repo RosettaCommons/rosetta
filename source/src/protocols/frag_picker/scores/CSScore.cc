@@ -29,7 +29,6 @@
 
 
 // Boost
-#include <boost/tuple/tuple.hpp>
 
 // project headers
 #include <basic/Tracer.hh>

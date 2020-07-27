@@ -24,8 +24,6 @@
 #include <utility/assert.hh>
 #include <utility/exit.hh>
 
-#include <boost/lexical_cast.hpp>
-
 #include <string>
 
 namespace basic {
@@ -92,7 +90,7 @@ listener_tag_to_name(listener_tags tag)
 	case DATABASE_PROTOCOL_AND_BATCH_ID_TAG :
 		return "DATABAASE_PROTOCOL_AND_BATCH_ID_TAG";
 	default :
-		return "Unrecognized listener_tag: " + boost::lexical_cast<std::string>(tag);
+		return "Unrecognized listener_tag: " + std::to_string(tag);
 	}
 }
 

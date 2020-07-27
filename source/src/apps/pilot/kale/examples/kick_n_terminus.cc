@@ -17,7 +17,6 @@
 
 #include <iomanip>
 #include <unistd.h>
-#include <boost/lexical_cast.hpp>
 
 
 // Namespaces {{{1
@@ -38,18 +37,18 @@ OPT_1GRP_KEY(Boolean, kale, terminus)
 // }}}1
 
 class NullKinematicPerturber : public KinematicPerturber { // {{{1
-	
+
 public:
-	
+
 	std::string perturber_type() const {
 		return "NullKinematicPerturber";
 	}
-	
+
 	void perturb_chain(
-			core::pose::Pose const & pose,
-			utility::vector1< core::Real> & torsion_angles,
-			utility::vector1< core::Real> & bond_angles,
-			utility::vector1< core::Real> & bond_lengths) {
+		core::pose::Pose const & pose,
+		utility::vector1< core::Real> & torsion_angles,
+		utility::vector1< core::Real> & bond_angles,
+		utility::vector1< core::Real> & bond_lengths) {
 
 		/// Don't do anything.
 		return;
@@ -58,27 +57,27 @@ public:
 // }}}1
 
 void make_random_perturbation( // {{{1
-		ClosureProblem &problem) {
+	ClosureProblem &problem) {
 
 	Size first_torsion = 4;
 	Size last_torsion = problem.torsion_angles.size() - 3;
 
-	for(Size i = first_torsion; i <= last_torsion; /* increment in loop */) {
-			Real phi = 360 * numeric::random::rg().uniform() - 180;
-			Real psi = 360 * numeric::random::rg().uniform() - 180;
-			Real omega = 360 * numeric::random::rg().uniform() - 180;
+	for ( Size i = first_torsion; i <= last_torsion; /* increment in loop */ ) {
+		Real phi = 360 * numeric::random::rg().uniform() - 180;
+		Real psi = 360 * numeric::random::rg().uniform() - 180;
+		Real omega = 360 * numeric::random::rg().uniform() - 180;
 
-			problem.torsion_angles[i++] = phi;
-			problem.torsion_angles[i++] = psi;
+		problem.torsion_angles[i++] = phi;
+		problem.torsion_angles[i++] = psi;
 
-			if (i != last_torsion) problem.torsion_angles[i++] = omega;
-			else i++;
+		if ( i != last_torsion ) problem.torsion_angles[i++] = omega;
+		else i++;
 	}
 }
 
 void pick_random_solution( // {{{1
-		SolutionList const &solutions,
-		ClosureSolution const *&solution) {
+	SolutionList const &solutions,
+	ClosureSolution const *&solution) {
 
 	Size index = numeric::random::rg().random_range(1, solutions.size());
 	solution = &solutions[index];
@@ -100,12 +99,11 @@ void devel_main(int argc, char** argv) { // {{{1
 	ClosureSolution const *solution = NULL;
 	SolutionList solutions;
 
-	if (option[OptionKeys::kale::terminus]() == true) {
+	if ( option[OptionKeys::kale::terminus]() == true ) {
 		input_pdb = "structures/linear/4.helix.pdb";
 		output_pdb = "terminus_closure.";
 		first_pivot = 1; second_pivot = 2; third_pivot = 3;
-	}
-	else {
+	} else {
 		input_pdb = "structures/linear/5.helix.pdb";
 		output_pdb = "standard_closure.";
 		first_pivot = 2; second_pivot = 3; third_pivot = 4;
@@ -114,17 +112,17 @@ void devel_main(int argc, char** argv) { // {{{1
 	cout << "Input: " << input_pdb << endl;
 	cout << "Outputs: " << output_pdb << "*.pdb" << endl;
 	cout << "Pivots: " << first_pivot << "/"
-		                 << second_pivot << "/"
-		                 << third_pivot << endl << endl;
+		<< second_pivot << "/"
+		<< third_pivot << endl << endl;
 
 	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	cout << "Before Anything" << endl;
 	cout << "===============" << endl;
 
-	cout << "Pose XYZs" << endl; 
+	cout << "Pose XYZs" << endl;
 	cout << "---------" << endl;
-	for (int j = 1; j <= pose.size(); j++) {
+	for ( int j = 1; j <= pose.size(); j++ ) {
 		id::NamedAtomID n_id("N", j);
 		id::NamedAtomID ca_id("CA", j);
 		id::NamedAtomID c_id("C", j);
@@ -149,26 +147,26 @@ void devel_main(int argc, char** argv) { // {{{1
 	}
 	cout << endl;
 
-	define_closure_problem(problem, pose, 
-			first_pivot, second_pivot, third_pivot);
+	define_closure_problem(problem, pose,
+		first_pivot, second_pivot, third_pivot);
 
 	cout << "Problem" << endl;
 	cout << "=======" << endl;
 
-	cout << "KIC XYZs" << endl; 
+	cout << "KIC XYZs" << endl;
 	cout << "--------" << endl;
-	for (int j = 1; j <= problem.atom_xyzs.size(); j++) {
+	for ( int j = 1; j <= problem.atom_xyzs.size(); j++ ) {
 		Coordinate xyz = problem.atom_xyzs[j];
 		cout << fixed << setprecision(4) << setw(8) << xyz[1] << " ";
 		cout << fixed << setprecision(4) << setw(8) << xyz[2] << " ";
 		cout << fixed << setprecision(4) << setw(8) << xyz[3] << endl;
-		if (j % 3 == 0) cout << endl;
+		if ( j % 3 == 0 ) cout << endl;
 	}
 	cout << endl;
 
-	cout << "Pose XYZs" << endl; 
+	cout << "Pose XYZs" << endl;
 	cout << "---------" << endl;
-	for (int j = 1; j <= problem.pose.size(); j++) {
+	for ( int j = 1; j <= problem.pose.size(); j++ ) {
 		id::NamedAtomID n_id("N", j);
 		id::NamedAtomID ca_id("CA", j);
 		id::NamedAtomID c_id("C", j);
@@ -198,24 +196,24 @@ void devel_main(int argc, char** argv) { // {{{1
 	apply_all_closure_solutions(solutions);
 	//pick_random_solution(solutions, solution);
 
-	for (int i = 1; i <= solutions.size(); i++) {
+	for ( int i = 1; i <= solutions.size(); i++ ) {
 		cout << "Solution " << i << endl;
 		cout << "==========" << endl;
 
-		cout << "KIC XYZs" << endl; 
+		cout << "KIC XYZs" << endl;
 		cout << "--------" << endl;
-		for (int j = 1; j <= solutions[i].atom_xyzs.size(); j++) {
+		for ( int j = 1; j <= solutions[i].atom_xyzs.size(); j++ ) {
 			Coordinate xyz = solutions[i].atom_xyzs[j];
 			cout << fixed << setprecision(4) << setw(8) << xyz[1] << " ";
 			cout << fixed << setprecision(4) << setw(8) << xyz[2] << " ";
 			cout << fixed << setprecision(4) << setw(8) << xyz[3] << endl;
-			if (j % 3 == 0) cout << endl;
+			if ( j % 3 == 0 ) cout << endl;
 		}
 		cout << endl;
 
-		cout << "Pose XYZs" << endl; 
+		cout << "Pose XYZs" << endl;
 		cout << "---------" << endl;
-		for (int j = 1; j <= solutions[i].pose.size(); j++) {
+		for ( int j = 1; j <= solutions[i].pose.size(); j++ ) {
 			id::NamedAtomID n_id("N", j);
 			id::NamedAtomID ca_id("CA", j);
 			id::NamedAtomID c_id("C", j);
@@ -241,59 +239,59 @@ void devel_main(int argc, char** argv) { // {{{1
 		cout << endl;
 
 		/*
-		cout << "Solved Torsions" << endl; 
+		cout << "Solved Torsions" << endl;
 		cout << "===============" << endl;
 		for (int j = 1; j <= solutions[i].torsion_angles.size(); j++) {
-			Real angle = solutions[i].torsion_angles[j];
-			angle = (angle < 0) ? angle + 360 : angle;
-			cout << fixed << setprecision(4) << setw(8) << angle << endl;
-			if (j % 3 == 0) cout << endl;
+		Real angle = solutions[i].torsion_angles[j];
+		angle = (angle < 0) ? angle + 360 : angle;
+		cout << fixed << setprecision(4) << setw(8) << angle << endl;
+		if (j % 3 == 0) cout << endl;
 		}
 		cout << endl;
 
-		cout << "Applied Torsions" << endl; 
+		cout << "Applied Torsions" << endl;
 		cout << "================" << endl;
 		for (int j = 1; j <= solutions[i].pose.size(); j++) {
-			Real phi = solutions[i].pose.phi(j);
-			Real psi = solutions[i].pose.psi(j);
-			Real omega = solutions[i].pose.omega(j);
+		Real phi = solutions[i].pose.phi(j);
+		Real psi = solutions[i].pose.psi(j);
+		Real omega = solutions[i].pose.omega(j);
 
-			phi = (phi < 0) ? phi + 360 : phi;
-			psi = (psi < 0) ? psi + 360 : psi;
-			omega = (omega < 0) ? omega + 360 : omega;
+		phi = (phi < 0) ? phi + 360 : phi;
+		psi = (psi < 0) ? psi + 360 : psi;
+		omega = (omega < 0) ? omega + 360 : omega;
 
-			cout << fixed << setprecision(4) << setw(8) << phi << endl;
-			cout << fixed << setprecision(4) << setw(8) << psi << endl;
-			cout << fixed << setprecision(4) << setw(8) << omega << endl;
-			cout << endl;
+		cout << fixed << setprecision(4) << setw(8) << phi << endl;
+		cout << fixed << setprecision(4) << setw(8) << psi << endl;
+		cout << fixed << setprecision(4) << setw(8) << omega << endl;
+		cout << endl;
 		}
 		cout << endl;
 		*/
 
 		/*
-		cout << "Angles  " << endl; 
+		cout << "Angles  " << endl;
 		cout << "========" << endl;
 		for (int j = 1; j <= solutions[i].bond_angles.size(); j++) {
-			Real angle = solutions[i].bond_angles[j];
-			angle = (angle < 0) ? angle + 360 : angle;
-			cout << fixed << setprecision(4) << setw(8) << angle << endl;
-			if (j % 3 == 0) cout << endl;
+		Real angle = solutions[i].bond_angles[j];
+		angle = (angle < 0) ? angle + 360 : angle;
+		cout << fixed << setprecision(4) << setw(8) << angle << endl;
+		if (j % 3 == 0) cout << endl;
 		}
 		cout << endl;
 
-		cout << "Lengths " << endl; 
+		cout << "Lengths " << endl;
 		cout << "========" << endl;
 		for (int j = 1; j <= solutions[i].bond_lengths.size(); j++) {
-			Real length = solutions[i].bond_lengths[j];
-			cout << fixed << setprecision(4) << setw(8) << length << endl;
-			if (j % 3 == 0) cout << endl;
+		Real length = solutions[i].bond_lengths[j];
+		cout << fixed << setprecision(4) << setw(8) << length << endl;
+		if (j % 3 == 0) cout << endl;
 		}
 		cout << endl;
 		*/
 	}
 
-	for (int i = 1; i <= solutions.size(); i++) {
-		string index = boost::lexical_cast<std::string>(i);
+	for ( int i = 1; i <= solutions.size(); i++ ) {
+		string index = std::to_string(i);
 		solutions[i].pose.dump_pdb(output_pdb + index + ".pdb");
 	}
 }
@@ -313,12 +311,11 @@ void protocols_main(int argc, char** argv) { // {{{1
 	KinematicPerturberOP perturber = new NullKinematicPerturber();
 	mover->set_perturber(perturber);
 
-	if (option[OptionKeys::kale::terminus]() == true) {
+	if ( option[OptionKeys::kale::terminus]() == true ) {
 		input_pdb = "structures/linear/4.helix.pdb";
 		output_pdb = "terminus_closure.prc.pdb";
 		first_pivot = 1; second_pivot = 2; third_pivot = 3;
-	}
-	else {
+	} else {
 		input_pdb = "structures/linear/5.helix.pdb";
 		output_pdb = "standard_closure.prc.pdb";
 		first_pivot = 2; second_pivot = 3; third_pivot = 4;
@@ -327,16 +324,16 @@ void protocols_main(int argc, char** argv) { // {{{1
 	cout << "Input: " << input_pdb << endl;
 	cout << "Outputs: " << output_pdb << endl;
 	cout << "Pivots: " << first_pivot << "/"
-		                 << second_pivot << "/"
-		                 << third_pivot << endl << endl;
+		<< second_pivot << "/"
+		<< third_pivot << endl << endl;
 
 	import_pose::pose_from_file(pose, input_pdb, core::import_pose::PDB_file);
 
 	mover->apply(pose);
 
-	cout << "Applied Torsions" << endl; 
+	cout << "Applied Torsions" << endl;
 	cout << "================" << endl;
-	for (int j = 1; j <= pose.size(); j++) {
+	for ( int j = 1; j <= pose.size(); j++ ) {
 		Real phi = pose.phi(j);
 		Real psi = pose.psi(j);
 		Real omega = pose.omega(j);

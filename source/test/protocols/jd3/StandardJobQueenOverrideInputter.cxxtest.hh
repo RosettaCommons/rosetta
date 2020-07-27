@@ -49,8 +49,6 @@
 #include <utility/options/keys/OptionKeyList.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <sstream>

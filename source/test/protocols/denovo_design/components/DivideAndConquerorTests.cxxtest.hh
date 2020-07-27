@@ -113,7 +113,7 @@ public:
 		TR << sd << std::endl;
 
 		DivideAndConqueror conq;
-		conq.set_start_segments( boost::assign::list_of("E04") );
+		conq.set_start_segments( { "E04" } );
 		BuildPhases const st_segments = conq.divide_and_conquer( sd );
 		TR << sd << std::endl;
 		TR << st_segments << std::endl;

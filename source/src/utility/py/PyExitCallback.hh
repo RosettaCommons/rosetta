@@ -19,8 +19,6 @@
 
 #include <utility/VirtualBase.hh>
 
-//#include <boost/utility.hpp>
-
 #include <string>
 
 namespace utility { namespace py {

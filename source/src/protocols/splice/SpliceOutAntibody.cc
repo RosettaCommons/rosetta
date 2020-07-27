@@ -34,7 +34,6 @@
 #include <core/chemical/AA.hh>
 #include <protocols/protein_interface_design/filters/TorsionFilter.hh>
 #include <protocols/protein_interface_design/util.hh>
-#include <boost/foreach.hpp>
 #include <boost/algorithm/string/predicate.hpp>//for comparing string case insensitive
 #include <protocols/task_operations/RestrictChainToRepackingOperation.hh>
 #include <protocols/minimization_packing/MinMover.hh>

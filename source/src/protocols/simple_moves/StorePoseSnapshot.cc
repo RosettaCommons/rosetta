@@ -34,8 +34,6 @@
 #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 
-#include <boost/lexical_cast.hpp>
-#include <boost/foreach.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

@@ -29,7 +29,6 @@
 #include <utility/vector0.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
 
 // C++ Headers
 #include <string>

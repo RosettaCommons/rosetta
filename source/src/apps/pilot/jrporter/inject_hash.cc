@@ -35,7 +35,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.hh>
 
-#include <boost/foreach.hpp>
 #include <boost/functional/hash.hpp>
 
 

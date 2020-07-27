@@ -35,7 +35,7 @@
 
 //C++ headers
 #include <iostream>
-#include <boost/bind/bind.hpp>
+#include <functional>
 
 // --------------- Test Class --------------- //
 
@@ -98,20 +98,20 @@ public:
 			if ( i != SEQPOS ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}
 
 		// Exception safety of the above calls is tested in other tests.
 
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, SEQPOS, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, SEQPOS, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, SEQPOS, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, SEQPOS, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, SEQPOS, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, SEQPOS, 0.0 ) ) );
 	}
 
 	void test_tclaim_constructor_multi_pos() {
@@ -150,24 +150,24 @@ public:
 			if ( i != SEQPOS1 && i != SEQPOS2 ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}
 
 		// Exception safety of the above calls is tested in other tests.
 
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, SEQPOS1, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, SEQPOS1, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, SEQPOS1, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, SEQPOS1, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, SEQPOS1, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, SEQPOS1, 0.0 ) ) );
 
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, SEQPOS2, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, SEQPOS2, 0.0 ) ) );
-		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, SEQPOS2, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, SEQPOS2, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, SEQPOS2, 0.0 ) ) );
+		TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, SEQPOS2, 0.0 ) ) );
 	}
 
 	void test_tclaim_constructor_list_pos( core::pose::Pose const& pose ) {
@@ -202,11 +202,11 @@ public:
 			if ( i < SEQPOS_START || i > SEQPOS_END ) {
 				//std::cout << i << std::endl;
 				if ( i != 1 ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 				if ( i != prot_pose.size() ) {
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
-					TS_ASSERT_THROWS( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
+					TS_ASSERT_THROWS( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, i, 0.0 ) ) , EXCN_Env_Security_Exception & );
 				}
 			}
 		}
@@ -214,9 +214,9 @@ public:
 		// Exception safety of the above calls is tested in other tests.
 
 		for ( core::Size i = SEQPOS_START; i <= SEQPOS_END; ++i ) {
-			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_phi, &prot_pose, i, 0.0 ) ) );
-			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_psi, &prot_pose, i, 0.0 ) ) );
-			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, boost::bind( set_omega, &prot_pose, i, 0.0 ) ) );
+			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_phi, &prot_pose, i, 0.0 ) ) );
+			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_psi, &prot_pose, i, 0.0 ) ) );
+			TS_ASSERT_THROWS_NOTHING( claim_test->apply( prot_pose, std::bind( set_omega, &prot_pose, i, 0.0 ) ) );
 		}
 	}
 };

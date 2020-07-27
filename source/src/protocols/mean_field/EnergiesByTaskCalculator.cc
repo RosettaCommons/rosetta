@@ -35,9 +35,6 @@
 
 #include <utility/vector1.hh>
 #include <set>
-#include <boost/foreach.hpp>
-
-#define foreach BOOST_FOREACH
 
 using namespace core;
 using namespace core::pose;
@@ -117,7 +114,7 @@ EnergiesByTaskCalculator::recompute(
 
 		if ( task_->being_packed( i ) || task_->being_designed( i ) ) {
 			//core::Real rsd_total = 0.0;
-			foreach ( core::scoring::ScoreType score_type, score_types ) {
+			for ( core::scoring::ScoreType score_type: score_types ) {
 				core::Real score = (weights[score_type] * this_pose.energies().residue_total_energies(i)[ score_type ]);
 				total += score;
 			}

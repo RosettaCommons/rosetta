@@ -33,8 +33,6 @@
 #include <core/kinematics/AtomTree.hh>
 
 // tracer
-#include <boost/bind/bind.hpp>
-#include <boost/ref.hpp>
 #include <basic/Tracer.hh>
 
 // C++ Headers

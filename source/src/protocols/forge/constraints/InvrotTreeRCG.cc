@@ -35,7 +35,6 @@
 #include <utility/vector1.hh>
 
 // boost headers
-#include <boost/assign.hpp>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

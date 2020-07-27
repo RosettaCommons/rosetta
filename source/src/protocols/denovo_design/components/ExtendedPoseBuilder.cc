@@ -35,7 +35,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 #include <iterator>
@@ -66,7 +65,7 @@ ExtendedPoseBuilder::apply( StructureData const & sd ) const
 		SegmentNameSet const template_set( template_segments.begin(), template_segments.end() );
 		StructureData cur_sd = sd.slice( template_set, false );
 		FoldGraph fg( cur_sd );
-		newpose->fold_tree( fg.fold_tree( boost::assign::list_of (*cur_sd.segments_begin()) ) );
+		newpose->fold_tree( fg.fold_tree( { *cur_sd.segments_begin() } ) );
 	}
 
 	newpose->dump_pdb( "frag_templates.pdb" );
@@ -75,7 +74,7 @@ ExtendedPoseBuilder::apply( StructureData const & sd ) const
 
 	// rebuild fold tree
 	FoldGraph fg( sd );
-	newpose->fold_tree( fg.fold_tree( boost::assign::list_of(*sd.segments_begin()) ) );
+	newpose->fold_tree( fg.fold_tree( { *sd.segments_begin() } ) );
 
 	StructureDataFactory::get_instance()->save_into_pose( *newpose, sd );
 	return newpose;

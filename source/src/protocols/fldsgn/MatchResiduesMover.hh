@@ -33,7 +33,6 @@
 #include <utility/tag/Tag.fwd.hh>
 
 // Boost headers
-#include <boost/tuple/tuple.hpp>
 
 
 namespace protocols {

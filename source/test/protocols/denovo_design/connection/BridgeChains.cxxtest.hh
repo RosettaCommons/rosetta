@@ -52,7 +52,6 @@
 
 // Boost headers
 #include <boost/algorithm/string.hpp>
-#include <boost/assign.hpp>
 
 // unit test utility functions
 #include <protocols/denovo_design/test_utils.hh>
@@ -108,7 +107,7 @@ core::Size new_resnum_termini(
 			return cse - c1_cut_residues + orig_resnum - cms + insert_length;
 			// also inside fixed segment -- should never happen
 		} else {
-			utility_exit_with_message( boost::lexical_cast< std::string >(orig_resnum) + " is inside both the fixed and movable segments. Something is wrong..." );
+			utility_exit_with_message( std::to_string(orig_resnum) + " is inside both the fixed and movable segments. Something is wrong..." );
 		}
 		return cse - c1_cut_residues + orig_resnum - cms + insert_length;
 	}
@@ -276,10 +275,8 @@ public:
 
 		// look for proper termini
 		TR << sd_conn << std::endl;
-		std::set< core::Size > const expected_lower_termini =
-			boost::assign::list_of (1) (15) (35) (43);
-		std::set< core::Size > const expected_upper_termini =
-			boost::assign::list_of (14) (34) (42) (49);
+		std::set< core::Size > const expected_lower_termini = { 1, 15, 35, 43 };
+		std::set< core::Size > const expected_upper_termini = { 14, 34, 42, 49 };
 
 		c_count = 0;
 		n_count = 0;

@@ -50,8 +50,6 @@
 #include <protocols/toolbox/superimpose.hh>
 
 //Include Boost
-#include <boost/foreach.hpp>
-#include <boost/lexical_cast.hpp>
 
 //Include ObjexxFCL
 #include <ObjexxFCL/FArray.all.hh>

@@ -38,8 +38,6 @@
 #include <utility/file/file_sys_util.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 #include <limits>
 
 // External Headers

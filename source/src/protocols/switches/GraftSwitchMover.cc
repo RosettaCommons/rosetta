@@ -49,9 +49,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
 
-#include <boost/filesystem/path.hpp>
-#include <boost/iterator/indirect_iterator.hpp>
-
 // Utility Headers
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>

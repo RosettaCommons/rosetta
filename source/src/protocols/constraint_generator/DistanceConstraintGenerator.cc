@@ -33,7 +33,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR( "protocols.constraint_generator.DistanceConstraintGenerator" );
 
@@ -132,7 +131,7 @@ DistanceConstraintGenerator::apply( core::pose::Pose const & pose ) const
 
 	TR.Debug << "Rolling constraints into ambiguous constraint" << std::endl;
 	ConstraintOP amb_cst( new core::scoring::constraints::AmbiguousConstraint( csts ) );
-	return boost::assign::list_of (amb_cst);
+	return { amb_cst };
 }
 
 core::scoring::constraints::ConstraintOP

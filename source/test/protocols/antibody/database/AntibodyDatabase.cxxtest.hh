@@ -36,13 +36,11 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 // Utility headers
 #include <utility/backtrace.hh>
 #include <utility/vector1.hh>
 
-#define BFE BOOST_FOREACH
 using namespace protocols::antibody;
 using namespace protocols::antibody::design;
 using namespace protocols::antibody::clusters;

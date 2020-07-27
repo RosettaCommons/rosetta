@@ -18,8 +18,6 @@
 #include <string>
 
 // External headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 #include <boost/unordered/unordered_map.hpp>
 
 // Utility headers

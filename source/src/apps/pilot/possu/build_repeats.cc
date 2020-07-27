@@ -52,7 +52,6 @@
 #include <utility/options/keys/OptionKey.hh>
 
 // boost headers
-#include <boost/lexical_cast.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/algorithm/string.hpp>
 

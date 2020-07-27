@@ -337,7 +337,7 @@ SheetDB::load_sheetlist_from_file( core::Size const nstrands, std::string const 
 	TR << "Requested: " << strandinfo << " Canonical: " << canonical.second << std::endl;
 
 	if ( db_path_.empty() ) return;
-	std::string const filename = db_path_ + "/" + boost::lexical_cast< std::string >(nstrands) + "/" +
+	std::string const filename = db_path_ + "/" + std::to_string(nstrands) + "/" +
 		canonical.first + "/" + canonical.second + "/clusters_firstmember.out.gz";
 	TR << "loading " << filename << std::endl;
 	utility::io::izstream infile;
@@ -865,9 +865,9 @@ make_strand_info_str( Lengths const & lengths, RegisterShifts const & shifts )
 		if ( retval.size() ) {
 			retval += ',';
 		}
-		retval += boost::lexical_cast< std::string >( lengths[i] );
+		retval += std::to_string( lengths[i] );
 		retval += ':';
-		retval += boost::lexical_cast< std::string >( shifts[i] );
+		retval += std::to_string( shifts[i] );
 	}
 	return retval;
 }
@@ -1213,7 +1213,7 @@ find_orientations_and_lengths( core::pose::Pose const & pose )
 		if ( len_str.size() ) {
 			len_str += ',';
 		}
-		len_str += boost::lexical_cast< std::string >( lengths[i] ) + '_' + boost::lexical_cast< std::string >( shifts[i] );
+		len_str += std::to_string( lengths[i] ) + '_' + std::to_string( shifts[i] );
 	}
 	return std::make_pair( orient_str, len_str );
 }

@@ -89,7 +89,6 @@
 
 #include <ObjexxFCL/format.hh>
 #include <sstream>
-#include <boost/foreach.hpp>
 
 using namespace ObjexxFCL::format;
 using utility::vector1;

@@ -47,11 +47,10 @@
 #include <utility/string_util.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // C++ headers
 #include <sstream>
+#include <functional>
 
 using namespace utility::tag;
 using namespace protocols::jd3;
@@ -160,10 +159,10 @@ public:
 public:
 
 	// callbacks
-	typedef boost::function< void ( protocols::jd3::LarvalJobCOP, utility::options::OptionCollectionCOP ) > CompleteJobMaturationCallback;
+	typedef std::function< void ( protocols::jd3::LarvalJobCOP, utility::options::OptionCollectionCOP ) > CompleteJobMaturationCallback;
 	CompleteJobMaturationCallback complete_job_maturation_;
 
-	typedef boost::function< void ( utility::tag::XMLSchemaDefinition & xsd, utility::tag::XMLSchemaComplexTypeGenerator & ctgen ) > SubtagAppenderCallback;
+	typedef std::function< void ( utility::tag::XMLSchemaDefinition & xsd, utility::tag::XMLSchemaComplexTypeGenerator & ctgen ) > SubtagAppenderCallback;
 	SubtagAppenderCallback append_job_tag_subelements_;
 	SubtagAppenderCallback append_common_tag_subelements_;
 
@@ -208,7 +207,7 @@ public:
 
 		if ( jobs.empty() ) return;
 
-		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
+		djq.complete_job_maturation_ = std::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, std::placeholders::_1, std::placeholders::_2 );
 		utility::vector1< JobResultOP > empty_vector;
 		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
 	}
@@ -322,7 +321,7 @@ public:
 	void test_job_definition_file_xsd() {
 		core_init();
 		DummyJobQueen djq;
-		djq.append_job_tag_subelements_ = boost::bind( StandardJobQueenTests::job_tag_xsd1, _1, _2 );
+		djq.append_job_tag_subelements_ = std::bind( StandardJobQueenTests::job_tag_xsd1, std::placeholders::_1, std::placeholders::_2 );
 		std::string job_def_xsd = djq.job_definition_xsd();
 		// now lets turn this into a Tag object and then make sure the Job tag has the definition it ought to
 
@@ -394,7 +393,7 @@ public:
 		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 
 		utility::vector1< JobResultOP > empty_vector;
-		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, _1, _2 );
+		djq.complete_job_maturation_ = std::bind( StandardJobQueenTests::callback_complete_larval_job_maturation1, std::placeholders::_1, std::placeholders::_2 );
 		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation1
 
 	}
@@ -432,7 +431,7 @@ public:
 		LarvalJobs jobs = djq.determine_job_list( JobDAGNodeID( 1 ), 1000 );
 
 		utility::vector1< JobResultOP > empty_vector;
-		djq.complete_job_maturation_ = boost::bind( StandardJobQueenTests::callback_complete_larval_job_maturation2, _1, _2 );
+		djq.complete_job_maturation_ = std::bind( StandardJobQueenTests::callback_complete_larval_job_maturation2, std::placeholders::_1, std::placeholders::_2 );
 		djq.mature_larval_job( jobs.front(), empty_vector ); // invokes callback_complete_larval_job_maturation2
 
 	}

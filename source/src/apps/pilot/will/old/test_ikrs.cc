@@ -81,9 +81,6 @@
 #include <utility>
 #include <vector>
 #include <boost/algorithm/string/erase.hpp>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
-#include <boost/functional/hash.hpp>
 #include <boost/unordered/unordered_map.hpp>
 #include <zlib/zlib.h>
 #include <zlib/zutil.h>

@@ -44,8 +44,6 @@
 
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
 
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 static basic::Tracer TR("protocols.protein_interface_design.protein_interface_design.cxxtest");
 

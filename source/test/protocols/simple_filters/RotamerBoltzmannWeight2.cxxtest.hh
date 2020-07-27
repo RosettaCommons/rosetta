@@ -32,7 +32,6 @@
 #include <basic/Tracer.hh>
 
 // Boost Headers
-#include <boost/assign.hpp>
 
 // C++ Headers
 
@@ -90,8 +89,7 @@ public:
 
 		core::Real const rbw1_score = rbw.compute( trpcage );
 
-		utility::vector1< core::Real > const expected_rotamer_scores = boost::assign::list_of
-			(32.2396) (34.3224) (40.2989) (37.2014) (32.5707);
+		utility::vector1< core::Real > const expected_rotamer_scores = { 32.2396, 34.3224, 40.2989, 37.2014, 32.5707 };
 
 		// initialize scorermspoints object with initial pose score
 		ScoreRmsPoints score_rms( ScoreRmsPoint( 32.5724, 0.0 ) );

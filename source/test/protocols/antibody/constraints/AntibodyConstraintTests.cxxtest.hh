@@ -39,9 +39,7 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
-#define BFE BOOST_FOREACH
 using namespace protocols::antibody;
 using namespace protocols::antibody::constraints;
 

@@ -43,7 +43,6 @@
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/rosetta_scripts/util.hh>
-#include <boost/foreach.hpp>
 #include <sstream>
 #include <core/chemical/AA.hh>
 

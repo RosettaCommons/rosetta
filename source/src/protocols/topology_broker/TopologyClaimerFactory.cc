@@ -55,8 +55,6 @@
 #include <utility/vector1.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 static basic::Tracer tr( "protocols.topo_broker", basic::t_info );
 

@@ -26,8 +26,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/format.hh>

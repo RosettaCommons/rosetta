@@ -30,7 +30,6 @@
 #include <basic/citation_manager/CitationManager.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
 
 namespace core {
 namespace select {

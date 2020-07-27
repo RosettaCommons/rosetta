@@ -42,7 +42,6 @@
 #include <numeric/model_quality/rms.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <boost/foreach.hpp>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>

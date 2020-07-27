@@ -60,8 +60,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 //Auto using namespaces
 namespace std { } using namespace std; // AUTO USING NS

@@ -32,11 +32,9 @@
 #include <protocols/loops/Loops.hh>
 
 // Utility headers
-#include <boost/foreach.hpp>
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
 
-#define foreach BOOST_FOREACH
 
 // Global names {{{1
 using namespace core;
@@ -127,7 +125,7 @@ void ClosureTest::test_closure(SolutionList solutions) const { // {{{1
 
 	TS_ASSERT_EQUALS(num_solutions, solutions.size());
 
-	foreach ( ClosureSolutionCOP solution, solutions ) {
+	for ( ClosureSolutionCOP solution: solutions ) {
 		Pose solution_pose(pose);
 		solution->apply(solution_pose);
 
@@ -186,7 +184,7 @@ void ClosureTest::test_closure(Pose const & solution_pose) const { // {{{1
 void ClosureTest::test_restore( // {{{1
 	ClosureProblemCOP problem, SolutionList solutions) const {
 
-	foreach ( ClosureSolutionCOP solution, solutions ) {
+	for ( ClosureSolutionCOP solution: solutions ) {
 		Pose solution_pose(pose);
 		solution->apply(solution_pose);
 
@@ -208,7 +206,7 @@ void ClosureTest::test_restore( // {{{1
 
 void ClosureTest::test_jacobian(SolutionList solutions) const { // {{{1
 	// Make sure the expected jacobians match the observed ones.
-	foreach ( ClosureSolutionCOP solution, solutions ) {
+	for ( ClosureSolutionCOP solution: solutions ) {
 		Real expected_jacobian = jacobians[solution->get_index()];
 		Real observed_jacobian = solution->get_jacobian();
 		TS_ASSERT_DELTA(expected_jacobian, observed_jacobian, precision);
@@ -232,7 +230,7 @@ void ClosureTest::test_pickers( // {{{1
 	boost::unordered_map<Size, Size> random_picks;
 	boost::unordered_map<Size, Size> balanced_picks;
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	for (ClosureSolutionCOP solution: solutions) {
 	Size index = solution->get_index();
 	total_jacobian += solution->get_jacobian();
 
@@ -255,7 +253,7 @@ void ClosureTest::test_pickers( // {{{1
 
 	// Check to see that the expected distributions were observed.
 
-	foreach (ClosureSolutionCOP solution, solutions) {
+	for (ClosureSolutionCOP solution: solutions) {
 	Size index = solution->get_index();
 
 	Size expected_random = iterations / solutions.size();

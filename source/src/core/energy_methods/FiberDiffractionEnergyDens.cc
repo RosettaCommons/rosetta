@@ -62,7 +62,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/sys_util.hh>
-#include <boost/math_fwd.hpp>
 
 // C++
 #include <iomanip>

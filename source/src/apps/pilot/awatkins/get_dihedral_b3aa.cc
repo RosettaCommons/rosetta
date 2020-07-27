@@ -55,9 +55,6 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
 
-// External headers
-#include <boost/lexical_cast.hpp>
-
 // basic headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -249,7 +246,7 @@ get_rsrpl(core::chemical::ResidueType const & rsd_type )
 			break;
 		}
 		default :
-			utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + boost::lexical_cast<std::string>(n_rotlib_chi) );
+			utility_exit_with_message( "ERROR: too many chi angles desired for dunbrack library: " + std::to_string(n_rotlib_chi) );
 			break;
 		}
 

@@ -22,8 +22,6 @@
 #include <utility/exit.hh>
 
 // Boost headers
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 
 static basic::Tracer TR( "devel.matdes.SymmetrizerSampler" );

@@ -28,8 +28,6 @@
 #include <utility/string_util.hh>
 
 // Boost Headers
-#include <boost/foreach.hpp>
-#define foreach BOOST_FOREACH
 
 namespace protocols {
 namespace ligand_docking {
@@ -60,7 +58,7 @@ move_ligand_to_desired_centroid(
 	utility::vector1<core::Size> jump_ids;
 
 	//obtain chain IDs and jump IDs from pose
-	foreach ( std::string chain, chains ) {
+	for ( std::string const & chain: chains ) {
 		chain_ids.push_back(core::pose::get_chain_id_from_chain(chain, pose));
 		jump_ids.push_back(core::pose::get_jump_id_from_chain_id(chain_ids.back(), pose));
 	}
@@ -113,7 +111,7 @@ move_ligand_neighbor_to_desired_position(
 	core::Vector const & desired_position,
 	core::pose::Pose & pose
 ){
-	foreach ( std::string chain, chains ) {
+	for ( std::string const & chain: chains ) {
 		move_ligand_neighbor_to_desired_position(chain, desired_position,pose);
 	}
 

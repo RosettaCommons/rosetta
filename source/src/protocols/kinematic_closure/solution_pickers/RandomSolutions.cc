@@ -17,7 +17,6 @@
 
 // Utility headers
 #include <numeric/random/random.hh>
-#include <boost/foreach.hpp>
 
 // C++ headers
 #include <iostream>

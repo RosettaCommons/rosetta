@@ -51,7 +51,6 @@
 
 // boost headers
 #include <boost/unordered/unordered_map.hpp>
-#include <boost/functional/hash.hpp>
 
 // C++ headers
 #include <iosfwd>

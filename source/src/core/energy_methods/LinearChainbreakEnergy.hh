@@ -31,10 +31,9 @@
 // Project headers
 
 // Third-party headers
-#include <boost/scoped_ptr.hpp>
 
 // C++ headers
-
+#include <memory>
 #include <utility/vector1.hh>
 
 
@@ -130,7 +129,7 @@ private:
 	// changes to the FoldTree used to initialize it. As a result, we can
 	// only reuse a ShortestPathInFoldTree object if we are certain that the
 	// FoldTree has not changed.
-	mutable boost::scoped_ptr<core::kinematics::ShortestPathInFoldTree> shortest_paths_;
+	mutable std::unique_ptr<core::kinematics::ShortestPathInFoldTree> shortest_paths_;
 
 	// FoldTree::hash_value() provides a time- and space-efficient mechanism
 	// to compare a pair of FoldTree's. Each time we are forced to recompute

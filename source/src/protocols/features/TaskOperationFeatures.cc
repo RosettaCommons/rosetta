@@ -15,7 +15,6 @@
 #include <protocols/features/TaskOperationFeatures.hh>
 
 //External
-#include <boost/assign/list_of.hpp>
 
 // Project Headers
 #include <basic/database/sql_utils.hh>
@@ -45,7 +44,6 @@
 #include <cppdb/frontend.h>
 
 // Boost Headers
-#include <boost/assign/list_of.hpp>
 
 // C++ Headers
 #include <cmath>

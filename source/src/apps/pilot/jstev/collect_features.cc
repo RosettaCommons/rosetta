@@ -16,7 +16,6 @@
 #include <sstream>
 
 //Boost Headers
-#include <boost/lexical_cast.hpp>
 
 //Protocol Headers
 #include <protocols/pose_metric_calculators/NeighborsByDistanceCalculator.hh>
@@ -306,7 +305,7 @@ main(int argc, char* argv[]){
 			core::pose::metrics::PoseMetricCalculatorOP nbydist_calc =
 				new protocols::pose_metric_calculators::NeighborsByDistanceCalculator(input_pose.pdb_info()->number(*iter), 5);
 			std::string calc_name = "nbydist";
-			calc_name.append(boost::lexical_cast<std::string>(*iter));
+			calc_name.append(std::to_string(*iter));
 			core::pose::metrics::CalculatorFactory::Instance().register_calculator(calc_name, nbydist_calc);
 
 			//find the number of neighbors for the current residue

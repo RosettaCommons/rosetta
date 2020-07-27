@@ -23,7 +23,6 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/lexical_cast.hpp>
 
 //// C++ headers
 #include <ObjexxFCL/format.hh>
@@ -132,7 +131,7 @@ ResidueNetwork::create_from_pose( core::pose::Pose const & pose )
 
 	// populate lists of nodes and edges
 	for ( core::Size i=1; i<=pose.size(); ++i ) {
-		std::string resname = pose.residue( i ).name3() + boost::lexical_cast<std::string>( i );
+		std::string resname = pose.residue( i ).name3() + std::to_string( i );
 		TR.Debug << "Adding node " << resname << std::endl;
 		nodes_.push_back( utility::pointer::make_shared< Node >( resname, i ) );
 	} // for each residue

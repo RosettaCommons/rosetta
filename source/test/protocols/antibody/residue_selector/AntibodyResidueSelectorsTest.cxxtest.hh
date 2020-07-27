@@ -44,7 +44,6 @@
 
 // Protocol Headers
 #include <basic/Tracer.hh>
-#include <boost/foreach.hpp>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>

@@ -29,7 +29,6 @@
 #include <utility/excn/Exceptions.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
 
 // C++ headers
 
@@ -46,10 +45,11 @@ public:
 	virtual core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & ) const
 	{
-		return boost::assign::list_of
-			(core::scoring::constraints::ConstraintCOP())
-			(core::scoring::constraints::ConstraintCOP())
-			(core::scoring::constraints::ConstraintCOP());
+		return {
+			core::scoring::constraints::ConstraintCOP(),
+			core::scoring::constraints::ConstraintCOP(),
+			core::scoring::constraints::ConstraintCOP()
+			};
 	}
 
 protected:

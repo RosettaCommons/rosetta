@@ -95,8 +95,7 @@
 #include <utility/io/ozstream.hh>
 #include <utility/string_util.hh>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
+#include <tuple>
 
 #include <basic/Tracer.hh>
 
@@ -213,7 +212,7 @@ struct FragID {
 // ignores idx (pos/tag pair is unique)
 bool operator<(const FragID& x, const FragID& y)
 {
-	return boost::make_tuple(x.pos_,x.tag_) < boost::make_tuple(y.pos_,y.tag_);
+	return std::make_tuple(x.pos_,x.tag_) < std::make_tuple(y.pos_,y.tag_);
 }
 
 /// fpd

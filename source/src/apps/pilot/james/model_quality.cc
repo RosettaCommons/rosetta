@@ -273,8 +273,6 @@
 #include <sstream>
 #include <utility>
 #include <vector>
-#include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 #include <utility/excn/Exceptions.hh>
 

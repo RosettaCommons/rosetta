@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   test/devel/cycles/SetupMover.cxxtest.hh
-/// @brief  
+/// @brief
 /// @author Kale Kundert
 
 #ifndef INCLUDED_devel_cycles_setup_mover_CXXTEST_HH
@@ -22,7 +22,6 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <utility/vector1.hh>
-#include <boost/foreach.hpp>
 
 using namespace core;
 using namespace devel;
@@ -45,7 +44,7 @@ public:
 	}
 
 	void test_something_else() { // {{{1
- 
+
 	}
 	// }}}1
 

@@ -117,7 +117,6 @@
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <boost/lexical_cast.hpp>
 
 //Auto Headers
 #include <core/conformation/Conformation.hh>

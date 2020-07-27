@@ -36,8 +36,6 @@
 #include <basic/Tracer.hh>
 
 // Boost headers
-#include <boost/assign.hpp>
-#include <boost/lexical_cast.hpp>
 
 // C++ headers
 

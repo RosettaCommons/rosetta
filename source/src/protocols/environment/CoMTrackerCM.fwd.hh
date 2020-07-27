@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_environment_CoMTrackerCM_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <boost/shared_ptr.hpp>
 
 // Package headers
 

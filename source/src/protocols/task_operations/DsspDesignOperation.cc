@@ -33,7 +33,6 @@
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <basic/options/keys/OptionKeys.hh>
-#include <boost/assign/list_inserter.hpp>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -78,14 +77,15 @@ DsspDesignOperation::set_blueprint( BluePrintOP const bp )
 void
 DsspDesignOperation::set_default_sse_residues() {
 	TR << "Initializing DSSP regions with default residues" << std::endl;
-	boost::assign::insert( sse_residues_ )
-		( std::string( "Loop" ),   std::string( "ACDEFGHIKLMNPQRSTVWY" ) )
-		( std::string( "Strand" ),   std::string( "DEFHIKLNQRSTVWY" ) )
-		( std::string( "Helix" ),   std::string( "ADEFIKLNQRSTVWY" ) )
-		( std::string( "HelixStart" ),  std::string( "ADEFHIKLNPQRSTVWY" ) )
-		( std::string( "HelixCapping" ), std::string( "DNST" ) )
-		( std::string( "Nterm" ),    std::string( "ACDEFGHIKLMNPQRSTVWY" ) )
-		( std::string( "Cterm" ),    std::string( "ACDEFGHIKLMNPQRSTVWY" ) );
+	sse_residues_ = {
+		{"Loop",         "ACDEFGHIKLMNPQRSTVWY" },
+		{"Strand",       "DEFHIKLNQRSTVWY" },
+		{"Helix",        "ADEFIKLNQRSTVWY" },
+		{"HelixStart",   "ADEFHIKLNPQRSTVWY" },
+		{"HelixCapping", "DNST" },
+		{"Nterm",        "ACDEFGHIKLMNPQRSTVWY" },
+		{"Cterm",        "ACDEFGHIKLMNPQRSTVWY" },
+		};
 }
 
 void

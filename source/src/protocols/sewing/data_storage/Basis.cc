@@ -14,15 +14,10 @@
 #include <protocols/sewing/data_storage/Basis.hh>
 #include <basic/Tracer.hh>
 
+#include <tuple>
 
 //External headers
 #include <boost/unordered_map.hpp>
-#include <boost/functional/hash.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp>
-
-
-
 
 
 static basic::Tracer TR( "protocols.sewing.data_storage.Basis" );
@@ -54,7 +49,7 @@ Basis::clone() const {
 
 bool
 operator< ( Basis const & a, Basis const & b ){
-	return boost::tie( a.segment_id_, a.resnum_) < boost::tie(b.segment_id_, b.resnum_);
+	return std::tie( a.segment_id_, a.resnum_) < std::tie(b.segment_id_, b.resnum_);
 }
 
 void

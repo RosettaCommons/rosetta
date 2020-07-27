@@ -39,8 +39,6 @@
 
 #include <core/id/types.hh>
 
-#include <boost/bind/bind.hpp>
-
 #define TS_ASSERT( x ) assert( x )
 #define TS_ASSERT_THROWS_NOTHING( x ) x
 #define TS_ASSERT_EQUALS( x , y ) TS_ASSERT( x == y )

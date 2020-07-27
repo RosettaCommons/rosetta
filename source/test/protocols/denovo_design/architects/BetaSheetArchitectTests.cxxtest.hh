@@ -33,7 +33,6 @@
 #include <utility/tag/Tag.hh>
 
 // Boost Headers
-#include <boost/assign.hpp>
 
 static basic::Tracer TR("BetaSheetArchitectTests");
 
@@ -115,9 +114,9 @@ public:
 	// pull this sheet from sheetDB
 	protocols::denovo_design::components::SheetDB db;
 	db.set_db_path( "/work/tlinsky/sheet_db/clustered" );
-	Lengths const test_lengths = boost::assign::list_of (4)(5)(4);
-	StrandOrientations const test_orientations = boost::assign::list_of (UP)(UP)(UP);
-	RegisterShifts const test_shifts = boost::assign::list_of (0)(-1)(0);
+	Lengths const test_lengths = { 4, 5, 4 };
+	StrandOrientations const test_orientations = { UP, UP, UP };
+	RegisterShifts const test_shifts = { 0, -1, 0 };
 	//devel::denovo_design::components::SheetList const & list = db.sheet_list( test_lengths, test_orientations, test_shifts );
 
 	core::Real random = 0.25001;
