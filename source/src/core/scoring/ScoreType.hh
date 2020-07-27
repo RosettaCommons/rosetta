@@ -468,6 +468,7 @@ enum ScoreType {
 	covalent_labeling,
 	covalent_labeling_fa, //FA form of covalent labeling
 	hrf_ms_labeling,
+	hrf_dynamics,
 	rnp_env,
 
 	// nucleotide resolution thermodynamics

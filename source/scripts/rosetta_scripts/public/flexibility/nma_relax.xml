@@ -1,0 +1,20 @@
+<ROSETTASCRIPTS>
+    <SCOREFXNS>
+	<ScoreFunction name="ref_cart" weights="ref2015_cart" />
+    </SCOREFXNS>
+    <RESIDUE_SELECTORS>
+    </RESIDUE_SELECTORS>
+    <TASKOPERATIONS>
+    </TASKOPERATIONS>
+    <FILTERS>
+    </FILTERS>
+    <MOVERS>
+	<NormalModeRelax name="nma" cartesian="true" centroid="false" scorefxn="ref_cart" nmodes="5" mix_modes="true" pertscale="2.0" randomselect="false" relaxmode="relax" nsample="20" cartesian_minimize="false" />
+	<FastRelax name="fr" scorefxn="ref_cart" repeats="25" />
+    </MOVERS>
+    <PROTOCOLS>
+	<Add mover="nma" />
+	<Add mover="fr" />
+    </PROTOCOLS>
+    <OUTPUT scorefxn="ref_cart" />
+</ROSETTASCRIPTS>

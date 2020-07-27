@@ -102,6 +102,7 @@ sources = {
 		"GaussianOverlapEnergy",
 		"GenBornEnergy",
 		"GenericBondedEnergy",
+		"HRFDynamicsEnergy",
 		"HRF_MSLabelingEnergy",
 		"MultipoleElecEnergy",
 		"GoapEnergy",

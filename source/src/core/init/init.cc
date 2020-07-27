@@ -73,6 +73,7 @@
 #include <core/energy_methods/BurialEnergyCreator.hh>
 #include <core/energy_methods/Burial_v2EnergyCreator.hh>
 #include <core/energy_methods/HRF_MSLabelingEnergyCreator.hh>
+#include <core/energy_methods/HRFDynamicsEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingEnergyCreator.hh>
 #include <core/energy_methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/energy_methods/RG_Energy_FastCreator.hh>
@@ -464,6 +465,7 @@ static EnergyMethodRegistrator< scoring::methods::BurialEnergyCreator > BurialCr
 static EnergyMethodRegistrator< scoring::methods::Burial_v2EnergyCreator > Burial_v2Creator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CovalentLabelingEnergyCreator> CovalentLabelingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::CovalentLabelingFAEnergyCreator> CovalentLabelingFAEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::HRFDynamicsEnergyCreator > HRFDynamicsEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::HRF_MSLabelingEnergyCreator > HRF_MSLabelingEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_Energy_FastCreator > RG_Energy_FastCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::RG_LocalEnergyCreator > RG_LocalEnergyCreator_registrator;

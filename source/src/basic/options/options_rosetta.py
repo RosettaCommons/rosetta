@@ -1504,6 +1504,7 @@ Options = Option_Group( '',
 		Option( 'buried_unsatisfied_penalty_hbond_energy_threshold', 'Real', desc='The energy threshold above which a hydrogen bond is not counted, used by the BuriedUnsatPenalty energy.', default='-0.25' ),
 
 		Option( 'covalent_labeling_input', 'File', desc='Input covalent labeling data in the form of neighbor counts'),
+		Option( 'hrf_dynamics_input', 'File', desc='Input covalent labeling data in the form of protection factors for FA'),
 		Option( 'covalent_labeling_fa_input', 'File', desc='Input covalent labeling data in the form of neighbor counts for FA'),
 		Option( 'elec_min_dis', 'Real', desc='changes the minimum distance cut-off for hack-elec energy', default='1.6'),
 		Option( 'elec_max_dis', 'Real', desc='changes the maximum distance cut-off for hack-elec energy', default='5.5'),
