@@ -607,7 +607,7 @@ PointMutationCalculator::calc_point_mut_filters(
 		using ResidueTypeCOPList = std::list<ResidueTypeCOP>;
 		ResidueTypeCOPList const & allowed( task->residue_task( resi ).allowed_residue_types() );
 		vector1< AA > allow_temp;
-		for ( ResidueTypeCOP const t: allowed ) {
+		for ( ResidueTypeCOP const & t: allowed ) {
 			if ( std::find(allow_temp.begin(),allow_temp.end(),t->aa())!=allow_temp.end() ) continue;
 			allow_temp.push_back( t->aa() );
 		}

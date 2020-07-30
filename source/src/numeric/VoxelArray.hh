@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <array>
+#include <iostream>
 
 #ifdef CEREAL
 #include <cereal/access.hpp>

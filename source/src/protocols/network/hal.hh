@@ -26,6 +26,7 @@
 
 #include <functional>
 #include <string>
+#include <iostream>
 
 namespace protocols {
 namespace network {
