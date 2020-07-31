@@ -2124,6 +2124,7 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_values.push_back(covalent_labeling_fa_input_);
 
 	option_keys.push_back("hrf_dynamics_input");
+	option_values.push_back(hrf_dynamics_input_);
 
 	option_keys.push_back("exclude_protein_protein_fa_elec");
 	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");
