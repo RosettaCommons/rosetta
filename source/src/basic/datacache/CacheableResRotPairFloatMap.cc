@@ -35,13 +35,43 @@
 namespace basic {
 namespace datacache {
 
-CacheableResRotPairFloatMap::CacheableResRotPairFloatMap() : CacheableData() {}
+CacheableResRotPairFloatMap::CacheableResRotPairFloatMap( )
+:
+	CacheableData(),
+	shallow_copy_( false )
+{
+	mapOP_ = utility::pointer::make_shared< std::unordered_map< ResRotPair, float, ResRotPairHasher > >();
+	four_int_indexed_mapOP_ = utility::pointer::make_shared< std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > >();
+}
+
+CacheableResRotPairFloatMap::CacheableResRotPairFloatMap( CacheableResRotPairFloatMap const & ot ) : CacheableData() {
+	mapOP_ = utility::pointer::make_shared< std::unordered_map< ResRotPair, float, ResRotPairHasher > >();
+	four_int_indexed_mapOP_ = utility::pointer::make_shared< std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > >();
+	*this = ot;
+}
+
+CacheableResRotPairFloatMap &
+CacheableResRotPairFloatMap::operator=( CacheableResRotPairFloatMap const & ot ) {
+	debug_assert( mapOP_ );
+	debug_assert( four_int_indexed_mapOP_ );
+	shallow_copy_ = ot.shallow_copy_;
+	if ( shallow_copy_ ) {
+		mapOP_ = ot.mapOP_;
+		four_int_indexed_mapOP_ = ot.four_int_indexed_mapOP_;
+	} else {
+		// Copy constructor doesn't work for unordered_map. But assignment does.
+		*mapOP_ = *ot.mapOP_;
+		*four_int_indexed_mapOP_ = *ot.four_int_indexed_mapOP_;
+	}
+
+	return *this;
+}
 
 CacheableResRotPairFloatMap::~CacheableResRotPairFloatMap() = default;
 
 CacheableDataOP
 CacheableResRotPairFloatMap::clone() const {
-	return CacheableDataOP( new CacheableResRotPairFloatMap(*this) );
+	return utility::pointer::make_shared< CacheableResRotPairFloatMap >(*this);
 }
 
 CacheableResRotPairFloatMapOP
@@ -49,14 +79,21 @@ CacheableResRotPairFloatMap::shared_from_this() {
 	return utility::pointer::static_pointer_cast<CacheableResRotPairFloatMap>( CacheableData::shared_from_this() );
 }
 
+void
+CacheableResRotPairFloatMap::set_shallow_copy( bool shallow ) {
+	shallow_copy_ = shallow;
+}
+
 std::unordered_map< ResRotPair, float, ResRotPairHasher > &
 CacheableResRotPairFloatMap::map(){
-	return map_;
+	debug_assert( mapOP_ );
+	return *mapOP_;
 }
 
 std::unordered_map< ResRotPair, float, ResRotPairHasher > const &
 CacheableResRotPairFloatMap::map() const {
-	return map_;
+	debug_assert( mapOP_ );
+	return *mapOP_;
 }
 
 /// @brief Nonconst access to map of four ints --> float value.
@@ -64,7 +101,8 @@ CacheableResRotPairFloatMap::map() const {
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > &
 CacheableResRotPairFloatMap::four_int_indexed_map() {
-	return four_int_indexed_map_;
+	debug_assert( mapOP_ );
+	return *four_int_indexed_mapOP_;
 }
 
 /// @brief Const access to map of four ints --> float value.
@@ -72,7 +110,8 @@ CacheableResRotPairFloatMap::four_int_indexed_map() {
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > const &
 CacheableResRotPairFloatMap::four_int_indexed_map() const {
-	return four_int_indexed_map_;
+	debug_assert( mapOP_ );
+	return *four_int_indexed_mapOP_;
 }
 
 } // namespace datacache
@@ -105,8 +144,9 @@ template< class Archive >
 void
 basic::datacache::CacheableResRotPairFloatMap::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc( CEREAL_NVP( map_ ) ); // std::unordered_map<uint64_t, MathMatrix<float>>
-	arc( CEREAL_NVP( four_int_indexed_map_ ) );
+	arc( CEREAL_NVP( mapOP_ ) ); // std::unordered_map<uint64_t, MathMatrix<float>>
+	arc( CEREAL_NVP( four_int_indexed_mapOP_ ) );
+	arc( CEREAL_NVP( shallow_copy_ ) );
 }
 
 /// @brief Automatically generated deserialization method
@@ -114,8 +154,9 @@ template< class Archive >
 void
 basic::datacache::CacheableResRotPairFloatMap::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
-	arc( map_ ); // std::unordered_map<uint64_t, MathMatrix<float>>
-	arc( four_int_indexed_map_ );
+	arc( mapOP_ ); // std::unordered_map<uint64_t, MathMatrix<float>>
+	arc( four_int_indexed_mapOP_ );
+	arc( shallow_copy_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( basic::datacache::CacheableResRotPairFloatMap );

@@ -34,6 +34,8 @@
 
 #include <chrono>
 #include <thread>
+#include <cstdint>
+#include <iostream>
 
 namespace core {
 namespace pack {
@@ -41,120 +43,18 @@ namespace guidance_scoreterms {
 namespace approximate_buried_unsat_penalty {
 
 static basic::Tracer TR( "core.pack.guidance_scoreterms.approximate_buried_unsat_penalty" );
+static basic::Tracer TR2( "approx" );
 
 using basic::datacache::ResRotPair;
+using basic::datacache::ResRotPairHasher;
 
 
-typedef std::pair<Size,Size> ScratchVectorLimits;
-
-template< class T >
-class ScratchVectors {
-
-public:
-	typedef typename std::vector<T>::iterator iterator;
-
-	ScratchVectors( Size initial_size, T default_value ) :
-		default_value_( default_value ),
-		next_free_( 0 ),
-		data_( initial_size + 1, default_value )
-	{
-		runtime_assert( data_.size() > 0 );
-	}
-
-	ScratchVectorLimits new_vector( Size size ) {
-		while ( next_free_ + size > data_.size() ) data_.resize( data_.size() * 10, default_value_ );
-		std::pair<Size,Size> offsets( next_free_, next_free_ + size );
-		next_free_ += size;
-		return offsets;
-	}
-
-	iterator iter( Size offset ) {
-		return data_.begin() + offset;
-	}
-
-	void clear_vectors() {
-		next_free_ = 0;
-	}
-
-	bool is_data_default() {
-		for ( T const & dat : data_ ) {
-			if ( dat != default_value_ ) return false;
-		}
-		return true;
-	}
-
-	T default_value_;
-	Size next_free_;
-	std::vector<T> data_;
-};
-
-struct OversatToSidechain {
-
-	OversatToSidechain(
-		Size _sc1_resid, Size _sc1_rotid,
-		Size _sc2_resid, Size _sc2_rotid,
-		Size _bb_resid
-	) :
-		sc1_resid( _sc1_resid ),
-		sc1_rotid( _sc1_rotid ),
-		sc2_resid( _sc2_resid ),
-		sc2_rotid( _sc2_rotid ),
-		bb_resid( _bb_resid )
-	{}
-
-	Size sc1_resid;
-	Size sc1_rotid;
-	Size sc2_resid;
-	Size sc2_rotid;
-	Size bb_resid;
-
-	bool
-	operator<( OversatToSidechain const & ot ) const {
-		if ( sc1_resid != ot.sc1_resid ) return sc1_resid < ot.sc1_resid;
-		if ( sc1_rotid != ot.sc1_rotid ) return sc1_rotid < ot.sc1_rotid;
-		if ( sc2_resid != ot.sc2_resid ) return sc2_resid < ot.sc2_resid;
-		if ( sc2_rotid != ot.sc2_rotid ) return sc2_rotid < ot.sc2_rotid;
-		if ( bb_resid  != ot.bb_resid  ) return bb_resid  < ot.bb_resid;
-		return false;
-	}
-
-	bool
-	operator==( OversatToSidechain const & ot ) const {
-		return  ( sc1_resid == ot.sc1_resid ) &&
-			( sc1_rotid == ot.sc1_rotid ) &&
-			( sc2_resid == ot.sc2_resid ) &&
-			( sc2_rotid == ot.sc2_rotid ) &&
-			( bb_resid  == ot.bb_resid  );
-	}
-};
-
-struct OversatToSidechainHasher {
-	std::size_t operator()( OversatToSidechain const & k ) const {
-		// Bits allocated to each field:
-		// sc1_resid  13
-		// sc1_rotid  13
-		// sc2_resid  13
-		// sc2_rotid  13
-		// bb_resid   12 // sorry bb_resid
-
-		return uint64_t( k.sc1_resid  ) << ( 13 + 13 + 13 + 12 )
-			^ uint64_t( k.sc1_rotid  ) << (      13 + 13 + 12 )
-			^ uint64_t( k.sc2_resid  ) << (           13 + 12 )
-			^ uint64_t( k.sc2_rotid  ) << (                12 )
-			^ uint64_t( k.bb_resid   );
-	}
-};
-
-
-// This function is really complicated. There is no other way.
-//
 void
 prestore_sc_oversat(
-	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > & oversat_map,
-	ScratchVectors<float> & oversat_scratch,
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_bur_rotamer_oversat_map,
 	Size resnum1, Size rotamer1, bool is_bb1,
 	Size resnum2, Size rotamer2, bool is_bb2,
-	Size sc_resnum, Size sc_rotamer, Size sc_num_rotamers, float score ) {
+	float score ) {
 
 	// If its bb, we don't want it associated with a rotamer
 	//  Also, changing these here does not affect should_store_hbond()
@@ -175,48 +75,24 @@ prestore_sc_oversat(
 	// Size at2 = swap ? atom1    : atom2;
 
 
-	OversatToSidechain sc_oversat( r1, ro1, r2, ro2, sc_resnum );
+	ResRotPair res_rot_pair( r1, ro1, r2, ro2 );
 
-
-	// This is a little complicated because runtime is critical here
-	// First try to emplace a fake ScratchVectorLimits into the unordered_map
-	// If this succeeds, then that means we have a new key and we need to
-	//   allocate a new ScratchVector and store that to the map_iterator
-	// Then we use the map_iterator to get our scratch vector and store the score
-
-	typedef std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher >::iterator map_iterator;
-	typedef typename ScratchVectors<float>::iterator scratch_iterator;
-
-	std::pair<map_iterator, bool> map_iter_new_key = oversat_map.emplace(std::piecewise_construct,
-		std::forward_as_tuple( sc_oversat ),
-		std::forward_as_tuple( 0,0 ));
-
-	map_iterator & map_iter = map_iter_new_key.first;
-	const bool     new_key  = map_iter_new_key.second;
-	if ( new_key ) {
-		ScratchVectorLimits new_limits = oversat_scratch.new_vector( sc_num_rotamers + 1 ); // +1 because backbone is 0
-		(*map_iter).second = new_limits;
-	}
-
-	// Get an iterator to the start of the ScratchVector
-	ScratchVectorLimits const & limits = (*map_iter).second;
-	scratch_iterator scratch_vector_begin = oversat_scratch.iter( limits.first );
-
-	// Make sure that we aren't going past the end of the allocation
-	debug_assert( (int)sc_rotamer < std::distance( scratch_vector_begin, oversat_scratch.iter( limits.second ) ) );
-
-	// Kinda like scratch_vector[ sc_rotamer ] += score;
-	*( scratch_vector_begin + sc_rotamer ) += score;
+	this_bur_rotamer_oversat_map[ res_rot_pair ] += score;
 }
 
 void
-accumulate_oversats(
+accumulate_bur_rotamer_oversats(
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_bur_rotamer_oversat_map,
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_seqpos_oversat_map
+);
+
+void
+accumulate_seqpos_oversats(
 	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & complete_rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
-	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > & oversat_map,
-	ScratchVectors<float> & oversat_scratch,
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_seqpos_oversat_map,
 	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
 );
 
@@ -344,8 +220,14 @@ three_body_approximate_buried_unsat_calculation(
 	UnsatCorrectionOptions const & cor_opt /* = UnsatCorrectionOptions() */,
 	HBondBonusOptions const & bonus_opt /* = HBondBonusOptions() */
 ) {
+
+	using namespace std::chrono;
+
 	const float PENALTY = 1.0f;
 	basic::datacache::CacheableResRotPairFloatMapOP score_map ( utility::pointer::make_shared< basic::datacache::CacheableResRotPairFloatMap >() );
+	score_map->set_shallow_copy( true );
+
+	milliseconds start = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
 
 	conformation::symmetry::SymmetryInfoCOP symm_info(nullptr); //Set to non-null iff pose is symmetric, below.
 
@@ -368,21 +250,22 @@ three_body_approximate_buried_unsat_calculation(
 		}
 	}
 
+	if ( TR.Trace.visible() ) {
+		for ( Size irotset = 1; irotset <= rotsets->nmoltenres(); irotset++ ) {
+			Size resnum = rotsets->moltenres_2_resid(irotset);
+			pack::rotamer_set::RotamerSetCOP const & rotset = rotsets->rotamer_set_for_residue(resnum);
 
-	// for ( Size irotset = 1; irotset <= rotsets->nmoltenres(); irotset++ ) {
-	//  Size resnum = rotsets->moltenres_2_resid(irotset);
-	//  pack::rotamer_set::RotamerSetCOP const & rotset = rotsets->rotamer_set_for_residue(resnum);
+			for ( Size irot = 1; irot <= rotset->num_rotamers(); irot++ ) {
+				conformation::ResidueCOP rotamer = rotset->rotamer( irot );
 
-	//  for ( Size irot = 1; irot <= rotset->num_rotamers(); irot++ ) {
-	//   conformation::ResidueCOP rotamer = rotset->rotamer( irot );
-
-	//   std::cout << boost::str(boost::format("Res: %i %s Rot: %i Chis: ")%resnum%rotamer->name3()%irot);
-	//   for ( Size chi = 1; chi <= rotamer->nchi(); chi++ ) {
-	//    std::cout << boost::str(boost::format("%7.3f ")%rotamer->chi(chi) );
-	//   }
-	//   std::cout << std::endl;
-	//  }
-	// }
+				TR2 << boost::str(boost::format("Res: %i %s Rot: %i Chis: ")%resnum%rotamer->name3()%irot);
+				for ( Size chi = 1; chi <= rotamer->nchi(); chi++ ) {
+					TR2 << boost::str(boost::format("%7.3f ")%rotamer->chi(chi) );
+				}
+				TR2 << std::endl;
+			}
+		}
+	}
 
 	// First we need to get the HBondGraph and its associated complete RotamerSets
 
@@ -391,9 +274,16 @@ three_body_approximate_buried_unsat_calculation(
 
 	TR << "Building hbond graph" << std::endl;
 
+	milliseconds hbond_start = duration_cast< milliseconds >( system_clock::now().time_since_epoch());
+
 	scoring::hbonds::graph::HBondGraphOP hb_graph;
 	hb_graph = hbonds::hbond_graph_from_partial_rotsets( pose, *rotsets, scorefxn_sc, scorefxn_bb,
 		complete_rotsets_out, position_had_rotset, minimum_hb_cut );
+
+
+	milliseconds hbond_end = duration_cast< milliseconds >( system_clock::now().time_since_epoch());
+	if ( TR.Debug.visible() ) TR.Debug << "TIMING: HBOND: " << (hbond_end - hbond_start).count() << std::endl;
+
 
 	TR << "Hbond graph has: " << hb_graph->num_edges() << " edges requiring: " << hb_graph->getTotalMemoryUsage() << " bytes" << std::endl;
 
@@ -413,9 +303,13 @@ three_body_approximate_buried_unsat_calculation(
 		score_map->map()[ResRotPair(i, 0, 0, 0)] = complete_rotsets->nrotamers_for_moltenres( complete_rotsets->resid_2_moltenres( i ) );
 	}
 
+	milliseconds depth_start = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
 
 	// Next, we need to create the AtomicDepth object and figure out which nodes are buried
 	scoring::atomic_depth::AtomicDepth atomic_depth( pose, atomic_depth_probe_radius, true, atomic_depth_resolution );
+
+	milliseconds depth_end = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
+	if ( TR.Debug.visible() ) TR.Debug << "TIMING: DEPTH: " << (depth_end - depth_start).count() << std::endl;
 
 	chemical::AtomTypeSet const & atom_type_set = pose.residue(1).type().atom_type_set();
 
@@ -425,11 +319,8 @@ three_body_approximate_buried_unsat_calculation(
 	// Now we begin the algorithm
 
 	ReweightData reweight_data( pose, rotsets->task() );
-	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > oversat_map;
-	oversat_map.max_load_factor( 0.7 );
-
-	// This seems like a good ballpark start
-	ScratchVectors<float> oversat_scratch( rotsets->nrotamers(), 0.0f );
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > this_bur_rotamer_oversat_map;
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > this_seqpos_oversat_map;
 
 	//////////////////// Iterate over all polar heavy atoms looking for buried ones //////////////////////////
 
@@ -449,7 +340,7 @@ three_body_approximate_buried_unsat_calculation(
 		//   vectors and lower our memory footprint.
 		if ( node_resnum != last_resnum ) {
 
-			accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch, symm_info );
+			accumulate_seqpos_oversats( score_map, complete_rotsets, is_asu, reweight_data, this_seqpos_oversat_map, symm_info );
 
 			last_resnum = node_resnum;
 		}
@@ -585,13 +476,17 @@ three_body_approximate_buried_unsat_calculation(
 
 			if ( buried_should_store ) {
 				add_to_onebody( score_map, complete_rotsets, is_asu, node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ), buried_penalty );
-				// std::cout << boost::str(boost::format("BUR: OneB Res: %i %s Rot: %i Atom: %s Score: %6.3f")
-				// %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-				// %rotamer->atom_name(info.local_atom_id())%buried_penalty) << std::endl;
+				if ( TR.Trace.visible() ) {
+					TR2 << boost::str(boost::format("BUR: OneB Res: %i %s Rot: %i Atom: %s Score: %6.3f")
+						%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+						%rotamer->atom_name(info.local_atom_id())%buried_penalty) << std::endl;
+				}
 			} else {
-				// std::cout << boost::str(boost::format("BUR: ZeroB Res: %i %s Rot: %i Atom: %s Score: %6.3f")
-				// %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-				// %rotamer->atom_name(info.local_atom_id())%buried_penalty) << std::endl;
+				if ( TR.Trace.visible() ) {
+					TR2 << boost::str(boost::format("BUR: ZeroB Res: %i %s Rot: %i Atom: %s Score: %6.3f")
+						%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+						%rotamer->atom_name(info.local_atom_id())%buried_penalty) << std::endl;
+				}
 				// zero_body += buried_penalty;
 			}
 
@@ -627,28 +522,36 @@ three_body_approximate_buried_unsat_calculation(
 							other_resnum, complete_rotsets->rotid_on_moltenresidue( other_rotamerid ),
 							hbond_bonus, symm_info );
 					}
-					// std::cout << boost::str(boost::format("HYD: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-					//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-					//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
-					//  %hbond_bonus) << std::endl;
+					if ( TR.Trace.visible() ) {
+						TR2 << boost::str(boost::format("HYD: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+							%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+							%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
+							%hbond_bonus) << std::endl;
+					}
 				} else if ( buried_should_store ) {
 					if ( do_store ) add_to_onebody( score_map, complete_rotsets, is_asu, node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ), hbond_bonus );
-					// std::cout << boost::str(boost::format("HYD: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-					//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-					//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
-					//  %hbond_bonus) << std::endl;
+					if ( TR.Trace.visible() ) {
+						TR2 << boost::str(boost::format("HYD: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+							%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+							%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
+							%hbond_bonus) << std::endl;
+					}
 				} else if ( other_should_store ) {
 					if ( do_store ) add_to_onebody( score_map, complete_rotsets, is_asu, other_resnum, complete_rotsets->rotid_on_moltenresidue( other_rotamerid ), hbond_bonus );
-					// std::cout << boost::str(boost::format("HYD: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
-					//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-					//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
-					//  %hbond_bonus) << std::endl;
+					if ( TR.Trace.visible() ) {
+						TR2 << boost::str(boost::format("HYD: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
+							%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+							%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
+							%hbond_bonus) << std::endl;
+					}
 				} else {
 					// zero_body += hbond_bonus;
-					// std::cout << boost::str(boost::format("HYD: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-					//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-					//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
-					//  %hbond_bonus) << std::endl;
+					if ( TR.Trace.visible() ) {
+						TR2 << boost::str(boost::format("HYD: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+							%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+							%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_rotamerid )
+							%hbond_bonus) << std::endl;
+					}
 				}
 			}
 
@@ -672,7 +575,7 @@ three_body_approximate_buried_unsat_calculation(
 					Size jj_resnum = complete_rotsets->res_for_rotamer( jj_rotamerid ); // potentiall slow
 					bool jj_should_store = should_store[ jj ];
 
-					if ( ii_resnum == jj_resnum && ii_rotamerid != jj_rotamerid ) continue;
+					if ( ii_resnum == jj_resnum && ii_rotamerid != jj_rotamerid && !is_bb[ii] && !is_bb[jj] ) continue;
 
 					bool do_store = true;
 
@@ -695,11 +598,9 @@ three_body_approximate_buried_unsat_calculation(
 							//      At the end, assign as an oversat the max of that vector
 							//
 							do_store = false;
-							prestore_sc_oversat( oversat_map, oversat_scratch,
+							prestore_sc_oversat( this_bur_rotamer_oversat_map,
 								ii_resnum, complete_rotsets->rotid_on_moltenresidue( ii_rotamerid ), assume_const_backbone && is_bb[ ii ],
 								jj_resnum, complete_rotsets->rotid_on_moltenresidue( jj_rotamerid ), assume_const_backbone && is_bb[ jj ],
-								node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ),
-								complete_rotsets->nrotamers_for_moltenres( complete_rotsets->resid_2_moltenres( node_resnum ) ),
 								oversat_penalty );
 						}
 					}
@@ -711,36 +612,47 @@ three_body_approximate_buried_unsat_calculation(
 								jj_resnum, complete_rotsets->rotid_on_moltenresidue( jj_rotamerid ),
 								oversat_penalty, symm_info );
 						}
-						// std::cout << boost::str(boost::format("OVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-						//  %ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
-						//  %jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
-						//  %oversat_penalty) << std::endl;
+						if ( TR.Trace.visible() ) {
+							TR2 << boost::str(boost::format("OVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								%ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
+								%jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
+								%oversat_penalty) << ( do_store ? "" : " skip") << std::endl;
+						}
 					} else if ( ii_should_store ) {
 						if ( do_store ) add_to_onebody( score_map, complete_rotsets, is_asu, ii_resnum, complete_rotsets->rotid_on_moltenresidue( ii_rotamerid ), oversat_penalty );
-						// std::cout << boost::str(boost::format("OVR: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-						//  %ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
-						//  %jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
-						//  %oversat_penalty) << std::endl;
+						if ( TR.Trace.visible() ) {
+							TR2 << boost::str(boost::format("OVR: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								%ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
+								%jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
+								%oversat_penalty) << ( do_store ? "" : " skip") << std::endl;
+						}
 					} else if ( jj_should_store ) {
 						if ( do_store ) add_to_onebody( score_map, complete_rotsets, is_asu, jj_resnum, complete_rotsets->rotid_on_moltenresidue( jj_rotamerid ), oversat_penalty );
-						// std::cout << boost::str(boost::format("OVR: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
-						//  %ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
-						//  %jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
-						//  %oversat_penalty) << std::endl;
+						if ( TR.Trace.visible() ) {
+							TR2 << boost::str(boost::format("OVR: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
+								%ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
+								%jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
+								%oversat_penalty) << ( do_store ? "" : " skip") << std::endl;
+						}
 					} else {
 						// zero_body += hbond_bonus;
-						// std::cout << boost::str(boost::format("OVR: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-						//  %ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
-						//  %jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
-						//  %oversat_penalty) << std::endl;
+						if ( TR.Trace.visible() ) {
+							TR2 << boost::str(boost::format("OVR: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+								%ii_resnum%complete_rotsets->rotamer( ii_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( ii_rotamerid )
+								%jj_resnum%complete_rotsets->rotamer( jj_rotamerid )->name3()%complete_rotsets->rotid_on_moltenresidue( jj_rotamerid )
+								%oversat_penalty) << ( do_store ? "" : " skip") << std::endl;
+						}
 					}
 				}
 			}
 		}
+		// Determine if this buried rotamer set any new max values in the oversat map
+		accumulate_bur_rotamer_oversats( this_bur_rotamer_oversat_map, this_seqpos_oversat_map );
+
 	}
 
 	// Very important!!! This must be here!!! This catches the final residue.
-	accumulate_oversats( score_map, complete_rotsets, is_asu, reweight_data, oversat_map, oversat_scratch, symm_info );
+	accumulate_seqpos_oversats( score_map, complete_rotsets, is_asu, reweight_data, this_seqpos_oversat_map, symm_info );
 
 
 	//////////////////////////////////// HBond Bonus //////////////////////////////////////
@@ -880,31 +792,38 @@ three_body_approximate_buried_unsat_calculation(
 							if ( we_should_store && other_should_store ) {
 								add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
 									node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ),
-									other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ),
-									bonus, symm_info );
+									other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ), bonus, symm_info );
 
-								// std::cout << boost::str(boost::format("BON: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
-								//  %bonus) << std::endl;
+								if ( TR.Trace.visible() ) {
+									TR2 << boost::str(boost::format("BON: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+										%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+										%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+										%bonus) << std::endl;
+								}
 							} else if ( we_should_store ) {
 								add_to_onebody( score_map, complete_rotsets, is_asu, node_resnum, complete_rotsets->rotid_on_moltenresidue( ihbnode ), bonus );
-								// std::cout << boost::str(boost::format("BON: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
-								//  %bonus) << std::endl;
+								if ( TR.Trace.visible() ) {
+									TR2 << boost::str(boost::format("BON: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+										%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+										%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+										%bonus) << std::endl;
+								}
 							} else if ( other_should_store ) {
 								add_to_onebody( score_map, complete_rotsets, is_asu, other_resnum, complete_rotsets->rotid_on_moltenresidue( other_node ), bonus );
-								// std::cout << boost::str(boost::format("BON: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
-								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
-								//  %bonus) << std::endl;
+								if ( TR.Trace.visible() ) {
+									TR2 << boost::str(boost::format("BON: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
+										%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+										%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+										%bonus) << std::endl;
+								}
 							} else {
 								// zero_body += bonus;
-								// std::cout << boost::str(boost::format("BON: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
-								//  %node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
-								//  %other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
-								//  %bonus) << std::endl;
+								if ( TR.Trace.visible() ) {
+									TR2 << boost::str(boost::format("BON: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+										%node_resnum%rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( ihbnode )
+										%other_resnum%other_rotamer->name3()%complete_rotsets->rotid_on_moltenresidue( other_node )
+										%bonus) << std::endl;
+								}
 							}
 						}
 
@@ -914,7 +833,25 @@ three_body_approximate_buried_unsat_calculation(
 		}
 	}
 
+	// // for debugging cache persistence
+	// if ( ! all_atoms_active ) {
+	//  std::cout << "BUILDING GIANT DEBUG TABLE" << std::endl;
+	//  Size scaler = Size(std::pow( 600000000, 0.25 ) );
 
+	//  for ( Size i = 0; i <= scaler; i++ ) {
+	//  for ( Size j = 0; j <= scaler; j++ ) {
+	//  for ( Size k = 0; k <= scaler; k++ ) {
+	//  for ( Size l = 0; l <= scaler; l++ ) {
+	//   score_map->map()[{i, j, k, l}] = 5;
+	//  }
+	//  }
+	//  }
+	//  }
+	// }
+
+
+	milliseconds end = duration_cast< milliseconds >( system_clock::now().time_since_epoch() );
+	if ( TR.Debug.visible() ) TR.Debug<< "TIMING: APPROX: " << milliseconds( end - start).count() << std::endl;
 
 
 
@@ -931,73 +868,83 @@ three_body_approximate_buried_unsat_calculation(
 	return score_map;
 }
 
+void
+accumulate_bur_rotamer_oversats(
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_bur_rotamer_oversat_map,
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_seqpos_oversat_map
+) {
+	for ( auto const & pair : this_bur_rotamer_oversat_map ) {
+		ResRotPair const & resrot = pair.first;
+		float score = pair.second;
+
+		// Take the max of score and whatever is in the map
+		auto iter_new = this_seqpos_oversat_map.emplace( resrot, pair.second );
+		if ( ! iter_new.second ) {
+			if ( score > (*iter_new.first).second ) {
+				(*iter_new.first).second = score;
+			}
+		}
+	}
+	this_bur_rotamer_oversat_map.clear();
+}
+
 
 void
-accumulate_oversats(
+accumulate_seqpos_oversats(
 	basic::datacache::CacheableResRotPairFloatMapOP const & score_map,
 	pack::rotamer_set::RotamerSetsOP const & complete_rotsets,
 	utility::vector1<bool> const & is_asu,
 	ReweightData & reweight_data,
-	std::unordered_map< OversatToSidechain, ScratchVectorLimits, OversatToSidechainHasher > & oversat_map,
-	ScratchVectors<float> & oversat_scratch,
+	std::unordered_map< ResRotPair, float, ResRotPairHasher > & this_seqpos_oversat_map,
 	core::conformation::symmetry::SymmetryInfoCOP const & symm_info /*can be nullptr*/
 ) {
 
 	// Loop over all oversat pairs that were identified
 	// Each edge should be listed here at most once
-	for ( auto const & pair : oversat_map ) {
+	for ( auto const & pair : this_seqpos_oversat_map ) {
 
-		OversatToSidechain const & oversat = pair.first;
-		ScratchVectorLimits const & limits = pair.second;
+		ResRotPair const & oversat = pair.first;
+		float max_penalty = pair.second;
 
-		float max_penalty = 0;
-
-		// Assembly level optimization right here. Find the max and clear the vector simultaneously
-		for ( auto iter = oversat_scratch.iter( limits.first ), end = oversat_scratch.iter( limits.second );
-				iter != end;
-				++iter ) {
-			max_penalty = std::max<float>( max_penalty, *iter );
-			*iter = 0;
-		}
-
-		if ( oversat.sc1_rotid != 0 && oversat.sc2_rotid != 0 ) {
+		if ( oversat.first_rot != 0 && oversat.second_rot != 0 ) {
 			add_to_twobody( score_map, complete_rotsets, is_asu, reweight_data,
-				oversat.sc1_resid, oversat.sc1_rotid,
-				oversat.sc2_resid, oversat.sc2_rotid,
+				oversat.first_res, oversat.first_rot,
+				oversat.second_res, oversat.second_rot,
 				max_penalty, symm_info );
-			// std::cout << boost::str(boost::format("FINOVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i BBRes: %i Score: %6.3f")
-			//  %oversat.sc1_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc1_resid )->rotamer( oversat.sc1_rotid )->name3()%oversat.sc1_rotid
-			//  %oversat.sc2_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc2_resid )->rotamer( oversat.sc2_rotid )->name3()%oversat.sc2_rotid
-			//  %oversat.bb_resid
-			//  %max_penalty) << std::endl;
-		} else if ( oversat.sc1_rotid != 0 ) {
-			add_to_onebody( score_map, complete_rotsets, is_asu, oversat.sc1_resid, oversat.sc1_rotid, max_penalty );
-			// std::cout << boost::str(boost::format("FINOVR: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i BBRes: %i Score: %6.3f")
-			//  %oversat.sc1_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc1_resid )->rotamer( oversat.sc1_rotid )->name3()%oversat.sc1_rotid
-			//  %oversat.sc2_resid%"BB "%oversat.sc2_rotid
-			//  %oversat.bb_resid
-			//  %max_penalty) << std::endl;
-		} else if ( oversat.sc2_rotid != 0 ) {
-			add_to_onebody( score_map, complete_rotsets, is_asu, oversat.sc2_resid, oversat.sc2_rotid, max_penalty );
-			// std::cout << boost::str(boost::format("FINOVR: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i BBRes: %i Score: %6.3f")
-			//  %oversat.sc1_resid%"BB "%oversat.sc1_rotid
-			//  %oversat.sc2_resid%complete_rotsets->rotamer_set_for_residue( oversat.sc2_resid )->rotamer( oversat.sc2_rotid )->name3()%oversat.sc2_rotid
-			//  %oversat.bb_resid
-			//  %max_penalty) << std::endl;
+			if ( TR.Trace.visible() ) {
+				TR2 << boost::str(boost::format("FINOVR: TwoB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+					%oversat.first_res%complete_rotsets->rotamer_set_for_residue( oversat.first_res )->rotamer( oversat.first_rot )->name3()%oversat.first_rot
+					%oversat.second_res%complete_rotsets->rotamer_set_for_residue( oversat.second_res )->rotamer( oversat.second_rot )->name3()%oversat.second_rot
+					%max_penalty) << std::endl;
+			}
+		} else if ( oversat.first_rot != 0 ) {
+			add_to_onebody( score_map, complete_rotsets, is_asu, oversat.first_res, oversat.first_rot, max_penalty );
+			if ( TR.Trace.visible() ) {
+				TR2 << boost::str(boost::format("FINOVR: OneB *Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+					%oversat.first_res%complete_rotsets->rotamer_set_for_residue( oversat.first_res )->rotamer( oversat.first_rot )->name3()%oversat.first_rot
+					%oversat.second_res%"BB "%oversat.second_rot
+					%max_penalty) << std::endl;
+			}
+		} else if ( oversat.second_rot != 0 ) {
+			add_to_onebody( score_map, complete_rotsets, is_asu, oversat.second_res, oversat.second_rot, max_penalty );
+			if ( TR.Trace.visible() ) {
+				TR2 << boost::str(boost::format("FINOVR: OneB Res: %i %s Rot: %i *Res: %i %s Rot: %i Score: %6.3f")
+					%oversat.first_res%"BB "%oversat.first_rot
+					%oversat.second_res%complete_rotsets->rotamer_set_for_residue( oversat.second_res )->rotamer( oversat.second_rot )->name3()%oversat.second_rot
+					%max_penalty) << std::endl;
+			}
 		} else {
 			// zero_body += max_penalty;
-			// std::cout << boost::str(boost::format("FINOVR: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i BBRes: %i Score: %6.3f")
-			//  %oversat.sc1_resid%"BB "%oversat.sc1_rotid
-			//  %oversat.sc2_resid%"BB "%oversat.sc2_rotid
-			//  %oversat.bb_resid
-			//  %max_penalty) << std::endl;
+			if ( TR.Trace.visible() ) {
+				TR2 << boost::str(boost::format("FINOVR: ZeroB Res: %i %s Rot: %i Res: %i %s Rot: %i Score: %6.3f")
+					%oversat.first_res%"BB "%oversat.first_rot
+					%oversat.second_res%"BB "%oversat.second_rot
+					%max_penalty) << std::endl;
+			}
 		}
 	}
 
-	oversat_scratch.clear_vectors();
-	debug_assert( oversat_scratch.is_data_default() );
-	oversat_map.clear();
-
+	this_seqpos_oversat_map.clear();
 }
 
 
@@ -1083,7 +1030,6 @@ add_to_twobody(
 			}
 		}
 	}
-
 }
 
 

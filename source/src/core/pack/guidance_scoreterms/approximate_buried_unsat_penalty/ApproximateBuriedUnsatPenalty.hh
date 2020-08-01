@@ -243,6 +243,7 @@ private:
 	/// not during access by another thread.
 	mutable HBondBonusOptions hbond_bonus_opt_;
 
+
 };
 
 } // approximate_buried_unsat_penalty

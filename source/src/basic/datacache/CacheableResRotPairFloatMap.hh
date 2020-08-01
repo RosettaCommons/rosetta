@@ -109,6 +109,10 @@ class CacheableResRotPairFloatMap : public CacheableData
 public:
 	CacheableResRotPairFloatMap();
 
+	CacheableResRotPairFloatMap( CacheableResRotPairFloatMap const & ot );
+
+	CacheableResRotPairFloatMap & operator=( CacheableResRotPairFloatMap const & ot );
+
 	~CacheableResRotPairFloatMap() override;
 
 	CacheableDataOP
@@ -135,14 +139,21 @@ public:
 	virtual std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > const &
 	four_int_indexed_map() const;
 
+	/// @brief Only perform a shallow copy when clone() is called
+	void
+	set_shallow_copy( bool shallow );
+
 private:
 	/// @brief Map of seqpos1/rotamer1/seqpos2/rotamer2 --> float value.
-	std::unordered_map< ResRotPair, float, ResRotPairHasher > map_;
+	utility::pointer::shared_ptr< std::unordered_map< ResRotPair, float, ResRotPairHasher > > mapOP_;
 
 	/// @brief Map of four ints --> float value.
 	/// @details Used only to store energies of a rotamer interacting with its own symmetric copies in the symmetric case.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
-	std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > four_int_indexed_map_;
+	utility::pointer::shared_ptr< std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > > four_int_indexed_mapOP_;
+
+	/// @brief Only perform a shallow copy when clone() is called
+	bool shallow_copy_;
 
 #ifdef    SERIALIZATION
 public:

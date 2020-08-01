@@ -42,6 +42,7 @@
 
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
+#include <basic/datacache/ConstDataMap.hh>
 
 #include <ObjexxFCL/FArray2D.hh>
 #include <boost/format.hpp>
@@ -53,6 +54,9 @@ namespace guidance_scoreterms {
 namespace approximate_buried_unsat_penalty {
 
 using basic::datacache::ResRotPair;
+
+static std::string const CONST_DATA_CATEGORY = "temp_score";
+static std::string const CONST_DATA_NAME = "approximate_buried_unsat_penalty_score_info";
 
 
 scoring::methods::EnergyMethodOP
@@ -170,6 +174,9 @@ ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 
 	hbond_bonus_opt_.scorefxn_weight_ = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
 
+	// drop the memory so we don't have two copies at once
+	pose.set_const_data<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME,
+		basic::datacache::CacheableResRotPairFloatMap() );
 
 	basic::datacache::CacheableResRotPairFloatMapOP energies =
 		three_body_approximate_buried_unsat_calculation(
@@ -187,7 +194,9 @@ ApproximateBuriedUnsatPenalty::setup_for_packing_with_rotsets(
 		cor_opt_,
 		hbond_bonus_opt_
 	);
-	pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
+	// pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
+
+	pose.set_const_data<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME, *energies );
 }
 
 
@@ -323,6 +332,10 @@ ApproximateBuriedUnsatPenalty::setup_for_scoring(
 
 	hbond_bonus_opt_.scorefxn_weight_ = sfxn.weights()[ core::scoring::approximate_buried_unsat_penalty ];
 
+	// drop the memory so we don't have two copies at once
+	pose.set_const_data<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME,
+		basic::datacache::CacheableResRotPairFloatMap() );
+
 	basic::datacache::CacheableResRotPairFloatMapOP energies =
 		three_body_approximate_buried_unsat_calculation(
 		pose,
@@ -339,18 +352,25 @@ ApproximateBuriedUnsatPenalty::setup_for_scoring(
 		cor_opt_,
 		hbond_bonus_opt_
 	);
+	// pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
 
-	pose.data().set( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO, energies );
+	pose.set_const_data<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME, *energies );
 }
 
 void
 ApproximateBuriedUnsatPenalty::finalize_total_energy(
-	pose::Pose &,
+	pose::Pose & pose,
 	scoring::ScoreFunction const &,
 	scoring::EnergyMap &
 ) const {
 	if ( mode_ == MINIMIZING ) return;
 	mode_ = IDLE;
+
+	// This doesn't get called after packing, but that's ok because
+	//  the scorefunction gets called immediately after packing so the huge map gets deleted.
+	// This then deletes the much smaller map created when simply scoring the pose.
+	pose.set_const_data<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME,
+		basic::datacache::CacheableResRotPairFloatMap() );
 }
 
 
@@ -467,11 +487,20 @@ ApproximateBuriedUnsatPenalty::get_energies_cache( pose::Pose const & pose ) con
 
 	basic::datacache::CacheableResRotPairFloatMapCOP energies = nullptr;
 
-	if ( pose.data().has( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) ) {
-		energies = utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableResRotPairFloatMap const > (
-			pose.data().get_const_ptr( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) );
+	basic::datacache::ConstDataMap const & const_data_cache = pose.const_data_cache();
 
+	if ( const_data_cache.has( CONST_DATA_CATEGORY, CONST_DATA_NAME ) ) {
+		energies = const_data_cache.get_ptr<basic::datacache::CacheableResRotPairFloatMap>( CONST_DATA_CATEGORY, CONST_DATA_NAME );
+		if ( energies->map().size() == 0 ) {
+			energies = nullptr;
+		}
 	}
+
+	// if ( pose.data().has( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) ) {
+	//  energies = utility::pointer::dynamic_pointer_cast< basic::datacache::CacheableResRotPairFloatMap const > (
+	//   pose.data().get_const_ptr( pose::datacache::CacheableDataType::APPROXIMATE_UNSAT_POSE_INFO ) );
+
+	// }
 
 	if ( ! energies ) {
 		utility_exit_with_message("ApproximateBuriedUnsatPenalty: Pre-calculation was not performed on pose! Ensure"
