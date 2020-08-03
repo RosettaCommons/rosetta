@@ -44,7 +44,7 @@ CacheableResRotPairFloatMap::CacheableResRotPairFloatMap( )
 	four_int_indexed_mapOP_ = utility::pointer::make_shared< std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > >();
 }
 
-CacheableResRotPairFloatMap::CacheableResRotPairFloatMap( CacheableResRotPairFloatMap const & ot ) : CacheableData() {
+CacheableResRotPairFloatMap::CacheableResRotPairFloatMap( CacheableResRotPairFloatMap const & ot ) : CacheableData( ot ) {
 	mapOP_ = utility::pointer::make_shared< std::unordered_map< ResRotPair, float, ResRotPairHasher > >();
 	four_int_indexed_mapOP_ = utility::pointer::make_shared< std::map< std::tuple< platform::Size, platform::Size, platform::Size, platform::Size>, float > >();
 	*this = ot;

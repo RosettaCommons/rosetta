@@ -151,7 +151,7 @@ template< class Ty >
 utility::pointer::shared_ptr< Ty const >
 ConstDataMap::get_ptr( std::string const & type, std::string const & name ) const {
 	using namespace utility::pointer;
-	utility::pointer::shared_ptr< Ty > ret( 0 );
+	utility::pointer::shared_ptr< Ty > ret( nullptr );
 
 	if ( !has( type, name ) ) {
 		std::stringstream error_message;
