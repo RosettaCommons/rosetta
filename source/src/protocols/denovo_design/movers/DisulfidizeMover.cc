@@ -400,6 +400,7 @@ DisulfidizeMover::find_current_disulfides(
 	debug_assert( pose.size() == subset2.size() );
 	DisulfideList retval;
 	std::set< core::Size > cyds;
+	//This loop creates a set of residues which participate in any disulfide bond
 	for ( core::Size resi=1; resi<=pose.size(); ++resi ) {
 		if ( ( !subset1[ resi ] ) && ( !subset2[ resi ] ) ) continue;
 		if ( pose.residue(resi).type().is_disulfide_bonded() ) {
@@ -407,10 +408,24 @@ DisulfidizeMover::find_current_disulfides(
 		}
 	}
 
+	//this loop pairs the set into specific disulfide bonds
 	for ( auto cyd1=cyds.begin(); cyd1!=cyds.end(); ++cyd1 ) {
 		for ( auto cyd2=cyd1; cyd2!=cyds.end(); ++cyd2 ) {
-			if ( pose.residue(*cyd1).is_bonded( pose.residue(*cyd2) ) ) {
-				retval.push_back( std::make_pair( *cyd1, *cyd2 ) );
+			core::Size const res1(*cyd1); //*cyd1 syntax original to this code is atrocious and I'm aliasing it for this block
+			core::Size const res2(*cyd2);
+			if ( pose.residue(res1).is_bonded( pose.residue(res2) ) ) { //this check alone determines if two residues are bonded to each other, (and their presence in the set means they are disulfide bonded in general), but as written this does not work properly with vicinal reisudes polymer bonded to each other, but not disulfide bonded to each other.
+
+				std::string const & res1_disulf_atom_name = pose.residue_type(res1).get_disulfide_atom_name();
+				std::string const & res2_disulf_atom_name = pose.residue_type(res2).get_disulfide_atom_name();
+
+				core::id::AtomID const res1_disulf_atomid(pose.residue_type(res1).atom_index(res1_disulf_atom_name), res1);
+				core::id::AtomID const res2_disulf_atomid(pose.residue_type(res2).atom_index(res2_disulf_atom_name), res2);
+
+				if ( pose.conformation().is_bonded(res1_disulf_atomid, res2_disulf_atomid) ) {
+					retval.push_back( std::make_pair( res1, res2 ) );
+				} else if ( res2 != (res1 + 1 ) ) { //if the two residues are adjacent, ignore emitting a warning.  if they are not, and were not bound by their disulf_atom_name, there may be a problem.  res1 < res2 from the way the lists were generated.
+					TR.Warning << "Found two residues that are disulfides, are bonded, but are not disulfide bonded: " << res1 << " and " << res2 << ".  This may indicate an issue in detection." << std::endl;
+				}
 			}
 		}
 	}

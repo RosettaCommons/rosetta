@@ -961,6 +961,7 @@ testinputfiles = [
 	"cyclic_peptide_predict/native.pdb",
 	"cyclic_peptide_predict/seq.txt",
 	"cyclic_peptide_predict/seq_gly.txt",
+	"denovo_design/4b2v_disulf_test.pdb",
 	"denovo_design/disulf_test.pdb",
 	"denovo_design/QTS.params",
 	"denovo_design/QTS_connectC6.txt",

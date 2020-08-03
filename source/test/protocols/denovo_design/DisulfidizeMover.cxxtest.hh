@@ -27,6 +27,7 @@
 
 // Core headers
 #include <core/io/pdb/build_pose_as_is.hh>
+#include <core/import_pose/import_pose.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
@@ -268,6 +269,36 @@ public:
 
 		TS_ASSERT_EQUALS( all_combinations.size(), 11 );
 		TR << "All combinations: " << all_combinations << std::endl;
+	}
+
+	//The test here is that the input PDB has disulfides 3-21 and 20-29.  Old versions of find_current_disulfides would erroneously pair 20-21 because they are (polymer) bonded.
+	void test_find_current_disulfides() {
+
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file( pose, "protocols/denovo_design/4b2v_disulf_test.pdb" );
+
+		//brazenly copied from the apply for this pose
+		core::select::residue_selector::ResidueSubset subset1;
+		core::select::residue_selector::ResidueSubset subset2;
+		subset1.assign( pose.size(), true );
+		subset2.assign( pose.size(), true );
+
+		protocols::denovo_design::DisulfidizeMover disulf_mover;
+		//from DisulfidizeMover header
+		typedef utility::vector1< std::pair< core::Size, core::Size > > DisulfideList;
+
+		DisulfideList const disulf_list = disulf_mover.find_current_disulfides(pose, subset1, subset2);
+		//the correct list is [(3, 21), (10, 24), (20, 29)]
+		std::pair< core::Size, core::Size > const p1(3, 21);
+		std::pair< core::Size, core::Size > const p2(10, 24);
+		std::pair< core::Size, core::Size > const p3(20, 29);
+
+		TS_ASSERT_EQUALS(disulf_list.size(), 3);
+		TS_ASSERT_EQUALS(disulf_list[1], p1);
+		TS_ASSERT_EQUALS(disulf_list[2], p2);
+		TS_ASSERT_EQUALS(disulf_list[3], p3);
+
+		return;
 	}
 
 };
