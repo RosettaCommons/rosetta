@@ -1,0 +1,55 @@
+## full-atom 1-phosphorylated sugar patch
+
+NAME 1-OPO32-
+TYPES C1_PHOSPHORYLATED_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_ATOM O1
+NOT VARIANT_TYPE C1_BRANCH_POINT
+NOT PROPERTY C1_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, deprotonate.
+SET_ATOM_TYPE HO1 VIRT
+SET_MM_ATOM_TYPE HO1 VIRT
+SET_ATOMIC_CHARGE HO1 0.00
+
+# Next, add the new atoms.
+ADD_ATOM   P1   Phos  P   2.08
+ADD_ATOM 1OP1  OOC   O   -0.64
+ADD_ATOM 2OP1  OOC   O   -0.64
+ADD_ATOM 3OP1  OOC   O   -0.40
+
+SET_FORMAL_CHARGE  P1   0
+SET_FORMAL_CHARGE 1OP1  -1
+SET_FORMAL_CHARGE 2OP1  -1
+SET_FORMAL_CHARGE 3OP1  0
+
+ADD_BOND  O1   P1
+ADD_BOND  P1   1OP1
+ADD_BOND  P1   2OP1
+ADD_BOND  P1   3OP1
+
+REDEFINE_CHI 2  C5   C1   O1   P1
+
+# Since the saccharide ResidueType we are patching can have any number of side
+# chains, we want to add the new torsion introduced by the patch to the end of
+# the current list of chis, i.e., CHI N+1.  We then wish to provide rotamer
+# samples for this new chi, which now has the index of N.
+ADD_CHI N+1  C1   O1   P1  1OP1
+ADD_CHI_ROTAMER N  180 0  # Because of the three-fold symmetry, that's it.
+
+SET_ICOOR    P1    180.0    73.2    1.6   O1    C1    C5
+SET_ICOOR  3OP1    55.0     70.6    1.5   P1    O1    C1
+SET_ICOOR  2OP1   -120.0    70.5    1.5   P1    O1    3OP1
+SET_ICOOR  1OP1   -120.0    70.5    1.5   P1    O1    2OP1
+
+ADD_PROPERTY C1_MODIFIED
+ADD_PROPERTY PHOSPHORYLATED_SUGAR
+ADD_PROPERTY CHARGED
+
+END_CASE

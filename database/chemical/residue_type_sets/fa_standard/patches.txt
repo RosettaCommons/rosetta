@@ -192,6 +192,11 @@ patches/carbohydrates/O2-lactylation.txt
 patches/carbohydrates/O3-lactylation.txt
 patches/carbohydrates/O4-lactylation.txt
 patches/carbohydrates/O6-lactylation.txt
+patches/carbohydrates/1-phosphorylation.txt
+patches/carbohydrates/2-phosphorylation.txt
+patches/carbohydrates/3-phosphorylation.txt
+patches/carbohydrates/4-phosphorylation.txt
+patches/carbohydrates/6-phosphorylation.txt
 
 ## Coenzyme patches
 patches/coenzymes/non-conjugated_nucleotide_diphosphate.txt
