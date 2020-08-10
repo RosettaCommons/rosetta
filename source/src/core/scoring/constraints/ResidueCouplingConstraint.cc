@@ -141,7 +141,7 @@ ResidueCouplingConstraint::score( func::XYZ_Func const & xyz_func, EnergyMap con
 	conformation::Residue const & rsd2( xyz_func.residue(seqpos2_) );
 
 	// looking up the coupling strength in the tensor (!Tensor index starts at ZERO!)
-	utility::fixedsizearray1< long unsigned int, 4 > look_up {
+	utility::fixedsizearray1< numeric::Size, 4 > look_up {
 		(tensor_index1_),
 		amino_acids_.find(rsd1.type().name1())->second,
 		(tensor_index2_),
