@@ -40,7 +40,7 @@
 namespace protocols {
 namespace hbnet {
 
-PURE
+PURE_ATTR
 std::string
 print_list_to_string(
 	HBondNetStruct const & network,
@@ -50,7 +50,7 @@ print_list_to_string(
 	bool term_w_bb=false
 );
 
-PURE
+PURE_ATTR
 std::string print_list_to_string(
 	core::pose::Pose const & pose,
 	HBondNetStruct const & network,
@@ -61,55 +61,55 @@ std::string print_list_to_string(
 	bool use_pdb_numbering=true
 );
 
-PURE
+PURE_ATTR
 std::string print_network( HBondNetStruct const & i, bool chainid=true );
 
-PURE
+PURE_ATTR
 std::string print_network_w_pdb_numbering( core::pose::Pose const & pose, HBondNetStruct const & i, bool chainid );
 
-CONST NODISCARD
+CONST_ATTR NODISCARD_ATTR
 std::string print_headers();
 
-PURE
+PURE_ATTR
 utility::vector1< HBondResStructCOP >::const_iterator
 find_HBondResStruct(
 	utility::vector1< HBondResStructCOP > const & residues,
 	core::Size resnum
 );
 
-PURE
+PURE_ATTR
 void get_hbond_atom_pairs(
 	HBondNetStruct & network,
 	core::pose::Pose & pose,
 	bool bb_exlcusion=false
 );
 
-PURE
+PURE_ATTR
 bool hbond_exists_in_vector(
 	utility::vector1<core::scoring::hbonds::HBondCOP> const & hbond_vec,
 	core::scoring::hbonds::HBondCOP & h2
 );
 
-PURE
+PURE_ATTR
 void add_reslabels_to_pose(
 	core::pose::Pose & pose,
 	HBondNetStruct & i,
 	std::string label="HBNet"
 );
 
-PURE
+PURE_ATTR
 core::Size get_num_protein_sc_sc_hbonds(
 	core::pose::Pose & pose,
 	HBondNetStruct & i
 );
 
-PURE
+PURE_ATTR
 core::Size get_num_edges_for_res(
 	core::Size const res,
 	ObjexxFCL::FArray2D_int & path_dists
 );
 
-PURE
+PURE_ATTR
 void hbnet_symm_one_body_energies(
 	core::pose::Pose const & pose,
 	core::pack::rotamer_set::RotamerSet & rotset_op,
@@ -119,7 +119,7 @@ void hbnet_symm_one_body_energies(
 	utility::vector1< core::PackerEnergy > & energies
 );
 
-PURE
+PURE_ATTR
 void hbnet_one_body_energies(
 	core::pose::Pose const & pose,
 	core::pack::rotamer_set::RotamerSet & rotset_op,
@@ -127,23 +127,23 @@ void hbnet_one_body_energies(
 	utility::vector1< core::PackerEnergy > & energies
 );
 
-PURE
+PURE_ATTR
 bool network_contains_aa(
 	char aa_one_letter,
 	HBondNetStruct const & i
 );
 
-PURE
+PURE_ATTR
 bool network_contains_aa(
 	char aa_one_letter,
 	utility::vector1< HBondResStructCOP > const & residues
 );
 
-PURE
+PURE_ATTR
 bool his_tyr_connectivity( core::pose::Pose const & pose, HBondNetStruct & i );
 
 
-PURE
+PURE_ATTR
 bool
 edge_satisfies_heavy_unsat_for_node(
 	NetworkState const & current_state,

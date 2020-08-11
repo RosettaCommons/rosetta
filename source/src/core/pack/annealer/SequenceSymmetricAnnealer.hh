@@ -89,7 +89,7 @@ public:
 	void record_annealer_trajectory( bool setting );
 	void trajectory_file_name( std::string const & setting );
 
-	NODISCARD
+	NODISCARD_ATTR
 	utility::vector1< utility::vector1< Size > >
 	create_corresponding_mress_for_mres() const;
 

@@ -179,7 +179,7 @@ SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
 /// @brief virtual destructor
 SequenceSymmetricAnnealer::~SequenceSymmetricAnnealer() = default;
 
-//NODISCARD
+//NODISCARD_ATTR
 utility::vector1< utility::vector1< Size > >
 SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 	Size const nmoltenres = ig_->get_num_nodes();

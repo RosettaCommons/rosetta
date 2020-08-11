@@ -36,17 +36,17 @@ return 1;
 #define ATTR(...)
 #endif
 
-/* NODISCARD
+/* NODISCARD_ATTR
 If a function declared nodiscard or a function returning an enumeration or class declared nodiscard by value is called from a discarded-value expression other than a cast to void, the compiler is encouraged to issue a warning.
 */
-#define NODISCARD ATTR( [[nodiscard]] )
+#define NODISCARD_ATTR ATTR( [[nodiscard]] )
 
-/* UNUSED
+/* UNUSED_ATTR
 This attribute, attached to a function, means that the function is meant to be possibly unused. GCC does not produce a warning for this function.
 */
-#define UNUSED ATTR( [[unused]] )
+#define UNUSED_ATTR ATTR( [[unused]] )
 
-/* PURE
+/* PURE_ATTR
 Calls to functions that have no observable effects on the state of the program other than to return a value may lend themselves to optimizations such as common subexpression elimination. Declaring such functions with the pure attribute allows GCC to avoid emitting some calls in repeated invocations of the function with the same argument values.
 
 The pure attribute prohibits a function from modifying the state of the program that is observable by means other than inspecting the function’s return value. However, functions declared with the pure attribute can safely read any non-volatile objects, and modify the value of objects in a way that does not affect their return value or the observable state of the program.
@@ -60,9 +60,9 @@ Some common examples of pure functions are strlen or memcmp. Interesting non-pur
 
 The pure attribute imposes similar but looser restrictions on a function’s definition than the const attribute: pure allows the function to read any non-volatile memory, even if it changes in between successive invocations of the function. Declaring the same function with both the pure and the const attribute is diagnosed. Because a pure function cannot have any observable side effects it does not make sense for such a function to return void. Declaring such a function is diagnosed.
 */
-#define PURE ATTR( [[pure ]] )
+#define PURE_ATTR ATTR( [[pure ]] )
 
-/* CONST
+/* CONST_ATTR
 Calls to functions whose return value is not affected by changes to the observable state of the program and that have no observable effects on such state other than to return a value may lend themselves to optimizations such as common subexpression elimination. Declaring such functions with the const attribute allows GCC to avoid emitting some calls in repeated invocations of the function with the same argument values.
 
 For example,
@@ -75,4 +75,4 @@ The const attribute imposes greater restrictions on a function’s definition th
 
 Note that a function that has pointer arguments and examines the data pointed to must not be declared const if the pointed-to data might change between successive invocations of the function. In general, since a function cannot distinguish data that might change from data that cannot, const functions should never take pointer or, in C++, reference arguments. Likewise, a function that calls a non-const function usually must not be const itself.
 */
-#define CONST ATTR( [[const]] )
+#define CONST_ATTR ATTR( [[const]] )
