@@ -18,7 +18,6 @@
 #include <protocols/residue_selectors/HBondSelector.hh>
 #include <protocols/residue_selectors/HBondSelectorCreator.hh>
 
-
 //Protocols
 #include <protocols/rosetta_scripts/util.hh>
 
@@ -155,7 +154,7 @@ HBondSelector::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 		}
 		try {
-			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+			core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::get_residue_selector(selector_str, datamap);
 			set_input_set_selector( selector );
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -221,10 +220,14 @@ HBondSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	using namespace utility::tag;
 
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"residue_selector",
+		"Name of residue selector specifying residues for which to select hydrogen bonded partners");
+
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "include_bb_bb", xsct_rosetta_bool, "Include backbone-backbone hydrogen bonds?", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "hbond_energy_cutoff", xsct_real, "Upper energy cutoff for whether we will count a hydrogen bond", "-0.5" )
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of residue selector specifying residues for which to select hydrogen bonded partners" );
+		+ XMLSchemaAttribute::attribute_w_default( "hbond_energy_cutoff", xsct_real, "Upper energy cutoff for whether we will count a hydrogen bond", "-0.5" );
 	core::pose::attributes_for_get_resnum_selector( attlist, xsd, "resnums" );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 	core::select::residue_selector::xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name() ,"A ResidueSelector that selects all residues with hydrogen bonds to the specified starting residues. If no input residues are specified, selects all residues forming hydrogen bonds.", attlist );

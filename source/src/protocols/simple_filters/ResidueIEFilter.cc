@@ -21,6 +21,7 @@
 #include <protocols/scoring/Interface.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <core/pose/Pose.hh>
@@ -177,7 +178,7 @@ ResidueIEFilter::parse_my_tag(
 	if ( tag->hasOption("selector") ) {
 		std::string const selector_name = tag->getOption< std::string >( "selector" );
 		try {
-			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector_ = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from DisulfidizeMover.\n";
@@ -306,6 +307,7 @@ void ResidueIEFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector");
 	protocols::rosetta_scripts::attributes_for_parse_score_function(attlist);
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
@@ -359,10 +361,6 @@ void ResidueIEFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	attlist + XMLSchemaAttribute(
 		"resnums", xs_string,
-		"XSD XRW: TO DO");
-
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
 		"XSD XRW: TO DO");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(

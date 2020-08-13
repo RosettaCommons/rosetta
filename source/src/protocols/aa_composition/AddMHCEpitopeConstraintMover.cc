@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
 
@@ -106,7 +107,7 @@ AddMHCEpitopeConstraintMover::parse_my_tag(
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP residue_selector;
 		try {
-			residue_selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector = core::select::residue_selector::get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddMHCEpitopeConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -186,8 +187,9 @@ void AddMHCEpitopeConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDe
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector", "If provided, the mhc epitope score of the selected region is constrained; otherwise the global score is constrained.");
+
 	attlist + XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of mhc epitope constraint file.  (These files have a \".mhc\" suffix)." );
-	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script.  If provided, the mhc epitope score of the selected region is constrained; otherwise the global score is constrained." );
 	attlist + XMLSchemaAttribute::attribute_w_default("weight", xsct_real, "Adjust the mhc_epitope weight for the epitope predictor set up by this constraint mover ONLY.  The weight will be the mhc_epitope weight of the scorefunction * this weight.", "1.0" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add mhc epitope constraints from the provided file to the selected region or whole pose.", attlist );
 }

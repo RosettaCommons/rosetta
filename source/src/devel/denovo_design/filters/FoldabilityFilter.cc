@@ -31,6 +31,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/select/residue_selector/SecondaryStructureSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/sequence/ABEGOManager.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
@@ -130,7 +131,7 @@ FoldabilityFilter::parse_my_tag(
 		}
 		std::string const selectorname = tag->getOption< std::string >("selector");
 		try {
-			selector_ = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+			selector_ = core::select::residue_selector::get_residue_selector(selectorname, data);
 		} catch (utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
@@ -466,14 +467,12 @@ void FoldabilityFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector", "(start_res;end_res) and selector are mutually exclusive");
+
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"tries", xsct_non_negative_integer,
 		"number of attempted fragment insertions",
 		"100");
-
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"(start_res;end_res) and selector are mutually exclusive");
 
 	attlist + XMLSchemaAttribute(
 		"start_res", xsct_non_negative_integer,

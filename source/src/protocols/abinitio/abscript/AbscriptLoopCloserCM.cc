@@ -25,22 +25,15 @@
 // Project headers
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
-
 #include <core/kinematics/MoveMap.hh>
-
 #include <core/scoring/ScoreFunctionFactory.hh>
-
 #include <core/select/residue_selector/TrueResidueSelector.hh>
-
+#include <core/select/residue_selector/util.hh>
 #include <protocols/loops/loop_closure/ccd/WidthFirstSlidingWindowLoopClosure.hh>
 #include <protocols/loops/Exceptions.hh>
-
 #include <protocols/checkpoint/CheckPointer.hh>
-
 #include <protocols/jumping/util.hh>
-
 #include <protocols/idealize/IdealizeMover.hh>
-
 #include <protocols/rosetta_scripts/util.hh>
 
 #ifdef WIN32
@@ -244,7 +237,7 @@ void AbscriptLoopCloserCM::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace basic::options;
 
 	if ( tag->hasOption( "selector" ) ) {
-		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+		set_selector( core::select::residue_selector::get_residue_selector(tag->getOption<std::string>( "selector" ), datamap ));
 	} else {
 		set_selector( utility::pointer::make_shared< core::select::residue_selector::TrueResidueSelector >() );
 	}
@@ -357,9 +350,8 @@ void AbscriptLoopCloserCM::provide_xml_schema( utility::tag::XMLSchemaDefinition
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"Residue selector specifying the region where fragments will be inserted");
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector", "Residue selector specifying the region where fragments will be inserted");
+
 	attlist + XMLSchemaAttribute(
 		"fragments", xs_string,
 		"Path to fragment file containing fragments that will be used to close the loop");

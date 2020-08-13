@@ -28,6 +28,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/pose/rna/RNA_SuiteName.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 // Core headers
 #include <core/pose/Pose.hh>
@@ -479,7 +480,7 @@ ERRASER2Protocol::parse_my_tag(
 		if ( TR.visible() ) TR << "Set rebuild res selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP residue_selector;
 		try {
-			residue_selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the DataMap from ERRASER2Protocol::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -494,11 +495,10 @@ void ERRASER2Protocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 
 	using namespace utility::tag;
 	AttributeList attlist;
-
+	core::select::residue_selector::attributes_for_parse_residue_selector( attlist, "selector" );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 
 	attlist + XMLSchemaAttribute("n_rounds", xsct_non_negative_integer, "Number of ERRASER2 minimize-rebuild rounds." );
-	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script" );
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 

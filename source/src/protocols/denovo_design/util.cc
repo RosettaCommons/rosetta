@@ -39,6 +39,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/energy_methods/LinearChainbreakEnergy.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
@@ -295,7 +296,7 @@ get_residue_selector( basic::datacache::DataMap const & data, std::string const 
 {
 	core::select::residue_selector::ResidueSelectorCOP selector;
 	try {
-		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", name );
+		selector = core::select::residue_selector::get_residue_selector(name, data);
 	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
 		error_msg << "Failed to find ResidueSelector named '" << name << "' from the Datamap.\n";

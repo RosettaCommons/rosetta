@@ -142,7 +142,9 @@ attributes_for_parse_residue_selector_when_required(
 );
 
 /// @brief returns a residue selector given a selector's name and datamap
-/// @details Looks for selector in the datamap
+/// @details Looks for selector in the datamap,
+///          if not found, will attempt to parse logicals using SelectorLogicParser.
+///          (AND/OR/NOT separated by spaces). Not gets priority.
 ///          Returns a const ptr to the selector
 /// @throws utility::excn::EXCN_Msg_Exception if selector is not found in datamap
 ResidueSelectorCOP

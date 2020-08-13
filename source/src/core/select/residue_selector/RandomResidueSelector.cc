@@ -154,7 +154,7 @@ RandomResidueSelector::parse_my_tag(
 	if ( !selectorname.empty() ) {
 		ResidueSelectorCOP selector;
 		try {
-			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+			selector = core::select::residue_selector::get_residue_selector(selectorname, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' in the DataMap.\n";
@@ -184,6 +184,8 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 {
 	using namespace utility::tag;
 	AttributeList attributes;
+	attributes_for_parse_residue_selector(attributes, "selector");
+
 	attributes + XMLSchemaAttribute(
 		"num_residues", xsct_non_negative_integer,
 		"The number of residues to be randomly selected")
@@ -192,10 +194,7 @@ RandomResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		"option to only select multiple residues near each other, only applies to case where num_residues greater than 1, multiple random residues are required to be within distance_cutoff angstroms of one another")
 		+ XMLSchemaAttribute(
 		"distance_cutoff", xsct_real,
-		"only active when select_res_cluster set to true, distance that defines whether two residues are neighbors or not")
-		+ XMLSchemaAttribute(
-		"selector", xs_string,
-		"Defines the subset from which random residues are chosen.");
+		"only active when select_res_cluster set to true, distance that defines whether two residues are neighbors or not");
 	xsd_type_definition_w_attributes_and_optional_subselector(
 		xsd, class_name(),
 		"Selects residues in the pose at random. Note that this residue "

@@ -120,7 +120,7 @@ PrimarySequenceNeighborhoodSelector::parse_my_tag(
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
 		try {
-			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
+			set_selector( core::select::residue_selector::get_residue_selector(selectorname, data));
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from DisulfidizeMover.\n";
@@ -188,10 +188,10 @@ PrimarySequenceNeighborhoodSelector::provide_xml_schema( utility::tag::XMLSchema
 {
 	using namespace utility::tag;
 	AttributeList attributes;
+	attributes_for_parse_residue_selector(attributes, "selector");
 	attributes
 		+ XMLSchemaAttribute( "lower", xsct_non_negative_integer , "XRW TO DO" )
 		+ XMLSchemaAttribute( "upper", xsct_non_negative_integer , "XRW TO DO" )
-		+ XMLSchemaAttribute( "selector", xs_string , "XRW TO DO" )
 		+ XMLSchemaAttribute( "cross_chain_boundaries", xsct_rosetta_bool, "Allow the selector to cross chain boundaries? By default false.");
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
 }

@@ -32,6 +32,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/simple_moves/SmoothFragmentMover.hh>
@@ -164,7 +165,7 @@ void FragmentCM::parse_my_tag( utility::tag::TagCOP tag,
 	initialize( tag->getOption< bool >( "initialize", true ) );
 	yield_cut_bias(tag->getOption< bool >("yield_cut_bias", false));
 
-	set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+	set_selector( core::select::residue_selector::get_residue_selector(tag->getOption<std::string>( "selector" ), datamap ));
 }
 
 claims::EnvClaims FragmentCM::yield_claims( core::pose::Pose const& pose,

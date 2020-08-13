@@ -30,6 +30,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/AngleConstraint.hh>
@@ -163,7 +164,7 @@ MetalContactsConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::da
 	if ( tag->hasOption( "ligand_selector" ) ) {
 		use_ligand_selector_ = true;
 		std::string selector_string = tag->getOption< std::string >( "ligand_selector" );
-		ligand_selector_= datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_string );
+		ligand_selector_= core::select::residue_selector::get_residue_selector(selector_string, datamap);
 	} else {
 		ligand_resnum_string_ = tag->getOption< std::string >( "ligand_resnum" );
 		use_ligand_selector_ = false;
@@ -176,7 +177,7 @@ MetalContactsConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::da
 	if ( tag->hasOption( "contact_selector" ) ) {
 		use_contact_selector_ = true;
 		std::string selector_string = tag->getOption< std::string >( "contact_selector" );
-		contact_selector_= datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_string );
+		contact_selector_= core::select::residue_selector::get_residue_selector( selector_string, datamap);
 	} else if ( tag->hasOption( "contact_resnums" ) ) {
 		contact_resnum_string_ = tag->getOption< std::string >( "contact_resnums" );
 		use_contact_selector_ = false;
@@ -619,11 +620,19 @@ MetalContactsConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDef
 	using namespace utility::tag;
 
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"ligand_selector",
+		"Residue selector specifying which metal-containing ligand to constrain");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"contact_selector",
+		"Residue selector restricting which residues should be considered as potential ligand contacts.");
+
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "dist_cutoff_multiplier", xsct_real, "Multiply van der Waals radii of metal and contact atom by this value during contact detection.", "1.0" )
 		+ XMLSchemaAttribute::required_attribute( "ligand_atom_name", xs_string, "Name of ligand metal atom you want to constrain." )
-		+ XMLSchemaAttribute( "ligand_selector", xs_string, "Residue selector specifying which metal-containing ligand to constrain" )
-		+ XMLSchemaAttribute( "contact_selector", xs_string, "Residue selector restricting which residues should be considered as potential ligand contacts." )
 		+ XMLSchemaAttribute( "ligand_resnum", xsct_positive_integer, "Residue number for ligand to be constrained" )
 		+ XMLSchemaAttribute( "contact_resnums", xsct_refpose_enabled_residue_number_cslist, "Residue numbers for residues that could be considered as contacts. If neither this option nor a residue selector is specified, then all residues are considered." )
 		+ XMLSchemaAttribute( "base_atom_name", xs_string, "Name of atom to use as base of contact atoms for angles/dihedrals. Defaults to residue's base atom for contact atom." )

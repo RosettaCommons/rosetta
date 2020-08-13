@@ -213,7 +213,7 @@ NeighborhoodResidueSelector::parse_my_tag(
 		selector_str = tag->getOption< std::string >( "selector" );
 
 
-		ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+		ResidueSelectorCOP selector = get_residue_selector(selector_str, datamap);
 		set_focus_selector( selector );
 
 	} else if ( tag->hasOption("resnums") ) {
@@ -387,7 +387,10 @@ void
 NeighborhoodResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "selector", xs_string        , "Focus to select around." )
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(attributes, "selector",  "Focus to select around." );
+
+	attributes
 		+ XMLSchemaAttribute( "resnums",  xs_string     , "Focus to select around." )
 		+ XMLSchemaAttribute( "distance", xsct_real , "Distance to measure neighbors. Default is 10A. " )
 		+ XMLSchemaAttribute("atom_names_for_distance_measure", xs_string, "A list of comma separated atom names, for each focus residue, the positions of which will be used for measuring distance to find neighbors." )

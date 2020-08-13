@@ -39,6 +39,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 //Auto Headers
 #include <utility/excn/Exceptions.hh>
@@ -231,7 +232,7 @@ TryDisulfPermutations::parse_my_tag(
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
-			set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
+			set_selector( core::select::residue_selector::get_residue_selector(selector_name, datamap));
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -435,11 +436,16 @@ void TryDisulfPermutations::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
+		"Residue selector specifying which residues to consider");
+
 	attlist
 		+ XMLSchemaAttribute( "consider_already_bonded", xsct_rosetta_bool, "Also sample permutations of disulfides that are already bonded" )
 		+ XMLSchemaAttribute( "min_type", xsct_minimizer_type, "Type of minimization to perform" )
-		+ XMLSchemaAttribute( "min_tolerance", xsct_real, "tolerance for the minimizer" )
-		+ XMLSchemaAttribute( "selector", xs_string, "Residue selector specifying which residues to consider" );
+		+ XMLSchemaAttribute( "min_tolerance", xsct_real, "tolerance for the minimizer" );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover that tries different sets of possible disulfide bonds between existing residues capable of forming disulfides", attlist );
 }
 

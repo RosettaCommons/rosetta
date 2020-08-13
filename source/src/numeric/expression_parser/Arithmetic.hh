@@ -200,7 +200,10 @@ public:
 	ArithmeticScanner( bool );
 	/// @brief Add the functions min, max and sqrt.
 	void add_standard_functions();
+
 	void treat_AND_and_OR_as_operators( bool setting );
+
+	void treat_NOT_as_operator( bool setting );
 
 	void add_variable( std::string const & name );
 	void add_function( std::string const & name, numeric::Size nargs );
@@ -215,6 +218,7 @@ private:
 
 private:
 	bool treat_AND_and_OR_as_operators_;
+	bool treat_NOT_as_operator_ = false;
 	std::map< std::string, numeric::Size > functions_;
 	std::map< std::string, numeric::Size > variables_; // Size is a placeholder; the name string is the only important data.
 

@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/aa_composition_energy/AACompositionConstraint.hh>
 
 //Auto Headers
@@ -126,7 +127,7 @@ AddCompositionConstraintMover::parse_my_tag(
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP residue_selector;
 		try {
-			residue_selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector = core::select::residue_selector::get_residue_selector( selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -190,10 +191,11 @@ void AddCompositionConstraintMover::provide_xml_schema( utility::tag::XMLSchemaD
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector");
+
 	attlist + XMLSchemaAttribute("filename", xs_string, "Name of composition constraint file" );
 	// I would consider a complex type that ends in .pdb, but I want users to be
 	// able to provide cifs! Or name their files whatever!
-	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script" );
 
 	AttributeList subtag_attributes;
 	subtag_attributes + XMLSchemaAttribute::required_attribute("entry", xs_string, "Composition constraint entries, optionally ';' separated." );

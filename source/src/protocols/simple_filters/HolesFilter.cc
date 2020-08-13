@@ -22,6 +22,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 
@@ -196,7 +197,7 @@ HolesFilter::parse_my_tag(
 		if ( tr.visible() ) tr << " Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -225,15 +226,17 @@ void HolesFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"residue_selector",
+		"only calculate holes score for residues in residue_selector; The holes calculation is performed on the Pose as whole (ignoring the ResidueSelector), but the score that's reported is the sum of only the atoms in the residue selector.  The Holes score is a sum of individual atoms/residues anyway (technically PoseBalls), so by only reporting a specific selection, get location-specific data.");
+
 	attlist + XMLSchemaAttribute::attribute_w_default("cmd", xs_string, "expects you to use -holes::dalphaball", "XRW TO DO")
 		+ XMLSchemaAttribute::attribute_w_default("threshold", xsct_real, "Threshold value for the filter", "2.0")
 		+ XMLSchemaAttribute::attribute_w_default("exclude_bb_atoms", xsct_rosetta_bool, "don't include backbone (bb) atoms in residue selection (residue_selector case)", "false")
 		+ XMLSchemaAttribute::attribute_w_default("normalize_per_residue", xsct_rosetta_bool, "for residue selector case, nomralize per residue", "false")
 		+ XMLSchemaAttribute::attribute_w_default("normalize_per_atom", xsct_rosetta_bool,
-		"for residue selector case, normalize per atom; defaults to true if residue_selector if normalize_per_atom and normalize_per_residue not explicitly defined by user", "false")
-		+ XMLSchemaAttribute("residue_selector", xs_string,
-		"only calculate holes score for residues in residue_selector; The holes calculation is performed on the Pose as whole (ignoring the ResidueSelector), but the score that's reported is the sum of only the atoms in the residue selector.  The Holes score is a sum of individual atoms/residues anyway (technically PoseBalls), so by only reporting a specific selection, get location-specific data.");
-
+		"for residue selector case, normalize per atom; defaults to true if residue_selector if normalize_per_atom and normalize_per_residue not explicitly defined by user", "false");
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates holes value(?) and filters based upon topology", attlist );
 

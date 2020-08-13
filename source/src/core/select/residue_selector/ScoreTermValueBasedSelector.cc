@@ -123,7 +123,7 @@ void ScoreTermValueBasedSelector::parse_my_tag(utility::tag::TagCOP tag, basic::
 	}
 
 	if ( tag->hasOption( "selector" ) ) {
-		input_residues_selector_ = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", tag->getOption< std::string >( "selector" ) );
+		input_residues_selector_ = get_residue_selector(tag->getOption< std::string >( "selector" ), datamap);
 		TR << "Will operate on the subset of residues resulting from selector '"
 			<< input_residues_selector_->get_name() << "'." << std::endl;
 	} else if ( tag->size() > 1 ) {
@@ -170,7 +170,9 @@ std::string ScoreTermValueBasedSelector::class_name() {
 void ScoreTermValueBasedSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "selector", xs_string, "residue selector to be used, in case only a subset of residues need to be considered")
+	attributes_for_parse_residue_selector(attributes,  "selector");
+
+	attributes
 		+ XMLSchemaAttribute::attribute_w_default( "resnums", xs_string, "pose number of the subset of residues to be considered. The default is 'ALL'.", "ALL" )
 		+ XMLSchemaAttribute::required_attribute( "lower_threshold", xsct_real, "residues scoring equal to or above this threshold will be selected" )
 		+ XMLSchemaAttribute::required_attribute( "upper_threshold", xsct_real, "residues scoring equal to or below this threshold will be selected" )

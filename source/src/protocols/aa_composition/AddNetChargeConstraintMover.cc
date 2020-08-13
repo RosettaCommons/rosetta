@@ -22,6 +22,7 @@
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/scoring/netcharge_energy/NetChargeConstraint.hh>
 
 //Auto Headers
@@ -101,7 +102,7 @@ AddNetChargeConstraintMover::parse_my_tag(
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP residue_selector;
 		try {
-			residue_selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector = core::select::residue_selector::get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddNetChargeConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -165,10 +166,11 @@ void AddNetChargeConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDef
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector", "If provided, the net charge of the selected region is constrained; otherwise the global net charge is constrained.");
+
 	attlist + XMLSchemaAttribute::required_attribute("filename", xs_string, "Name of net charge constraint file.  (These files have a \".charge\" suffix)." );
 	// I would consider a complex type that ends in .pdb, but I want users to be
 	// able to provide cifs! Or name their files whatever!
-	attlist + XMLSchemaAttribute("selector", xs_string, "Residue selector named somewhere else in the script.  If provided, the net charge of the selected region is constrained; otherwise the global net charge is constrained." );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Add net charge constraints from the provided file to the selected region or whole pose.", attlist );
 }
 

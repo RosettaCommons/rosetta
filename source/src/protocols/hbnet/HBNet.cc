@@ -97,6 +97,7 @@
 #include <core/select/residue_selector/ResiduePDBInfoHasLabelSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/CachedResidueSubset.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 
 // Protocols headers
@@ -452,7 +453,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -467,7 +468,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -482,7 +483,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, data);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -3508,6 +3509,25 @@ void
 HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 {
 	using namespace utility::tag;
+
+	//Residue Selector schemas
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"start_selector",
+		"Residue selector that tells HBNet which residues to start from (will only search for networks that include these resid");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"core_selector",
+		"Residue selector that defines what HBNet considers \"core\"; "
+		"used in buriedness determination for unsats; "
+		"default is layer selector default using sidechain neighbors(core=5.2)." );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"boundary_selector",
+		"Residue selector to define what HBNet considers boundary during comparisons/scoring of networks");
+
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default(
 		"hb_threshold", xsct_real,
@@ -3699,17 +3719,6 @@ HBNet::attributes_for_hbnet( utility::tag::AttributeList & attlist )
 		"start_resnums", xsct_residue_number_cslist,
 		"comma delimited list of residue positions to start network search from "
 		"(e.g. \"1,2,3,5\"); now is better to use start_selector residue selector")
-		+ XMLSchemaAttribute(
-		"start_selector", xs_string,
-		"residue selector that tells HBNet which residues to start from (will only search for networks that include these resid")
-		+ XMLSchemaAttribute(
-		"core_selector", xs_string,
-		"residue selector that defines what HBNet considers \"core\"; "
-		"used in buriedness determination for unsats; "
-		"default is layer selector default using sidechain neighbors(core=5.2)." )
-		+ XMLSchemaAttribute(
-		"boundary_selector", xs_string,
-		"residue selector to define what HBNet considers boundary during comparisons/scoring of networks" )
 		+ XMLSchemaAttribute(
 		"allow_no_hbnets", xsct_rosetta_bool,
 		"allows the program to continue when no hbnets are found" )

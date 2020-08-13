@@ -19,6 +19,7 @@
 // Project Headers
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 #include <basic/options/option.hh>
@@ -206,7 +207,7 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
 	if ( tag->hasOption( "residue_selector" ) ) {
 		std::string const selector_name ( tag->getOption< std::string >( "residue_selector" ) );
 		try {
-			residue_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
+			residue_selector( core::select::residue_selector::get_residue_selector(selector_name, datamap));
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfileFromDB::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -218,6 +219,12 @@ ReadResfileFromDB::parse_tag( TagCOP tag , DataMap & datamap )
 void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attributes,
+		"residue_selector",
+		"If this is used, then the ResidueSelector is used "
+		"as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, "
+		"even if the resfile lists other residues as well.");
 
 	attributes
 		+ XMLSchemaAttribute( "database_table", xs_string , "The table in the database from which to read" )
@@ -226,12 +233,7 @@ void ReadResfileFromDB::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 		" the row in the indicated table that will be read from for the indicated job. In JD3, this"
 		" can/should be combined with the script_vars flag so that different jobs can read different"
 		" resfiles. This is a marked departure from the JD2 functionality which relied on the global"
-		" data representing the currently-running job. That functionality is now removed." )
-
-		+ utility::tag::XMLSchemaAttribute( "residue_selector", xs_string , "Optionally, a previously-defined ResidueSelector "
-		"may be specified using the residue_selector=(some string) option. If this is used, then the ResidueSelector is used "
-		"as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, "
-		"even if the resfile lists other residues as well." );
+		" data representing the currently-running job. That functionality is now removed." );
 
 	protocols::rosetta_scripts::attributes_for_parse_database_session( xsd, attributes );
 

@@ -123,7 +123,7 @@ SymmetricalResidueSelector::parse_my_tag(
 		std::string const selectorname = tag->getOption< std::string >( "selector" );
 		//make sure it is a valid residue selector
 		try {
-			set_selector( data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ) );
+			set_selector( core::select::residue_selector::get_residue_selector(selectorname, data) );
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from SymmetricalResidueSelector.\n";
@@ -175,11 +175,8 @@ void SymmetricalResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes
-		+ XMLSchemaAttribute(
-		"selector",
-		xs_string,
-		"name of the selector" );
+	attributes_for_parse_residue_selector(attributes, "selector");
+
 	xsd_type_definition_w_attributes_and_optional_subselector(
 		xsd, class_name(),
 		"The SymmetricalResidueSelector, when given a selector, will return all symmetrical "

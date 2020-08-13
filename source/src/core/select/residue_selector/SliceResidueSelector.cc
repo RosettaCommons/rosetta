@@ -339,7 +339,7 @@ void SliceResidueSelector::parse_my_tag(
 		}
 
 		try {
-			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+			ResidueSelectorCOP selector = get_residue_selector(selector_str, datamap);
 			set_residue_selector(selector);
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -450,8 +450,9 @@ void
 SliceResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attlist;
+	attributes_for_parse_residue_selector(attlist, "selector" , "The selector to slice from.");
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "selector" , xs_string , "The selector to slice from.", "" )
+
 		+ XMLSchemaAttribute::attribute_w_default( "from" , xs_integer , "Range selection: This is the first residue of the range to select." , "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "to" , xs_integer , "Range selection: This is the last residue of the range to select." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "indices" , xs_string , "Index selection: Comma separated list of indices. May not use this with from-to" , "" )

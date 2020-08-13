@@ -124,7 +124,7 @@ BondedResidueSelector::parse_my_tag(
 		}
 
 		try {
-			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+			ResidueSelectorCOP selector = get_residue_selector(selector_str, datamap);
 			set_input_set_selector( selector );
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -260,8 +260,7 @@ void
 BondedResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of residue selector specifying residues for which to select bonded partners" );
+	select::residue_selector::attributes_for_parse_residue_selector(attributes, "residue_selector", "Name of residue selector specifying residues for which to select bonded partners");
 	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums" );
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), "Selects all residues that are attached to the provided residues by a chemical bond", attributes );
 

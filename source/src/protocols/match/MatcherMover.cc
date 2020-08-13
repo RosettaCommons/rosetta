@@ -38,6 +38,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <basic/options/option.hh>
 #include <basic/options/keys/match.OptionKeys.gen.hh>
@@ -279,7 +280,7 @@ MatcherMover::parse_my_tag(
 		for ( auto const & selector_str : selector_strs ) {
 			core::select::residue_selector::ResidueSelectorCOP selector;
 			try {
-				selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
+				selector = core::select::residue_selector::get_residue_selector(selector_str, data);
 			} catch ( utility::excn::Exception & e ) {
 				std::stringstream error_msg;
 				error_msg << "Failed to find ResidueSelector named '" << selector_str << "' from the Datamap from MatcherMover::parse_my_tag.\n";
@@ -359,10 +360,14 @@ void MatcherMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"residues_for_geomcsts",
+		"A comma-separated list of residue selectors specifying residues to be used in geometric constraints");
+
 	//residues_for_geomcsts: comma-separated list of residue selectors
 	attlist
-		+ XMLSchemaAttribute::attribute_w_default( "incorporate_matches_into_pose", xsct_rosetta_bool, "Incorporate the identified matches into the input pose", "true" )
-		+ XMLSchemaAttribute( "residues_for_geomcsts", xs_string, "A comma-separated list of residue selectors specifying residues to be used in geometric constraints" );
+		+ XMLSchemaAttribute::attribute_w_default( "incorporate_matches_into_pose", xsct_rosetta_bool, "Incorporate the identified matches into the input pose", "true" );
 
 	XMLSchemaSimpleSubelementList matcher_constraint_subelements;
 	toolbox::match_enzdes_util::MatchConstraintFileInfo::return_complex_type_for_MatcherConstraint( matcher_constraint_subelements, xsd );

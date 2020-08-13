@@ -109,7 +109,7 @@ void AndResidueSelector::parse_my_tag(
 
 		for ( std::string const & selector_name : selector_names ) {
 			try {
-				ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
+				ResidueSelectorCOP selector = get_residue_selector(selector_name,datamap);
 				local_selectors.push_back( selector );
 			} catch ( utility::excn::Exception & e ) {
 				std::stringstream error_msg;
@@ -176,9 +176,7 @@ std::string AndResidueSelector::class_name() {
 void
 AndResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	utility::tag::AttributeList attributes;
-	attributes + utility::tag::XMLSchemaAttribute(
-		"selectors", utility::tag::xs_string,
-		"Comma separated list of selected residues" );
+	select::residue_selector::attributes_for_parse_residue_selector(attributes, "selectors", "Comma separated list of selected residues");
 	xsd_type_definition_w_attributes_and_optional_subselectors(
 		xsd, class_name(),
 		"The AndResidueSelector combines the output of multiple ResidueSelectors using AND "

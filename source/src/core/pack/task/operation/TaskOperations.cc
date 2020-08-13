@@ -25,6 +25,7 @@
 #include <core/pack/rotamer_set/RotamerSetOperation.hh>
 #include <core/pack/task/RotamerSampleOptions.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/selection.hh>
@@ -1603,7 +1604,7 @@ ReadResfile::parse_tag( TagCOP tag , DataMap &datamap )
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const selector_name ( tag->getOption< std::string >( "selector" ) );
 		try {
-			set_residue_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name ) );
+			set_residue_selector( core::select::residue_selector::get_residue_selector(selector_name, datamap));
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ReadResfile::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -1666,8 +1667,10 @@ utility::tag::AttributeList
 ReadResfile::xml_schema_attributes() {
 	utility::tag::AttributeList attributes;
 	attributes
-		+ utility::tag::XMLSchemaAttribute( "filename", xs_string , "If a filename is given, read from that file. Otherwise, read the file specified on the commandline with -packing:resfile." )
-		+ utility::tag::XMLSchemaAttribute( "selector", xs_string , "Optionally, a previously-defined ResidueSelector may be specified using the selector=(some string) option. If this is used, then the ResidueSelector is used as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, even if the resfile lists other residues as well." );
+		+ utility::tag::XMLSchemaAttribute( "filename", xs_string , "If a filename is given, read from that file. Otherwise, read the file specified on the commandline with -packing:resfile." );
+
+	select::residue_selector::attributes_for_parse_residue_selector(attributes, "selector", "Optionally, a previously-defined ResidueSelector may be specified using the selector=(some string) option. If this is used, then the ResidueSelector is used as a mask, and the ReadResfile TaskOperation is applied only to those residues selected by the ResidueSelector, even if the resfile lists other residues as well.");
+
 	return attributes;
 }
 

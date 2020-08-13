@@ -46,6 +46,7 @@
 
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 //Utility Headers
 #include <utility/tag/Tag.hh>
@@ -179,7 +180,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 
 	std::string const SELECTOR = "selector";
 	if ( tag->hasOption( SELECTOR ) ) {
-		sim_selector( datamap.get_ptr< ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( SELECTOR ) ) );
+		sim_selector( get_residue_selector(tag->getOption<std::string>( SELECTOR ), datamap ));
 	}
 
 	std::string const APPLY_TO_TEMPLATE = "apply_to_template";
@@ -246,7 +247,7 @@ void RigidChunkCM::parse_my_tag( utility::tag::TagCOP tag,
 		ResidueSelectorCOP sele( new ResidueIndexSelector( ss.str() ) );
 		templ_selector( sele );
 	} else if ( tag->hasOption( "region_selector" ) ) {
-		ResidueSelectorCOP sele( datamap.get_ptr< ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "region_selector" ) ) );
+		ResidueSelectorCOP sele( get_residue_selector(tag->getOption<std::string>( "region_selector" ), datamap ));
 		templ_selector( sele );
 	} else if ( tag->hasOption( "region" ) ) {
 		ResidueSelectorCOP sele( new ResidueIndexSelector( tag->getOption< std::string >( "region" ) ) );
@@ -872,12 +873,19 @@ void RigidChunkCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
+		"Residue selector specifying the region over which this client mover will be applied");
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"region_selector",
+		"Residue selector specifying the region of the template pdb to use as a template for the pose");
+
 	attlist + XMLSchemaAttribute::required_attribute(
 		"name", xs_string,
 		"Unique name for this client mover");
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"Residue selector specifying the region over which this client mover will be applied");
 	attlist + XMLSchemaAttribute(
 		"apply_to_template", xs_string,
 		"Comma-separated list of movers to apply to the template region");
@@ -887,9 +895,6 @@ void RigidChunkCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute(
 		"region_file", xs_string,
 		"Loops file specifying the region of the template pdb to use as a template for the pose");
-	attlist + XMLSchemaAttribute(
-		"region_selector", xs_string,
-		"Residue selector specifying the region of the template pdb to use as a template for the pose");
 	attlist + XMLSchemaAttribute(
 		"region", xs_string,
 		"String specifying indices of residues to be used as a template");

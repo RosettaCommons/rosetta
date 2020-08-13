@@ -101,7 +101,7 @@ void NotResidueSelector::parse_my_tag(
 		}
 
 		try {
-			ResidueSelectorCOP selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+			ResidueSelectorCOP selector = get_residue_selector(selector_str, datamap);
 			set_residue_selector(selector);
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -176,8 +176,8 @@ void
 NotResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attributes;
-	attributes + XMLSchemaAttribute( "selector", xs_string , "XRW TO DO" );
-	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"XRW TO DO", attributes );
+	core::select::residue_selector::attributes_for_parse_residue_selector(attributes, "selector");
+	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(),"A Residue Selector that selects the inverse of the selector passed to it.", attributes );
 }
 
 

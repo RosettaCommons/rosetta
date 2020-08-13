@@ -35,6 +35,8 @@
 #include <core/fragment/OrderedFragSet.hh>
 #include <core/fragment/FrameList.hh>
 #include <core/fragment/Frame.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -77,7 +79,7 @@ namespace abscript {
 
 using namespace core::environment;
 using namespace protocols::environment;
-
+using core::select::residue_selector::get_residue_selector;
 // creator
 
 
@@ -124,7 +126,7 @@ void FragmentJumpCM::parse_my_tag( utility::tag::TagCOP tag,
 	initialize( tag->getOption< bool >( "initialize", true ) );
 
 	if ( tag->hasOption( "selector" ) ) {
-		set_selector( datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) ) );
+		set_selector( core::select::residue_selector::get_residue_selector(tag->getOption<std::string>( "selector" ), datamap ));
 	} else {
 		set_selector( nullptr );
 	}
@@ -388,6 +390,11 @@ void FragmentJumpCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
+		"Residue selector specifying region where this mover will be applied");
+
 	attlist + XMLSchemaAttribute(
 		"topol_file", xs_string,
 		"File specifying topology for the pose. If not provided, must specify ss_info, pairing_file, and n_sheets");
@@ -409,9 +416,6 @@ void FragmentJumpCM::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"initialize", xsct_rosetta_bool,
 		"Apply FragmentJumpCM after brokering is complete?", "true");
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"Residue selector specifying region where this mover will be applied");
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"name", xs_string,
 		"Unique name for this client mover", "");

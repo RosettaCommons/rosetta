@@ -55,12 +55,24 @@ SelectorLogicParser:: parse_string_to_residue_selector(
 	// create scanner w/o adding any functions, e.g. sqrt
 	numeric::expression_parser::ArithmeticScanner as( true );
 	as.treat_AND_and_OR_as_operators( true );
+	as.treat_NOT_as_operator( true );
 
 	for ( auto const & name_selector_pair : dm.category_map( "ResidueSelector" ) ) {
 		ResidueSelectorOP selector = utility::pointer::dynamic_pointer_cast< ResidueSelector >
 			(  name_selector_pair.second );
 		if ( selector ) {
-			as.add_variable( name_selector_pair.first );
+			// Error detection here should the user have provided an invalid variable name
+			// for one of their residue selectors. I.e. something that conflicts with the
+			// boolean operators like "or" or "noT".
+			try {
+				as.add_variable( name_selector_pair.first );
+			} catch ( utility::excn::Exception const & e ) {
+				std::ostringstream oss;
+				oss << "Cannot proceed because of the residue selector named '" <<
+					name_selector_pair.first << "'. This selector should be renamed.\n";
+				oss << e.msg() << "\n";
+				throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+			}
 			add_named_selector( name_selector_pair.first, selector );
 		}
 	}
@@ -77,9 +89,20 @@ SelectorLogicParser::parse_string_to_residue_selector(
 	// create scanner w/o adding any functions, e.g. sqrt
 	numeric::expression_parser::ArithmeticScanner as( true );
 	as.treat_AND_and_OR_as_operators( true );
-
+	as.treat_NOT_as_operator( true );
 	for ( auto const & name_selector_pair : selectors ) {
-		as.add_variable( name_selector_pair.first );
+		// Error detection here should the user have provided an invalid variable name
+		// for one of their residue selectors. I.e. something that conflicts with the
+		// boolean operators like "or" or "noT".
+		try {
+			as.add_variable( name_selector_pair.first );
+		} catch ( utility::excn::Exception const & e ) {
+			std::ostringstream oss;
+			oss << "Cannot proceed because of the residue selector named '" <<
+				name_selector_pair.first << "'. This selector should be renamed.\n";
+			oss << e.msg() << "\n";
+			throw CREATE_EXCEPTION( utility::excn::Exception, oss.str() );
+		}
 		add_named_selector( name_selector_pair.first, name_selector_pair.second );
 	}
 	return finish_parse_string_to_residue_selector( input_string, as );
@@ -465,4 +488,3 @@ SelectorLogicParser::finish_parse_string_to_residue_selector(
 }
 }
 }
-

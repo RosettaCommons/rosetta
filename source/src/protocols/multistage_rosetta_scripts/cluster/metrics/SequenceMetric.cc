@@ -19,6 +19,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/XMLSchemaValidation.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <utility/pointer/memory.hh>
 
@@ -68,8 +69,9 @@ void
 SequenceMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist
-		+ XMLSchemaAttribute( "selector", xs_string,
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
 		"Name of the optional residue selector to use. If used, this will only use the selected residues to create the sequence." );
 
 	xsd_type_definition_w_attributes( xsd, "Sequence",
@@ -85,7 +87,7 @@ void SequenceMetric::parse_my_tag(
 		std::string const selector_str = tag->getOption< std::string >( "selector" );
 
 		core::select::residue_selector::ResidueSelectorCOP selector =
-			datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str )->clone();
+			core::select::residue_selector::get_residue_selector(selector_str, datamap)->clone();
 
 		analyze( pose, selector );
 	} else {

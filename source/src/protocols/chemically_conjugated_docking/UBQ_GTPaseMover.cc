@@ -48,6 +48,7 @@
 
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <protocols/jd2/JobDistributor.hh>
 #include <protocols/jd2/JobOutputter.hh>
@@ -738,7 +739,7 @@ UBQ_GTPaseMover::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Please enter either a residue selector or the location for binding.");
 	} else if ( lys_num==0 ) { // setting selector from selector created in script
 		try {
-			set_selector(data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname ));
+			set_selector(core::select::residue_selector::get_residue_selector(selectorname, data));
 			TR << "Using residue selector " << selectorname << std::endl;
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -760,11 +761,14 @@ void UBQ_GTPaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"binding_lysine",
+		"A residue selector giving the lysine residue on the substrate to which UBQ will bind.");
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 	attlist
 		+XMLSchemaAttribute("UBQpdb", xs_string, "File path to UBQ pdb file")
-		+XMLSchemaAttribute("binding_lysine", xs_string, "A residue selector giving the lysine residue on the substrate to which UBQ will bind.")
 		+XMLSchemaAttribute("extraBodies", xs_boolean, "Whether there are extra bodies in the simulation.")
 		+XMLSchemaAttribute("numTailRes", xsct_non_negative_integer, "Number of tail residues on the ubiquitin.")
 		+XMLSchemaAttribute("scorefilter", xs_decimal, "Filter for total score")

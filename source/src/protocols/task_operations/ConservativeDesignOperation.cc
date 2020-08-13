@@ -26,7 +26,7 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
-
+#include <core/select/residue_selector/util.hh>
 #include <cppdb/frontend.h>
 
 #include <utility/sql_database/DatabaseSessionManager.hh>
@@ -249,7 +249,7 @@ ConservativeDesignOperation::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	if ( tag->hasOption( "residue_selector" ) ) {
 		std::string const & selector_name = tag->getOption< std::string >( "residue_selector" );
 		try {
-			residue_selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			residue_selector_ = core::select::residue_selector::get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from ConservativeDesignOperation::parse_tag\n" + e.msg();
 			throw CREATE_EXCEPTION( utility::excn::Exception,  error_message );
@@ -270,11 +270,12 @@ ConservativeDesignOperation::parse_tag( utility::tag::TagCOP tag, basic::datacac
 void ConservativeDesignOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	AttributeList attributes;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attributes,
+		"residue_selector",
+		"Residue selector that indicates to which residues the operation will be applied.");
+
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default(
-		"residue_selector", xs_string,
-		"Residue selector that indicates to which residues the operation will be applied.",
-		"")
 		+ XMLSchemaAttribute::attribute_w_default(
 		"data_source", xs_string,
 		"Set the source of the data used to define what is conservative. Options are: chothia_76 and the Blosum matrices from 30 to 100; designated as blosum30, 62, etc. Default is blosum62.  The higher the number, the more conservative the set of mutations (numbers are sequence identity cutoffs).",

@@ -18,7 +18,7 @@
 #include <core/environment/LocalPosition.hh>
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-
+#include <core/select/residue_selector/util.hh>
 #include <protocols/environment/claims/EnvLabelSelector.hh>
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/ClaimStrength.hh>
@@ -81,7 +81,7 @@ TorsionClaim::TorsionClaim( ClientMoverOP owner,
 			<< " Are you sure this is what you wanted?" << std::endl;
 	}
 
-	selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selector" ) );
+	selector_ = core::select::residue_selector::get_residue_selector( tag->getOption<std::string>( "selector" ), datamap );
 }
 
 TorsionClaim::TorsionClaim( ClientMoverOP owner,
@@ -223,13 +223,17 @@ TorsionClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	xsd.add_top_level_element( restr );
 
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
+		"Name of previously defined residue selector that defines where to apply this claim");
+
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "control_strength", "envclaim_ctrl_str", "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "initialization_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" )
 		+ XMLSchemaAttribute::attribute_w_default( "backbone", xsct_rosetta_bool, "XRW TO DO",  "false" )
 
-		+ XMLSchemaAttribute::attribute_w_default( "sidechain", xsct_rosetta_bool,"XRW TO DO",  "false" )
-		+ XMLSchemaAttribute::required_attribute( "selector", xs_string, "Name of previously defined residue selector that defines where to apply this claim" );
+		+ XMLSchemaAttribute::attribute_w_default( "sidechain", xsct_rosetta_bool,"XRW TO DO",  "false" );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( class_name() )

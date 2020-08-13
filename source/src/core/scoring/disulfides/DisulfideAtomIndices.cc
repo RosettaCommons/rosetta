@@ -19,7 +19,7 @@
 #include <core/chemical/ResidueType.hh>
 
 #include <utility/vector1.hh>
-
+#include <basic/Tracer.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -35,6 +35,7 @@ namespace core {
 namespace scoring {
 namespace disulfides {
 
+static basic::Tracer TR( "core.scoring.disulfides.DisulfideAtomIndices" );
 
 DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) :
 	derivative_atom_types_( res.natoms(), NO_DERIVATIVES_FOR_ATOM )
@@ -43,6 +44,14 @@ DisulfideAtomIndices::DisulfideAtomIndices( conformation::Residue const & res ) 
 
 	std::string disulf_atom_name = rt.get_disulfide_atom_name();
 	disulf_atom_index_ = rt.has( disulf_atom_name ) ? res.atom_index( disulf_atom_name ) : 0;
+
+	//JAB - this is here because if a disulfide breaks and this code hits, you get a segfault in the else statement.
+	// This is better than a segfault.
+	if ( disulf_atom_index_ == 0 ) {
+		TR << "Proto disulfide has no disulfide atom index but is supposed to be connected!" << std::endl;
+		TR << rt << std::endl;
+		utility_exit_with_message("A disulfide is shown to be atomocially connected, but the residue type is not a disulfide! ");
+	}
 
 	if ( disulf_atom_name == "CEN" ) {
 		debug_assert(rt.has("CEN") );//disulfides form to SG or CEN only

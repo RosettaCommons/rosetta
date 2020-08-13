@@ -175,7 +175,7 @@ void OperateOnResidueSubset::parse_tag( TagCOP tag , DataMap & datamap )
 	} else if ( tag->hasOption( "selector" ) ) {
 		selector_name = tag->getOption< std::string >( "selector" );
 		try {
-			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from OperateOnResidueSubset::parse_tag\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -238,9 +238,7 @@ void OperateOnResidueSubset::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	AttributeList attlist;
 	attlist + optional_name_attribute();
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"Residue selector that indicates to which residues the operation will be applied.");
+	select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector", "Residue selector that indicates to which residues the operation will be applied.");
 	select::residue_selector::attributes_for_parse_residue_selector_logic_string( xsd, attlist );
 	attributes_for_parse_residue_level_operations( attlist );
 

@@ -26,6 +26,7 @@
 /// C++ headers
 #include <iostream>
 #include <cmath>
+#include <algorithm>
 
 #include <utility/vector1.hh>
 
@@ -98,6 +99,13 @@ is_numeral( char c ) {
 bool
 is_letter( char c ) {
 	return ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' );
+}
+
+std::string
+to_uppercase( std::string const & s ){
+	std::string new_s = s;
+	std::transform(new_s.begin(), new_s.end(), new_s.begin(), ::toupper);
+	return new_s;
 }
 
 LiteralToken::LiteralToken() : value_( 0.0 ) {}
@@ -311,6 +319,11 @@ void ArithmeticScanner::treat_AND_and_OR_as_operators( bool setting )
 	treat_AND_and_OR_as_operators_ = setting;
 }
 
+void ArithmeticScanner::treat_NOT_as_operator(bool setting)
+{
+	treat_NOT_as_operator_ = setting;
+}
+
 void ArithmeticScanner::add_variable( std::string const & name )
 {
 	if ( name.size() == 0 ) {
@@ -324,6 +337,26 @@ void ArithmeticScanner::add_variable( std::string const & name )
 	if ( functions_.find( name ) != functions_.end() ) {
 		utility_exit_with_message( "Error in ArithmeticScanner::add_variable.  Variable name conflicts with already added function name: " + name );
 	}
+
+	if ( treat_AND_and_OR_as_operators_ || treat_NOT_as_operator_ ) {
+		auto capitalized_name = to_uppercase( name );
+		bool illegal = false;
+		if ( treat_AND_and_OR_as_operators_ ) {
+			if ( capitalized_name == "AND" || capitalized_name == "OR" ) {
+				illegal = true;
+			}
+		}
+		if ( treat_NOT_as_operator_ ) {
+			if ( capitalized_name == "NOT" ) {
+				illegal = true;
+			}
+		}
+
+		if ( illegal ) {
+			utility_exit_with_message( "Illegal variable named '" + name + "' ('" + capitalized_name + "') conflicts with the boolean operator of the same name.");
+		}
+	}
+
 	variables_.insert( std::make_pair( name, 1 ));
 }
 
@@ -343,7 +376,7 @@ void ArithmeticScanner::add_function(
 		utility_exit_with_message( "Error in ArithmeticScanner::add_function.  Function name has already conflicts with already added variable name: " + name );
 	}
 	if ( functions_.find( name ) != functions_.end() ) {
-		utility_exit_with_message( "Error in ArithmeticScanner::add_variable.  Function name has already been added: " + name );
+		utility_exit_with_message( "Error in ArithmeticScanner::add_function.  Function name has already been added: " + name );
 	}
 
 	functions_.insert( std::make_pair( name,  nargs ));
@@ -529,11 +562,20 @@ ArithmeticScanner::scan_identifier( std::string const & input_string ) const
 		}
 	}
 
-	if ( treat_AND_and_OR_as_operators_ ) {
-		if ( input_string == "AND" ) {
-			return utility::pointer::make_shared< SimpleToken >( AND_SYMBOL );
-		} else if ( input_string == "OR" ) {
-			return utility::pointer::make_shared< SimpleToken >( OR_SYMBOL );
+	if ( treat_AND_and_OR_as_operators_ || treat_NOT_as_operator_ ) {
+		auto upper_input = to_uppercase(input_string);
+		if ( treat_AND_and_OR_as_operators_ ) {
+			if ( upper_input == "AND" ) {
+				return utility::pointer::make_shared< SimpleToken >( AND_SYMBOL );
+			} else if ( upper_input == "OR" ) {
+				return utility::pointer::make_shared< SimpleToken >( OR_SYMBOL );
+			}
+		}
+
+		if ( treat_NOT_as_operator_ ) {
+			if ( upper_input == "NOT" ) {
+				return utility::pointer::make_shared< SimpleToken >( NOT_SYMBOL );
+			}
 		}
 	}
 
@@ -2641,4 +2683,3 @@ parse_string_to_boolean_expression( std::string const & input_string )
 
 }
 }
-

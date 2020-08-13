@@ -21,6 +21,9 @@
 #include <core/environment/LocalPosition.hh>
 #include <core/environment/SequenceAnnotation.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+
 #include <protocols/environment/claims/EnvClaim.hh>
 #include <protocols/environment/claims/TorsionClaim.hh>
 #include <protocols/environment/claims/ClaimStrength.hh>
@@ -64,7 +67,7 @@ XYZClaim::XYZClaim( ClientMoverOP owner,
 	std::string const& selection = tag->getOption< std::string >( "selection" );
 	if ( datamap.has( "ResidueSelector", selection ) ) {
 		tr.Debug << "Pulling ResidueSelector '" << selection << "' from datamap in " << *this << std::endl;
-		selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", tag->getOption<std::string>( "selection" ) );
+		selector_ = core::select::residue_selector::get_residue_selector(tag->getOption<std::string>( "selection" ), datamap );
 	} else {
 		tr.Debug << "Instantiating EnvLabelSelector for selection '" << selection << "' in " << *this << std::endl;
 		selector_ = utility::pointer::make_shared< EnvLabelSelector >( LocalPosition( selection ) );
@@ -214,11 +217,11 @@ XYZClaim::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	xsd.add_top_level_element( restr );
 
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selection");
 	attlist
 		+ XMLSchemaAttribute::required_attribute( "control_strength", "envclaim_ctrl_str", "XRW TO DO" )
 		+ XMLSchemaAttribute::attribute_w_default( "initialization_strength", "envclaim_ctrl_str", "XRW TO DO", "DOES_NOT_CONTROL" )
-		+ XMLSchemaAttribute::attribute_w_default( "relative_only", xsct_rosetta_bool, "XRW TO DO", "false" )
-		+ XMLSchemaAttribute::required_attribute( "selection", xs_string, "XRW TO DO" );
+		+ XMLSchemaAttribute::attribute_w_default( "relative_only", xsct_rosetta_bool, "XRW TO DO", "false" );
 
 	XMLSchemaComplexTypeGenerator ct_gen;
 	ct_gen.element_name( class_name() )

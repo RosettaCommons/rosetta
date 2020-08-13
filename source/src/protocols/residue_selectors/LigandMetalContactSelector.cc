@@ -124,7 +124,7 @@ LigandMetalContactSelector::parse_my_tag(
 		}
 
 		try {
-			core::select::residue_selector::ResidueSelectorCOP selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_str );
+			core::select::residue_selector::ResidueSelectorCOP selector = core::select::residue_selector::get_residue_selector(selector_str, datamap);
 			set_input_set_selector( selector );
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -177,8 +177,12 @@ void LigandMetalContactSelector::provide_xml_schema( utility::tag::XMLSchemaDefi
 	//Syntax Example:
 	using namespace utility::tag;
 	AttributeList attributes;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attributes,
+		"residue_selector",
+		"Name of the residue selector for the ligand");
+
 	attributes
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of the residue selector for the ligand")
 		+ XMLSchemaAttribute::attribute_w_default( "dist_cutoff_multiplier", xsct_real, "Multiplier for the distance from the metal atom for contact detection", "1");
 	core::pose::attributes_for_get_resnum_selector( attributes, xsd, "resnums");
 	core::select::residue_selector::xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), "This residue selector selects for the residues in contact with the ligand metal", attributes );

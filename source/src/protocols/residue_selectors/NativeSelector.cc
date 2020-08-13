@@ -142,7 +142,7 @@ NativeSelector::parse_my_tag(
 		}
 		try {
 			core::select::residue_selector::ResidueSelectorCOP selector =
-				datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_str );
+				core::select::residue_selector::get_residue_selector(selector_str, datamap);
 			set_residue_selector( selector );
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
@@ -176,8 +176,10 @@ NativeSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	using namespace utility::tag;
 
 	AttributeList attlist;
-	attlist
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "Name of residue selector to be applied to the native pose." );
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"residue_selector",
+		"Name of residue selector to be applied to the native pose.");
 
 	core::select::residue_selector::xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name() ,"A ResidueSelector that applies a given residue selector to the native pose. If the native pose is shorter than the given pose, 'false' values will be appended onto the end of the returned residue subset. If the native pose is longer than the given pose, then the subset will be shortened to be the length of the given pose.", attlist );
 

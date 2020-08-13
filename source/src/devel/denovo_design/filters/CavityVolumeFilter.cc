@@ -23,6 +23,8 @@
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
+#include <core/select/residue_selector/util.hh>
+
 #include <core/pose/Pose.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/scoring/dssp/Dssp.hh>
@@ -104,7 +106,7 @@ CavityVolumeFilter::parse_my_tag(
 	if ( tag->hasOption( "selector" ) ) {
 		std::string const & selectorname = tag->getOption< std::string >( "selector" );
 		try {
-			selector_ = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selectorname );
+			selector_ = core::select::residue_selector::get_residue_selector(selectorname, datamap);
 		} catch (utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selectorname << "' from the Datamap from CavityVolumeFilter::parse_my_tag.\n";
@@ -208,9 +210,7 @@ void CavityVolumeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute(
-		"selector", xs_string,
-		"residue selector name");
+	core::select::residue_selector::attributes_for_parse_residue_selector(attlist, "selector");
 
 	protocols::filters::xsd_type_definition_w_attributes(
 		xsd, class_name(),

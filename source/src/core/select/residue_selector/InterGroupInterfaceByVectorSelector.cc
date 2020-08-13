@@ -173,7 +173,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 		ResidueSelectorCOP grp1_sel_op, grp2_sel_op;
 		if ( ! grp1_selector_name.empty() ) {
 			try {
-				grp1_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp1_selector_name );
+				grp1_sel_op = get_residue_selector(grp1_selector_name, datamap);
 			} catch ( utility::excn::Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp1_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
 				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -182,7 +182,7 @@ InterGroupInterfaceByVectorSelector::parse_my_tag(
 
 		if ( ! grp2_selector_name.empty() ) {
 			try {
-				grp2_sel_op = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", grp2_selector_name );
+				grp2_sel_op = get_residue_selector(grp2_selector_name, datamap);
 			} catch ( utility::excn::Exception & e ) {
 				std::string error_message = "Failed to find ResidueSelector named '" + grp2_selector_name + "' from the Datamap from InterGroupInterfaceByVectorSelector::parse_my_tag\n" + e.msg();
 				throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -291,13 +291,24 @@ InterGroupInterfaceByVectorSelector::provide_xml_schema( utility::tag::XMLSchema
 	using namespace utility::tag;
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute::attribute_w_default( "cb_dist_cut",      xsct_real, "XRW TO DO",  "11.0"  )
-		+ XMLSchemaAttribute::attribute_w_default( "nearby_atom_cut",  xsct_real, "XRW TO DO",  "5.5"   )
-		+ XMLSchemaAttribute::attribute_w_default( "vector_angle_cut", xsct_real, "XRW TO DO",  "75.0"  )
-		+ XMLSchemaAttribute::attribute_w_default( "vector_dist_cut",  xsct_real, "XRW TO DO",  "9.0"   )
-		+ XMLSchemaAttribute( "grp1_selector",    xs_string  , "XRW TO DO" )
-		+ XMLSchemaAttribute( "grp2_selector",    xs_string  , "XRW TO DO" );
-	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), "XRW TO DO", 0, 2, attributes );
+		+ XMLSchemaAttribute::attribute_w_default( "cb_dist_cut",      xsct_real,
+		"Distance to cut using neighbor graph before doing other calculations.",  "11.0"  )
+		+ XMLSchemaAttribute::attribute_w_default( "nearby_atom_cut",  xsct_real,
+		"Distance to include nearby atoms before using the vectors.",  "5.5"   )
+
+		+ XMLSchemaAttribute::attribute_w_default( "vector_angle_cut", xsct_real,
+		"The angle that defines a single side of the interaction cone",  "75.0"  )
+		+ XMLSchemaAttribute::attribute_w_default( "vector_dist_cut",  xsct_real, "Distance that defines the vector-vector distance",  "9.0"   );
+	core::select::residue_selector::attributes_for_parse_residue_selector(attributes, "grp1_selector", "First selector (creates cone)");
+	core::select::residue_selector::attributes_for_parse_residue_selector(attributes, "grp2_selector", "Second selector");
+
+	xsd_type_definition_w_attributes_and_optional_subselectors( xsd, class_name(), "Measures an interface by creating two vectors."
+		"One vector is between Ca - to Cb of grp1 residues.  Second vector is between Cb and Ca of residues in group 2.\n"
+		" Using the angle_cut and dist_cut options, we take the dot product of both vectors,\n"
+		" essentially creating a cone of grp1 residues and seeing if the interactions are within that cone.\n"
+		"It should be noted that \n"
+		"  1) GRP1 to GRP2 is slightly different than GRP2 to GRP1\n"
+		"  2) before using the vector, we use the nearby_atom_cut to select nearby atoms as well.", 0, 2, attributes );
 }
 
 

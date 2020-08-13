@@ -230,6 +230,20 @@ attributes_for_parse_residue_selector_default_option_name(
 	attributes_for_parse_residue_selector(attlist, "residue_selector", documentation_string);
 }
 
+std::string
+parse_residue_selector_xsd_documentation() {
+	return
+		"The name of a previously declared residue selector or a logical"
+		" expression of AND, NOT (!), OR, parentheses, and the names of"
+		" previously declared residue selectors. Any capitalization of"
+		" AND, NOT, and OR is accepted. An exclamation mark can be used"
+		" instead of NOT. Boolean operators have their traditional priorities:"
+		" NOT then AND then OR. For example, if selectors s1, s2, and s3 have been"
+		" declared, you could write: 's1 or s2 and not s3' which would select"
+		" a particular residue if that residue were selected by s1 or if it"
+		" were selected by s2 but not by s3.";
+}
+
 void
 attributes_for_parse_residue_selector(
 	utility::tag::AttributeList & attlist,
@@ -238,7 +252,15 @@ attributes_for_parse_residue_selector(
 )
 {
 	using namespace utility::tag;
-	attlist + XMLSchemaAttribute( option_name, xs_string, documentation_string == "" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
+	std::string user_docs = documentation_string;
+	if ( ! utility::endswith(user_docs, ".") ) {
+		user_docs+=".";
+	}
+
+	std::string const docs = user_docs +
+		(user_docs == "" ? "" : " ") +
+		parse_residue_selector_xsd_documentation();
+	attlist + XMLSchemaAttribute( option_name, xs_string,  docs );
 }
 
 void
@@ -249,23 +271,40 @@ attributes_for_parse_residue_selector_when_required(
 )
 {
 	using namespace utility::tag;
-	attlist + XMLSchemaAttribute::required_attribute( option_name, xs_string, documentation_string == "" ? "The name of the already defined ResidueSelector that will be used by this object" : documentation_string );
+	std::string const docs = documentation_string +
+		(documentation_string == "" ? "" : " ") +
+		parse_residue_selector_xsd_documentation();
+	attlist + XMLSchemaAttribute::required_attribute( option_name, xs_string, docs );
 }
 
 ResidueSelectorCOP
 get_residue_selector( std::string const & selector_name, basic::datacache::DataMap const & data )
 {
-	core::select::residue_selector::ResidueSelectorCOP selector;
+
+	core::select::residue_selector::ResidueSelectorCOP selector = nullptr;
 	try {
-		selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+
+		if ( data.has("ResidueSelector", selector_name) ) {
+			selector = data.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+		} else {
+			//JAB attempt to use logic
+			TR << "Attempting to parse selector logic" << std::endl;
+			SelectorLogicParser parser;
+			selector =  parser.parse_string_to_residue_selector( data, selector_name );
+		}
 	} catch ( utility::excn::Exception & e ) {
 		std::stringstream error_msg;
-		error_msg << "Failed to find ResidueSelector named '" << selector_name << "' in the DataMap.\n";
+		error_msg << "Failed to find ResidueSelector or parse logic of '" << selector_name << "' in the DataMap.\n";
 		error_msg << e.msg();
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
 	}
-	debug_assert( selector );
-	TR << "Found residue selector " << selector_name << std::endl;
+	if ( ! selector ) {
+		std::stringstream error_msg;
+		error_msg << "Failed to find ResidueSelector or parse logic of '" << selector_name << "' in the DataMap.\n";
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_msg.str() );
+	}
+
+	//TR << "Found residue selector " << selector_name << std::endl;
 	return selector;
 }
 

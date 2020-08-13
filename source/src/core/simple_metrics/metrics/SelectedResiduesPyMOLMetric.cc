@@ -142,7 +142,15 @@ SelectedResiduesPyMOLMetric::calculate(const pose::Pose & pose) const {
 	utility::vector1< bool > subset = selector_->apply( pose );
 	utility::vector1< core::Size > selected = core::select::get_residues_from_subset( subset );
 
-	std::string selection = "select rosetta_sele, "; //Can't use prefix/suffix as we don't have it here yet.
+	//We don't have prefix/suffix, but we have custom_type. Use it here.
+	std::string selection;
+	if ( get_custom_type() != "" ) {
+		selection = "select "+get_custom_type()+", ";
+	} else {
+		selection = "select rosetta_sele, ";
+	}
+
+
 	std::map< std::string, utility::vector1<std::string >> chain_residues;
 	utility::vector1< std::string > chains; //So we can iterate over only the chains, then the residues ala python.
 	core::pose::PDBInfoCOP pdb_info( pose.pdb_info() );

@@ -29,6 +29,7 @@
 #include <core/select/util.hh>
 #include <core/select/residue_selector/NeighborhoodResidueSelector.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
@@ -92,6 +93,11 @@ void GraftSwitchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"selector",
+		"Residue Selector defining residues that can be threaded onto.  Overrides default behavior and start/end if defined.");
+
 	attlist
 		+ XMLSchemaAttribute::attribute_w_default( "start", xsct_non_negative_integer, "Residue number defining the start of the threadable residue range.  Must be defined with 'end'. Overrides default behavior.", "0")
 		+ XMLSchemaAttribute::attribute_w_default( "end", xsct_non_negative_integer, "Residue number to end the range of residues to allow threading.", "0" )
@@ -102,7 +108,6 @@ void GraftSwitchMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute::attribute_w_default( "sequence", xs_string, "Comma separated list of sequences to thread. A '-' indicates a gap where NATAA will be default", "" )
 		+ XMLSchemaAttribute::attribute_w_default( "important_residues", xs_string, "A comma-separated list of residue numbers (1 corresponding to first residue in 'sequence') that must be buried/caged. Separate important residues for separate sequences with a '/' in order listed for the 'sequences' tag", "" )
 		+ XMLSchemaAttribute::attribute_w_default( "burial_cutoff", xsct_real, "Number of neighboring residues that determines extent of burial", "6")
-		+ XMLSchemaAttribute::attribute_w_default( "selector", xs_string, "Residue Selector defining residues that can be threaded onto.  Overrides default behavior and start/end if defined.", "")
 		+ XMLSchemaAttribute::attribute_w_default( "pack_min", xsct_rosetta_bool, "Do a final minimization and pack neighbors after threading", "true");
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
@@ -426,7 +431,7 @@ GraftSwitchMover::parse_my_tag(
 		if ( TR.visible() ) TR << "Set selector name to " << selector_name << "." << std::endl;
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );

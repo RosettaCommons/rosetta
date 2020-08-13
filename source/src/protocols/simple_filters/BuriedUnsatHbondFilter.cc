@@ -47,6 +47,7 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymDof.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
 #include <basic/options/option.hh>
@@ -275,7 +276,7 @@ BuriedUnsatHbondFilter::parse_my_tag(
 		std::string const selector_name ( tag->getOption< std::string >( "residue_selector" ) );
 		core::select::residue_selector::ResidueSelectorCOP selector;
 		try {
-			selector = datamap.get_ptr< core::select::residue_selector::ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = core::select::residue_selector::get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::string error_message = "Failed to find ResidueSelector named '" + selector_name + "' from the Datamap from AddCompositionConstraintMover::parse_tag()\n" + e.msg();
 			throw CREATE_EXCEPTION(utility::excn::Exception,  error_message );
@@ -694,6 +695,11 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 {
 	using namespace utility::tag;
 	AttributeList attlist;
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist,
+		"residue_selector",
+		"residue selector that tells the filter to restrict the Unsat search to only those residues");
+
 	attlist + XMLSchemaAttribute::attribute_w_default( "use_legacy_options", xsct_rosetta_bool, "revert to legacy options (equivalent to old, original BuriedUnsat Filter; WARNING! If this is true, will overwrite all other options", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "generous_hbonds", xsct_rosetta_bool, "count all h-bonds (not just those scored by the default scorefxn in rosetta", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "max_hbond_energy", xsct_real, "Max energy for an hbond to be accepted as making an hbond. This can go positive!!! Defaults to -score::hb_max_energy (which defaults to 0).", "0" )
@@ -725,8 +731,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "report_nonheavy_unsats",xsct_rosetta_bool,"report non heavy atom unsats","false")
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_deeper_than",xsct_rosetta_bool, "If true, only atoms deeper than atomic_depth_selection are included. If false, only atoms less deep than atomic_depth_selection are included.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_poly_leu",xsct_rosetta_bool, "Convert pose to poly-leu before calculating depth? Gives stable, sequence independent values that align with approximate_buried_unsat_penalty.", "true" )
-		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "For multicomponent symmetry: what jump(s) used for ddG-like separation. (From Dr. Bale: For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used.)  IF YOU DEFIN THIS OPTION, Will use ddG-style separation for the calulation; if you do not want this, pass a residue selector instead of defining symdofs." )
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "residue selector that tells the filter to restrict the Unsat search to only those residues" );
+		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "For multicomponent symmetry: what jump(s) used for ddG-like separation. (From Dr. Bale: For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used.)  IF YOU DEFIN THIS OPTION, Will use ddG-style separation for the calulation; if you do not want this, pass a residue selector instead of defining symdofs." );
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 

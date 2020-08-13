@@ -182,7 +182,7 @@ CloseContactResidueSelector::parse_my_tag(
 	if ( tag->hasOption("residue_selector") ) {
 		std::string selector_name = tag->getOption< std::string >( "residue_selector" );
 		try {
-			selector = datamap.get_ptr< ResidueSelector const >( "ResidueSelector", selector_name );
+			selector = get_residue_selector(selector_name, datamap);
 		} catch ( utility::excn::Exception & e ) {
 			std::stringstream error_msg;
 			error_msg << "Failed to find ResidueSelector named '" << selector_name << "' from the Datamap from AndResidueSelector::parse_my_tag.\n";
@@ -226,12 +226,20 @@ std::string CloseContactResidueSelector::class_name()
 void CloseContactResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+
+
+
 	AttributeList attributes;
 	attributes
-		+ XMLSchemaAttribute( "residue_selector", xs_string, "The name of the residue selector that's used to identify"
-		" the central residue(s); other residues are selected if they are in close contact with this group of central residues"  )
 		+ XMLSchemaAttribute::attribute_w_default( "contact_threshold", xsct_real, "The distance, in Angstroms, around the"
 		" residues in the central-residues set which defines the atomic-contact cutoff", "4.5" );
+
+	select::residue_selector::attributes_for_parse_residue_selector(
+		attributes,
+		"residue_selector",
+		"The name of the residue selector"
+		" that's used to identify the central residue(s);"
+		" other residues are selected if they are in close contact with this group of central residues");
 
 	xsd_type_definition_w_attributes_and_optional_subselector( xsd, class_name(), "This class selects all residues in close contact"
 		" with a central residue, or a set of central residues, where this decision is based on atom-to-atom distances for the current"
