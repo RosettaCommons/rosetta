@@ -19,6 +19,7 @@
 #include <core/scoring/nmr/NMRDataFactory.hh>
 #include <core/scoring/nmr/pcs/PCSMultiSet.hh>
 #include <core/scoring/nmr/pcs/PCSSingleSet.hh>
+#include <core/scoring/nmr/pcs/PCSSingle.hh>
 #include <core/scoring/nmr/pcs/PCSTensor.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>

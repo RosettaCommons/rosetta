@@ -18,6 +18,7 @@
 // Package headers
 #include <core/scoring/nmr/pre/PREMultiSet.hh>
 #include <core/scoring/nmr/pre/PRESingleSet.hh>
+#include <core/scoring/nmr/pre/PRESingle.hh>
 #include <core/scoring/nmr/NMRDataFactory.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/scoring/nmr/NMRGridSearch.hh>
