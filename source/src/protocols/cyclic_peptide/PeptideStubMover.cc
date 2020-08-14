@@ -362,6 +362,9 @@ void
 PeptideStubMover::assign_chain_ids(
 	core::pose::Pose & pose
 ){
+	if ( pose.pdb_info() == nullptr ) {
+		pose.pdb_info( utility::pointer::make_shared< core::pose::PDBInfo >( pose, true ) );
+	}
 	runtime_assert( pose.pdb_info() != nullptr );
 	core::pose::PDBInfo & pdbinfo = * pose.pdb_info();
 
