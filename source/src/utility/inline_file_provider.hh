@@ -21,6 +21,9 @@
 // C++ headers
 #include <iosfwd>
 #include <vector>
+#if WIN32
+#include <string>
+#endif
 
 
 namespace utility {

@@ -23,6 +23,10 @@
 
 #include <utility/VirtualBase.hh>
 
+#if WIN32
+#include <string>
+#endif
+
 
 namespace basic {
 namespace tensorflow_manager {

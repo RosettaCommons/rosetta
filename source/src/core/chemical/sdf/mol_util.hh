@@ -18,6 +18,9 @@
 #include <map>
 #include <set>
 #include <iosfwd>
+#if WIN32
+#include <string>
+#endif
 
 namespace core {
 namespace chemical {

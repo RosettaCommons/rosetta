@@ -24,6 +24,9 @@
 
 // C++ headers
 #include <map>
+#if WIN32
+#include <string>
+#endif
 
 // Platform headers
 #include <platform/types.hh>

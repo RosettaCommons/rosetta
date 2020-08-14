@@ -22,6 +22,9 @@
 
 // C++ Headers
 #include <sstream>
+#if WIN32
+#include <ctime>
+#endif
 
 
 namespace utility {

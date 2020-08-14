@@ -21,6 +21,9 @@
 
 
 #include <string>
+#if WIN32
+#include <sstream>
+#endif
 
 #include <utility/excn/Exceptions.hh>
 

@@ -33,6 +33,9 @@
 
 #include <map>
 #include <list>
+#if WIN32
+#include <string>
+#endif
 
 #include <protocols/jd2/SingleFileBuffer.fwd.hh>
 

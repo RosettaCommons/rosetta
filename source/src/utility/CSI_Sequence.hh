@@ -18,7 +18,11 @@
 #include <utility/CSI_Sequence.fwd.hh>
 
 #include <string>
+#if WIN32
+#include <ostream>  // for ostream, operator<<
+#else
 #include <iosfwd>  // for ostream, operator<<
+#endif
 
 
 namespace utility {

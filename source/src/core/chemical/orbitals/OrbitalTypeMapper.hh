@@ -19,6 +19,9 @@
 
 // C++ Headers
 #include <map>
+#if WIN32
+#include <string>
+#endif
 
 
 namespace core {

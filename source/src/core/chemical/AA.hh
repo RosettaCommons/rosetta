@@ -22,8 +22,9 @@
 // Utility headers
 
 // C++ headers
-
-
+#if WIN32
+#include <string>
+#endif
 #include <iosfwd>
 
 

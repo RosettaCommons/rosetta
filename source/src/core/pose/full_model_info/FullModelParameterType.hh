@@ -18,6 +18,9 @@
 
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <iosfwd>
+#if WIN32
+#include <string>
+#endif
 
 namespace core {
 namespace pose {

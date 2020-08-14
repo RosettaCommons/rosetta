@@ -20,6 +20,10 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
+#if WIN32
+#include <string>
+#endif
+
 namespace core {
 namespace pose {
 

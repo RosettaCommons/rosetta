@@ -22,6 +22,9 @@
 #include <iosfwd>
 #include <vector>
 #include <algorithm>
+#if WIN32
+#include <string>
+#endif
 
 namespace core {
 namespace chemical {
