@@ -100,6 +100,8 @@ ParsedProtocol::~ParsedProtocol() = default;
 void
 ParsedProtocol::apply( Pose & pose )
 {
+	n_filters_passed_in_previous_run_ = 0;
+
 	ParsedProtocolAP this_weak_ptr(
 		utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
 	);
@@ -161,6 +163,9 @@ ParsedProtocol::apply( Pose & pose )
 
 		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) { // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
 			final_score(pose);
+			runtime_assert( n_filters_passed_in_previous_run_ == movers_.size() );
+		} else {
+			runtime_assert( n_filters_passed_in_previous_run_ < movers_.size() );
 		}
 
 		if ( protocols::jd2::jd2_used() ) {
@@ -666,6 +671,8 @@ ParsedProtocol::sequence_protocol( Pose & pose,
 		apply_mover( pose, *mover_it );
 		if ( !apply_filter( pose, *mover_it ) ) {
 			return;
+		} else {
+			++n_filters_passed_in_previous_run_;
 		}
 	}
 	// we're done! mark as success
@@ -674,10 +681,13 @@ ParsedProtocol::sequence_protocol( Pose & pose,
 
 void ParsedProtocol::random_order_protocol(Pose & pose){
 	numeric::random::random_permutation(movers_.begin(),movers_.end(),numeric::random::rg());
+
 	for ( MoverFilterVector::const_iterator it = movers_.begin(); it != movers_.end(); ++it ) {
 		apply_mover( pose, *it );
 		if ( !apply_filter( pose, *it ) ) {
 			return;
+		} else {
+			++n_filters_passed_in_previous_run_;
 		}
 	}
 	// we're done! mark as success
@@ -719,6 +729,8 @@ void ParsedProtocol::random_single_protocol(Pose & pose){
 	apply_mover( pose, movers_[ mover_index ] );
 	if ( !apply_filter( pose, movers_[ mover_index ] ) ) {
 		return;
+	} else {
+		++n_filters_passed_in_previous_run_;
 	}
 
 	// we're done! mark as success

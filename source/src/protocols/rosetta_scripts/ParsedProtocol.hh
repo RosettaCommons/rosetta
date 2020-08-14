@@ -161,7 +161,9 @@ public:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
-
+	core::Size n_filters_passed_in_previous_run() const {
+		return n_filters_passed_in_previous_run_;
+	}
 
 private:
 	void finish_protocol(Pose & pose);
@@ -188,6 +190,7 @@ private:
 	protocols::moves::MoverOP last_mover_;
 	bool resume_support_;
 
+	core::Size n_filters_passed_in_previous_run_ = 0;
 };
 
 } // rosetta_scripts
