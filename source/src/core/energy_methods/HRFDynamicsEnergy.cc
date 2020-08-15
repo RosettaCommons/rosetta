@@ -156,6 +156,7 @@ void HRFDynamicsEnergy::init_from_file() {
 
 		ss >> resi >> nc;
 
+		runtime_assert_string_msg( !(ss.fail() || ss.bad()), "Error in HRFDynamicsEnergy::init_from_file():  Could not parse line \"" + line + "\"." );
 		input_nc_.push_back( std::pair< core::Size, core::Real >(resi, nc) );
 	}
 
