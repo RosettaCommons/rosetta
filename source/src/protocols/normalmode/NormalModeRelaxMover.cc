@@ -57,6 +57,7 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
+#include <utility>
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 #include <basic/Tracer.hh>
@@ -64,6 +65,9 @@
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
+
+//can't figure out how to feed a random number generator to the shuffle func
+#include <random>
 
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
@@ -152,6 +156,7 @@ NormalModeRelaxMover::set_default()
 void
 NormalModeRelaxMover::apply( pose::Pose &pose )
 {
+
 	core::kinematics::MoveMapOP mm;
 	if ( mm_ ) {
 		mm = mm_;
@@ -193,10 +198,6 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 	}
 
 	// apply
-	Real scoremin( 1e6 );
-	utility::vector1< pose::Pose > poses;
-	core::Size imin( 1 );
-
 	for ( core::Size i_comb = 1; i_comb <= modescales.size(); ++i_comb ) {
 		set_mode( modes, modescales[i_comb] );
 
@@ -216,34 +217,53 @@ NormalModeRelaxMover::apply( pose::Pose &pose )
 			runtime_assert( !pose_tmp.is_centroid() );
 			score = sfxn_->score( pose_tmp );
 		}
-		TR << "score: " << F(8,3,score) << " (best so far: " << F(8,3,scoremin) << ")" << std::endl;
+		TR << "score: " << F(8,3,score) << std::endl;
 
-		if ( score < scoremin ) {
-			imin = i_comb;
-			scoremin = score;
-		}
-		poses.push_back( pose_tmp );
+		output_pose_OPs_.push_back( utility::pointer::make_shared< pose::Pose >( pose_tmp ) );
 	}
 
-	if ( randomselect_ ) {
-		core::Size ipose = core::Size(numeric::random::rg().uniform()*poses.size()) + 1;
-		pose = poses[ipose];
-	} else {
-		pose = poses[imin];
-	}
 
 	if ( dump_silent_ ) {
 		core::io::silent::SilentFileOptions opts;
 		core::io::silent::SilentFileData sfd( opts );
-		for ( core::Size i_pose = 1; i_pose <= poses.size(); ++i_pose ) {
+		for ( core::Size i_pose = 1; i_pose <= output_pose_OPs_.size(); ++i_pose ) {
 			core::io::silent::SilentStructOP ss =
 				core::io::silent::SilentStructFactory::get_instance()->get_silent_struct("binary", opts);
 			std::stringstream tag;
 			tag << "mode_" << i_pose;
-			ss->fill_struct( poses[i_pose], tag.str() );
+			ss->fill_struct( *output_pose_OPs_[i_pose], tag.str() );
 			sfd.write_silent_struct( *ss, outsilent_ );
 		}
 	}
+
+	//if the user wants a random selection, shuffle it. Otherwise sort by descending score.
+	//Using descending order because additional poses will be retrieved off the back of the
+	//vector in get_additional_output and the best pose will be in the back (if sorted).
+	if ( randomselect_ ) {
+		//This is a lazy use of auto because I had a mildly hard time finding out
+		//what type this should be. Forgive me.
+		auto eng = std::default_random_engine {};
+		std::shuffle(output_pose_OPs_.begin(), output_pose_OPs_.end(), eng);
+	} else {
+		//sorts pose OPs for descending score
+		if ( centroid_ ) {
+			//assertions for centroid-ness were done above
+			std::sort(output_pose_OPs_.begin(), output_pose_OPs_.end(),
+				[&](core::pose::PoseOP a, core::pose::PoseOP b) -> bool {
+				return sfxn_cen_->score( *a ) > sfxn_cen_->score( *b );
+				} );
+		} else {
+			std::sort(output_pose_OPs_.begin(), output_pose_OPs_.end(),
+				[&](core::pose::PoseOP a, core::pose::PoseOP b) -> bool {
+				return sfxn_->score( *a ) > sfxn_->score( *b );
+				} );
+		}
+	}
+
+	//this should produce the approprate result wrt randomselect_
+	pose = *output_pose_OPs_.back();
+	TR << "final pose with score " << F(8,3,(centroid_ ? sfxn_cen_->score(pose) : sfxn_->score(pose))) << std::endl;
+	output_pose_OPs_.pop_back();
 }
 
 // Set single mode
@@ -261,6 +281,7 @@ void
 NormalModeRelaxMover::set_mode( utility::vector1< core::Size > const mode_using,
 	utility::vector1< Real > const mode_scales )
 {
+	TR << "printing mode_scales" << std::endl << mode_scales << std::endl;
 	mode_using_ = mode_using;
 	mode_scale_ = mode_scales;
 
@@ -268,7 +289,6 @@ NormalModeRelaxMover::set_mode( utility::vector1< core::Size > const mode_using,
 	Real scalesum( 0.0 );
 	for ( core::Size i = 1; i <= mode_scales.size(); ++i ) {
 		// Assert if values are valid
-		debug_assert( mode_scales[i] > 0.0 );
 		debug_assert( mode_using[i] <= NM().nmode() );
 
 		scalesum += mode_scales[i]*mode_scales[i];
@@ -414,6 +434,30 @@ NormalModeRelaxMover::apply_on_pose( pose::Pose &pose, core::kinematics::MoveMap
 
 	TR << "Rmsd: initial vs relaxed: " << rmsd_init << std::endl;
 	TR << "Rmsd: extrapolated vs relaxed: " << rmsd << std::endl;
+}
+
+///@detail normal mode relaxed poses are remembered as PoseOPs in a score-sorted fashion. Each time this is called,
+///the best is removed from memory and returned until no more remain. Assumes randomselect_/order of
+///output_pose_OPs_ isn't changed between calls because this would not be reflected in how addnl poses are retrived
+///(sorting/shuffling is done only once)
+
+core::pose::PoseOP
+NormalModeRelaxMover::get_additional_output()
+{
+	core::pose::PoseOP out_pose_OP;
+
+	if ( output_pose_OPs_.size() == 0 ) {
+		return nullptr;
+	}
+
+	out_pose_OP = output_pose_OPs_.back();
+	//pop_back normally calls destructors but we're storing PoseOPs so we should be alright
+	output_pose_OPs_.pop_back();
+
+	TR << "returning additional pose with score " << F(8,3,centroid_ ? sfxn_cen_->score(*out_pose_OP) : sfxn_->score(*out_pose_OP)) << std::endl;
+
+	return out_pose_OP;
+
 }
 
 // Gen Coordinate Constraint
@@ -714,7 +758,9 @@ void NormalModeRelaxMover::provide_xml_schema( utility::tag::XMLSchemaDefinition
 		"NormalModeRelax relaxes a structures to the coordinate directions derived from Anisotropic "
 		"Network Model (ANM). The way how it works is: a) generate a extrapolated coordinates, "
 		"b) put coordinate restraints to that coordinates, and c) run minimization or FastRelax. "
-		"Current implementation tries multiple normal modes and returns the best scoring one",
+		""
+		"Current implementation tries multiple normal and returns `nsamples`. Use a `MultiplePoseMover` to handle all the output samples."
+		"If a `MultiplePoseMover` is not used, only the top scoring pose is returned (unless `randomselect` is True).",
 		attlist, subelements );
 }
 

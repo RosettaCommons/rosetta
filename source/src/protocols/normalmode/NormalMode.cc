@@ -107,7 +107,7 @@ NormalMode::solve( pose::Pose const &pose )
 	if ( torsion() ) {
 		TR << "Solving Torsional Normal Mode (phi/psi:" << use_phi_ << "/" << use_psi_ << "), ";
 	} else {
-		TR << "Solving Cartesian Noraml Mode, ";
+		TR << "Solving Cartesian Normal Mode, ";
 	}
 	TR << "Distance cut set as " << std::sqrt(dist2_cut_);
 	if ( !use_uniform_k_ ) {

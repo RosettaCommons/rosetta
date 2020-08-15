@@ -33,6 +33,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility>
 
 namespace protocols {
 namespace normalmode {
@@ -114,6 +115,10 @@ public:
 	std::string
 	get_name() const override;
 
+	///@brief used by the job distributor and MultiplePoseMover (MPM) to return as many of the potential poses as possible.
+	core::pose::PoseOP
+	get_additional_output() override;
+
 	static
 	std::string
 	mover_name();
@@ -161,6 +166,8 @@ private:
 	bool cartesian_minimize_ = false;
 	bool dump_silent_ = false;
 	std::string outsilent_;
+
+	utility::vector1< core::pose::PoseOP > output_pose_OPs_;
 
 	std::string relaxmode_;
 	core::optimization::MinimizerOptionsCOP minoption_;
