@@ -305,7 +305,7 @@ void add_non_protein_cst(core::pose::Pose & pose, core::pose::Pose & tmpl, core:
 			for ( core::Size jres=1; jres<=tmpl.size(); ++jres ) {
 				if ( tmpl.residue(jres).is_protein() || tmpl.residue(jres).aa() == core::chemical::aa_vrt ) continue;
 
-				core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(ires) : ires;
+				core::Size jres_tgt = (tmpl.pdb_info()) ? tmpl.pdb_info()->number(jres) : jres;
 				if ( symm_info && !symm_info->bb_is_independent(jres_tgt) ) {
 					jres_tgt = symm_info->bb_follows( jres_tgt );
 				}
