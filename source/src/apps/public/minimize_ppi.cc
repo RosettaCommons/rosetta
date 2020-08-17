@@ -107,6 +107,7 @@ OPT_KEY( Boolean, print_complex )
 OPT_KEY( Boolean, iface_rmsd )
 OPT_KEY( String, ref_decoy )
 OPT_KEY( Boolean, score_only )
+OPT_KEY( Boolean, jump_all )
 
 static basic::Tracer TR( "apps.pilot.minimize_ppi" );
 
@@ -313,6 +314,7 @@ int main( int argc, char * argv [] ){
 		NEW_OPT( iface_rmsd, "calculate the interface rmsd", false );
 		NEW_OPT( ref_decoy, "the structure to compute RMSD and relative score to", "" );
 		NEW_OPT( score_only, "compute all scores for the iput complex without minimization", false );
+		NEW_OPT( jump_all, "jump all the chains if the complex has more than two chains", false );
 
 		devel::init(argc, argv);
 
@@ -476,13 +478,26 @@ int main( int argc, char * argv [] ){
 
 			//setup the unbound pose
 			core::pose::Pose unbound_pose = bound_pose;
-			core::Real const unbound_dist = 80.;
-			//Size const rb_jump = 1; // use the first jump as the one between partners
-			Size const rb_jump = bound_pose.num_jump(); // use the LAST jump as the one between partners
-			protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
-			trans_mover.trans_axis( trans_mover.trans_axis() );
-			trans_mover.step_size(unbound_dist);
-			trans_mover.apply( unbound_pose );
+			if ( option[ jump_all ] ) {
+				core::Real unbound_dist = 200.; // Mutiple jumps: not fix step size
+				for ( Size rb_jump = 1; rb_jump <= bound_pose.num_jump(); ++rb_jump ) {//  jump between every chain
+					protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
+					trans_mover.trans_axis( trans_mover.trans_axis() );
+					trans_mover.step_size(unbound_dist);
+					trans_mover.apply(unbound_pose);
+					unbound_dist += 200.;  //change step_size for every jump to avoid overlapping
+				}
+			} else {
+				core::Real const unbound_dist = 200.;
+				//Size const rb_jump = 1; // use the first jump as the one between partners
+				Size const rb_jump = bound_pose.num_jump(); // use the LAST jump as the one between partners
+				protocols::rigid::RigidBodyTransMover trans_mover( unbound_pose, rb_jump );
+				trans_mover.trans_axis( trans_mover.trans_axis() );
+				trans_mover.step_size(unbound_dist);
+				trans_mover.apply( unbound_pose );
+			}
+
+
 			(*scorefxn)(unbound_pose);
 			if ( option[ print_unbound ] ) {
 				unbound_pose.dump_pdb( unbo_pdb );
