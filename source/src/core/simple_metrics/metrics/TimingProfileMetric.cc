@@ -66,10 +66,9 @@ TimingProfileMetric::~TimingProfileMetric(){}
 /// @brief Copy constructor
 TimingProfileMetric::TimingProfileMetric( TimingProfileMetric const & src ):
 	RealMetric( src ),
-	construction_time_( src.construction_time_),
 	calc_in_hours_( src.calc_in_hours_)
 {
-
+	construction_time_ = high_resolution_clock::now();
 }
 
 
