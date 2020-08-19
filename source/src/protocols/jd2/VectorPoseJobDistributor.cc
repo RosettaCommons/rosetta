@@ -317,12 +317,12 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & p
 	for ( core::Size mover_it = 1; mover_it <= protocol->size(); ++mover_it ) {
 
 		protocols::moves::MoverOP current_mover = protocol->
-			get_mover_filter_pair( mover_it ).first.first;
+			get_mover_filter_pair( mover_it ).mover;
 		protocols::filters::FilterOP current_filter = protocol->
-			get_mover_filter_pair( mover_it ).second;
+			get_mover_filter_pair( mover_it ).filter;
 
 		TR << "=================running mover " << current_mover->get_name() << " - "
-			<< protocol->get_mover_filter_pair( mover_it ).first.second
+			<< protocol->get_mover_filter_pair( mover_it ).mover_user_name
 			<< "======================" << std::endl;
 		time_t mover_time = time(nullptr);
 		// i refers to mover type -> j refers to each pose
@@ -344,7 +344,7 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & p
 			current_mover->apply( *temp_pose );
 		}
 
-		TR << "mover " << protocol->get_mover_filter_pair( mover_it ).first.second << " finished in " << time(nullptr) - mover_time << " seconds" << std::endl;
+		TR << "mover " << protocol->get_mover_filter_pair( mover_it ).mover_user_name << " finished in " << time(nullptr) - mover_time << " seconds" << std::endl;
 		TR << "=================end mover " << "======================" << std::endl;
 		TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
 
@@ -396,11 +396,11 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_serial( utility::vector1< c
 			current_pose_ = pose_order[ i ];
 
 			protocols::moves::MoverOP current_mover = protocols[ current_pose_ ]->
-				get_mover_filter_pair( mover_it ).first.first;
+				get_mover_filter_pair( mover_it ).mover;
 			protocols::filters::FilterOP current_filter = protocols[ current_pose_ ]->
-				get_mover_filter_pair( mover_it ).second;
+				get_mover_filter_pair( mover_it ).filter;
 			TR << "=================running mover " << current_mover->get_name() << " - "
-				<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).first.second
+				<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).mover_user_name
 				<< "======================" << std::endl;
 
 			// i refers to mover type -> j refers to each pose

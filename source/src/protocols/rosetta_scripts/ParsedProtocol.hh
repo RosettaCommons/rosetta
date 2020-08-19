@@ -50,22 +50,22 @@ public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 
-	class MoverFilterPair {
-		// OFL want to have more state in the MoverFilterPair -- transform from std:pair into a class, but keep first and second members intact
-		// JRP it would sure be nice if this operated like a real class. Calls to first.first suck to read.
-	public:
-		MoverFilterPair( protocols::moves::MoverOP mover,
-			std::string const& mover_name,
-			protocols::filters::FilterOP filter,
-			bool report_filter_at_end = false ) :
-			first( std::make_pair( mover, mover_name ) ),
-			second(std::move( filter )),
+	struct MoverFilterPair {
+		MoverFilterPair (
+			moves::MoverOP mover_in,
+			std::string const & mover_name,
+			filters::FilterOP filter_in,
+			bool report_filter_at_end = false
+		) :
+			mover( mover_in ),
+			mover_user_name( mover_name ),
+			filter( filter_in ),
 			report_filter_at_end_( report_filter_at_end )
 		{}
-		protocols::filters::Filter const& filter() const { return *second; }
 
-		std::pair< protocols::moves::MoverOP, std::string > first;
-		protocols::filters::FilterOP second;
+		protocols::moves::MoverOP mover;
+		std::string mover_user_name;
+		protocols::filters::FilterOP filter;
 		bool report_filter_at_end_;
 	};
 
@@ -91,7 +91,7 @@ public:
 	// void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
-		return( movers_[ mover_number ].first.first );
+		return( movers_[ mover_number ].mover );
 	}
 	MoverFilterPair get_mover_filter_pair( core::Size const mover_number ) const {
 		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );

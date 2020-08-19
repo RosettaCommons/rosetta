@@ -122,11 +122,11 @@ ParsedProtocol::apply( Pose & pose )
 
 		if ( resume_support_ && mode_ == "sequence" ) {
 			for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
-				core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
+				core::pose::PoseOP checkpoint = (*rmover_it).mover->get_additional_output();
 
 				// otherwise continue where we left off
 				if ( checkpoint ) {
-					std::string const mover_name( rmover_it->first.first->get_name() );
+					std::string const mover_name( rmover_it->mover->get_name() );
 
 					// if mode_ is not 'sequence' then checkpointing is unsupported
 					if ( checkpoint && mode_ != "sequence" ) {
@@ -214,10 +214,10 @@ void
 ParsedProtocol::report_all( Pose const & pose ) const {
 	for ( MoverFilterPair const & mover_pair : movers_ ) {
 		if ( mover_pair.report_filter_at_end_ &&
-				!( mover_pair.second->get_user_defined_name().empty() && mover_pair.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
-			TR_report<<"============Begin report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
-			mover_pair.second->report( TR_report, pose );
-			TR_report<<"============End report for "<<mover_pair.second->get_user_defined_name()<<"=================="<<std::endl;
+				!( mover_pair.filter->get_user_defined_name().empty() && mover_pair.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
+			TR_report<<"============Begin report for "<<mover_pair.filter->get_user_defined_name()<<"=================="<<std::endl;
+			mover_pair.filter->report( TR_report, pose );
+			TR_report<<"============End report for "<<mover_pair.filter->get_user_defined_name()<<"=================="<<std::endl;
 		}
 	}
 	TR_report.flush();
@@ -227,10 +227,10 @@ void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
 	for ( auto const & mover : movers_ ) {
 		if ( mover.report_filter_at_end_ &&
-				!( mover.second->get_user_defined_name().empty() && mover.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
-			core::Real const filter_value( mover.second->report_sm( pose ) );
+				!( mover.filter->get_user_defined_name().empty() && mover.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
+			core::Real const filter_value( mover.filter->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
-				job.add_string_real_pair(mover.second->get_user_defined_name(), filter_value);
+				job.add_string_real_pair(mover.filter->get_user_defined_name(), filter_value);
 			}
 		}
 	}
@@ -239,7 +239,7 @@ ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job 
 void
 ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
 	for ( auto const & mover_filter_pair : movers_ ) {
-		protocols::filters::Filter const & filter( *mover_filter_pair.second );
+		protocols::filters::Filter const & filter( *mover_filter_pair.filter );
 		if ( filter.get_user_defined_name().empty() && filter.name() == "TrueFilter" ) { continue; } // Skip default TrueFilter
 		if ( mover_filter_pair.report_filter_at_end_ ) {
 			core::Real const filter_value( filter.report_sm( pose ) );
@@ -293,8 +293,8 @@ void
 ParsedProtocol::set_resid( core::Size const resid ){
 	for ( auto & mover : movers_ ) {
 		using namespace protocols::moves;
-		modify_ResId_based_object( mover.first.first, resid );
-		modify_ResId_based_object( mover.second, resid );
+		modify_ResId_based_object( mover.mover, resid );
+		modify_ResId_based_object( mover.filter, resid );
 	}
 }
 
@@ -303,8 +303,8 @@ void
 ParsedProtocol::set_resid( core::pose::ResidueIndexDescriptionCOP r ){
 	for ( auto & mover : movers_ ) {
 		using namespace protocols::moves;
-		modify_ResId_based_object( mover.first.first, r );
-		modify_ResId_based_object( mover.second, r );
+		modify_ResId_based_object( mover.mover, r );
+		modify_ResId_based_object( mover.filter, r );
 	}
 }
 
@@ -445,7 +445,7 @@ ParsedProtocol::get_additional_output( )
 		// Get output from last specified mover
 		const utility::vector1< MoverFilterPair >::const_reverse_iterator movers_crend = movers_.rend();
 		for ( auto rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
-			protocols::moves::MoverOP mover = (*rmover_it).first.first;
+			protocols::moves::MoverOP mover = (*rmover_it).mover;
 			if ( mover && mover->get_name() != "NullMover" ) {
 				core::pose::PoseOP additional_pose = mover->get_additional_output();
 
@@ -465,7 +465,7 @@ ParsedProtocol::get_additional_output( )
 
 	//fpd search the mover-filter pairs backwards; look for movers that have remaining poses
 	for ( auto movers_crend = movers_.rend(); rmover_it != movers_crend; ++rmover_it ) {
-		core::pose::PoseOP checkpoint = (*rmover_it).first.first->get_additional_output();
+		core::pose::PoseOP checkpoint = (*rmover_it).mover->get_additional_output();
 		if ( checkpoint ) {
 			//std::string const mover_name( rmover_it->first.first->get_name() );
 			pose = checkpoint;
@@ -513,52 +513,52 @@ ParsedProtocol::get_additional_output( )
 
 void
 ParsedProtocol::apply_mover( Pose & pose, MoverFilterPair const & mover_pair ) {
-	std::string const mover_name( mover_pair.first.first->get_name() );
-	std::string const mover_user_name( mover_pair.first.second);
+	std::string const mover_name( mover_pair.mover->get_name() );
+	std::string const mover_user_name( mover_pair.mover_user_name);
 
 	// If the mover about to be applied is a MultiplePoserMover,
 	// tell it about the previous mover where it should pull poses from
 	TR.Debug << "apply_mover_filter_pair: Last mover: " << ( last_mover_ ? last_mover_->get_name() : "(None)" ) << std::endl;
-	TR.Debug << "apply_mover_filter_pair: This mover: " << ( mover_pair.first.first ? mover_pair.first.first->get_name() : "(None)" ) << std::endl;
+	TR.Debug << "apply_mover_filter_pair: This mover: " << ( mover_pair.mover ? mover_pair.mover->get_name() : "(None)" ) << std::endl;
 
-	if ( last_mover_ && mover_pair.first.first ) {
+	if ( last_mover_ && mover_pair.mover ) {
 		protocols::rosetta_scripts::MultiplePoseMoverOP mp_mover(
-			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( mover_pair.first.first )
+			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( mover_pair.mover )
 		);
 		if ( mp_mover ) {
 			mp_mover->set_previous_mover(last_mover_);
 		}
 	}
 
-	if ( mover_pair.first.first && ( mover_pair.first.first->get_name() != "NullMover" || mover_user_name != "NULL_MOVER" ) ) { // Skip default NullMover
+	if ( mover_pair.mover && ( mover_pair.mover->get_name() != "NullMover" || mover_user_name != "NULL_MOVER" ) ) { // Skip default NullMover
 		TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
-		mover_pair.first.first->set_native_pose( get_native_pose() );
-		mover_pair.first.first->apply( pose );
+		mover_pair.mover->set_native_pose( get_native_pose() );
+		mover_pair.mover->apply( pose );
 
-		last_mover_ = mover_pair.first.first;
+		last_mover_ = mover_pair.mover;
 	}
 }
 
 bool
 ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
-	std::string const filter_name( mover_pair.second->get_user_defined_name() );
+	std::string const filter_name( mover_pair.filter->get_user_defined_name() );
 
 	// Shouldin't this really go into apply_mover()?
-	info().insert( info().end(), mover_pair.first.first->info().begin(), mover_pair.first.first->info().end() );
+	info().insert( info().end(), mover_pair.mover->info().begin(), mover_pair.mover->info().end() );
 
-	moves::MoverStatus status( mover_pair.first.first->get_last_move_status() );
+	moves::MoverStatus status( mover_pair.mover->get_last_move_status() );
 	bool pass( status==protocols::moves::MS_SUCCESS );
-	if ( !( mover_pair.second->get_user_defined_name().empty() && mover_pair.second->name() == "TrueFilter" ) ) { // Skip default TrueFilter
+	if ( !( mover_pair.filter->get_user_defined_name().empty() && mover_pair.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
 		TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
 		// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
 		pose.update_residue_neighbors();
-		pass = pass && mover_pair.filter().apply( pose );
+		pass = pass && mover_pair.filter->apply( pose );
 		if ( !mover_pair.report_filter_at_end_ ) { //report filter now
-			core::Real const filter_value(  mover_pair.filter().report_sm( pose ) );
-			setPoseExtraScore(pose, mover_pair.second->get_user_defined_name(), (float)filter_value);
-			TR_report << "============Begin report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
-			mover_pair.filter().report( TR_report, pose );
-			TR_report << "============End report for " << mover_pair.second->get_user_defined_name() << "==================" << std::endl;
+			core::Real const filter_value(  mover_pair.filter->report_sm( pose ) );
+			setPoseExtraScore(pose, mover_pair.filter->get_user_defined_name(), (float)filter_value);
+			TR_report << "============Begin report for " << mover_pair.filter->get_user_defined_name() << "==================" << std::endl;
+			mover_pair.filter->report( TR_report, pose );
+			TR_report << "============End report for " << mover_pair.filter->get_user_defined_name() << "==================" << std::endl;
 		}
 		TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
 	}
@@ -566,7 +566,7 @@ ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
 	//filter failed -- set status in mover and return false
 	if ( !pass ) {
 		if ( status != protocols::moves::MS_SUCCESS ) {
-			TR << "Mover " << mover_pair.first.first->get_name() << " reports failure!" << std::endl;
+			TR << "Mover " << mover_pair.mover->get_name() << " reports failure!" << std::endl;
 			protocols::moves::Mover::set_last_move_status( status );
 		} else {
 			TR << "Filter " << filter_name << " reports failure!" << std::endl;
@@ -596,11 +596,11 @@ ParsedProtocol::provide_citation_info() const {
 
 	// Add citations for all movers and filters:
 	for ( MoverFilterPair const & mf_pair : movers_ ) {
-		if ( mf_pair.first.first != nullptr ) {
-			merge_into_citation_collection_vector( mf_pair.first.first->provide_citation_info(), returnvec );
+		if ( mf_pair.mover != nullptr ) {
+			merge_into_citation_collection_vector( mf_pair.mover->provide_citation_info(), returnvec );
 		}
-		if ( mf_pair.second != nullptr ) {
-			merge_into_citation_collection_vector( mf_pair.second->provide_citation_info(), returnvec );
+		if ( mf_pair.filter != nullptr ) {
+			merge_into_citation_collection_vector( mf_pair.filter->provide_citation_info(), returnvec );
 		}
 	}
 
@@ -624,11 +624,11 @@ utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
 ParsedProtocol::provide_authorship_info_for_unpublished() const {
 	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
 	for ( MoverFilterPair const & mf_pair : movers_ ) {
-		if ( mf_pair.first.first != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.first.first->provide_authorship_info_for_unpublished(), returnvec );
+		if ( mf_pair.mover != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.mover->provide_authorship_info_for_unpublished(), returnvec );
 		}
-		if ( mf_pair.second != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.second->provide_authorship_info_for_unpublished(), returnvec );
+		if ( mf_pair.filter != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.filter->provide_authorship_info_for_unpublished(), returnvec );
 		}
 	}
 
@@ -657,7 +657,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 		std::string job_name ( protocols::jd2::jd2_used() ? protocols::jd2::current_output_name() : "CURRENT_JOB" );
 		TR_call_order << job_name << " ";
 		for ( MoverFilterPair const & p : movers_ ) {
-			TR_call_order<<p.first.second<<" ";
+			TR_call_order<<p.mover_user_name<<" ";
 		}
 		TR_call_order<<std::endl;
 	}
@@ -666,6 +666,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 void
 ParsedProtocol::sequence_protocol( Pose & pose,
 	MoverFilterVector::const_iterator mover_it_in ) {
+
 	for ( auto mover_it = mover_it_in;
 			mover_it!=movers_.end(); ++mover_it ) {
 		apply_mover( pose, *mover_it );
