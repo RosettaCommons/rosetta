@@ -75,6 +75,7 @@
 #include <protocols/protein_interface_design/filters/HbondsToResidueFilter.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/denovo_design/movers/FastDesign.hh>
+#include <protocols/cyclic_peptide/PeptideInternalHbondsFilter.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -1601,8 +1602,7 @@ SimpleCycpepPredictApplication::run() const {
 	}
 
 	//Set up a filter for total number of hbonds:
-	protocols::filters::CombinedFilterOP total_hbond( new protocols::filters::CombinedFilter );
-	set_up_hbond_filter( total_hbond, resnames.size(), sfxn_default, static_cast<core::Real>( min_genkic_hbonds_ ) );
+	protocols::filters::FilterOP total_hbond( set_up_hbond_filter( min_genkic_hbonds_) );
 
 	//Get the checkpoint information:
 	core::Size success_count(0);
@@ -1767,9 +1767,9 @@ SimpleCycpepPredictApplication::run() const {
 		}
 
 		//Re-filter based on number of Hbonds (using option[min_final_hbonds]()):
-		core::Real const final_hbonds( total_hbond->compute( *pose ) );
-		if ( final_hbonds > -1.0*min_final_hbonds_ ) {
-			TR << "Final hbond count is " << -1.0*final_hbonds << ", which is less than the minimum.  Failing job." << std::endl;
+		core::Real const final_hbonds( total_hbond->report_sm( *pose ) );
+		if ( final_hbonds < static_cast<core::Real>(min_final_hbonds_) ) {
+			TR << "Final hbond count is " << final_hbonds << ", which is less than the minimum.  Failing job." << std::endl;
 			TR.flush();
 			checkpoint( irepeat, success_count ); //This job has been attempted and has failed; don't repeat it.
 #ifdef BOINC
@@ -2756,43 +2756,20 @@ SimpleCycpepPredictApplication::set_mainchain_torsions (
 }
 
 /// @brief Set up the filters for the mainchain hydrogen bonds that will
-/// be used to discard solutions with too little mainchain hydrogen bonding.
-void
+/// be used to discard solutions with too few mainchain hydrogen bonds.
+protocols::filters::FilterOP
 SimpleCycpepPredictApplication::set_up_hbond_filter(
-	protocols::filters::CombinedFilterOP total_hbond,
-	core::Size const nres,
-	core::scoring::ScoreFunctionOP sfxn,
-	core::Real const &min_hbonds
+	core::Size const min_hbonds
 ) const {
-	total_hbond->set_threshold( -1.0 * min_hbonds );
-	for ( core::Size i=1; i<=nres; ++i ) { //Loop through all residues and add hbond counters
-		protocols::protein_interface_design::filters::HbondsToResidueFilterOP hbondfilt( new protocols::protein_interface_design::filters::HbondsToResidueFilter );
-		hbondfilt->set_resnum(i);
-		hbondfilt->set_sidechain( count_sc_hbonds_ );
-		hbondfilt->set_energy_cutoff( hbond_energy_cutoff_ );
-		hbondfilt->set_partners(0);
-		hbondfilt->set_scorefxn( sfxn );
+	protocols::cyclic_peptide::PeptideInternalHbondsFilterOP total_hbond(
+		utility::pointer::make_shared<protocols::cyclic_peptide::PeptideInternalHbondsFilter>()
+	);
+	total_hbond->set_exclusion_distance( do_not_count_adjacent_res_hbonds_ ? 1 : 0 );
+	total_hbond->set_hbond_cutoff( min_hbonds );
+	total_hbond->set_hbond_types(true, count_sc_hbonds_, false);
+	total_hbond->set_hbond_energy_cutoff(hbond_energy_cutoff_);
 
-		//Add ResidueSelectors to ensure that hydrogen bonds with adjacent residues are not counted.
-		if ( do_not_count_adjacent_res_hbonds_ ) {
-			std::stringstream indices_string("");
-			core::Size const avoid1( i - 1 > 0 ? i - 1 : nres );
-			core::Size const avoid2( i + 1 <= nres ? i + 1 : 1 );
-			bool first(true);
-			for ( core::Size j=1; j<=nres; ++j ) {
-				if ( j == i || j == avoid1 || j == avoid2 ) continue; //Skip the current residue and its adjacent residues.
-				if ( first ) { first=false; }
-				else { indices_string << ","; }
-				indices_string << j;
-			}
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
-			index_selector->set_index( indices_string.str() );
-			hbondfilt->set_selector( index_selector );
-		}
-
-		total_hbond->add_filter( hbondfilt, -0.5, false );
-	}
-	return;
+	return total_hbond;
 }
 
 /// @brief Set up the logic to close the bond at the cyclization point.
@@ -3036,7 +3013,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	core::scoring::ScoreFunctionOP sfxn_highhbond,
 	core::scoring::ScoreFunctionOP sfxn_highhbond_cart,
 	core::scoring::ScoreFunctionCOP sfxn_default,
-	protocols::filters::CombinedFilterOP total_hbond,
+	protocols::filters::FilterOP total_hbond,
 	core::Size const cyclic_offset
 ) const {
 	using namespace protocols::generalized_kinematic_closure;

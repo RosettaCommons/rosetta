@@ -29,6 +29,7 @@
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/denovo_design/movers/FastDesign.fwd.hh>
 #include <protocols/filters/BasicFilters.fwd.hh>
+#include <protocols/filters/Filter.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/Ramachandran.hh>
@@ -450,13 +451,10 @@ private:
 	) const;
 
 	/// @brief Set up the filters for the mainchain hydrogen bonds that will
-	/// be used to discard solutions with too little mainchain hydrogen bonding.
-	void
+	/// be used to discard solutions with too few mainchain hydrogen bonds.
+	protocols::filters::FilterOP
 	set_up_hbond_filter(
-		protocols::filters::CombinedFilterOP total_hbond,
-		core::Size const nres,
-		core::scoring::ScoreFunctionOP sfxn,
-		core::Real const &min_hbonds
+		core::Size const min_hbonds
 	) const;
 
 	/// @brief Set up the logic to close the bond at the cyclization point.
@@ -483,7 +481,7 @@ private:
 		core::scoring::ScoreFunctionOP sfxn_highhbond,
 		core::scoring::ScoreFunctionOP sfxn_highhbond_cart,
 		core::scoring::ScoreFunctionCOP sfxn_default,
-		protocols::filters::CombinedFilterOP total_hbond,
+		protocols::filters::FilterOP total_hbond,
 		core::Size const cyclic_offset
 	) const;
 
