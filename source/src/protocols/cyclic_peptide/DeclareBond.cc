@@ -24,6 +24,9 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
+
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueConnection.hh>
@@ -34,6 +37,7 @@
 
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicMover.hh>
 #include <protocols/loops/loop_closure/kinematic_closure/KinematicWrapper.hh>
+#include <protocols/rosetta_scripts/util.hh>
 
 #include <utility/tag/Tag.hh>
 #include <basic/Tracer.hh>
@@ -47,6 +51,25 @@ static basic::Tracer TR( "protocols.cyclic_peptide.DeclareBond" );
 
 namespace protocols {
 namespace cyclic_peptide {
+
+namespace {
+///@brief run the residue selector on the pose, assert that only one residue is selected, return the resid for that selected residue
+core::Size
+get_selected_residue(
+	core::pose::Pose const & pose,
+	core::select::residue_selector::ResidueSelector const & selector
+) {
+	utility::vector1< bool > const sele = selector.apply( pose );
+	utility::vector1< core::Size > const positions =
+		core::select::residue_selector::selection_positions( sele );
+
+	if ( positions.size() != 1 ) {
+		utility_exit_with_message( "DeclareBond expected a residue selector to select exactly one residues. Instead, it selected " + std::to_string( positions.size() ) );
+	}
+
+	return positions[ 1 ];
+}
+}
 
 DeclareBond::DeclareBond():
 	res1_(0),
@@ -87,6 +110,16 @@ DeclareBond::set( core::Size const res1,
 void DeclareBond::apply( core::pose::Pose & pose )
 {
 	using namespace core::chemical;
+
+	if ( selector1_ != nullptr ) {
+		res1_ = get_selected_residue( pose, *selector1_ );
+	}
+	runtime_assert( res1_ != 0 );
+
+	if ( selector2_ != nullptr ) {
+		res2_ = get_selected_residue( pose, *selector2_ );
+	}
+	runtime_assert( res2_ != 0 );
 
 	//printf("Stripping termini.\n"); fflush(stdout); //DELETE ME
 	if ( atom1_=="N" && ( pose.residue_type(res1_).is_alpha_aa() || pose.residue_type(res1_).is_beta_aa() || pose.residue_type(res1_).is_peptoid() ) && pose.residue(res1_).has_variant_type(LOWER_TERMINUS_VARIANT) ) {
@@ -213,18 +246,39 @@ void DeclareBond::apply( core::pose::Pose & pose )
 void
 DeclareBond::parse_my_tag(
 	TagCOP tag,
-	basic::datacache::DataMap &
+	basic::datacache::DataMap & data
 )
 {
-	res1_ = tag->getOption< core::Size >( "res1" );
 	atom1_ = tag->getOption< std::string >( "atom1" );
-	res2_ = tag->getOption< core::Size >( "res2" );
 	atom2_ = tag->getOption< std::string >( "atom2" );
 	add_termini_ = tag->getOption< bool >( "add_termini", true );
 	rebuild_fold_tree_ = tag->getOption< bool >( "rebuild_fold_tree", false );
 	run_kic_ = tag->getOption< bool >( "run_KIC", false);
 	kic_res1_ = tag->getOption< core::Size >( "KIC_res1", 0);
 	kic_res2_ = tag->getOption< core::Size >( "KIC_res2", 0);
+
+	if ( tag->hasOption( "res1_selector" ) ) {
+		selector1_ = protocols::rosetta_scripts::parse_residue_selector( tag, data, "res1_selector" );
+		res1_ = 0;
+		runtime_assert_msg( ! tag->hasOption( "res1" ), "Please only use one of 'res1_selector' or 'res1', not both" );
+	} else if ( tag->hasOption( "res1" ) ) {
+		selector1_ = nullptr;
+		res1_ = tag->getOption< core::Size >( "res1" );
+	} else {
+		utility_exit_with_message( "Please provide either res1 or res1_selector to DeclareBond" );
+	}
+
+	if ( tag->hasOption( "res2_selector" ) ) {
+		selector2_ = protocols::rosetta_scripts::parse_residue_selector( tag, data, "res2_selector" );
+		res2_ = 0;
+		runtime_assert_msg( ! tag->hasOption( "res2" ), "Please only use one of 'res2_selector' or 'res2', not both" );
+	} else if ( tag->hasOption( "res2" ) ) {
+		selector2_ = nullptr;
+		res2_ = tag->getOption< core::Size >( "res2" );
+	} else {
+		utility_exit_with_message( "Please provide either res2 or res2_selector to DeclareBond" );
+	}
+
 }
 
 moves::MoverOP DeclareBond::clone() const { return utility::pointer::make_shared< DeclareBond >( *this ); }
@@ -247,8 +301,8 @@ void DeclareBond::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist
-		+ XMLSchemaAttribute::required_attribute( "res1", xsct_non_negative_integer, "Residue containing first atom" )
-		+ XMLSchemaAttribute::required_attribute( "res2", xsct_non_negative_integer, "Residue containing second atom" )
+		+ XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue containing first atom" )
+		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue containing second atom" )
 		+ XMLSchemaAttribute::required_attribute( "atom1", xs_string, "Name of first atom" )
 		+ XMLSchemaAttribute::required_attribute( "atom2", xs_string, "Name of second atom" )
 		+ XMLSchemaAttribute::attribute_w_default( "add_termini", xsct_rosetta_bool, "Add termini to pose?", "true" )
@@ -256,6 +310,15 @@ void DeclareBond::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute::attribute_w_default( "run_kic", xsct_rosetta_bool, "Run KIC to close any chainbreak caused by the declared chemical bond?", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "KIC_res1", xsct_non_negative_integer, "First residue to use in KIC", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "KIC_res2", xsct_non_negative_integer, "Second residue to use in KIC", "0" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "res1_selector",
+		"Alternative to using the res1 option. This residue selector must select exactly one residue!" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "res2_selector",
+		"Alternative to using the res2 option. This residue selector must select exactly one residue!" );
+
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Declares a chemical bond between two atoms", attlist );
 
 }

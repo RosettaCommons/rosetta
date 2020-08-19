@@ -16,6 +16,8 @@
 
 #include <protocols/cyclic_peptide/DeclareBond.fwd.hh>
 #include <protocols/moves/Mover.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
 
 namespace protocols {
 namespace cyclic_peptide {
@@ -56,10 +58,22 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void
+	set_selector_for_res1( core::select::residue_selector::ResidueSelectorCOP selector1 ){
+		selector1_ = selector1;
+	}
+
+	void
+	set_selector_for_res2( core::select::residue_selector::ResidueSelectorCOP selector2 ){
+		selector2_ = selector2;
+	}
 
 private:
+	core::select::residue_selector::ResidueSelectorCOP selector1_ = nullptr;
 	core::Size res1_;
 	std::string atom1_;
+
+	core::select::residue_selector::ResidueSelectorCOP selector2_ = nullptr;
 	core::Size res2_;
 	std::string atom2_;
 

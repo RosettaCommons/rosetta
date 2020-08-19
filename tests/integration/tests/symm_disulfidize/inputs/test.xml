@@ -6,6 +6,8 @@
 	<RESIDUE_SELECTORS>
 		<Index name="helix1" resnums="1-20" />
 		<Index name="helix2" resnums="21-40" />
+		<Index name="res1" resnums="1" />
+		<Index name="res2" resnums="2" />
 	</RESIDUE_SELECTORS>
 	<TASKOPERATIONS>
 	</TASKOPERATIONS>
@@ -19,7 +21,7 @@
 			Helix delta_omega0=180 invert=true />
 		</BundleGridSampler>
 		
-		<DeclareBond name="add_termini" atom1="C" atom2="N" res1="1" res2="2" add_termini="true" />
+		<DeclareBond name="add_termini" atom1="C" atom2="N" res1_selector="res1" res2_selector="res2" add_termini="true" />
 		
 		<SetupForSymmetry name="make_symm" definition="inputs/c2.symm" />
 

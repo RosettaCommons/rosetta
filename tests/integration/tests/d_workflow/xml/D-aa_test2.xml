@@ -8,6 +8,7 @@
 	<Layer name="boundary" select_core="false" select_boundary="true" select_surface="false" />
 	<Layer name="surface" select_core="false" select_boundary="false" select_surface="true" />
 
+	<Index name="select_first_nterm" resnums="1" />
 	<Index name="select_nterm" resnums="1,31" />
 	<Index name="select_cterm" resnums="30,60" />
 	<Or name="select_termini" selectors="select_nterm,select_cterm" />
@@ -33,7 +34,7 @@
 		<Helix r0_copies_helix="1" pitch_from_helix="1" delta_omega0="180" invert="true" />
 	</BundleGridSampler>
 
-	<DeclareBond name="add_termini" atom1="C" atom2="N" res1="1" res2="2" add_termini="true" />
+	<DeclareBond name="add_termini" atom1="C" atom2="N" res1_selector="select_first_nterm" res2="2" add_termini="true" />
 
     <FastDesign name="fdesign4" scorefxn="SFXN_STD" repeats="1" packer_palette="palette" task_operations="resfile_core,resfile_boundary,resfile_surface,resfile_termini" ramp_down_constraints="false">
         <MoveMap name="fdesign4_mm">
