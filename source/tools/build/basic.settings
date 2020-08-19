@@ -2055,6 +2055,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },
@@ -2065,6 +2066,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },
@@ -2075,6 +2077,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },
@@ -2085,6 +2088,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },
@@ -2095,6 +2099,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },
@@ -2105,6 +2110,7 @@ settings = {
         "appends" : {
             "flags" : {
                 "warn" : [
+                    "Wcomma",
                     "Winconsistent-missing-override",
                 ],
             },

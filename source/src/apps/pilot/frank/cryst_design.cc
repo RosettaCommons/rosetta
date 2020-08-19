@@ -422,7 +422,8 @@ public:
 
 		DDG_CUT_ = -10.0;
 		WEAKE_CUT_ = -5.0;
-		WFY_MUT_CUT_ = 1, M_MUT_CUT_ = 1;
+		WFY_MUT_CUT_ = 1;
+		M_MUT_CUT_ = 1;
 		UNSATS_SOFT_CUT_ = 2.5;
 		UNSATS_CUT_ = 1.1;
 		SC_CUT_ = 0.4;

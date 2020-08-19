@@ -111,7 +111,7 @@ public:
 	void test_RestrictToNeighborhoodOperation() {
 
 		std::set< core::Size > crset;
-		crset.insert(77); crset.insert(215), crset.insert(45); //surface, interface, buried residues to test
+		crset.insert(77); crset.insert(215); crset.insert(45); //surface, interface, buried residues to test
 
 		using namespace core::pack::task;
 		using protocols::task_operations::RestrictToNeighborhoodOperation;
@@ -129,7 +129,7 @@ public:
 		//first we set up the calculators that the Operation will use
 		std::string const interface_calc("interface"), neighborhood_calc("neighborhood");
 		std::set< core::Size > crset_RBC;
-		crset_RBC.insert(127); crset_RBC.insert(170), crset_RBC.insert(46);
+		crset_RBC.insert(127); crset_RBC.insert(170); crset_RBC.insert(46);
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( interface_calc, utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( core::Size(1), core::Size(2) ) );
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( neighborhood_calc, utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >( crset_RBC ) );
 

@@ -69,7 +69,7 @@ public:
 
 		//set up the Neighborhood calculators (testing each constructor type)
 		std::set< core::Size > crset;
-		crset.insert(213); crset.insert(204), crset.insert(265);
+		crset.insert(213); crset.insert(204); crset.insert(265);
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( "nh_crset_calc", utility::pointer::make_shared< protocols::pose_metric_calculators::NeighborhoodByDistanceCalculator >(crset) );
 	}
 

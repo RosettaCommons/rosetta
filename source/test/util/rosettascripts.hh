@@ -259,7 +259,11 @@ public:
 	{}
 	FilterOP clone() const { return utility::pointer::make_shared< StubMultiFilter >( *this ); }
 	FilterOP fresh_instance() const { return utility::pointer::make_shared< StubMultiFilter >(); }
-	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") { values_ = values, truth_ = truth; tag_ = tag; }
+	void set( utility::vector1<core::Real> const & values, bool truth=true, std::string tag="") {
+		values_ = values;
+		truth_ = truth;
+		tag_ = tag;
+	}
 	void push_back( core::Real value ) { values_.push_back( value); }
 	void set_pos( core::Size pos = 1) { pos_ = pos; }
 	bool apply( core::pose::Pose const & ) const { return truth_; }
