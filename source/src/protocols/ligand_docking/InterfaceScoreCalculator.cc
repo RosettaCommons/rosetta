@@ -62,7 +62,8 @@ InterfaceScoreCalculator::InterfaceScoreCalculator():
 	normalization_function_(/* NULL */),
 	compute_grid_scores_(false),
 	grid_set_prototype_(/* NULL */),
-	prefix_("")
+	prefix_(""),
+	score_in_mem_(false)
 {}
 
 InterfaceScoreCalculator::InterfaceScoreCalculator(InterfaceScoreCalculator const & ) = default;
@@ -147,6 +148,7 @@ InterfaceScoreCalculator::parse_my_tag(
 			}
 		}
 	}
+	score_in_mem_ = tag->getOption<bool>("score_in_membrane",false);
 
 	prefix_ = tag->getOption<std::string>("prefix","");
 
@@ -234,7 +236,7 @@ InterfaceScoreCalculator::get_ligand_docking_scores(
 			}
 		}
 
-		utility::map_merge( retval, get_interface_deltas( chain[0], after, score_fxn_, prefix_, normalization_function_ ) );
+		utility::map_merge( retval, get_interface_deltas( chain[0], after, score_fxn_, prefix_, normalization_function_, score_in_mem_ ) );
 		utility::map_merge( retval, get_ligand_docking_scores( chain[0], after ) );
 	}
 
@@ -290,7 +292,9 @@ void InterfaceScoreCalculator::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute( "native", xs_string , "This is your native pdb without interface mutations. If a native structure is specified, 4 additional score terms are calculated: ligand_centroid_travel, ligand_radious_of_gyration, ligand_rms_no_super, and ligand_rms_with_super." )
 		+ XMLSchemaAttribute::attribute_w_default( "native_ensemble_best", xsct_rosetta_bool , "If true, the native pose has multiple residues for the given chains, and the travel and rmsd metrics will be computed as the best (lowest) value from any of them.", "false" )
 		+ XMLSchemaAttribute( "normalize", xs_string , "The normalization function you wish to use." )
-		+ XMLSchemaAttribute::attribute_w_default( "compute_grid_scores", xsct_rosetta_bool , "If compute_grid_scores is true, the scores for each grid will be calculated. This may result in the regeneration of the scoring grids, which can be slow.", "false" );
+		+ XMLSchemaAttribute::attribute_w_default( "compute_grid_scores", xsct_rosetta_bool , "If compute_grid_scores is true, the scores for each grid will be calculated. This may result in the regeneration of the scoring grids, which can be slow.", "false" )
+		+ XMLSchemaAttribute::attribute_w_default("score_in_membrane", xsct_rosetta_bool , "If true, the interface score of the pose will be computed in solution and in the membrane. Requires pose to have membrane_info object as set in RosettaMP.", "false");
+
 
 	protocols::qsar::scoring_grid::attributes_for_parse_grid_set_from_tag( attlist, "The Grid Set to use when computing grid scores." );
 

@@ -1,0 +1,7 @@
+-in:file:s 4dkl_A_relax.pdb 
+-mp:setup:spanfiles 4dkl_A.span 
+-in:file:extra_res_fa CLR.params 
+-in:membrane 
+-nstruct 1 
+-packing:pack_missing_sidechains false 
+-parser:protocol membrane_interface.xml 

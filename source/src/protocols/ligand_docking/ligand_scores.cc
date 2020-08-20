@@ -31,6 +31,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/membrane/MembraneInfo.hh>
 
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>
@@ -66,7 +67,9 @@ get_interface_deltas(
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
 	std::string const & prefix,
-	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function,
+	bool score_in_mem /*= false*/
+
 ) {
 	std::map< std::string, core::Real > retval;
 
@@ -101,6 +104,8 @@ get_interface_deltas(
 		together_score = (*normalization_function)( together_score, residues );
 		initial_fa_rep = (*normalization_function)( initial_fa_rep, residues );
 	}
+
+
 	protocols::rigid::RigidBodyTransMover trans_mover( *after_copy, jump_id );
 	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move together
 	trans_mover.step_size(1);
@@ -119,26 +124,84 @@ get_interface_deltas(
 	}
 	retval[ touching_label ] = are_touching;
 
-	// Now pull apart by 500 A to determine the reference E for calculating interface E.
-	trans_mover.trans_axis( trans_mover.trans_axis().negate() ); // now move apart
-	trans_mover.step_size(500); // make sure they're fully separated!
+
+	//Now pull apart by 500 A to determine the reference E for calculating interface E.
+	core::Vector axis;
+	if ( score_in_mem ) {
+		
+   	axis = after_copy->conformation().membrane_info()->membrane_normal(after_copy->conformation()); //The ligand will be moved along the axis out of the membrane
+
+		if ( !after_copy->conformation().is_membrane() ) {
+			utility_exit_with_message( "ERROR score_in_mem is set to true, but RosettaMP has not set the membrane for the pose.");
+		}
+	} else {
+		axis = trans_mover.trans_axis().negate();
+	}
+
+
+	trans_mover.trans_axis( axis ); //Now move apart
+	trans_mover.step_size(500); //Make sure they're fully separated!
 	trans_mover.apply( *after_copy );
 	core::Real separated_score = (*scorefxn)( *after_copy );
 	if ( normalization_function ) {
 		separated_score = (*normalization_function)( separated_score, residues );
 	}
 	core::scoring::EnergyMap const & separated_energies = after_copy->energies().total_energies(); // reference is fine
+	output_interface_deltas(retval, chain, scorefxn, together_energies, separated_energies, residues, prefix, normalization_function);
 
-	std::string delta_label( "interface_delta_" );
-	delta_label += chain;
-	if ( prefix != "" ) {
-		delta_label = prefix + "_" + delta_label;
+
+	if ( score_in_mem ) {
+
+		axis = axis.negate(); // Now move to original position in the membrane
+		trans_mover.trans_axis( axis );
+		trans_mover.step_size(500);
+		trans_mover.apply( *after_copy );
+
+		//Find the perpendicular axis and move 500A in the membrane
+		//Calculate the cross product between the membrane normal and a second 
+		//vector which isn't parallel to the membrane normal. This gives the 
+		//direction orthoganal to the membrane normal.
+		core::Vector help_axis = axis + core::Vector(1,0,0);
+		axis = axis.cross_product(help_axis);
+		trans_mover.trans_axis(axis);
+		trans_mover.step_size(500);
+		trans_mover.apply(*after_copy);
+		core::Real separated_score_in_mem = (*scorefxn)( *after_copy );
+		if ( normalization_function ) {
+			separated_score_in_mem = (*normalization_function)(separated_score_in_mem , residues);
+		}
+		std::string str(prefix);
+		if ( prefix != "" ) {
+			str += "_";
+		}
+		str += "mem";
+
+		core::scoring::EnergyMap const separated_energies_mem = after_copy->energies().total_energies();
+		output_interface_deltas(retval, chain, scorefxn, together_energies, separated_energies_mem, residues, str, normalization_function);
+
 	}
-	retval[ delta_label ] = together_score - separated_score;
+	return retval;
+}
 
-	// Interface delta, broken down by component
+
+
+void
+output_interface_deltas(
+	std::map< std::string, core::Real >& score_map,
+	char chain,
+	const core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::EnergyMap const & together_energies,
+	core::scoring::EnergyMap const & separated_energies,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
+	std::string const & prefix,
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function
+) {
+	//Sum of all score differences
+	core::Real total_score(0);
+
+	//Calculate Interface delta, broken down by component
 	for ( int i = 1; i <= core::scoring::n_score_types; ++i ) {
-		auto ii = core::scoring::ScoreType(i);
+		core::scoring::ScoreType ii = core::scoring::ScoreType(i);
 
 		if ( !scorefxn->has_nonzero_weight(ii) ) continue;
 
@@ -146,6 +209,8 @@ get_interface_deltas(
 		if ( normalization_function ) {
 			component_score = (*normalization_function)( component_score, residues );
 		}
+		total_score += component_score;
+
 		std::string component_label( "if_" );
 		component_label += chain;
 		component_label += '_';
@@ -153,10 +218,15 @@ get_interface_deltas(
 		if ( prefix != "" ) {
 			component_label = prefix + "_" + component_label;
 		}
-		retval[ component_label ] = component_score;
+		score_map[ component_label ] = component_score;
 	}
+	std::string delta_label( "interface_delta_" );
+	delta_label += chain;
+	if ( prefix != "" ) {
+		delta_label = prefix + "_" + delta_label;
+	}
+	score_map[ delta_label ] = total_score;
 
-	return retval;
 }
 
 std::map< std::string, core::Real >
@@ -281,8 +351,8 @@ get_ligand_grid_scores(
 	qsar::scoring_grid::GridSetCOP grid_set = qsar::scoring_grid::GridManager::get_instance()->get_grids( grid_set_prototype, test_pose, center, chain );
 
 	if ( grid_set->is_normalization_enabled() ) {
-		// Note that the GridSet::total_score() function would also normalize, if the normalization function was set in the GridSet
-		normalization_function = nullptr; // Not passed by reference, so wouldn't change any upstream pointers
+		//Note that the GridSet::total_score() function would also normalize, if the normalization function was set in the GridSet
+		normalization_function = nullptr; //Not passed by reference, so wouldn't change any upstream pointers
 	}
 
 	core::conformation::ResidueCOPs residues;

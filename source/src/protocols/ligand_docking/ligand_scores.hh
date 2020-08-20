@@ -19,10 +19,12 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/types.hh>
 #include <protocols/qsar/scoring_grid/ScoreNormalization.fwd.hh>
 #include <protocols/qsar/scoring_grid/GridSet.fwd.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <utility/vector1.hh>
 
 #include <map>
@@ -35,6 +37,20 @@ get_interface_deltas(
 	char chain,
 	core::pose::Pose const & after,
 	const core::scoring::ScoreFunctionOP scorefxn,
+	std::string const & prefix = "",
+	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr,
+	bool score_in_mem = false
+);
+
+// @brief Utility function to put interface deltas of ligand into score_map
+void
+output_interface_deltas(
+	std::map< std::string, core::Real > & score_map, //output//
+	char chain,
+	const core::scoring::ScoreFunctionOP scorefxn,
+	core::scoring::EnergyMap const & together_energies,
+	core::scoring::EnergyMap const & separated_energies,
+	utility::vector1< core::conformation::ResidueCOP > const & residues,
 	std::string const & prefix = "",
 	protocols::qsar::scoring_grid::ScoreNormalizationOP normalization_function = nullptr
 );

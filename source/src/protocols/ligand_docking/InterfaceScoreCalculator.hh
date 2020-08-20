@@ -121,6 +121,8 @@ private:
 	bool compute_grid_scores_;
 	protocols::qsar::scoring_grid::GridSetCOP grid_set_prototype_;
 	std::string prefix_;
+	//Compute mem_interface_delta_X by translating the ligand in the membrane.
+	bool score_in_mem_;
 
 };
 
