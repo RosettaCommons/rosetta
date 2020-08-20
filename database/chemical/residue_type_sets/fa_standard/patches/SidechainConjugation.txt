@@ -9,7 +9,7 @@ TYPES SIDECHAIN_CONJUGATION
 ## require protein, ignore anything that's already nterm patched:
 
 BEGIN_SELECTOR
-NAME3 ASP GLU DAS DGU LYS DLY ORN DOR DAB DDA DPP DDP # Add to this list as more sidechain-conjugable types are added.
+NAME3 ASP GLU DAS DGU CYS DCS LYS DLY ORN DOR DAB DDA DPP DDP # Add to this list as more sidechain-conjugable types are added.
 NOT VARIANT_TYPE SC_BRANCH_POINT
 NOT VARIANT_TYPE PROTONATED
 NOT VARIANT_TYPE VIRTUAL_METAL_CONJUGATION
@@ -60,6 +60,33 @@ SET_ATOM_TYPE CG CObb
 SET_MM_ATOM_TYPE CG C
 
 SET_NET_FORMAL_CHARGE 0
+
+END_CASE
+
+BEGIN_CASE ## cysteine (CYS), L- or D-version #################################################
+## Note: the CYX residue type still exists, but only for backward-compatibility.
+
+## These define which residues match this case:
+BEGIN_SELECTOR
+NAME3 CYS DCS #L- or D-version.
+END_SELECTOR
+
+# These are the operations involved:
+
+# Delete a sidechain hydrogen:
+DELETE_ATOM HG
+
+# Add a sidechain connection and a virtual atom:
+ADD_CONNECT SG ICOOR 180.0 75.00 1.793 SG CB CA
+ADD_ATOM  V1  VIRT VIRT 0.00
+
+# Add new bonds:
+ADD_BOND SG V1
+
+# Set position of the new V1 atom:
+SET_ICOOR  V1    0.00 75.00 1.793 SG CB CONN%LASTCONN
+
+REDEFINE_CHI 2 CA CB SG V1
 
 END_CASE
 
