@@ -95,6 +95,20 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	inline bool update_polymer_dependent() const { return update_polymer_dependent_; }
 
+	/// @brief Set whether disulfide bonds are properly broken when
+	/// mutating *from* a disulfide-bonded cysteine *to* anything else.
+	/// @details True by default.  If false, the other cysteine will still think that
+	/// it is disulfide-bonded to something, and scoring will fail.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_break_disulfide_bonds( bool const setting );
+
+	/// @brief Get whether disulfide bonds are properly broken when
+	/// mutating *from* a disulfide-bonded cysteine *to* anything else.
+	/// @details True by default.  If false, the other cysteine will still think that
+	/// it is disulfide-bonded to something, and scoring will fail.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline bool break_disulfide_bonds() const { return break_disulfide_bonds_; }
+
 	/// @brief Get the residue to mutate to.
 	/// @details This is the full name, not the three-letter code.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
@@ -108,7 +122,7 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	bool preserve_atom_coords() { return preserve_atom_coords_; }
 
-	void make_mutation(core::pose::Pose &, core::Size);
+
 
 	std::string
 	get_name() const override;
@@ -120,6 +134,21 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+private: //Functions.
+
+	/// @brief Actually make a mutation at a position, based on the current configuration of
+	/// this mover.
+	void make_mutation(core::pose::Pose &, core::Size);
+
+	/// @brief Given that position X is involved in a disulfide bond, break the disulfide between
+	/// the residue at position X and its partner.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	break_a_disulfide(
+		core::pose::Pose & pose,
+		core::Size const rosetta_target
+	) const;
 
 
 private:
@@ -134,14 +163,20 @@ private:
 
 	/// @brief Should the mover try to preserve the xyz coordinates of the atoms in the side-chain if the
 	/// new residue has an atom name matching an atom name in the old residue?  Default false.
-	bool preserve_atom_coords_;
+	bool preserve_atom_coords_ = false;
 
 	/// @brief If true, mutates the residue to itself, ie. Ala -> Ala. This fixes some problems with TerCards being attached to residues that shouldn't have them for RotamerLinks.
-	bool mutate_self_;
+	bool mutate_self_ = false;
 
 	/// @brief If true, updates polymer-dependent atoms.
 	/// @details false by default.
-	bool update_polymer_dependent_;
+	bool update_polymer_dependent_ = false;
+
+	/// @brief If true, ensure that disulfide bonds are properly broken when
+	/// mutating *from* a disulfide-bonded cysteine *to* anything else.
+	/// @details True by default.  If false, the other cysteine will still think that
+	/// it is disulfide-bonded to something, and scoring will fail.
+	bool break_disulfide_bonds_ = true;
 
 	///@brief gets a residue selector
 	///

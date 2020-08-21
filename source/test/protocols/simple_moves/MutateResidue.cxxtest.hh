@@ -28,14 +28,18 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/kinematics/FoldTree.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/ScoreFunctionFactory.hh>
 
 #include <core/types.hh>
 
@@ -122,5 +126,48 @@ public: // test functions
 		return;
 	}
 
+	/// @brief Test that we can mutate a disulfide-bonded cysteine.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void test_mutate_disulfide() {
+		using namespace protocols::simple_moves;
+		core::pose::PoseOP pose( core::import_pose::pose_from_file( "protocols/simple_moves/1A2A_A.pdb", false, core::import_pose::PDB_file ) );
+
+		//Score the pose:
+		core::scoring::ScoreFunctionOP sfxn( core::scoring::get_score_function() );
+		TS_ASSERT_THROWS_NOTHING(
+			(*sfxn)(*pose);
+		);
+
+		//Confirm that there's a disulfide:
+		TS_ASSERT_EQUALS( pose->residue_type(2).base_name(), "CYS" );
+		TS_ASSERT_EQUALS( pose->residue_type(18).base_name(), "CYS" );
+		TS_ASSERT( pose->residue_type(2).is_disulfide_bonded() );
+		core::Size const other_res( core::conformation::get_disulf_partner( pose->conformation(), 2 ) );
+		TS_ASSERT_EQUALS( other_res, 18 );
+		TS_ASSERT( pose->residue_type(18).is_disulfide_bonded() );
+		TS_ASSERT( pose->residue_type(18).has_variant_type( core::chemical::DISULFIDE ) );
+		TS_ASSERT( pose->residue_type(18).has_property( core::chemical::DISULFIDE_BONDED ) );
+
+		//Mutate the residue:
+		MutateResidue mutres;
+		mutres.set_target("29A");
+		mutres.set_res_name("ALA");
+		TS_ASSERT( mutres.break_disulfide_bonds() ); //Ensure that the default is to have this ON.
+		mutres.apply(*pose);
+
+		//Confirm that the disulfide is properly broken:
+		TS_ASSERT_EQUALS( pose->residue_type(2).base_name(), "ALA" );
+		TS_ASSERT_EQUALS( pose->residue_type(18).base_name(), "CYS" );
+		TS_ASSERT( !(pose->residue_type(2).is_disulfide_bonded()) );
+		TS_ASSERT( !(pose->residue_type(18).is_disulfide_bonded()) );
+		TS_ASSERT( !(pose->residue_type(18).has_variant_type( core::chemical::DISULFIDE ) ) );
+		TS_ASSERT( !(pose->residue_type(18).has_property( core::chemical::DISULFIDE_BONDED ) ) );
+
+		//Confirm that we can score the pose:
+		TS_ASSERT_THROWS_NOTHING(
+			(*sfxn)(*pose);
+		);
+
+	}
 
 }; // MutateResidueTests

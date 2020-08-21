@@ -63,13 +63,7 @@ static basic::Tracer TR( "protocols.simple_moves.MutateResidue" );
 
 /// @brief default ctor
 MutateResidue::MutateResidue() :
-	parent(),
-	target_(""),
-	res_name_(""),
-	preserve_atom_coords_(false),
-	mutate_self_(false),
-	update_polymer_dependent_(false),
-	selector_()
+	parent()
 {}
 
 /// @brief copy ctor
@@ -82,11 +76,7 @@ MutateResidue::MutateResidue(MutateResidue const& /*dm*/) = default;
 MutateResidue::MutateResidue( core::Size const target, string const & new_res ) :
 	parent(),
 	target_(""),
-	res_name_(new_res),
-	preserve_atom_coords_(false),
-	mutate_self_(false),
-	update_polymer_dependent_(false),
-	selector_()
+	res_name_(new_res)
 {
 	set_target( target );
 }
@@ -94,11 +84,7 @@ MutateResidue::MutateResidue( core::Size const target, string const & new_res ) 
 MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 	parent(),
 	target_(""),
-	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) ),
-	preserve_atom_coords_(false),
-	mutate_self_(false),
-	update_polymer_dependent_(false),
-	selector_()
+	res_name_( name_from_aa( aa_from_oneletter_code( new_res ) ) )
 {
 	set_target( target );
 }
@@ -106,11 +92,7 @@ MutateResidue::MutateResidue( core::Size const target, int const new_res ) :
 MutateResidue::MutateResidue( core::Size const target, core::chemical::AA const aa) :
 	parent(),
 	target_(""),
-	res_name_( name_from_aa( aa )),
-	preserve_atom_coords_(false),
-	mutate_self_(false),
-	update_polymer_dependent_(false),
-	selector_()
+	res_name_( name_from_aa( aa ))
 {
 	set_target( target );
 }
@@ -158,6 +140,9 @@ void MutateResidue::parse_my_tag( utility::tag::TagCOP tag,
 	//Set whether we're updating coordinates of polymer bond-dependent atoms.
 	set_update_polymer_dependent( tag->getOption<bool>( "update_polymer_bond_dependent", update_polymer_dependent() ) );
 
+	//Set whether we correctly break disulfide bonds.
+	set_break_disulfide_bonds( tag->getOption< bool >( "break_disulfide_bonds", break_disulfide_bonds() ) );
+
 	if ( tag->hasOption("residue_selector") ) {
 		set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 	}
@@ -178,6 +163,18 @@ void MutateResidue::set_res_name( core::chemical::AA const & aa){
 	res_name_ = name_from_aa( aa );
 }
 
+/// @brief Set whether disulfide bonds are properly broken when
+/// mutating *from* a disulfide-bonded cysteine *to* anything else.
+/// @details True by default.  If false, the other cysteine will still think that
+/// it is disulfide-bonded to something, and scoring will fail.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+MutateResidue::set_break_disulfide_bonds(
+	bool const setting
+) {
+	break_disulfide_bonds_ = setting;
+}
+
 void MutateResidue::apply( Pose & pose ) {
 
 	// Converting the target string to target residue index must be done at apply time,
@@ -195,43 +192,6 @@ void MutateResidue::apply( Pose & pose ) {
 		core::Size const rosetta_target( core::pose::parse_resnum( target(), pose, true /*"true" must be specified to check for refpose numbering when parsing the string*/ ) );
 		make_mutation(pose,rosetta_target);
 	}
-}
-
-void MutateResidue::make_mutation(core::pose::Pose & pose, core::Size rosetta_target)
-{
-	if ( rosetta_target < 1 ) {
-		// Do nothing for 0
-		return;
-	}
-	if ( rosetta_target > pose.size() ) {
-		TR.Error << "Residue "<< rosetta_target <<" is out of bounds." << std::endl;
-		utility_exit();
-	}
-
-	if ( mutate_self_ ) {
-		TR << "Setting target residue: " << rosetta_target << " to self (" << pose.residue( rosetta_target ).name3() << ")" << std::endl;
-		set_res_name( pose.residue( rosetta_target ).name3() ); //sets res_name to the residue of target
-	}
-
-	if ( TR.Debug.visible() ) {
-		TR.Debug << "Mutating residue " << rosetta_target << " from "
-			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
-	}
-
-	chemical::ResidueTypeCOP new_restype( core::pose::get_restype_for_pose( pose, res_name_, pose.residue_type( rosetta_target ).mode() ) );
-	// Create the new residue and replace it
-	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
-		*new_restype, pose.residue( rosetta_target ),
-		pose.conformation());
-	// Make sure we retain as much info from the previous res as possible
-	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
-		*new_res, pose.conformation(), !preserve_atom_coords() );
-	pose.replace_residue( rosetta_target, *new_res, false );
-
-	if ( update_polymer_dependent() ) { //Update the coordinates of atoms that depend on polymer bonds:
-		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( rosetta_target );
-	}
-
 }
 
 std::string MutateResidue::get_name() const {
@@ -282,6 +242,15 @@ void MutateResidue::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	attlist + XMLSchemaAttribute( "preserve_atom_coords", xsct_rosetta_bool,
 		"Preserve atomic coords as much as possible" );
 
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"break_disulfide_bonds", xsct_rosetta_bool,
+		"If true, then disulfide bonds are properly broken when mutating from a disulfide-bonded "
+		"cysteine to anything else.  If false, the disulfide partner will still think that "
+		"it is bonded to something, and scoring will fail unless the disulfide variant type is "
+		"removed by something else.  Setting this to false is strongly NOT recommended.  True by "
+		"default.",
+		"true"
+	);
 
 	core::select::residue_selector::attributes_for_parse_residue_selector(
 		attlist, "residue_selector",
@@ -289,8 +258,80 @@ void MutateResidue::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
-		"Change a single residue or a given subset of residues to a different type. For instance, mutate Arg31 to an Asp, or mutate all Prolines to Alanine",
+		"Change a single residue or a given subset of residues to a different type. For instance, "
+		"mutate Arg31 to an Asp, or mutate all Prolines to Alanine.  Note that by default, this mover "
+		"breaks disulfide bonds, converting any parters of disulfide-bonded target residues to the reduced "
+		"variant type.",
 		attlist );
+}
+
+//////////////// PRIVATE FUNCTIONS ////////////////
+
+/// @brief Actually make a mutation at a position, based on the current configuration of
+/// this mover.
+void
+MutateResidue::make_mutation(
+	core::pose::Pose & pose,
+	core::Size rosetta_target
+) {
+	if ( rosetta_target < 1 ) {
+		// Do nothing for 0
+		return;
+	}
+	if ( rosetta_target > pose.size() ) {
+		TR.Error << "Residue "<< rosetta_target <<" is out of bounds." << std::endl;
+		utility_exit();
+	}
+
+	if ( mutate_self_ ) {
+		TR << "Setting target residue: " << rosetta_target << " to self (" << pose.residue( rosetta_target ).name3() << ")" << std::endl;
+		set_res_name( pose.residue( rosetta_target ).name3() ); //sets res_name to the residue of target
+	}
+
+	if ( TR.Debug.visible() ) {
+		TR.Debug << "Mutating residue " << rosetta_target << " from "
+			<< pose.residue( rosetta_target ).name3() << " to " << res_name_ <<" ." << std::endl;
+	}
+
+	if ( pose.residue_type(rosetta_target).is_disulfide_bonded() ) {
+		if ( break_disulfide_bonds() ) {
+			break_a_disulfide( pose, rosetta_target );
+		} else {
+			//Print a warning if we're not breaking the disulfide bond:
+			core::Size const other_res( core::conformation::get_disulf_partner( pose.conformation(), rosetta_target ) );
+			TR.Warning << TR.Red << "Warning!  Target residue " << pose.residue_type(rosetta_target).base_name() << rosetta_target << " has a disulfide bond to " << pose.residue_type(other_res).base_name() << other_res << ", but the MutateResidue mover is not configured to break disulfide bonds.  An unbonded residue with the DISULFIDE variant type will be left at position " << other_res << "!" << TR.Reset << std::endl;
+		}
+	}
+
+	chemical::ResidueTypeCOP new_restype( core::pose::get_restype_for_pose( pose, res_name_, pose.residue_type( rosetta_target ).mode() ) );
+	// Create the new residue and replace it
+	conformation::ResidueOP new_res = conformation::ResidueFactory::create_residue(
+		*new_restype, pose.residue( rosetta_target ),
+		pose.conformation());
+	// Make sure we retain as much info from the previous res as possible
+	conformation::copy_residue_coordinates_and_rebuild_missing_atoms( pose.residue( rosetta_target ),
+		*new_res, pose.conformation(), !preserve_atom_coords() );
+	pose.replace_residue( rosetta_target, *new_res, false );
+
+	if ( update_polymer_dependent() ) { //Update the coordinates of atoms that depend on polymer bonds:
+		pose.conformation().rebuild_polymer_bond_dependent_atoms_this_residue_only( rosetta_target );
+	}
+
+}
+
+/// @brief Given that position X is involved in a disulfide bond, break the disulfide between
+/// the residue at position X and its partner.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+MutateResidue::break_a_disulfide(
+	core::pose::Pose & pose,
+	core::Size const rosetta_target
+) const {
+	debug_assert( pose.residue_type(rosetta_target).is_disulfide_bonded() );
+	core::Size const other_residue( core::conformation::get_disulf_partner( pose.conformation(), rosetta_target ) );
+	debug_assert( other_residue > 0 );
+	TR << "Breaking disulfide bond between " << pose.residue_type(rosetta_target).base_name() << rosetta_target << " and " << pose.residue_type(other_residue).base_name() << other_residue << "." << std::endl;
+	core::conformation::break_disulfide( pose.conformation(), rosetta_target, other_residue );
 }
 
 std::string MutateResidueCreator::keyname() const {
