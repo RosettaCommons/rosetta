@@ -26,11 +26,9 @@
 #ifndef INCLUDED_utility_exit_hh
 #define INCLUDED_utility_exit_hh
 
+
 // C++ headers
 #include <string>
-
-// Utility headers
-#include <utility/cxx_versioning_macros.hh>
 
 namespace utility_exit_detail {
 
@@ -126,24 +124,33 @@ private:
 
 namespace utility {
 
+// Shared with utility/backtrace.hh
+#ifndef NORETURN
+#ifdef __GNUC__
+#  define NORETURN __attribute__ ((noreturn))
+#elif __clang__
+#  define NORETURN __attribute__ ((noreturn))
+#else
+#  define NORETURN
+#endif
+#endif
+
 /// @brief Exit in cases where there's a clear issue the user can fix.
-NORETURN_ATTR
 void
 exit_with_user_fixable_issue(
 	char const * file,
 	int line,
 	std::string const & message
-);
+) NORETURN;
 
 /// @brief Exit with file + line + message + optional status
-NORETURN_ATTR
 void
 exit(
 	char const * file,
 	int line,
 	std::string const & message,
 	int const status = 1
-);
+) NORETURN;
 
 /// @brief Conditional Exit with file + line + message + optional status. WIll exit if the condition is not met!
 int
@@ -157,14 +164,13 @@ cond_exit(
 
 
 /// @brief Exit with file + line + optional status
-NORETURN_ATTR
 inline
 void
 exit(
 	char const * file,
 	int const line,
 	int const status = 1
-);
+) NORETURN;
 
 
 /// @brief Exit with file + line + optional status

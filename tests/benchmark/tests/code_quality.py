@@ -253,7 +253,6 @@ def run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=N
                         "-clang-analyzer-cplusplus.NewDelete", # Skip - There's issues on the test server with shared_ptr in the system headers.
                         "-clang-analyzer-cplusplus.NewDeleteLeaks", # Ibid.
                             # (These are likely also covered by the ClangSA tests, but with better system header exclusion.)
-                        "-clang-diagnostic-c++17-extensions", # Skip - do not warn for using C++17 features without -std=c++17 being enabled.
                         ]
     CLANG_TIDY_TESTS = ','.join( CLANG_TIDY_TESTS )
 
