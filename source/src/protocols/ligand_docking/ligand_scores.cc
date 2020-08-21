@@ -128,8 +128,8 @@ get_interface_deltas(
 	//Now pull apart by 500 A to determine the reference E for calculating interface E.
 	core::Vector axis;
 	if ( score_in_mem ) {
-		
-   	axis = after_copy->conformation().membrane_info()->membrane_normal(after_copy->conformation()); //The ligand will be moved along the axis out of the membrane
+
+		axis = after_copy->conformation().membrane_info()->membrane_normal(after_copy->conformation()); //The ligand will be moved along the axis out of the membrane
 
 		if ( !after_copy->conformation().is_membrane() ) {
 			utility_exit_with_message( "ERROR score_in_mem is set to true, but RosettaMP has not set the membrane for the pose.");
@@ -158,8 +158,8 @@ get_interface_deltas(
 		trans_mover.apply( *after_copy );
 
 		//Find the perpendicular axis and move 500A in the membrane
-		//Calculate the cross product between the membrane normal and a second 
-		//vector which isn't parallel to the membrane normal. This gives the 
+		//Calculate the cross product between the membrane normal and a second
+		//vector which isn't parallel to the membrane normal. This gives the
 		//direction orthoganal to the membrane normal.
 		core::Vector help_axis = axis + core::Vector(1,0,0);
 		axis = axis.cross_product(help_axis);
