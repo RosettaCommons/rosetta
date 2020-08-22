@@ -181,13 +181,14 @@ RNA_BasePairHandler::figure_out_partner( std::map< Size, Size > & partner, bool 
 
 		if ( partner.find( i ) != partner.end() )  {
 			TR << "Warning: in base pair steps, already found a partner for " << i << " which is " << partner[ i ] << ", so not including additional pairing to " << j << std::endl;
+		} else {
+			partner[ i ] = j;
 		}
 		if ( partner.find( j ) != partner.end() )  {
 			TR << "Warning: in base pair steps, already found a partner for " << j << " which is " << partner[ j ] << ", so not including additional pairing to " << i << std::endl;
+		} else {
+			partner[ j ] = i;
 		}
-
-		partner[ i ] = j;
-		partner[ j ] = i;
 	}
 }
 
