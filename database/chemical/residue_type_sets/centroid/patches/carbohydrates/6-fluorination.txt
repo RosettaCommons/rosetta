@@ -1,0 +1,36 @@
+## full-atom 6-deoxy-6-fluoro sugar patch
+
+NAME 6-F
+TYPES C6_FLUORO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_ATOM O6
+NOT VARIANT_TYPE C6_BRANCH_POINT
+NOT PROPERTY C6_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO6 VIRT
+SET_MM_ATOM_TYPE HO6 VIRT
+SET_ATOMIC_CHARGE HO6 0.00
+
+SET_ATOM_TYPE O6 VIRT
+SET_MM_ATOM_TYPE O6 VIRT
+SET_ATOMIC_CHARGE O6 0.00
+
+# Next, add the new atoms.
+ADD_ATOM  F6  F  F6  -0.23
+
+ADD_BOND  C6  F6
+
+# Using H3 to define 0 degree torsion angle, to place FC6 at same position as (now virtual) O6 allows us to have a single patch file for either (S) or (R) stereochemistry.
+SET_ICOOR  F6     0.00    70.5  1.4  C6    H6    O6
+
+ADD_PROPERTY C6_MODIFIED
+ADD_PROPERTY FLUORO_SUGAR
+
+END_CASE

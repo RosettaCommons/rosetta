@@ -91,7 +91,7 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare variables.
-		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, free_14_mer,
+		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, fluoro_sugar, free_14_mer,
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
 			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb, lactyl_sugar, ligand_sugar, phosphorylated_sugar;
@@ -447,6 +447,15 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
+
+		cout << "Creating fluoro sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( fluoro_sugar, "->3)-alpha-d-Glcp2F", *residue_set );
+		fluoro_sugar.pdb_info()->name( "Glcp2F" );
+
+		test_sugar( fluoro_sugar );
+
+
 		cout << "Creating phosphorylated sugar from sequence:" << endl;
 
 		make_pose_from_saccharide_sequence( phosphorylated_sugar, "->4)-alpha-d-Glcp6P", *residue_set );

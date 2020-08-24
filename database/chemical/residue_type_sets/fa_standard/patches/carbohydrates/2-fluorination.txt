@@ -1,0 +1,36 @@
+## full-atom 2-deoxy-2-fluoro sugar patch
+
+NAME 2-F
+TYPES C2_FLUORO_SUGAR
+
+BEGIN_SELECTOR
+PROPERTY CARBOHYDRATE
+PROPERTY ALDOSE
+NOT UPPER_ATOM O2
+NOT VARIANT_TYPE C2_BRANCH_POINT
+NOT PROPERTY C2_MODIFIED
+END_SELECTOR
+
+BEGIN_CASE
+
+# First, make into a deoxy sugar.
+SET_ATOM_TYPE HO2 VIRT
+SET_MM_ATOM_TYPE HO2 VIRT
+SET_ATOMIC_CHARGE HO2 0.00
+
+SET_ATOM_TYPE O2 VIRT
+SET_MM_ATOM_TYPE O2 VIRT
+SET_ATOMIC_CHARGE O2 0.00
+
+# Next, add the new atoms.
+ADD_ATOM  F2  F  F1  -0.23
+
+ADD_BOND  C2  F2
+
+# Using H2 to define 0 degree torsion angle, to place FC2 at same position as (now virtual) O2 allows us to have a single patch file for either (S) or (R) stereochemistry.
+SET_ICOOR  F2     0.00    70.5  1.4  C2    H2    O2
+
+ADD_PROPERTY C2_MODIFIED
+ADD_PROPERTY FLUORO_SUGAR
+
+END_CASE
