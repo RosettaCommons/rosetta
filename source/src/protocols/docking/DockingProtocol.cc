@@ -584,7 +584,14 @@ DockingProtocol::finalize_setup( pose::Pose & pose ) //setup objects requiring p
 		p2_end = *std::max_element(all_partner2_residues.begin(), all_partner2_residues.end());
 
 
+	} else {
+		// If the chain has more than 2 chains an interface needs to be specified.
+		if ( pose.pdb_info()->num_chains() > 2 ) {
+			TR << "The pose has " << pose.pdb_info()->num_chains() << " chains. If there are more than 2 chains, you need to specify an interface." << std::endl;
+			utility_exit_with_message( "No interface defined. Use -partners to specify.");
+		}
 	}
+
 
 	// if an ensemble file is defined for either partner, both partners must be defined
 	if ( ensemble1_filename_ != "" || ensemble2_filename_ != "" ) {

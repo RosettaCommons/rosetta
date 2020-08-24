@@ -33,6 +33,7 @@
 
 // C++ headers
 #include <algorithm>
+#include <set>
 
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
@@ -458,6 +459,16 @@ PDBInfo::pose2pdb( Size const res ) const
 	pdb_chain << residue_rec_[res].chainID;
 	pdb_num << residue_rec_[res].resSeq;
 	return pdb_num.str() + " " + pdb_chain.str() + " ";
+}
+
+int
+PDBInfo::num_chains() const
+{
+	std::set< char > chainIDs;
+	for ( Size res(1); res <= residue_rec_.size(); ++res ) {
+		chainIDs.insert(residue_rec_[ res ].chainID);
+	}
+	return chainIDs.size();
 }
 
 /// @brief returns for pose( resnumber) the label associated to the residue

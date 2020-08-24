@@ -725,6 +725,22 @@ public: // single residue accessors
 	String
 	pose2pdb( Size const res ) const;
 
+	/// @brief Returns the total number of (chain letter) chains in the pose
+	///
+	/// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.
+	///
+	/// example(s):
+	///     pose.pdb_info().num_chains()
+	/// see also:
+	///     pose
+	///     pose.annotated_sequence
+	///     pose.fold_tree
+	///     pose.num_jump
+	///   pose.pdb_info().chain
+	///   pose.pdb_info().pdb2pose
+	int
+	num_chains() const;
+
 	/// @brief returns the pose(number) labels associated to the residue
 	/// @param[in] res  residue in pose numbering
 	utility::vector1 < std::string >
