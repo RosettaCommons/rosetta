@@ -29,6 +29,8 @@
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/pose/selection.hh>
 #include <basic/Tracer.hh>
+#include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/util.hh>
 
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>
@@ -41,6 +43,33 @@ namespace protocols {
 namespace simple_filters {
 
 static basic::Tracer TR( "protocols.filters.AtomicDistanceFilter" );
+
+namespace {//helper functions
+
+///@brief figure out which of description and selector is active and return the resid that it selects
+///@details not prototyped in the .hh file because it serves no purpose outside of this class
+core::Size
+determine_resid(
+	core::pose::ResidueIndexDescriptionCOP const & description,
+	core::select::residue_selector::ResidueSelectorCOP const & selector,
+	core::pose::Pose const & pose
+) {
+	if ( description != nullptr ) { //ResidueIndexDescription option
+		runtime_assert( selector == nullptr );
+		return description->resolve_index( pose );
+
+	} else { //ResidueSelector option
+		runtime_assert( selector != nullptr );
+		utility::vector1< bool > const sele = selector->apply( pose );
+		utility::vector1< core::Size > const positions =
+			core::select::residue_selector::selection_positions( sele );
+		if ( positions.size() != 1 ) {
+			utility_exit_with_message( "AtomicDistanceFilter expected a residue selector to select exactly one residues. Instead, it selected " + std::to_string( positions.size() ) );
+		}
+		return positions[ 1 ];
+	}
+}
+}//anonymous namespace
 
 /// @brief default ctor
 AtomicDistanceFilter::AtomicDistanceFilter() :
@@ -75,15 +104,13 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 
 	core::Real nearest_distance( 999999 );
 
-	debug_assert( residue1_ != nullptr );
-	debug_assert( residue2_ != nullptr );
-	Residue const& res1( pose.residue( residue1_->resolve_index( pose ) ) );
-	Residue const& res2( pose.residue( residue2_->resolve_index( pose ) ) );
+	Residue const & res1 = pose.residue( determine_resid( residue1_, selector1_, pose ) );
+	Residue const & res2 = pose.residue( determine_resid( residue2_, selector2_, pose ) );
 
 	core::Size a1primet(1), a1end(res1.natoms());
 	if ( ! astype1_ ) { // If given by name, look only at the single atom
 		if ( ! res1.type().has(atomdesg1_) ) {
-			TR.Warning <<*residue1_<<" of type "<<res1.type().name()<<" does not have atom with name "<<atomdesg1_<<std::endl;
+			TR.Warning << "Residue " << res1.seqpos() <<" of type "<<res1.type().name()<<" does not have atom with name "<<atomdesg1_<<std::endl;
 			return nearest_distance;
 		}
 		a1primet = a1end = res1.atom_index(atomdesg1_);
@@ -91,7 +118,7 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 	core::Size a2primet(1), a2end(res2.natoms());
 	if ( ! astype2_ ) { // If given by name, look only at the single atom
 		if ( ! res2.type().has(atomdesg2_) ) {
-			TR.Warning <<*residue2_<<" of type "<<res2.type().name()<<" does not have atom with name "<<atomdesg2_<<std::endl;
+			TR.Warning << "Residue " << res2.seqpos() <<" of type "<<res2.type().name()<<" does not have atom with name "<<atomdesg2_<<std::endl;
 			return nearest_distance;
 		}
 		a2primet = a2end = res2.atom_index(atomdesg2_);
@@ -114,9 +141,9 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 	}
 
 	if ( ! found1 ) {
-		TR.Warning <<*residue1_<<" of type "<<res1.type().name()<<" does not have atom with "<<(astype1_?"type ":"name ")<<atomdesg1_<<std::endl;
+		TR.Warning << "Residue " << res1.seqpos() <<" of type "<<res1.type().name()<<" does not have atom with "<<(astype1_?"type ":"name ")<<atomdesg1_<<std::endl;
 	} else if ( ! found2 ) { // elseif because the inner loop doesn't run if the outer loop doesn't trip. (if found1 is false, found2 is always false)
-		TR.Warning <<*residue2_<<" of type "<<res2.type().name()<<" does not have atom with "<<(astype2_?"type ":"name ")<<atomdesg2_<<std::endl;
+		TR.Warning << "Residue " << res2.seqpos() <<" of type "<<res2.type().name()<<" does not have atom with "<<(astype2_?"type ":"name ")<<atomdesg2_<<std::endl;
 	}
 	return( nearest_distance );
 }
@@ -124,26 +151,46 @@ AtomicDistanceFilter::compute( core::pose::Pose const & pose ) const
 core::Real
 AtomicDistanceFilter::report_sm( core::pose::Pose const & pose ) const
 {
-	core::Real const dist( compute( pose ) );
-	return( dist );
+	return compute( pose );
 }
 
 void AtomicDistanceFilter::report( std::ostream & out, core::pose::Pose const & pose ) const
 {
 	core::Real const dist( compute( pose ) );
-	out<<"Minimal distance between "<<*residue1_<<" atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and "<<*residue2_<<" atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" is "<<dist<<std::endl;
+	out<<"Minimal distance between Residue 1 atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and Residue 2 atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" is "<<dist<<std::endl;
 }
 
-void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
-	basic::datacache::DataMap &
+void AtomicDistanceFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data
 )
 {
 	distance_ = tag->getOption< core::Real >( "distance", 4.0 );
 
-	std::string const res1( tag->getOption< std::string >( "residue1" ) );
-	std::string const res2( tag->getOption< std::string >( "residue2" ) );
-	residue1_ = core::pose::parse_resnum( res1 );
-	residue2_ = core::pose::parse_resnum( res2 );
+	if ( tag->hasOption( "residue1" ) ) {
+		std::string const res1( tag->getOption< std::string >( "residue1" ) );
+		residue1_ = core::pose::parse_resnum( res1 );
+		selector1_ = nullptr;
+		runtime_assert_msg( ! tag->hasOption( "res1_selector" ), "Please only use one of 'res1_selector' or 'residue1', not both" );
+	} else if ( tag->hasOption( "res1_selector" ) ) {
+		selector1_ = protocols::rosetta_scripts::parse_residue_selector( tag, data, "res1_selector" );
+		residue1_ = nullptr;
+	} else {
+		utility_exit_with_message( "Please provide either residue1 or res1_selector to AtomicDistanceFilter" );
+	}
+
+	if ( tag->hasOption( "residue2" ) ) {
+		std::string const res2( tag->getOption< std::string >( "residue2" ) );
+		residue2_ = core::pose::parse_resnum( res2 );
+		selector2_ = nullptr;
+		runtime_assert_msg( ! tag->hasOption( "res2_selector" ), "Please only use one of 'res2_selector' or 'residue2', not both" );
+	} else if ( tag->hasOption( "res2_selector" ) ) {
+		selector2_ = protocols::rosetta_scripts::parse_residue_selector( tag, data, "res2_selector" );
+		residue2_ = nullptr;
+	} else {
+		utility_exit_with_message( "Please provide either residue2 or res2_selector to AtomicDistanceFilter" );
+	}
+
 
 	if ( tag->hasOption( "atomtype1" ) ) {
 		if ( tag->hasOption( "atomname1" ) ) {
@@ -167,7 +214,7 @@ void AtomicDistanceFilter::parse_my_tag( utility::tag::TagCOP tag,
 		astype2_ = false;
 	}
 
-	TR<<"AtomicDistance filter between "<<*residue1_<<" atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and "<<*residue2_<<" atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" with distance cutoff of "<<distance_<<std::endl;
+	TR<<"AtomicDistance filter between Residue 1 atom "<<(astype1_?"type ":"name ")<<atomdesg1_<<" and Residue 2 atom "<<(astype2_?"type ":"name ")<<atomdesg2_<<" with distance cutoff of "<<distance_<<std::endl;
 }
 
 
@@ -192,6 +239,15 @@ void AtomicDistanceFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition
 
 	core::pose::attributes_for_parse_resnum( attlist, "residue1", "First residue" );
 	core::pose::attributes_for_parse_resnum( attlist, "residue2", "Second residue" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "res1_selector",
+		"Alternative to using the residue1 option. This residue selector must select exactly one residue!" );
+
+	core::select::residue_selector::attributes_for_parse_residue_selector(
+		attlist, "res2_selector",
+		"Alternative to using the residue2 option. This residue selector must select exactly one residue!" );
+
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Filters on the distance between two specific atoms or the minimal distance between atoms of two specific types, on one or two residues.", attlist );
 }

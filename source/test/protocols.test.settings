@@ -667,6 +667,7 @@ sources = {
             "HasherTests",
         ],
 	"simple_filters" : [
+		"AtomicDistanceFilter",
 		"DdgFilter",
 		"DdGScan",
 		"InterfaceHydrophobicResidueContactsFilter",

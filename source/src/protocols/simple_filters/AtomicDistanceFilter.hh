@@ -25,6 +25,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 #include <utility/vector1.hh>
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 
 namespace protocols {
@@ -66,7 +67,32 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void
+	set_selector_for_res1( core::select::residue_selector::ResidueSelectorCOP selector1 ){
+		selector1_ = selector1;
+	}
+
+	void
+	set_selector_for_res2( core::select::residue_selector::ResidueSelectorCOP selector2 ){
+		selector2_ = selector2;
+	}
+
+	void
+	set_atomname1( std::string && atomname1 ){
+		atomdesg1_ = atomname1;
+		astype1_ = false;
+	}
+
+	void
+	set_atomname2( std::string && atomname2 ){
+		atomdesg2_ = atomname2;
+		astype2_ = false;
+	}
+
 private:
+	core::select::residue_selector::ResidueSelectorCOP selector1_ = nullptr;
+	core::select::residue_selector::ResidueSelectorCOP selector2_ = nullptr;
+
 	core::pose::ResidueIndexDescriptionCOP residue1_, residue2_;
 	std::string atomdesg1_, atomdesg2_;
 	bool astype1_, astype2_; // if desg should be interpreted as an atomtype
