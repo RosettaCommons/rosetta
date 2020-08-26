@@ -90,7 +90,11 @@ PROPERTIES  DNA CANONICAL_NUCLEIC POLAR CHARGED AROMATIC PURINE
 ## these need to be fixed!
 ## and need to add chi1
 NBR_ATOM C1'
-NBR_RADIUS 1000.0
+# danpf 2020-08-26 NBR WAS set to 1000.0, I set it to the value 
+# molfile_to_params.py set for GUA on a single PDB + 0.1
+# it is possible this could be improved, but this seems good
+# enough for now as it is no longer 1000.0.
+NBR_RADIUS 8.476380
 FIRST_SIDECHAIN_ATOM  N9
 LOWER_CONNECT P
 UPPER_CONNECT O3'
