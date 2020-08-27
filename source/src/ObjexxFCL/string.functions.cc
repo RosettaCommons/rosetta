@@ -29,7 +29,7 @@ using std::string;
 
 // Constants
 char const SPACE( ' ' );
-std::string const WHITESPACE( " \t\0", 3 );
+std::string const WHITESPACE( " \t\0\r\n", 5 ); // Need length, due to embedded null
 
 
 // Predicate

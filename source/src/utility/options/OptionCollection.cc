@@ -63,6 +63,35 @@ void std_exit_wrapper( const int error_code ){
 	throw CREATE_EXCEPTION(utility::excn::Exception, "std::exit() was called" );
 }
 
+/// @brief Utility function to return true if a character isn't a standard ASCII one.
+/// This is a bit more general, as it also returns true if the character is a (non-space) non-printing ASCII one.
+inline
+bool
+is_not_ascii( char C ) {
+	return C < ' ' || C > '~'; // Space to tilde is the typical range of "normal" ASCII characters.
+}
+
+/// @brief Utility function which returns true if the string contains a non-ASCII value.
+inline
+bool
+has_non_ascii( std::string const & str ) {
+	return std::any_of( str.begin(), str.end(), is_not_ascii );
+}
+
+/// @brief Utility function to return the position of the first non-ASCII value in the string.
+/// The return value is 1-indexed.
+inline
+std::string::size_type
+non_ascii_pos( std::string const & str ) {
+	for ( std::string::size_type ii(0); ii < str.size(); ++ii ) {
+		if ( is_not_ascii( str[ii] ) ) {
+			return ii + 1;
+		}
+	}
+	// Ideally, should never get here.
+	return std::string::npos;
+}
+
 /// @brief Copy constructor.
 /// @details Needed because the mutex can't be copied.
 OptionCollection::OptionCollection(
@@ -279,6 +308,7 @@ OptionCollection::load(
 		arg_strings.pop_front(); // Remove lead argument
 
 		char const arg_first( arg_string[ 0 ] );
+
 		if ( ( arg_first == '-' ) && ( ! ObjexxFCL::is_double( arg_string ) ) ) { // - prefix: Treat as an option
 
 			// Load the option
@@ -312,6 +342,9 @@ OptionCollection::load(
 			load_options_from_file(ObjexxFCL::trim(file_string), cid);
 
 		} else if ( ! free_args ) { // Warn about free argument
+			if ( is_not_ascii( arg_first) ) {
+				throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Option starts with non-ASCII character: " + arg_string ));
+			}
 			throw( CREATE_EXCEPTION(excn::Exception,  "ERROR: Unused \"free\" argument specified: " + arg_string ));
 		}
 	}
@@ -513,6 +546,10 @@ void OptionCollection::load_options_from_stream(
 
 			load_options_from_file(ObjexxFCL::trim(file_string2), cid);
 		} else if ( (stream ) && len_trim_whitespace(line) > 0 && stripped_whitespace(line)[0] != '#' ) {
+			if ( has_non_ascii( line ) ) {
+					std::cout << "\n[WARNING] Option file line contains a non-ASCII character at position " << non_ascii_pos( line ) << std::endl;
+					std::cout << line << '\n' << std::endl;
+			}
 			throw(CREATE_EXCEPTION(excn::Exception,  "Comments in an option file must begin with '#', options must begin with '-' the line:\n"
 				+stripped_whitespace(line)+"\n is incorrectly formatted"));
 		}
@@ -1032,6 +1069,11 @@ OptionCollection::load_option_cl(
 	using ObjexxFCL::stripped_whitespace;
 	using size_type = std::string::size_type;
 
+	// Check for non-ASCII values in the option. We don't support non-ASCII in option names
+	if ( has_non_ascii( arg_string ) ) {
+		throw( CREATE_EXCEPTION(excn::Exception, "Option " + arg_string + " has non-ASCII character starting at position " + std::to_string(non_ascii_pos(arg_string)) ) );
+	}
+
 	// Parse argument into key and value strings
 	bool top( false ); // Top-level context?
 	size_type kb( arg_string.find_first_not_of( '-' ) );
@@ -1060,6 +1102,7 @@ OptionCollection::load_option_cl(
 	// Actually, this is very annoying in practice.
 	// Require cmd line arg names to either be (globally) unique or fully-qualified.
 	//cid = key_id;
+
 }
 
 
@@ -1079,6 +1122,11 @@ OptionCollection::load_option_file(
 	// std::cout << "load_option_file: arg_string=" << arg_string << "\n";
 	// for(ValueStrings::iterator it=val_strings.begin(); it!=val_strings.end(); it++)
 	// std::cout << "val_strings[] =" << *it << "\n";
+
+	// We don't support non-ASCII characters embedded in option names.
+	if ( has_non_ascii( arg_string ) ) {
+		throw( CREATE_EXCEPTION(excn::Exception, "Option from file " + arg_string + " has non-ASCII character starting at position " + std::to_string(non_ascii_pos(arg_string)) ) );
+	}
 
 	// Taking care of '-@MyOption' case
 	if ( arg_string.size() > 1 ) {
@@ -1139,6 +1187,9 @@ OptionCollection::set_option_value_cl(
 			// Pass empty string: Valid for some options and others will give error
 			opt.cl_value( string() );
 		} else {
+			if ( has_non_ascii( arg_strings.front() ) ) {
+				std::cout << "\n[ WARNING ] Parameter " << arg_strings.front() << " contains non-ASCII values.\n" << std::endl;
+			}
 			opt.cl_value( arg_strings.front() ); // Use the argument
 			arg_strings.pop_front(); // Remove the argument
 		}
@@ -1150,13 +1201,22 @@ OptionCollection::set_option_value_cl(
 				throw ( CREATE_EXCEPTION(excn::Exception,  "No values specified for multi-valued option -"+ key.id() ) );
 			}
 		} else if ( ! opt.is_cl_value( arg_strings.front() ) ) { // No values of correct type
+			if ( has_non_ascii( arg_strings.front() ) ) {
+				std::cout << "\n[ WARNING ] Parameter " << arg_strings.front() << " contains non-ASCII values.\n" << std::endl;
+			}
 			throw ( CREATE_EXCEPTION(excn::Exception,  "No values of the appropriate type specified for multi-valued option -"+key.id() ) );
 		} else { // Take value(s)
 			// This takes the first value even if the vector is full to trigger an error
+			if ( has_non_ascii( arg_strings.front() ) ) {
+				std::cout << "\n[ WARNING ] Parameter " << arg_strings.front() << " contains non-ASCII values.\n" << std::endl;
+			}
 			opt.cl_value( arg_strings.front() ); // Use the first argument
 			arg_strings.pop_front(); // Remove the first argument
 			while ( ( ! arg_strings.empty() ) &&  ( opt.can_hold_another() ) &&
 					( opt.is_cl_value( arg_strings.front() ) ) ) { // Take another value
+				if ( has_non_ascii( arg_strings.front() ) ) {
+					std::cout << "\n[ WARNING ] Parameter " << arg_strings.front() << " contains non-ASCII values.\n" << std::endl;
+				}
 				opt.cl_value( arg_strings.front() ); // Use the argument
 				arg_strings.pop_front(); // Remove the argument
 			}
@@ -1185,7 +1245,14 @@ OptionCollection::set_option_value_file(
 		if ( val_strings.size() > 1 ) { // Multiple values for a scalar option
 			throw( CREATE_EXCEPTION(excn::Exception,  " Multiple values specified for option -" + key.id() ) );
 		}
-		option( key ).cl_value( val_strings.empty() ? string() : *val_strings.begin() );
+		if ( val_strings.empty() ) {
+			option( key ).cl_value( string() );
+		} else {
+			if ( has_non_ascii( *val_strings.begin() ) ) {
+				std::cout << "\n[ WARNING ] Option file parameter " << *val_strings.begin() << " contains non-ASCII values.\n" << std::endl;
+			}
+			option( key ).cl_value( *val_strings.begin() );
+		}
 	} else { // Vector option key
 		runtime_assert( key.vector() );
 		if ( val_strings.empty() ) { // No values for a vector option
@@ -1195,8 +1262,11 @@ OptionCollection::set_option_value_file(
 					+ key.id() + " requiring one or more values" ) );
 			}
 		}
-		for ( ValueStrings::const_iterator i = val_strings.begin(), e = val_strings.end(); i != e; ++i ) {
-			option( key ).cl_value( *i );
+		for ( auto const & value: val_strings ) {
+			if ( has_non_ascii( value ) ) {
+				std::cout << "\n[ WARNING ] Option file parameter " << value << " contains non-ASCII values.\n" << std::endl;
+			}
+			option( key ).cl_value( value );
 		}
 	}
 }
