@@ -35,17 +35,6 @@
 #define MY__has_include( x ) 1
 #endif
 
-// Shared with utility/exit.hh
-#ifndef NORETURN
-#ifdef __GNUC__
-#  define NORETURN __attribute__ ((noreturn))
-#elif __clang__
-#  define NORETURN __attribute__ ((noreturn))
-#else
-#  define NORETURN
-#endif
-#endif
-
 /// @brief Function for unit testing only -- if an assertion failure is hit, throw an exception
 /// instead of exiting.  Don't let me catch you calling this function from anywhere besides a
 /// unit test.  Punishment will be swift.
@@ -67,6 +56,7 @@ bool maybe_throw_on_next_assertion_failure( char const * condition );
 #include <iosfwd>
 
 #include <utility/CSI_Sequence.hh>
+#include <utility/cxx_versioning_macros.hh>
 
 
 //////////////////////////////////////////////////////////////////////
@@ -172,11 +162,10 @@ print_backtrace( char const * /*unused*/ ) {
 #endif
 
 #ifdef __clang_analyzer__
-/// @details NORETURN to tell the Clang Static Analyzer that we don't continue on if we hit this point.
-bool handle_assert_failure( char const * condition, std::string const & file, int const line ) NORETURN;
-#else
-bool handle_assert_failure( char const * condition, std::string const & file, int const line );
+/// @details NORETURN_ATTR to tell the Clang Static Analyzer that we don't continue on if we hit this point.
+NORETURN_ATTR
 #endif
+bool handle_assert_failure( char const * condition, std::string const & file, int const line );
 
 // When used, this macro must be followed by a semi-colon to be beautified properly.
 #define debug_assert(condition) assert( ( condition ) || handle_assert_failure( #condition, __FILE__, __LINE__ ) )
