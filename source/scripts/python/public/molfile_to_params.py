@@ -1248,16 +1248,24 @@ def write_all_files(m, molfiles, num_frags, options, suffix=""): #{{{
     if not options.no_pdb:
         if options.conformers_in_one_file:
             pdb_file = "%s%s.pdb" % (options.pdb,suffix)
-            for i,molfile in enumerate(molfiles):
-                if i == 0:
-                    file_to_write = pdb_file
-                else:
-                    conformer_file = "%s%s_conformers.pdb" % (options.pdb,suffix)
-                    file_to_write = open(conformer_file,'a')
-                try:
-                    write_ligand_pdb(file_to_write, m, molfile, options.name, options.center, options.chain)
-                except ValueError as e:
-                    sys.exit(e)
+            conformer_file = "%s%s_conformers.pdb" % (options.pdb,suffix)
+            if not options.clobber and (os.path.exists(pdb_file) or os.path.exists(conformer_file)):
+                    print("File %s or %s already exist -- aborting!" % (pdb_file, conformer_file))
+                    print("Use --clobber to overwrite existing files.")
+                    return 4
+            else:
+                #making sure the conformer file is empty before start appending
+                file_to_write = open(conformer_file,'w')
+                file_to_write.close()
+                for i,molfile in enumerate(molfiles):
+                    if i == 0:
+                        file_to_write = pdb_file
+                    else:
+                        file_to_write = open(conformer_file,'a')
+                    try:
+                        write_ligand_pdb(file_to_write, m, molfile, options.name, options.center, options.chain)
+                    except ValueError as e:
+                        sys.exit(e)
         else:
             for i, molfile in enumerate(molfiles):
                 pdb_file = "%s_%04i%s.pdb" % (options.pdb, i+1, suffix)
