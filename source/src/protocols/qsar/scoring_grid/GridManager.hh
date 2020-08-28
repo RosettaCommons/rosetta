@@ -53,7 +53,8 @@ public:
 		core::pose::Pose const & pose,
 		core::Vector const & center,
 		std::string const & chain,
-		bool exclude = true );
+		bool exclude = true,
+		core::Real fuzz_factor = 0.0);
 
 	/// @brief Get a set of grids for the given pose, centered on the given center, including/excluding the given chains.
 	GridSetCOP get_grids(
@@ -61,16 +62,46 @@ public:
 		core::pose::Pose const & pose,
 		core::Vector const & center,
 		char chain,
-		bool exclude = true );
+		bool exclude = true,
+		core::Real fuzz_factor = 0.0);
 
 	/// @brief Get a set of grids for the given pose, centered on the given center, including/excluding the given chains,
 	/// using the given prototype as the prototype.
+	/// fuzz_factor is the distance by which to consider the center "close enough" not to regenerate
 	GridSetCOP get_grids(
 		GridSet const & prototype,
 		core::pose::Pose const & pose,
 		core::Vector const & center,
-		utility::vector1< std::string > chains,
-		bool exclude = true );
+		utility::vector1< std::string > const & chains,
+		bool exclude = true,
+		core::Real fuzz_factor = 0.0);
+
+protected:
+
+	/// @brief Compute the hash string for on-disk/in-memory storage.
+	std::string
+	compute_hash(
+		GridSet const & prototype,
+		core::pose::Pose const & pose,
+		core::Vector const & center,
+		utility::vector1< std::string > const & chains,
+		bool exclude = true
+	) const;
+
+	GridSetCOP
+	find_grid_set(std::string const & chain_hash ) const;
+
+	GridSetCOP
+	fuzzy_find_grid_set(
+		GridSet const & prototype,
+		core::pose::Pose const & pose,
+		core::Vector const & center,
+		utility::vector1< std::string > const & chains,
+		bool exclude,
+		core::Real fuzz_factor ) const;
+
+	/// @brief Insert the given GridSet into the grid_set_cache under the given index value.
+	void insert_into_cache( std::string const & hash_val, core::Vector const & center, GridSetOP const & grid_set );
 
 private:
 
@@ -78,12 +109,11 @@ private:
 	GridManager(GridManager const &) = delete;
 	GridManager const & operator = (GridManager const & ) = delete;
 
-	/// @brief Insert the given GridSet into the grid_set_cache under the given index value.
-	void insert_into_cache( std::string const & hash_val, GridSetOP const & grid_set );
-
 private:
 
 	std::map< std::string, GridSetCOP > grid_set_cache_;
+	// The centers in the cache, for fuzzy distance finding.
+	utility::vector1< core::Vector > centers_;
 
 };
 

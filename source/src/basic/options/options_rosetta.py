@@ -7279,7 +7279,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	Option_Group( 'qsar',
 		Option( 'weights','String',default='talaris2013',desc = 'select qsar weight set to use'),
 		Option( 'grid_dir','String',desc = 'Directory to store grids in'),
-		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size')
+		Option( 'max_grid_cache_size','Integer',desc= 'delete old grids if grid cache exceeds specified size', default='10')
 	), # qsar
 
 	Option_Group( 'rbe',

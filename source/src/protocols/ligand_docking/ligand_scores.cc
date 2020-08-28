@@ -338,7 +338,8 @@ get_ligand_grid_scores(
 		return retval;
 	}
 
-	qsar::scoring_grid::GridSetCOP grid_set = qsar::scoring_grid::GridManager::get_instance()->get_grids( grid_set_prototype, test_pose, center, chain );
+	// The ligand likely moved during docking. Attempt to get the original grid used. Assume that we haven't moved more than 2.0 Ang or so.
+	qsar::scoring_grid::GridSetCOP grid_set = qsar::scoring_grid::GridManager::get_instance()->get_grids( grid_set_prototype, test_pose, center, chain, /*exclude*/ true, /*fuzz_factor*/ 2.0  );
 
 	if ( grid_set->is_normalization_enabled() ) {
 		//Note that the GridSet::total_score() function would also normalize, if the normalization function was set in the GridSet

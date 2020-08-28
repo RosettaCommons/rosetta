@@ -63,10 +63,11 @@ GridManager::get_grids(
 	core::pose::Pose const & pose,
 	core::Vector const & center,
 	std::string const & chain,
-	bool exclude )
+	bool exclude,
+	core::Real fuzz_factor )
 {
 	utility::vector1< std::string > chains(1, chain );
-	return get_grids( prototype, pose, center, chains, exclude );
+	return get_grids( prototype, pose, center, chains, exclude, fuzz_factor );
 }
 
 GridSetCOP
@@ -75,10 +76,11 @@ GridManager::get_grids(
 	core::pose::Pose const & pose,
 	core::Vector const & center,
 	char chain,
-	bool exclude )
+	bool exclude,
+	core::Real fuzz_factor )
 {
 	utility::vector1< std::string > chains(1, utility::to_string( chain ) );
-	return get_grids( prototype, pose, center, chains, exclude );
+	return get_grids( prototype, pose, center, chains, exclude, fuzz_factor );
 }
 
 GridSetCOP
@@ -86,24 +88,18 @@ GridManager::get_grids(
 	GridSet const & prototype,
 	core::pose::Pose const & pose,
 	core::Vector const & center,
-	utility::vector1< std::string > chains,
-	bool exclude /*=true*/ )
+	utility::vector1< std::string > const & chains,
+	bool exclude /*=true*/,
+	core::Real fuzz_factor /*=0.0*/ )
 {
-	std::string chain_hash;
+	std::string const chain_hash = compute_hash(prototype, pose, center, chains, exclude );
 
-	// Include the fingerprint of the grid setup and the center of the grid in with the pose hash.
-	// We don't need to be all that accurate with the position of the center. If we're off by 0.1 Ang, it shouldn't make too much difference.
-	if ( ! exclude ) {
-		chain_hash = core::pose::get_sha1_hash_from_chains(chains, pose, numeric::truncate_and_serialize_xyz_vector(center,1) + prototype.hash_fingerprint() );
-	} else {
-		chain_hash = core::pose::get_sha1_hash_excluding_chains(chains, pose, numeric::truncate_and_serialize_xyz_vector(center,1) + prototype.hash_fingerprint() );
-	}
+	GridSetCOP grid_set = find_grid_set( chain_hash );
+	if ( grid_set ) { return grid_set; }
 
-	std::map<std::string,GridSetCOP>::const_iterator grid_cache_entry(grid_set_cache_.find(chain_hash));
-
-	if ( grid_cache_entry != grid_set_cache_.end() ) { //we've already seen this conformation, load the associated grid out of the map
-		TR << "Found a conformation matching hash: " << chain_hash << " Loading from grid cache" <<std::endl;
-		return grid_cache_entry->second;
+	if ( fuzz_factor > 0.0 ) {
+		grid_set = fuzzy_find_grid_set( prototype, pose, center, chains, exclude, fuzz_factor );
+		if ( grid_set ) { return grid_set; }
 	}
 
 	bool grid_directory_active = basic::options::option[basic::options::OptionKeys::qsar::grid_dir].user();
@@ -112,12 +108,6 @@ GridManager::get_grids(
 		TR.Warning << "option -qsar:grid_dir is not set.  Use this flag to specify a directory to store scoring grids.  This will save you a huge amount of time" <<std::endl;
 	} else if ( !utility::file::file_exists(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()) ) {
 		utility_exit_with_message(basic::options::option[basic::options::OptionKeys::qsar::grid_dir]()+" does not exist. specify a valid path with -qsar:grid_dir");
-	}
-
-	if ( basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].user() &&
-			grid_set_cache_.size()  >= core::Size(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() ) ) {
-		TR << "Grid cache exceeds max_cache_size, clearing old scoring grids to save memory." <<std::endl;
-		grid_set_cache_.clear();
 	}
 
 	//Try to read it off the disk
@@ -131,7 +121,7 @@ GridManager::get_grids(
 			GridSetOP new_grid_set( new GridSet );
 			new_grid_set->deserialize(gridmap_data.get_array());
 			TR << "successfully read grids from the disk for conformation matching hash" << chain_hash <<std::endl;
-			insert_into_cache( chain_hash, new_grid_set );
+			insert_into_cache( chain_hash, center, new_grid_set );
 			return new_grid_set;
 		}
 	}
@@ -143,7 +133,7 @@ GridManager::get_grids(
 	GridSetOP new_grid_set( prototype.clone() );
 	new_grid_set->reinitialize( pose, center );
 
-	insert_into_cache( chain_hash, new_grid_set );
+	insert_into_cache( chain_hash, center, new_grid_set );
 
 	if ( grid_directory_active ) {
 		//if we just made a grid, we should write it to the disk for safekeeping.
@@ -167,13 +157,72 @@ GridManager::get_grids(
 	return new_grid_set;
 }
 
+std::string
+GridManager::compute_hash(
+	GridSet const & prototype,
+	core::pose::Pose const & pose,
+	core::Vector const & center,
+	utility::vector1< std::string > const & chains,
+	bool exclude
+) const {
+	// Include the fingerprint of the grid setup and the center of the grid in with the pose hash.
+	// We don't need to be all that accurate with the position of the center. If we're off by 0.1 Ang, it shouldn't make too much difference.
+	if ( ! exclude ) {
+		return core::pose::get_sha1_hash_from_chains(chains, pose, numeric::truncate_and_serialize_xyz_vector(center,1) + prototype.hash_fingerprint() );
+	} else {
+		return core::pose::get_sha1_hash_excluding_chains(chains, pose, numeric::truncate_and_serialize_xyz_vector(center,1) + prototype.hash_fingerprint() );
+	}
+}
+
+GridSetCOP
+GridManager::find_grid_set(std::string const & chain_hash ) const {
+	std::map<std::string,GridSetCOP>::const_iterator grid_cache_entry(grid_set_cache_.find(chain_hash));
+
+	if ( grid_cache_entry != grid_set_cache_.end() ) { //we've already seen this conformation, load the associated grid out of the map
+		TR << "Found a conformation matching hash: " << chain_hash << " Loading from grid cache" <<std::endl;
+		return grid_cache_entry->second;
+	}
+	return nullptr;
+}
+
+GridSetCOP
+GridManager::fuzzy_find_grid_set(
+	GridSet const & prototype,
+	core::pose::Pose const & pose,
+	core::Vector const & center,
+	utility::vector1< std::string > const & chains,
+	bool exclude,
+	core::Real fuzz_factor ) const
+{
+	// See if any of the current centers is close enough.
+	for ( core::Vector const & new_center: centers_ ) {
+		if ( new_center.distance( center ) > fuzz_factor ) { continue; }
+
+		// (We can't necessarily trust that the hash will be the same, even with the new center matching.)
+		std::string const chain_hash = compute_hash(prototype, pose, new_center, chains, exclude );
+		GridSetCOP grid_cache = find_grid_set( chain_hash );
+		if ( grid_cache ) { return grid_cache; }
+	}
+
+	return nullptr; // didn't find.
+}
+
 /// @brief Insert the given GridSet into the grid_set_cache under the given index value.
 void
-GridManager::insert_into_cache( std::string const & hash_val, GridSetOP const & grid_set ) {
+GridManager::insert_into_cache( std::string const & hash_val, core::Vector const & center, GridSetOP const & grid_set ) {
 	if ( grid_set_cache_.count( hash_val ) != 0 ) {
 		utility_exit_with_message( "Error: Attempting to insert a new GridSet into the cache over an existing one.");
 	}
+	if ( basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size].active() &&
+			grid_set_cache_.size()  >= core::Size(basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() ) ) {
+		TR << "Grid cache exceeds max_cache_size of " << basic::options::option[basic::options::OptionKeys::qsar::max_grid_cache_size]() << ", clearing old scoring grids to save memory." <<std::endl;
+		// Can/Should we be more intelligent about this than simply blowing away the cache?
+		grid_set_cache_.clear();
+		centers_.clear();
+	}
+
 	grid_set_cache_[ hash_val ] = grid_set;
+	centers_.push_back( center );
 	// We assume that there aren't any further modifications of the cached grid_set
 }
 
