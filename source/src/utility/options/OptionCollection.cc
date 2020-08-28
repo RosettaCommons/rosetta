@@ -547,8 +547,8 @@ void OptionCollection::load_options_from_stream(
 			load_options_from_file(ObjexxFCL::trim(file_string2), cid);
 		} else if ( (stream ) && len_trim_whitespace(line) > 0 && stripped_whitespace(line)[0] != '#' ) {
 			if ( has_non_ascii( line ) ) {
-					std::cout << "\n[WARNING] Option file line contains a non-ASCII character at position " << non_ascii_pos( line ) << std::endl;
-					std::cout << line << '\n' << std::endl;
+				std::cout << "\n[WARNING] Option file line contains a non-ASCII character at position " << non_ascii_pos( line ) << std::endl;
+				std::cout << line << '\n' << std::endl;
 			}
 			throw(CREATE_EXCEPTION(excn::Exception,  "Comments in an option file must begin with '#', options must begin with '-' the line:\n"
 				+stripped_whitespace(line)+"\n is incorrectly formatted"));
