@@ -244,7 +244,7 @@ StepWiseLegacyClustererSilentBased::do_some_clustering() {
 			if ( pose_output_list_.size() >= max_decoys_ ) break;
 		} else {
 			num_pose_in_cluster_[ found_close_cluster ]++;
-			if ( numbered_pdb_output_ && num_pose_in_cluster_[ found_close_cluster ] <= 10 ) {
+			if ( numbered_pdb_output_ && found_close_cluster <= 10 ) {
 				// output 10 representatives.
 				std::stringstream ss;
 				ss << "c." << found_close_cluster - 1 << "." << num_pose_in_cluster_[ found_close_cluster ] - 1 << ".pdb";

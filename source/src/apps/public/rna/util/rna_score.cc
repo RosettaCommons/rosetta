@@ -409,6 +409,8 @@ void RNA_ScoreMover::apply( core::pose::Pose & pose ) {
 		if ( ! option[ original_input ].user() ) {
 			FullModelPoseBuilder builder;
 			utility::vector1< pose::PoseOP > input_poses;
+			// we could add one back in as a consequence of build()
+			remove_virtual_residues( pose );
 			input_poses.push_back( utility::pointer::make_shared< Pose >( pose ) );
 			builder.set_input_poses( input_poses );
 			builder.set_options( option );
