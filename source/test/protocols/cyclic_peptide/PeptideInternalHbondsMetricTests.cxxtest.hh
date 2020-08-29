@@ -74,20 +74,26 @@ public:
 		filter.set_exclusion_distance(0);
 		filter.set_hbond_cutoff(5);
 		TS_ASSERT_EQUALS( filter.apply(*pose), true );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 5.0 );
 		filter.set_hbond_cutoff(6);
 		TS_ASSERT_EQUALS( filter.apply(*pose), false );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 5.0 );
 
 		filter.set_exclusion_distance(1);
 		filter.set_hbond_cutoff(5);
 		TS_ASSERT_EQUALS( filter.apply(*pose), true );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 5.0 );
 		filter.set_hbond_cutoff(6);
 		TS_ASSERT_EQUALS( filter.apply(*pose), false );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 5.0 );
 
 		filter.set_exclusion_distance(2);
 		filter.set_hbond_cutoff(3);
 		TS_ASSERT_EQUALS( filter.apply(*pose), true );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 3.0 );
 		filter.set_hbond_cutoff(4);
 		TS_ASSERT_EQUALS( filter.apply(*pose), false );
+		TS_ASSERT_EQUALS( filter.report_sm(*pose), 3.0 );
 
 		TR << "Finished PeptideInternalHbondsMetricTests:test_peptide_internal_hbonds_filter." << std::endl;
 	}

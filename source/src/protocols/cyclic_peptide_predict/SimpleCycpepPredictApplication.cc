@@ -1791,7 +1791,7 @@ SimpleCycpepPredictApplication::run() const {
 		TR << irepeat << "\t";
 		if ( native_pose ) { TR << native_rmsd; }
 		else { TR << "--"; }
-		TR << "\t" << pose->energies().total_energy() << "\t" << -1.0*final_hbonds << "\t" << cis_peptide_bonds << std::endl;
+		TR << "\t" << pose->energies().total_energy() << "\t" << static_cast<core::Size>( std::round( final_hbonds) ) << "\t" << cis_peptide_bonds << std::endl;
 
 		if ( silent_out_ || silentlist_out_ ) { //Writing directly to silent file or to a list of silent file data OPs
 			core::io::silent::SilentFileOptions opts;
@@ -1805,7 +1805,7 @@ SimpleCycpepPredictApplication::run() const {
 			}
 			ss->fill_struct( *pose, std::string(tag) );
 			if ( native_pose ) ss->add_energy( "RMSD", native_rmsd ); //Add the RMSD to the energy to be written out in the silent file.
-			ss->add_energy( "HBOND_COUNT", -1.0*final_hbonds ); //Add the hbond count to be written out in the silent file.
+			ss->add_energy( "HBOND_COUNT", final_hbonds ); //Add the hbond count to be written out in the silent file.
 			ss->add_energy( "CIS_PEPTIDE_BOND_COUNT", cis_peptide_bonds ); //Add the cis-peptide bond count to be written out in the silent file.
 #ifdef BOINC_GRAPHICS
 			protocols::boinc::Boinc::update_graphics_current( *pose );
@@ -1821,7 +1821,7 @@ SimpleCycpepPredictApplication::run() const {
 			if ( silentlist_out_ ) {
 				silentlist_->push_back(ss);
 				core::Size curjob( summarylist_->size() + 1 );
-				summarylist_->push_back( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(-1.0*final_hbonds) ), cis_peptide_bonds ) );
+				summarylist_->push_back( utility::pointer::make_shared< HierarchicalHybridJD_JobResultsSummary >( my_rank_, curjob, pose->energies().total_energy(), (native_pose ? native_rmsd : 0), static_cast< core::Size >( std::round(final_hbonds) ), cis_peptide_bonds ) );
 			}
 		} else { //if pdb output
 			char outstring[512];
