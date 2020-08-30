@@ -125,7 +125,7 @@ public:
 
 class FileNotFound : public IOError {
 public:
-	FileNotFound(char const * file, int line, std::string const& not_found_file_name ) : IOError(file, line, std::string("unable to open file ") + file ), file_( not_found_file_name ) {};
+	FileNotFound(char const * file, int line, std::string const& not_found_file_name ) : IOError(file, line, std::string("unable to open file ") + not_found_file_name ), file_( not_found_file_name ) {};
 	void crash_log() const override {} // User error, not crash, & fix should be clear from error message.
 private:
 	std::string file_;
