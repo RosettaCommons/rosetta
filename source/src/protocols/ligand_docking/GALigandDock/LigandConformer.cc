@@ -83,6 +83,8 @@ LigandConformer::init_params() {
 	generation_tag_ = "";
 	rg_ = 0.0;
 	sample_ring_conformers_ = true;
+	ligand_typename_ = "";
+	negTdS_ = 0.0;
 }
 
 void
@@ -95,10 +97,11 @@ LigandConformer::initialize(
 	ref_pose_ = pose;
 	movingscs_ = movingscs;
 	update_conf( pose );
+	ligand_typename_ = pose->residue(ligid).name();
 
 	// get ligand chi dependence... this is a stupid way, should have a better way ...
 	core::conformation::Residue ligand( pose->residue( ligid ) );
-	core::Size nligchi( ligand.nchi());
+	core::Size nligchi( ligand.nchi() );
 	ligandchi_downstream_.resize( nligchi );
 
 	utility::vector1< core::Size > atmindex_defining_chi( nligchi, 0 );

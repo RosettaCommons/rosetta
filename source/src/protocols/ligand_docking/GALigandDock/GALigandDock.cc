@@ -1084,6 +1084,7 @@ GALigandDock::final_exact_scmin(
 		relax.set_scorefxn( scfxn_relax_ );
 	}
 	relax.set_movemap( mm );
+	relax.set_movemap_disables_packing_of_fixed_chi_positions(true);
 	relax.apply( pose );
 
 	TR << "final_scmin: score after relax: " << (*scfxn_relax_)(pose) <<std::endl;
