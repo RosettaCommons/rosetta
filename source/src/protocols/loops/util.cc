@@ -77,8 +77,7 @@
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL::format;
 
 static basic::Tracer TR( "protocols.loops.util" );
 

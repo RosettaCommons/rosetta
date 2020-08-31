@@ -83,11 +83,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-//Auto Headers
-
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
 
 
 namespace protocols {

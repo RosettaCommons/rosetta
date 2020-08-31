@@ -35,11 +35,6 @@
 #include <utility/vector1.hh>
 
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
-
 static basic::Tracer TR( "protocols.analysis.packstat" );
 using namespace core;
 
@@ -69,7 +64,6 @@ PackStatMover::apply( pose::Pose & pose )
 	using namespace core;
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-	using namespace ObjexxFCL::format;
 	using namespace numeric;
 	using namespace utility;
 

@@ -27,6 +27,7 @@ namespace fragment {
 namespace rna {
 
 using namespace core;
+using ObjexxFCL::SRange;
 
 FragmentLibrary::~FragmentLibrary() = default;
 

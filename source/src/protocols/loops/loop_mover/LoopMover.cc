@@ -42,8 +42,6 @@
 //Utility Headers
 
 
-/// ObjexxFCL headers
-
 // C++ Headers
 #include <iostream>
 #include <map>
@@ -55,15 +53,6 @@
 
 #include <numeric/random/random.hh>
 
-//Auto Headers
-
-
-// Auto-header: duplicate removed #include <utility/vector1.hh>
-
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace loops {
@@ -71,8 +60,6 @@ namespace loop_mover {
 
 ///////////////////////////////////////////////////////////////////////////////
 using namespace core;
-using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 
 LoopMover::LoopMover() :
 	Mover(),

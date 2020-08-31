@@ -27,8 +27,6 @@
 #include <core/chemical/rings/RingConformerSet.fwd.hh>
 #include <core/chemical/rings/RingConformer.hh>
 
-namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
-
 namespace protocols {
 namespace stepwise {
 namespace sampler {

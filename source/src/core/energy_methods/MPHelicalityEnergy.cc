@@ -61,9 +61,6 @@
 #include <set>
 
 
-// Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-// Auto using namespaces end
 using namespace core::scoring;
 using namespace core::scoring::methods;
 

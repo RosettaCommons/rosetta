@@ -82,10 +82,8 @@
 
 #include <utility/excn/Exceptions.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 
 
 using namespace core;

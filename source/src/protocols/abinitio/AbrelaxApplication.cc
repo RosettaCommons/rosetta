@@ -199,9 +199,7 @@
 #include <utility/vector0.hh>
 #include <ObjexxFCL/format.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL::format;
 
 static basic::Tracer tr( "protocols.abinitio.AbrelaxApplication" );
 

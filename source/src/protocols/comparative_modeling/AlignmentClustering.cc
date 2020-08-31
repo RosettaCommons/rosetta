@@ -60,10 +60,6 @@
 #include <core/pose/annotated_sequence.hh>
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 static basic::Tracer tr( "AlignmentClustering" );
 
@@ -181,7 +177,6 @@ AlignmentClustering::AlignmentClustering(){
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::sequence;
-	using namespace ObjexxFCL::format;
 	Real THRESHOLD_FOR_E_VAL = 1e-30;
 	Real MIN_GDT = .70;
 	Real MAX_GDT = .90;

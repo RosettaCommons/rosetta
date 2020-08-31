@@ -75,7 +75,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
+using namespace ObjexxFCL::format;
 
 namespace core {
 namespace scoring {

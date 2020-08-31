@@ -70,10 +70,6 @@
 
 // C++ headers
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace fmt { } } using namespace ObjexxFCL::fmt; // AUTO USING NS
-//Auto using namespaces end
-
 using basic::Error;
 using basic::Warning;
 

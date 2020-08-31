@@ -56,10 +56,7 @@
 #include <ObjexxFCL/format.hh>
 #include <basic/Tracer.hh>
 
-
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL::format;
 
 namespace protocols {
 namespace cluster {

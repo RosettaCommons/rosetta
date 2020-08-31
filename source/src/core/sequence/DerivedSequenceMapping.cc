@@ -26,10 +26,6 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace core {
 namespace sequence {

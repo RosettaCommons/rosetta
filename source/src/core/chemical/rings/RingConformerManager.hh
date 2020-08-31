@@ -19,9 +19,7 @@
 #include <core/chemical/rings/RingConformerManager.fwd.hh>
 
 // Package headers
-// No fwd.hh of RingConformer exists
-namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
-//#include <core/chemical/rings/RingConformer.hh>
+#include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/rings/RingSaturationType.hh>
 
 // Project headers

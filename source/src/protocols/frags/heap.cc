@@ -14,18 +14,7 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1A.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
-// #include <ObjexxFCL/FArray2D.hh>
-// #include <ObjexxFCL/FArray3D.hh>
-// #include <ObjexxFCL/FArray4D.hh>
-//#include <ObjexxFCL/format.hh>
-
-// C++ Headers
-//#include <algorithm>
-//#include <iostream>
+using namespace ObjexxFCL;
 
 namespace protocols {
 namespace frags {

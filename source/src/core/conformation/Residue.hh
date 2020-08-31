@@ -38,10 +38,7 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/AtomTypeSet.fwd.hh>
-
-// No fwd.hh
-namespace core { namespace chemical { namespace rings { struct RingConformer; } } }
-
+#include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.fwd.hh>
 #include <core/types.hh>
 

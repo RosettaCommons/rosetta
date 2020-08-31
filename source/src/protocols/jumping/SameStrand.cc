@@ -47,15 +47,6 @@
 #include <utility/vector1.hh>
 
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
-
-//// C++ headers
-//#include <cstdlib>
-//#include <string>
-//#include <vector>
 static basic::Tracer tr( "protocols.jumping" );
 
 namespace protocols {
@@ -214,7 +205,6 @@ SameStrand::read_from_file( std::string fn ) {
 #endif
 /// @detail write to stream ( opposite from read_from_file )
 void SameStrand::show( std::ostream& out ) const {
-	using namespace format;
 	for ( core::Size i = 1; i<=total_residue_; i++ ) {
 		for ( core::Size j = 1; j<=total_residue_; j++ ) {
 			out << ( eval(i,j) ? "E" : "." );

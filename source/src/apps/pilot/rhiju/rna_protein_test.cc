@@ -96,10 +96,6 @@ using core::util::T;
 
 #include <numeric/NumericTraits.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 using core::util::Error;
 using core::util::Warning;

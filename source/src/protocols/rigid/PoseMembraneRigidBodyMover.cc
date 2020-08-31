@@ -40,11 +40,6 @@
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 
-//Auto Headers
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace rigid {
@@ -67,7 +62,6 @@ void MovePoseToMembraneCenterMover::apply( core::pose::Pose & pose )
 	Vector const current_pose_center( estimate_membrane_center(pose) );
 
 	Real const pose_shifted_from_membrane_center( membrane_normal.dot( current_pose_center-membrane_center ) );
-	using namespace ObjexxFCL::format;
 	//TR << "MovePoseToMembraneCenterMover: estimate membrane center " << F(8,3,current_pose_center.x()) << F(8,3,current_pose_center.y()) << F(8,3,current_pose_center.z()) << " shifted by:" << F(8,3,pose_shifted_from_membrane_center) << std::endl;
 	if ( fabs(pose_shifted_from_membrane_center) > 20. ) {
 		Vector shift_back = -pose_shifted_from_membrane_center * membrane_normal;
@@ -92,7 +86,6 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 	Vector center(0);
 
 	for ( core::Size i=1; i<=topology.tmhelix(); ++i ) {
-		//using namespace ObjexxFCL::format;
 		//TR << "MovePoseToMembraneCenterMover: after moving center      " << I(4,i) << " " << topology.allow_tmh_scoring(i) << std::endl;
 
 		if ( !topology.allow_tmh_scoring(i) ) continue;
@@ -127,7 +120,6 @@ MovePoseToMembraneCenterMover::estimate_membrane_center( core::pose::Pose & pose
 		center = 0.5*(sum_membrane_anchor)/(float)(symm_info->num_bb_clones() + 1)/(float)topology.tmh_inserted();
 	}
 
-	//using namespace ObjexxFCL::format;
 	//TR << "Yifan debug: current origin          " << F(8,3,pose.conformation().atom_tree().root()->xyz().x()) << F(8,3,pose.conformation().atom_tree().root()->xyz().y()) << F(8,3,pose.conformation().atom_tree().root()->xyz().z()) << std::endl;
 	//TR << "Yifan debug: current membrane center " << F(8,3,center.x()) << F(8,3,center.y()) << F(8,3,center.z()) << std::endl;
 	//TR << "Yifan debug: current res 29 position " << F(8,3,pose.residue(29).atom("CA").xyz().x()) << F(8,3,pose.residue(29).atom("CA").xyz().y()) << F(8,3,pose.residue(29).atom("CA").xyz().z()) << std::endl;
@@ -211,7 +203,6 @@ WholeBodyTranslationMover::WholeBodyTranslationMover( core::Vector const & trans
 
 void WholeBodyTranslationMover::apply( core::pose::Pose & pose )
 {
-	using namespace ObjexxFCL::format;
 
 	// MovePoseToMembraneCenterMover move_pose_to_membrane_mover;
 

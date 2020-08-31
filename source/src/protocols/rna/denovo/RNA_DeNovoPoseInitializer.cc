@@ -78,8 +78,8 @@
 #include <utility/vector1.hh>
 #include <utility/stream_util.hh>
 
-using namespace ObjexxFCL; // AUTO USING NS
-using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 using namespace core::pose::rna::secstruct_legacy;
 using namespace core;
 using namespace core::pose::rna;

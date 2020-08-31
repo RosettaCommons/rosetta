@@ -28,10 +28,6 @@
 #include <sstream>
 #include <string>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace plot_hb {
 // mjo the new HBEvalTypes breaks this reporting mechanism!

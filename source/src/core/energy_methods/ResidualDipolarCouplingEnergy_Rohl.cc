@@ -61,11 +61,6 @@
 #include <string>
 #include <vector>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
 
 namespace core {
 namespace scoring {

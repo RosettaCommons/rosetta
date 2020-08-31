@@ -78,7 +78,7 @@ using namespace core;
 using namespace basic::options::OptionKeys;
 using namespace core::chemical::rna;
 using namespace core::scoring::rna::data;
-using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL::format;
 
 using utility::vector1;
 using utility::tools::make_vector1;

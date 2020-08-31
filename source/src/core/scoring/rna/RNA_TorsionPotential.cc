@@ -91,11 +91,6 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 
-//Auto using namespaces
-namespace std { } using namespace std; // AUTO USING NS
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
 ///////////////////////////
 
 

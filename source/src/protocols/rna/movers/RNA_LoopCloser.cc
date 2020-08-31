@@ -65,9 +65,7 @@
 #include <numeric/conversions.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
 
 
 using namespace core;

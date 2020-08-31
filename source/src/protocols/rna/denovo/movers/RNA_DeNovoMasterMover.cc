@@ -45,7 +45,7 @@ static basic::Tracer TR( "protocols.rna.denovo.movers.RNA_DeNovoMasterMover" );
 
 using namespace core;
 using namespace core::pose::rna;
-using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL::format;
 using namespace core::fragment::rna;
 using namespace core::import_pose;
 using namespace core::import_pose::libraries;

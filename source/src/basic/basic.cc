@@ -21,10 +21,7 @@
 // Numeric headers
 #include <numeric/constants.hh>  // for pi_2
 
-
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
 
 
 // C++ Headers

@@ -61,15 +61,9 @@
 #include <core/kinematics/Jump.hh>
 #include <utility/vector0.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace core {
 namespace pack {
-
-using namespace ObjexxFCL::format;
 
 
 static basic::Tracer TR( "core.pack.rtmin" );

@@ -35,11 +35,6 @@
 #include <utility/vector1.hh>
 
 
-//Auto using namespaces
-// To Author(s) of this code: our coding convention explicitly forbid of using ‘using namespace ...’ in header files outside class or function body, please make sure to refactor this out!
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-
-
 /////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////
 // Goal: to make a fragment object that can choose fragments
@@ -154,14 +149,14 @@ private:
 
 	// Probably should make following "vall" stuff a different object
 	// and, come on, these could be a vector to save memory!
-	FArray2D <core::Real> vall_torsions_;
-	FArray3D <core::Real> vall_non_main_chain_sugar_coords_;
-	FArray1D <char>  vall_sequence_;
-	FArray1D <bool>  vall_is_chainbreak_;
-	FArray2D <bool>  vall_edge_is_base_pairing_;
-	FArray1D <bool>  vall_makes_canonical_base_pair_;
-	FArray1D <char>  vall_secstruct_;
-	FArray1D <std::string>  vall_name_;
+	ObjexxFCL::FArray2D <core::Real> vall_torsions_;
+	ObjexxFCL::FArray3D <core::Real> vall_non_main_chain_sugar_coords_;
+	ObjexxFCL::FArray1D <char>  vall_sequence_;
+	ObjexxFCL::FArray1D <bool>  vall_is_chainbreak_;
+	ObjexxFCL::FArray2D <bool>  vall_edge_is_base_pairing_;
+	ObjexxFCL::FArray1D <bool>  vall_makes_canonical_base_pair_;
+	ObjexxFCL::FArray1D <char>  vall_secstruct_;
+	ObjexxFCL::FArray1D <std::string>  vall_name_;
 	core::Size vall_size_;
 	bool vall_non_main_chain_sugar_coords_defined_;
 

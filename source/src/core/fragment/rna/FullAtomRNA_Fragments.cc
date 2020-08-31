@@ -67,10 +67,8 @@
 #include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <numeric/random/random.fwd.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 using namespace core;
 using namespace core::import_pose;
 

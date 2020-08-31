@@ -19,6 +19,7 @@ namespace fragment {
 namespace rna {
 
 using namespace core;
+using ObjexxFCL::SRange;
 
 TorsionSet::TorsionSet( Size const size, Size const index_in_vall ){
 	torsions.dimension( core::chemical::rna::NUM_RNA_TORSIONS, SRange(0, size) );

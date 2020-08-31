@@ -105,10 +105,6 @@
 #include <core/scoring/constraints/Constraint.hh>
 #include <numeric/xyz.functions.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 using namespace core;
 using namespace core::conformation;
 //using namespace protocols;

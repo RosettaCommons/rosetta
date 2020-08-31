@@ -70,7 +70,7 @@
 static basic::Tracer TR( "protocols.rna.denovo.RNA_FragmentMonteCarlo" );
 
 using namespace core;
-using namespace ObjexxFCL::format; // AUTO USING NS
+using namespace ObjexxFCL::format;
 using namespace protocols::rna::denovo::movers;
 using namespace core::pose;
 using namespace core::pose::rna;

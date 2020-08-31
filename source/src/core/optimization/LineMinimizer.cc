@@ -31,11 +31,7 @@
 
 #include <utility/vector1.hh>
 
-
-//Auto using namespaces
-namespace ObjexxFCL {
-} using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
 
 static basic::Tracer TR( "core.optimization.LineMinimizer" );
 

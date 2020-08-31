@@ -48,8 +48,6 @@
 #include <sstream>
 #include <string>
 
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format;
-
 namespace core {
 namespace fragment {
 
@@ -160,8 +158,6 @@ void ConstantLengthFragSet::read_fragment_file( std::string filename, Size top25
 }
 
 void ConstantLengthFragSet::read_fragment_stream( std::string const & filename, std::string const & first_line, std::istream & data, Size top25, Size ncopies, bool bAnnotation ) {
-	using namespace ObjexxFCL;
-	using namespace ObjexxFCL::format;
 	using std::endl;
 	using std::istringstream;
 	using std::string;

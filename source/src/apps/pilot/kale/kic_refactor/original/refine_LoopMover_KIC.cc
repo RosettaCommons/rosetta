@@ -78,12 +78,6 @@
 #include <utility/vector1.hh>
 #include <fstream>
 
-//Auto Headers
-
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace loops {

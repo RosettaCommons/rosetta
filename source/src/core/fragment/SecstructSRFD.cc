@@ -30,11 +30,6 @@
 #include <utility/vector1.hh>
 
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
-
 namespace core {
 namespace fragment {
 
@@ -84,7 +79,6 @@ bool SecstructSRFD::is_applicable( kinematics::MoveMap const&, Size) const {
 }
 
 void SecstructSRFD::show( std::ostream &out ) const {
-	using namespace ObjexxFCL::format;
 	Parent::show( out );
 	out << sequence() << ' ' << secstruct() << ' ';
 }

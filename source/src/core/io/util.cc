@@ -73,10 +73,6 @@ namespace io {
 static basic::Tracer TR( "core.io.util" );
 
 
-using namespace ObjexxFCL::format; // AUTO USING NS
-
-
-
 /// @brief Write Pose energies information into a string and return it.
 /// @details Added during the 2016 Chemical XRW.
 /// @author Vikram K. Mulligan (vmullig@uw.edu) Jared Adolf-Bryfogle (jadolfbr@gmail.com)

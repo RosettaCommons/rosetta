@@ -23,9 +23,7 @@
 #include <ObjexxFCL/format.hh>
 #include <boost/algorithm/string.hpp>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL::format;
 
 namespace basic {
 

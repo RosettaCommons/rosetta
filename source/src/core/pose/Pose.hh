@@ -44,7 +44,7 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeFinder.fwd.hh>
 #include <core/chemical/Patch.fwd.hh>
-namespace core { namespace chemical { namespace rings { struct RingConformer; } } } // why no RingConformer.fwd.hh?
+#include <core/chemical/rings/RingConformer.fwd.hh>
 #include <core/chemical/AA.hh>
 
 #include <core/conformation/Residue.fwd.hh>

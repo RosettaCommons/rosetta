@@ -34,10 +34,6 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 // C++
 static basic::Tracer TR( "core.scoring.methods.MembraneEnvSmoothEnergy", basic::t_info );
 
@@ -203,7 +199,6 @@ MembraneEnvSmoothEnergy::residue_energy(
 
 	Real countN    =  0.0;
 	// iterate across neighbors within 12 angstroms
-	using namespace ObjexxFCL::format;
 	//TR << I(4,rsd.seqpos()) << std::endl;
 	for ( utility::graph::Graph::EdgeListConstIter
 			ir  = graph.get_node( rsd.seqpos() )->const_edge_list_begin(),

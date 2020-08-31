@@ -66,10 +66,6 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace dna {
@@ -106,7 +102,6 @@ using namespace pose;
 using namespace scoring;
 
 using namespace ObjexxFCL;
-using namespace ObjexxFCL::format;
 
 using basic::t_info;
 static basic::Tracer TR( "protocols.dna.DnaInterfacePacker" );

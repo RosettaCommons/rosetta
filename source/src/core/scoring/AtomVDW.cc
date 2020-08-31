@@ -34,10 +34,6 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace core {
 namespace scoring {
@@ -138,7 +134,6 @@ AtomVDW::setup_approximate_vdw_radii(
 	utility::vector1< int > const & atom_type_index,
 	chemical::AtomTypeSet const & atom_type_set
 ) {
-	using namespace ObjexxFCL::format;
 
 	Size const natoms_full( atom_vdw_.size() );
 	Size const natoms( atom_type_index.size() ); // # atoms in the db file

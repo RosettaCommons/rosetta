@@ -75,14 +75,6 @@
 #include <ObjexxFCL/format.hh>
 #include <fstream>
 
-//Auto Headers
-
-
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 namespace protocols {
 namespace loops {

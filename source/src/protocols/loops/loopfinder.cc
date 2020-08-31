@@ -34,9 +34,6 @@
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-
 
 static basic::Tracer TR( "protocols.loops.util" );
 static basic::Tracer tr( "protocols.loops" );

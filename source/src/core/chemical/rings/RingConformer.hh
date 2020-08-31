@@ -15,6 +15,8 @@
 #ifndef INCLUDED_core_chemical_rings_RingConformer_HH
 #define INCLUDED_core_chemical_rings_RingConformer_HH
 
+#include <core/chemical/rings/RingConformer.fwd.hh>
+
 // Project header
 #include <core/types.hh>
 

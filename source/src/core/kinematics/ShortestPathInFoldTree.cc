@@ -38,7 +38,6 @@
 
 #include <basic/Tracer.hh>
 
-//Auto using namespaces
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -51,14 +50,6 @@
 #include <cereal/types/polymorphic.hpp>
 #include <cereal/types/utility.hpp>
 #endif // SERIALIZATION
-
-
-namespace ObjexxFCL {
-namespace format {
-}
-}
-using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
 
 
 namespace core {
@@ -291,7 +282,6 @@ ShortestPathInFoldTree::compute_dist_map( FoldTree const& f ) {
 void
 ShortestPathInFoldTree::build_peptide_table( core::kinematics::FoldTree const& f ) {
 	using namespace core::kinematics;
-	using namespace  ObjexxFCL::format;
 	res2jumps_.dimension( f.nres(), 5, -1 );   //5 entries per residue.
 	utility::vector1< int > leaves;
 	// go thru edges and fill res2jump array accordingly

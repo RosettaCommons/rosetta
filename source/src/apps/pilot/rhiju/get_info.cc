@@ -56,7 +56,6 @@ using namespace core;
 using namespace core::options;
 using namespace core::options::OptionKeys;
 using ObjexxFCL::FArray2D;
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
 
 
 ////////////////////////////////////////////////////////////////////////////////////

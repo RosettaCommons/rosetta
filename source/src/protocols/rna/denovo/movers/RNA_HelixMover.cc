@@ -55,10 +55,6 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
-
 
 using namespace core;
 

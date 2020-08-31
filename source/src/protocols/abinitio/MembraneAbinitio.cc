@@ -83,10 +83,8 @@
 #include <utility/vector1.hh>
 #include <numeric/random/random.fwd.hh>
 
-//Auto using namespaces
-namespace ObjexxFCL { } using namespace ObjexxFCL; // AUTO USING NS
-namespace ObjexxFCL { namespace format { } } using namespace ObjexxFCL::format; // AUTO USING NS
-//Auto using namespaces end
+using namespace ObjexxFCL;
+using namespace ObjexxFCL::format;
 
 
 static basic::Tracer tr( "protocols.membrane.abinitio", basic::t_info );
