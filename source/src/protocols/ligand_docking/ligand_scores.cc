@@ -97,6 +97,7 @@ get_interface_deltas(
 
 	// A very hacky way of guessing whether the components are touching:
 	// if pushed together by 1A, does fa_rep change at all?
+	scorefxn->score(*after_copy) ;
 	core::scoring::EnergyMap together_energies = after_copy->energies().total_energies(); // Make a copy
 	core::Real initial_fa_rep = after_copy->energies().total_energies()[ core::scoring::fa_rep ];
 	if ( normalization_function ) {
@@ -140,6 +141,8 @@ get_interface_deltas(
 	trans_mover.trans_axis( axis ); //Now move apart
 	trans_mover.step_size(500); //Make sure they're fully separated!
 	trans_mover.apply( *after_copy );
+
+	scorefxn->score(*after_copy) ;
 	core::scoring::EnergyMap const & separated_energies = after_copy->energies().total_energies(); // reference is fine
 	output_interface_deltas(retval, chain, scorefxn, together_energies, separated_energies, residues, prefix, normalization_function);
 
@@ -160,6 +163,7 @@ get_interface_deltas(
 		trans_mover.trans_axis(axis);
 		trans_mover.step_size(500);
 		trans_mover.apply(*after_copy);
+		(*scorefxn)(*after_copy);
 		std::string str(prefix);
 		if ( prefix != "" ) {
 			str += "_";
