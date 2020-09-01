@@ -1928,7 +1928,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	pose::Pose mini_pose;
 	Size count( 0 );
 	std::map< Size, Size > res_map;
-	for ( unsigned long & it : all_res_list ) {
+	for ( Size & it : all_res_list ) {
 		res_map[ it ] = ++count;
 		mini_pose.append_residue_by_bond( pose.residue( it ) );
 	}
@@ -1956,7 +1956,7 @@ output_benchmark_stuff( pose::Pose const & pose,
 	///////////////////////////////////////////////////////
 	// Some pymol crap.
 	pymol_out << "select  chunk"<< lead_zero_string_of(n,3) << ", resi ";
-	for ( unsigned long & it : all_res_list ) {
+	for ( Size & it : all_res_list ) {
 		pymol_out << it << "+";
 	}
 	pymol_out << "0" << std::endl;
@@ -2057,7 +2057,7 @@ figure_out_stems( pose::Pose & pose, std::string const & infile, utility::io::oz
 		stem_residues.unique();
 
 		std::cout << "  ASSOCIATED STEM RESIDUES ==> ";
-		for ( unsigned long & stem_residue : stem_residues ) {
+		for ( Size & stem_residue : stem_residues ) {
 			std::cout << " " << stem_residue;
 		}
 		std::cout << std::endl;
