@@ -35,6 +35,11 @@
 // Numeric headers
 #include <numeric/random/random.hh>
 
+#if (defined WIN32) && (!defined WIN_PYROSETTA)
+// Windows headers
+#include <Windows.h>
+#include <Wincrypt.h>
+#endif
 
 static basic::Tracer TR( "basic.random.init_random_generator" );
 
@@ -166,7 +171,7 @@ int determine_random_number_seed(
 			random_device_name = "CryptGenRandom";
 
 			// unique name for key container
-			ostringstream_t key_container_name;
+			std::ostringstream key_container_name;
 			key_container_name << "arzetta-" << GetCurrentProcessId() << "-" << GetCurrentThreadId();
 
 			// init cryptographic provider, creates key container
