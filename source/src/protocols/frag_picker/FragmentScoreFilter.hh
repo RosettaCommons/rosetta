@@ -102,7 +102,7 @@ private:
 	std::string direction_;
 
 	/// @brief Choose which score type to filter based on
-	std::string score_type_;
+	std::string score_type_ = "FragmentCrmsd";
 
 	/// @brief Start evaluating fragments at this residue
 	core::pose::ResidueIndexDescriptionCOP start_res_;
@@ -115,7 +115,7 @@ private:
 	/// @brief Should the final score be the minimum, maximum, or average of the positions queried?
 	std::string compute_ = "maximum";
 
-	/// @brief How to choose the best fragment at each position (default FragmentCrmsd; TotalScore can also be used)
+	/// @brief How to choose the best fragment at each position (by default, it takes the lowest FragmentCrmsd at each position and returns the average FragmentCrmsd of all positions; however, suggested use is to set sort_by_ to 'average', which calculates the average of the score_type for each fragment. You may specify a different score type (including TotalScore) here and it will choose the fragment with the lowest of that score type at each position.)
 	std::string sort_by_ = "FragmentCrmsd";
 
 	/// @brief Folder to place sequence profile files

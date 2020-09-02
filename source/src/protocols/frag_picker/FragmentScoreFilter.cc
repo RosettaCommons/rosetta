@@ -7,9 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file --path--/--class--.cc
-/// @brief --brief--
-/// @author --name-- (--email--)
+/// @file protocols/frag_picker/FragmentScoreFilter.cc
+/// @brief This filter analyzes fragment quality. How it does so is
+/// highly customizeable, but it is reccommended that you average the RMSD
+/// of all 200 fragments picked at every position. This is also the
+/// default behavior. It requires paths to external programs like
+/// SPARKS-X and blast-pgp, depending on your method of fragment picking.
+/// @author Cody Krivacic (krivacic@berkeley.edu)
 
 #include <protocols/frag_picker/FragmentScoreFilter.hh>
 #include <protocols/frag_picker/FragmentScoreFilterCreator.hh>
@@ -469,12 +473,29 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 
 	utility::vector1<frag_picker::Candidate> total_scores;
 	frag_picker::scores::FragmentScoreManagerOP ms = picker->get_score_manager();
+	utility::vector1<core::Real> scores;
+	int score_id = score_component->get_id();
 
 
 
 	// For each residue position, sort final fragments by either total
 	// score or some score chosen in the XML file.
-	if ( sort_by_ == "TotalScore" ) {
+	if ( sort_by_ == "average" ) {
+		TR.Debug << "Averaging all fragments" << std::endl;
+		// core::Size score_id = ms->get_component_by_name(score_type_)->get_id();
+		// Loop over final candidates and add to vector of all scores
+		for ( frag_picker::Candidates cs : final_fragments ) {
+			utility::vector1<core::Real> cs_scores;
+			for ( frag_picker::Candidate ct : cs ) {
+				frag_picker::scores::FragmentScoreMap candidate_scoremap = *ct.second;
+				utility::vector1<core::Real> score_components = candidate_scoremap.get_score_components();
+				core::Real fragment_score = score_components[score_id];
+				cs_scores.push_back(fragment_score);
+			}
+			core::Real average = std::accumulate( cs_scores.begin(), cs_scores.end(), 0.0 ) / cs_scores.size();
+			scores.push_back(average);
+		}
+	} else if ( sort_by_ == "TotalScore" ) {
 		TR.Debug << "Sorting by total score" <<std::endl;
 		// Loop over final candidates and find the best-scoring ones
 		for ( frag_picker::Candidates cs : final_fragments ) {
@@ -520,15 +541,15 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 		}
 	}
 
-	utility::vector1<core::Real> scores;
-	int score_id = score_component->get_id();
 
 	// Loop over best-scoring candidates and get the score component
 	// specified by the user
-	for ( frag_picker::Candidate ct : total_scores ) {
-		frag_picker::scores::FragmentScoreMap scoremap = *ct.second;
-		utility::vector1<core::Real> score_components = scoremap.get_score_components();
-		scores.push_back(score_components[score_id]);
+	if ( sort_by_ != "average" ) {
+		for ( frag_picker::Candidate ct : total_scores ) {
+			frag_picker::scores::FragmentScoreMap scoremap = *ct.second;
+			utility::vector1<core::Real> score_components = scoremap.get_score_components();
+			scores.push_back(score_components[score_id]);
+		}
 	}
 
 	core::Real result = get_result( scores );
@@ -541,8 +562,10 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 		std::string user_name = this->get_user_defined_name();
 		oss << std::endl << filter_name << " " << user_name + ": " << std::endl;
 
-		core::Size index = 1 + start_res;
+		core::Size index = start_res;
 		for ( core::Real score : scores ) {
+			TR.Debug << "Index is " << utility::to_string(index) << std::endl;
+			TR.Debug << "Residue number is " << utility::to_string(index - start_res + start_res_orig) << std::endl;
 			core::conformation::Residue residue = pose_chain_OP->residue(index);
 			std::string restype = residue.name3();
 			std::string resnum = utility::to_string(index - start_res + start_res_orig);
@@ -551,7 +574,7 @@ core::Real FragmentScoreFilter::compute( core::pose::Pose const pose ) const
 			oss << temp_str << std::endl;
 			++index;
 		}
-		runtime_assert( index == end_res );
+		runtime_assert( index == end_res + 1 );
 
 		core::Real min_score = *std::min_element( scores.begin(), scores.end() );
 		core::Size min_residue = std::distance( scores.begin(), std::min_element( scores.begin(), scores.end() ) ) + start_res_orig;
