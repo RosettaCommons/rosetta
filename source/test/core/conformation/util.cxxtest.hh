@@ -196,13 +196,13 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		Residue const & glucose( monosaccharide.residue( 1 ) );
 		utility::vector1< core::uint > const & ring_atoms( glucose.type().ring_atoms( 1 ) );
 
-		uint const O1_index( glucose.atom_index( " O1 " ) );
-		uint const O2_index( glucose.atom_index( " O2 " ) );
-		uint const O3_index( glucose.atom_index( " O3 " ) );
-		uint const O4_index( glucose.atom_index( " O4 " ) );
-		uint const O5_index( glucose.atom_index( " O5 " ) );
-		uint const O6_index( glucose.atom_index( " O6 " ) );
-		uint const C6_index( glucose.atom_index( " C6 " ) );
+		core::uint const O1_index( glucose.atom_index( " O1 " ) );
+		core::uint const O2_index( glucose.atom_index( " O2 " ) );
+		core::uint const O3_index( glucose.atom_index( " O3 " ) );
+		core::uint const O4_index( glucose.atom_index( " O4 " ) );
+		core::uint const O5_index( glucose.atom_index( " O5 " ) );
+		core::uint const O6_index( glucose.atom_index( " O6 " ) );
+		core::uint const C6_index( glucose.atom_index( " C6 " ) );
 
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O1_index, ring_atoms ), 1 );
 		TS_ASSERT_EQUALS( position_of_atom_on_ring( glucose, O2_index, ring_atoms ), 2 );

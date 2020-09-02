@@ -254,9 +254,9 @@ public:  // Test //////////////////////////////////////////////////////////////
 		Residue const & Glc( glucose.residue( 1 ) );
 		Residue const & Ser( serine.residue( 1 ) );
 
-		uint const O1_index( Glc.atom_index( " O1 " ) );
-		uint const O6_index( Glc.atom_index( " O6 " ) );
-		uint const OG_index( Ser.atom_index( " OG " ) );
+		core::uint const O1_index( Glc.atom_index( " O1 " ) );
+		core::uint const O6_index( Glc.atom_index( " O6 " ) );
+		core::uint const OG_index( Ser.atom_index( " OG " ) );
 
 		// An alpha D-sugar has an axial attachment of its O1.
 		TS_ASSERT_EQUALS( is_atom_axial_or_equatorial( Glc, O1_index ), AXIAL );
