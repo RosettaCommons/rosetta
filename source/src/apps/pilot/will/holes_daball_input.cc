@@ -28,9 +28,6 @@
 #include <utility/io/izstream.hh>
 
 
-#include <pstream.h>
-
-
 #include <sstream>
 #include <fstream>
 
@@ -82,7 +79,8 @@ void test( std::string fname ) {
 		//  // cout << "PoseBalls " << i << " " << pb.index_to_id(i) << " " << b.x() << " " << b.y() << " " << b.z() << " " << b.r() <<  endl;
 		cout << b.x() << " " << b.y() << " " << b.z() << " " << b.r() << " " << endl;
 	}
-	cout << "END" << endl << redi::peof;
+	cout << "END" << endl;
+	fclose( stdout );
 
 
 }
