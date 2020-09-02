@@ -24,6 +24,12 @@
 #include <string>
 #include <iosfwd>
 
+#if _WIN32
+// DELETE is one of the "Standard Access Rights" in Windows
+// https://docs.microsoft.com/en-us/windows/win32/secauthz/standard-access-rights
+#undef DELETE
+#endif
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {
