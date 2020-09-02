@@ -143,7 +143,7 @@ public:
 			og_pose->dump_pdb(test_file + ".io.pdb");
 
 			// 2. create the sfr
-			core::io::StructFileRepOptionsOP options( core::io::StructFileRepOptionsOP( utility::pointer::make_shared< core::io::StructFileRepOptions >() ) );
+			core::io::StructFileRepOptionsOP options = utility::pointer::make_shared< core::io::StructFileRepOptions >();
 			core::io::mmtf::set_mmtf_default_options( *options );
 			core::io::pose_to_sfr::PoseToStructFileRepConverter converter( *options );
 			converter.init_from_pose( *og_pose );
