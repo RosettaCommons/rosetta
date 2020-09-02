@@ -84,6 +84,7 @@ public: // Types
 	using Super::sarray_;
 	using Super::shift_;
 	using Super::shift_set;
+	using Super::size_of;
 	using Super::size_set;
 	using Super::s1_;
 	using Super::s2_;
