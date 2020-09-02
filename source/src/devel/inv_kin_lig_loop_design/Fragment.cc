@@ -12,6 +12,9 @@
 /// @brief
 /// @author
 
+#ifdef WIN32
+#define _USE_MATH_DEFINES
+#endif
 #include <climits>
 #include <iostream>
 #include <fstream>
@@ -22,9 +25,6 @@
 // #include <Util/Erg.hh>
 #include <devel/inv_kin_lig_loop_design/std_extra.hh>
 
-#ifdef WIN32
-#define _USE_MATH_DEFINES
-#endif
 #include <cmath>
 
 #include <numeric/random/random.hh>
