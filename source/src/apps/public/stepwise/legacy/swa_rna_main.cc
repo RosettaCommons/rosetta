@@ -129,9 +129,6 @@
 #include <map>
 #include <cstdlib>
 #include <ctime>
-#include <unistd.h>
-#include <libgen.h>
-#define GetCurrentDir getcwd
 
 #include <list>
 #include <cstdio>

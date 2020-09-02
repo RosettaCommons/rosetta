@@ -169,7 +169,6 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdio>
-#include <execinfo.h>
 #include <iosfwd>
 #include <iostream>
 #include <limits>

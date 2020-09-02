@@ -64,11 +64,6 @@
 #include <core/pack/task/operation/task_op_schemas.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
-
-#ifdef WIN32
-#include <core/graph/Graph.hh>
-#endif
-
 namespace protocols {
 namespace splice {
 typedef utility::vector1<utility::vector1<core::conformation::ResidueOP> > res_matrix;

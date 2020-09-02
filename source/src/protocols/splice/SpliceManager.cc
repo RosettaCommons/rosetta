@@ -28,7 +28,6 @@
 #include <iostream>
 #include <sstream>
 #include <utility/string_util.hh>
-#include <dirent.h>
 #include <protocols/toolbox/superimpose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
