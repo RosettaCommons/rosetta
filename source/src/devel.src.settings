@@ -38,11 +38,9 @@ sources = {
 		"RestrictRegion",
 	],
 	"devel/denovo_design/calculators": [
-		"CavityCalculator",
 		"ResidueCentralityCalculator",
 	],
 	"devel/denovo_design/filters": [
-		"CavityVolumeFilter",
 		"CoreResiduesPerElementFilter",
 		"FoldabilityFilter",
 	],

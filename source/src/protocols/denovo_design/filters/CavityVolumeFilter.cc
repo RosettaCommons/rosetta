@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/filters/CavityVolumeFilter.cc
+/// @file src/protocols/denovo_design/filters/CavityVolumeFilter.cc
 /// @brief Tom's Denovo design protocol
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) -- Moved from devel to protocols.
 
 // Unit headers
-#include <devel/denovo_design/filters/CavityVolumeFilter.hh>
-#include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
+#include <protocols/denovo_design/filters/CavityVolumeFilter.hh>
+#include <protocols/denovo_design/filters/CavityVolumeFilterCreator.hh>
 
 // Protocol Headers
-#include <devel/denovo_design/calculators/CavityCalculator.hh>
+#include <protocols/denovo_design/calculators/CavityCalculator.hh>
 
 // Project Headers
 #include <core/conformation/Residue.hh>
@@ -34,9 +35,11 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/MetricValue.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
@@ -59,11 +62,11 @@
 #endif
 
 
-static basic::Tracer TR( "devel.denovo_design.filters.CavityVolumeFilter" );
+static basic::Tracer TR( "protocols.denovo_design.filters.CavityVolumeFilter" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
@@ -226,6 +229,28 @@ void CavityVolumeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		attlist );
 }
 
+/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
+/// included in publications resulting from it)?  Yes, it does.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+bool
+CavityVolumeFilter::filter_is_unpublished() const {
+	return true;
+}
+
+/// @brief Provide a list of authors and their e-mail addresses, as strings.
+/// @returns A pairs of ("Tom Linsky", "tlinsky@gmail.com").
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
+CavityVolumeFilter::provide_authorship_info_for_unpublished() const {
+	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >{
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		class_name(), basic::citation_manager::CitedModuleType::Filter,
+		"Tom Linsky", "Institute for Protein Design, University of Washington", "tlinsky@gmail.com",
+		"Created this filter."
+		)
+		};
+}
+
 std::string CavityVolumeFilterCreator::keyname() const {
 	return CavityVolumeFilter::class_name();
 }
@@ -244,6 +269,6 @@ void CavityVolumeFilterCreator::provide_xml_schema( utility::tag::XMLSchemaDefin
 
 } // namespace filters
 } // namespace denovo_design
-} // namespace devel
+} // namespace protocols
 
 

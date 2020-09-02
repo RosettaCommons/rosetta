@@ -20,7 +20,6 @@
 #include <devel/denovo_design/filters/FoldabilityFilter.fwd.hh>
 
 // Project headers
-#include <devel/denovo_design/calculators/CavityCalculator.hh>
 #include <protocols/denovo_design/components/Picker.fwd.hh>
 
 // Protocol headers

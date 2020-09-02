@@ -25,7 +25,7 @@
 #include <sstream>
 
 // Filter creator headers
-#include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
+#include <protocols/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
@@ -40,8 +40,8 @@ class BackwardsDevelFilterCreatorTests : public CxxTest::TestSuite
 {
 public:
 
-	void test_devel_denovo_design_filters_CavityVolumeFilterCreator_name()
-	{ devel::denovo_design::filters::CavityVolumeFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "CavityVolume" ); }
+	void test_protocols_denovo_design_filters_CavityVolumeFilterCreator_name()
+	{ protocols::denovo_design::filters::CavityVolumeFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "CavityVolume" ); }
 
 	void test_devel_denovo_design_filters_CoreResiduesPerElementFilterCreator_name()
 	{ devel::denovo_design::filters::CoreResiduesPerElementFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "CoreResiduesPerElement" ); }
@@ -71,8 +71,8 @@ public:
 	{ devel::buns::BuriedUnsatHbondFilter2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuriedUnsatHbonds2" ); }
 
 
-	//void test_devel_denovo_design_filters_CavityVolumeFilterCreator()
-	//{ devel::denovo_design::filters::CavityVolumeFilterCreator cr; std::cout << "devel::denovo_design::filters::CavityVolumeFilterCreator " << cr.keyname() << std::endl; }
+	//void test_protocols_denovo_design_filters_CavityVolumeFilterCreator()
+	//{ protocols::denovo_design::filters::CavityVolumeFilterCreator cr; std::cout << "protocols::denovo_design::filters::CavityVolumeFilterCreator " << cr.keyname() << std::endl; }
 	//
 	//void test_devel_denovo_design_filters_CoreResiduesPerElementFilterCreator()
 	//{ devel::denovo_design::filters::CoreResiduesPerElementFilterCreator cr; std::cout << "devel::denovo_design::filters::CoreResiduesPerElementFilterCreator " << cr.keyname() << std::endl; }

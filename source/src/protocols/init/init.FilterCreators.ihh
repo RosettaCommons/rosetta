@@ -58,6 +58,7 @@
 #include <protocols/fold_from_loops/filters/ScorePoseSegmentFromResidueSelectorFilterCreator.hh>
 #include <protocols/fold_from_loops/filters/ConstraintFulfilmentFilterCreator.hh>
 
+#include <protocols/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <protocols/denovo_design/filters/ExposedHydrophobicsFilterCreator.hh>
 #include <protocols/denovo_design/filters/PreProlineFilterCreator.hh>
 #include <protocols/denovo_design/filters/SSPredictionFilterCreator.hh>

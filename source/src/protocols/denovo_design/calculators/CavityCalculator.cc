@@ -7,13 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/denovo_design/calculators/CavityCalculator.cc
+/// @file protocols/denovo_design/calculators/CavityCalculator.cc
 /// @brief calculate centrality for all (or a subset of) residues
 /// @details
 /// @author Tom Linsky (tlinsky@uw.edu)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) -- Moved from devel to protocols.
 
 // Unit Headers
-#include <devel/denovo_design/calculators/CavityCalculator.hh>
+#include <protocols/denovo_design/calculators/CavityCalculator.hh>
 
 // Project Headers
 #include <basic/MetricValue.hh>
@@ -36,7 +37,7 @@
 #include <utility/excn/Exceptions.hh>
 
 
-static basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
+static basic::Tracer TR( "protocols.denovo_design.calculators.CavityCalculator" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -47,7 +48,7 @@ static basic::Tracer TR( "devel.denovo_design.calculators.CavityCalculator" );
 #include <cereal/types/polymorphic.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace calculators {
 
@@ -131,7 +132,7 @@ CavityCalculator::recompute( core::pose::Pose const & pose )
 
 } // calculators
 } // denovo_design
-} // devel
+} // protocols
 
 
 #ifdef    SERIALIZATION
@@ -139,7 +140,7 @@ CavityCalculator::recompute( core::pose::Pose const & pose )
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-devel::denovo_design::calculators::CavityCalculator::save( Archive & arc ) const {
+protocols::denovo_design::calculators::CavityCalculator::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( CEREAL_NVP( total_volume_ ) ); // core::Real
 	arc( CEREAL_NVP( clusters_ ) ); // utility::vector1<core::scoring::packstat::CavityBallCluster>
@@ -148,14 +149,14 @@ devel::denovo_design::calculators::CavityCalculator::save( Archive & arc ) const
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-devel::denovo_design::calculators::CavityCalculator::load( Archive & arc ) {
+protocols::denovo_design::calculators::CavityCalculator::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::StructureDependentCalculator >( this ) );
 	arc( total_volume_ ); // core::Real
 	arc( clusters_ ); // utility::vector1<core::scoring::packstat::CavityBallCluster>
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( devel::denovo_design::calculators::CavityCalculator );
-CEREAL_REGISTER_TYPE( devel::denovo_design::calculators::CavityCalculator )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::denovo_design::calculators::CavityCalculator );
+CEREAL_REGISTER_TYPE( protocols::denovo_design::calculators::CavityCalculator )
 
-CEREAL_REGISTER_DYNAMIC_INIT( devel_denovo_design_calculators_CavityCalculator )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_denovo_design_calculators_CavityCalculator )
 #endif // SERIALIZATION

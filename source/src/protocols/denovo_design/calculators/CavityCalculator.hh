@@ -7,15 +7,16 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/calculators/CavityCalculator.hh
+/// @file src/protocols/denovo_design/calculators/CavityCalculator.hh
 /// @brief header file for CavityCalculator class.
 /// Roughly, fragment quality is number of fragments which are close to a pose in rmsd
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) -- Moved from devel to protocols.
 
 
-#ifndef INCLUDED_devel_denovo_design_calculators_CavityCalculator_hh
-#define INCLUDED_devel_denovo_design_calculators_CavityCalculator_hh
+#ifndef INCLUDED_protocols_denovo_design_calculators_CavityCalculator_hh
+#define INCLUDED_protocols_denovo_design_calculators_CavityCalculator_hh
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <basic/MetricValue.fwd.hh>
@@ -42,7 +43,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace calculators {
 
@@ -83,10 +84,10 @@ public:
 
 } // ns calculators
 } // ns denovo_design
-} // ns devel
+} // ns protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( devel_denovo_design_calculators_CavityCalculator )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_denovo_design_calculators_CavityCalculator )
 #endif // SERIALIZATION
 
 

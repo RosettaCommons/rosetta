@@ -7,21 +7,20 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/devel/denovo_design/filters/CavityVolumeFilter.fwd.hh
+/// @file   src/protocols/denovo_design/filters/CavityVolumeFilter.fwd.hh
 /// @brief  Fwd declarations for Tom's denovo design protocol
 /// @author Tom Linsky
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) -- Moved from devel to protocols.
 
-
-#ifndef INCLUDED_devel_denovo_design_filters_CavityVolumeFilter_fwd_hh
-#define INCLUDED_devel_denovo_design_filters_CavityVolumeFilter_fwd_hh
-
+#ifndef INCLUDED_protocols_denovo_design_filters_CavityVolumeFilter_fwd_hh
+#define INCLUDED_protocols_denovo_design_filters_CavityVolumeFilter_fwd_hh
 
 // Utility headers
 #include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 // Forward
@@ -36,6 +35,6 @@ typedef  utility::pointer::weak_ptr< CavityVolumeFilter const >  CavityVolumeFil
 
 } // namespace filters
 } // namespace denovo_design
-} // namespace devel
+} // namespace protocols
 
 #endif

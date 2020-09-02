@@ -16,7 +16,7 @@
 #include <devel/denovo_design/task_operations/HighestEnergyRegionCreator.hh>
 
 // package headers
-#include <devel/denovo_design/calculators/CavityCalculator.hh>
+#include <protocols/denovo_design/calculators/CavityCalculator.hh>
 #include <devel/denovo_design/calculators/ResidueCentralityCalculator.hh>
 #include <core/io/external/PsiPredInterface.hh>
 #include <protocols/flxbb/utility.hh>
@@ -664,7 +664,7 @@ DesignByCavityProximityOperation::get_residues_to_design( core::pose::Pose const
 	std::string const calc_name( "CavityCalculator" );
 	// check for calculator; create if it doesn't exist
 	if ( ! core::pose::metrics::CalculatorFactory::Instance().check_calculator_exists( calc_name ) ) {
-		calculators::CavityCalculator calculator;
+		protocols::denovo_design::calculators::CavityCalculator calculator;
 		core::pose::metrics::CalculatorFactory::Instance().register_calculator( calc_name, calculator.clone() );
 	}
 

@@ -48,7 +48,6 @@
 #include <devel/matdes/StoreQuasiSymmetricTaskMoverCreator.hh>
 
 // Filter creators
-#include <devel/denovo_design/filters/CavityVolumeFilterCreator.hh>
 #include <devel/denovo_design/filters/CoreResiduesPerElementFilterCreator.hh>
 #include <devel/denovo_design/filters/FoldabilityFilterCreator.hh>
 #include <devel/replica_docking/InteractionScoreFilterCreator.hh>
@@ -117,7 +116,6 @@ core::pack::task::operation::TaskOperationRegistrator< devel::znhash::DisableZnC
 
 
 // Filter creators
-static protocols::filters::FilterRegistrator< denovo_design::filters::CavityVolumeFilterCreator > reg_CavityVolumeFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::CoreResiduesPerElementFilterCreator > reg_CoreResiduesPerElementFilterCreator;
 static protocols::filters::FilterRegistrator< denovo_design::filters::FoldabilityFilterCreator > reg_FoldabilityFilterCreator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::InteractionScoreFilterCreator > IscCreator_registrator;

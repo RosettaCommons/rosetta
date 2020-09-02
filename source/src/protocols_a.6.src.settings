@@ -54,6 +54,9 @@ sources = {
 		"StructureArchitect",
 		"util",
 	],
+	"protocols/denovo_design/calculators" : [
+		"CavityCalculator",
+	],
 	"protocols/denovo_design/components" : [
 		"DivideAndConqueror",
 		"FoldGraph",
@@ -80,6 +83,7 @@ sources = {
 		"FileConstraintGenerator",
 	],
 	"protocols/denovo_design/filters": [
+		"CavityVolumeFilter",
 		"ExposedHydrophobicsFilter",
 		"PreProlineFilter",
 		"SSPredictionFilter",

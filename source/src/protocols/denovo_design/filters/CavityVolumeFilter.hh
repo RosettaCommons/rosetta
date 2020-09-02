@@ -7,20 +7,23 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/devel/denovo_design/filters/CavityVolumeFilter.hh
+/// @file src/protocols/denovo_design/filters/CavityVolumeFilter.hh
 /// @brief Tom's Denovo Protocol. This is freely mutable and used for playing around with stuff
 /// @details
 /// @author Tom Linsky (tlinsky@gmail.com)
+/// @modified Vikram K. Mulligan (vmulligan@flatironinstitue.org) -- Moved from devel to protocols.
 
 
-#ifndef INCLUDED_devel_denovo_design_filters_CavityVolumeFilter_hh
-#define INCLUDED_devel_denovo_design_filters_CavityVolumeFilter_hh
+#ifndef INCLUDED_protocols_denovo_design_filters_CavityVolumeFilter_hh
+#define INCLUDED_protocols_denovo_design_filters_CavityVolumeFilter_hh
 
 // Unit headers
-#include <devel/denovo_design/filters/CavityVolumeFilter.fwd.hh>
+#include <protocols/denovo_design/filters/CavityVolumeFilter.fwd.hh>
+
+// Basic headers
+#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 
 // Project headers
-#include <devel/denovo_design/calculators/CavityCalculator.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/fldsgn/topology/HelixPairing.fwd.hh>
 #include <protocols/fldsgn/topology/HSSTriplet.fwd.hh>
@@ -44,7 +47,7 @@
 #include <utility/vector1.hh>
 
 
-namespace devel {
+namespace protocols {
 namespace denovo_design {
 namespace filters {
 
@@ -88,6 +91,17 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //CitationManager functions:
+
+	/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
+	/// included in publications resulting from it)?  Yes, it does.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	bool filter_is_unpublished() const override;
+
+	/// @brief Provide a list of authors and their e-mail addresses, as strings.
+	/// @returns A pairs of ("Tom Linsky", "tlinsky@gmail.com").
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
 private:   // private functions
 
@@ -101,6 +115,6 @@ private:   // other data
 
 } // filters
 } // denovo_design
-} // devel
+} // protocols
 
 #endif
