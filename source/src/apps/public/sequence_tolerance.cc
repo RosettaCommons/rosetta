@@ -15,6 +15,7 @@
 #include <protocols/multistate_design/PackingState.hh>
 #include <protocols/multistate_design/MetricCalculatorFitnessFunction.hh>
 #include <protocols/multistate_design/MultiStateEntity.hh>
+#include <protocols/multistate_design/SingleStateEntityData.hh>
 #include <protocols/pose_metric_calculators/DecomposeAndReweightEnergiesCalculator.hh>
 #include <protocols/pose_metric_calculators/ResidueDecompositionByChainCalculator.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>

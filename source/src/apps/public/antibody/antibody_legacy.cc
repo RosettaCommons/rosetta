@@ -23,6 +23,8 @@
 #include <utility/vector1.hh>
 #include <utility/excn/Exceptions.hh>
 
+#include <core/fragment/FragData.hh>
+
 
 ////////////////////////////////////////////////////////
 

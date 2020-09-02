@@ -16,6 +16,7 @@
 #include <utility/version.hh>
 #include <utility/backtrace.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/CSI_Sequence.hh>
 
 #include <sstream>
 #include <fstream>

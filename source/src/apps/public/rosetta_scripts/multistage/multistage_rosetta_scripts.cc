@@ -27,6 +27,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/jd3/JobDistributor.hh>
 #include <protocols/jd3/JobDistributorFactory.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #include <protocols/jobdist/standard_mains.hh>
 #include <protocols/jobdist/Jobs.hh>
 

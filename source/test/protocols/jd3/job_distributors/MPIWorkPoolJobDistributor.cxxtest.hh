@@ -29,6 +29,7 @@
 #include <protocols/jd3/JobResult.hh>
 #include <protocols/jd3/JobSummary.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
 #include <protocols/jd3/deallocation/InputPoseDeallocationMessage.hh>
 #include <protocols/jd3/output/OutputSpecification.hh>

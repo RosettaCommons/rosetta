@@ -52,6 +52,7 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/jobs/MoverJob.hh>
 #include <protocols/jd3/standard/StandardJobQueen.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <devel/init.hh>
 

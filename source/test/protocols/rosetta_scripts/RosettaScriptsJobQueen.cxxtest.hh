@@ -30,6 +30,7 @@
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/moves/NullMover.hh>
 #include <protocols/moves/mover_schemas.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 
 // basic headers

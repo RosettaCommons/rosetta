@@ -46,6 +46,7 @@ CEREAL_REGISTER_DYNAMIC_INIT( DummyOutputSpecification )
 #include <protocols/jd3/pose_outputters/PoseOutputterCreator.hh>
 #include <protocols/jd3/pose_outputters/PoseOutputterFactory.hh>
 #include <protocols/jd3/pose_outputters/PDBPoseOutputter.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 #include <protocols/moves/NullMover.hh>
 #include <core/pose/Pose.hh>

@@ -53,6 +53,7 @@
 
 // Numeric Headers
 #include <numeric/random/random.hh>
+#include <numeric/MultiDimensionalHistogram.hh>
 
 // Platform Headers
 #include <platform/types.hh>

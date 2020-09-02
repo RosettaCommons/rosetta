@@ -17,6 +17,7 @@
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
+#include <core/id/TorsionID.hh>
 #include <protocols/recces/RECCES_Mover.hh>
 #include <protocols/recces/options/RECCES_Options.hh>
 #include <protocols/recces/params/RECCES_Parameters.hh>

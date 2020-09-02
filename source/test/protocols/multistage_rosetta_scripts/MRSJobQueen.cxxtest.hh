@@ -32,6 +32,7 @@
 #include <protocols/jd3/InnerLarvalJob.hh>
 #include <protocols/jd3/job_results/PoseJobResult.hh>
 #include <protocols/jd3/job_summaries/EnergyJobSummary.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 // Movers and Filters
 #include <protocols/relax/FastRelax.hh>

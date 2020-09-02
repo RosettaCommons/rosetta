@@ -31,6 +31,7 @@
 #include <protocols/jd3/pose_inputters/PoseInputSource.hh>
 #include <protocols/jd3/pose_inputters/PoseInputterFactory.hh>
 #include <protocols/jd3/pose_inputters/PDBPoseInputter.hh>
+#include <protocols/jd3/standard/PreliminaryLarvalJob.hh>
 
 // basic headers
 #include <basic/options/option.hh>
