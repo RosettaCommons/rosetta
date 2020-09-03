@@ -203,7 +203,7 @@ VLB::parse_my_tag(
 
 			instr.ss = tag->getOption< std::string >( "ss", "L^L" );
 			//instr.aa = tag->getOption< std::string >( "aa", "" );
-			instr.keep_bb = tag->getOption< bool >( "keep_bb_torsions", "0" );
+			instr.keep_bb = tag->getOption< bool >( "keep_bb_torsions", false );
 			instr.filename = tag->getOption< std::string >( "pdb", "" );
 			runtime_assert( instr.filename != "" );
 

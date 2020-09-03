@@ -125,7 +125,7 @@ SymmetricCycpepAlign::parse_my_tag(
 	basic::datacache::DataMap&
 )
 {
-	bool auto_detect( tag->getOption<bool>("auto_detect_symmetry", "false") );
+	bool auto_detect( tag->getOption<bool>("auto_detect_symmetry", false) );
 	runtime_assert_string_msg(
 		!(auto_detect && (tag->hasOption("symmetry_repeats") || tag->hasOption("mirror_symmetry") )),
 		"Error in protocols::cyclic_peptide::SymmetricCycpepAlign::parse_my_tag(): If the auto_detect_symmetry=\"true\" option is used, then the \"mirror_symmetry\" and \"symmetry_repeats\" options cannot be used."

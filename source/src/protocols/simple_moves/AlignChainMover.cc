@@ -121,7 +121,7 @@ AlignChainMover::parse_my_tag(
 	target_chain( tag->getOption< core::Size >( "target_chain", 0 ) );
 	std::string const fname( tag->getOption< std::string >( "target_name" ) );
 
-	align_to_com_ = tag->getOption< bool >( "align_to_com", "0" );
+	align_to_com_ = tag->getOption< bool >( "align_to_com", false );
 	if ( ! align_to_com_ ) {
 		pose( core::import_pose::pose_from_file( fname ) );
 	}

@@ -134,7 +134,7 @@ RNA_DeNovoProtocolOptions::initialize_from_tag( utility::tag::TagCOP const & tag
 	}
 
 	if ( tag->hasOption( "cst_gap" ) ) {
-		set_cst_gap( tag->getOption< bool >( "cst_gap", "false" ) );
+		set_cst_gap( tag->getOption< bool >( "cst_gap", false ) );
 	}
 }
 

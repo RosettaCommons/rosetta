@@ -288,7 +288,7 @@ RotLibOut::parse_my_tag(
 	set_min_dist(tag->getOption< core::Real >( "min_dist", 2.0 ));
 	Rotamer_db_file(tag->getOption< std::string >( "rotamer_db_filename", "Rotamer_db.dat" ));
 	seq_aln_file(tag->getOption< std::string >( "sequence_alignment_filename", "seqeunce_aln.fa" ));
-	dump_pdb(tag->getOption< bool >( "dump_pdb", "0" ));// if set to true dump aligned fragments between template and target
+	dump_pdb(tag->getOption< bool >( "dump_pdb", false ));// if set to true dump aligned fragments between template and target
 	min_frag_length(tag->getOption< core::Size >( "min_frag_len", 3 ) );// if set to true dump aligned fragments between template and target
 }
 void RotLibOut::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
