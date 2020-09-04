@@ -109,6 +109,12 @@ int list_dir (std::string dir, utility::vector1<std::string> & files);
 
 FileName combine_names(utility::vector1<std::string> file_name_strings);
 
+/// @brief Changes the current working directory
+bool
+change_working_directory(
+	std::string const & dir_path
+);
+
 } // namespace file
 } // namespace utility
 

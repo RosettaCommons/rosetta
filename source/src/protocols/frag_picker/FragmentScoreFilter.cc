@@ -49,8 +49,7 @@
 #include <utility/vector1.hh>
 #include <sys/stat.h>
 #include <fstream>
-#include <sys/param.h>
-#include <unistd.h>
+#include <utility/file/file_sys_util.hh>
 
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/database/open.hh>
@@ -217,18 +216,12 @@ void FragmentScoreFilter::setup_fragment_picker( core::pose::PoseOP const pose_c
 
 
 	// Record cwd and switch to outputs_folder_
-	char buffer[MAXPATHLEN];
-	char *path = getcwd(buffer, MAXPATHLEN);
-	std::string original_path = path;
+	std::string original_path = utility::file::cwd();
 	if ( !outputs_folder_.empty() ) {
-		int make_dir = mkdir( outputs_folder_.c_str(), 0700 );
-		if ( make_dir == -1 ) {
-			if ( errno != EEXIST ) {
-				utility_exit_with_message( "Failed to create directory for sequence profile outputs." );
-			}
+		if ( !utility::file::create_directory_recursive(outputs_folder_) ) {
+			utility_exit_with_message( "Failed to create directory for sequence profile outputs." );
 		}
-		int rc = chdir( outputs_folder_.c_str() );
-		if ( rc < 0 ) {
+		if ( !utility::file::change_working_directory(outputs_folder_) ) {
 			utility_exit_with_message("Unable to change directories to " + outputs_folder_ + " for FragmentPicker setup.");
 		}
 	}
@@ -350,10 +343,8 @@ void FragmentScoreFilter::setup_fragment_picker( core::pose::PoseOP const pose_c
 	}
 
 	if ( !outputs_folder_.empty() ) {
-		int rc = chdir( original_path.c_str() );
-		if ( rc < 0 ) {
+		if ( !utility::file::change_working_directory(original_path) ) {
 			utility_exit_with_message("Unable to change directories back to " + original_path + " after FragmentPicker setup.");
-
 		}
 	}
 	// Setup VALL

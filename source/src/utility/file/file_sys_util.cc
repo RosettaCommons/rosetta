@@ -551,5 +551,14 @@ get_home_dir() {
 #endif //ifndef BLUEGENECLANG
 }
 
+/// @brief Changes the current working directory
+bool
+change_working_directory(
+	std::string const & dir_path
+)
+{
+	return !chdir( dir_path.c_str() );
+}
+
 } // namespace file
 } // namespace utility
