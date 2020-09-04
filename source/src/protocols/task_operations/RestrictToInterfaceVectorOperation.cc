@@ -356,7 +356,7 @@ RestrictToInterfaceVectorOperation::parse_tag( TagCOP tag , DataMap & )
 	nearby_atom_cutoff( tag->getOption< core::Real >( "nearby_atom_cutoff", 5.5) );
 	vector_angle_cutoff( tag->getOption< core::Real >( "vector_angle_cutoff", 75.0) );
 	vector_dist_cutoff( tag->getOption< core::Real >( "vector_dist_cutoff", 9.0 ) );
-	include_all_water( tag->getOption<bool>( "include_all_water", 0 ) );
+	include_all_water( tag->getOption<bool>( "include_all_water", false ) );
 }
 
 void RestrictToInterfaceVectorOperation::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

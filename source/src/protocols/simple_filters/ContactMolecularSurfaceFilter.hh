@@ -62,7 +62,7 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
-		core::Size const & quick, core::Size const & verbose );
+		bool const quick, bool const verbose );
 
 	~ContactMolecularSurfaceFilter() override= default;
 
@@ -77,8 +77,8 @@ public:// accessor
 	// @brief get name of this filter
 
 public:// mutator
-	void quick( core::Size const & quick );
-	void verbose( core::Size const & verbose );
+	void quick( bool const quick );
+	void verbose( bool const verbose );
 
 public:// parser
 	void parse_my_tag( TagCOP tag,
@@ -125,8 +125,8 @@ private:
 private:
 	Real filtered_area_;
 	Real distance_weight_;
-	core::Size quick_;
-	core::Size verbose_;
+	bool quick_ = false;
+	bool verbose_ = false;
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
 

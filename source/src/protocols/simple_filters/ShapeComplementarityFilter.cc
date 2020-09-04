@@ -76,7 +76,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 
 // @brief constructor with arguments
 ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-	core::Size const & jump_id, core::Size const & quick, core::Size const & verbose, Real const & filtered_median_distance /*= 1000.0f*/):
+	core::Size const & jump_id, bool const quick, bool const verbose, Real const & filtered_median_distance /*= 1000.0f*/):
 	Filter( "ShapeComplementarity" ),
 	filtered_sc_( filtered_sc ),
 	filtered_area_( filtered_area ),
@@ -93,8 +93,8 @@ void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filte
 void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { filtered_area_ = filtered_area; }
 void ShapeComplementarityFilter::filtered_median_distance( Real const & filtered_median_distance ) { filtered_d_median_ = filtered_median_distance; }
 void ShapeComplementarityFilter::jump_id( core::Size const & jump_id ) { jump_id_ = jump_id; }
-void ShapeComplementarityFilter::quick( core::Size const & quick ) { quick_ = quick; }
-void ShapeComplementarityFilter::verbose( core::Size const & verbose ) { verbose_ = verbose; }
+void ShapeComplementarityFilter::quick( bool const quick ) { quick_ = quick; }
+void ShapeComplementarityFilter::verbose( bool const verbose ) { verbose_ = verbose; }
 
 void ShapeComplementarityFilter::residues1( std::string const & res_string )
 {
@@ -296,8 +296,8 @@ ShapeComplementarityFilter::parse_my_tag(
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );
 	filtered_area_ = tag->getOption<Real>( "min_interface", 0 );
 	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0 );
-	verbose_ = tag->getOption<core::Size>( "verbose", false );
-	quick_ = tag->getOption<core::Size>( "quick", false );
+	verbose_ = tag->getOption<bool>( "verbose", false );
+	quick_ = tag->getOption<bool>( "quick", false );
 	jump_id_ = tag->getOption<core::Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 	write_d_median_ = tag->getOption<bool>( "write_median_dist", false );

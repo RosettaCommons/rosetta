@@ -218,7 +218,7 @@ SimulatedTempering::parse_my_tag(
 	//simple options
 	score_offset_ = tag->getOption< Real >( "score_offset", 40.0 );
 	temperature_jumps_ = tag->getOption< bool >( "temperature_jumps", false );
-	reweight_stride_ = tag->getOption< core::Size >( "reweight_stride", false );
+	reweight_stride_ = tag->getOption< core::Size >( "reweight_stride", 0 );
 }
 
 /// handling of options including command-line

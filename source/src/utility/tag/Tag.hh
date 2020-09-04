@@ -130,6 +130,16 @@ public:
 		return t_default;
 	}
 
+	/// @brief Variant for the case in which the developer has mistakenly provided a string literal
+	/// instead of a value of type T.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	template< class T >
+	T
+	getOption(std::string const& key, char const * default_as_string_literal ) const {
+		utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+		return T(0);
+	}
+
 	/// @brief Retrieve an option from the Tag with the given key name.
 	/// @throws Throws a utility::excn::EXCN_Msg_Exception if the an option
 	/// with the given key is not present, or if the boost::lexical_cast fails
@@ -156,6 +166,7 @@ public:
 
 #ifdef PYROSETTA
 	bool get_option_bool(std::string const& key) const;
+	bool get_option_bool(std::string const& key, char const * default_as_string_literal) const;
 	bool get_option_bool(std::string const& key, bool const& t_default) const;
  	int get_option_int(std::string const& key) const;
 	int get_option_int(std::string const& key, int const& t_default) const;
@@ -230,11 +241,18 @@ public:
 std::ostream& operator<<(std::ostream& out, Tag const & tag);
 std::ostream& operator<<(std::ostream& out, TagCOP const & tag);
 
-//This is explicit specialization for boolean values
-//to allow for use of "true" "false" etc. in addition to 1 and 0
+/// @brief This is explicit specialization for boolean values
+/// to allow for use of "true" "false" etc. in addition to 1 and 0
 template<>
 bool
 Tag::getOption<bool>(std::string const& key, bool const& t_default) const;
+
+/// @brief This is for the variant in which someone has specified a default
+/// using "true" instead of true, or "false" instead of false.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+bool
+Tag::getOption<bool>(std::string const& key, char const * default_as_string_literal) const;
 
 template<>
 bool
@@ -244,9 +262,40 @@ template<>
 AutoBool
 Tag::getOption<AutoBool>(std::string const& key, AutoBool const& t_default) const;
 
+/// @brief This is for the variant in which someone has specified a default
+/// using "true" instead of true, or "false" instead of false.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+AutoBool
+Tag::getOption<AutoBool>(std::string const& key, char const * default_as_string_literal) const;
+
 template<>
 AutoBool
 Tag::getOption<AutoBool>(std::string const& key) const;
+
+/// @brief Special-casing the string literal version for string options.  In this case,
+/// there shouldn't be an error thrown.  A string literal should be allowed to set the
+/// default value for a string.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+std::string
+Tag::getOption<std::string>( std::string const & key, char const * default_as_string_literal ) const;
+
+/// @brief Special-casing the string literal version for integer options, too.
+/// @details Needed since 0 gets interpreted as a char const * and not a Size, which
+/// means that this code is called.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+platform::Size
+Tag::getOption<platform::Size>( std::string const & key, char const * default_as_string_literal ) const;
+
+/// @brief Special-casing the string literal version for float options, too.
+/// @details Needed since 0 gets interpreted as a char const * and not a Real, which
+/// means that this code is called.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+platform::Real
+Tag::getOption<platform::Real>( std::string const & key, char const * default_as_string_literal ) const;
 
 } // namespace tag
 } // namespace utility

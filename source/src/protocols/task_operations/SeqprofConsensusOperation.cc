@@ -358,7 +358,7 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 		tr<<"Seqprof not loaded. Expecting another mover/filter to provide a sequence profile..."<<std::endl;
 	}
 	if ( tag->hasOption("min_aa_probability") ) min_aa_probability_ = tag->getOption< Real >("min_aa_probability" );
-	if ( tag->hasOption("keep_native") ) keep_native_ = tag->getOption< Real >("keep_native",false );//Include native aa identity in allowed identities even if below min_aa_prob.
+	if ( tag->hasOption("keep_native") ) keep_native_ = tag->getOption< bool >("keep_native",false );//Include native aa identity in allowed identities even if below min_aa_prob.
 	chain_num_=tag->getOption< core::Size >("chain_num",1 );
 	if ( tag->hasOption("probability_larger_than_current") ) prob_larger_current_ = tag->getOption< bool >("probability_larger_than_current");
 

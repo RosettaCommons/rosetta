@@ -131,6 +131,11 @@ Tag::getOptions() const { return mOptions_; }
 bool Tag::get_option_bool(std::string const& key) const {
 	return Tag::getOption<bool>(key);
 }
+
+bool Tag::get_option_bool(std::string const& key, char const * default_as_string_literal) const {
+	return Tag::getOption<bool>(key, default_as_string_literal);
+}
+
 bool Tag::get_option_bool(std::string const& key, bool const& t_default) const {
 	return Tag::getOption<bool>(key, t_default);
 }
@@ -331,6 +336,27 @@ Tag::getOption<bool>(std::string const& key, bool const& t_default) const {
 	return t_default;
 }
 
+/// @brief This is for the variant in which someone has specified a default
+/// using "true" instead of true, or "false" instead of false.
+template<>
+bool
+Tag::getOption<bool>(std::string const& key, char const * default_as_string_literal) const {
+	auto i = mOptions_.find(key);
+	if ( i != mOptions_.end() ) {
+		return getOption<bool>(key);
+	}
+
+	runtime_assert_string_msg( default_as_string_literal != nullptr, "Program error: the developer has erroneously provided 0 or nullptr as the default for boolean option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+	std::string const default_string( default_as_string_literal );
+
+	if ( utility::is_true_string( default_string ) ) { return true; }
+	if ( utility::is_false_string( default_string ) ) { return false; }
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for default boolean value failed! Tried to parse \"" << default_string << "\", but the developer has provided a default string that can't be interpreted as a boolean.  This is really coding problem that would ideally be a compilation error, but it can only show up at runtime.\n";
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
+	return true; //Keep the compiler satsified.
+}
+
 /// @throws Throws a utility::excn::EXCN_Msg_Exception if none of the
 /// accepted boolean strings is provided.
 template<>
@@ -369,6 +395,27 @@ Tag::getOption< AutoBool >(std::string const& key, AutoBool const& t_default) co
 	return t_default;
 }
 
+/// @brief This is for the variant in which someone has specified a default
+/// using "true" instead of true, or "false" instead of false.
+template<>
+AutoBool
+Tag::getOption<AutoBool>(std::string const& key, char const * default_as_string_literal) const {
+	auto i = mOptions_.find(key);
+	if ( i != mOptions_.end() ) {
+		return getOption<AutoBool>(key);
+	}
+	runtime_assert_string_msg( default_as_string_literal != nullptr, "Program error: the developer has erroneously provided 0 or nullptr as the default for AutoBool option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+	std::string const default_string( default_as_string_literal );
+
+	if ( utility::is_true_string( default_string ) ) { return AutoBool::True; }
+	if ( utility::is_false_string( default_string ) ) { return AutoBool::False; }
+	if ( utility::upper( default_string ) == "AUTO" ) { return AutoBool::Auto; }
+	std::stringstream error_message;
+	error_message << "getOption: key= " << key << " stream extraction for default AutoBool value failed! Tried to parse \"" << default_string << "\", but the developer has provided a default string that can't be interpreted as an AutoBool.  This is really coding problem that would ideally be a compilation error, but it can only show up at runtime.\n";
+	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
+	return AutoBool::True; //keep the compiler happy
+}
+
 /// @throws Throws a utility::excn::EXCN_Msg_Exception if none of the
 /// accepted boolean strings is provided.
 template<>
@@ -388,6 +435,53 @@ Tag::getOption< AutoBool >(std::string const& key) const {
 	error_message << "getOption: key= " << key << " stream extraction for autoboolean value failed! Tried to parse '" << i->second << "\n";
 	throw CREATE_EXCEPTION(utility::excn::Exception, error_message.str() );
 	return AutoBool::False; // appease compiler
+}
+
+/// @brief Special-casing the string literal version for string options.  In this case,
+/// there shouldn't be an error thrown.  A string literal should be allowed to set the
+/// default value for a string.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+std::string
+Tag::getOption<std::string>( std::string const & key, char const * default_as_string_literal ) const {
+	runtime_assert_string_msg( default_as_string_literal != nullptr, "Program error: the developer has erroneously provided 0, nullptr, or false as the default for string option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  Please inform a developer." );
+	return getOption< std::string >( key, std::string( default_as_string_literal ) );
+}
+
+/// @brief Special-casing the string literal version for integer options, too.
+/// @details Needed since 0 gets interpreted as a char const * and not a Size, which
+/// means that this code is called.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+platform::Size
+Tag::getOption<platform::Size>( std::string const & key, char const * default_as_string_literal ) const {
+	auto i = mOptions_.find(key);
+	if ( i != mOptions_.end() ) {
+		return getOption<platform::Size>(key);
+	}
+
+	if ( default_as_string_literal == nullptr ) {
+		return 0; //Needed since 0 gets interpreted as a char const * and not a Size, which means that this code is called.
+	}
+	utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for integer option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+}
+
+/// @brief Special-casing the string literal version for float options, too.
+/// @details Needed since 0 gets interpreted as a char const * and not a Real, which
+/// means that this code is called.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+platform::Real
+Tag::getOption<platform::Real>( std::string const & key, char const * default_as_string_literal ) const {
+	auto i = mOptions_.find(key);
+	if ( i != mOptions_.end() ) {
+		return getOption<platform::Real>(key);
+	}
+
+	if ( default_as_string_literal == nullptr ) {
+		return 0.0; //Needed since 0 gets interpreted as a char const * and not a Real, which means that this code is called.
+	}
+	utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for real-valued option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
 }
 
 // ____________________ <boost::spirit parser definition> ____________________
