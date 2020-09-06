@@ -42,7 +42,7 @@
 // REQUIRED FOR WINDOWS
 #ifndef __native_client__
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #undef min
 #undef max
 #else

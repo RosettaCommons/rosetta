@@ -75,7 +75,10 @@
 #endif
 */
 
-#ifndef _WIN32
+#ifdef _WIN32
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#else
 #include "pthread.h"
 // XSD XRW Includes
 #endif
