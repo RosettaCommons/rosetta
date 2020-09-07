@@ -1449,6 +1449,12 @@ ResidueLevelTask_::update_commutative(
 	mode_tokens_       .insert(mode_tokens_       .begin(),o.mode_tokens_       .begin(),o.mode_tokens_       .end());
 }
 
+core::pack::palette::PackerPaletteCOP
+ResidueLevelTask_::MakeDefaultPackerPaletteCOP()
+{
+	return utility::pointer::make_shared< core::pack::palette::DefaultPackerPalette >();
+}
+
 } //namespace task
 } //namespace pack
 } //namespace core

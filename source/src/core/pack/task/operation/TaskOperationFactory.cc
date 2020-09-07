@@ -207,11 +207,14 @@ TaskOperationFactory::TaskOperationCreatorMap const & TaskOperationFactory::crea
 	return task_operation_creator_map_;
 }
 
-
 std::string TaskOperationFactory::task_operation_xml_schema_group_name() {
 	return "task_operation";
 }
 
+TaskOperationFactory::TagCOP TaskOperationFactory::MakeTagCOP()
+{
+	return utility::pointer::make_shared< utility::tag::Tag >();
+}
 
 } //namespace operation
 } //namespace task

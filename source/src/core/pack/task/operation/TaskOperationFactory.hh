@@ -56,6 +56,10 @@ public:
 	typedef utility::tag::TagOP TagOP;
 	typedef utility::tag::TagCOP TagCOP;
 
+private:
+	/// @brief Workaround for https://developercommunity.visualstudio.com/content/problem/1170468/ice-when-using-make-shared-via-a-using-declaration.html
+	static TagCOP MakeTagCOP();
+
 public:
 	void factory_register( TaskOperationCreatorOP );
 
@@ -75,7 +79,7 @@ public:
 	TaskOperationOP newTaskOperation(
 		std::string const &,
 		basic::datacache::DataMap & datamap,
-		TagCOP = utility::pointer::make_shared< utility::tag::Tag >()
+		TagCOP = MakeTagCOP()
 	) const;
 	/// @brief fills vector with new TaskOperations from nested "TASKOPERATIONS" TagCOP
 	void newTaskOperations( TaskOperationOPs &, basic::datacache::DataMap & datamap, TagCOP ) const;

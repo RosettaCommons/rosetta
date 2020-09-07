@@ -54,12 +54,16 @@ namespace task {
 /// @brief Residue-level task class
 class ResidueLevelTask_ : public ResidueLevelTask
 {
+private:
+	/// @brief Workaround for https://developercommunity.visualstudio.com/content/problem/1170468/ice-when-using-make-shared-via-a-using-declaration.html
+	static core::pack::palette::PackerPaletteCOP MakeDefaultPackerPaletteCOP();
+
 public:
 	/// @brief constructor; requires a Residue object and a PackerPalette object.
 	ResidueLevelTask_(
 		conformation::Residue const & original_residue,
 		core::pose::Pose const & pose,
-		core::pack::palette::PackerPaletteCOP packer_palette_in = utility::pointer::make_shared< core::pack::palette::DefaultPackerPalette >()
+		core::pack::palette::PackerPaletteCOP packer_palette_in = MakeDefaultPackerPaletteCOP()
 	);
 
 	ResidueLevelTask_();
