@@ -369,7 +369,44 @@ def build_rosetta(rosetta_dir, platform, config, mode='release', build_unit=Fals
 
 
 
-def get_required_pyrosetta_packages_for_platform(platform, conda=False):
+def get_required_pyrosetta_python_packages_for_testing(platform):
+    ''' return list of Python packages that is required to run PyRosetta for given platform
+
+        IMPORTANT: each package should have version specification in it by either using ==, >= or <=
+        so we can have reproducible test enviroment
+
+        IMPORTANT: there should be no spaces between package name and version number
+    '''
+    packages = '\
+    attrs>=19.3.0        \
+    billiard>=3.6.3.0    \
+    blosc>=1.7.0         \
+    cloudpickle>=1.4.1   \
+    dask>=2.16.0         \
+    dask-jobqueue>=0.7.0 \
+    distributed>=2.16.0  \
+    gitpython>=3.1.1     \
+    jupyter>=1.0.0       \
+    numpy>=1.17.3        \
+    pandas>=0.25.2       \
+    scipy>=1.4.1         \
+    traitlets>=4.3.3     \
+    '
+    # not available in standard Conda channels:
+    #    blosc==1.8.3         \
+    #    py3Dmol>=0.8.0       \
+
+    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+
+    #if conda: packages = [ p.replace('blosc', 'python-blosc').replace('>=', ' >=').replace('==', ' ==') for p in packages ]
+
+    for p in packages: assert '=' in p
+
+    return packages
+
+
+
+def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
     ''' return list of Python packages that is required to run PyRosetta for given platform
 
         IMPORTANT: each package should have version specification in it by either using ==, >= or <=
@@ -389,18 +426,10 @@ def get_required_pyrosetta_packages_for_platform(platform, conda=False):
     scipy>=1.4.1         \
     traitlets>=4.3.3     \
     '
-    # not available in standard Conda channels:
-    #    blosc==1.8.3         \
-    #    py3Dmol>=0.8.0       \
 
     if conda: packages = packages.replace('blosc', 'python-blosc')
-
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
-
-    #if conda: packages = [ p.replace('blosc', 'python-blosc').replace('>=', ' >=').replace('==', ' ==') for p in packages ]
-
     for p in packages: assert '=' in p
-
     return packages
 
 

@@ -592,7 +592,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
         else:
             distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-            packages = ' '.join( get_required_pyrosetta_packages_for_platform(platform) ).replace('>', '=').replace('<', '=')
+            packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
 
             local_python = local_python_install(platform, config)
             python_virtual_environment = setup_persistent_python_virtual_environment(local_python, packages)
@@ -638,7 +638,7 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                     build = [f'python =={platform["python"]}'],
                     host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
-                    run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_packages_for_platform(platform, conda=True),
+                    run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
                 ),
 
                 # technically there is no need to re-run tests here, since we just have run a full PyRosetta test suite

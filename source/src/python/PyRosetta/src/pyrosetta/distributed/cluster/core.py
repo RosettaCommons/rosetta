@@ -1,0 +1,634 @@
+"""
+PyRosettaCluster is a class for reproducible, high-throughput job distribution
+of user-defined PyRosetta protocols efficiently parallelized on the user's
+local computer, high-performance computing (HPC) cluster, or elastic cloud
+computing infrastructure with available compute resources.
+
+Args:
+    tasks: A `list` of `dict` objects, a callable or called function returning
+        a `list` of `dict` objects, or a callable or called generator yielding
+        a `list` of `dict` objects. Each dictionary object element of the list
+        is accessible via kwargs in the user-defined PyRosetta protocols.
+        In order to initialize PyRosetta with user-defined PyRosetta command line
+        options at the start of each user-defined PyRosetta protocol, either
+        `extra_options` and/or `options` must be a key of each dictionary object,
+        where the value is a `str`, `tuple`, `list`, `set`, or `dict` of
+        PyRosetta command line options.
+        Default: [{}]
+    input_packed_pose: Optional input `PackedPose` object that is accessible via
+        the first argument of the first user-defined PyRosetta protocol.
+        Default: None
+    seeds: A `list` of `int` objects specifying the random number generator seeds
+        to use for each user-defined PyRosetta protocol. The number of seeds
+        provided must be equal to the number of user-defined input PyRosetta
+        protocols. Seeds are used in the same order that the user-defined PyRosetta
+        protocols are executed.
+        Default: None
+    decoy_ids: A `list` of `int` objects specifying the decoy numbers to keep after
+        executing user-defined PyRosetta protocols. User-provided PyRosetta
+        protocols may return a list of `Pose` and/or `PackedPose` objects, or
+        yield multiple `Pose` and/or `PackedPose` objects. To reproduce a
+        particular decoy generated via the chain of user-provided PyRosetta
+        protocols, the decoy number to keep for each protocol may be specified,
+        where other decoys are discarded. Decoy numbers use zero-based indexing,
+        so `0` is the first decoy generated from a particular PyRosetta protocol.
+        The number of decoy_ids provided must be equal to the number of
+        user-defined input PyRosetta protocols, so that one decoy is saved for each
+        user-defined PyRosetta protocol. Decoy ids are applied in the same order
+        that the user-defined PyRosetta protocols are executed.
+        Default: None
+    client: An initialized dask `distributed.client.Client` object to be used as
+        the dask client interface to the local or remote compute cluster. If `None`,
+        then PyRosettaCluster initializes its own dask client based on the
+        `PyRosettaCluster(scheduler=...)` class attribute.
+        Default: None
+    scheduler: A `str` of either "sge" or "slurm", or `None`. If "sge", then
+        PyRosettaCluster schedules jobs using `SGECluster` with `dask-jobqueue`.
+        If "slurm", then PyRosettaCluster schedules jobs using `SLURMCluster` with
+        `dask-jobqueue`. If `None`, then PyRosettaCluster schedules jobs using
+        `LocalCluster` with `dask.distributed`. If `PyRosettaCluster(client=...)`
+        is provided, then `PyRosettaCluster(scheduler=...)` is ignored.
+        Default: None
+    cores: An `int` object specifying the total number of cores per job, which
+        is input to the `dask_jobqueue.SLURMCluster(cores=...)` argument.
+        Default: 1
+    processes: An `int` object specifying the total number of processes per job,
+        which is input to the `dask_jobqueue.SLURMCluster(processes=...)` argument.
+        This cuts the job up into this many processes.
+        Default: 1
+    memory: A `str` object specifying the total amount of memory per job, which
+        is input to the `dask_jobqueue.SLURMCluster(memory=...)` argument.
+        Default: "4g"
+    scratch_dir: A `str` object specifying the path to a scratch directory where
+        dask litter may go.
+        Default: "/temp" if it exists, otherwise the current working directory
+    min_workers: An `int` object specifying the minimum number of workers to
+        which to adapt during parallelization of user-provided PyRosetta protocols.
+        Default: 1
+    max_workers: An `int` object specifying the maximum number of workers to
+        which to adapt during parallelization of user-provided PyRosetta protocols.
+        Default: 1000 if the initial number of `tasks` is <1000, else use the
+            the initial number of `tasks`
+    dashboard_address: A `str` object specifying the port over which the dask
+        dashboard is forwarded. Particularly useful for diagnosing PyRosettaCluster
+        performance in real-time.
+        Default=":8787"
+    nstruct: An `int` object specifying the number of repeats of the first
+        user-provided PyRosetta protocol. The user can control the number of
+        repeats of subsequent user-provided PyRosetta protocols via returning
+        multiple clones of the output pose(s) from a user-provided PyRosetta
+        protocol run earlier, or cloning the input pose(s) multiple times in a
+        user-provided PyRosetta protocol run later.
+        Default: 1
+    compressed: A `bool` object specifying whether or not to compress the output
+        .pdb files with bzip2, resulting in .pdb.bz2 files.
+        Default: True
+    system_info: A `dict` or `NoneType` object specifying the system information
+        required to reproduce the simulation. If `None` is provided, then PyRosettaCluster
+        automatically detects the platform and returns this attribute as a dictionary
+        {'sys.platform': `sys.platform`} (for example, {'sys.platform': 'linux'}).
+        If a `dict` is provided, then validate that the 'sys.platform' key has a value
+        equal to the current `sys.platform`, and log a warning message if not.
+        Additional system information such as Amazon Machine Image (AMI) identifier
+        and compute fleet instance type identifier may be stored in this dictionary,
+        but is not validated. This information is stored in the simulation records for
+        accounting.
+        Default: None
+    pyrosetta_build: A `str` or `NoneType` object specifying the PyRosetta build as
+        output by `pyrosetta._version_string()`. If `None` is provided, then PyRosettaCluster
+        automatically detects the PyRosetta build and sets this attribute as the `str`.
+        If a `str` is provided, then validate that the input PyRosetta build is equal
+        to the active PyRosetta build, and log a warning message if not.
+        Default: None
+    sha1: A `str` or `NoneType` object specifying the git SHA1 hash string of the
+        particular git commit being simulated. If a non-empty `str` object is provided,
+        then it is validated to match the SHA1 hash string of the current HEAD,
+        and then it is added to the simulation record for accounting. If an empty string
+        is provided, then ensure that everything in the working directory is committed
+        to the repository. If `None` is provided, then bypass SHA1 hash string
+        validation and set this attribute to an empty string.
+        Default: ""
+    project_name: A `str` object specifying the project name of this simulation.
+        This option just adds the user-provided project_name to the scorefile
+        for accounting.
+        Default: datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f") if not specified,
+            else "PyRosettaCluster" if None
+    simulation_name: A `str` object specifying the name of this simulation.
+        This option just adds the user-provided simulation_name to the scorefile
+        for accounting.
+        Default: `project_name` if not specified, else "PyRosettaCluster" if None
+    environment: A `NoneType` or `str` object specifying the active conda environment
+        YML file string. If a `NoneType` object is provided, then generate a YML file
+        string for the active conda environment and save it to the full simulation
+        record. If a `str` object is provided, then validate it against the active
+        conda environment YML file string and save it to the full simulation record.
+        Default: None
+    output_path: A `str` object specifying the full path of the output directory
+        (to be created if it doesn't exist) where the output results will be saved
+        to disk.
+        Default: "./outputs"
+    scorefile_name: A `str` object specifying the name of the output JSON-formatted
+        scorefile. The scorefile location is always `output_path`/`scorefile_name`.
+        Default: "scores.json"
+    simulation_records_in_scorefile: A `bool` object specifying whether or not to
+        write full simulation records to the scorefile. If `True`, then write
+        full simulations records to the scorefile. This results in some redundant
+        information on each line, allowing downstream reproduction of a decoy from
+        the scorefile, but a larger scorefile. If `False`, then write
+        curtailed simulations records to the scorefile. This results in minimally
+        redundant information on each line, disallowing downstream reproduction
+        of a decoy from the scorefile, but a smaller scorefile. If `False`, also
+        write the active conda environment to a YML file in 'output_path'. Full
+        simulation records are always written to the output '.pdb' or '.pdb.bz2'
+        file(s), which can be used to reproduce any decoy without the scorefile.
+        Default: False
+    decoy_dir_name: A `str` object specifying the directory name where the
+        output decoys will be saved. The directory location is always
+        `output_path`/`decoy_dir_name`.
+        Default: "decoys"
+    logs_dir_name: A `str` object specifying the directory name where the
+        output log files will be saved. The directory location is always
+        `output_path`/`logs_dir_name`.
+        Default: "logs"
+    logging_level: A `str` object specifying the logging level of python tracer
+        output to write to the log file of either "NOTSET", "DEBUG", "INFO",
+        "WARNING", "ERROR", or "CRITICAL". The output log file is always written
+        to `output_path`/`logs_dir_name`/`simulation_name`.log on disk.
+        Default: "INFO"
+    ignore_errors: A `bool` object specifying for PyRosettaCluster to ignore errors
+        raised in the user-provided PyRosetta protocols. This comes in handy when
+        well-defined errors are sparse and sporadic (such as rare Segmentation Faults),
+        and the user would like PyRosettaCluster to run without raising the errors.
+        Default: False
+    timeout: A `float` or `int` object specifying how many seconds to wait between
+        PyRosettaCluster checking-in on the running user-provided PyRosetta protocols.
+        If each user-provided PyRosetta protocol is expected to run quickly, then
+        0.1 seconds seems reasonable. If each user-provided PyRosetta protocol is
+        expected to run slowly, then >1 second seems reasonable.
+        Default: 0.5
+    save_all: A `bool` object specifying whether or not to save all of the returned
+        or yielded `Pose` and `PackedPose` objects from all user-provided
+        PyRosetta protocols. This option may be used for checkpointing trajectories.
+        To save arbitrary poses to disk, from within any user-provided PyRosetta
+        protocol:
+            `pose.dump_pdb(os.path.join(kwargs["output_path"], "checkpoint.pdb")`
+        Default: False
+    dry_run: A `bool` object specifying whether or not to save .pdb files to
+        disk. If `True`, then do not write .pdb or .pdb.bz2 files to disk.
+        Default: False
+
+Returns:
+    A PyRosettaCluster instance.
+"""
+# :noTabs=true:
+# (c) Copyright Rosetta Commons Member Institutions.
+# (c) This file is part of the Rosetta software suite and is made available under license.
+# (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+# (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+# (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+
+__author__ = "Jason C. Klima"
+__email__ = "klima.jason@gmail.com"
+
+try:
+    import attr
+    import distributed
+    import toolz
+    from dask.distributed import as_completed
+    from distributed.scheduler import KilledWorker
+except ImportError:
+    print(
+        "Importing 'pyrosetta.distributed.cluster.core' requires the "
+        + "third-party packages 'attrs', 'dask', 'distributed', and 'toolz' as dependencies!\n"
+        + "Please install these packages into your python environment. "
+        + "For installation instructions, visit:\n"
+        + "https://pypi.org/project/attrs/\n"
+        + "https://pypi.org/project/dask/\n"
+        + "https://pypi.org/project/distributed/\n"
+        + "https://pypi.org/project/toolz/\n"
+    )
+    raise
+
+import copy
+import logging
+import os
+import pyrosetta.distributed.io as io
+
+from datetime import datetime
+from pyrosetta.rosetta.core.pose import Pose
+from pyrosetta.distributed.cluster.base import TaskBase, _get_residue_type_set
+from pyrosetta.distributed.cluster.converters import (
+    _parse_decoy_ids,
+    _parse_environment,
+    _parse_input_packed_pose,
+    _parse_pyrosetta_build,
+    _parse_scratch_dir,
+    _parse_seeds,
+    _parse_sha1,
+    _parse_system_info,
+    _parse_tasks,
+)
+from pyrosetta.distributed.cluster.initialization import _maybe_init_master
+from pyrosetta.distributed.cluster.io import IO
+from pyrosetta.distributed.cluster.logging_support import LoggingSupport
+from pyrosetta.distributed.cluster.multiprocessing import user_spawn_thread
+from pyrosetta.distributed.cluster.utilities import SchedulerManager
+from pyrosetta.distributed.cluster.validators import (
+    _validate_dir,
+    _validate_dirs,
+    _validate_float,
+    _validate_int,
+)
+from pyrosetta.distributed.packed_pose.core import PackedPose
+from typing import (
+    Any,
+    NoReturn,
+    Optional,
+    TypeVar,
+)
+
+
+G = TypeVar("G")
+
+
+@attr.s(kw_only=True, slots=True, frozen=False)
+class PyRosettaCluster(IO[G], LoggingSupport[G], SchedulerManager[G], TaskBase[G]):
+
+    tasks = attr.ib(
+        type=list,
+        default=[{}],
+        validator=attr.validators.deep_iterable(
+            member_validator=attr.validators.instance_of(dict),
+            iterable_validator=attr.validators.instance_of(list),
+        ),
+        converter=_parse_tasks,
+    )
+    nstruct = attr.ib(
+        type=int,
+        default=1,
+        validator=[_validate_int, attr.validators.instance_of(int)],
+        converter=attr.converters.default_if_none(default=1),
+    )
+    tasks_size = attr.ib(
+        type=int,
+        default=attr.Factory(
+            lambda self: toolz.itertoolz.count(self.tasks) * self.nstruct,
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(int),
+    )
+    input_packed_pose = attr.ib(
+        type=PackedPose,
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(PackedPose)),
+        converter=_parse_input_packed_pose,
+    )
+    seeds = attr.ib(
+        type=list,
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(list)),
+        converter=attr.converters.optional(_parse_seeds),
+    )
+    decoy_ids = attr.ib(
+        type=list,
+        default=None,
+        validator=attr.validators.optional(attr.validators.instance_of(list)),
+        converter=attr.converters.optional(_parse_decoy_ids),
+    )
+    client = attr.ib(
+        type=distributed.client.Client,
+        default=None,
+        validator=attr.validators.optional(
+            attr.validators.instance_of(distributed.client.Client)
+        ),
+    )
+    scheduler = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.optional(
+            [attr.validators.in_(["sge", "slurm"]), attr.validators.instance_of(str),],
+        ),
+    )
+    cores = attr.ib(
+        type=int,
+        default=1,
+        validator=[_validate_int, attr.validators.instance_of(int)],
+        converter=attr.converters.default_if_none(default=1),
+    )
+    processes = attr.ib(
+        type=int,
+        default=1,
+        validator=[_validate_int, attr.validators.instance_of(int)],
+        converter=attr.converters.default_if_none(default=1),
+    )
+    memory = attr.ib(
+        type=str,
+        default="4g",
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+        converter=attr.converters.default_if_none(default="4g"),
+    )
+    scratch_dir = attr.ib(
+        type=str,
+        default=None,
+        validator=[_validate_dir, attr.validators.instance_of(str)],
+        converter=_parse_scratch_dir,
+    )
+    min_workers = attr.ib(
+        type=int,
+        default=1,
+        validator=[_validate_int, attr.validators.instance_of(int)],
+        converter=attr.converters.default_if_none(default=1),
+    )
+    max_workers = attr.ib(
+        type=int,
+        default=attr.Factory(
+            lambda self: 1000 if (self.tasks_size < 1000) else self.tasks_size,
+            takes_self=True,
+        ),
+        validator=[_validate_int, attr.validators.instance_of(int)],
+        converter=attr.converters.default_if_none(default=1000),
+    )
+    dashboard_address = attr.ib(
+        type=str,
+        default=":8787",
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(default=":8787"),
+    )
+    project_name = attr.ib(
+        type=str,
+        default=datetime.now().strftime("%Y.%m.%d.%H.%M.%S.%f"),
+        validator=attr.validators.optional(attr.validators.instance_of(str)),
+        converter=attr.converters.default_if_none(default="PyRosettaCluster"),
+    )
+    simulation_name = attr.ib(
+        type=str,
+        default=attr.Factory(lambda self: self.project_name, takes_self=True),
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(default="PyRosettaCluster"),
+    )
+    output_path = attr.ib(
+        type=str,
+        default=os.path.abspath(os.path.join(os.getcwd(), "outputs")),
+        validator=[_validate_dirs, attr.validators.instance_of(str)],
+        converter=attr.converters.default_if_none(
+            default=os.path.abspath(os.path.join(os.getcwd(), "outputs"))
+        ),
+    )
+    scorefile_name = attr.ib(
+        type=str,
+        default="scores.json",
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(default="scores.json"),
+    )
+    scorefile_path = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.abspath(
+                os.path.join(self.output_path, self.scorefile_name)
+            ),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    simulation_records_in_scorefile = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(default=False),
+    )
+    decoy_dir_name = attr.ib(
+        type=str,
+        default="decoys",
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(default="decoys"),
+    )
+    decoy_path = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.abspath(
+                os.path.join(self.output_path, self.decoy_dir_name)
+            ),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    logs_dir_name = attr.ib(
+        type=str,
+        default="logs",
+        validator=attr.validators.instance_of(str),
+        converter=attr.converters.default_if_none(default="logs"),
+    )
+    logs_path = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.abspath(
+                os.path.join(self.output_path, self.logs_dir_name)
+            ),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    logging_level = attr.ib(
+        type=str,
+        default="INFO",
+        validator=[
+            attr.validators.in_(
+                ["NOTSET", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+            ),
+            attr.validators.instance_of(str),
+        ],
+        converter=attr.converters.default_if_none(default="NOTSET"),
+    )
+    logging_file = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.logs_path,
+                "_".join(
+                    [
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-") + ".log",
+                    ]
+                ),
+            ),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    compressed = attr.ib(
+        type=bool,
+        default=True,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(default=True),
+    )
+    sha1 = attr.ib(
+        type=str,
+        default="",
+        validator=attr.validators.instance_of(str),
+        converter=_parse_sha1,
+    )
+    ignore_errors = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(default=False),
+    )
+    timeout = attr.ib(
+        type=float,
+        default=0.5,
+        validator=[_validate_float, attr.validators.instance_of((float, int))],
+        converter=attr.converters.default_if_none(default=0.5),
+    )
+    save_all = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(default=False),
+    )
+    dry_run = attr.ib(
+        type=bool,
+        default=False,
+        validator=attr.validators.instance_of(bool),
+        converter=attr.converters.default_if_none(False),
+    )
+    protocols_key = attr.ib(
+        type=str,
+        default="PyRosettaCluster_protocols_container",
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+    system_info = attr.ib(
+        type=dict,
+        default=None,
+        validator=attr.validators.instance_of(dict),
+        converter=_parse_system_info,
+    )
+    pyrosetta_build = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=_parse_pyrosetta_build,
+    )
+    environment = attr.ib(
+        type=str,
+        default=None,
+        validator=attr.validators.instance_of(str),
+        converter=_parse_environment,
+    )
+    environment_file = attr.ib(
+        type=str,
+        default=attr.Factory(
+            lambda self: os.path.join(
+                self.output_path,
+                "_".join(
+                    [
+                        self.project_name.replace(" ", "-"),
+                        self.simulation_name.replace(" ", "-"),
+                        "environment.yml",
+                    ]
+                ),
+            ),
+            takes_self=True,
+        ),
+        init=False,
+        validator=attr.validators.instance_of(str),
+    )
+
+    def __attrs_post_init__(self):
+        _maybe_init_master()
+        self._setup_logger()
+        self._write_environment_file(self.environment_file)
+
+    def distribute(self, *args: Any, protocols: Any = None) -> Optional[NoReturn]:
+        """
+        Run user-provided PyRosetta protocols on a local or remote compute cluster using
+        the user-customized PyRosettaCluster instance. Either arguments or the 'protocols'
+        keyword argument is required. If both are provided, then the 'protocols' keyword
+        argument gets concatenated after the input arguments.
+
+        Examples:
+            PyRosettaCluster().distribute(protocol_1)
+            PyRosettaCluster().distribute(protocols=protocol_1)
+            PyRosettaCluster().distribute(protocol_1, protocol_2, protocol_3)
+            PyRosettaCluster().distribute(protocols=(protocol_1, protocol_2, protocol_3))
+            PyRosettaCluster().distribute(protocol_1, protocol_2, protocols=[protocol_3, protocol_4])
+
+        Args:
+            *args: Optional instances of type `types.GeneratorType` or `types.FunctionType`,
+                in the order of protocols to be executed.
+            protocols: An optional iterable of extra callable PyRosetta protocols,
+                i.e. an iterable of objects of `types.GeneratorType` and/or
+                `types.FunctionType` types; or a single instance of type
+                `types.GeneratorType` or `types.FunctionType`.
+                Default: None
+
+        Returns:
+            None
+        """
+
+        protocols, protocol, seed = self._setup_protocols_protocol_seed(args, protocols)
+        client, cluster, adaptive = self._setup_client_cluster_adaptive()
+        master_residue_type_set = _get_residue_type_set()
+        extra_args = (
+            self.decoy_ids,
+            self.protocols_key,
+            self.timeout,
+            self.ignore_errors,
+            self.logging_file,
+            self.logging_level,
+            self.DATETIME_FORMAT,
+            master_residue_type_set,
+        )
+        seq = as_completed(
+            [
+                client.submit(
+                    user_spawn_thread,
+                    protocol,
+                    self.input_packed_pose,
+                    kwargs,
+                    *extra_args,
+                    pure=False,
+                )
+                for kwargs in (
+                    self._setup_initial_kwargs(protocols, seed, task_kwargs)
+                    for task_kwargs in self.tasks
+                )
+                for _ in range(self.nstruct)
+            ]
+        )
+        for i, future in enumerate(seq, start=1):
+            try:
+                results = future.result()
+            except KilledWorker as ex:
+                logging.error(ex)
+                continue
+            logging.info(
+                "Percent Complete = {0:0.5f} %".format((i / self.tasks_size) * 100.0)
+            )
+            for packed_pose, kwargs in results:
+                if not kwargs[self.protocols_key]:
+                    self._save_results(packed_pose, kwargs)
+                else:
+                    if self.save_all:
+                        self._save_results(
+                            packed_pose.pose.clone(), copy.deepcopy(kwargs),
+                        )
+                    kwargs, protocol = self._setup_kwargs(kwargs)
+                    scatter = client.scatter(
+                        (protocol, packed_pose, kwargs, *extra_args,)
+                    )
+                    seq.add(client.submit(user_spawn_thread, *scatter, pure=False,))
+                    self.tasks_size += 1
+                    self._maybe_adapt(adaptive)
+
+        self._maybe_teardown(client, cluster)
+        self._close_logger()
+
+
+PyRosettaCluster.__doc__ = __doc__
