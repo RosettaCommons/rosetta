@@ -30,7 +30,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.hh>
-#include <core/scoring/TwelveANeighborGraph.hh>
+#include <core/scoring/TenANeighborGraph.hh>
 #include <core/types.hh>
 
 #include <core/conformation/symmetry/SymmetricConformation.hh>
@@ -80,77 +80,83 @@ static basic::Tracer TR( "core.scoring.epr_deer.EPRSpinLabel" );
 // is more appropriate.
 static const
 utility::vector1< PseudoElectron > mtssl13_ = {
-std::make_pair( numeric::xyzVector< Real >( -5.767,  2.275, -0.295 ), 0.5447 ),
-std::make_pair( numeric::xyzVector< Real >(  3.613, -6.337,  0.800 ), 0.7091 ),
-std::make_pair( numeric::xyzVector< Real >( -1.705, -1.234,  5.859 ), 1.0000 ),
-std::make_pair( numeric::xyzVector< Real >( -5.623, -4.733, -2.694 ), 0.2072 ),
-std::make_pair( numeric::xyzVector< Real >( -2.224, -6.089,  5.277 ), 0.3287 ),
-std::make_pair( numeric::xyzVector< Real >(  5.572, -2.864,  3.288 ), 0.4498 ),
-std::make_pair( numeric::xyzVector< Real >(  1.108, -6.893, -2.574 ), 0.9798 ),
-std::make_pair( numeric::xyzVector< Real >( -3.732,  1.880,  7.013 ), 0.4694 ),
-std::make_pair( numeric::xyzVector< Real >(  2.653,  0.153,  6.667 ), 0.6293 ),
-std::make_pair( numeric::xyzVector< Real >( -3.585, -7.244,  2.537 ), 0.1551 ),
-std::make_pair( numeric::xyzVector< Real >( -1.877, -5.513, -1.528 ), 0.2841 ),
-std::make_pair( numeric::xyzVector< Real >(  0.386, -6.957,  4.280 ), 0.3151 ),
-std::make_pair( numeric::xyzVector< Real >( -0.407, -6.350, -5.107 ), 0.6001 )
+	std::make_pair( numeric::xyzVector< Real >( -5.767,  2.275, -0.295 ), 0.5447 ),
+	std::make_pair( numeric::xyzVector< Real >(  3.613, -6.337,  0.800 ), 0.7091 ),
+	std::make_pair( numeric::xyzVector< Real >( -1.705, -1.234,  5.859 ), 1.0000 ),
+	std::make_pair( numeric::xyzVector< Real >( -5.623, -4.733, -2.694 ), 0.2072 ),
+	std::make_pair( numeric::xyzVector< Real >( -2.224, -6.089,  5.277 ), 0.3287 ),
+	std::make_pair( numeric::xyzVector< Real >(  5.572, -2.864,  3.288 ), 0.4498 ),
+	std::make_pair( numeric::xyzVector< Real >(  1.108, -6.893, -2.574 ), 0.9798 ),
+	std::make_pair( numeric::xyzVector< Real >( -3.732,  1.880,  7.013 ), 0.4694 ),
+	std::make_pair( numeric::xyzVector< Real >(  2.653,  0.153,  6.667 ), 0.6293 ),
+	std::make_pair( numeric::xyzVector< Real >( -3.585, -7.244,  2.537 ), 0.1551 ),
+	std::make_pair( numeric::xyzVector< Real >( -1.877, -5.513, -1.528 ), 0.2841 ),
+	std::make_pair( numeric::xyzVector< Real >(  0.386, -6.957,  4.280 ), 0.3151 ),
+	std::make_pair( numeric::xyzVector< Real >( -0.407, -6.350, -5.107 ), 0.6001 )
 };
 
 static const
 utility::vector1< PseudoElectron > mtssl50_unweighted_ = {
-std::make_pair( numeric::xyzVector< core::Real > ( -3.02, -6.385, 4.598), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -3.171, -5.602, -1.129), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.965, 1.611, -1.727), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 1.721, -7.535, 3.201), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -7.095, -5.243, 2.081), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 5.401, -2.96, 4.29), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 1.535, -5.371, -4.155), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 2.451, -0.607, 6.988), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -8.324, 0.475, 3.255), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -6.721, -4.965, -2.153), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 1.768, -7.644, -1.366), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.965, -3.659, 5.684), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -3.628, 2.644, 6.662), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -7.029, -1.377, -5.071), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -8.731, -3.654, 0.004), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -3.698, -7.508, 1.932), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 4.807, -5.037, 1.085), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.315, 2.65, -0.775), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 0.822, -6.631, -3.274), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 0.941, -5.792, 5.57), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 2.066, -7.341, 1.191), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -2.384, -5.545, 6.003), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -0.505, -5.657, -5.723), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -8.803, -1.771, 0.792), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -6.585, -5.547, 4.04), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.742, -4.1, -4.064), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -1.205, -7.119, 3.747), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -6.679, 0.592, -4.703), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 3.965, -6.634, 0.124), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -0.491, -5.153, -2.001), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -7.825, 0.17, 5.212), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -0.309, -7.044, -4.492), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -2.704, -0.365, 5.652), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 5.743, -2.769, 2.286), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -6.208, 1.811, 0.086), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 2.854, 0.912, 6.346), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -4.644, -6.581, 2.998), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.152, 3.53, 0.742), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 0.087, -7.381, 4.601), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -4.32, -4.43, -1.535), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( 0.307, -7.925, -1.5), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -3.837, 1.117, 7.365), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -7.49, -4.188, -0.854), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -2.413, -7.644, 2.679), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.711, -5.438, -3.024), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -1.671, -6.489, 4.795), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -1.969, -5.785, -1.454), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -5.895, -5.548, 4.9), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -0.513, -1.394, 5.729), 0.02 ),
-std::make_pair( numeric::xyzVector< core::Real >( -2.159, -1.769, 5.96), 0.02 )
+	std::make_pair( numeric::xyzVector< core::Real > ( -3.02, -6.385, 4.598), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -3.171, -5.602, -1.129), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.965, 1.611, -1.727), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 1.721, -7.535, 3.201), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -7.095, -5.243, 2.081), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 5.401, -2.96, 4.29), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 1.535, -5.371, -4.155), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 2.451, -0.607, 6.988), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -8.324, 0.475, 3.255), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -6.721, -4.965, -2.153), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 1.768, -7.644, -1.366), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.965, -3.659, 5.684), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -3.628, 2.644, 6.662), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -7.029, -1.377, -5.071), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -8.731, -3.654, 0.004), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -3.698, -7.508, 1.932), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 4.807, -5.037, 1.085), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.315, 2.65, -0.775), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 0.822, -6.631, -3.274), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 0.941, -5.792, 5.57), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 2.066, -7.341, 1.191), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -2.384, -5.545, 6.003), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -0.505, -5.657, -5.723), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -8.803, -1.771, 0.792), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -6.585, -5.547, 4.04), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.742, -4.1, -4.064), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -1.205, -7.119, 3.747), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -6.679, 0.592, -4.703), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 3.965, -6.634, 0.124), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -0.491, -5.153, -2.001), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -7.825, 0.17, 5.212), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -0.309, -7.044, -4.492), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -2.704, -0.365, 5.652), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 5.743, -2.769, 2.286), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -6.208, 1.811, 0.086), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 2.854, 0.912, 6.346), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -4.644, -6.581, 2.998), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.152, 3.53, 0.742), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 0.087, -7.381, 4.601), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -4.32, -4.43, -1.535), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( 0.307, -7.925, -1.5), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -3.837, 1.117, 7.365), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -7.49, -4.188, -0.854), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -2.413, -7.644, 2.679), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.711, -5.438, -3.024), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -1.671, -6.489, 4.795), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -1.969, -5.785, -1.454), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -5.895, -5.548, 4.9), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -0.513, -1.394, 5.729), 0.02 ),
+	std::make_pair( numeric::xyzVector< core::Real >( -2.159, -1.769, 5.96), 0.02 )
 };
 
+static core::scoring::AtomVDWOP atom_vdw_ = core::scoring::AtomVDWOP( nullptr );
+
 /// @brief Constructor
-EPRSpinLabel::EPRSpinLabel() {}
+EPRSpinLabel::EPRSpinLabel() {
+	if ( !atom_vdw_ ) {
+		atom_vdw_ = AtomVDWOP( new AtomVDW( ScoringManager::get_instance()->get_AtomVDW( chemical::CENTROID ) ) );
+	}
+}
 
 /// @brief Destructor
 EPRSpinLabel::~EPRSpinLabel() {}
@@ -172,14 +178,15 @@ std::map< Size, Real >
 EPRSpinLabel::histogram(
 	utility::vector1< std::pair< Size, std::string > > const & residues,
 	Size const & bins_per_a,
-	Real const & modifier // = 0.0
+	Real const & modifier, // = 0.0
+	std::map< Size, Real > const & dist_ids // = {}
 ) {
 	std::map< Size, Real > output;
 	// This iterates through all pairs of residues. There should be ( n * ( n - 1 ) ) / 2 such pairs
 	// In the typical case where only two residues are spin labeled, it will simply go through these loops once
 	for ( Size i = 1; i < residues.size(); ++i ) {
 		for ( Size j = i + 1; j <= residues.size(); ++j ) {
-			auto distribution = normalize_distribution( histogram( residues[ i ], residues[ j ], bins_per_a, modifier ) );
+			auto distribution = normalize_distribution( histogram( residues[ i ], residues[ j ], bins_per_a, modifier, 1.0, dist_ids ) );
 			for ( auto const & dist : distribution ) {
 				if ( output.find( dist.first ) == output.end() ) {
 					output[ dist.first ] = 0.0;
@@ -198,7 +205,8 @@ EPRSpinLabel::histogram(
 	std::pair< Size, std::string > const & res2,
 	Size const & bins_per_a,
 	Real const & modifier, // = 0.0
-	Real const & stdev // = 1.0
+	Real const & stdev, // = 1.0
+	std::map< Size, Real > const & dist_ids // = {}
 ) {
 	Size STDEV_RANGE = 4;
 	if ( mapped_coords_.find( res1 ) == mapped_coords_.end() || mapped_coords_.find( res2 ) == mapped_coords_.end() ) {
@@ -209,12 +217,25 @@ EPRSpinLabel::histogram(
 	auto const & res2_coords = mapped_coords_[ res2 ];
 	for ( auto const & iter1 : res1_coords ) {
 		for ( auto const & iter2 : res2_coords ) {
-			Real dist = iter1.first.distance( iter2.first ) + ( modifier * bins_per_a );
 			Real comb_weight = iter1.second * iter2.second;
-			Size lowest_bin = std::max( round( dist * bins_per_a ) - round( STDEV_RANGE * bins_per_a ), 1.0 );
-			Size highest_bin = round( dist * bins_per_a ) + int( STDEV_RANGE * bins_per_a );
-			for ( Size bin = lowest_bin; bin <= highest_bin; ++bin ) {
-				output[ bin ] += comb_weight * gauss( bin / Real( bins_per_a ), dist, stdev );
+			if ( bins_per_a > 0 ) {
+				Real dist = iter1.first.distance( iter2.first ) + ( modifier * bins_per_a );
+				Size lowest_bin = std::max( round( dist * bins_per_a ) - round( STDEV_RANGE * bins_per_a ), 1.0 );
+				Size highest_bin = round( dist * bins_per_a ) + int( STDEV_RANGE * bins_per_a );
+				for ( Size bin = lowest_bin; bin <= highest_bin; ++bin ) {
+					if ( output.find( bin ) == output.end() ) {
+						output[ bin ] = 0.0;
+					}
+					output[ bin ] += comb_weight * gauss( bin / Real( bins_per_a ), dist, stdev );
+				}
+			} else {
+				Real dist = iter1.first.distance( iter2.first ) + modifier;
+				for ( auto const & dist_id : dist_ids ) {
+					if ( output.find( dist_id.first ) == output.end() ) {
+						output[ dist_id.first ] = 0.0;
+					}
+					output[ dist_id.first ] += comb_weight * gauss( dist_id.second, dist, stdev );
+				}
 			}
 		}
 	}
@@ -244,13 +265,16 @@ EPRSpinLabel::label(
 	pose::Pose const & pose,
 	bool const & skip_clash_eval // = false
 ) {
-	auto pair = std::make_pair( res, label );
+	auto const res_sl = std::make_pair( res, label );
+	if ( mapped_coords_.find( res_sl ) != mapped_coords_.end() ) {
+		return;
+	}
 	if ( label == "MTSSL13" || label == "DEFAULT_FAST" ) {
-		mapped_coords_[ pair ] = get_coords( res, pose, mtssl13_, skip_clash_eval );
+		mapped_coords_[ res_sl ] = get_electrons_for_residue( res, pose, mtssl13_, skip_clash_eval );
 	} else if ( label == "MTSSL50_UNWEIGHTED" || label == "DEFAULT" ) {
-		mapped_coords_[ pair ] = get_coords( res, pose, mtssl50_unweighted_, skip_clash_eval );
+		mapped_coords_[ res_sl ] = get_electrons_for_residue( res, pose, mtssl50_unweighted_, skip_clash_eval );
 	} else if ( label == "CUSTOM" ) {
-		mapped_coords_[ pair ] = get_coords( res, pose, custom_coords_[ res ], true );
+		mapped_coords_[ res_sl ] = get_electrons_for_residue( res, pose, custom_coords_[ res ], true );
 	} else {
 		TR.Error << "Must specify DEFAULT, DEFAULT_FAST, or CUSTOM when declaring rotamers to use! Res : " << res << std::endl;
 	}
@@ -288,7 +312,7 @@ EPRSpinLabel::normalize_distribution(
 
 /// @brief Given a set of electrons, a pose, and a residue of interest, find viable coords
 utility::vector1< PseudoElectron >
-EPRSpinLabel::get_coords(
+EPRSpinLabel::get_electrons_for_residue(
 	Size const & res,
 	pose::Pose const & pose,
 	utility::vector1< PseudoElectron > const & electrons,
@@ -315,17 +339,17 @@ EPRSpinLabel::get_coords(
 
 	for ( Real forgive_factor = 0.80; forgive_factor >= 0.00; forgive_factor -= 0.05 ) {
 		auto v_e_temp( v_e );
-		for ( auto & e : v_e_temp ) {
-			e.second *= get_weight( res, center_of_mass( e.first, cb ), pose, forgive_factor );
-		}
+		for ( auto & e : v_e_temp ) e.second *= get_weight( res, center_of_mass( e.first, cb ), pose, forgive_factor );
+		utility::vector1< PseudoElectron > output;
 		Size n_viable = 0;
 		for ( auto const & e_temp : v_e_temp ) {
+			output.push_back( e_temp );
 			if ( e_temp.second > cutoff_ ) {
 				n_viable += 1;
 			}
 		}
 		if ( n_viable > 0 ) {
-			return v_e_temp;
+			return output;
 		}
 	}
 	// If at this point output has not returned, just return the original set of coordinates
@@ -342,8 +366,8 @@ EPRSpinLabel::get_weight(
 ) {
 	// Using the neighborgraph since it is a more efficient way of checking for clashes
 	Real weight( 1.0 );
-	auto const & neighborgraph = pose.energies().twelveA_neighbor_graph();
-	auto const & atom_vdw = ScoringManager::get_instance()->get_AtomVDW( chemical::CENTROID );
+	auto const & neighborgraph = pose.energies().tenA_neighbor_graph();
+	
 	for (
 			auto edge_iter = neighborgraph.get_node( source_res )->const_edge_list_begin();
 			edge_iter != neighborgraph.get_node( source_res )->const_edge_list_end();
@@ -355,7 +379,7 @@ EPRSpinLabel::get_weight(
 		}
 		for ( Size ii = 1; ii <= pose.residue( res ).natoms(); ++ii ) {
 			Real clash_d_sq = ( !pose.is_fullatom() && ii == pose.residue( res ).atom_index( "CEN" ) )
-				? pow( 2.4 + forgive_factor * atom_vdw.approximate_vdw_radius( pose.residue( res ).atom_type_index( ii ) ), 2 )
+				? pow( 2.4 + forgive_factor * atom_vdw_->approximate_vdw_radius( pose.residue( res ).atom_type_index( ii ) ), 2 )
 				: pow( 2.4 + forgive_factor * ( pose.residue( res ).atom_type( ii ).lj_radius() ), 2 );
 			Real distance_sq = center_of_mass.distance_squared( pose.residue( res ).atom( ii ).xyz() );
 			weight *= ( pose.residue( res ).atom_is_backbone( ii ) ) ?

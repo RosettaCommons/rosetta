@@ -38,7 +38,7 @@ namespace epr_deer {
 typedef std::pair< numeric::xyzVector< Real >, Real > PseudoElectron;
 
 static
-	std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
+std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
 
 static const
 numeric::xyzVector< Real > cb_coord_( -1.3116, -0.5715, 0.5398 );
@@ -66,7 +66,8 @@ public:
 	histogram(
 		utility::vector1< std::pair< Size, std::string > > const & residues,
 		Size const & bins_per_a,
-		Real const & modifer = 0.0
+		Real const & modifer = 0.0,
+		std::map< Size, Real > const & dist_ids = {}
 	);
 
 	/// @brief Returns a histogram between all coordinates between two residue/SL combinations
@@ -76,7 +77,8 @@ public:
 		std::pair< Size, std::string > const & res2,
 		Size const & bins_per_a,
 		Real const & modifer = 0.0,
-		Real const & stdev = 1.0
+		Real const & stdev = 1.0,
+		std::map< Size, Real > const & dist_ids = {}
 	);
 
 	/// @brief Return a value for a gaussian distribution at a particular value, given a average and standard deviation
@@ -104,7 +106,7 @@ public:
 
 	/// @brief Given a set of electrons, a pose, and a residue of interest, find viable coords
 	utility::vector1< PseudoElectron >
-	get_coords(
+	get_electrons_for_residue(
 		core::Size const & res,
 		pose::Pose const & pose,
 		utility::vector1< PseudoElectron > const & electrons,
