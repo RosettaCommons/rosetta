@@ -9,18 +9,18 @@ import build_util
 # Note that CMake encodes absolute path information in the compile,
 # so we don't actually lose anything by using the absolute path
 PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) + "/"
-PATH_TO_SOURCE_DIR.replace('\\', '/')
+PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
 def update_version():
-    cmd = 'cd ..; ./version.py'
+    cmd = 'cd .. && version.py'
     os.system(cmd)
 
 def update_options():
-    cmd = 'cd ..; ./update_options.sh'
+    cmd = 'cd .. && update_options.sh'
     os.system(cmd)
 
 def update_ResidueType_enum_files():
-    cmd = 'cd ..; ./update_ResidueType_enum_files.sh'
+    cmd = 'cd .. && update_ResidueType_enum_files.sh'
     os.system(cmd)
 
 

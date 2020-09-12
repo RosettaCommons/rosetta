@@ -35,7 +35,7 @@ def exe_exists(exe):
     for path in os.environ["PATH"].split(os.pathsep):
         path = path.strip('"')
         exe_file = os.path.join(path, exe)
-        if is_exe(exe_file):
+        if is_exe(exe_file) or is_exe(exe_file + '.exe'):
             return True
     return False
 
@@ -101,9 +101,9 @@ if args.clean_exit or args.clean:
 #Run make_project.py if requested
 if args.remake:
     if args.my:
-        subprocess.check_call(["./make_project.py", "my"], cwd=cmake_path)
+        subprocess.check_call([sys.executable, "./make_project.py", "my"], cwd=cmake_path)
     else:
-        subprocess.check_call(["./make_project.py", "all"], cwd=cmake_path)
+        subprocess.check_call([sys.executable, "./make_project.py", "all"], cwd=cmake_path)
 
 #Run cmake if requested
 if args.remake:

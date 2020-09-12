@@ -19,11 +19,11 @@ from __future__ import print_function
 import sys, time, os, re, os.path, subprocess, json, argparse, subprocess, datetime
 
 
-def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False):
+def execute(message, command_line, return_='status', until_successes=False, terminate_on_failure=True, silent=False, silence_output=False, cwd=None):
     if not silent: print(message);  print(command_line); sys.stdout.flush();
     while True:
 
-        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
         output, errors = p.communicate()
 
         output = output + errors
@@ -115,30 +115,33 @@ def generate_version_information(rosetta_dir, url=None, branch=None, package=Non
     for repository in 'main tools demos documentation'.split():
         repository_dir = rosetta_dir if repository == 'main' else '{rosetta_dir}/../{repository}'.format(**vars())
         if os.path.isdir(repository_dir):
-            res, output = execute('Getting Git commit SHA1 for rosetta {repository}...',  'cd {repository_dir} && git rev-parse HEAD'.format(**vars()), return_='tuple', silent=True)
+            res, output = execute('Getting Git commit SHA1 for rosetta {repository}...',  'git rev-parse HEAD'.format(**vars()), return_='tuple', silent=True, cwd=repository_dir)
             versions[repository] = None if res else output[:-1]  # remove \n at the end
         else: versions[repository] = None
 
-    #versions['binder'] = execute('Getting Binder submodule SHA1...', "cd {rosetta_dir} && git ls-tree HEAD source/src/python/PyRosetta/binder | awk '{{print $3}}'".format(**vars()), return_='output')
+    #versions['binder'] = execute('Getting Binder submodule SHA1...', "git -C "{rosetta_dir}" ls-tree HEAD source/src/python/PyRosetta/binder | awk '{{print $3}}'".format(**vars()), return_='output')
     for s, p in [('binder', 'source/src/python/PyRosetta/binder'), ('rosetta_scripts_scripts', 'rosetta_scripts_scripts'), ('pyrosetta_scripts', 'pyrosetta_scripts'), ('pybind11', 'source/external/pybind11')]:
-        versions[s] = execute('Getting {s} submodule SHA1...'.format(**vars()), "cd {rosetta_dir} && git ls-tree HEAD {p} | awk '{{print $3}}'".format(**vars()), return_='output', silent=True)[:-1]  # remove \n at the end
+        versions[s] = execute('Getting {s} submodule SHA1...'.format(**vars()), 'git rev-parse "HEAD:{p}"'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1]  # remove \n at the end
 
     if date is None:
-        d = execute('Getting date for main {} commit...'.format(versions['main']),  "cd {rosetta_dir} && git log -1 --format='%ci' {versions[main]}".format(**vars()), return_='output', silent=True)
+        d = execute('Getting date for main {} commit...'.format(versions['main']),  'git log -1 --format="%ci" {versions[main]}'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)
         date = datetime.datetime.strptime(' '.join( d.split()[:2] ), "%Y-%m-%d %H:%M:%S")
 
     year = date.isocalendar()[0]
     week = date.isocalendar()[1]
 
-    if url is None: url = execute('Getting source origin...',  "cd {rosetta_dir} && git remote -v | grep fetch | awk '{{print $2}}' | head -n1".format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
+    if url is None:
+        remoteName = execute('Getting remote name', 'git remote'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end)
+        remoteName = remoteName.splitlines()[0]
+        url = execute('Getting source origin...',  'git config --get remote.{remoteName}.url'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
 
-    if branch is None: branch = execute('Getting current branch',  'cd {rosetta_dir} && git rev-parse --abbrev-ref HEAD'.format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
+    if branch is None: branch = execute('Getting current branch',  'git rev-parse --abbrev-ref HEAD'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
 
-    res, _ = execute('Checking if current Git repositoty is clone of RosettaCommons/main...',  'cd {rosetta_dir} && git cat-file -t e7ed669d70414d073c5477a317a65cea1172daa2'.format(**vars()), return_='tuple', silent=True)
+    res, _ = execute('Checking if current Git repositoty is clone of RosettaCommons/main...',  'git cat-file -t e7ed669d70414d073c5477a317a65cea1172daa2'.format(**vars()), return_='tuple', silent=True, cwd=rosetta_dir)
     if res: git_describe = None
     else:
         # Use git-describe --long to always include post-version and sha information
-        git_describe_str = execute('Getting `git describe` for current commit...',  "cd {rosetta_dir} && git describe --tags --long --match 'v[0-9]*'".format(**vars()), return_='output', silent=True)[:-1] # remove \n at the end
+        git_describe_str = execute('Getting `git describe` for current commit...',  'git describe --tags --long --match "v[0-9]*"'.format(**vars()), return_='output', silent=True, cwd=rosetta_dir)[:-1] # remove \n at the end
         describe_match = re.match("v(?P<year>\d+)\.(?P<week>\d+)(-dev(?P<dev_revision>\d+))?-(?P<post_revision>\d+)-g(?P<commit>\w+)", git_describe_str)
 
         if describe_match:
