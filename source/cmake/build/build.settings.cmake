@@ -181,10 +181,94 @@ endif()
 ###########################################################################
 
 if( ${COMPILER} STREQUAL "cl" )
-	#list( REMOVE_ITEM warn
-	#		-Wextra
-	#)
+	ADD_DEFINITIONS(-DPTR_STD)
+	ADD_DEFINITIONS(-DCXX11)
+	set( cc
+			# MSVC doesn't support setting the C version to use.
+	)
+	set( cxx
+			# MSVC uses C++14 as the default, there is no way to request C++11.
+			#-std=c++11
+	)
+	set( compile
+		-I../../src/platform/windows/msvc/
 
+		# Use the updated MSVC frontend that has improved standards conformance.
+		-permissive-
+		# Enable >64k sections in obj files.
+		-bigobj
+
+		# Disable noisy warnings.
+		# Signed/unsigned mismatch for comparison.
+		-wd4018
+		# Unreferenced local variable.
+		-wd4101
+		# "*/" found outside of comment.
+		-wd4138
+		# Conversion from floating point to integer may lose data.
+		-wd4244
+		# Ensure class has a dll-interface if exported.
+		-wd4251
+		# Conversion from size_t to smaller type may lose data.
+		-wd4267
+		# Non dll-exported class used as the base for dll-exported class.
+		-wd4275
+		# Conversion to smaller type during initialization/construction may lose data.
+		-wd4305
+		# Use of insecure CRT function.
+		-wd4996
+	)
+
+	# Prevent the Windows headers from defining the "min" and "max" macros.
+	ADD_DEFINITIONS(-DNOMINMAX)
+	# Use the reduced version of the Windows headers (e.g., no Winsock 1, no OLE2, etc.).
+	ADD_DEFINITIONS(-DWIN32_LEAN_AND_MEAN)
+
+	# Force Boost.System to be header-only.
+	ADD_DEFINITIONS(-DBOOST_ERROR_CODE_HEADER_ONLY)
+	# Remove deprecated features in Boost.System.
+	ADD_DEFINITIONS(-DBOOST_SYSTEM_NO_DEPRECATED)
+	# Disable automatic linking for Boost.
+	ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
+
+	# Only permit four link commands to be run at once.
+	# Rosetta builds *massive* static libraries which are linked together to make executables,
+	# these libraries are massive enough that they can cause MSVC's linker comsume all physical
+	# memory if too instances of link.exe are running at once, so prefer build reliability over
+	# speed by forcing all link commands into a ninja job pool with max parallelism=4.
+	# Additionally, link.exe is multi-threaded so it is best not to create as many link processes
+	# as there are cores on the machine.
+	set_property(GLOBAL PROPERTY JOB_POOLS link_job_pool=4)
+	set(CMAKE_JOB_POOL_LINK link_job_pool)
+endif()
+
+
+# modes ###################################################################
+
+# "cl, debug"
+if( ${COMPILER} STREQUAL "cl" AND ${MODE} STREQUAL "debug" )
+	list( APPEND compile
+		# Place functions in individual sections (allows functions to be dropped by opt:ref).
+		-Gy
+	)
+	list( APPEND shlink
+		# Enable dropping unused functions/data - this is disabled by default with /DEBUG.
+		-opt:ref
+	)
+	list( APPEND exelink
+		# Enable dropping unused functions/data - this is disabled by default with /DEBUG.
+		-opt:ref
+	)
+
+	foreach(t EXE SHARED)
+		# Disable incremental linking (the programs linked in Rosetta are too large to be incrementally linked).
+		string(REPLACE "/INCREMENTAL" "/INCREMENTAL:NO" CMAKE_${t}_LINKER_FLAGS_DEBUG "${CMAKE_${t}_LINKER_FLAGS_DEBUG}")
+
+		# Enable fastlink for debug symbols (.pdb files) - this causes the PDB files for libraries and executables
+		# to point back to the PDB files for .objs or .libs instead of copying their contents: greatly reducing the
+		# time it takes to do linking and the size of the generated PDB files.
+		string(REPLACE "/debug" "/debug:fastlink" CMAKE_${t}_LINKER_FLAGS_DEBUG "${CMAKE_${t}_LINKER_FLAGS_DEBUG}")
+	endforeach()
 endif()
 
 ###########################################################################
@@ -579,7 +663,16 @@ if( EXTRAS )
 endif()
 
 # Make sure that the submodules are up-to-date w/r/t the extras
-EXECUTE_PROCESS(COMMAND "../../update_submodules.sh" ${EXTRAS})
+if( WIN32 )
+	# EXECUTE_PROCESS on Windows requires that the "child process" is actually a binary executable, hence we use cmd to then invoke our
+	# script. Additionally, cmd can only handle back slashes...
+	EXECUTE_PROCESS(COMMAND "cmd" "/c ..\\..\\update_submodules.sh ${EXTRAS}" RESULT_VARIABLE rv )
+else()
+	EXECUTE_PROCESS(COMMAND "../../update_submodules.sh" "${EXTRAS}" RESULT_VARIABLE rv)
+endif()
+if( NOT rv STREQUAL "0" )
+	message( FATAL_ERROR "update_submodules.sh failed with: ${rv}" )
+endif()
 
 
 ###########################################################################
@@ -591,6 +684,12 @@ add_definitions( ${defines} )
 foreach( flag ${shlink} )
 	set( CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${flag}" )
 endforeach()
+
+if( WIN32 )
+	foreach( flag ${exelink} )
+		set( CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${flag}" )
+	endforeach()
+endif()
 
 foreach( flag ${cc} ${cxx} ${compile} ${warn} ${mode} )
 	set( COMPILE_FLAGS "${COMPILE_FLAGS} ${flag}" )

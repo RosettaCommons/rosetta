@@ -10,7 +10,11 @@ FOREACH(LIBRARY ${EXTERNAL_LIBRARIES})
 	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES LINK_FLAGS "${linkflags_string}")
 	# Because CMAKE can't actually use CMAKE-formated lists...
 	STRING( REPLACE ";" " " compileflags_string "${${LIBRARY}_compileflags}" )
-	SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "${compileflags_string} -Wno-error -w") #Also Turn off warnings for external libraries
+	if( ${COMPILER} STREQUAL "cl" )
+		SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "${compileflags_string}")
+	else()
+		SET_TARGET_PROPERTIES(${LIBRARY} PROPERTIES COMPILE_FLAGS "${compileflags_string} -Wno-error -w") #Also Turn off warnings for external libraries
+	endif()
 	SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} ${LIBRARY})
 ENDFOREACH( LIBRARY )
 
@@ -59,9 +63,13 @@ if(NOT DISABLE_SQLITE)
 
 	add_library(sqlite3 SHARED ${SQLITE3_SRC})
 
-        set(INTERNAL_SOURCES ${INTERNAL_SOURCES} ../../external/dbio/cppdb/sqlite3_backend.cpp)
-        set(INTERNAL_LIBRARIES ${INTERNAL_LIBRARIES} sqlite3)
-        add_definitions(-DCPPDB_WITH_SQLITE3)
+	set(INTERNAL_SOURCES ${INTERNAL_SOURCES} ../../external/dbio/cppdb/sqlite3_backend.cpp)
+	set(INTERNAL_LIBRARIES ${INTERNAL_LIBRARIES} sqlite3)
+	add_definitions(-DCPPDB_WITH_SQLITE3)
+
+	if( ${COMPILER} STREQUAL "cl" )
+		set_target_properties(sqlite3 PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -DSQLITE_API=__declspec(dllexport)" )
+	endif()
 
 endif()
 
@@ -80,7 +88,7 @@ set(CPPDB_SRC
 	${INTERNAL_SOURCES}
 	)
 
-      add_library(cppdb SHARED ${CPPDB_SRC})
+	add_library(cppdb SHARED ${CPPDB_SRC})
 
 # set(LIBXML2_SRC
 # 	../../external/libxml2/buf.c
@@ -155,4 +163,6 @@ endforeach()
 SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} cppdb)
 #SET(LINK_EXTERNAL_LIBS ${LINK_EXTERNAL_LIBS} libxml2)
 
-
+if( ${COMPILER} STREQUAL "cl" )
+	set_target_properties(zlib PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS} -DZLIB_DLL=1 -DZLIB_WINAPI=1" )
+endif()
