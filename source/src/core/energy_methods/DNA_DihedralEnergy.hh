@@ -19,9 +19,8 @@
 #include <core/energy_methods/DNA_DihedralEnergy.fwd.hh>
 
 // Package headers
-#include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/dna/DNA_DihedralPotential.fwd.hh>
-//#include <core/scoring/dna/DNA_DihedralPotential.fwd.hh>
 
 
 namespace core {
@@ -29,9 +28,9 @@ namespace scoring {
 namespace methods {
 
 ///
-class DNA_DihedralEnergy : public ContextDependentOneBodyEnergy {
+class DNA_DihedralEnergy : public ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef ContextIndependentLRTwoBodyEnergy  parent;
 public:
 
 	/// ctor
@@ -42,52 +41,50 @@ public:
 	EnergyMethodOP
 	clone() const override;
 
+	void
+	configure_from_options_system();
+
+	void
+	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+
 	bool
-	defines_score_for_residue(
+	defines_intrares_energy( EnergyMap const & ) const override { return true; }
+
+	bool
+	defines_intrares_energy_for_residue(
 		conformation::Residue const &
 	) const override;
 
 	bool
-	defines_dof_derivatives( pose::Pose const & ) const override { return true; }
-
-	void
-	configure_from_options_system();
-
-	/////////////////////////////////////////////////////////////////////////////
-	// methods for ContextIndependentOneBodyEnergies
-	/////////////////////////////////////////////////////////////////////////////
-
-	///
-	void
-	residue_energy(
-		conformation::Residue const & rsd,
+	defines_residue_pair_energy(
 		pose::Pose const & pose,
+		Size res1,
+		Size res2
+	) const override;
+
+	bool
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
+
+	void
+	residue_pair_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		ScoreFunction const &,
 		EnergyMap & emap
 	) const override;
 
-	//  virtual
-	//  void
-	//  residue_energy_old(
-	//   conformation::Residue const & rsd,
-	//   pose::Pose const & pose,
-	//   EnergyMap & emap
-	//  ) const;
+	void
+	eval_intrares_energy(
+		conformation::Residue const &,
+		pose::Pose const &,
+		ScoreFunction const &,
+		EnergyMap &
+	) const override;
 
-
-	///
-	virtual
+	///  this function is used for most torsions
 	Real
-	eval_dof_derivative(
-		id::DOF_ID const &,// dof_id,
-		id::TorsionID const & tor_id,
-		pose::Pose const & pose,
-		ScoreFunction const &,// sfxn,
-		EnergyMap const & weights
-	) const;
-
-
-	Real
-	eval_residue_dof_derivative(
+	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
 		ResSingleMinimizationData const &, // min_data,
 		id::DOF_ID const & dof_id,
@@ -100,7 +97,7 @@ public:
 
 	/// this function is used for the sugar derivs, which dont match up to a "torsion" in the current scheme
 	void
-	eval_residue_derivatives(
+	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
 		ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
@@ -108,21 +105,27 @@ public:
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const override;
 
-	//  virtual
-	//  Real
-	//  eval_dof_derivative_old(
-	//   id::DOF_ID const &,// dof_id,
-	//   id::TorsionID const & tor_id,
-	//   pose::Pose const & pose,
-	//   ScoreFunction const &,// sfxn,
-	//   EnergyMap const & weights
-	//  ) const;
+	///  this function is used for bb torsions spanning 2 residues
+	virtual
+	void
+	eval_residue_pair_derivatives(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		ResSingleMinimizationData const &,
+		ResSingleMinimizationData const &,
+		ResPairMinimizationData const & min_data,
+		pose::Pose const & pose, // provides context
+		EnergyMap const & weights,
+		utility::vector1< DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< DerivVectorPair > & r2_atom_derivs
+	) const override;
 
-	/// @brief DNA_Dihedral Energy is context dependent, but indicates that no context graphs need to
-	/// be maintained by class Energies
-	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
+	methods::LongRangeEnergyType
+	long_range_type() const override;
 
-	core::Size version() const override { return 1; }
+	core::Size version() const override { return 2; }
+
+	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	// data
 private:

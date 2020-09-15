@@ -134,6 +134,7 @@
 #include <core/energy_methods/DNAChiEnergyCreator.hh>
 #include <core/energy_methods/DNATorsionEnergyCreator.hh>
 #include <core/energy_methods/DNA_BaseEnergyCreator.hh>
+#include <core/energy_methods/DNA_DihedralEnergyCreator.hh>
 #include <core/energy_methods/DirectReadoutEnergyCreator.hh>
 #include <core/energy_methods/DistanceChainbreakEnergyCreator.hh>
 #include <core/energy_methods/Fa_MbenvEnergyCreator.hh>
@@ -530,6 +531,7 @@ static EnergyMethodRegistrator< scoring::loop_graph::LoopCloseEnergyCreator > Lo
 static EnergyMethodRegistrator< scoring::magnesium::MgEnergyCreator > MgEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::magnesium::RNA_MgPointEnergyCreator > RNA_MgPointEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DNA_BaseEnergyCreator > DNA_BaseEnergyCreator_registrator;
+static EnergyMethodRegistrator< scoring::methods::DNA_DihedralEnergyCreator > DNA_DihedralEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DirectReadoutEnergyCreator > DirectReadoutEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::DistanceChainbreakEnergyCreator > DistanceChainbreakEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::Fa_MbenvEnergyCreator > Fa_MbenvEnergyCreator_registrator;

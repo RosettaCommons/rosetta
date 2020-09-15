@@ -69,7 +69,7 @@ HBondOptions::HBondOptions(
 	std::string const & params_db_tag
 ):
 	max_hb_energy_( 0.0 ),
-	exclude_DNA_DNA_( true ),
+	exclude_DNA_DNA_( false ),
 	exclude_intra_res_protein_( true ),
 	exclude_intra_res_RNA_( false ),
 	put_intra_into_total_( false ), // means that intra will go into 'hbond' (all hbond terms)

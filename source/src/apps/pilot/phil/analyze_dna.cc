@@ -20,6 +20,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <core/scoring/func/Func.hh>
 
+#include <protocols/dna/util.hh>
 
 #include <core/pose/Pose.hh>
 
@@ -46,6 +47,7 @@
 // option key includes
 
 #include <basic/options/keys/dna.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>
@@ -80,7 +82,7 @@ dna_geometry()
 		core::import_pose::pose_from_file( pose, files[n] , core::import_pose::PDB_file);
 		std::cout << "DNA_GEOMETRY: " << files[n] << std::endl;
 		scoring::dna::set_base_partner( pose );
-		scoring::dna::show_dna_geometry( pose, std::cout );
+		protocols::dna::show_dna_geometry_extra_details( pose, files[n], std::cout );
 	}
 
 }

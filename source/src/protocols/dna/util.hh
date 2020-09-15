@@ -254,6 +254,23 @@ set_base_segment_chainbreak_constraints(
 );
 
 
+// @brief write some (more detailed) information on the dna geometry to the ostream "out"
+void
+show_dna_geometry(
+	core::pose::Pose const & pose,
+	std::ostream & out
+);
+
+
+// @brief write some (more detailed) information on the dna geometry to the ostream "out"
+//
+void
+show_dna_geometry_extra_details(
+	core::pose::Pose const & pose,
+	std::string tag,
+	std::ostream & out
+);
+
 } // namespace dna
 } // namespace protocols
 

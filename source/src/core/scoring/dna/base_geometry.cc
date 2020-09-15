@@ -16,6 +16,8 @@
 #include <core/scoring/dna/DNA_BasePotential.hh>
 
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/EnergyMap.hh>
 
 #include <core/types.hh>
 #include <basic/Tracer.hh>
@@ -49,7 +51,6 @@ using namespace ObjexxFCL;
 using namespace ObjexxFCL::format;
 
 using Matrix = numeric::xyzMatrix<Real>;
-//using kinematics::Stub::Matrix;
 using Params = utility::vector1<Real>;
 
 ////////////////////////////////////////////////////////////////////////////
@@ -60,61 +61,6 @@ lsf_normal(
 	utility::vector1< Vector > const & atoms_in
 );
 
-////////////////////////////////////////////////////////////////////////////
-void
-get_base_pucker(
-	conformation::Residue const & rsd,
-	std::pair< std::string, int > & pucker
-)
-{
-
-	utility::vector1< std::string > names;
-	names.push_back( "C1'" );
-	names.push_back( "C2'" );
-	names.push_back( "C3'" );
-	names.push_back( "C4'" );
-	names.push_back( "O4'" );
-
-	utility::vector1< Vector > atoms;
-	for ( int i=1; i<= 5; ++i ) {
-		atoms.push_back( rsd.xyz( names[i] ) );
-	}
-
-	Real mindot = 1000.0;
-	bool exxo( false );
-	for ( int ii=1; ii<= 5; ++ii ) {
-
-		Vector n12 = (( atoms[2]-atoms[1] ).cross( atoms[3]-atoms[2] ) ).normalized();
-		Real dot = std::fabs( n12.dot( ( atoms[4]-atoms[3] ).normalized() ) );
-		if ( dot < mindot ) {
-			// get pucker
-			//Real pucker_dot = n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() );
-
-			mindot = dot;
-			pucker.first = names[5];
-			exxo = ( n12.dot( ( atoms[5] - Real(0.5) * ( atoms[4] + atoms[1] ) ).normalized() ) > 0.0 );
-		}
-
-		atoms.push_back( atoms[1] );
-		atoms.erase( atoms.begin() );
-
-		names.push_back( names[1] );
-		names.erase( names.begin() );
-
-	}
-
-
-	// additional integer for scannability
-	{
-		int const atom_index( std::find( names.begin(), names.end(), pucker.first ) - names.begin() );
-		int const sign_index( exxo ? 0 : 1 );
-		if ( atom_index%2 == sign_index ) pucker.second = atom_index+1;
-		else                              pucker.second = atom_index-4;
-	}
-
-	if ( exxo ) pucker.first += " exxo";
-	else pucker.first += " endo";
-}
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -196,6 +142,63 @@ get_sugar_pucker(
 	pucker.second += 4;
 	debug_assert( pucker.second >= 0 && pucker.second <= 9 );
 }
+
+/// A "soft" version of the function above, that assigns a probability distribution over the 10 puckers
+/// This is necessary to smoothly minimize between puckers
+void
+get_sugar_pucker_distr(
+	conformation::Residue const & rsd,
+	utility::vector1<core::Real> & puckerProb
+) {
+	using std::string;
+	using namespace utility;
+	using namespace utility::tools;
+
+	const Real temperature = 0.01;
+
+	puckerProb.clear();
+	puckerProb.resize(10, 0.0);
+
+	vector1< string > names = {
+		string( "C1'" ), string( "C2'" ), string( "C3'" ), string( "C4'" ), string( "O4'" ) };
+	utility::vector1< Vector > atoms;
+	for ( int i=1; i<=9; ++i ) {
+		atoms.push_back( rsd.xyz( names[1+(i-1)%5] ) );
+	}
+
+	Real pSum = 0.0;
+	for ( int ii=1; ii<=5; ++ii ) {
+		Vector n12 = (( atoms[ii+1]-atoms[ii] ).cross( atoms[ii+2]-atoms[ii+1] ) ).normalized_any();
+		Real dot = std::fabs( n12.dot( ( atoms[ii+3]-atoms[ii+2] ).normalized_any() ) );
+		Real exxo = n12.dot( ( atoms[ii+4] - Real(0.5) * ( atoms[ii+3] + atoms[ii] ) ).normalized_any() );
+
+		Size index_endo = (ii==1?5:ii-1) + (ii%2==1?5:0);
+		Size index_exo = (ii==1?5:ii-1) + (ii%2==1?0:5);
+
+		Real prob_endo = std::exp( -exxo/temperature );
+		Real prob_exo = std::exp( exxo/temperature );
+		Real probZ = prob_endo+prob_exo;
+		prob_endo /= probZ;
+		prob_exo /= probZ;
+
+		Real probdot = std::exp( -dot/temperature );
+		pSum += probdot;
+
+		puckerProb[index_endo] = probdot*prob_endo;
+		puckerProb[index_exo] = probdot*prob_exo;
+	}
+	for ( int ii=1; ii<=10; ++ii ) {
+		puckerProb[ii] /= pSum;
+	}
+
+	//for ( int ii=0; ii<=9; ++ii ) {
+	// int const atom_index( 1+(ii%5) );
+	// bool endo=false;
+	// if (atom_index%2==1) { endo=(ii < 5); } else { endo=(ii >= 5); }
+	// TR << ii << " " << names[atom_index] << " " << (endo?"endo ":"exo ") << puckerProb[ii+1] << std::endl;
+	//}
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 void
 get_sugar_torsions(
@@ -854,10 +857,11 @@ seqpos_is_base_step_anchor(
 	pose::Pose const & pose
 )
 {
+	if ( seqpos<1 || seqpos > pose.total_residue() ) return false;
 	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 	conformation::Residue const & rsd( pose.residue( seqpos ) );
 
-	return ( seqpos < pose.size() && ( rsd.is_DNA()  || rsd.is_RNA() )&& !rsd.is_lower_terminus() && partner[ seqpos ] &&
+	return ( seqpos < pose.size() && ( rsd.is_DNA()  || rsd.is_RNA() )&& partner[ seqpos ] &&
 		partner[ seqpos+1 ] && partner[seqpos] == partner[seqpos+1]+1 && partner[seqpos] != seqpos+1 );
 }
 
@@ -957,58 +961,87 @@ show_base_pair_params(
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-// might be useful at some point to get them from coordinates. in case atomtree has breaks...
+
+// compute three groove width measures: P-P distances that approximate major and minor groove width,
+// and a third measure that also captures major groove distortion (major_length)
 //
-// void
-// get_dna_dihedrals(
-//          Size const seqpos,
-//          pose::Pose const & pose
-//          vector1< Real > & dihedrals
-//          )
-// {
-//  dihedrals.resize( 7 );
-//  Residue const & rsd( pose.residue(seqpos) );
-
-
-// }
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////
+// these measures are centered around the base-step i->i+1 paired with partner[i+1]->partner[i]
+//
 void
-show_dna_geometry(
+get_groove_widths(
+	Size const i, // first position in base-step
 	pose::Pose const & pose,
-	std::ostream & out
+	Real & major_width,
+	Real & minor_width,
+	Real & major_length
 )
 {
+	minor_width = major_width = major_length = 0.0;
 
-	// dihedrals + a/g bin + typeI,II + pucker
-	Size const nres( pose.size() );
+	BasePartner const & partner( retrieve_base_partner_from_pose( pose ) );
 
-	for ( Size i=1; i<= nres; ++i ) {
-		conformation::Residue const & rsd( pose.residue(i) );
-		if ( !rsd.is_DNA() || rsd.is_RNA() ) continue;
-		std::pair< std::string, int > pucker;
-		get_base_pucker( rsd, pucker );
-
-		out << "DNA_DIHEDRALS " << I(4,i) << ' ' << rsd.name1() << ' ' <<
-			pucker.first << right_string_of( pucker.second, 3 ) << ' ' << get_DNA_backbone_bin( rsd ) <<
-			F(7,1,rsd.mainchain_torsion(1)) <<
-			F(7,1,rsd.mainchain_torsion(2)) <<
-			F(7,1,rsd.mainchain_torsion(3)) <<
-			F(7,1,rsd.mainchain_torsion(4)) <<
-			F(7,1,rsd.mainchain_torsion(5)) <<
-			F(7,1,rsd.mainchain_torsion(6)) <<
-			F(7,1,rsd.chi(1)) << '\n';
+	// compute the alternate version of groove width, call it major_length
+	if ( i>=4 && pose.residue(i-3).is_DNA() ) {
+		Size pos1( i-3 ), pos2(0);
+		bool problemo( false );
+		for ( Size j=pos1; j<= pos1+7; ++j ) {
+			if ( j<= pose.total_residue() && pose.chain(j) == pose.chain(pos1) && partner[j] ) {
+				Size const p2 = partner[j] - ( 7-(j-pos1) );
+				if ( p2>=1 && p2 <= pose.total_residue() && pose.residue(p2).is_DNA() &&
+						pose.chain(p2) == pose.chain(partner[j]) ) {
+					if ( !pos2 ) pos2 = p2;
+					else if ( pos2 != p2 ) {
+						//error
+						problemo = true;
+						break;
+					}
+				}
+			}
+		}
+		if ( pos2 && !problemo ) {
+			major_length = pose.residue(pos1).xyz("C3'").distance( pose.residue(pos2).xyz("C3'") );
+		}
 	}
 
-	// base-pair params
-	show_base_pair_params( pose, out );
 
-	// base-step params
-	show_base_step_params( pose, out );
+	// compute the P to P distance from i-1 to partner[i]-2
+	if ( i>=2 && pose.residue(i-1).is_DNA() ) {
+		Size pos1( i-1 ), pos2(0);
+		bool problemo( false );
+		for ( Size j=pos1; j<= pos1+3; ++j ) {
+			if ( j<= pose.total_residue() && pose.chain(j) == pose.chain(pos1) && partner[j] ) {
+				Size const p2 = partner[j] - ( 3-(j-pos1) );
+				if ( p2>=1 && p2 <= pose.total_residue() && pose.residue(p2).is_DNA() &&
+						pose.chain(p2) == pose.chain(partner[j]) ) {
+					if ( !pos2 ) pos2 = p2;
+					else if ( pos2 != p2 ) {
+						//error
+						problemo = true;
+						break;
+					}
+				}
+			}
+		}
+		if ( pos2 && !problemo && !pose.residue(pos1).is_lower_terminus() && !pose.residue(pos2).is_lower_terminus() ) {
+			major_width = pose.residue(pos1).xyz("P").distance( pose.residue(pos2).xyz("P") );
+		}
+	}
+
+
+	if ( ! ( i>1 && seqpos_is_base_step_anchor( i-1, pose ) &&
+			seqpos_is_base_step_anchor( i  , pose ) &&
+			seqpos_is_base_step_anchor( i+1, pose ) ) ) return; // not a valid base-step
+
+	Size const j( partner[i+1] );
+
+	// try calculating minor groove width
+	if ( !pose.residue( i + 2 ).is_upper_terminus() && !pose.residue( j + 2 ).is_upper_terminus() ) {
+		minor_width = 0.5 * ( pose.residue(i+3).xyz("P").distance( pose.residue(j+2).xyz("P") ) +
+			pose.residue(i+2).xyz("P").distance( pose.residue(j+3).xyz("P") ) );
+	}
 
 }
+
 
 ///////////////////////////////////////////////////////////////////
 /// if you really want the least-squares plane:

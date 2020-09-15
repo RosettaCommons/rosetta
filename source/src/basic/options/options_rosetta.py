@@ -5220,7 +5220,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -DenovoProteinDesign
 	Option_Group( 'dna',
 		Option_Group( 'specificity',
-			Option( 'exclude_dna_dna', 'Boolean', default='true'),
+			Option( 'exclude_dna_dna', 'Boolean', default='false'),
 			Option( 'params', 'RealVector', desc="vector of real-valued params"),
 			Option( 'frag_files', 'FileVector', desc="files to collect frags from" ),
 #			Option( 'exclude_bb_sc_hbonds', 'Boolean', default='false'),

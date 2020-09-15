@@ -18,6 +18,7 @@
 //#include <devel/dna/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/dna/util.hh>
 #include <protocols/frags/TorsionFragment.hh>
 #include <utility/excn/Exceptions.hh>
 
@@ -172,7 +173,7 @@ static basic::Tracer TR( "apps.pilot.phil.simple_dna_regression_test" );
 void
 show_dna_geometry( pose::Pose const & pose )
 {
-	scoring::dna::show_dna_geometry( pose, TR.Info );
+	protocols::dna::show_dna_geometry( pose, TR.Info );
 }
 
 

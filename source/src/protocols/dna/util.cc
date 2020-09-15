@@ -18,8 +18,10 @@
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/energy_methods/DNA_DihedralEnergy.hh>
 #include <utility/graph/Graph.hh>
 #include <basic/options/option.hh>
+#include <basic/basic.hh>
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 #include <core/pack/rotamer_set/RotamerSetFactory.hh>
@@ -35,6 +37,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/dna/base_geometry.hh>
+#include <core/scoring/dna/BasePartner.hh>
 #include <basic/Tracer.hh>
 
 #include <utility/file/file_sys_util.hh> // file_exists, create_directory
@@ -65,6 +68,7 @@ using xyzVec = numeric::xyzVector<core::Real>;
 #include <core/chemical/VariantType.hh>
 #include <core/import_pose/import_pose.hh>
 #include <ObjexxFCL/format.hh>
+#include <ObjexxFCL/string.functions.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
 
@@ -1139,6 +1143,132 @@ set_base_segment_chainbreak_constraints(
 
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+// @details write some information on dna geometry to the ostream out
+
+void
+show_dna_geometry(
+	core::pose::Pose const & pose,
+	std::ostream & out
+)
+{
+
+	// dihedrals + a/g bin + typeI,II + pucker
+	Size const nres( pose.size() );
+
+	for ( Size i=1; i<= nres; ++i ) {
+		conformation::Residue const & rsd( pose.residue(i) );
+		if ( !rsd.is_DNA() || rsd.is_RNA() ) continue;
+		std::pair< std::string, int > pucker;
+		core::scoring::dna::get_sugar_pucker( rsd, pucker );
+
+		out << "DNA_DIHEDRALS " << I(4,i) << ' ' << rsd.name1() << ' ' <<
+			pucker.first << ObjexxFCL::right_string_of( pucker.second, 3 ) << ' ' <<
+			core::scoring::dna::get_DNA_backbone_bin( rsd ) <<
+			F(7,1,rsd.mainchain_torsion(1)) <<
+			F(7,1,rsd.mainchain_torsion(2)) <<
+			F(7,1,rsd.mainchain_torsion(3)) <<
+			F(7,1,rsd.mainchain_torsion(4)) <<
+			F(7,1,rsd.mainchain_torsion(5)) <<
+			F(7,1,rsd.mainchain_torsion(6)) <<
+			F(7,1,rsd.chi(1)) << '\n';
+	}
+
+	// base-pair params
+	core::scoring::dna::show_base_pair_params( pose, out );
+
+	// base-step params
+	core::scoring::dna::show_base_step_params( pose, out );
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// @details write some (more detailed) information on the dna geometry to the ostream "out"
+//
+void
+show_dna_geometry_extra_details(
+	pose::Pose const & pose,
+	std::string tag,
+	std::ostream & out
+)
+{
+	core::scoring::methods::DNA_DihedralEnergy dna_dihedral_energy_method;
+
+	// dihedrals + a/g bin + typeI,II + pucker
+	Size const nres( pose.total_residue() );
+
+	for ( Size i=1; i<= nres; ++i ) {
+		conformation::Residue const & rsd( pose.residue(i) );
+
+		if ( !rsd.is_DNA() ) continue;
+
+		std::pair< std::string, int > pucker;
+		core::scoring::dna::get_sugar_pucker( rsd, pucker );
+
+		Real dna_dihedral_bbE, dna_dihedral_sugarE, dna_dihedral_chiE;
+		{
+			core::scoring::EnergyMap emap;
+			core::scoring::ScoreFunction empty_scorefxn; // unused, but needed for function call signature
+			dna_dihedral_energy_method.eval_intrares_energy( rsd, pose, empty_scorefxn, emap );
+			dna_dihedral_bbE = emap[ dna_dihedral_bb ];
+			dna_dihedral_sugarE = emap[ dna_dihedral_sugar ];
+			dna_dihedral_chiE = emap[ dna_dihedral_chi ];
+		}
+
+		/// show the dihedrals between [0,360) rather than [-180:180) since 180 has more counts than 0
+		///
+		utility::vector1< Real > sugar_torsions;
+		core::scoring::dna::get_sugar_torsions( rsd, sugar_torsions );
+		assert( sugar_torsions[1] == rsd.mainchain_torsion( 4 ) );
+
+
+		Real Pdis( 10.0 ), O3dis( 10.0 );
+		if ( !rsd.is_lower_terminus() &&   pose.residue(i-1).has("O3'") ) {
+			Pdis  = rsd.xyz("P"  ).distance( pose.residue(i-1).xyz("O3'") );
+		}
+		if ( !rsd.is_upper_terminus() &&   pose.residue(i+1).has("P") ) {
+			O3dis = rsd.xyz("O3'").distance( pose.residue(i+1).xyz("P") );
+		}
+
+		Size const ppos( scoring::dna::retrieve_base_partner_from_pose( pose )[i] ),
+			ppos_prev( i == 1 ? 0 : scoring::dna::retrieve_base_partner_from_pose( pose )[ i-1 ] ),
+			ppos_next( i == pose.total_residue() ? 0 : scoring::dna::retrieve_base_partner_from_pose( pose )[ i+1 ] );
+
+
+		Real major_width( 0.0 ), minor_width( 0.0 ), major_length( 0.0 );
+		core::scoring::dna::get_groove_widths( i, pose, major_width, minor_width, major_length );
+
+		//// one big long line:
+		using basic::unsigned_periodic_range;
+		out << "DNA_DIHEDRALS " << I(4,i) << ' ' << rsd.name1() << ' ' <<
+			pucker.first << ObjexxFCL::right_string_of( pucker.second, 3 ) << ' ' <<
+			core::scoring::dna::get_DNA_backbone_bin( rsd ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(1), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(2), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(3), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(4), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(5), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.mainchain_torsion(6), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( rsd.chi(1), 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( sugar_torsions[2], 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( sugar_torsions[3], 360.0 ) ) <<
+			F(7,1,unsigned_periodic_range( sugar_torsions[4], 360.0 ) ) <<
+			" groove_widths: " << F(9,3,major_width) << F(9,3,minor_width) << F(9,3,major_length) <<
+			" dna_dihedralE(bb,sugar,chi): " <<F(9,3,dna_dihedral_bbE)<<F(9,3,dna_dihedral_sugarE)<<F(9,3,dna_dihedral_chiE)<<
+			" Pdis: " << F(9,3,Pdis) << " O3dis: " << F(9,3,O3dis) <<
+			" ppos3: " << I(4,ppos_prev) << ' ' << I(4,ppos) << ' ' << I(4,ppos_next) <<
+			' ' << tag << std::endl;
+	}
+
+	// base-pair params
+	core::scoring::dna::show_base_pair_params( pose, out );
+
+	// base-step params
+	core::scoring::dna::show_base_step_params( pose, out );
+
+}
 
 } // namespace dna
 } // namespace protocols

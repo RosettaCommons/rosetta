@@ -492,8 +492,8 @@ sources = {
 		#"jd2memtest",
 	],
 	"pilot/jeliazkov" : [
-		"calc_irms_despite_mismatch", 
-		"calc_cdr_rmsd", 
+		"calc_irms_despite_mismatch",
+		"calc_cdr_rmsd",
 	],
 	"pilot/jianqing" : [
 		#"antibody_assemble_CDRs",
@@ -639,7 +639,7 @@ sources = {
 		#"minimize_with_constraints", # /* Liz Kellogg,Documentation Location,Demo Location */
 	],
 	"pilot/luki" : [
-		
+
 	],
 
 	# M ######################################################################
@@ -763,7 +763,7 @@ sources = {
 		"test1", # /* Phil Bradley,Documentation Location,Demo Location */
 	        "repeat_demo", # app to demo setting up a tandem repeat pose for connected chain folding
 		#"dna_spec_test", # /* Phil Bradley,Documentation Location,Demo Location */
-		#"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
+		"analyze_dna", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dimer_relax", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dna_design_test", # /* Phil Bradley,Documentation Location,Demo Location */
 		#"dna_relax", # /* Phil Bradley,Documentation Location,Demo Location */

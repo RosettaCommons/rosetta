@@ -21,6 +21,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
+#include <core/id/TorsionID.hh>
 
 #include <core/scoring/dna/setup.hh>
 #include <core/scoring/dna/BasePartner.hh>
@@ -36,6 +37,7 @@
 // Numeric Headers
 #include <ObjexxFCL/FArray2D.hh>
 #include <numeric/random/random.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <core/pose/variant_util.hh>
 #include <utility/vector1.hh>
@@ -84,15 +86,15 @@ setup_dna_chainbreak_constraints(
 		if ( rsd1.is_DNA() && !rsd1.is_upper_terminus() && rsd2.is_DNA() && !rsd2.is_lower_terminus() ) {
 			tt << "adding dna chainbreak constraint between residues " << i << " and " << i+1 << std::endl;
 
-			AtomID const C3_id( rsd1.atom_index( "C3*" ), i   );
-			AtomID const O3_id( rsd1.atom_index( "O3*" ), i   );
+			AtomID const C3_id( rsd1.atom_index( "C3'" ), i   );
+			AtomID const O3_id( rsd1.atom_index( "O3'" ), i   );
 			AtomID const  P_id( rsd2.atom_index( "P"   ), i+1 );
-			AtomID const O5_id( rsd2.atom_index( "O5*" ), i+1 );
+			AtomID const O5_id( rsd2.atom_index( "O5'" ), i+1 );
 
-			// distance from O3* to P
+			// distance from O3' to P
 			pose.add_constraint( utility::pointer::make_shared< AtomPairConstraint >( O3_id, P_id, distance_func ) );
 
-			// angle at O3*
+			// angle at O3'
 			pose.add_constraint( utility::pointer::make_shared< AngleConstraint >( C3_id, O3_id, P_id, O3_angle_func ) );
 
 			// angle at P
@@ -259,10 +261,118 @@ set_dna_jump_atoms( pose::Pose & pose )
 				AtomID( rsd.chi_atoms(1)[2], i ) ) );
 		}
 	}
-
-
 }
 
+
+std::string
+get_dna_residue_anchor_atom_name(
+	core::conformation::Residue const & rsd,
+	bool const anchor_jumps_in_backbone
+)
+{
+	runtime_assert( rsd.is_DNA() );
+	if ( anchor_jumps_in_backbone ) return "O3'";
+	else return rsd.atom_name( rsd.chi_atoms(1)[4] );
+}
+
+
+/// @details  Sets the jump-atoms in the foldtree so that the atomtree will have desired connectivity
+/// for intra-dna and dna-protein jumps.
+/// if anchor_dna_jumps_in_backbone is true, dna jumps are anchored at the O3' atom (suitable for frag moves)
+/// if not, dna jumps are anchored at the 4th chi1 atom,
+/// protein at the C-alpha
+void
+set_dna_jump_atoms_in_fold_tree(
+	pose::Pose const & pose,
+	bool const anchor_intra_dna_jumps_in_backbone,
+	bool const anchor_extra_dna_jumps_in_backbone,
+	kinematics::FoldTree & f
+)
+{
+	using conformation::Residue;
+	using namespace id;
+
+
+	// anchor intra-dna jumps at fourth chi1 atom (out in the base)
+	//
+	for ( Size i=1; i<= f.num_jump(); ++i ) {
+		Residue const & rsd1( pose.residue( f.  upstream_jump_residue( i ) ) );
+		Residue const & rsd2( pose.residue( f.downstream_jump_residue( i ) ) );
+
+		if ( rsd1.is_DNA() && rsd2.is_DNA() ) { // dna --> dna
+			f.set_jump_atoms( i, get_dna_residue_anchor_atom_name( rsd1, anchor_intra_dna_jumps_in_backbone ),
+				get_dna_residue_anchor_atom_name( rsd2, anchor_intra_dna_jumps_in_backbone ) );
+		} else if ( rsd1.is_DNA() && rsd2.is_protein() ) { // dna->protein
+			f.set_jump_atoms( i, get_dna_residue_anchor_atom_name( rsd1, anchor_extra_dna_jumps_in_backbone ), "CA" );
+		} else if ( rsd2.is_DNA() && rsd1.is_protein() ) { // protein-->dna
+			f.set_jump_atoms( i, "CA", get_dna_residue_anchor_atom_name( rsd2, anchor_extra_dna_jumps_in_backbone ) );
+		} else if ( rsd1.is_DNA() && rsd2.name()=="VRT" ) { // dna-->vrt
+			f.set_jump_atoms( i, get_dna_residue_anchor_atom_name( rsd1, anchor_extra_dna_jumps_in_backbone ),  "ORIG" );
+		} else if ( rsd2.is_DNA() && rsd1.name()=="VRT" ) {
+			f.set_jump_atoms( i, "ORIG", get_dna_residue_anchor_atom_name( rsd2, anchor_extra_dna_jumps_in_backbone ) );
+		}
+	}
+}
+
+
+/// @details  When we introduce cutpoint variants at DNA cutpoints, there are not residue-internal atoms
+/// to use to properly build OVL1 and OVL2
+///
+/// This routine will set the torsions that determine their position using coordinates of the neighboring residue
+
+void
+set_overlap_torsions_at_dna_lower_cutpoint_residue(
+	core::Size const seqpos,
+	core::pose::Pose & pose
+)
+{
+	using namespace core::conformation;
+	using namespace core::chemical;
+	Residue const & rsd     ( pose.residue( seqpos   ) );
+	Residue const & next_rsd( pose.residue( seqpos+1 ) );
+
+	if ( !rsd.is_DNA() ||
+			!rsd.has_variant_type( CUTPOINT_LOWER ) ||
+			!pose.fold_tree().is_cutpoint( seqpos ) ) {
+		utility_exit_with_message( "set_overlap_torsions_at_dna_lower_cutpoint_residue: bad rsd/fold_tree: "+rsd.name());
+	}
+
+	Real const epsilon
+		( numeric::dihedral_degrees( rsd.xyz("C4'"), rsd.xyz("C3'"),      rsd.xyz("O3'"), next_rsd.xyz(  "P")));
+	Real const zeta
+		( numeric::dihedral_degrees( rsd.xyz("C3'"), rsd.xyz("O3'"), next_rsd.xyz(  "P"), next_rsd.xyz("O5'")));
+	pose.set_torsion( id::TorsionID( seqpos, id::BB, 5 ), epsilon );
+	pose.set_torsion( id::TorsionID( seqpos, id::BB, 6 ), zeta );
+}
+
+
+/// @details  This routine will add CUTPOINT_LOWER and CUTPOINT_UPPER variants around all base steps
+/// The fold_tree should already have cutpoints in it.
+
+void
+setup_dna_cutpoint_variants(
+	core::pose::Pose & pose
+)
+{
+	using namespace core::chemical;
+	for ( Size i=1; i< pose.total_residue(); ++i ) {
+		if ( pose.residue(i).is_DNA() &&
+				pose.residue(i+1).is_DNA() &&
+				!pose.residue(i).is_upper_terminus() &&
+				pose.chain( i ) == pose.chain( i+1 ) ) {
+			if ( !pose.fold_tree().is_cutpoint( i ) ) {
+				utility_exit_with_message("setup fold_tree before cutpoint variants!");
+			}
+			if ( !( pose.residue( i   ).has_variant_type( CUTPOINT_LOWER ) &&
+					pose.residue( i+1 ).has_variant_type( CUTPOINT_UPPER ) ) ) {
+				// add variants if not already present
+				add_variant_type_to_pose_residue( pose, CUTPOINT_LOWER, i );
+				add_variant_type_to_pose_residue( pose, CUTPOINT_UPPER, i+1 );
+				set_overlap_torsions_at_dna_lower_cutpoint_residue( i, pose );
+			}
+		}
+	}
+}
 
 /// @details  Sets a foldtree for base-centric kinematics in a pose
 /// legacy helper code: do not reuse, prefer eg add_dna_base_jumps_to_foldtree and set_dna_base_atoms
@@ -345,7 +455,7 @@ setup_dna_only_jump_pose( pose::Pose const & start_pose, pose::Pose & jump_pose 
 
 	BasePartner const & partner( retrieve_base_partner_from_pose( start_pose ) );
 
-	std::string const jump_anchor_atom( "C1*" ); // temporary
+	std::string const jump_anchor_atom( "C1'" ); // temporary
 	for ( core::Size chain1_begin=1; chain1_begin<= nres; ++chain1_begin ) {
 		if ( partner[ chain1_begin ] ) {
 			// found first dna residue

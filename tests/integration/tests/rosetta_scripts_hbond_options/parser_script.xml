@@ -15,7 +15,7 @@
 			<Set hbonds__decompose_bb_hb_into_pair_energies="false"/>
 
 		        nucleic acid options
-			<Set hbonds__exclude_DNA_DNA_hbond="true"/>
+			<Set hbonds__exclude_DNA_DNA_hbond="false"/>
 			<Set hbonds__use_hb_env_dep_DNA="true"/>
 			<Set hbonds__exclude_intra_res_RNA="true"/>
 

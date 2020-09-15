@@ -44,6 +44,7 @@
 
 //#include <basic/options/after_opts.hh>
 
+#include <protocols/dna/util.hh>
 
 #include <devel/init.hh>
 
@@ -103,7 +104,7 @@ static basic::Tracer TR( "apps.pilot.chen.simple_dna_regression_test" );
 void
 show_dna_geometry( pose::Pose const & pose )
 {
-	scoring::dna::show_dna_geometry( pose, TR.Info );
+	protocols::dna::show_dna_geometry( pose, TR.Info );
 	TR.Info << std::endl;
 }
 

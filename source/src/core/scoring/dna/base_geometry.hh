@@ -60,6 +60,12 @@ get_sugar_pucker(
 );
 
 void
+get_sugar_pucker_distr(
+	conformation::Residue const & rsd,
+	utility::vector1<core::Real> & puckerProb
+);
+
+void
 get_sugar_torsions(
 	conformation::Residue const & rsd,
 	utility::vector1< Real > & torsions
@@ -117,7 +123,13 @@ show_new_base_step_params(
 
 
 void
-show_dna_geometry( pose::Pose const & pose, std::ostream & out );
+get_groove_widths(
+	Size const i, // first position in base-step
+	pose::Pose const & pose,
+	Real & major_width,
+	Real & minor_width,
+	Real & major_length
+);
 
 void
 get_base_step_params(
@@ -134,6 +146,22 @@ get_base_pair_stub_slow(
 	conformation::Residue const & rsd2  // on strand II
 );
 
+std::string
+get_DNA_backbone_bin(
+	conformation::Residue const & rsd
+);
+
+void
+show_base_step_params(
+	pose::Pose const & pose,
+	std::ostream & out
+);
+
+void
+show_base_pair_params(
+	pose::Pose const & pose,
+	std::ostream & out
+);
 
 
 } // namespace dna

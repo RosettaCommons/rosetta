@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
 
 
@@ -49,11 +50,24 @@ add_dna_base_jumps_to_fold_tree(
 	bool const flip=false
 );
 
-
 /// @brief  Sets the jump-atoms in the foldtree so that the atomtree will have desired connectivity for dna jumps.
 void
 set_dna_jump_atoms( core::pose::Pose & pose );
 
+/// @brief  Sets the jump-atoms in the foldtree.  Newer version handles protein+DNA
+void
+set_dna_jump_atoms_in_fold_tree(
+	core::pose::Pose const & pose,
+	bool const anchor_intra_dna_jumps_in_backbone,
+	bool const anchor_extra_dna_jumps_in_backbone,
+	core::kinematics::FoldTree & f
+);
+
+/// @brief  Adds cutpoint variants at all dna positions (foldtree should already have cutpoints present)
+void
+setup_dna_cutpoint_variants(
+	core::pose::Pose & pose
+);
 
 /// @brief  Sets a foldtree for base-centric kinematics in a pose (legacy code)
 void

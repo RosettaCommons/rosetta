@@ -52,6 +52,17 @@ public:
 	) const;
 
 	void
+	eval_harmonic_backbone_torsion_score_and_deriv(
+		Size const tor,
+		conformation::Residue const & rsd,
+		pose::Pose const & pose,
+		Real & score,
+		Real & dscore_dchi,
+		Real & dscore_deps,
+		Real & dscore_dzeta
+	) const;
+
+	void
 	eval_harmonic_sugar_pucker_dependent_chi_torsion_score_and_deriv(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,

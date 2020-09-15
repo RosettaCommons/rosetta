@@ -75,7 +75,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
@@ -84,6 +83,9 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 
+#include <devel/dna/relax_util.hh>
+#include <core/scoring/dna/setup.hh>
+#include <core/scoring/dna/BasePartner.hh>
 
 // C++ headers
 //#include <cstdlib>
@@ -110,7 +112,11 @@ OPT_1GRP_KEY(Boolean, min, debug)
 OPT_1GRP_KEY(Boolean, min, debug_verbose)
 OPT_1GRP_KEY(Boolean, min, cartesian)
 OPT_1GRP_KEY(Boolean, min, pack)
+OPT_1GRP_KEY(Boolean, min, dna)
+OPT_1GRP_KEY(Boolean, min, dualspace)
 OPT_1GRP_KEY(RealVector, min, ramp)
+OPT_1GRP_KEY(RealVector, min, ramp_cst)
+OPT_1GRP_KEY(BooleanVector, min, cart)
 OPT_1GRP_KEY(String, min, minimizer)
 OPT_1GRP_KEY(String, min, ref)
 OPT_1GRP_KEY(StringVector, min, fix_chains)
@@ -152,154 +158,30 @@ public:
 			core::pose::addVirtualResAsRoot( pose );
 		}
 
-		Size nres = pose.size();
 		Real const coord_sdev( 0.5 );
-		for ( Size i = 1; i<= (Size)nres; ++i ) {
-			if ( i==(Size)pose.fold_tree().root() ) continue;
-			if ( allatom && pose.residue(i).is_protein() ) continue;
+		for ( Size i = 1; i<=nnonvrt_pose; ++i ) {
 			Residue const & nat_i_rsd( constraint_pose.residue(i) );
-			Size natoms = allatom? nat_i_rsd.nheavyatoms() : 3;
-			for ( Size ii = 1; ii<=natoms; ++ii ) {  // N/CA/C only
-				func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
-				pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
-					AtomID(ii,i), AtomID(1,nres), nat_i_rsd.xyz( ii ),
-					fx ) ) );
-			}
-		}
-	}
-
-	// TO DO make symm-friendly
-	void fix_worst_bad_ramas( core::pose::Pose & pose, core::Real limit_RMS=1.0, core::Real limit_rama=2.0 ){
-		using namespace core;
-		using namespace id;
-		using namespace optimization;
-		using namespace protocols::moves;
-		using namespace core::scoring;
-		using namespace core::pose;
-		using namespace conformation;
-		using namespace kinematics;
-
-		const core::Real limit_rama_min = limit_rama;
-		const core::Real stepsize = 360.0;
-
-		// Original RAFT set
-		//-140  153 180 0.135 B
-		// -72  145 180 0.155 B
-		//-122  117 180 0.073 B
-		// -82  -14 180 0.122 A
-		// -61  -41 180 0.497 A
-		//  57   39 180 0.018 L
-
-		core::Real ok_phi[] =  { -140, -72, -122, -82, -61, 57 } ;
-		core::Real ok_psi[] =  {  153, 145,  117, -14, -41, 39 } ;
-		core::pose::Pose original_pose = pose;
-		core::pose::Pose temp_pose, best_pose;
-
-		add_coordinate_constraints_to_pose( pose, original_pose ) ;
-
-		core::scoring::ScoreFunction rama_scorefxn;
-		rama_scorefxn.set_weight( coordinate_constraint, 0.2 );
-		rama_scorefxn.set_weight( rama, 1.0 );
-		rama_scorefxn.set_weight( omega, 0.2 );
-
-		Energies & energies( pose.energies() );
-		rama_scorefxn(pose); //apply score
-
-		core::optimization::AtomTreeMinimizer minimizer;
-		MinimizerOptions options( "lbfgs_armijo", 0.1, true /*use_nblist*/, false /*deriv_check*/ );
-		options.max_iter(25);  //?
-		kinematics::MoveMap final_mm;
-		final_mm.set_bb(true);
-
-		std::vector < std::pair < core::Size, core::Real > > rama_list;
-
-		TR << "INITIAL: " << std::endl;
-		for ( auto & g : rama_list ) {
-			TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
-		}
-
-		kinematics::MoveMap my_mm;
-		my_mm.set_bb(true);
-		for ( Size ii=1; ii<= pose.size(); ii ++ ) {
-			my_mm.set( TorsionID( omega_torsion, BB, ii), false );
-			// disallow proline PHI
-			if ( pose.residue(ii).aa() == chemical::aa_pro ) my_mm.set( TorsionID( phi_torsion, BB, ii), false );
-		}
-
-		Size nrounds = 5; // rama_list.size()
-		for ( Size g=0; g< nrounds; g++ ) {
-			// find bad ramas
-			for ( Size j=1; j<= pose.size(); ++j ) {
-				EnergyMap & emap( energies.onebody_energies( j ) );
-				if (  emap[ rama ] > limit_rama_min ) {
-					rama_list.emplace_back( j, emap[ rama ] );
+			if ( allatom ) {
+				for ( Size ii = 1; ii<=nat_i_rsd.nheavyatoms(); ++ii ) {
+					func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
+						AtomID(ii,i), AtomID(1,nnonvrt_pose+1), nat_i_rsd.xyz( ii ),
+						fx ) ) );
+				}
+			} else {
+				core::Size atm_index = 0;
+				if ( nat_i_rsd.is_protein() ) {
+					atm_index = nat_i_rsd.atom_index("CA");
+				} else if ( nat_i_rsd.is_NA() ) {
+					atm_index = nat_i_rsd.atom_index("P");
+				}
+				if ( atm_index != 0 ) {
+					func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, coord_sdev ) );
+					pose.add_constraint( scoring::constraints::ConstraintCOP( utility::pointer::make_shared< CoordinateConstraint >(
+						AtomID(atm_index,i), AtomID(1,nnonvrt_pose+1), nat_i_rsd.xyz( atm_index ),
+						fx ) ) );
 				}
 			}
-			if ( rama_list.size() == 0 ) return;
-			std::sort(rama_list.begin(), rama_list.end(), rama_list_pred);
-
-
-			core::Size i = rama_list[g].first;
-			EnergyMap & emap( energies.onebody_energies( i ) );
-			//core::Real rama_e =  emap[ rama ];
-
-			core::Real curphi = pose.phi(i);
-			core::Real curpsi = pose.psi(i);
-
-			// save the original angles
-			temp_pose = pose;
-
-			core::Real bestscore = 1e6;
-			for ( Size a=0; a<6; ++a ) {
-				core::Real diffphi =  ok_phi[a]  - curphi; while ( diffphi > 180 ) diffphi-=360.0;  while ( diffphi < -180 ) diffphi += 360.0;
-				core::Real diffpsi =  ok_psi[a]  - curpsi; while ( diffpsi > 180 ) diffpsi-=360.0;  while ( diffpsi < -180 ) diffpsi += 360.0;
-				core::Real dist = sqrt( diffphi*diffphi + diffpsi * diffpsi );
-				auto nsteps = (core::Size) std::ceil ( dist / stepsize );
-
-				core::Real stepphi = diffphi / nsteps;
-				core::Real steppsi = diffpsi / nsteps;
-
-				for ( Size n=1; n<=nsteps; ++n ) {
-					pose.set_phi( i, curphi + n*stepphi );
-					pose.set_psi( i, curpsi + n*steppsi );
-					minimizer.run( pose, my_mm, rama_scorefxn, options );
-				}
-
-				// check score
-				core::Real tgt = rama_scorefxn(pose); //apply score
-				core::Real rama_final =  emap[ rama ];
-				core::Real rms_final = core::scoring::CA_rmsd( original_pose, pose );
-				core::Real score_final = tgt + 10*rms_final;
-
-				TR << "TRY " << g << "." << a << "  " << nsteps << "  " << score_final << "  " << rama_final << "  " << rms_final << std::endl;
-
-				if ( score_final<bestscore && rms_final<limit_RMS ) {
-					bestscore = score_final;
-					best_pose = pose;
-				}
-
-				// restore
-				pose = temp_pose;
-			}
-			TR << "BEST " << bestscore << std::endl;
-
-			pose = best_pose;
-		}
-
-		// find bad ramas
-		rama_list.clear();
-		for ( Size j=1; j<= pose.size(); ++j ) {
-			EnergyMap & emap( energies.onebody_energies( j ) );
-			if (  emap[ rama ] > limit_rama_min ) {
-				rama_list.emplace_back( j, emap[ rama ] );
-			}
-		}
-		if ( rama_list.size() == 0 ) return;
-		std::sort(rama_list.begin(), rama_list.end(), rama_list_pred);
-
-		TR << "FINAL: " << std::endl;
-		for ( auto & g : rama_list ) {
-			TR << "RAMALIST: " << g.first << "  " << g.second << std::endl;
 		}
 	}
 
@@ -358,7 +240,6 @@ public:
 			add_memb->apply( pose );
 		}
 
-		// steal relax flags
 		scoring::ScoreFunctionOP scorefxn = core::scoring::get_score_function();
 		kinematics::MoveMap mm;
 		mm.set_bb  ( true );
@@ -366,12 +247,20 @@ public:
 		mm.set_nu  ( true );
 		mm.set_chi ( true );
 		mm.set_jump( true );
-		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
-		mm.set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 
 		utility::vector1< core::Real > ramp =  option[ OptionKeys::min::ramp ]();
 		core::Size repeats = ramp.size();
 
+		utility::vector1< core::Real > ramp_cst =  option[ OptionKeys::min::ramp_cst ]();
+		runtime_assert( ramp_cst.size() == 0 || ramp_cst.size() == repeats );
+
+		utility::vector1< bool > cart =  option[ OptionKeys::min::cart ]();
+		runtime_assert( cart.size() == 0 || cart.size() == repeats );
+
+
+		// steal relax movemap flags
+		mm.set( core::id::THETA, option[ OptionKeys::relax::minimize_bond_angles ]() );
+		mm.set( core::id::D, option[ OptionKeys::relax::minimize_bond_lengths ]() );
 		if ( option[ OptionKeys::relax::jump_move ].user() ) {
 			mm.set_jump( option[ OptionKeys::relax::jump_move ]() );
 		}
@@ -382,6 +271,7 @@ public:
 			mm.set_chi( option[ OptionKeys::relax::chi_move ]() );
 		}
 
+		// optionally freeze chains based on chain ID
 		if ( option[ OptionKeys::min::fix_chains ].user() ) {
 			set_foldtree_for_variable_movement(pose);
 
@@ -404,22 +294,25 @@ public:
 			}
 		}
 
+		// optionally constrain to a reference pose
 		if ( option[ OptionKeys::min::ref ].user() ) {
 			core::pose::Pose reference_pose;
 			core::import_pose::pose_from_file(reference_pose, option[ OptionKeys::min::ref ](), core::import_pose::PDB_file);
 			add_coordinate_constraints_to_pose( pose, reference_pose, true );
-			if ( scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0 ) {
+
+			if ( scorefxn->get_weight( core::scoring::coordinate_constraint ) == 0 && ramp_cst.size() == 0 ) {
 				scorefxn->set_weight( core::scoring::coordinate_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
 			}
 		}
 
+		// symmetry
 		if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 			protocols::symmetry::SetupForSymmetryMoverOP symm( new protocols::symmetry::SetupForSymmetryMover );
 			symm->apply( pose );
 			core::pose::symmetry::make_symmetric_movemap( pose, mm );
 		}
 
-		// csts
+		// constraints
 		if ( option[ OptionKeys::constraints::cst_fa_file ].user() ) {
 			protocols::constraint_movers::ConstraintSetMoverOP loadCsts( new protocols::constraint_movers::ConstraintSetMover );
 			loadCsts->constraint_file( core::scoring::constraints::get_cst_fa_file_option() );
@@ -427,40 +320,55 @@ public:
 
 			if ( scorefxn->get_weight( core::scoring::atom_pair_constraint ) == 0 ) {
 				scorefxn->set_weight( core::scoring::atom_pair_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
+				scorefxn->set_weight( core::scoring::angle_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
+				scorefxn->set_weight( core::scoring::dihedral_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
+				scorefxn->set_weight( core::scoring::coordinate_constraint, option[ OptionKeys::constraints::cst_fa_weight ] );
 			}
 		}
 
-		// now add density scores from cmd line
+		// add density scores from cmd line
 		if ( option[ edensity::mapfile ].user() ) {
 			core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *scorefxn );
 		}
 
 		// set pose for density scoring if a map was input
-		//   + (potentially) dock map into density
 		if ( option[ edensity::mapfile ].user() ) {
 			protocols::electron_density::SetupForDensityScoringMoverOP edens( new protocols::electron_density::SetupForDensityScoringMover );
 			edens->apply( pose );
 		}
 
+		// start!  score pose and report pre-min energies
 		pose::PoseOP start_pose( new pose::Pose(pose) );
 		(*scorefxn)(pose);
 		scorefxn->show(TR, pose);
+		TR << "start score: " << (*scorefxn)(pose) << std::endl;
 
-		// ramady
-		if ( option[ OptionKeys::relax::ramady ]() )  {
-			fix_worst_bad_ramas( pose );
+		// set foldtree for DNA
+		if (  option[ min::dna ]() ) {
+			kinematics::FoldTree ft (pose.size());
+			core::scoring::dna::set_base_partner( pose );
+			devel::dna::add_dna_base_jumps_to_fold_tree( pose, ft, false );
+			devel::dna::set_dna_jump_atoms_in_fold_tree( pose, false, false, ft );
+			pose.fold_tree( ft );
+			TR << ft << std::endl;
 		}
 
+		// optimization loop
 		long t1=clock();
-		TR << "start score: " << (*scorefxn)(pose) << std::endl;
-		for ( int i=1; i<=(int)repeats; ++i ) {
+		for ( core::Size i=1; i<=repeats; ++i ) {
 			core::scoring::ScoreFunctionOP local_sf = scorefxn->clone();
 			local_sf->set_weight( core::scoring::fa_rep,
 				ramp[i]*scorefxn->get_weight( core::scoring::fa_rep )
 			);
+			if ( ramp_cst.size() != 0 ) {
+				local_sf->set_weight( core::scoring::atom_pair_constraint, ramp_cst[i]);
+				local_sf->set_weight( core::scoring::angle_constraint, ramp_cst[i]);
+				local_sf->set_weight( core::scoring::dihedral_constraint, ramp_cst[i]);
+				local_sf->set_weight( core::scoring::coordinate_constraint, ramp_cst[i]);
+			}
 
 			// repack
-			if ( option[ OptionKeys::min::pack ]() || option[ OptionKeys::relax::ramady ]() )  {
+			if ( option[ OptionKeys::min::pack ]() )  {
 				TaskFactoryOP local_tf( new TaskFactory() );
 				local_tf->push_back(utility::pointer::make_shared< InitializeFromCommandline >());
 				local_tf->push_back(utility::pointer::make_shared< RestrictToRepacking >());
@@ -480,9 +388,9 @@ public:
 				}
 				local_tf->push_back( prevent_some );
 
-				protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( scorefxn ) );
+				protocols::minimization_packing::PackRotamersMoverOP pack_full_repack( new protocols::minimization_packing::PackRotamersMover( local_sf ) );
 				if ( core::pose::symmetry::is_symmetric( pose ) )  {
-					pack_full_repack = utility::pointer::make_shared< minimization_packing::symmetry::SymPackRotamersMover >( scorefxn );
+					pack_full_repack = utility::pointer::make_shared< minimization_packing::symmetry::SymPackRotamersMover >( local_sf );
 				}
 				pack_full_repack->task_factory(local_tf);
 				pack_full_repack->apply( pose );
@@ -495,43 +403,40 @@ public:
 			std::string minimizer_name = option[ OptionKeys::min::minimizer ]();
 
 			// setup the options
-			if ( !option[ OptionKeys::min::cartesian ]() )  {
+			bool cart_this_cycle = option[ OptionKeys::min::cartesian ]();
+			if ( cart.size() > 0 ) {
+				cart_this_cycle = cart[i];
+			}
+
+			if ( !cart_this_cycle )  {
 				if ( option[ OptionKeys::symmetry::symmetry_definition ].user() )  {
 					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 					core::optimization::symmetry::SymAtomTreeMinimizer minimizer;
-					minimizer.run( pose, mm, *scorefxn, options );
+					minimizer.run( pose, mm, *local_sf, options );
 				} else {
 					core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 					core::optimization::AtomTreeMinimizer minimizer;
-					minimizer.run( pose, mm, *scorefxn, options );
+					minimizer.run( pose, mm, *local_sf, options );
 				}
 			} else {
 				core::optimization::MinimizerOptions options( minimizer_name, 0.00001, true, debug_derivs, debug_verbose );
 				core::optimization::CartesianMinimizer minimizer;
-				minimizer.run( pose, mm, *scorefxn, options );
+				minimizer.run( pose, mm, *local_sf, options );
+			}
+
+			if ( i != repeats ) {
+				local_sf->show(TR, pose);
 			}
 		}
-		scorefxn->show(TR, pose);
+
+		// done!  report final energies
 		long t2=clock();
+		scorefxn->show(TR, pose);
 		double time = ((double)t2 - t1) / CLOCKS_PER_SEC;
 		TR << "end score: " << (*scorefxn)(pose) << std::endl;
 		TR << "MIN TIME: " << time << " sec" << std::endl;
 
-		core::scoring::dssp::Dssp my_dssp( pose );
-		//core::scoring::dssp::DsspOP my_dssp_OP = new core::scoring::dssp::Dssp( pose );
-		my_dssp.insert_ss_into_pose( pose );
-
-		// add counts of ss elts to scorefile
-		core::Size nL=0,nH=0,nE=0;
-		for ( core::Size i=1; i<=pose.size(); ++i ) {
-			if ( !pose.residue(i).is_protein() ) continue;
-			if ( pose.secstruct(i) == 'L' ) nL++;
-			if ( pose.secstruct(i) == 'H' ) nH++;
-			if ( pose.secstruct(i) == 'E' ) nE++;
-		}
-		core::pose::setPoseExtraScore( pose, "nL", nL);
-		core::pose::setPoseExtraScore( pose, "nH", nH);
-		core::pose::setPoseExtraScore( pose, "nE", nE);
+		//core::pose::setPoseExtraScore( pose, "nL", nL);
 	}
 
 	std::string get_name() const override {
@@ -575,6 +480,10 @@ main( int argc, char * argv [] )
 		NEW_OPT(min::debug_verbose, "debug derivs verbose?", false);
 		NEW_OPT(min::cartesian, "cartesian minimization?", false);
 		NEW_OPT(min::ramp, "ramp", utility::vector1<core::Real>(1,1.0));
+		NEW_OPT(min::ramp_cst, "ramp_cst", utility::vector1<core::Real>(0));
+		NEW_OPT(min::cart, "cart at cycles", utility::vector1<bool>(0));
+		NEW_OPT(min::dna, "dna mode?", false);
+		NEW_OPT(min::dualspace, "dualspace mode?", false);
 		NEW_OPT(min::pack, "pack first?", false);
 		NEW_OPT(min::minimizer, "minimizer?", "lbfgs_armijo_nonmonotone");
 		NEW_OPT(min::ref, "reference structure", "");

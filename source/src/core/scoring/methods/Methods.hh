@@ -46,6 +46,7 @@ enum LongRangeEnergyType {
 	epr_deer_lr,
 	PB_elec_lr,
 	cart_bonded_lr,
+	dna_dihedral_lr,
 	gen_bonded_lr,
 	rama2b_lr,
 	ramaprepro_lr,

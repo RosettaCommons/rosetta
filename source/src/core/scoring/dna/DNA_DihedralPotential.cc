@@ -106,6 +106,29 @@ get_b1b2_bin( Real epsilon, Real zeta )
 	else return 2;
 }
 
+// soft version of the above, return the weight on state 1
+Real
+get_b1b2_weight( Real epsilon, Real zeta )
+{
+	Real const dev( epsilon - zeta );
+	Real const sharpness=20.0;
+	Real p1 = std::exp( -sharpness*std::sin( numeric::conversions::radians( dev ) ) );
+	Real p2 = std::exp( sharpness*std::sin( numeric::conversions::radians( dev ) ) );
+	return (p1/(p1+p2));
+}
+
+Real
+get_db1b2_weight_deps( Real epsilon, Real zeta )
+{
+	Real const dev( epsilon - zeta );
+	Real const sharpness=20.0, rad2deg=numeric::constants::d::pi/180.0;
+	Real p1 = std::exp( -sharpness * std::sin( rad2deg * dev ) );
+	Real p2 = std::exp( sharpness * std::sin( rad2deg * dev ) );
+	Real dp1 = -rad2deg * sharpness * p1 * std::cos( rad2deg * dev);
+	Real dp2 = rad2deg * sharpness * p2 * std::cos( rad2deg * dev);
+
+	return ((p1+p2)*dp1 - (dp1+dp2)*p1) / ((p1+p2)*(p1+p2));
+}
 
 void
 get_mean_median_and_sdev(
@@ -167,7 +190,6 @@ DNA_DihedralPotential::eval_sugar_torsion_score_and_deriv(
 
 	score = numeric::square( dev / sdev );
 	dscore_dtor = ( 2* dev ) / (sdev*sdev);
-
 }
 
 void
@@ -190,6 +212,7 @@ DNA_DihedralPotential::get_sugar_torsion_mean_and_sdev(
 	sdev = sdev_;
 }
 
+// simple derivative
 void
 DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
 	Size const tor,
@@ -199,8 +222,24 @@ DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
 	Real & dscore_dtor
 ) const
 {
+	Real dummy1,dummy2;
+	eval_harmonic_backbone_torsion_score_and_deriv (tor,rsd,pose,score,dscore_dtor,dummy1,dummy2);
+}
+
+// special form of derivative: torsions 2/5/6 have an additional dE/deps and dE/dzeta component
+void
+DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
+	Size const tor,
+	conformation::Residue const & rsd,
+	pose::Pose const & pose,
+	Real & score,
+	Real & dscore_dtor,
+	Real & dscore_deps,
+	Real & dscore_dzeta
+) const
+{
 	using namespace basic::options;
-	score = dscore_dtor = 0.0;
+	score = dscore_dtor = dscore_deps = dscore_dzeta = 0.0;
 	if ( tor == 4 ) return;
 
 	static utility::vector1< Real > const sdev_backbone_torsion
@@ -214,31 +253,57 @@ DNA_DihedralPotential::eval_harmonic_backbone_torsion_score_and_deriv(
 	debug_assert( tor <= 6 );
 	Real const angle( rsd.mainchain_torsion( tor ) );
 
-	Real mean;
+	Real dev, devsq;
 
 	if ( tor == 1 || tor == 3 ) {
 		// alpha and gamma
 		Size const bin( get_triple_bin( angle ) );
-		mean = mean_backbone_torsion_[ tor ][ bin ];
+		Real mean = mean_backbone_torsion_[ tor ][ bin ];
+		dev = basic::subtract_degree_angles( angle, mean );
+		devsq = numeric::square( dev );
 	} else if ( tor == 2 ) {
 		if ( rsd.is_lower_terminus() || rsd.seqpos() == 1 || !pose.residue( rsd.seqpos() - 1 ).is_DNA() ) {
-			mean = mean_backbone_torsion_[ tor ][ 1 ]; // use the B1 value
+			Real mean = mean_backbone_torsion_[ tor ][ 1 ]; // use the B1 value
+			dev = basic::subtract_degree_angles( angle, mean );
+			devsq = numeric::square( dev );
 		} else {
 			Real const epsilon( pose.residue( seqpos-1 ).mainchain_torsion( 5 ) ),
 				zeta( pose.residue( seqpos-1 ).mainchain_torsion( 6 ) );
-			mean = mean_backbone_torsion_[ tor ][ get_b1b2_bin( epsilon, zeta ) ];
+			Real b1_weight = get_b1b2_weight( epsilon, zeta );
+			Real mean1 = mean_backbone_torsion_[ tor ][ 1 ];
+			Real mean2 = mean_backbone_torsion_[ tor ][ 2 ];
+			Real dev1 = basic::subtract_degree_angles( angle, mean1 );
+			Real dev2 = basic::subtract_degree_angles( angle, mean2 );
+			dev = b1_weight * dev1 + (1-b1_weight) * dev2;
+			devsq = b1_weight * dev1 * dev1 + (1-b1_weight) * dev2 * dev2;
+
+			// extra derivs
+			Real db1wt_deps = get_db1b2_weight_deps( epsilon, zeta );
+			dscore_deps = db1wt_deps * dev1 * dev1 - db1wt_deps * dev2 * dev2;
+			dscore_dzeta = -db1wt_deps * dev1 * dev1 + db1wt_deps * dev2 * dev2;
 		}
 	} else {
 		debug_assert( tor == 5 || tor == 6 );
 		Real const epsilon( rsd.mainchain_torsion( 5 ) ), zeta( rsd.mainchain_torsion( 6 ) );
-		mean = mean_backbone_torsion_[ tor ][ get_b1b2_bin( epsilon, zeta ) ];
+		Real b1_weight = get_b1b2_weight( epsilon, zeta );
+		Real mean1 = mean_backbone_torsion_[ tor ][ 1 ];
+		Real mean2 = mean_backbone_torsion_[ tor ][ 2 ];
+		Real dev1 = basic::subtract_degree_angles( angle, mean1 );
+		Real dev2 = basic::subtract_degree_angles( angle, mean2 );
+		dev = b1_weight * dev1 + (1-b1_weight) * dev2;
+		devsq = b1_weight * dev1 * dev1 + (1-b1_weight) * dev2 * dev2;
+
+		// extra derivs
+		Real db1wt_deps = get_db1b2_weight_deps( epsilon, zeta );
+		dscore_deps = db1wt_deps * dev1 * dev1 - db1wt_deps * dev2 * dev2;
+		dscore_dzeta = -db1wt_deps * dev1 * dev1 + db1wt_deps * dev2 * dev2;
 	}
 
-	Real const dev( basic::subtract_degree_angles( angle, mean ) );
 	Real const sdev( sdev_backbone_torsion[ tor ] );
-
-	score = numeric::square( dev / sdev );
-	dscore_dtor = ( 2* dev ) / (sdev*sdev);
+	score = devsq / (sdev*sdev);
+	dscore_dtor = ( 2 * dev ) / (sdev*sdev);
+	dscore_deps = dscore_deps / (sdev*sdev);
+	dscore_dzeta = dscore_dzeta / (sdev*sdev);
 }
 
 void
