@@ -38,7 +38,7 @@ namespace epr_deer {
 typedef std::pair< numeric::xyzVector< Real >, Real > PseudoElectron;
 
 static
-std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
+	std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
 
 static const
 numeric::xyzVector< Real > cb_coord_( -1.3116, -0.5715, 0.5398 );
