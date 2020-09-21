@@ -2145,7 +2145,7 @@ settings = {
                 "shlink" : [ "install_name ${TARGET.abspath}", "stdlib=libc++", ],
                 "link"   : [ "stdlib=libc++"],
                 # There is at least one variable only used on non-Macs.
-                "warn" : ["Wno-unused-variable"],
+                "warn" : ["Wno-unused-variable", "Wno-implicit-function-declaration",],
 
                 #fd OSX clang (at least clang-11 on OSX 10.4 adds /usr/local/include as a default)
                 #fd   Declaring it as isystem "demotes" it to under other isystem headers
