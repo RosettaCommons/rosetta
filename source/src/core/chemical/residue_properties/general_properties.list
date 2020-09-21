@@ -91,6 +91,7 @@ POSITIVE_CHARGE #Has a positive charge.  Includes zwitterionic side-chains.
 AROMATIC
 ALIPHATIC #Has a side-chain (i.e. not gly) and the side-chain contains only carbon and hydrogen, with no aromatic rings.  Methionine is included as an "honourary" aliphatic, so the set is: ALA, VAL, ILE, LEU, PRO, MET.
 CYCLIC
+BETA_BRANCHED_SIDECHAIN #Sidechain is beta-branched (e.g. VAL, ILE)
 METALBINDING  # This residue type is a one capable of binding to a metal ion.
 SIDECHAIN_THIOL # This residue type is capable of forming a disulfide bond
 DISULFIDE_BONDED  # This residue type contains a disulfide bond/noncanonical connection
