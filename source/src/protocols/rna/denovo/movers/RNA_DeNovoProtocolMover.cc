@@ -49,6 +49,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/rna/leontis_westhof_util.hh>
 #include <core/pose/rna/RNA_SecStruct.hh>
+#include <protocols/viewer/viewers.hh>
 
 #include <protocols/rna/denovo/RNA_FragmentMonteCarlo.hh>
 // #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
@@ -209,6 +210,7 @@ void RNA_DeNovoProtocolMover::apply( core::pose::Pose & pose ) {
 
 	// This is actually all of apply, basically.
 	pose = *pose_;
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 600, 600 );
 
 
 
@@ -349,6 +351,8 @@ void RNA_DeNovoProtocolMover::apply( core::pose::Pose & pose ) {
 		setPoseExtraScore( pose, "lores_early", rna_fragment_monte_carlo_->lores_score_early() );
 		if ( options_->minimize_structure() ) setPoseExtraScore( pose, "lores_final", rna_fragment_monte_carlo_->lores_score_final() );
 	}
+
+	protocols::viewer::clear_conformation_viewers();
 }
 
 void
