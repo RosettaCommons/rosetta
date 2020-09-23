@@ -93,7 +93,7 @@ void assert_residue_entries_almost_equal(
 ) {
 	TS_ASSERT_EQUALS( a.end() - a.begin(), b.end() - b.begin());
 
-	for ( const auto & pair : boost::combine(a, b) ) {
+	for ( const auto pair : boost::combine(a, b) ) {
 		ResidueEntry ra, rb;
 		boost::tie(ra, rb) = pair;
 		assert_residue_entry_almost_equal(
