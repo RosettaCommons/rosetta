@@ -146,14 +146,14 @@ private:
 
 utility::vector1<core::Size>
 find_neighbors(
-	MutationSet mutations,
+	utility::vector1<MutationSet> mutationsets,
 	core::pose::Pose const & pose,
 	core::Real const heavyatom_distance_threshold
 );
 
 utility::vector1<core::Size>
 find_neighbors_directional(
-	MutationSet mutations,
+	utility::vector1<MutationSet> mutationsets,
 	core::pose::Pose const & pose,
 	core::Real const K
 );
@@ -188,8 +188,10 @@ optimize_native(
 	utility::vector1<MutationSet> mutationsets,
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP fa_scorefxn,
+    const bool flex_bb,
+	const bool cartesian=true,
 	const core::Size bbnbrs=0,
-	const bool cartesian=true
+    const core::Real heavyatom_distance_threshold = 6
 );
 
 /// @brief Cartesian Minimizer the residues in the set
@@ -243,6 +245,14 @@ read_existing_json(utility::vector1<MutationSet> & existing_mutsets, const std::
 // accordingly.
 void
 read_existing(std::string filename, utility::vector1<MutationSet> & mutationsets);
+
+// @brief returns a json object with all the scores as well as the tags for the mutation
+nlohmann::json
+single_result_json(
+        core::pose::Pose & pose,
+        core::scoring::ScoreFunctionOP score_fxn,
+        core::Real total_score,
+        std::string mut_string);
 
 // @brief returns a json object of all the score types and their values as found in the pose energy graph.
 nlohmann::json
