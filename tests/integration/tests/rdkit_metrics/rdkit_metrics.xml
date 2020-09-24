@@ -1,0 +1,28 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Chain name="ligand" chains="X" />
+	</RESIDUE_SELECTORS>
+	<PACKER_PALETTES>
+	</PACKER_PALETTES>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<MOVE_MAP_FACTORIES>
+	</MOVE_MAP_FACTORIES>
+	<SIMPLE_METRICS>
+		<RDKitMetric name="logp" metric_name="MolLogP" residue_selector="ligand" />
+		<RDKitMetric name="tpsa" metric_name="TPSA" residue_selector="ligand" />
+	</SIMPLE_METRICS>
+	<FILTERS>
+	</FILTERS>
+	<MOVERS>
+		<RunSimpleMetrics name="rsm" metrics="logp,tpsa" prefix="sm_" />
+		<RDKitMetricsMover name="metricsmover" chains="X" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="rsm" />
+		<Add mover="metricsmover" />
+	</PROTOCOLS>
+	<OUTPUT />
+</ROSETTASCRIPTS>

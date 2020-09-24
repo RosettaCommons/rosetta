@@ -64,7 +64,7 @@ def is_dir_banned(directory):
 
 def get_rosetta_system_include_directories():
     ''' return list of include directories for compilation '''
-    r = 'external external/include external/boost_submod external/dbio external/dbio/sqlite3 external/libxml2/include'.split()
+    r = 'external external/include external/boost_submod external/dbio external/dbio/sqlite3 external/libxml2/include external/rdkit'.split()
     return r
 
 def get_rosetta_include_directories():
@@ -161,7 +161,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
     if res: binder_head = 'unknown'
     else: binder_head = output.split('\n')[0]
 
-    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.0, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
+    signature = dict(config = 'LLVM install by install_llvm_tool version: 1.1, HTTPS', binder = binder_head, llvm_version=llvm_version, compiler=Options.compiler, gcc_install_prefix=Options.gcc_install_prefix)
     signature_file_name = build_dir + '/.signature.json'
 
     disk_signature = dict(config = 'unknown', binder = 'unknown')
@@ -222,7 +222,7 @@ def install_llvm_tool(name, source_location, prefix_root, debug, clean=True):
         if not os.path.isdir(build_dir): os.makedirs(build_dir)
         execute(
             'Building tool: {}...'.format(name), # -DLLVM_TEMPORARILY_ALLOW_OLD_TOOLCHAIN=1
-            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja bin/binder clang {jobs}'.format( # we need to build Clang so lib/clang/<version>/include is also built
+            'cd {build_dir} && cmake -G Ninja {config} -DLLVM_ENABLE_EH=1 -DLLVM_ENABLE_RTTI=ON {gcc_install_prefix} .. && ninja binder tools/clang/lib/Headers/clang-headers {jobs}'.format( # was 'binder clang', we need to build Clang so lib/clang/<version>/include is also built
                 build_dir=build_dir, config=config,
                 jobs="-j{}".format(Options.jobs) if Options.jobs else "",
                 gcc_install_prefix='-DGCC_INSTALL_PREFIX='+Options.gcc_install_prefix if Options.gcc_install_prefix else ''),
@@ -266,8 +266,10 @@ def get_compiler_version():
         _, version = execute('Getting gcc version...'.format(**locals()), 'gcc -dumpfullversion -dumpversion', return_='tuple', silent=True)
 
     elif compiler == 'clang':
-        _, version = execute('Getting clang version...'.format(**locals()), 'clang --version', return_='tuple', silent=True)
-        version = version.split()[3] if version.startswith('Apple LLVM version') else version.split()[2].split('-')[0]
+        _, version_output = execute('Getting clang version...'.format(**locals()), 'clang --version', return_='tuple', silent=True)
+
+        if version_output.startswith('Apple clang version') or version_output.startswith('Apple LLVM version'): version = version_output.split()[3]
+        else: version = version_output.split()[2].split('-')[0]
 
     else:
         version = 'unknown'
@@ -408,7 +410,7 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
 
             lib_name = scons_file[:-len(scons_file_extension)]
             libs[lib_name] = sources
-            defines[lib_name] = ' '.join( G['defines'] )
+            defines[lib_name] = ' '.join( G.get('defines',[]) )
 
     modified = False
     for l in libs:
@@ -851,7 +853,11 @@ def main(args):
             main_repository_root = output.split()[0] # removing \n at the end
 
             if res == 0:
-                execute('Updating Binder and Pybind11 Git submodules...', 'cd {}/.. && git submodule update --init -- source/src/python/PyRosetta/binder source/external/pybind11'.format(rosetta_source_path) )  # --recursive
+                if Options.pybind11: print('NOTE: options `--pybind11` was specified, skipping Pybind11 submodule update...')
+                else: execute('Updating Pybind11 Git submodule...', 'cd {}/.. && git submodule update --init -- source/external/pybind11'.format(rosetta_source_path) )  # --recursive
+
+                if Options.binder: print('NOTE: options `--binder` was specified, skipping Binder submodule update...')
+                else: execute('Updating Pybind11 Git submodule...', 'cd {}/.. && git submodule update --init -- source/src/python/PyRosetta/binder'.format(rosetta_source_path) )
 
                 if main_repository_root == os.path.abspath(rosetta_source_path + '/../'):
                     output = execute('Checking if Binder submodule present...',  'cd {}/.. && git submodule status'.format(rosetta_source_path), return_='output', silent=True)

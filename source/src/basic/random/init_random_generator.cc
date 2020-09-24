@@ -46,7 +46,7 @@ static basic::Tracer TR( "basic.random.init_random_generator" );
 namespace basic {
 namespace random {
 
-void
+int
 init_random_number_generators(
 #ifdef MULTI_THREADED
 	platform::Size const curthread /*=0*/
@@ -65,6 +65,8 @@ init_random_number_generators(
 	// non-approved random methods -- assuming that code is invoked in an integration
 	// test
 	srand( time(nullptr) );
+
+	return real_seed;
 }
 
 int determine_random_number_seed(

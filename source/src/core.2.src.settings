@@ -120,6 +120,11 @@ sources = {
 		"OrbitalTypeMapper",
 		"OrbitalTypeSet",
 	],
+	"core/chemical/rdkit": [
+		"RDMolToRestype",
+		"RestypeToRDMol",
+		"util",
+	],
 	"core/chemical/sdf": [
 		"mol_util",
 		"mol_writer",
