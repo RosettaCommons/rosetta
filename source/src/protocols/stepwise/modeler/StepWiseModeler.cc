@@ -264,7 +264,6 @@ StepWiseModeler::initialize_working_parameters_and_root( pose::Pose & pose ){
 	figure_out_moving_res_list( pose );
 
 	if ( working_parameters_ != nullptr ) return;
-
 	revise_root_and_moving_res_list( pose, moving_res_list_ ); // specify reference_res_? [i.e. anchor_res?]
 
 	Real const rmsd_screen = options_->rmsd_screen();

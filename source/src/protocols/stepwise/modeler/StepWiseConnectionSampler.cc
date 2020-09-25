@@ -772,17 +772,67 @@ StepWiseConnectionSampler::initialize_sampler( pose::Pose const & pose ){
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-StepWiseSamplerSizedOP
+StepWiseSamplerOP
 StepWiseConnectionSampler::initialize_protein_bond_sampler( pose::Pose const & pose ){
 	using namespace protocols::stepwise::sampler;
 	using namespace protocols::stepwise::sampler::protein;
-	StepWiseSamplerSizedOP sampler = get_basic_protein_sampler( pose, moving_res_list_,
-		working_parameters_, options_, input_streams_ );
 
-	if ( protein_cutpoints_closed_.size() > 0 && options_->kic_modeler_if_relevant() ) {
-		runtime_assert( protein_cutpoints_closed_.size() == 1 );
-		protein::loop_close::kic_close_loops_in_samples( sampler, pose, working_parameters_, options_);
+	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	utility::vector1< Real > dof_vals{
+		numeric::conversions::radians( -160.0 ),
+		numeric::conversions::radians( -140.0 ),
+		numeric::conversions::radians( -120.0 ),
+		numeric::conversions::radians( -100.0 ),
+		numeric::conversions::radians(  -80.0 ),
+		numeric::conversions::radians(  -60.0 ),
+		numeric::conversions::radians(  -40.0 ),
+		numeric::conversions::radians(  -20.0 ),
+		numeric::conversions::radians(    0.0 ),
+		numeric::conversions::radians(   20.0 ),
+		numeric::conversions::radians(   40.0 ),
+		numeric::conversions::radians(   60.0 ),
+		numeric::conversions::radians(   80.0 ),
+		numeric::conversions::radians(  100.0 ),
+		numeric::conversions::radians(  120.0 ),
+		numeric::conversions::radians(  140.0 ),
+		numeric::conversions::radians(  160.0 ),
+		numeric::conversions::radians(  180.0 ) };
+	auto sampler = utility::pointer::make_shared< StepWiseSamplerSizedComb >();
+	if ( moving_res_ == 0 ) { return nullptr; }
+	auto e = pose.fold_tree().get_residue_edge( moving_res_ );
+
+	if ( e.label() == kinematics::Edge::CHEMICAL ) {
+		TR << "Setting up RNA-bonded protein sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
+		using namespace core::id;
+		// residue is *built by* the branch
+		sampler->add_external_loop_rotamer(
+			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "C" ), moving_res_ ), id::PHI ), dof_vals ) );
+		sampler->add_external_loop_rotamer(
+			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "CA" ), moving_res_ ), id::PHI ), dof_vals ) );
+		sampler->add_external_loop_rotamer(
+			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "N" ), moving_res_ ), id::PHI ), dof_vals ) );
+		// these are actually the last two BB!
+	} else {
+
+		auto protein_sampler = get_basic_protein_sampler( pose, moving_res_list_,
+			working_parameters_, options_, input_streams_ );
+		// protein_sampler->init();
+
+		if ( protein_cutpoints_closed_.size() > 0 && options_->kic_modeler_if_relevant() ) {
+			runtime_assert( protein_cutpoints_closed_.size() == 1 );
+			protein::loop_close::kic_close_loops_in_samples( protein_sampler, pose, working_parameters_, options_ );
+		}
+
+		// need to provide BB-omitting flag to this IMO.
+		sampler->add_external_loop_rotamer( protein_sampler );
 	}
+
+	sampler->set_random( options_->choose_random() );
+	sampler->init();
+
 	return sampler;
 }
 
@@ -835,6 +885,28 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 	// AMW: Note that this won't work if the residue is LINKed to another residue, but it does not
 	// have the polymer property...
 	utility::vector1< Real > allowed_values{ -160, -140, -120, -100, -80, -60, -40, -20, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180 };
+	utility::vector1< Real > dof_vals{
+		numeric::conversions::radians( -160.0 ),
+		numeric::conversions::radians( -140.0 ),
+		numeric::conversions::radians( -120.0 ),
+		numeric::conversions::radians( -100.0 ),
+		numeric::conversions::radians(  -80.0 ),
+		numeric::conversions::radians(  -60.0 ),
+		numeric::conversions::radians(  -40.0 ),
+		numeric::conversions::radians(  -20.0 ),
+		numeric::conversions::radians(    0.0 ),
+		numeric::conversions::radians(   20.0 ),
+		numeric::conversions::radians(   40.0 ),
+		numeric::conversions::radians(   60.0 ),
+		numeric::conversions::radians(   80.0 ),
+		numeric::conversions::radians(  100.0 ),
+		numeric::conversions::radians(  120.0 ),
+		numeric::conversions::radians(  140.0 ),
+		numeric::conversions::radians(  160.0 ),
+		numeric::conversions::radians(  180.0 ) };
+	utility::vector1< Real > chi_values{ -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150, 180 };
+	utility::vector1< Real > symm_chi_values{ -150, -120, -90, -60, -30, 0 };
+	utility::vector1< Real > rotchi{ -60.0, 60.0, 180.0 };
 	StepWiseSamplerCombOP sampler( new StepWiseSamplerComb );
 	TR << "Setting up bonded polymer sampler for " << pose.residue_type( moving_res_ ).name() << std::endl;
 	// AMW: be very careful here because it's not clear all of these will be very useful.
@@ -863,15 +935,16 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 		// residue is *built by* the branch
 		sampler->add_external_loop_rotamer(
 			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
-			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "C" ), moving_res_ ), id::PHI ), allowed_values ) );
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "C" ), moving_res_ ), id::PHI ), dof_vals ) );
 		sampler->add_external_loop_rotamer(
 			utility::pointer::make_shared< StepWiseSamplerOneDOF >(
-			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "CA" ), moving_res_ ), id::PHI ), allowed_values ) );
+			core::id::DOF_ID( AtomID( pose.residue_type( moving_res_ ).atom_index( "CA" ), moving_res_ ), id::PHI ), dof_vals ) );
+		// these are actually the last two BB!
 		omit_first_two_bb = true;
 	}
 
-	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).mainchain_atoms().size(); ++ii ) {
-		if ( omit_first_two_bb && ii <= 2 ) continue;
+	for ( core::Size ii = pose.residue_type( moving_res_ ).mainchain_atoms().size() - 1; ii >= 1; --ii ) {
+		if ( omit_first_two_bb && ii >= pose.residue_type( moving_res_ ).mainchain_atoms().size() - 1 ) continue;
 		// skip if lower connect not there. Might be bad if it exists but is unfulfilled?
 		// ideally skip if it's there but unfulfilled
 		//if ( !pose.residue_type( moving_res_ ).lower_connect_id() && ii == 1 ) continue;
@@ -881,9 +954,24 @@ StepWiseConnectionSampler::initialize_generic_polymer_bond_sampler( pose::Pose c
 		// AMW TODO: use functions in conformation or something to only add sensible ones.
 		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::BB, ii ), allowed_values ) );
 	}
-	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi(); ++ii ) {
-		sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+	for ( core::Size ii = 1; ii <= pose.residue_type( moving_res_ ).nchi() - pose.residue_type( moving_res_ ).n_proton_chi(); ++ii ) {
+		// nrchi
+		if ( ii == 2 && (
+				pose.residue_type( moving_res_ ).aa() == chemical::aa_tyr ||
+				pose.residue_type( moving_res_ ).aa() == chemical::aa_phe ||
+				pose.residue_type( moving_res_ ).aa() == chemical::aa_asp ) ) {
+			sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), symm_chi_values ) );
+		} else if ( ii == 3 && pose.residue_type( moving_res_ ).aa() == chemical::aa_glu ) {
+			sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), symm_chi_values ) );
+		} else if ( ii == pose.residue_type( moving_res_ ).nchi() ) {
+			// final asymmetric nrchi: trp, gln, asn
+			sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), allowed_values ) );
+		} else {
+			sampler->add_external_loop_rotamer( utility::pointer::make_shared< StepWiseSamplerOneTorsion >( core::id::TorsionID( moving_res_, id::CHI, ii ), rotchi ) );
+		}
 	}
+
+	sampler->set_random( options_->choose_random() );
 	sampler->init();
 	return sampler;
 }
@@ -903,6 +991,7 @@ StepWiseConnectionSampler::initialize_ligand_bond_sampler( pose::Pose const & po
 		sampler->add_external_loop_rotamer( foo );
 	}
 	sampler->add_external_loop_rotamer( rigid_body_rotamer_ );
+	sampler->set_random( options_->choose_random() );
 	sampler->init();
 	return sampler;
 }

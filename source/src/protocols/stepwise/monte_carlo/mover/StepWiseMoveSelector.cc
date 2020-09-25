@@ -93,7 +93,7 @@ namespace mover {
 //Constructor
 StepWiseMoveSelector::StepWiseMoveSelector( options::StepWiseMoveSelectorOptionsCOP options ):
 	options_(std::move( options )),
-	allow_delete_( true ),
+	allow_delete_( !options_->skip_deletions() ),
 	force_unique_moves_( false ),
 	choose_random_( true )
 {}
@@ -101,7 +101,7 @@ StepWiseMoveSelector::StepWiseMoveSelector( options::StepWiseMoveSelectorOptions
 //Constructor
 StepWiseMoveSelector::StepWiseMoveSelector():
 	options_( utility::pointer::make_shared< options::StepWiseMoveSelectorOptions >() ),
-	allow_delete_( true ),
+	allow_delete_( !options_->skip_deletions() ),
 	force_unique_moves_( false ),
 	choose_random_( true )
 {
@@ -566,6 +566,15 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 			partition_res1 = get_partition_res( partition_definition, true );
 			partition_res2 = get_partition_res( partition_definition, false );
 
+			bool skip = false;
+			for ( Size ii : partition_res2 ) {
+				if ( ii == pose.fold_tree().root() ) continue;
+				if ( pose.fold_tree().get_residue_edge( ii ).label() == core::kinematics::Edge::CHEMICAL ) {
+					skip = true;
+				}
+			}
+			if ( skip ) continue;
+
 			// from-scratch handled elsewhere
 			if ( move_type == DELETE && both_remnants_would_be_deleted( pose, partition_res1, partition_res2 ) ) continue;
 			if ( !options_->allow_submotif_split() && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
@@ -621,6 +630,49 @@ StepWiseMoveSelector::get_intramolecular_split_move_elements( pose::Pose const &
 				Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
 		}
 	}
+
+	// now look at CHEMICAL edges. Note that, currently, additions by -2 are only for single residues, so only
+	// split cases in which single residues are deleted.
+	for ( auto const & edge : pose.fold_tree().get_chemical_edges() ) {
+
+		partition_definition = get_partition_definition_by_chemical_edge( pose, edge );
+		if ( partition_splits_an_input_domain( partition_definition, domain_map ) ) continue;
+
+		core::Size const downstream_res = edge.start();
+		core::Size const upstream_res = edge.stop();
+
+		// by convention, moving res should have higher
+		core::Size const moving_res = std::max( downstream_res, upstream_res );
+		core::Size const reference_res = std::min( downstream_res, upstream_res );
+		core::Size const offset = ( moving_res - reference_res );
+
+		// do not include jumps greater than a single residue (may exist in submotifs)
+		if ( std::abs( static_cast< int >( offset ) ) > 2 ) continue;
+		// AMW TODO CHEMICAL EDGE
+		if ( chains[ moving_res ] != chains[ reference_res ] ) continue;
+
+		partition_res1 = get_partition_res( partition_definition, ( moving_res < reference_res ) );
+		partition_res2 = get_partition_res( partition_definition, ( moving_res > reference_res ) );
+
+		// make sure that at least one partition is a single nucleotide.
+		if ( partition_res1.size() > 1 && partition_res2.size() > 1 ) continue;
+		if ( !options_->allow_submotif_split() && partitions_split_a_submotif( pose, partition_res1, partition_res2 ) ) continue;
+
+		if ( partition_res1.size() == 1 ) {
+			core::Size const anchor_res = partition_res1[1] == downstream_res ? upstream_res : downstream_res;
+			AttachmentType type = ( anchor_res > partition_res1[1] ) ? BOND_TO_NEXT : BOND_TO_PREVIOUS;
+			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res1),
+				Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
+			if ( force_unique_moves_ ) continue;
+		}
+		if ( partition_res2.size() == 1 ) {
+			core::Size const anchor_res = partition_res2[1] == downstream_res ? upstream_res : downstream_res;
+			AttachmentType type = ( anchor_res > partition_res2[1] ) ?  BOND_TO_NEXT : BOND_TO_PREVIOUS;
+			swa_moves_split.push_back( StepWiseMove( full_model_info.sub_to_full(partition_res2),
+				Attachment( full_model_info.sub_to_full(anchor_res), type ), move_type ) );
+		}
+	}
+
 	for ( core::Size n = 1; n <= swa_moves_split.size(); n++ ) swa_moves.push_back( swa_moves_split[ n ] );
 }
 

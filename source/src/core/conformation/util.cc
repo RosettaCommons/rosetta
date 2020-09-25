@@ -671,12 +671,12 @@ check_good_cutpoint_neighbour(
 		//AMW TODO: Andy, if ever you need RNA to connect to something other than RNA (or DNA) via a cutpoint, this is
 		//one place to make a change.  -VKM
 		runtime_assert_string_msg(
-			other_res.type().is_NA(),
+			other_res.type().is_polymer(),
 			"Error in core::conformation::check_good_cutpoint_neighbour(): The residue connected to a nucleic acid via a cutpoint is not itself a DNA or RNA residue."
 		);
 	} else {
 		runtime_assert_string_msg(
-			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid() || other_res.type().is_oligourea() || other_res.type().is_aramid() || other_res.type().has_property( chemical::TNA ),
+			other_res.type().is_alpha_aa() || other_res.type().is_beta_aa() || other_res.type().is_gamma_aa() || other_res.type().is_peptoid() || other_res.type().is_oligourea() || other_res.type().is_aramid() || other_res.type().is_RNA() || other_res.type().has_property( chemical::TNA ),
 			"Error in core::conformation::check_good_cutpoint_neighbour(): The connected residue is neither a peptoid, nor an oligourea, nor an alpha-, beta-, or gamma-amino acid."
 		);
 	}

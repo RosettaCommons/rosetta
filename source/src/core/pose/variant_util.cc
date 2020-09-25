@@ -512,6 +512,30 @@ is_upper_terminus( pose::Pose const & pose, Size const resid )
 		( pose.residue( resid ).is_upper_terminus() ) ); // explicit terminus variant @ end of loop
 }
 
+void
+show_adjacent_nt_connections(
+	pose::Pose const & pose,
+	Size const res
+) {
+	// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
+	core::conformation::Residue const & lower_rsd( pose.conformation().residue( res ) );
+
+	for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+		if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+		Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+		if ( upper == 0 ) continue;
+		core::conformation::Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
+		Size const m = lower_rsd.residue_connection_conn_id( k );
+		// runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
+		TR << "upper_rsd " << upper_rsd.seqpos() << " " << upper_rsd.name()
+			<< " is connected to " << upper_rsd.connected_residue_at_resconn( m )
+			<< " by " << m << "." << std::endl;
+		TR << "lower_rsd " << lower_rsd.seqpos() << " " << lower_rsd.name()
+			<< " is connected to " << lower_rsd.connected_residue_at_resconn( k )
+			<< " by " << k << "." << std::endl;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////
 void
 fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) {
@@ -541,12 +565,124 @@ fix_up_residue_type_variants_at_strand_end( pose::Pose & pose, Size const res ) 
 		if ( !( pose.residue_type( res + 1 ).is_RNA() || pose.residue_type( res + 1 ).is_protein()
 				|| pose.residue_type( res + 1 ).is_peptoid() || pose.residue_type( res + 1 ).is_TNA() ) ) return;
 
-		// can happen after additions
-		core::pose::correctly_add_cutpoint_variants( pose, res );
+		// Cover the RNA => protein case, i.e., we need some kind of branch term, not cutpoint
+		// variants per se which will make ridiculous assumptions.
+		if ( pose.residue_type( res ).is_RNA() && !pose.residue_type( res + 1 ).is_NA() && pose.residue_type( res + 1 ).is_polymer() ) {
+			// just add upper-to-upper bond, for now.
+			Size const next_res = res + 1;
+
+			// This gets rid of anything that touches uppers.
+			correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, res );
+			correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, next_res );
+
+			// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
+			core::conformation::Residue const & lower_rsd( pose.conformation().residue( res ) );
+
+			for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+				if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+				Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+				if ( upper == 0 ) continue;
+				core::conformation::Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
+				Size const m = lower_rsd.residue_connection_conn_id( k );
+				// runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
+				runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == res );
+				pose.conformation().sever_chemical_bond( res, k, upper, m );
+			}
+
+			core::conformation::Residue const & upper_rsd( pose.conformation().residue( next_res ) );
+			for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+				if ( upper_rsd.has_upper_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.upper_connect_atom() ) continue;
+				Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+				if ( lower == 0 ) continue;
+				core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+				Size const m = upper_rsd.residue_connection_conn_id( k );
+				// runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+				runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == next_res );
+				pose.conformation().sever_chemical_bond( next_res, k, lower, m );
+			}
+
+			// for the uppermost res, also sever its lower connections IF they are to lower_rsd.
+			for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+				if ( upper_rsd.has_lower_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
+				Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+				if ( lower == 0 ) continue;
+				core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+				Size const m = upper_rsd.residue_connection_conn_id( k );
+				// runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+				// runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == res );
+
+				if ( lower_rsd_k.connected_residue_at_resconn( m ) != next_res ) continue;
+				pose.conformation().sever_chemical_bond( next_res, k, lower, m );
+			}
+
+			pose.conformation().declare_chemical_bond(
+				res,
+				pose.residue( res ).atom_name( pose.residue( res ).upper_connect_atom() ),
+				next_res,
+				pose.residue( next_res ).atom_name( pose.residue( next_res ).upper_connect_atom() ) );
+		} else {
+			// can happen after additions
+			core::pose::correctly_add_cutpoint_variants( pose, res );
+		}
 
 		// leave virtual riboses in this should actually get instantiated by the modeler
 		// remove_variant_type_from_pose_residue( pose, chemical::VIRTUAL_RIBOSE, res );
 
+	} else if ( res == pose.size() && pose.residue_type( res - 1 ).is_RNA() && !pose.residue_type( res ).is_NA() && pose.residue_type( res ).is_polymer() ) {
+
+		Size const prev_res = res - 1;
+
+		// This gets rid of anything that touches uppers.
+		correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, prev_res );
+		correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, res );
+
+		// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
+		core::conformation::Residue const & lower_rsd( pose.conformation().residue( prev_res ) );
+
+		for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+			if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+			Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+			if ( upper == 0 ) continue;
+			// This is a fulfilled connection where lower_rsd uses k and that's upper.
+			core::conformation::Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
+			Size const m = lower_rsd.residue_connection_conn_id( k );
+			// m is the connection on upper_rsd that connects to lower_rsd's k
+			// runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
+			runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == prev_res );
+			pose.conformation().sever_chemical_bond( prev_res, k, upper, m );
+		}
+
+		core::conformation::Residue const & upper_rsd( pose.conformation().residue( res ) );
+		for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+			if ( upper_rsd.has_upper_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.upper_connect_atom() ) continue;
+			Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+			if ( lower == 0 ) continue;
+			core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+			Size const m = upper_rsd.residue_connection_conn_id( k );
+			// runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+			runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == res );
+			//lower_rsd_k.mark_connect_incomplete( m );
+			//upper_rsd.mark_connect_incomplete( k );
+			pose.conformation().sever_chemical_bond( res, k, lower, m );
+		}
+
+		// for the uppermost res, also sever its lower connections IF they are to lower_rsd.
+		for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+			if ( upper_rsd.has_lower_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
+			Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+			if ( lower == 0 ) continue;
+			core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+			Size const m = upper_rsd.residue_connection_conn_id( k );
+
+			if ( lower_rsd_k.connected_residue_at_resconn( m ) != res ) continue;
+			pose.conformation().sever_chemical_bond( res, k, lower, m );
+		}
+
+		pose.conformation().declare_chemical_bond(
+			prev_res,
+			pose.residue( prev_res ).atom_name( pose.residue( prev_res ).upper_connect_atom() ),
+			res,
+			pose.residue( res ).atom_name( pose.residue( res ).upper_connect_atom() ) );
 	} else {
 
 		// can happen after deletions
@@ -596,9 +732,72 @@ fix_up_residue_type_variants_at_strand_beginning( pose::Pose & pose, Size const 
 		if ( !( pose.residue_type( res - 1 ).is_RNA() || pose.residue_type( res - 1 ).is_protein()
 				|| pose.residue_type( res - 1 ).is_peptoid() || pose.residue_type( res - 1 ).is_TNA() ) ) return;
 
+		if ( pose.residue_type( res - 1 ).is_RNA() && !pose.residue_type( res ).is_NA() ) {
+			// just add upper-to-upper bond, for now.
+			Size const prev_res = res - 1;
 
-		// can happen after additions
-		core::pose::correctly_add_cutpoint_variants( pose, res - 1 );
+			// This gets rid of anything that touches uppers.
+			correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, res );
+			correctly_remove_variants_incompatible_with_lower_cutpoint_variant( pose, prev_res );
+
+
+			// Need to clear out any chemical bonds that might have been previously tied to upper/lower of these residues.
+			core::conformation::Residue const & lower_rsd( pose.conformation().residue( prev_res ) );
+			for ( Size k = 1; k <= lower_rsd.connect_map_size(); k++ ) {
+				if ( lower_rsd.has_upper_connect() && lower_rsd.residue_connect_atom_index( k ) != lower_rsd.upper_connect_atom() ) continue;
+				Size upper( lower_rsd.connected_residue_at_resconn( k ) );
+				if ( upper == 0 ) continue;
+				core::conformation::Residue const & upper_rsd( pose.conformation().residue( upper ) ); // upper residue.
+				Size const m = lower_rsd.residue_connection_conn_id( k );
+				// runtime_assert( upper_rsd.residue_connect_atom_index( m ) == upper_rsd.lower_connect_atom() );
+				runtime_assert( upper_rsd.connected_residue_at_resconn( m ) == prev_res );
+				pose.conformation().sever_chemical_bond( prev_res, k, upper, m );
+			}
+
+			core::conformation::Residue const & upper_rsd( pose.conformation().residue( res ) );
+			for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+				if ( upper_rsd.has_upper_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.upper_connect_atom() ) continue;
+				Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+				if ( lower == 0 ) continue;
+				core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+				Size const m = upper_rsd.residue_connection_conn_id( k );
+				// runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+				runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == res );
+				//lower_rsd_k.mark_connect_incomplete( m );
+				//upper_rsd.mark_connect_incomplete( k );
+				pose.conformation().sever_chemical_bond( res, k, lower, m );
+			}
+
+			// for the uppermost res, also sever its lower connections IF they are to lower_rsd.
+			for ( Size k = 1; k <= upper_rsd.connect_map_size(); k++ ) {
+				if ( upper_rsd.has_lower_connect() && upper_rsd.residue_connect_atom_index( k ) != upper_rsd.lower_connect_atom() ) continue;
+				Size lower( upper_rsd.connected_residue_at_resconn( k ) );
+				if ( lower == 0 || lower != lower_rsd.seqpos()  ) continue;
+				core::conformation::Residue const & lower_rsd_k( pose.conformation().residue( lower ) ); // lower residue.
+				Size const m = upper_rsd.residue_connection_conn_id( k );
+				// runtime_assert( lower_rsd_k.residue_connect_atom_index( m ) == lower_rsd_k.upper_connect_atom() );
+				// runtime_assert( lower_rsd_k.connected_residue_at_resconn( m ) == res );
+
+				TR << "We're here because lower rsd " << lower_rsd.type().name()
+					<< " is connected to upper rsd " << upper_rsd.type().name()
+					<< " by connection " << m << " to " << k << std::endl;
+				TR << "Lower rsd connected residue at resconn " << m  << " is " << lower_rsd_k.connected_residue_at_resconn( m )
+					<< " whereas upper is " << upper_rsd.seqpos() << "  " << res << std::endl;
+				if ( lower_rsd_k.connected_residue_at_resconn( m ) != res ) continue;
+				//lower_rsd_k.mark_connect_incomplete( m );
+				//upper_rsd.mark_connect_incomplete( k );
+				pose.conformation().sever_chemical_bond( res, k, lower, m );
+			}
+
+			pose.conformation().declare_chemical_bond(
+				prev_res,
+				pose.residue( prev_res ).atom_name( pose.residue( prev_res ).upper_connect_atom() ),
+				res,
+				pose.residue( res ).atom_name( pose.residue( res ).upper_connect_atom() ) );
+		} else {
+			// can happen after additions
+			core::pose::correctly_add_cutpoint_variants( pose, res - 1 );
+		}
 	} else {
 		// can happen after additions
 		if ( pose.residue_type( res ).is_RNA() &&
@@ -704,6 +903,7 @@ fix_up_residue_type_variants(
 
 	for ( Size n = 1; n <= pose.size(); n++ ) {
 
+		if ( pose.residue_type( n ).is_virtual_residue() ) continue;
 		// Are we at a strand beginning?
 		bool const at_strand_beginning = ( n == 1 || pose.fold_tree().is_cutpoint( n-1 ) );
 		if ( at_strand_beginning ) {
@@ -717,7 +917,11 @@ fix_up_residue_type_variants(
 		}
 
 		// Look for strand ends.
-		bool const at_strand_end = ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) );
+		// AMW: We have to explicitly exclude a weird case -- where charged tRNA residues will
+		// be cutpoints but also need free uppers.
+		bool const at_strand_end = ( n == pose.size() || pose.fold_tree().is_cutpoint( n ) )
+			&& !( pose.residue_type( n ).is_polymer() && !pose.residue_type( n ).is_NA()
+			&& n > 1 && pose.residue_type( n-1 ).is_NA() );
 		if ( at_strand_end ) {
 			fix_up_residue_type_variants_at_strand_end( pose, n );
 		} else {

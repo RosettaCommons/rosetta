@@ -1370,7 +1370,15 @@ FoldTree::new_jump(
 	add_vertex( new_cutpoint+1 );
 
 	add_edge( jump_pos1, jump_pos2, new_jump_number );
-	delete_unordered_edge( new_cutpoint, new_cutpoint+1, Edge::PEPTIDE );
+	// AMW: If new_cutpoint+1 is root, then we can't get its label. Default to
+	// peptide.
+	if ( edge_list_.begin()->start() == new_cutpoint + 1 ) {
+		delete_unordered_edge( new_cutpoint, new_cutpoint+1, Edge::PEPTIDE );
+	} else if ( get_residue_edge( new_cutpoint + 1 ).label() == Edge::CHEMICAL ) {
+		delete_unordered_edge( new_cutpoint, new_cutpoint+1, Edge::CHEMICAL );
+	} else {
+		delete_unordered_edge( new_cutpoint, new_cutpoint+1, Edge::PEPTIDE );
+	}
 
 	reorder( root );
 	new_topology = true;

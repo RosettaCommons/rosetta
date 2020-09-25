@@ -109,7 +109,6 @@ StepWiseMonteCarloOptions::initialize_from_options_collection( utility::options:
 	set_silent_file( options[ OptionKeys::out::file::silent ]() );
 	set_verbose_scores( options[ OptionKeys::stepwise::monte_carlo::verbose_scores ]() );
 	set_integration_test_mode( options[ OptionKeys::stepwise::rna::integration_test ]() );
-	set_skip_deletions( options[ OptionKeys::stepwise::monte_carlo::skip_deletions ]() );
 	set_num_pose_minimize( options[ OptionKeys::stepwise::num_pose_minimize ]() );
 	set_erraser( options[ OptionKeys::stepwise::rna::erraser ]() );
 	set_cycles( options[ OptionKeys::stepwise::monte_carlo::cycles ]() );

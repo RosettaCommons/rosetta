@@ -2008,6 +2008,10 @@ Conformation::update_polymeric_connection(
 
 	Residue const & lower( *residues_[ lower_seqpos ] ), upper( *residues_[ lower_seqpos + 1 ] );
 
+	// Don't do this for consecutive residues that are NA and protein.
+	// NA and polymer is, remarkably, actually fine.
+	if ( lower.is_NA() && upper.is_protein() ) return;
+
 	bool const disconnected(
 		lower.chain() != upper.chain() || lower.is_upper_terminus() ||
 		upper.is_lower_terminus() || !lower.is_polymer() || !upper.is_polymer() ||

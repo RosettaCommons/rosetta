@@ -172,7 +172,10 @@ StepWiseMonteCarlo::do_main_loop( pose::Pose & pose ){
 
 		master_mover_->apply( pose );
 		success = master_mover_->success();
-		if ( !success ) continue;
+		if ( !success ) {
+			TR.Warning << "Move failed. Continuing without incrementing cycle counter." << std::endl;
+			continue;
+		}
 		k++;
 
 		TR << "After move, modeling: " << get_all_res_list( pose ) << std::endl;

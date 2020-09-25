@@ -360,7 +360,7 @@ AddMover::append_residue( pose::Pose & pose, core::Size const offset ) {
 			//  false, false );
 			pose.insert_residue_by_atoms( *new_rsd, res_to_build_off+1, true, new_rsd->atom_name( new_rsd->upper_connect_atom() ),
 				res_to_build_off, pose.residue_type( res_to_build_off ).atom_name( pose.residue_type( res_to_build_off ).upper_connect_atom() ),
-				false, false );
+				false, true ); // lookup bond length
 		} else {
 			pose.append_polymer_residue_after_seqpos( *new_rsd, res_to_build_off, true /*build ideal geometry*/ );
 		}

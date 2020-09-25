@@ -158,12 +158,7 @@ IdealBondLengthSet::read_file( std::string const & filename )
 void
 IdealBondLengthSet::print_all_bond_lengths()
 {
-	for (
-			std::map< std::pair<AtomTypeIndex, AtomTypeIndex>, BondLength >::const_iterator i = bond_lengths_.begin(),
-			e = bond_lengths_.end();
-			i != e;
-			++i
-			) {
+	for ( auto i = bond_lengths_.begin(), e = bond_lengths_.end(); i != e; ++i ) {
 		std::cout << i->first.first << " " << i->first.second << " " << i->second << std::endl;
 	}
 }

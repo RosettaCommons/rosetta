@@ -1286,10 +1286,12 @@ setup_fold_trees( vector1< Pose * > & pose_pointers,
 				TR << TR.Red << "There appears to be a strand boundary at " << res_list[ i ] << " so adding to cutpoint_in_full_model." << TR.Reset << std::endl;
 				cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 			}
-			if ( pose.residue_type( i ).is_RNA() != pose.residue_type( i+1 ).is_RNA() ) {
+			if ( pose.residue_type( i ).is_RNA() != pose.residue_type( i+1 ).is_RNA()
+					&& !pose.residue_type( i+1 ).is_virtual_residue() ) {
 				cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 			}
-			if ( pose.residue_type( i ).is_protein() != pose.residue_type( i+1 ).is_protein() ) {
+			if ( pose.residue_type( i ).is_protein() != pose.residue_type( i+1 ).is_protein()
+					&& !pose.residue_type( i+1 ).is_virtual_residue() ) {
 				cutpoint_open_in_full_model.push_back( res_list[ i ] ); continue;
 			}
 		}

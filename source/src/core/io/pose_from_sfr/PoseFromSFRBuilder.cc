@@ -681,10 +681,10 @@ void PoseFromSFRBuilder::pass_4_redo_termini()
 		// AMW: new--don't add  an upper terminus type to protein residues following RNA
 		// if that RNA is itself not upper-terminal
 		if ( !residue_types_[ ii ]->is_upper_terminus() && residue_types_[ ii ]->upper_connect_id() != 0 &&
-				!( residue_types_[ ii ]->is_protein() && residue_types_[ ii_prev ]->is_RNA()
-				&& !residue_types_[ ii_prev ]->is_upper_terminus() ) &&
-				!( residue_types_[ ii ]->is_RNA() && residue_types_[ ii_next ]->is_protein()
-				&& !residue_types_[ ii_next ]->is_upper_terminus() ) &&
+				// !( residue_types_[ ii ]->is_polymer() && residue_types_[ ii_prev ]->is_RNA()
+				// && !residue_types_[ ii_prev ]->is_upper_terminus() ) &&
+				// !( residue_types_[ ii ]->is_RNA() && residue_types_[ ii_next ]->is_polymer()
+				// && !residue_types_[ ii_next ]->is_upper_terminus() ) &&
 				( ii == ii_next ||
 				( residue_types_[ ii_next ] && (
 				!residue_types_[ ii_next ]->is_polymer() ||
@@ -806,14 +806,17 @@ void PoseFromSFRBuilder::build_initial_pose( pose::Pose & pose )
 			pose.append_residue_by_bond( *ii_rsd );
 
 			// If this is a lower terminus, AND it's not about to get UPPER-UPPER bonded from prev
-		} else if ( ( ( is_lower_terminus_[ ii ] && !( !pose.residue_type( old_nres ).is_upper_terminus() && pose.residue_type( old_nres ).is_RNA() && !ii_rsd_type.is_upper_terminus() ) )
-				&& determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() )) ||
-				! same_chain_prev_[ ii ] ||
-				pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) ||
-				! ii_rsd->is_polymer() ||
+			// Actually, building initial PDBs like this is all right: we will be
+			// doing more complicated checks later.
+		} else if (
+				( is_lower_terminus_[ ii ] && determine_check_Ntermini_for_this_chain( rinfos_[ ii ].chainID() ) ) ||
+				( !pose.residue_type( old_nres ).is_upper_terminus() && pose.residue_type( old_nres ).is_RNA() && !ii_rsd_type.is_upper_terminus() && ii_rsd_type.is_lower_terminus() ) ||
+				! same_chain_prev_[ ii ] || // explicit new-chain signal
+				pose.residue_type( old_nres ).has_variant_type( "C_METHYLAMIDATION" ) || // C_METHYLAMIDATED can't bond, so jump AMW TODO VARIANT
+				! ii_rsd->is_polymer() || // new residue isn't polymer, so jump
 				// Don't connect to previous with an UPPER/LOWER polymeric bond if previous didn't have an upper.
-				! pose.residue_type( old_nres ).is_polymer() ||
-				pose.residue_type( old_nres ).is_upper_terminus() ||
+				! pose.residue_type( old_nres ).is_polymer() || // Nonpolymers can't bond-to-next automatically, so jump
+				pose.residue_type( old_nres ).is_upper_terminus() || // generalized from C_METHYLAMIDATION
 				! last_residue_was_recognized( ii ) ) {
 			// A new chain because this is a lower terminus (see logic above for designation)
 			// and if we're not checking it then it's a different chain from the previous

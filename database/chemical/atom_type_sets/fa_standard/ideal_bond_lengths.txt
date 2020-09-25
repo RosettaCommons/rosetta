@@ -55,3 +55,4 @@ OOC OOC 1.540000 #not from params
 COO COO 1.540000 #not from params
 VIRT S 1.329369 
 VIRT VIRT 1.569086 
+Oet2 CObb 1.311683 

@@ -132,7 +132,7 @@ private:
 	bool
 	initialize_sampler( core::pose::Pose const & pose );
 
-	sampler::StepWiseSamplerSizedOP
+	sampler::StepWiseSamplerOP
 	initialize_protein_bond_sampler( core::pose::Pose const & pose );
 
 	sampler::StepWiseSamplerOP

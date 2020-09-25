@@ -31,7 +31,7 @@
 #include <basic/options/option_macros.hh>
 
 // Boost headers
-#include <boost/math/common_factor_rt.hpp>
+#include <boost/integer/common_factor_rt.hpp>
 
 // C++ headers
 #include <cmath> //For std::pow
@@ -379,7 +379,7 @@ count_analytically_cyclic(
 
 	core::Size accumulator(0);
 	for ( core::Size i(1); i<=asymm_unit_size; ++i ) {
-		core::Size const gcf( boost::math::gcd( i, asymm_unit_size ) );
+		core::Size const gcf( boost::integer::gcd( i, asymm_unit_size ) );
 		accumulator += std::pow(noptions, gcf);
 		TR << noptions << "^" << gcf;
 		if ( i < asymm_unit_size ) TR << " + ";
@@ -452,7 +452,7 @@ count_analytically_improper_rotational(
 	core::Size accumulator( 0 );
 	bool first( true );
 	for ( core::Size i(1); i<=lobe_size; ++i ) {
-		core::Size const gcf( boost::math::gcd( i, lobe_size ) );
+		core::Size const gcf( boost::integer::gcd( i, lobe_size ) );
 		debug_assert( lobe_size % gcf == 0); //Must be true
 		if ( (lobe_size / gcf) % 2 == 0 ) continue; //Skip evens.
 

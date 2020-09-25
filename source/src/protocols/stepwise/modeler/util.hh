@@ -19,6 +19,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/Edge.fwd.hh>
 #include <core/io/silent/RNA_SilentStruct.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
@@ -199,6 +200,9 @@ get_partition_definition( core::pose::Pose const & pose, core::Size const & movi
 
 utility::vector1< bool >
 get_partition_definition_by_jump( core::pose::Pose const & pose, core::Size const & jump_nr /*jump_number*/ );
+
+utility::vector1< bool >
+get_partition_definition_by_chemical_edge( core::pose::Pose const & pose, core::kinematics::Edge const & edge );
 
 void
 reroot_based_on_full_model_info( core::pose::Pose & pose );

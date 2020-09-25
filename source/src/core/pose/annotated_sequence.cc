@@ -758,9 +758,9 @@ void make_pose_from_sequence(
 			pose.append_residue_by_atoms(
 				*new_rsd,
 				true,
-				rsd_type.atom_name( rsd_type.upper_connect_id() ),
+				rsd_type.atom_name( rsd_type.upper_connect_atom() ),
 				pose.size(),
-				pose.residue_type( pose.size() ).atom_name( pose.residue_type( pose.size() ).upper_connect_id() ),
+				pose.residue_type( pose.size() ).atom_name( pose.residue_type( pose.size() ).upper_connect_atom() ),
 				false,
 				false );
 			TR.Warning << "Pose residue " << pose.size() << " has been appended by an upper-to-upper connection." << std::endl;

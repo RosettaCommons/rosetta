@@ -46,7 +46,8 @@ StepWiseMoveSelectorOptions::StepWiseMoveSelectorOptions():
 	vary_loop_length_frequency_( 0.0 ),
 	filter_complex_cycles_( true ),
 	allow_submotif_split_( false ),
-	force_submotif_without_intervening_bulge_( false )
+	force_submotif_without_intervening_bulge_( false ),
+	skip_deletions_( false )
 {
 }
 
@@ -69,6 +70,7 @@ StepWiseMoveSelectorOptions::initialize_from_options_collection( utility::option
 	set_allow_internal_local_moves( the_options[ OptionKeys::stepwise::monte_carlo::allow_internal_local_moves ]() );
 	set_add_delete_frequency( the_options[ OptionKeys::stepwise::monte_carlo::add_delete_frequency ]() );
 	set_from_scratch_frequency( the_options[ OptionKeys::stepwise::monte_carlo::from_scratch_frequency ]() );
+	set_skip_deletions( the_options[ OptionKeys::stepwise::monte_carlo::skip_deletions ]() );
 
 	set_docking_frequency( the_options[ OptionKeys::stepwise::monte_carlo::docking_frequency ]() );
 	if ( the_options[ OptionKeys::stepwise::monte_carlo::intermolecular_frequency ].user() ) {
@@ -99,6 +101,7 @@ StepWiseMoveSelectorOptions::list_options_read( utility::options::OptionKeyList 
 		+ OptionKeys::stepwise::monte_carlo::from_scratch_frequency
 		+ OptionKeys::stepwise::monte_carlo::docking_frequency
 		+ OptionKeys::stepwise::monte_carlo::intermolecular_frequency
+		+ OptionKeys::stepwise::monte_carlo::skip_deletions
 		+ OptionKeys::stepwise::monte_carlo::allow_skip_bulge
 		+ OptionKeys::stepwise::monte_carlo::submotif_frequency
 		+ OptionKeys::stepwise::monte_carlo::switch_focus_frequency

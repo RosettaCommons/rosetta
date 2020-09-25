@@ -89,6 +89,9 @@ public:
 	void set_switch_focus_frequency( core::Real const & setting ){ switch_focus_frequency_ = setting; }
 	core::Real switch_focus_frequency() const{ return switch_focus_frequency_; }
 
+	bool const & skip_deletions() const { return skip_deletions_; }
+	void set_skip_deletions( bool const & setting ){ skip_deletions_ = setting; }
+
 	void set_skip_bulge_frequency( core::Real const & setting ){ skip_bulge_frequency_ = setting; }
 	core::Real skip_bulge_frequency() const{ return skip_bulge_frequency_; }
 
@@ -118,6 +121,7 @@ private:
 	bool filter_complex_cycles_;
 	bool allow_submotif_split_;
 	bool force_submotif_without_intervening_bulge_;
+	bool skip_deletions_;
 
 };
 

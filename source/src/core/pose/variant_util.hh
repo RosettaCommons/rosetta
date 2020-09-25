@@ -167,6 +167,11 @@ fix_up_residue_type_variants_at_strand_end( core::pose::Pose & pose, core::Size 
 void
 fix_up_residue_type_variants( core::pose::Pose & pose );
 
+void
+show_adjacent_nt_connections(
+	core::pose::Pose const & pose,
+	core::Size const res
+);
 
 } // pose
 } // core

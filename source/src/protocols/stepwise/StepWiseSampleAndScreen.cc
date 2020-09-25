@@ -87,6 +87,10 @@ StepWiseSampleAndScreen::run()
 	CompositionMoverOP update_movers( new CompositionMover ), restore_movers( new CompositionMover );
 	reset();
 	for ( sampler_->reset(); sampler_->not_end(); ++( *sampler_ ) ) {
+		// if ( verbose_ && num_tries() % 100 == 0 ) {
+		//  output_counts();
+		//  TR << "sample " << num_tries() << std::endl;
+		// }
 
 		if ( sampler_->random() && ( num_tries() >= max_ntries_ || num_successes() >= num_random_samples_ ) ) break;
 		update_movers->clear();

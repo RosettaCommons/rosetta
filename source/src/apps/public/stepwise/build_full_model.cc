@@ -169,7 +169,9 @@ BuildFullModel::BuildFullModel() {
 	if ( option[ in::file::native ].user() ) {
 		ResidueTypeSetCOP rsd_set = ChemicalManager::get_instance()->residue_type_set( FA_STANDARD );
 		native_pose_ = core::import_pose::get_pdb_with_full_model_info( option[ in::file::native ], rsd_set ); //import_pose::pose_from_file( option[ in::file::native ] );
-		core::pose::rna::virtualize_free_rna_moieties( *native_pose_ );
+		if ( option[ OptionKeys::stepwise::virtualize_free_moieties_in_native ].value() ) {
+			core::pose::rna::virtualize_free_rna_moieties( *native_pose_ );
+		}
 	}
 }
 

@@ -108,7 +108,9 @@ make_cut_at_moving_suite( pose::Pose & pose, core::Size const & moving_suite ){
 	core::kinematics::FoldTree fold_tree = pose.fold_tree();
 
 	core::Size jump_number( 0 );
-	if ( fold_tree.is_cutpoint( moving_suite ) ) { // already a cutpoint there
+	// Have to actually make the cut if the next residue is built by chemical edge.
+	if ( fold_tree.is_cutpoint( moving_suite ) &&
+			( moving_suite == pose.size() || fold_tree.get_residue_edge( moving_suite + 1 ).label() != core::kinematics::Edge::CHEMICAL ) ) { // already a cutpoint there
 		return find_jump_number_at_suite( fold_tree, moving_suite );
 	} else {
 		jump_number = make_cut_at_moving_suite( fold_tree, moving_suite );
@@ -669,7 +671,10 @@ slice( pose::Pose & sliced_out_pose,
 		core::Size const j = slice_res[ n ];
 		ResidueOP rsd = pose.residue( j ).clone();
 
-		bool const after_cutpoint = ( j == 1 || ( pose.fold_tree().is_cutpoint( j - 1 ) ) );
+		// Explicitly exclude chemical edges from this kind of cutpoint consideration
+		// AMW: don't do that!
+		//
+		bool const after_cutpoint = ( j == 1 || ( pose.fold_tree().is_cutpoint( j - 1 ) && pose.fold_tree().get_residue_edge( j ).label() != core::kinematics::Edge::CHEMICAL ) );
 		if ( after_cutpoint && rsd->has_variant_type( chemical::LOWER_TERMINUS_VARIANT ) ) rsd = remove_variant_type_from_residue( *rsd, chemical::LOWER_TERMINUS_VARIANT, pose );
 		if ( !after_cutpoint && !slice_res.has_value( j - 1 ) ) num_five_prime_connections++;
 
@@ -715,12 +720,14 @@ slice( pose::Pose & sliced_out_pose,
 
 	for ( core::Size n = 1; n < slice_res.size(); n++ ) {
 		core::Size const & i = slice_res[ n ];
+		if ( i == pose.size() - 1 && pose.residue_type( pose.size() ).is_virtual_residue() ) {
+			continue;
+		}
 		if ( !slice_res.has_value( i+1 ) || // boundary to non-sliced segment.
 				pose.fold_tree().is_cutpoint( i ) ) {  // cut internal to sliced segment.
 			cuts.push_back( n );
 		}
 	}
-
 	core::Size const num_cuts = cuts.size();
 	runtime_assert( jump_partners1.size() == jump_partners2.size() );
 	runtime_assert( num_cuts == jump_partners1.size() );
@@ -792,6 +799,12 @@ check_jump_to_previous_residue_in_chain( pose::Pose const & pose, core::Size con
 			chains_in_full_model[ res_list[ previous_res ] ] == current_chain ) {
 		if ( !current_element.has_value( res_list[ previous_res ] ) &&
 				pose.fold_tree().jump_nr( previous_res, i ) > 0 ) return previous_res;
+		// AMW TODO
+		if ( !current_element.has_value( res_list[ previous_res ] ) &&
+				pose.fold_tree().residue_is_in_fold_tree( res_list[ i ] ) &&
+				res_list[ i ] != pose.fold_tree().root() &&
+				pose.fold_tree().get_residue_edge( res_list[ i ] ).label() == core::kinematics::Edge::CHEMICAL ) return previous_res;
+
 		previous_res--;
 	}
 	return 0;
@@ -832,6 +845,10 @@ check_jump_to_next_residue_in_chain( pose::Pose const & pose, core::Size const i
 			chains_in_full_model[ res_list[ subsequent_res ] ] == current_chain ) {
 		if ( !current_element.has_value( res_list[ subsequent_res ] ) &&
 				pose.fold_tree().jump_nr( subsequent_res, i ) > 0 ) return subsequent_res;
+		// AMW TODO
+		if ( !current_element.has_value( res_list[ subsequent_res ] ) &&
+				pose.fold_tree().get_residue_edge( subsequent_res ).label() == core::kinematics::Edge::CHEMICAL &&
+				pose.fold_tree().get_residue_edge( subsequent_res ).start() == i ) return subsequent_res;
 		subsequent_res++;
 	}
 	return 0;
@@ -1180,10 +1197,10 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 			runtime_assert( three_prime_chain_break == n + 1 ); // no fast forward past bulges
 
 			// This condition only holds if those cutpoint types can be applied, which fails for some polymers.
-			if ( ( pose.residue_type( five_prime_chain_break ).is_RNA() || pose.residue_type( five_prime_chain_break ).is_protein()
-					|| pose.residue_type( five_prime_chain_break ).is_peptoid() || pose.residue_type( five_prime_chain_break ).is_TNA() ) &&
-					( pose.residue_type( three_prime_chain_break ).is_RNA() || pose.residue_type( three_prime_chain_break ).is_protein()
-					|| pose.residue_type( three_prime_chain_break ).is_peptoid() || pose.residue_type( three_prime_chain_break ).is_TNA() ) ) {
+			if ( ( pose.residue_type( five_prime_chain_break ).is_RNA() && pose.residue_type( three_prime_chain_break ).is_RNA() )
+					|| ( ( pose.residue_type( five_prime_chain_break ).is_protein() || pose.residue_type( five_prime_chain_break ).is_peptoid() )
+					&& ( pose.residue_type( three_prime_chain_break ).is_protein() || pose.residue_type( three_prime_chain_break ).is_peptoid() ) )
+					|| ( pose.residue_type( five_prime_chain_break ).is_TNA() && pose.residue_type( three_prime_chain_break ).is_TNA() ) ) {
 				runtime_assert( pose.residue_type( five_prime_chain_break ).has_variant_type( chemical::CUTPOINT_LOWER ) );
 				runtime_assert( pose.residue_type( three_prime_chain_break ).has_variant_type( chemical::CUTPOINT_UPPER ) );
 			}
@@ -1199,6 +1216,19 @@ figure_out_moving_chain_breaks( pose::Pose const & pose,
 utility::vector1< bool >
 get_partition_definition_by_jump( pose::Pose const & pose, core::Size const & jump_nr /*jump_number*/ ){
 	return pose.fold_tree().partition_by_jump( jump_nr );
+}
+
+///////////////////////////////////////////////////////////////////////
+utility::vector1< bool >
+get_partition_definition_by_chemical_edge( pose::Pose const & pose, core::kinematics::Edge const & edge ) {
+	ObjexxFCL::FArray1D<bool> partition_definition( pose.size(), false );
+	pose.fold_tree().partition_by_residue( edge.start(), partition_definition );
+
+	//silly conversion. There may be a faster way to do this actually.
+	utility::vector1< bool > partition_definition_vector1;
+	for ( core::Size n = 1; n <= pose.size(); n++ ) partition_definition_vector1.push_back( partition_definition(n) );
+
+	return partition_definition_vector1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1437,7 +1467,10 @@ split_pose( pose::Pose & pose, core::Size const moving_res, core::Size const ref
 	if ( !jump_at_moving_suite ) {
 		runtime_assert( (moving_res == reference_res + 1) || (moving_res == reference_res - 1) );
 		core::Size const moving_suite = ( moving_res < reference_res ) ? moving_res : reference_res;
-		runtime_assert( !pose.fold_tree().is_cutpoint( moving_suite ) );
+		// In the NA => AA case, technically moving_suite is already a cutpoint (chemical edges don't
+		// count) but we still need to make a cut there (to sever that edge, I guess).
+		runtime_assert( !pose.fold_tree().is_cutpoint( moving_suite )
+			|| ( pose.residue_type( moving_suite + 1 ).is_polymer() && pose.residue_type( moving_suite ).is_NA() ) ); // covers NA => AA case
 		jump_at_moving_suite = make_cut_at_moving_suite( pose, moving_suite );
 		if ( pose.residue_type( moving_suite + 1 ).is_RNA() && !pose.residue_type( moving_suite+1 ).has_variant_type( core::chemical::VIRTUAL_RNA_RESIDUE ) ) {
 			add_variant_type_to_pose_residue( pose, core::chemical::VIRTUAL_PHOSPHATE, moving_suite+1 );
