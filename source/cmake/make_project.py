@@ -2,7 +2,7 @@
 from __future__ import print_function
 # make_project.py - modified from mini-interactive by tex.
 
-import os, sys, os.path
+import os, sys, os.path, subprocess
 import timeit
 import build_util
 
@@ -11,21 +11,19 @@ import build_util
 PATH_TO_SOURCE_DIR = os.path.dirname( os.path.dirname( os.path.abspath(sys.argv[0]) ) ) + "/"
 PATH_TO_SOURCE_DIR = PATH_TO_SOURCE_DIR.replace('\\', '/')
 
-def update_version():
-    cmd = 'cd .. && version.py'
-    os.system(cmd)
 
-def update_options():
-    cmd = 'cd .. && update_options.sh'
-    os.system(cmd)
+def execute_rosetta_script_from_source_dir(script_name):
+    slash = '\\' if sys.platform == "win32" else '/'
+    return subprocess.check_call('cd .. && .' + slash + script_name, shell=True)
 
-def update_submodules():
-    cmd = 'cd ..; ./update_submodules.sh'
-    os.system(cmd)
 
-def update_ResidueType_enum_files():
-    cmd = 'cd .. && update_ResidueType_enum_files.sh'
-    os.system(cmd)
+def update_version(): execute_rosetta_script_from_source_dir('version.py')
+
+def update_options(): execute_rosetta_script_from_source_dir('update_options.sh')
+
+def update_submodules(): execute_rosetta_script_from_source_dir('update_submodules.sh')
+
+def update_ResidueType_enum_files(): execute_rosetta_script_from_source_dir('update_ResidueType_enum_files.sh')
 
 
 def project_callback(project, project_path, project_files):
