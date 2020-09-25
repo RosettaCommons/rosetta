@@ -142,8 +142,6 @@
 #include <protocols/docking/membrane/MPDockingMoverCreator.hh>
 #include <protocols/docking/membrane/MPDockingSetupMoverCreator.hh>
 
-#include <protocols/drug_design/RDKitMetricsMoverCreator.hh>
-
 // E //////////////////////////////////////////////////////////////////////////
 #include <protocols/electron_density/SetupForDensityScoringMoverCreator.hh>
 #include <protocols/electron_density/BfactorFittingMoverCreator.hh>

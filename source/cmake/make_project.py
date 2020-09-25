@@ -19,10 +19,6 @@ def update_options():
     cmd = 'cd .. && update_options.sh'
     os.system(cmd)
 
-def update_submodules():
-    cmd = 'cd ..; ./update_submodules.sh'
-    os.system(cmd)
-
 def update_ResidueType_enum_files():
     cmd = 'cd .. && update_ResidueType_enum_files.sh'
     os.system(cmd)
@@ -175,7 +171,6 @@ os.chdir( rosetta_cmake_directory or "./" )
 
 update_version()
 update_options()
-update_submodules()  # We do have the update in the build process, but if we don't trigger that properly we can error out before then.
 update_ResidueType_enum_files()
 
 build_util.external_main(PATH_TO_SOURCE_DIR, sys.argv, project_external_callback)

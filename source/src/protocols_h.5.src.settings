@@ -48,10 +48,6 @@ sources = {
 	"protocols/docking/stateless": [
 		"SaneDockingProtocol",
 	],
-	"protocols/drug_design": [
-		"RDKitMetric",
-		"RDKitMetricsMover",
-	],
 	"protocols/ligand_docking": [
 		"AddHydrogen",
 		"AddHydrogens",

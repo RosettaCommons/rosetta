@@ -65,7 +65,7 @@ public:
 	template<class C>
 	struct iter_base : public std::iterator<std::input_iterator_tag,float> {
 		iter_base(Ball const *p) : p_(p) {}
-		C & operator=(C const & r) { p_ = r.p_; return static_cast<C &>(*this); }
+		C & operator=(C const & r) { p_ = r.p_; return *this; }
 		C & operator++() { ++p_; return static_cast<C &>(*this); }
 		bool operator!=(C const & r) const { return (p_ != r.p_); }
 		bool operator==(C const & r) const { return (p_ == r.p_); }

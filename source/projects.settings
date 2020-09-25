@@ -58,6 +58,5 @@ projects = {
 		"cifparse",
 		"libxml2",
 		"libzmq",
-		"rdkit",
 	]
 }
