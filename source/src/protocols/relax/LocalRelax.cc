@@ -139,7 +139,7 @@ LocalRelax::LocalRelax() {
 
 	NCYC_ = option[ basic::options::OptionKeys::relax::default_repeats ](); // n relax cycles
 	NEXP_ = 2; // n expansions
-	K_ = 16; // CB dist cut
+	K_ = 0; // CB dist cut
 	max_iter_ = 200;
 	verbose_ = false;
 	ramp_cart_ = false;
@@ -213,55 +213,43 @@ LocalRelax::optimization_loop(
 	}
 }
 
-void
-LocalRelax::get_neighbor_graph(
-	Pose & pose,
-	utility::vector1< utility::vector1<bool> > &neighbor) {
+utility::vector1< utility::vector1<bool> >
+LocalRelax::get_neighbor_graph(Pose const & pose) {
 	using namespace core;
 	using namespace core::scoring;
-
+	core::Size const nres = pose.size();
 
 	// grab symminfo (if defined) from the pose
 	core::conformation::symmetry::SymmetryInfoCOP symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation &>(pose.conformation()).Symmetry_Info();
 	}
-
-	core::Real K=K_;
-	core::Real b=0.28;
-
-	core::Size nres = pose.size();
-
-	neighbor.clear();
+	utility::vector1< utility::vector1<bool> >neighbor;
 	neighbor.resize( nres );
+
+	// core::Real K=K_;
 
 	for ( core::Size i=1, i_end = nres; i<= i_end; ++i ) {
 		if ( symminfo && !symminfo->bb_is_independent( i ) ) continue;
 		neighbor[i].resize(nres, false);
 		neighbor[i][i] = true;
 
+
 		conformation::Residue const & rsd1( pose.residue( i ) );
 		for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 			conformation::Residue const & rsd2( pose.residue( j ) );
-
 			if ( i==j ) continue;
-			if ( !rsd1.is_protein() || !rsd2.is_protein() ) continue;
+			numeric::xyzVector<core::Real> const & nbr_atom_xyz_i(rsd1.atom(rsd1.nbr_atom()).xyz());
+			core::Real const & nbr_atom_radius_i(rsd1.nbr_radius());
 
-			core::Real dist, angle1, angle2;
+			numeric::xyzVector<core::Real> const & nbr_atom_xyz_j(rsd2.atom(rsd2.nbr_atom()).xyz());
+			core::Real const & nbr_atom_radius_j(rsd2.nbr_radius());
 
-			if ( rsd1.aa() == core::chemical::aa_gly || rsd2.aa() == core::chemical::aa_gly ) {
-				dist = (rsd1.atom("CA").xyz() - rsd2.atom("CA").xyz()).length() - 2.8;
-				angle1 = angle2 = 180.0;
-			} else {
-				dist = (rsd1.atom("CB").xyz() - rsd2.atom("CB").xyz()).length();
-				angle1 = numeric::angle_degrees(rsd1.atom("CA").xyz(), rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz() ) ;
-				angle2 = numeric::angle_degrees(rsd1.atom("CB").xyz(), rsd2.atom("CB").xyz(), rsd2.atom("CA").xyz() ) ;
-			}
+			core::Real const dist(nbr_atom_xyz_i.distance(nbr_atom_xyz_j));
+			core::Real const interact_threshold(nbr_atom_radius_i + nbr_atom_radius_j+K_);
 
-			core::Real angle_tgt = K*exp(b*dist);
-
-			if ( angle_tgt < 180 && angle1 > angle_tgt && angle2 > angle_tgt ) {
-				core::Size j_asu=j;
+			if ( dist <= interact_threshold ) {
+				core::Size j_asu(j);
 				if ( symminfo && !symminfo->bb_is_independent( j ) ) {
 					j_asu = symminfo->bb_follows( j );
 				}
@@ -269,6 +257,7 @@ LocalRelax::get_neighbor_graph(
 			}
 		}
 	}
+	return neighbor;
 }
 
 
@@ -331,7 +320,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 		core::util::switch_to_residue_type_set( pose, core::chemical::FULL_ATOM_t );
 	}
 
-	core::Size nres = pose.size();
+	core::Size const nres = pose.size();
 	core::Size nres_asu = nres;
 
 	// set up symm
@@ -342,17 +331,16 @@ LocalRelax::apply( core::pose::Pose & pose) {
 	}
 
 	// set up packer task [to do: make this RS selectible]
-	core::pack::task::TaskFactoryOP task ( new core::pack::task::TaskFactory );
+	core::pack::task::TaskFactoryOP task( utility::pointer::make_shared< core::pack::task::TaskFactory >() );
 	task->push_back( utility::pointer::make_shared< core::pack::task::operation::InitializeFromCommandline >() );
 	task->push_back( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepacking >() );
 	task->push_back( utility::pointer::make_shared< core::pack::task::operation::IncludeCurrent >() );
 	core::pack::task::PackerTaskOP ptask_resfile = task->create_task_and_apply_taskoperations( pose );
 
 	// for each residue
-	utility::vector1< utility::vector1<bool> > neighbor;
 	for ( core::Size cyc = 1; cyc <= NCYC_; ++cyc ) {
 		for ( core::Size innercyc = 1; innercyc <= ramp_schedule_.size(); ++innercyc ) {
-			get_neighbor_graph( pose, neighbor );
+			utility::vector1< utility::vector1<bool> > const neighbor(get_neighbor_graph( pose ));
 
 			// "priority list" on residues
 			//   - sort by connectedness
@@ -424,7 +412,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				}
 
 				// build 1 residue packer task
-				core::pack::task::PackerTaskOP ptask_working (core::pack::task::TaskFactory::create_packer_task( pose ));
+				core::pack::task::PackerTaskOP ptask_working(core::pack::task::TaskFactory::create_packer_task( pose ));
 				ptask_working->restrict_to_residues(shell1);
 				ptask_working->or_include_current(true);
 
@@ -440,7 +428,7 @@ LocalRelax::apply( core::pose::Pose & pose) {
 				}
 
 				// set up movemap
-				core::kinematics::MoveMapOP mm(new core::kinematics::MoveMap);
+				core::kinematics::MoveMapOP mm( utility::pointer::make_shared< core::kinematics::MoveMap >() );
 				mm->set_jump(true);
 				for ( core::Size j=1, j_end = nres; j<= j_end; ++j ) {
 					if ( shell1[j] ) {
@@ -493,15 +481,15 @@ void LocalRelax::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	// TO DO!
 	using namespace utility::tag;
 	AttributeList attlist; // TO DO: add attributes to this list
-	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "XRW TO DO")
-		+ XMLSchemaAttribute( "pack_scorefxn", xs_string, "XRW TO DO")
-		+ XMLSchemaAttribute( "min_scorefxn", xs_string, "XRW TO DO")
-		+ XMLSchemaAttribute( "ncyc", xs_integer, "XRW TO DO")
-		+ XMLSchemaAttribute( "nexp", xs_integer, "XRW TO DO")
-		+ XMLSchemaAttribute( "K", xs_integer, "XRW TO DO")
-		+ XMLSchemaAttribute( "max_iter", xs_integer, "XRW TO DO")
+	attlist + XMLSchemaAttribute( "scorefxn", xs_string, "Sets the scorefxn for both pack and min stages.")
+		+ XMLSchemaAttribute( "pack_scorefxn", xs_string, "Sets the scorefxn for both packing only.")
+		+ XMLSchemaAttribute( "min_scorefxn", xs_string, "Sets the scorefxn for min only")
+		+ XMLSchemaAttribute( "ncyc", xs_integer, "Number of cycles to perform localrelax")
+		+ XMLSchemaAttribute( "nexp", xs_integer, "Number of expansions to perform")
+		+ XMLSchemaAttribute( "K", xs_integer, "K is added to NBR_RADIUS-i and NBR_RADIUS-j to determine the size of the packing/minimization shells")
+		+ XMLSchemaAttribute( "max_iter", xs_integer, "maximum iterations to perform in minimization")
 		+ XMLSchemaAttribute( "ramp_schedule", xs_string, "XRW TO DO")
-		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "XRW TO DO", "false")
+		+ XMLSchemaAttribute::attribute_w_default( "verbose", xsct_rosetta_bool, "not really verbose, just dump intermediate files to the local directory", "false")
 		+ XMLSchemaAttribute::attribute_w_default( "ramp_cart", xsct_rosetta_bool, "XRW TO DO", "false");
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TO DO", attlist );

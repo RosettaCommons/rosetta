@@ -64,10 +64,8 @@ public:
 		core::Real, core::Real);
 
 	/// @brief get matrix of interacting residues
-	void
-	get_neighbor_graph(
-		Pose & pose,
-		utility::vector1< utility::vector1<bool> > &neighbor);
+	utility::vector1< utility::vector1<bool> >
+	get_neighbor_graph(Pose const & pose);
 
 	/// @brief RS integration
 	void parse_my_tag(
@@ -81,6 +79,21 @@ public:
 	}
 
 	void apply( core::pose::Pose & pose) override;
+
+	void set_pack_sfxn(core::scoring::ScoreFunctionOP const & sf) { pack_sfxn_ = sf; }
+	void set_min_sfxn(core::scoring::ScoreFunctionOP const & sf) { min_sfxn_ = sf; }
+	void set_sfxn(core::scoring::ScoreFunctionOP const & sf) { min_sfxn_ = sf; pack_sfxn_ = sf; }
+	void set_K(core::Real const K) { K_ = K; }
+	void set_max_iter(core::Real const max_iter) { max_iter_ = max_iter; }
+	void set_ncyc(core::Size const ncyc) { NCYC_ = ncyc; }
+	void set_nexp(core::Size const nexp) { NEXP_ = nexp; }
+
+	core::scoring::ScoreFunctionOP get_pack_sfxn() const { return pack_sfxn_; }
+	core::scoring::ScoreFunctionOP get_min_sfxn() const { return min_sfxn_; }
+	core::Real get_K() const { return K_; }
+	core::Real get_max_iter() const { return max_iter_; }
+	core::Size get_ncyc() const { return NCYC_; }
+	core::Size get_nexp() const { return NEXP_; }
 
 	std::string
 	get_name() const override;
