@@ -90,10 +90,12 @@ static SimpleMetricRegistrator< protocols::analysis::simple_metrics::SequenceRec
 // Added by VKM, 22 Apr. 2018:
 static SimpleMetricRegistrator< protocols::analysis::burial_metrics::PolarGroupBurialPyMolStringMetricCreator > reg_PolarGroupBurialPyMolStringMetricCreator;
 
-// Added by VKM, 5 Sept. 2018:
-static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
-
 // Added by VKM, 19 April 2020:
 static SimpleMetricRegistrator< protocols::cyclic_peptide::PeptideInternalHbondsMetricCreator > reg_PeptideInternalHbondsMetricCreator;
+
+static SimpleMetricRegistrator< protocols::drug_design::RDKitMetricCreator > reg_RDKitMetricCreator;
+
+// Added by VKM, 5 Sept. 2018:
+static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
 
 } // namespace protocols

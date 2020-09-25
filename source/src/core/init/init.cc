@@ -30,8 +30,12 @@
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>
 #include <basic/prof.hh>
+
+#include <core/chemical/rdkit/util.hh>
+
 #include <basic/random/RandomGeneratorSettings.hh>
 #include <basic/random/init_random_generator.hh>
+
 // Classes in core that must register with factories
 #include <core/init/score_function_corrections.hh>
 #include <core/energy_methods/AACompositionEnergyCreator.hh>
@@ -973,6 +977,9 @@ init_tracers(){
 	if ( option[ out::no_color ]() ) utility::CSI_Sequence::suppress_CSI_codes();
 
 	basic::TracerImpl::set_tracer_options( TO );
+
+	// Initialize tracers for external libraries
+	core::chemical::rdkit::initialize_rdkit_tracers();
 }
 
 
@@ -1264,7 +1271,9 @@ void init(int argc, char * argv [])
 	report_application_command(argc, argv);
 
 	//Initalize random number generators
-	basic::random::init_random_number_generators();
+	int rand_seed = basic::random::init_random_number_generators();
+	core::chemical::rdkit::initialize_rdkit_random(rand_seed);
+
 
 	//Choose to randomly delay execution to desyncronize parallel execution
 	random_delay();

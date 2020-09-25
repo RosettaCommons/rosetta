@@ -27,7 +27,8 @@ namespace random {
 /// @brief Initalize random number generators from the command line
 /// @details If this is the multi-threaded build, threads other than thread zero must
 /// provide their thread index to ensure that they get unique random seeds.
-void init_random_number_generators(
+/// Will return the seed value.
+int init_random_number_generators(
 #ifdef MULTI_THREADED
 	platform::Size const curthread=0
 #endif

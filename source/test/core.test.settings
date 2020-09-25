@@ -49,6 +49,10 @@ sources = {
 		"GasteigerAtomTypeSet",
 		"GasteigerAtomTyper",
 	],
+	"chemical/rdkit" : [
+		"RDMolToRestype",
+		"RestypeToRDMol",
+	],
 	"chemical/rings" : [
 		"ring_conformer_io",
 		"RingConformerSet",
@@ -915,6 +919,12 @@ testinputfiles = [
 	"chemical/params/U33.cen.params",
 	"chemical/params/U34.cen.params",
 	"chemical/orbitals/orbital_properties.txt",
+	"chemical/rdkit/ATP.sdf",
+	"chemical/rdkit/benzoate.sdf",
+	"chemical/rdkit/nitro.sdf",
+	"chemical/rdkit/nmethylpyridine.sdf",
+	"chemical/rdkit/purine.sdf",
+	"chemical/rdkit/pyridineNoxide.sdf",
 	"chemical/rings/dummy_conformers.data",
 	"chemical/sdf/Components_trimmed.sdf",
 	"chemical/sdf/paired_list.txt",

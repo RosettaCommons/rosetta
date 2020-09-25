@@ -1,0 +1,3 @@
+-parser:protocol rdkit_metrics.xml
+-s 7cpa_input.pdb
+-extra_res_fa 7cpa.params ZNx.params 

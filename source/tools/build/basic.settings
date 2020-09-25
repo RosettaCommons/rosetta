@@ -98,6 +98,7 @@ settings = {
                 "BOOST_ERROR_CODE_HEADER_ONLY",
                 "BOOST_SYSTEM_NO_DEPRECATED",
                 "BOOST_MATH_NO_LONG_DOUBLE_MATH_FUNCTIONS",
+                "BOOST_DISABLE_THREADS",
                 "PTR_STD",
             ],
 	    "libraries" : add_on_libraries.split(),
@@ -156,6 +157,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
                 ],
                 "cxx" : [
                     "std=c++0x",
@@ -166,6 +168,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
 
                     #"fno-omit-frame-pointer", # -- useful for profiling on linux using RotateRight's Zoom profiler
                 ],
@@ -1354,6 +1357,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
                 ],
                 "cxx" : [
                     "std=c++11",
@@ -1363,6 +1367,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
                 ],
                 "warn" : [
                     "Wall",
@@ -1981,6 +1986,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
                 ],
                 "cxx" : [
                     "std=c++11",
@@ -1990,6 +1996,7 @@ settings = {
                     "isystem external/include/",
                     "isystem external/dbio/",
                     "isystem external/libxml2/include",
+                    "isystem external/rdkit",
                 ],
                 "compile" : [
                     "march=core2",
