@@ -172,6 +172,20 @@ JumpAtom::copy_coords(
 	}
 }
 
+// useful helper function for manipulating stubs
+/// @brief  update the stub without actually updating coordinates
+void
+JumpAtom::update_stub(
+	Stub & stub
+) const {
+	bool const inv_stub = ( stub.M.det() < 0 );
+	bool const inv_up=(jump_.get_invert_upstream());
+
+	if ( inv_stub != inv_up ) {
+		stub.M = stub.M * Jump::mirror_z_transform;
+	}
+}
+
 /// @details Relies on get_input_stub, which will use the coordinates of this atom's ancestors to
 /// build a stub.  If this function has been invoked by AtomTree update_xyz_coords(), then these
 /// coordinates are guaranteed correct, since this atom is the root of a tree which needs to be
@@ -213,15 +227,19 @@ JumpAtom::update_xyz_coords(
 }
 
 /////////////////////////////////////////////////////////////////////////////
-/// @details update the jump from the input stub and this atom's own stub. If defined,
-/// will recursively update internal coords for all its offspring atoms.
-/// @note The input stub is not changed
+/// @details update the jump from the input stub and this atom's own stub.
+/// @details If childlist and stublist are not nullptr, childlist has pairs of (child atom, this stub),
+/// and stublist stores unique stubs.  (Multiple pointers in childlist can point to the same stub, since
+/// that stub ultimately gets updated during the update of the coordinate.)
+/// appended so that children may subsequently be updated.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+/// @note The input stub is not changed except in cases of mirror symmetry.
 void
 JumpAtom::update_internal_coords(
-	Stub & stub,
-	bool const recursive // = true
-)
-{
+	std::deque< std::pair< Atom *, core::kinematics::Stub * > > * childlist,
+	std::deque< core::kinematics::Stub > * stublist,
+	Stub & stub
+) {
 	debug_assert( stub.is_orthogonal( 1e-3 ) );
 
 	Stub new_stub( get_stub() );
@@ -260,10 +278,12 @@ JumpAtom::update_internal_coords(
 		new_stub.M =  new_stub.M * Jump::mirror_z_transform;
 	}
 
-	if ( recursive ) {
+	if ( childlist != nullptr ) {
+		debug_assert( stublist != nullptr );
+		stublist->push_back( new_stub );
 		for ( auto it= atoms_begin(), it_end= atoms_end();
 				it != it_end; ++it ) {
-			(*it)->update_internal_coords( new_stub, recursive );
+			childlist->push_back( std::make_pair( (*it).get(), &((*stublist)[stublist->size() - 1]) ) );
 		}
 	}
 }

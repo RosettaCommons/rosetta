@@ -574,6 +574,8 @@ private: // Methods
 	// these two private functions are for maintaining synchrony between the internal and xyz coords
 
 	/// @brief  Update the internal coordinates using the xyz (cartesian) coords
+	/// @note Updated by Vikram K. Mulligan (vmulligan@flatironinstitute.org) on 24
+	/// Sept 2020 to use ordinary iteration instead of recursion.
 	void
 	update_internal_coords() const;
 

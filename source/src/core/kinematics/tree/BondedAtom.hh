@@ -90,10 +90,16 @@ public:
 	using Atom_::update_internal_coords;
 
 	/// @brief update internal coordinates for this atom from its xyz position and input stub
+	/// @details If childlist and stublist are not nullptr, childlist has pairs of (child atom, this stub),
+	/// and stublist stores unique stubs.  (Multiple pointers in childlist can point to the same stub, since
+	/// that stub ultimately gets updated during the update of the coordinate.)
+	/// appended so that children may subsequently be updated.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	void
 	update_internal_coords(
-		Stub & stub,
-		bool const recursive = true
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > * childlist,
+		std::deque< core::kinematics::Stub > * stublist,
+		Stub & stub
 	) override;
 
 

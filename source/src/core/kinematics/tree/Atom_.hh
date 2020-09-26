@@ -113,6 +113,15 @@ public: // Methods
 		bool const recursive
 	) override;
 
+	/// @brief Update internal coordinates for this atom and possibly all children.
+	/// @details If recursive is true, we update children, grandchildren, great-grandchildren,
+	/// etc., but we don't use a recursive algorithm.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void
+	update_internal_coords(
+		Stub & stub,
+		bool const recursive = true
+	) override;
 
 	/// @brief for DOFs which must be kept fixed due to topology of tree
 	/** eg, phi of stub_atoms for jump_atoms */

@@ -71,11 +71,18 @@ public:
 
 	using Atom_::update_internal_coords;
 
-	/// update the jump info
+	/// @brief Update the jump info
+	/// @details If childlist and stublist are not nullptr, childlist has pairs of (child atom, this stub),
+	/// and stublist stores unique stubs.  (Multiple pointers in childlist can point to the same stub, since
+	/// that stub ultimately gets updated during the update of the coordinate.)
+	/// appended so that children may subsequently be updated.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	void
 	update_internal_coords(
-		Stub & stub,
-		bool const recursive = true ) override;
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > * childlist,
+		std::deque< core::kinematics::Stub > * stublist,
+		Stub & stub
+	) override;
 
 
 	///////////////////////////////////////////////////////////////////////////
@@ -186,14 +193,10 @@ public:
 
 	// useful helper function for manipulating stubs
 	/// @brief  update the stub without actually updating coordinates
-	/** since for a jump atom, update internal coords or xyz dont change input
-	jump, so we do not do anything here*/
-	inline
 	void
 	update_stub(
 		Stub & //stub
-	) const override
-	{} // stub doesnt change
+	) const override;
 
 
 public: // Properties

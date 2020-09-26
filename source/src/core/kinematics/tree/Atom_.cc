@@ -78,6 +78,61 @@ Atom_::update_internal_coords(
 	update_internal_coords( stub, recursive );
 }
 
+/// @brief Update internal coordinates for this atom and possibly all children.
+/// @details If recursive is true, we update children, grandchildren, great-grandchildren,
+/// etc., but we don't use a recursive algorithm.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+Atom_::update_internal_coords(
+	Stub & stub,
+	bool const recursive /*= true*/
+) {
+
+	if ( recursive ) {
+
+		// The list of children of the current batch of atoms.  We will swap back and forth between
+		// these two buffers.  We use raw pointers here to avoid the overhead of incrementing owning
+		// pointer reference counts.  Note that everything is either stack-allocated (childlist1, childlist2)
+		// or is already under the control of an owning pointer that is not destroyed in this frame (the
+		// atoms), so we're just getting raw pointers to objects with managed lifetimes that are guaranteed
+		// to exist for the lifetime of this function:
+		std::deque< core::kinematics::Stub > stublist1{ stub };
+		std::deque< core::kinematics::Stub > stublist2;
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > childlist1{ /*Initializing a pair:*/{ this, &(stublist1[0]) } };
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > childlist2;
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > * curchildlist( &childlist1 );
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > * nextchildlist( &childlist2 );
+		std::deque< core::kinematics::Stub > * curstublist( &stublist1 );
+		std::deque< core::kinematics::Stub > * nextstublist( &stublist2 );
+
+		// Outer loop: keep looping until the current batch of parents produces no more children:
+		do {
+			// Inner loop: Update the current batch of parents in curchildlist, and accumulate a list of their children in nextchildlist:
+			for ( auto & entry : (*curchildlist) ) {
+				//IMPORANT NOTE!  If this is ultimately made multi-threaded, it will have to be handled carefully.
+				// - As the deque is populated or read, a mutex will have to be locked and unlocked.  (Check this --
+				// it may be safe for one thread to be reading a deque entry while another pushes back...)
+				//     - Correction: we're only populating the nextchildlist deque, so reads aren't an issue.  But we
+				//     will need a mutex lock for pushing back, so that only one thread at a time does it.
+				// - The order in which children are updated matters.  Children of a common parent must be updated
+				// in order, since the update operation alters the stub stored in the stublist; a transformed stub
+				// is used by the next child.  Children of *independent* parents can presumably be updated
+				// simultaneously.
+				//      -- Sept. 2020 Vikram
+				entry.first->update_internal_coords( nextchildlist, nextstublist, *(entry.second) );
+			}
+			// We're done for this batch of parents.  Clear the current child list, and swap current and next so that
+			// current children become parents:
+			curchildlist->clear();
+			curstublist->clear();
+			std::swap( curchildlist, nextchildlist );
+			std::swap( curstublist, nextstublist );
+		} while( !(curchildlist->empty()) );
+	} else {
+		update_internal_coords( nullptr, nullptr, stub );
+	}
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details first this atom, then its parent and then recursively all its children

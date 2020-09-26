@@ -42,7 +42,6 @@
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
 
-
 #ifdef SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>
@@ -1264,6 +1263,8 @@ AtomTree::detached_copy( AtomTree const & src ) {
 /// @note see usage in AtomTree.cc
 /// @note these guys are const because of the lazy updating scheme we are using:
 /// they need to be called from within const accessing functions.
+/// @note Updated by Vikram K. Mulligan (vmulligan@flatironinstitute.org) on 24
+/// Sept 2020 to use ordinary iteration instead of recursion.
 void
 AtomTree::update_internal_coords() const
 {
@@ -1275,7 +1276,7 @@ AtomTree::update_internal_coords() const
 		if ( !root_ ) utility_exit_with_message("Attempting to update an AtomTree with no root!");
 
 		PROF_START( basic::ATOM_TREE_UPDATE_INTERNAL_COORDS );  // profiling
-		root_->update_internal_coords( default_stub );
+		root_->update_internal_coords( default_stub, true );
 		PROF_STOP ( basic::ATOM_TREE_UPDATE_INTERNAL_COORDS );
 
 		internal_coords_need_updating_ = false;

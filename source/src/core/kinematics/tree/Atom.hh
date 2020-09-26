@@ -137,14 +137,30 @@ public: // Methods
 		Stub & stub
 	) = 0;
 
-	/// @brief update internal coords from stub and xyz coords
+	/// @brief update internal coords from stub and xyz coords.
+	/// @details If childlist and stublist are not nullptr, childlist has pairs of (child atom, this stub),
+	/// and stublist stores unique stubs.  (Multiple pointers in childlist can point to the same stub, since
+	/// that stub ultimately gets updated during the update of the coordinate.)
+	/// appended so that children may subsequently be updated.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual
+	void
+	update_internal_coords(
+		std::deque< std::pair< Atom *, core::kinematics::Stub * > > * childlist,
+		std::deque< core::kinematics::Stub > * stublist,
+		Stub & stub
+	) = 0;
+
+	/// @brief Update internal coordinates for this atom and possibly all children.
+	/// @details If recursive is true, we update children, grandchildren, great-grandchildren,
+	/// etc., but we don't use a recursive algorithm.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	virtual
 	void
 	update_internal_coords(
 		Stub & stub,
 		bool const recursive = true
 	) = 0;
-
 
 	/// @brief calculate my input_stub from the current xyz's and use that input_stub to update my torsions
 	virtual

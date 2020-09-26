@@ -173,16 +173,17 @@ BondedAtom::update_xyz_coords(
 
 /////////////////////////////////////////////////////////////////////////////
 /// @details starting from the input stub, calculate the internal coordinates d_, theta_ and
-/// phi_ for this atom. If recursive is true, obtain the new stub centered at
-/// this atom and pass the new stub to all its children atoms to update their
-/// internal coordinates recursively.
-/// @note stub passed in is modified by rotating phi_ around x in the stub frame
+/// phi_ for this atom.  If childlist and stublist are not nullptr, childlist has pairs of (child atom, this stub),
+/// and stublist stores unique stubs.  (Multiple pointers in childlist can point to the same stub, since
+/// that stub ultimately gets updated during the update of the coordinate.)
+/// appended so that children may subsequently be updated.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 void
 BondedAtom::update_internal_coords(
-	Stub & stub,
-	bool const recursive
-)
-{
+	std::deque< std::pair< Atom *, core::kinematics::Stub * > > * childlist,
+	std::deque< core::kinematics::Stub > * stublist,
+	Stub & stub
+) {
 	using numeric::x_rotation_matrix_radians;
 	using numeric::z_rotation_matrix_radians;
 	using numeric::constants::d::pi;
@@ -246,17 +247,18 @@ BondedAtom::update_internal_coords(
 
 	stub.M *= x_rotation_matrix_radians( phi_ );
 
-	if ( recursive ) {
-		Stub new_stub( stub.M * z_rotation_matrix_radians( theta_ ), position() );
+	if ( childlist != nullptr ) {
+		debug_assert( stublist != nullptr );
+		stublist->emplace_back( Stub( stub.M * z_rotation_matrix_radians( theta_ ), position() ) );
+		Stub * new_stub = &((*stublist)[stublist->size()-1]);
 
 		if ( flip_stub ) {
 			// special case if I'm stub_atom2 of my parent (who is a jump)
-			new_stub.M *= x_rotation_matrix_radians( pi );
+			new_stub->M *= x_rotation_matrix_radians( pi );
 		}
 
-		for ( auto it=atoms_begin(), it_end = atoms_end();
-				it != it_end; ++it ) {
-			(*it)->update_internal_coords( new_stub, recursive );
+		for ( auto it=atoms_begin(), it_end = atoms_end(); it != it_end; ++it ) {
+			childlist->push_back( std::make_pair( (*it).get(), new_stub ) );
 		}
 	}
 }
