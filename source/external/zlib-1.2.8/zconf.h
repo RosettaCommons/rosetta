@@ -263,7 +263,7 @@
                         /* Type declarations */
 
 #ifndef OF /* function prototypes */
-#  ifdef STDC
+#  if defined(STDC) || defined(WIN32)
 #    define OF(args)  args
 #  else
 #    define OF(args)  ()

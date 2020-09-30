@@ -42,10 +42,14 @@ This will use the same settings as Rosetta, but without any of the warning setti
 Additionally, the *.external.settings file can contain a "defines" list, for enabling
 particular preprocessor defines while compiling the external library specifically.
 
-There is also a "only_with_extras" list, which will compile the external library only
+There is also a `only_with_extras` list, which will compile the external library only
 when one of those particular extras builds are enabled. Please note that when library specify
 `only_with_extras` it will still be build and link for default-build as well, but for
 default-build it will be build as library with an empty number of source files.
+
+There is also a `only_with_platforms` list that works in the same way as the `only_with_extras`
+list above, except that is filters according to the `build.options.os` variable (e.g., "windows",
+"macos" or "linux").
 
 2b) Custom compilation
 

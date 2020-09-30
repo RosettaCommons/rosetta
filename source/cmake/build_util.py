@@ -144,8 +144,8 @@ def list_external_files(path_to_mini, external_name):
 
         full_path = path_to_external + dir
 
-        if not os.path.exists(full_path) and 'only_with_extras' in settings_dict and settings_dict['only_with_extras']:
-            # This may be part of a submodule which isn't currently loaded, but isn't needed for the current only_with_extras build
+        if not os.path.exists(full_path) and (settings_dict.get('only_with_extras', False) or settings_dict.get('only_with_platforms', False)):
+            # This may be part of a submodule which isn't currently loaded, but isn't needed for the current build
             # Don't crash (yet).
             continue
 
@@ -209,6 +209,20 @@ def update_externals_list(projects):
                     endguard += 'endif()\n'
 
                 project_entry = "\n" + guard + project_entry + endguard + "\n"
+
+            if other_settings.get("only_with_platforms", False):
+                # Add if to check if we are targetting one of the permitted platforms.
+                condition = ""
+
+                for platform in other_settings["only_with_platforms"]:
+                    osVariable = {
+                        "linux" : "(UNIX AND NOT APPLE)",
+                        "macos" : "APPLE",
+                        "windows" : "WIN32",
+                        }.get(platform)
+                    condition += " OR " + osVariable
+
+                project_entry = "if( FALSE" + condition + " )\n" + project_entry + "\nendif()\n\n"
 
             out.write(project_entry)
 

@@ -34,6 +34,10 @@ elif os.path.exists( subsettings ):
         if extra in build.options.extras:
             use_this = True
             break
+  if use_this and 'only_with_platforms' in requested:
+    # Use if the build OS is in the list of platforms
+    use_this = build.options.os in requested['only_with_platforms']
+
   requested = ProjectSettings(project, requested)
 
   # Add the default settings for source builds.
@@ -41,27 +45,6 @@ elif os.path.exists( subsettings ):
 
   # Subprojects are used to determine dependencies on other projects
   actual.subprojects = requested.subprojects
-
-  # Sources.  Currently we assume they are all C++.  If this ever changes
-  # we will need to differentiate language types in the .src.settings files.
-  if use_this:
-   for package, modules in list(requested.sources.items()):
-    for module in modules:
-        # CUDA files have extension '.cu'
-        if module.endswith(".cu"):
-            #print "build.options.extras", build.options.extras
-            if "cuda" not in build.options.extras : continue # skip .cu files if the "cuda" extra is not supplied
-            source = module
-        elif '.' not in module:
-            source = module + ".cc"
-        else: # Already has extension, and it's probably not ".cc"
-            source = module
-        if package:
-            actual.sources += [ "%s/%s" % (package, source) ]
-        else:
-            actual.sources += [ "%s" % (source) ]
-  else:
-    actual.sources += [ "dummy.cc" ] # We need to have at least one source file in the library
 
   # Include paths.  Gives priority to user defined paths.
   actual.include_path = \
@@ -112,6 +95,32 @@ elif os.path.exists( subsettings ):
   # direct SCons to the nvcc tool for CUDA source
   env.Tool('nvcc', toolpath = ['#tools/build/'])
 
+  # Sources.  Currently we assume they are all C++.  If this ever changes
+  # we will need to differentiate language types in the .src.settings files.
+  if use_this:
+   for package, modules in list(requested.sources.items()):
+    for module in modules:
+        # CUDA files have extension '.cu'
+        if module.endswith(".cu"):
+            #print "build.options.extras", build.options.extras
+            if "cuda" not in build.options.extras : continue # skip .cu files if the "cuda" extra is not supplied
+            source = module
+        elif '.' not in module:
+            source = module + ".cc"
+        else: # Already has extension, and it's probably not ".cc"
+            source = module
+        if package:
+            actual.sources += [ "%s/%s" % (package, source) ]
+        else:
+            actual.sources += [ "%s" % (source) ]
+  else:
+    # We need to have at least one source file in the library
+    if "static" not in build.options.extras:
+      dummyObject = env.SharedObject("dummy_" + project, "dummy.cc")
+    else:
+      dummyObject = env.StaticObject("dummy_" + project, "dummy.cc")
+    actual.sources += [ obj.get_path() for obj in dummyObject ]
+
   target = project
   if "static" not in build.options.extras:
     #print "In SConscript.src"
@@ -138,4 +147,4 @@ elif os.path.exists( subsettings ):
   # TODO: Allow building of specific source units.
   for package in map(str, BUILD_TARGETS) :
     if package.startswith(project):
-        Alias(package, "#build/external/" + build.platform + "/" + package)
+        Alias(package, [ l.get_path() for l in lib ])
