@@ -287,9 +287,6 @@
 [submodule "source/external/boost_submod/multi_array"]
 	path = source/external/boost_submod/multi_array
 	url = https://github.com/boostorg/multi_array.git
-[submodule "source/external/boost_submod/disjoint_sets"]
-	path = source/external/boost_submod/disjoint_sets
-	url = https://github.com/boostorg/disjoint_sets.git
 ############################
 # PyRosetta-build-related
 ###########################

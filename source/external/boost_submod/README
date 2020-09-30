@@ -16,10 +16,10 @@ or
 
     for r in `grep -v '^#' source/external/boost_submod/submodules.txt`; do
         git submodule add git@github.com:boostorg/${r}.git source/external/boost_submod/${r}
-	sleep 5 # Rate limiting
+	sleep 1 # Rate limiting
     done
 
-Note that GitHub apparently doesn't like rapid submodule additions under ssh, so you need some sort of rate limiting in the automated process to keep from dying partway through
+Note that GitHub apparently doesn't like rapid submodule additions under ssh, so you may need some sort of rate limiting in the automated process to keep from dying partway through
 (And it's really difficult to recover from dying when doing a git submodule add.)
 Using HTTPS instead for the cloning looks to do better -- we've converted to https.
 
@@ -33,7 +33,7 @@ To update all the submodules to a particular revision
 	echo "===================" $d
 	git fetch; git fetch --tags
         git checkout $TAG
-	sleep 5 # Rate limiting
+	sleep 1 # Rate limiting
         popd
     done
 

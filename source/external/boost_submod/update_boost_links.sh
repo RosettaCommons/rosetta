@@ -48,3 +48,6 @@ for dir in "pending/detail"; do
     done
 done
 
+# Needed to pull back in the individual files
+git checkout -- .gitattributes
+

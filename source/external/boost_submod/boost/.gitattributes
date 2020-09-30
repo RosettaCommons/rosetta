@@ -1,6 +1,7 @@
 accumulators symlink=dir
 algorithm symlink=dir
 archive symlink=dir
+assert symlink=dir
 assign symlink=dir
 atomic symlink=dir
 bimap symlink=dir
