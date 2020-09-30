@@ -801,9 +801,9 @@ check_jump_to_previous_residue_in_chain( pose::Pose const & pose, core::Size con
 				pose.fold_tree().jump_nr( previous_res, i ) > 0 ) return previous_res;
 		// AMW TODO
 		if ( !current_element.has_value( res_list[ previous_res ] ) &&
-				pose.fold_tree().residue_is_in_fold_tree( res_list[ i ] ) &&
-				res_list[ i ] != pose.fold_tree().root() &&
-				pose.fold_tree().get_residue_edge( res_list[ i ] ).label() == core::kinematics::Edge::CHEMICAL ) return previous_res;
+				pose.fold_tree().residue_is_in_fold_tree( i ) &&
+				i != pose.fold_tree().root() &&
+				pose.fold_tree().get_residue_edge( i ).label() == core::kinematics::Edge::CHEMICAL ) return previous_res;
 
 		previous_res--;
 	}
@@ -847,6 +847,8 @@ check_jump_to_next_residue_in_chain( pose::Pose const & pose, core::Size const i
 				pose.fold_tree().jump_nr( subsequent_res, i ) > 0 ) return subsequent_res;
 		// AMW TODO
 		if ( !current_element.has_value( res_list[ subsequent_res ] ) &&
+				pose.fold_tree().residue_is_in_fold_tree( subsequent_res ) && // short-circuit to avod weirdness
+				pose.fold_tree().root() != subsequent_res && // short-circuit to avoid get_residue_edge on root.
 				pose.fold_tree().get_residue_edge( subsequent_res ).label() == core::kinematics::Edge::CHEMICAL &&
 				pose.fold_tree().get_residue_edge( subsequent_res ).start() == i ) return subsequent_res;
 		subsequent_res++;
