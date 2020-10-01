@@ -292,8 +292,8 @@ FitSimpleHelix::parse_my_tag(
 		tag->getOption<core::Real>("dz1_initial", 1.0 ) );
 
 	set_range(
-		tag->getOption<core::Size>("start_index", 0 ),
-		tag->getOption<core::Size>("end_index", 0 ) );
+		tag->getOption<core::Size>("start_index", core::Size(0) ),
+		tag->getOption<core::Size>("end_index", core::Size(0) ) );
 
 	set_min_type( tag->getOption<std::string>("min_type", "lbfgs_armijo_nonmonotone" ) );
 	set_min_tolerance( tag->getOption<core::Real>("min_tolerance", 0.00000001 ) );

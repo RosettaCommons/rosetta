@@ -172,11 +172,11 @@ ProtLigEnsemble::parse_my_tag(
 	correlation_weight_ = basic::options::option[ basic::options::OptionKeys::docking::ligand::ligand_ensemble ]();
 
 	if ( tag->hasOption("ignore_correlation") ) {
-		ignore_correlation_until_ = tag->getOption<core::Size>("ignore_correlation", 0);
+		ignore_correlation_until_ = tag->getOption<core::Size>("ignore_correlation", static_cast<core::Size>(0) );
 	}
 
 	if ( tag->hasOption("ignore_correlation_after") ) {
-		ignore_correlation_after_ = tag->getOption<core::Size>("ignore_correlation_after", 0);
+		ignore_correlation_after_ = tag->getOption<core::Size>("ignore_correlation_after", static_cast<core::Size>(0) );
 	} else {
 		ignore_correlation_after_ = pose_infos_.size();
 

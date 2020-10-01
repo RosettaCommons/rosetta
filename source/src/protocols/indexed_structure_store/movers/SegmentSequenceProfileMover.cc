@@ -255,8 +255,8 @@ SegmentSequenceProfileMover::parse_my_tag(
 	if ( tag->hasOption("residue_selector") ) {
 		selector_ = protocols::rosetta_scripts::parse_residue_selector(tag, data);
 	}
-	profile_config_.rmsd_tolerance = tag->getOption< core::Real >( "rmsd_tolerance", .5);
-	profile_config_.pseudocount = tag->getOption< core::Real >( "pseudocount", 1);
+	profile_config_.rmsd_tolerance = tag->getOption< core::Real >( "rmsd_tolerance", 0.5);
+	profile_config_.pseudocount = tag->getOption< core::Real >( "pseudocount", 1.0);
 
 	output_lookup_count_ = tag->getOption< std::string >( "output_lookup_count", "");
 	output_pssm_filename_ = tag->getOption< std::string >( "output_pssm_filename", "");

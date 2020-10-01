@@ -106,7 +106,6 @@ public:
 	) const override;
 
 	///  this function is used for bb torsions spanning 2 residues
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,

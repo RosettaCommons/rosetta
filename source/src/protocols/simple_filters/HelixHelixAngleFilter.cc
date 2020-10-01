@@ -82,10 +82,10 @@ HelixHelixAngleFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &
 ) {
-	start_helix_1_ = tag->getOption< core::Size >( "start_helix_1", 0 );
-	start_helix_2_ = tag->getOption< core::Size >( "start_helix_2", 0  );
-	end_helix_1_ = tag->getOption< core::Size >( "end_helix_1", 0  );
-	end_helix_2_ = tag->getOption< core::Size >( "end_helix_2", 0  );
+	start_helix_1_ = tag->getOption< core::Size >( "start_helix_1", core::Size(0) );
+	start_helix_2_ = tag->getOption< core::Size >( "start_helix_2", core::Size(0) );
+	end_helix_1_ = tag->getOption< core::Size >( "end_helix_1", core::Size(0) );
+	end_helix_2_ = tag->getOption< core::Size >( "end_helix_2", core::Size(0) );
 	angle_min_ = tag->getOption< core::Real >( "angle_min", 40.0 );
 	angle_max_ = tag->getOption< core::Real >( "angle_max", 100.0 );
 	dist_min_ = tag->getOption< core::Real >( "dist_min", 0.0 );

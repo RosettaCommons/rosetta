@@ -1040,7 +1040,7 @@ GenericMonteCarloMover::parse_my_tag(
 					utility_exit_with_message( "Filter " + filter_name2 + " can't be found." );
 				}
 
-				auto const temp( ftag->getOption< Real >( "temperature", 1 ) );
+				auto const temp( ftag->getOption< Real >( "temperature", 1.0 ) );
 				bool const adap( ftag->getOption< bool >( "adaptive", true ));
 				String const samp_type( ftag->getOption< String >( "sample_type", "low" ));
 				bool const rank( ftag->getOption< bool >( "rank", false ) );

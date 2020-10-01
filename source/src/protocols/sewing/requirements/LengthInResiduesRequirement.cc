@@ -103,7 +103,7 @@ LengthInResiduesRequirement::set_options_from_tag(
 	TR << "Setting up LengthInResiduesRequirement" << std::endl;
 	maximum_length_ = requirement_tag->getOption< core::Size >( "maximum_length", 10000 );
 	TR << "Maximum length: " << maximum_length_ << std::endl;
-	minimum_length_ = requirement_tag->getOption< core::Size >( "minimum_length", 0 );
+	minimum_length_ = requirement_tag->getOption< core::Size >( "minimum_length", core::Size(0) );
 	TR << "Minimum length: " << minimum_length_ << std::endl;
 }
 

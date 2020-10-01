@@ -159,8 +159,8 @@ LigDSasaFilter::compute( core::pose::Pose const & pose ) const {
 void
 LigDSasaFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
-	lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1 );
+	lower_threshold_ = tag->getOption<core::Real>( "lower_threshold", 0.0 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1.0 );
 
 	TR<<"LigDSasaFilter with lower threshold of "<<lower_threshold_<<" and upper threshold of "<< upper_threshold_ <<std::endl;
 }
@@ -301,7 +301,7 @@ LigBurialFilter::compute( core::pose::Pose const & pose ) const {
 void
 LigBurialFilter::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 {
-	lig_id_ =  tag->getOption<core::Size>( "lig_id", 0 );
+	lig_id_ =  tag->getOption<core::Size>( "lig_id", core::Size(0) );
 	distance_threshold_ = tag->getOption<core::Real>( "distance", 8.0 );
 	neighbors_ = tag->getOption<core::Size>( "neighbors", 1 );
 
@@ -458,7 +458,7 @@ LigInterfaceEnergyFilter::parse_my_tag( TagCOP const tag, basic::datacache::Data
 
 	threshold_ = tag->getOption<core::Real>( "energy_cutoff", 0.0 );
 	include_cstE_ = tag->getOption<bool>( "include_cstE" , false );
-	rb_jump_ = tag->getOption<core::Size>( "jump_number", 0 );
+	rb_jump_ = tag->getOption<core::Size>( "jump_number", core::Size(0) );
 	interface_distance_cutoff_ = tag->getOption<core::Real>( "interface_distance_cutoff" , 8.0 );
 
 }
@@ -1373,9 +1373,9 @@ ResidueConformerFilter::parse_my_tag(utility::tag::TagCOP tag, basic::datacache:
 		for ( core::Size i(1); i <= restype_->nheavyatoms(); ++i ) relevant_atom_indices_.push_back( i );
 	}
 
-	if ( tag->hasOption("desired_conformer") ) desired_conformer_ = tag->getOption<core::Size>( "desired_conformer",0 );
-	if ( tag->hasOption("seqpos") ) seqpos_ = tag->getOption<core::Size>( "seqpos",0 );
-	if ( tag->hasOption("max_rms") ) max_rms_ = tag->getOption<core::Real>( "max_rms",0.0 );
+	if ( tag->hasOption("desired_conformer") ) desired_conformer_ = tag->getOption<core::Size>( "desired_conformer", static_cast<core::Size>(0) );
+	if ( tag->hasOption("seqpos") ) seqpos_ = tag->getOption<core::Size>( "seqpos", static_cast<core::Size>(0) );
+	if ( tag->hasOption("max_rms") ) max_rms_ = tag->getOption<core::Real>( "max_rms", 0.0 );
 
 	this->initialize_internal_data();
 }

@@ -167,7 +167,7 @@ ClashRequirement::set_options_from_tag(
 	basic::datacache::DataMap&
 ) {
 	TR << "Setting up ClashRequirement" << std::endl;
-	maximum_clashes_allowed_ = requirement_tag->getOption< core::Size >( "maximum_clashes_allowed", 0 );
+	maximum_clashes_allowed_ = requirement_tag->getOption< core::Size >( "maximum_clashes_allowed", core::Size(0) );
 	TR << "Number of clashes allowed: " << maximum_clashes_allowed_ << std::endl;
 	clash_radius_ = requirement_tag->getOption< core::Real >( "clash_radius", 4.0 );
 	TR << "Clash radius (Angstroms): " << clash_radius_ << std::endl;

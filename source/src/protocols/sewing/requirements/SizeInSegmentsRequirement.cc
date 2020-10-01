@@ -104,7 +104,7 @@ SizeInSegmentsRequirement::set_options_from_tag(
 	TR << "Setting up SizeInSegmentsRequirement" << std::endl;
 	maximum_size_ = requirement_tag->getOption< core::Size >( "maximum_size", 10000 );
 	TR << "Maximum size: " << maximum_size_ << std::endl;
-	minimum_size_ = requirement_tag->getOption< core::Size >( "minimum_size", 0 );
+	minimum_size_ = requirement_tag->getOption< core::Size >( "minimum_size", core::Size(0) );
 	TR << "Minimum size: " << minimum_size_ << std::endl;
 }
 

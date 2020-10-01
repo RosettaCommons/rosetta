@@ -172,7 +172,7 @@ get_forcefield(::RDKit::ROMol & mol, int conf_num /*=-1*/) {
 		return ff;
 	} else {
 		TR.Warning << "Cannot find a suitable forcefield for optimizing molecule: " << ::RDKit::MolToSmiles( mol ) << std::endl;
-		return ::RDKit::ForceFieldOP(0);
+		return ::RDKit::ForceFieldOP(nullptr);
 	}
 }
 

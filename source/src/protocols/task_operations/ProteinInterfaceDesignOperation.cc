@@ -220,10 +220,10 @@ ProteinInterfaceDesignOperation::parse_tag( TagCOP tag , DataMap & )
 {
 	repack_chain1( tag->getOption< core::Size >( "repack_chain1", 1 ) );
 	repack_chain2( tag->getOption< core::Size >( "repack_chain2", 1 ) );
-	design_chain1( tag->getOption< core::Size >( "design_chain1", 0 ) );
+	design_chain1( tag->getOption< core::Size >( "design_chain1", core::Size(0) ) );
 	design_chain2( tag->getOption< core::Size >( "design_chain2", 1 ) );
-	allow_all_aas( tag->getOption< core::Size >( "allow_all_aas", 0 ) );
-	design_all_aas( tag->getOption< core::Size >( "design_all_aas", 0 ) );
+	allow_all_aas( tag->getOption< core::Size >( "allow_all_aas", core::Size(0) ) );
+	design_all_aas( tag->getOption< core::Size >( "design_all_aas", core::Size(0) ) );
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
 	interface_distance_cutoff( tag->getOption< core::Real >( "interface_distance_cutoff", 8.0 ) );
 	modify_before_jump( tag->getOption< bool >( "modify_before_jump", true ) );

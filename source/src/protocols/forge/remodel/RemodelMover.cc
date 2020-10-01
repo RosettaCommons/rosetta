@@ -2428,7 +2428,7 @@ RemodelMover::parse_my_tag(
 	rosetta_scripts_max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", 1 );
 	TR << "Setting max_disulfides " << rosetta_scripts_max_disulfides_ << std::endl;
 
-	rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1 );
+	rosetta_scripts_min_loop_ = tag->getOption< core::Real >( "min_loop", 1.0 );
 	TR << "Setting min_loop " << rosetta_scripts_min_loop_ << std::endl;
 
 	rosetta_scripts_keep_current_ds_ = tag->getOption< bool>( "keep_current_disulfides", false);

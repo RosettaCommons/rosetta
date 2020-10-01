@@ -185,11 +185,11 @@ TaskAwareSASAFilter::parse_my_tag(
 )
 {
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0.0 ) );
 	designable_only( tag->getOption< bool >( "designable_only", false ) );
 	sc_only( tag->getOption< bool >( "sc_only", false ) );
 	probe_radius( tag->getOption< core::Real >( "probe_radius", 2.2 ) );
-	jump_id( tag->getOption< core::Size >( "jump", 0 ) );
+	jump_id( tag->getOption< core::Size >( "jump", static_cast<core::Size>(0) ) );
 }
 
 core::Real

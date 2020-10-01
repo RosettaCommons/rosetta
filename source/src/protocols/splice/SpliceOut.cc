@@ -411,8 +411,8 @@ void SpliceOut::parse_SpliceOut_tags(TagCOP const tag, basic::datacache::DataMap
 	if ( tag->hasOption("splice_filter") ) {
 		splice_filter(protocols::rosetta_scripts::parse_filter(tag->getOption<std::string>("splice_filter"), data));
 	}
-	rms_cutoff(tag->getOption<core::Real>("rms_cutoff", 999999));
-	rms_cutoff_loop(tag->getOption<core::Real>("rms_cutoff_loop", -1));//Added by gideonla Sep15, used in concatenation with the "rms_cutoff" sets a different rms cutoff for loop segments
+	rms_cutoff(tag->getOption<core::Real>("rms_cutoff", 999999.0));
+	rms_cutoff_loop(tag->getOption<core::Real>("rms_cutoff_loop", -1.0));//Added by gideonla Sep15, used in concatenation with the "rms_cutoff" sets a different rms cutoff for loop segments
 	ignore_chain_break_=tag->getOption<bool>("ignore_chain_break",false);//for debugging purposes
 }
 

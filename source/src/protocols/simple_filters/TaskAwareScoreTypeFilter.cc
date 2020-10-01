@@ -351,11 +351,11 @@ TaskAwareScoreTypeFilter::parse_my_tag( utility::tag::TagCOP tag,
 	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	score_type(core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) ) );
 	score_type_name( tag->getOption<std::string>( "score_type", "total_score" ) );
-	threshold( tag->getOption< core::Real >( "threshold", 100000 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 100000.0 ) );
 	bb_bb( tag->getOption< bool >( "bb_bb", false ) );
 	unbound( tag->getOption< bool >( "unbound", false ) );
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
-	jump( tag->getOption< core::Size >( "jump", 0 ) );
+	jump( tag->getOption< core::Size >( "jump", static_cast<core::Size>(0) ) );
 	mode( tag->getOption< std::string >( "mode", "average" ) );
 	write2pdb( tag->getOption< bool >("write2pdb", false) );
 	individual_hbonds(tag->getOption< bool >("individual_hbonds", false ));

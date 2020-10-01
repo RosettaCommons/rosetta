@@ -172,10 +172,10 @@ JointSequenceOperation::parse_tag( TagCOP tag , DataMap & )
 	use_natro( tag->getOption< bool >( "use_natro", false ) );
 
 	// specifiy a chain, if 0 use all
-	chain_ = tag->getOption< core::Size >("chain", 0 );
+	chain_ = tag->getOption< core::Size >("chain", core::Size(0) );
 
 	// if a pdb file is supplied under native, which chain should be used to extract the sequence
-	use_chain_ = tag->getOption < core::Size > ("use_chain" , 0 );
+	use_chain_ = tag->getOption < core::Size > ("use_chain" , core::Size(0) );
 
 	if ( tag->getOption< bool >( "use_native", false ) ) {
 		if ( basic::options::option[ basic::options::OptionKeys::in::file::native ].user() ) {

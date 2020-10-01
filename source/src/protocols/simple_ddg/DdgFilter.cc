@@ -132,7 +132,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	using namespace core::scoring;
 
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
-	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15 );
+	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15.0 );
 	ddg_threshold_min_ = tag->getOption<core::Real>( "threshold_min", -999999.0 );
 	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
@@ -146,7 +146,7 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	repack_unbound( tag->getOption<bool>( "repack_unbound", true ) );
 	relax_bound( tag->getOption<bool>( "relax_bound", false ) );
 	relax_unbound( tag->getOption<bool>( "relax_unbound", true ) );
-	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000 );
+	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000.0 );
 
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), data ) );

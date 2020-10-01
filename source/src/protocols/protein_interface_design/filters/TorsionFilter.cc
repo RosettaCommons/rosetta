@@ -135,9 +135,9 @@ Torsion::parse_my_tag( utility::tag::TagCOP tag,
 		task_factory_set( true );
 	}
 	runtime_assert( task_factory_set_ != tag->hasOption( "resnum" ) );
-	lower( tag->getOption< core::Real >( "lower", 0 ) );
+	lower( tag->getOption< core::Real >( "lower", 0.0 ) );
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	upper( tag->getOption< core::Real >( "upper", 0 ) );
+	upper( tag->getOption< core::Real >( "upper", 0.0 ) );
 	torsion( tag->getOption< std::string >( "torsion", "" ) );
 	if ( tag->hasOption( "resnum" ) ) {
 		resnum( core::pose::parse_resnum( tag->getOption< std::string >( "resnum" ) ) );

@@ -223,9 +223,9 @@ SuperimposeMover::parse_my_tag( utility::tag::TagCOP tag,
 )
 {
 	ref_start_ = tag->getOption< core::Size >("ref_start",1);
-	ref_end_ = tag->getOption< core::Size >("ref_end",0);
+	ref_end_ = tag->getOption< core::Size >("ref_end", core::Size(0));
 	target_start_ = tag->getOption< core::Size >("target_start",1);
-	target_end_ = tag->getOption< core::Size >("target_end",0);
+	target_end_ = tag->getOption< core::Size >("target_end", core::Size(0));
 	CA_only_ = tag->getOption< bool >("CA_only",true);
 	if ( tag->hasOption("ref_pose") ) ref_pose_ = core::import_pose::pose_from_file(tag->getOption< std::string >("ref_pose"), core::import_pose::PDB_file);
 	else if ( tag->hasOption("spm_reference_name") ) {

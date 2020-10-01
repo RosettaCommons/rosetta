@@ -117,8 +117,8 @@ AlignChainMover::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {
-	source_chain( tag->getOption< core::Size >( "source_chain", 0 ) );
-	target_chain( tag->getOption< core::Size >( "target_chain", 0 ) );
+	source_chain( tag->getOption< core::Size >( "source_chain", static_cast<core::Size>(0) ) );
+	target_chain( tag->getOption< core::Size >( "target_chain", static_cast<core::Size>(0) ) );
 	std::string const fname( tag->getOption< std::string >( "target_name" ) );
 
 	align_to_com_ = tag->getOption< bool >( "align_to_com", false );

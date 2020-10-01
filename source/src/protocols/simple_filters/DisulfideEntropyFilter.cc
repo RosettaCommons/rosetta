@@ -116,13 +116,13 @@ DisulfideEntropyFilter::parse_my_tag(
 ) {
 
 	if ( tag->hasOption("tightness") ) {
-		tightness(tag->getOption< core::Real >("tightness",0));
+		tightness(tag->getOption< core::Real >("tightness", 0.0));
 		TR << "setting tightness" << std::endl;
 	}
 
 
 	if ( tag->hasOption("lower_bound") ) {
-		lower_bound(tag->getOption< core::Real >("lower_bound",0));
+		lower_bound(tag->getOption< core::Real >("lower_bound", 0.0));
 		TR << "setting lower_bound" << std::endl;
 	}
 

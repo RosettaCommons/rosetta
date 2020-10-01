@@ -159,7 +159,7 @@ Operator::parse_my_tag(
 	if ( op != "SUM" && op != "PRODUCT" && op != "NORMALIZED_SUM" && op != "MAX" && op != "MIN" && op != "SUBTRACT" && op != "ABS" && op != "BOOLEAN_OR" && op != "XOR" ) {
 		utility_exit_with_message( "Operation " + op + " not recognized" );
 	}
-	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0.0 ) );
 	negate( tag->getOption< bool >( "negate", false ) );
 
 	utility::vector1< std::string > filter_names;

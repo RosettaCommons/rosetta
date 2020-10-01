@@ -92,8 +92,8 @@ CutOutDomain::parse_my_tag(
 	end_res_ = tag->getOption<core::Size>( "end_res", 1 );
 	source_pdb_name( tag->getOption< std::string >( "source_pdb" ));
 	suffix( tag->getOption< std::string >( "suffix" ,""));
-	delta_n_ter_ = tag->getOption<core::Size>( "delta_n_ter", 0 );
-	delta_c_ter_ = tag->getOption<core::Size>( "delta_c_ter", 0 );
+	delta_n_ter_ = tag->getOption<core::Size>( "delta_n_ter", core::Size(0) );
+	delta_c_ter_ = tag->getOption<core::Size>( "delta_c_ter", core::Size(0) );
 }
 
 core::Size

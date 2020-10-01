@@ -663,7 +663,7 @@ RestrictResidueToRepacking::clear() { residues_to_restrict_to_repacking_.clear()
 void
 RestrictResidueToRepacking::parse_tag( TagCOP tag , DataMap & )
 {
-	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
+	include_residue( tag->getOption< core::Size >( "resnum", core::Size(0) ) );
 }
 
 std::string RestrictResidueToRepacking::keyname() { return "RestrictResidueToRepacking"; }
@@ -764,7 +764,7 @@ RestrictAbsentCanonicalAAS::include_residue( core::Size const resid )
 void
 RestrictAbsentCanonicalAAS::parse_tag( TagCOP tag , DataMap & )
 {
-	include_residue( tag->getOption< core::Size >( "resnum", 0 ) );
+	include_residue( tag->getOption< core::Size >( "resnum", core::Size(0) ) );
 	keep_aas( tag->getOption< std::string >( "keep_aas" ) );
 }
 
@@ -884,7 +884,7 @@ void DisallowIfNonnative::restrict_to_residue( utility::vector1< core::Size > co
 
 void DisallowIfNonnative::parse_tag( TagCOP tag , DataMap & )
 {
-	restrict_to_residue( tag->getOption< core::Size >( "resnum", 0 ) );
+	restrict_to_residue( tag->getOption< core::Size >( "resnum", static_cast<core::Size>(0) ) );
 	disallow_aas( tag->getOption< std::string >( "disallow_aas" ) );
 }
 

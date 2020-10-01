@@ -135,7 +135,7 @@ SetupHotspotConstraintsMover::parse_my_tag( TagCOP const tag, basic::datacache::
 	chain_to_design_ = tag->getOption<core::Size>( "redesign_chain", 2 );
 
 	CB_force_constant_ = tag->getOption<Real>( "cb_force", 0.5 );
-	worst_allowed_stub_bonus_ = tag->getOption<Real>( "worst_allowed_stub_bonus", 0 );
+	worst_allowed_stub_bonus_ = tag->getOption<Real>( "worst_allowed_stub_bonus", 0.0 );
 	apply_self_energies_ = tag->getOption<bool>( "apply_stub_self_energies", false );
 	bump_cutoff_ = tag->getOption<Real>( "apply_stub_bump_cutoff", 10. );
 	apply_ambiguous_constraints_ = tag->getOption<bool>( "pick_best_energy_constraint", true );

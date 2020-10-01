@@ -190,9 +190,9 @@ BoltzmannFilter::parse_my_tag( utility::tag::TagCOP tag,
 {
 	TR << "BoltzmannFilter"<<std::endl;
 	runtime_assert( tag->hasOption( "anchors" ) || tag->hasOption( "negative_filters" ) );
-	fitness_threshold( tag->getOption< core::Real >( "fitness_threshold", 0 ) );
+	fitness_threshold( tag->getOption< core::Real >( "fitness_threshold", 0.0 ) );
 	temperature( tag->getOption< core::Real >( "temperature", 0.6 ) );
-	triage_threshold( tag->getOption< core::Real >( "triage_threshold", -9999 ) );
+	triage_threshold( tag->getOption< core::Real >( "triage_threshold", -9999.0 ) );
 	norm_neg( tag->getOption< bool >( "norm_neg", false ) );
 	utility::vector1< std::string > const positive_filter_names( utility::string_split( tag->getOption< std::string >( "positive_filters" ), ',' ) );
 	utility::vector1< std::string > negative_filter_names, anchors_string;

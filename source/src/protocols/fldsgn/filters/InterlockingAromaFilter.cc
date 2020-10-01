@@ -256,7 +256,7 @@ InterlockingAromaFilter::parse_my_tag(
 		input_ss_ = blue.secstruct();
 	}
 	// set threshold
-	filter_value( tag->getOption<Real>( "threshold", 0 ) );
+	filter_value( tag->getOption<Real>( "threshold", 0.0 ) );
 
 	// set threshold
 	contact_distance( tag->getOption<Real>( "dist", 5.5 ) );

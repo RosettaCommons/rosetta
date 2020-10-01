@@ -167,7 +167,7 @@ PeptideStubMover::parse_my_tag(
 		add_residue(
 			(*tag_it)->getName(),
 			(*tag_it)->getOption<std::string>( "resname", "" ),
-			(*tag_it)->getOption<core::Size>( "position", 0 ),
+			(*tag_it)->getOption<core::Size>( "position", core::Size(0) ),
 			(*tag_it)->getOption<bool>( "jump", false ),
 			(*tag_it)->getOption<std::string>( "connecting_atom", "" ),
 			(*tag_it)->getOption<core::Size>( "repeat", 1 ),

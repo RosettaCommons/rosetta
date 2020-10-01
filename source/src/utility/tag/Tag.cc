@@ -127,6 +127,20 @@ void Tag::clear() {
 Tag::options_t const&
 Tag::getOptions() const { return mOptions_; }
 
+#ifdef OLDER_CLANG
+/// @brief Variant that will only be defined for Sizes.
+/// @note Older clang compilers have trouble with the general case being
+/// deleted and then specialized cases being defined, even though this is supposed to be supported
+/// by the cxx11 standard.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template< class T >
+T
+Tag::getOption( std::string const &, int const ) const {
+	utility_exit_with_message( "Program error: an integer default was specified for a non-integer type.  This is effectively a compilation error, but it can only appear at runtime with older standard libraries." );
+	return T(0);
+}
+#endif
+
 #ifdef PYROSETTA
 bool Tag::get_option_bool(std::string const& key) const {
 	return Tag::getOption<bool>(key);
@@ -437,6 +451,22 @@ Tag::getOption< AutoBool >(std::string const& key) const {
 	return AutoBool::False; // appease compiler
 }
 
+// @brief If this were uncommented, this would add a special-case treatment to ensure that integer defaults
+// get interpreted as Reals when setting a Real option.  So, for example, a developer could write
+// tag->getOption<core::Real>("myoption", 1) instead of tag->getOption<core::Real>("myoption", 1.0).
+// @details This has been deliberately REMOVED because there's value in not allowing a Real's default to be set with a Size
+// -- removing this revealed a number of actual errors.  I'm leaving this here, commented out, in case we someday
+// decide to allow a Real option to be given a Size default.
+// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+// template<>
+// platform::Real
+// Tag::getOption<platform::Real>(
+//  std::string const & key,
+//  int const default_int
+// ) const {
+//  return getOption< platform::Real >(key, static_cast<platform::Real>(default_int));
+// }
+
 /// @brief Special-casing the string literal version for string options.  In this case,
 /// there shouldn't be an error thrown.  A string literal should be allowed to set the
 /// default value for a string.
@@ -448,40 +478,46 @@ Tag::getOption<std::string>( std::string const & key, char const * default_as_st
 	return getOption< std::string >( key, std::string( default_as_string_literal ) );
 }
 
-/// @brief Special-casing the string literal version for integer options, too.
-/// @details Needed since 0 gets interpreted as a char const * and not a Size, which
-/// means that this code is called.
+/// @brief Special-casing to ensure that 0 gets interpreted as Size(0) rather than nullptr.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 template<>
 platform::Size
-Tag::getOption<platform::Size>( std::string const & key, char const * default_as_string_literal ) const {
-	auto i = mOptions_.find(key);
-	if ( i != mOptions_.end() ) {
-		return getOption<platform::Size>(key);
-	}
-
-	if ( default_as_string_literal == nullptr ) {
-		return 0; //Needed since 0 gets interpreted as a char const * and not a Size, which means that this code is called.
-	}
-	utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for integer option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+Tag::getOption<platform::Size>( std::string const & key, int const default_int ) const {
+	runtime_assert_string_msg( default_int >= 0, "Error in Tag::getOption(): A platform::Size cannot have a negative default.  The platform::Size type is unsigned." );
+	return getOption< platform::Size >( key, static_cast<platform::Size>(default_int) );
 }
 
-/// @brief Special-casing the string literal version for float options, too.
-/// @details Needed since 0 gets interpreted as a char const * and not a Real, which
-/// means that this code is called.
+/// @brief Special-casing for signed ints.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 template<>
-platform::Real
-Tag::getOption<platform::Real>( std::string const & key, char const * default_as_string_literal ) const {
+int
+Tag::getOption<int>( std::string const & key, int const default_int ) const {
 	auto i = mOptions_.find(key);
-	if ( i != mOptions_.end() ) {
-		return getOption<platform::Real>(key);
+	if ( i == mOptions_.end() ) {
+		accessed_options_[key]= key;
+		return default_int;
 	}
+	accessed_options_[key]= i->second;
 
-	if ( default_as_string_literal == nullptr ) {
-		return 0.0; //Needed since 0 gets interpreted as a char const * and not a Real, which means that this code is called.
+	try{
+		return boost::lexical_cast<int>(i->second);
+	} catch(boost::bad_lexical_cast &) {
+		std::stringstream error_message;
+		error_message << "getOption: key= " << key << " stream extraction failed! Tried to parse '" << i->second << "' as a signed integer, but could not!\n";
+		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
-	utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for real-valued option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
+	return default_int;
+}
+
+/// @brief Special-casing for int64_t.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+int64_t
+Tag::getOption<int64_t>(
+	std::string const & key,
+	int const default_int
+) const {
+	return getOption<int64_t>( key, static_cast<int64_t>(default_int) );
 }
 
 // ____________________ <boost::spirit parser definition> ____________________

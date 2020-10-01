@@ -211,7 +211,7 @@ ParallelBetaPairingPreferenceFilter::parse_my_tag(
 )
 {
 	// set threshold
-	filter_value( tag->getOption<Real>( "threshold", 0 ) );
+	filter_value( tag->getOption<Real>( "threshold", 0.0 ) );
 
 	// set threshold
 	verbose_ = tag->getOption<bool>( "verbose", false );

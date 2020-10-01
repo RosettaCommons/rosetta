@@ -123,7 +123,7 @@ InterfaceFeatures::parse_my_tag(
 {
 	pack_separated_ = tag->getOption<bool>("pack_separated", true);
 	pack_together_ = tag->getOption<bool>("pack_together", false);
-	dSASA_cutoff_ = tag->getOption<core::Real>("dSASA_cutoff", 100);
+	dSASA_cutoff_ = tag->getOption<core::Real>("dSASA_cutoff", 100.0);
 	compute_packstat_ = tag->getOption<bool>("compute_packstat", true);
 
 	if ( tag->hasOption("scorefxn") ) {

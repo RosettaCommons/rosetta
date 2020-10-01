@@ -91,8 +91,8 @@ InterfaceSasaFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &
 ) {
-	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
+	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800.0 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000.0 );
 
 	std::string specified_jumps = tag->getOption< std::string >( "jump", "" );
 	std::string specified_sym_dof_names = tag->getOption< std::string >( "sym_dof_names", "" );

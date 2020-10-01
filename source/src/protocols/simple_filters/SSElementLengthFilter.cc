@@ -209,7 +209,7 @@ SSElementLengthFilter::parse_my_tag(
 	basic::datacache::DataMap & data
 ) {
 	// set threshold
-	threshold_ = tag->getOption<Real>("threshold",-999999);
+	threshold_ = tag->getOption<Real>("threshold",-999999.0);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
 	report_shortest_ =  tag->getOption<bool>( "report_shortest", false );
 	report_longest_ =  tag->getOption<bool>( "report_longest", false );

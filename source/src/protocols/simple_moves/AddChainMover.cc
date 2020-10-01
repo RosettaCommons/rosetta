@@ -243,7 +243,7 @@ AddChainMover::parse_my_tag(
 	}
 	new_chain( tag->getOption< bool >( "new_chain", true ) );
 	update_PDBInfo( tag->getOption< bool >( "update_PDBInfo", true ) );
-	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", 0 ) );
+	swap_chain_number( tag->getOption< core::Size >( "swap_chain_number", core::Size(0) ) );
 	scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	if ( tag->hasOption( "spm_reference_name" ) ) {
 		spm_reference_name_ = tag->getOption< std::string >( "spm_reference_name" );

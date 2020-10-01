@@ -132,7 +132,7 @@ AverageDegreeFilter::parse_my_tag( utility::tag::TagCOP tag,
 {
 	TR << "AverageDegreeFilter"<<std::endl;
 	task_factory( protocols::rosetta_scripts::parse_task_operations( tag, data ) );
-	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0.0 ) );
 	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 8.0 ) );
 	TR<<"with options threshold: "<<threshold()<<" and distance_threshold "<<distance_threshold()<<std::endl;
 }

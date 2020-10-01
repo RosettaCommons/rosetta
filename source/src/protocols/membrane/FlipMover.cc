@@ -169,22 +169,22 @@ FlipMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "axisx" ) || tag->hasOption( "axisy" ) || tag->hasOption( "axisz" ) ) {
-		int a1 = tag->getOption< core::Size >("axisx", 0);
-		int a2 = tag->getOption< core::Size >("axisy", 0);
-		int a3 = tag->getOption< core::Size >("axisz", 0);
+		int a1 = tag->getOption< core::Size >( "axisx", core::Size(0) );
+		int a2 = tag->getOption< core::Size >( "axisy", core::Size(0) );
+		int a3 = tag->getOption< core::Size >( "axisz", core::Size(0) );
 		axis_.assign( a1, a2, a3);
 	}
 
 	if ( tag->hasOption( "angle" ) ) {
-		angle_ = tag->getOption< core::Real >("angle", 0);
+		angle_ = tag->getOption< core::Real >( "angle", 0.0 );
 	}
 
 	if ( tag->hasOption( "random_angle" ) ) {
-		random_angle_ = tag->getOption< bool >("random_angle", false);
+		random_angle_ = tag->getOption< bool >( "random_angle", false );
 	}
 
 	if ( tag->hasOption( "max_angle_dev" ) ) {
-		max_angle_dev_ = tag->getOption< core::Real >("max_angle_dev", 0);
+		max_angle_dev_ = tag->getOption< core::Real >( "max_angle_dev", 0.0 );
 	}
 
 }

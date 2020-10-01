@@ -237,7 +237,7 @@ PlaceProbeMover::parse_place_probe_tag( utility::tag::TagCOP tag,
 	}
 
 	// Partition Spec
-	search_partition_ = tag->getOption< core::Size >( "search_partition", 0 );
+	search_partition_ = tag->getOption< core::Size >( "search_partition", static_cast<core::Size>(0) );
 	total_search_partition_ = tag->getOption< core::Size >( "total_search_partition", 1 );
 
 	if ( !(search_partition_ < total_search_partition_ && total_search_partition_ > 0) ) {

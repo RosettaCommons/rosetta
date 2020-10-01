@@ -288,8 +288,8 @@ InterfacePackingFilter::parse_my_tag( utility::tag::TagCOP tag,
 	TR << "InterfacePackingFilter"<<std::endl;
 	distance_cutoff( tag->getOption< core::Real >( "distance_cutoff", 9.0 ) );
 	contact_dist( tag->getOption<core::Real>("contact_dist", 10.0));
-	lower_threshold( tag->getOption< core::Real >( "lower_cutoff", -5 ) );
-	upper_threshold( tag->getOption< core::Real >( "upper_cutoff", 5 ) );
+	lower_threshold( tag->getOption< core::Real >( "lower_cutoff", -5.0 ) );
+	upper_threshold( tag->getOption< core::Real >( "upper_cutoff", 5.0 ) );
 	sym_dof_names( tag->getOption< std::string >( "sym_dof_names", "" ) );
 	multicomp( tag->getOption< bool >("multicomp", false) );
 	TR<<"with options lower_threshold: "<<lower_threshold()<<", upper_threshold: "<<upper_threshold()<<", distance_cutoff: "<<distance_cutoff()<<"contact_dist: "<<contact_dist()<<"sym_dof_names: "<<sym_dof_names()<<std::endl;

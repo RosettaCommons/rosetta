@@ -1002,7 +1002,7 @@ LigandBindingResPlacer::parse_ideal_contacts( utility::tag::TagCOP ligands_tag, 
 			}
 			std::string file_names_string = coord_tag->getOption< std::string >( "coordination_files" );
 			current_ligand.ligand_coord_files = utility::string_split_simple( file_names_string, ',' );
-			current_ligand.geometry_score_threshold = coord_tag->getOption< core::Real >( "geometry_score_threshold", 1 );
+			current_ligand.geometry_score_threshold = coord_tag->getOption< core::Real >( "geometry_score_threshold", 1.0 );
 
 			for ( utility::tag::TagCOP ideal_contacts_tag: coord_tag->getTags() ) {
 				//Each IdealContacts subtag has attributes for ligand atom name, ideal contact distance, ideal angle between contacts, and max # of contacts
@@ -1015,8 +1015,8 @@ LigandBindingResPlacer::parse_ideal_contacts( utility::tag::TagCOP ligands_tag, 
 				//We won't be able to actually make the conversion until later on when we have the pose and construct the LigandResidue objects
 				std::string ligand_atom_name = ideal_contacts_tag->getOption< std::string >( "ligand_atom_name" );
 				current_atom.ligand_atom = 1;
-				current_atom.preferred_dihedral_1 = ideal_contacts_tag->getOption< core::Real >( "dihedral_1", 30 ) * numeric::constants::r::degrees_to_radians;
-				current_atom.preferred_dihedral_2 = ideal_contacts_tag->getOption< core::Real >( "dihedral_2", 30 ) * numeric::constants::r::degrees_to_radians;
+				current_atom.preferred_dihedral_1 = ideal_contacts_tag->getOption< core::Real >( "dihedral_1", 30.0 ) * numeric::constants::r::degrees_to_radians;
+				current_atom.preferred_dihedral_2 = ideal_contacts_tag->getOption< core::Real >( "dihedral_2", 30.0 ) * numeric::constants::r::degrees_to_radians;
 				current_ligand.ideal_contacts_str[ ligand_atom_name ] = current_atom;
 			}
 		}

@@ -119,8 +119,8 @@ ReplicateFilter::parse_my_tag( utility::tag::TagCOP tag_ptr,
 {
 	subfilter_ = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "filter_name" ) , data );
 	replicates_ = tag_ptr->getOption<core::Size>( "replicates", 1 );
-	auto upper_cut = tag_ptr->getOption<core::Real>( "upper_cut", 0 );
-	auto lower_cut = tag_ptr->getOption<core::Real>( "lower_cut", 0 );
+	auto upper_cut = tag_ptr->getOption<core::Real>( "upper_cut", 0.0 );
+	auto lower_cut = tag_ptr->getOption<core::Real>( "lower_cut", 0.0 );
 	lower_trim_ = core::Size(lower_cut);
 	if ( lower_cut < 1.0 ) {
 		lower_trim_ = core::Size(lower_cut * replicates_); // Truncation is desired

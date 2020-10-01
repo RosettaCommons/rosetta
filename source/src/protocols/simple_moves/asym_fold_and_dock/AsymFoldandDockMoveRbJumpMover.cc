@@ -183,7 +183,7 @@ AsymFoldandDockMoveRbJumpMover::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {
-	chain_start_ = tag->getOption< core::Size >( "chain_start", 0 ) ;
+	chain_start_ = tag->getOption< core::Size >( "chain_start", core::Size(0) ) ;
 	runtime_assert_string_msg( chain_start_ > 0, "chain start must be provided" );
 }
 

@@ -100,7 +100,7 @@ LoopsExplicitDefiner::parse_loop_tag(
 		utility_exit_with_message(err_msg.str());
 	}
 
-	loop.cut = tag->getOption<core::Size>("cut", 0);
+	loop.cut = tag->getOption<core::Size>("cut", core::Size(0));
 	loop.skip_rate = tag->getOption<Real>("skip_rate", 0.0);
 	loop.extended = tag->getOption<bool>("extended", false);
 

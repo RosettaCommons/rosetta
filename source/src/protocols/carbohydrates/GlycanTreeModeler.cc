@@ -171,7 +171,7 @@ GlycanTreeModeler::parse_my_tag(
 	}
 
 
-	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
+	min_rings_ = tag->getOption< bool >("min_rings", min_rings_);
 	cartmin_ = tag->getOption< bool >("cartmin", cartmin_);
 	idealize_ = tag->getOption< bool >("idealize", idealize_);
 

@@ -194,7 +194,7 @@ SimpleMetricFilter::parse_my_tag(
 	std::map< std::string, comparison_type > types = get_string_comparison_type_map();
 	set_comparison_type( types[tag->getOption< std::string >("comparison_type")]);
 	set_epsilon( tag->getOption< core::Real >("epsilon", epsilon_));
-	set_cutoff( tag->getOption< core::Real >("cutoff", 0));
+	set_cutoff( tag->getOption< core::Real >("cutoff", 0.0));
 
 	if ( tag->hasOption("composite_action") ) {
 		set_composite_action( tag->getOption< std::string >("composite_action"));

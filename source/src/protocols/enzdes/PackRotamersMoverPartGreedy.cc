@@ -118,7 +118,7 @@ PackRotamersMoverPartGreedy::parse_my_tag(
 	threshold_  =  tag->getOption<core::Real>("distance_threshold", 8.0 );
 	//if choose targets based on N-best residues
 	if ( tag->hasOption("choose_best_n") ) {
-		n_best_ = tag->getOption<core::Size>("choose_best_n", 0 );
+		n_best_ = tag->getOption<core::Size>("choose_best_n", static_cast<core::Size>(0) );
 	}
 }
 

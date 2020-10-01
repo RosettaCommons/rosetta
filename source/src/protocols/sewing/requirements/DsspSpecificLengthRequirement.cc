@@ -74,7 +74,7 @@ DsspSpecificLengthRequirement::set_options_from_tag(
 	TR << "DSSP code: " << dssp_code_ << std::endl;
 	maximum_length_ = requirement_tag->getOption< core::Size >( "maximum_length", 100 );
 	TR << "Maximum length: " << maximum_length_ << std::endl;
-	minimum_length_ = requirement_tag->getOption< core::Size >( "minimum_length", 0 );
+	minimum_length_ = requirement_tag->getOption< core::Size >( "minimum_length", core::Size(0) );
 	TR << "Minimum length: " << minimum_length_ << std::endl;
 }
 

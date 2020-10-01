@@ -869,7 +869,7 @@ SetupCoiledCoilFoldTreeMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("chain2_cutpos") ) {
-		chain2_cutpos_ = tag->getOption<core::Size>("chain2_cutpos", 0);
+		chain2_cutpos_ = tag->getOption<core::Size>("chain2_cutpos", static_cast<core::Size>(0) );
 	}
 
 	if ( tag->hasOption("add_chainbreak_variants") ) {

@@ -327,8 +327,8 @@ RestrictToInterface::parse_tag( TagCOP tag , DataMap & )
 	//fd sanity check: ensure both jump and chain have not been provided (since chain overrides jump)
 	runtime_assert( !tag->hasOption("chain_num") || !tag->hasOption("jump") );
 
-	distance_ = tag->getOption< core::Real >( "distance", 8 )  ;
-	include_all_water_ = tag->getOption<bool>( "include_all_water", 0 );
+	distance_ = tag->getOption< core::Real >( "distance", 8.0 )  ;
+	include_all_water_ = tag->getOption<bool>( "include_all_water", false );
 }
 
 void RestrictToInterface::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )

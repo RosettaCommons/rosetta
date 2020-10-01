@@ -313,9 +313,9 @@ SSElementBisectddGFilter::parse_my_tag(
 {
 	// set threshold
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
-	threshold_ = tag->getOption<Real>("threshold",-999999);
+	threshold_ = tag->getOption<Real>("threshold", -999999.0);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
-	ignore_terminal_SS_ = tag->getOption<core::Size>("ignore_terminal_ss",0);
+	ignore_terminal_SS_ = tag->getOption<core::Size>("ignore_terminal_ss", core::Size(0));
 	only_n_term_ = tag->getOption<bool>("only_n_term",false);
 	only_c_term_ = tag->getOption<bool>("only_c_term",false);
 	skip_ss_element_ = tag->getOption<bool>("skip_ss_element",false);

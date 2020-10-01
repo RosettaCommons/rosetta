@@ -70,7 +70,7 @@ protocols::loops::LoopsOP parse_loops_from_tag( utility::tag::TagCOP tag ) {
 	for ( utility::tag::TagCOP subtag : tag->getTags("Loop") ) {
 		auto start = subtag->getOption<core::Size>("start");
 		auto stop = subtag->getOption<core::Size>("stop");
-		auto cut = subtag->getOption<core::Size>("cut", 0);
+		auto cut = subtag->getOption<core::Size>("cut", static_cast<core::Size>(0));
 		auto skip_rate = subtag->getOption<Real>("skip_rate", 0.0);
 		bool extended = subtag->getOption<bool>("rebuild", false);
 

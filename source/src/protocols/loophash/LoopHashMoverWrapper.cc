@@ -292,8 +292,8 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	basic::datacache::DataMap & data
 )
 {
-	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0 );
-	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000 );
+	min_bbrms_ = tag->getOption< Real >( "min_bbrms", 0.0 );
+	max_bbrms_ = tag->getOption< Real >( "max_bbrms", 100000.0 );
 	min_rms_ = tag->getOption< Real >( "min_rms",   0.0 );
 	max_rms_ = tag->getOption< Real >( "max_rms",   4.0 );
 	max_nstruct_ = tag->getOption< core::Size >( "max_nstruct",   1000000 );
@@ -323,7 +323,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	library_->mem_foot_print();
 
 	// FILTERING STEP 1 --- filter with chainbreak
-	nprefilter_ = tag->getOption< core::Size >( "nprefilter", 0 );
+	nprefilter_ = tag->getOption< core::Size >( "nprefilter", core::Size(0) );
 	if ( tag->hasOption( "prefilter_scorefxn" ) ) {
 		string const prefilter_scorefxn_name( tag->getOption< string >( "prefilter_scorefxn" ) );
 		prefilter_scorefxn_ = data.get_ptr< ScoreFunction >( "scorefxns", prefilter_scorefxn_name );
@@ -332,7 +332,7 @@ LoopHashMoverWrapper::parse_my_tag( TagCOP const tag,
 	// FILTERING STEP 2 --- filter after idealization (+symmetrization)
 	// number of structures to accept
 	// 0 = accept everything passing the filter
-	ncentroid_ = tag->getOption< core::Size >( "ncentroid",  0 );
+	ncentroid_ = tag->getOption< core::Size >( "ncentroid", core::Size(0) );
 	nfullatom_ = ncentroid_;
 
 	// centroid filter

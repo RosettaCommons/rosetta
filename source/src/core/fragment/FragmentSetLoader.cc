@@ -44,7 +44,7 @@ FragmentSetLoader::create_resource(
 	std::istream & input_stream
 ) const
 {
-	Size top( resource_tag->getOption< Size >( "top", 0 ));
+	Size top( resource_tag->getOption< Size >( "top", Size(0) ));
 	Size ncopies( resource_tag->getOption< Size >( "ncopies", 1 ));
 	bool annotate( resource_tag->getOption< bool >( "annotate", true ));
 

@@ -144,7 +144,7 @@ FnonnatFilter::parse_my_tag(
 	native_contacts_ = tag->getOption< std::string >( "native_contacts","");
 
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1);
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1.0);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
 }

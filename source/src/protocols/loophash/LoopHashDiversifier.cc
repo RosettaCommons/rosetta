@@ -345,11 +345,11 @@ LoopHashDiversifier::parse_my_tag(
 
 	diversify_loop_only_ = tag->getOption< bool >( "diversify_loop_only", false ); // specify in xml 'diversify_loop_only=1/0'
 
-	min_inter_ss_bbrms_ = tag->getOption< Real >( "min_inter_ss_bbrms", 0 );
-	max_inter_ss_bbrms_ = tag->getOption< Real >( "max_inter_ss_bbrms", 100000 );
+	min_inter_ss_bbrms_ = tag->getOption< Real >( "min_inter_ss_bbrms", 0.0 );
+	max_inter_ss_bbrms_ = tag->getOption< Real >( "max_inter_ss_bbrms", 100000.0 );
 
-	min_intra_ss_bbrms_ = tag->getOption< Real >( "min_intra_ss_bbrms", 0 );
-	max_intra_ss_bbrms_ = tag->getOption< Real >( "max_intra_ss_bbrms", 100000 );
+	min_intra_ss_bbrms_ = tag->getOption< Real >( "min_intra_ss_bbrms", 0.0 );
+	max_intra_ss_bbrms_ = tag->getOption< Real >( "max_intra_ss_bbrms", 100000.0 );
 
 	min_rms_ = tag->getOption< Real >( "min_rms",   0.0 );
 	max_rms_ = tag->getOption< Real >( "max_rms",   100.0 );

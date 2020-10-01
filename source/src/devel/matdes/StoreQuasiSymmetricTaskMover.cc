@@ -299,7 +299,7 @@ StoreQuasiSymmetricTaskMover::parse_my_tag( TagCOP const tag, basic::datacache::
 	overwrite_ = tag->getOption< bool >( "overwrite", false );
 	quasi_symm_comp( tag->getOption< std::string >( "quasi_symm_comp", "B" ) );
 	num_quasi_repeats( tag->getOption< core::Size >( "num_quasi_repeats", 2 ) );
-	offset_resis( tag->getOption< core::Size >( "offset_resis", 0 ) );
+	offset_resis( tag->getOption< core::Size >( "offset_resis", static_cast<core::Size>(0) ) );
 }
 
 // @brief Identification

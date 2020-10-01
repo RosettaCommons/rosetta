@@ -384,9 +384,9 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 {
 	hydrogen_bond_threshold_ = tag->getOption<core::Real>( "hb_threshold" ,-0.5);
 	//bw_cutoff_ = tag->getOption<core::PackerEnergy>("bw_cutoff",-0.5);
-	onebody_hb_threshold_ = tag->getOption<core::PackerEnergy>("onebody_hb_threshold",-0.4);
-	charge_charge_rep_cutoff_ = tag->getOption<core::PackerEnergy>("charge_charge_rep_cutoff",1.0);
-	clash_threshold_ = tag->getOption<core::PackerEnergy>("clash_threshold",1.0);
+	onebody_hb_threshold_ = tag->getOption<core::PackerEnergy>("onebody_hb_threshold",core::PackerEnergy(-0.4));
+	charge_charge_rep_cutoff_ = tag->getOption<core::PackerEnergy>("charge_charge_rep_cutoff",core::PackerEnergy(1.0));
+	clash_threshold_ = tag->getOption<core::PackerEnergy>("clash_threshold",core::PackerEnergy(1.0));
 	upper_score_limit_ = tag->getOption<core::Real>("upper_score_limit",15.0);
 	find_native_ = tag->getOption<bool>( "find_native_networks", false );
 	only_native_ = tag->getOption<bool>( "find_only_native_networks", false );
@@ -402,7 +402,7 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 	output_poly_ala_background_ = tag->getOption< bool >( "output_poly_ala_background", false );
 	store_network_scores_in_pose_ = tag->getOption< bool >( "store_network_scores_in_pose", store_network_scores_in_pose_ );
 	max_rep_ = tag->getOption< core::Size >( "max_replicates", 1 );
-	max_replicates_before_branch_ = tag->getOption< core::Size >( "max_replicates_before_branch", 0 );
+	max_replicates_before_branch_ = tag->getOption< core::Size >( "max_replicates_before_branch", core::Size(0) );
 	max_replicates_before_unsat_check_ = tag->getOption< core::Size >( "max_replicates_before_unsat_check", 1 );
 	//    bridging_water_search_depth_ = tag->getOption< core::Size >( "bridging_water_search_depth", 1 );
 	tyr_hydroxyls_must_donate_ = tag->getOption<bool>( "tyr_hydroxyls_must_donate", false ); // only for unsat check -- should move to filter
@@ -414,8 +414,8 @@ HBNet::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data 
 	min_network_size_ = tag->getOption<core::Size>( "min_network_size", 3 );
 	max_network_size_ = tag->getOption<core::Size>( "max_network_size", 15 );
 	min_unique_networks_ = tag->getOption<core::Size>( "min_unique_networks", 1 );
-	min_core_res_ = tag->getOption<core::Size>( "min_core_res", 0 );
-	min_boundary_res_ = tag->getOption<core::Size>( "min_boundary_res", 0 );
+	min_core_res_ = tag->getOption<core::Size>( "min_core_res", core::Size(0) );
+	min_boundary_res_ = tag->getOption<core::Size>( "min_boundary_res", core::Size(0) );
 	max_unsat_Hpol_ = tag->getOption<core::Size>( "max_unsat_Hpol", 5 );
 	min_percent_hbond_capacity_ = tag->getOption<core::Real>( "min_percent_hbond_capacity", 0.5 );
 	allow_no_hbnets_ = tag->getOption< bool >( "allow_no_hbnets", false);

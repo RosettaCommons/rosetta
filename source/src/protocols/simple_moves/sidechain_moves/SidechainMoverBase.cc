@@ -136,7 +136,7 @@ SidechainMoverBase::parse_my_tag(
 	task_factory_ = new_task_factory;
 
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance() ) );
-	set_change_chi_without_replacing_residue( tag->getOption<Real>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
+	set_change_chi_without_replacing_residue( tag->getOption<bool>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
 }
 
 void

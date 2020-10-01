@@ -158,10 +158,10 @@ GlycanSampler::parse_my_tag(
 	tree_based_min_pack_ = tag->getOption< bool >("tree_based_min_pack", tree_based_min_pack_);
 	population_based_conformer_sampling_ = tag->getOption< bool >("use_conformer_probs", population_based_conformer_sampling_);
 	use_gaussian_sampling_ = tag->getOption< bool >("use_gaussian_sampling", use_gaussian_sampling_);
-	min_rings_ = tag->getOption< core::Real >("min_rings", min_rings_);
+	min_rings_ = tag->getOption< bool >("min_rings", min_rings_);
 	use_shear_ = tag->getOption< bool >("shear", use_shear_);
 	randomize_first_ = tag->getOption< bool >("randomize_torsions", randomize_first_);
-	inner_ncycles_ = tag->getOption< bool >("inner_bb_cycles", inner_ncycles_);
+	inner_ncycles_ = tag->getOption< core::Size >("inner_bb_cycles", inner_ncycles_);
 	match_sampling_of_modeler_ = tag->getOption< bool >("match_sampling_of_modeler", match_sampling_of_modeler_);
 	root_prob_sampling_ = tag->getOption< bool >("root_populations_only", root_prob_sampling_);
 

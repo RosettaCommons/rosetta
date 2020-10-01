@@ -287,13 +287,13 @@ CircularPermutation::parse_my_tag(
 {
 
 	// set positions of new N- and C- terminal
-	new_terminal_pos_ = ( tag->getOption<core::Size>( "pos", 0 ) );
+	new_terminal_pos_ = ( tag->getOption<core::Size>( "pos", core::Size(0) ) );
 
 	// ignore chain
 	ignore_chain_ = ( tag->getOption<bool>( "ignore_chain", false ) );
 
 	// split chain
-	split_ = ( tag->getOption<core::Size>( "split_chain", 0 ) );
+	split_ = ( tag->getOption<core::Size>( "split_chain", core::Size(0) ) );
 
 }
 

@@ -154,8 +154,8 @@ void DockWithHotspotMover::parse_my_tag( utility::tag::TagCOP tag,
 	basic::datacache::DataMap &
 )
 {
-	hotspot_score_weight_=tag->getOption<core::Real>( "hotspot_score_weight", 10 );
-	centroidscore_filter_=tag->getOption<core::Real>( "centroidscore_filter", 0 );
+	hotspot_score_weight_=tag->getOption<core::Real>( "hotspot_score_weight", 10.0 );
+	centroidscore_filter_=tag->getOption<core::Real>( "centroidscore_filter", 0.0 );
 
 	TR << "Setup DockWithHotspotMover with backbone_stub_linear_constraint with weight "<< hotspot_score_weight_ <<
 		" from:" << std::endl;

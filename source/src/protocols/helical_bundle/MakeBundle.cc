@@ -307,7 +307,7 @@ MakeBundle::parse_my_tag(
 
 			//Set helix length for this helix:
 			if ( (*branch_tag)->hasOption( "helix_length" ) ) {
-				core::Size const helixlength( (*branch_tag)->getOption<core::Size>("helix_length", 0) );
+				core::Size const helixlength( (*branch_tag)->getOption<core::Size>("helix_length", core::Size(0)) );
 				set_helix_length_for_helix( helixlength, helix_index );
 				if ( TR.visible() ) TR << "\tSet helix length to " << helixlength << "." << std::endl;
 			}
@@ -333,14 +333,14 @@ void MakeBundle::set_symmetry_options_from_tag( utility::tag::TagCOP tag )
 {
 	//Set options for the MakeBundle mover:
 	if ( tag->hasOption("symmetry") ) {
-		set_symmetry( tag->getOption<core::Size>("symmetry", 0) );
+		set_symmetry( tag->getOption<core::Size>( "symmetry", core::Size(0) ) );
 		if ( TR.visible() ) {
 			if ( symmetry()<2 ) TR << "Symmetry mode set to false." << std::endl;
 			else TR << symmetry() << "-fold symmetry set." << std::endl;
 		}
 	}
 	if ( tag->hasOption("symmetry_copies") ) {
-		set_symmetry_copies( tag->getOption<core::Size>("symmetry_copies", 0) );
+		set_symmetry_copies( tag->getOption<core::Size>( "symmetry_copies", core::Size(0) ) );
 		if ( TR.visible() ) {
 			if ( symmetry_copies()<1 ) TR << "All symmetry copies will be generated." << std::endl;
 			if ( symmetry_copies()==1 ) TR << "Only the first symmetry copy will be generated." << std::endl;

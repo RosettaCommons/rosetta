@@ -674,8 +674,8 @@ IfThenFilter::parse_my_tag(
 		if ( tag_ptr->hasOption("valuefilter") ) {
 			valuefilter = protocols::rosetta_scripts::parse_filter( tag_ptr->getOption<std::string>( "valuefilter" ), data);
 		}
-		auto value( tag_ptr->getOption<core::Real>( "value", 0 ) );
-		auto weight( tag_ptr->getOption<core::Real>( "weight", 1 ) );
+		auto value( tag_ptr->getOption<core::Real>( "value", 0.0 ) );
+		auto weight( tag_ptr->getOption<core::Real>( "weight", 1.0 ) );
 
 		if ( tagname == "IF" || tagname == "ELIF" ) {
 			if ( ! tag_ptr->hasOption("testfilter") )  {

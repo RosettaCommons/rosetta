@@ -164,7 +164,7 @@ FavorSequenceProfile::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) {
-	weight_ = tag->getOption<core::Real>( "weight", 1 );
+	weight_ = tag->getOption<core::Real>( "weight", 1.0 );
 
 	if ( tag->hasOption("scorefxns") ) {
 		std::string const sf_val( tag->getOption<std::string>("scorefxns") );
@@ -199,7 +199,7 @@ FavorSequenceProfile::parse_my_tag(
 		TR.Warning << "In option matrix not used with pssm specification." << std::endl;
 	}
 	if ( tag->hasOption("chain") ) {
-		chain_ = tag->getOption<core::Size>("chain", 0 );
+		chain_ = tag->getOption<core::Size>("chain", core::Size(0) );
 	}
 
 	set_scaling( tag->getOption< std::string >( "scaling", "prob" ) );

@@ -186,7 +186,7 @@ ResidueSummaryMetric::parse_my_tag(
 
 	set_action( summary_string_to_type.at(tag->getOption< std::string >("action")));
 	set_epsilon( tag->getOption< core::Real >("epsilon", epsilon_));
-	set_action_value( tag->getOption< core::Real >("action_value", 0));
+	set_action_value( tag->getOption< core::Real >("action_value", 0.0));
 
 
 	bool use_cache = tag->getOption<bool>("use_cached_data", false);

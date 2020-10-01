@@ -200,7 +200,7 @@ LoopFinder::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data )
 	} else {
 		TR<<"no target residue has been specified"<< std::endl;
 	}
-	ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15 );
+	ca_ca_distance_ = tag->getOption<core::Real>( "CA_CA_distance", 15.0 );
 	if ( ! resnum_.empty() ) TR<<"distance cutoff from user defined residue is " << ca_ca_distance_ << std::endl;
 
 	// add loopsOP to the basic::datacache::DataMap

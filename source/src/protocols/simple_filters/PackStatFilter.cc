@@ -123,7 +123,7 @@ PackStatFilter::parse_my_tag(
 {
 	filtered_score_ = tag->getOption<Real>( "threshold", 0.58 ); // ideally, ~0.65 is required for good packing
 	tr << "Structures with packstat score " << filtered_score_ << " will be filtred." << std::endl;
-	chain_ = tag->getOption<core::Size>( "chain", 0 );
+	chain_ = tag->getOption<core::Size>( "chain", core::Size(0) );
 	repeats_ = tag->getOption<core::Size>( "repeats", 1 );
 }
 

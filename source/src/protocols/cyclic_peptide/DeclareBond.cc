@@ -254,8 +254,9 @@ DeclareBond::parse_my_tag(
 	add_termini_ = tag->getOption< bool >( "add_termini", true );
 	rebuild_fold_tree_ = tag->getOption< bool >( "rebuild_fold_tree", false );
 	run_kic_ = tag->getOption< bool >( "run_KIC", false);
-	kic_res1_ = tag->getOption< core::Size >( "KIC_res1", 0);
-	kic_res2_ = tag->getOption< core::Size >( "KIC_res2", 0);
+
+	kic_res1_ = tag->getOption< core::Size >( "KIC_res1", core::Size(0) );
+	kic_res2_ = tag->getOption< core::Size >( "KIC_res2", core::Size(0) );
 
 	if ( tag->hasOption( "res1_selector" ) ) {
 		selector1_ = protocols::rosetta_scripts::parse_residue_selector( tag, data, "res1_selector" );

@@ -81,10 +81,10 @@ MPSpanAngleFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::Dat
 {
 	threshold_ = tag->getOption< core::Real >( "threshold", -10.0 );
 	output_ = tag->getOption< std::string >( "output_file", "TR" );
-	tm_num_ = tag->getOption< core::Size >( "tm", 0 );
+	tm_num_ = tag->getOption< core::Size >( "tm", core::Size(0) );
 	angle_or_score_ = tag->getOption< std::string >( "angle_or_score", "angle" );
-	ang_max_ = tag->getOption< core::Real >( "ang_max", 90 );
-	ang_min_ = tag->getOption< core::Real >( "ang_min", 0 );
+	ang_max_ = tag->getOption< core::Real >( "ang_max", 90.0 );
+	ang_min_ = tag->getOption< core::Real >( "ang_min", 0.0 );
 
 	TR << "testing MPSpanAngle with threshold " << threshold_ << std::endl;
 }

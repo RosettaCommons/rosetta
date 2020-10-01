@@ -941,8 +941,8 @@ void MergePDBMover::parse_my_tag(
 	overlap_scan_range_cmdLine_ = tag->getOption< core::Size >( "overlap_scan_range_cmdLine_pose", 20);
 	overlap_scan_range_xml_ = tag->getOption< core::Size >( "overlap_scan_range_xml_pose", 20);
 	std::string fname( tag->getOption< std::string >( "attach_pdb" ) );
-	design_range_ = tag->getOption<Real>("design_range",9);
-	packing_range_ = tag->getOption<Real>("packing_range",8);
+	design_range_ = tag->getOption<Real>("design_range",9.0);
+	packing_range_ = tag->getOption<Real>("packing_range",8.0);
 	do_minimize_ = tag->getOption<bool>("do_minimize",true);
 	symm_file_ = tag->getOption<std::string>("symm_file","");
 	no_design_label_ = tag->getOption<std::string>("no_design_label","");

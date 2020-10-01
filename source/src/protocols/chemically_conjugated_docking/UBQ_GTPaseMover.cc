@@ -728,12 +728,12 @@ UBQ_GTPaseMover::parse_my_tag(
 	set_UBQpdb(tag -> getOption < std::string > ("UBQpdb",""));
 	set_extra_bodies(tag -> getOption < bool > ("extraBodies", false));
 	set_n_tail_res(tag -> getOption < core::Size > ("numTailRes", 3));
-	set_scorefilter(tag -> getOption < core::Real > ("scorefilter", 0));
-	set_SASAfilter(tag -> getOption < core::Real > ("SASAfilter", 1000));
+	set_scorefilter(tag -> getOption < core::Real > ("scorefilter", 0.0));
+	set_SASAfilter(tag -> getOption < core::Real > ("SASAfilter", 1000.0));
 
 	// setting the selector
 	std::string const selectorname = tag -> getOption < std::string > ("binding_lysine","");
-	core::Size const lys_num = tag -> getOption <core::Size> ("lys_num", 0);
+	core::Size const lys_num = tag -> getOption <core::Size> ("lys_num", static_cast<core::Size>(0) );
 
 	if ( selectorname=="" && lys_num==0 ) {
 		throw CREATE_EXCEPTION(utility::excn::Exception, "Please enter either a residue selector or the location for binding.");

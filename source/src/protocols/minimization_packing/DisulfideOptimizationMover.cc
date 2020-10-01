@@ -200,7 +200,7 @@ DisulfideOptimizationMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("final_optimization_n_iter") ) {
-		set_final_optimization_n_iter( tag->getOption< core::Size >( "final_optimization_n_iter", 0 ) );
+		set_final_optimization_n_iter( tag->getOption< core::Size >( "final_optimization_n_iter", core::Size(0) ) );
 	}
 }
 

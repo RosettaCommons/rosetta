@@ -53,7 +53,7 @@ NonSequentialNeighborsFilter::parse_my_tag(
 	distance_threshold( tag->getOption< core::Real >( "distance_threshold", 8.0 ) );
 	neighbor_cutoff( tag->getOption< core::Size >( "neighbor_cutoff", 10 ));
 	bound( tag->getOption< bool >( "bound", false ) );
-	resnum( tag->getOption< core::Size >( "resnum", 0 ) );
+	resnum( tag->getOption< core::Size >( "resnum", core::Size(0) ) );
 	jump( tag->getOption< core::Size >( "jump", 1 ) );
 
 	TR<<"jump: "<<jump()<<" distance_threshold: "<<distance_threshold()<<" neighbor_cutoff: "<<neighbor_cutoff()<<" bound: "<<bound()<<" resnum: "<<resnum()<<std::endl;

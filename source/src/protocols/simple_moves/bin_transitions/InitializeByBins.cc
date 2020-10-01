@@ -142,7 +142,7 @@ void InitializeByBins::parse_my_tag( utility::tag::TagCOP tag,
 	set_binfile_and_load( tag->getOption< std::string >( "bin_params_file", "ABBA" ) );
 
 	//Get the residue ranges:
-	set_residue_range( tag->getOption< core::Size >("start", 0), tag->getOption< core::Size >("end", 0) );
+	set_residue_range( tag->getOption< core::Size >("start", core::Size(0)), tag->getOption< core::Size >("end", core::Size(0)) );
 
 	if ( TR.visible() ) TR.flush();
 

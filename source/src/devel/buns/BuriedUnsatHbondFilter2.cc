@@ -81,7 +81,7 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 		calc_->set_sasa_burial_cutoff( tag->getOption<core::Real>( "sasa_burial_cutoff" ) );
 	}
 	if ( tag->hasOption("AHD_cutoff") ) {
-		calc_->set_AHD_cutoff(tag->getOption<core::Real>( "AHD_cutoff", 120 ));
+		calc_->set_AHD_cutoff(tag->getOption<core::Real>( "AHD_cutoff", 120.0 ));
 	}
 	if ( tag->hasOption("dist_cutoff") ) {
 		calc_->set_dist_cutoff(tag->getOption<core::Real>( "dist_cutoff", 3.0 ));

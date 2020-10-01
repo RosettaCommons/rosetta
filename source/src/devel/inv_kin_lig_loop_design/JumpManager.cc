@@ -177,8 +177,8 @@ int random_sign() {
 core::kinematics::RT JumpManager::get_hbond_rt( TagCOP tag, bool h2a ) {
 
 	double const dist = tag->getOption<double>("dist",1.8)  + numeric::random::gaussian() * tag->getOption<double>("sigma_dist",0.1);
-	double const xBAH = (tag->getOption<double>("xBAH",120) + numeric::random::gaussian() * tag->getOption<double>("sigma_xBAH",5) ) * random_sign();
-	double const xAHD = (tag->getOption<double>("xAHD",180) + numeric::random::gaussian() * tag->getOption<double>("sigma_xAHD",5) );
+	double const xBAH = (tag->getOption<double>("xBAH",120.0) + numeric::random::gaussian() * tag->getOption<double>("sigma_xBAH",5.0) ) * random_sign();
+	double const xAHD = (tag->getOption<double>("xAHD",180.0) + numeric::random::gaussian() * tag->getOption<double>("sigma_xAHD",5.0) );
 
 	//double const xAHD = (tag->getOption<double>("xBAHD",180) + numeric::random::gaussian() * tag->getOption<double>("sigma_xAHD",5) );
 	double const xBAHD = numeric::random::uniform() * 360;

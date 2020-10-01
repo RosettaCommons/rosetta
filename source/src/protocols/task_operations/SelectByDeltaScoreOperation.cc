@@ -220,7 +220,7 @@ SelectByDeltaScoreOperation::parse_tag( TagCOP tag , DataMap & data)
 	scorefxn(protocols::rosetta_scripts::parse_score_function(tag, data));
 	score_type(core::scoring::score_type_from_name( tag->getOption<std::string>( "score_type", "total_score" ) ) );
 	score_type_name( tag->getOption<std::string>( "score_type", "total_score" ) );
-	threshold(tag->getOption< core::Real >("threshold", 100 ));
+	threshold(tag->getOption< core::Real >("threshold", 100.0 ));
 	lower(tag->getOption< bool >("lower", false ));
 	individual_hbonds(tag->getOption< bool >("individual_hbonds", false ));
 	if ( tag->hasOption("reference_name") ) {

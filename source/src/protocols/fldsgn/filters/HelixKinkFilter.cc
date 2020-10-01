@@ -202,7 +202,7 @@ HelixKinkFilter::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {
-	bend_angle_  = tag->getOption<Real>( "bend",  20 );
+	bend_angle_  = tag->getOption<Real>( "bend",  20.0 );
 	// secondary strucuture info
 	// blueprint, or secstruct can be provided, but not both
 	if ( tag->hasOption( "blueprint" ) && tag->hasOption( "secstruct" ) ) {

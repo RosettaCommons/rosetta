@@ -153,7 +153,7 @@ ScoreCutoffFilter::parse_my_tag(
 	basic::datacache::DataMap &
 ) {
 	if ( tag->hasOption("report_residue_pair_energies") ) {
-		if ( tag->getOption<core::Size>("report_residue_pair_energies",0) == 1 ) report_residue_pair_energies_ = true;
+		report_residue_pair_energies_ = tag->getOption<bool>( "report_residue_pair_energies", false );
 	}
 	if ( tag->hasOption("cutoff") ) {
 		cutoff_ = tag->getOption<core::Real>("cutoff", 10000.0 );
@@ -278,7 +278,7 @@ void ScoreCutoffFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default("report_residue_pair_energies", xsct_non_negative_integer, "XRW TO DO", "0")
+	attlist + XMLSchemaAttribute::attribute_w_default("report_residue_pair_energies", xsct_rosetta_bool, "XRW TO DO", "false")
 		+ XMLSchemaAttribute::attribute_w_default("cutoff", xsct_real, "XRW TO DO", "10000.0")
 		+ XMLSchemaAttribute::attribute_w_default("pdb_numbering", xsct_rosetta_bool, "XRW TO DO", "true");
 

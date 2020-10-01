@@ -181,9 +181,9 @@ CDRDihedralConstraintMover::parse_my_tag(
 		set_force_cluster(cluster_manager.cdr_cluster_string_to_enum(tag->getOption< std::string >("force_cluster")));
 	}
 
-	cluster_data_cutoff_ = tag->getOption< core::Real >("cluster_data_required", cluster_data_cutoff_);
+	cluster_data_cutoff_ = tag->getOption< core::Size >("cluster_data_required", cluster_data_cutoff_);
 
-	use_outliers_ = tag->getOption< core::Real >("use_outliers", use_outliers_);
+	use_outliers_ = tag->getOption< bool >("use_outliers", use_outliers_);
 
 	general_phi_sd_ = tag->getOption< core::Real >("general_phi_sd", general_phi_sd_);
 	general_psi_sd_ = tag->getOption< core::Real >("general_psi_sd", general_psi_sd_);
@@ -478,11 +478,11 @@ void CDRDihedralConstraintMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 		"Force addition of cluster constraints of this particular cluster. Must be same CDR length as the current CDR");
 
 	attlist + XMLSchemaAttribute(
-		"cluster_data_required", xsct_real,
+		"cluster_data_required", xsct_non_negative_integer,
 		"How many structures per cluster are required to use cluster-based constraints for those structures?");
 
 	attlist + XMLSchemaAttribute(
-		"use_outliers", xsct_real,
+		"use_outliers", xsct_rosetta_bool,
 		"Use a separate set of data for cluster-based constraints which contained outliers for the calculation (dihedral distance greater than 40 degrees, RMSD greater than 1.5A)");
 
 	attlist + XMLSchemaAttribute(

@@ -191,8 +191,8 @@ public:
 	bool no_prepack1;
 	bool no_prepack2;
 	core::Real score_filter;
-	int    hb_filter;
-	int    hotspot_filter;
+	core::Size hb_filter;
+	core::Size hotspot_filter;
 	core::Real frag3_weight;
 	core::Real frag5_weight;
 	core::Real frag9_weight;

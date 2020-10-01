@@ -88,8 +88,8 @@ TotalSasaFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 ) {
-	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000);
+	lower_threshold_ = tag->getOption<core::Real>( "threshold", 800.0 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 1000000.0 );
 
 	hydrophobic_ = tag->getOption<bool>( "hydrophobic", false );
 	polar_ = tag->getOption<bool>( "polar", false );

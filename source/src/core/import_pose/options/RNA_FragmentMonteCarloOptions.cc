@@ -365,7 +365,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_tag( utility::tag::TagCOP const &
 	*/
 
 	if ( tag->hasOption( "output_score_frequency" ) ) {
-		set_output_score_frequency( tag->getOption< core::Real >( "output_score_frequency", output_score_frequency_ ) );
+		set_output_score_frequency( tag->getOption< core::Size >( "output_score_frequency", output_score_frequency_ ) );
 	}
 
 	if ( tag->hasOption( "output_lores_silent_file" ) ) {
@@ -608,7 +608,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_tag( utility::tag::TagCOP const &
 		set_align_pdb( tag->getOption< std::string >( "align_pdb", align_pdb_ ) );
 	}
 	if ( tag->hasOption( "rmsd_screen" ) ) {
-		set_rmsd_screen( tag->getOption< core::Real >( "rmsd_screen", rmsd_screen_ ) );
+		set_rmsd_screen( tag->getOption< bool >( "rmsd_screen", rmsd_screen_ ) );
 	}
 
 	if ( tag->hasOption( "symm_hack_arity" ) ) {
@@ -655,7 +655,7 @@ RNA_FragmentMonteCarloOptions::list_attributes( AttributeList & attlist ) {
 		+ XMLSchemaAttribute::attribute_w_default( "disallow_bps_at_extra_min_res", xsct_rosetta_bool, "XRW TODO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "allow_fragment_moves_in_bps", xsct_rosetta_bool, "XRW TODO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "frag_size", xsct_non_negative_integer, "XRW TODO", "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "output_score_frequency", xsct_real, "XRW TODO", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "output_score_frequency", xsct_non_negative_integer, "XRW TODO", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "output_lores_silent_file", xsct_rosetta_bool, "XRW TODO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "output_score_file", xs_string, "XRW TODO", "" )
 		+ XMLSchemaAttribute::attribute_w_default( "output_jump_res", xsct_nnegative_int_wsslist, "XRW TODO", "" )
@@ -703,7 +703,7 @@ RNA_FragmentMonteCarloOptions::list_attributes( AttributeList & attlist ) {
 		+ XMLSchemaAttribute::attribute_w_default( "linear_chainbreak_weight", xsct_real, "XRW TODO", "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "chainbreak_weight", xsct_real, "XRW TODO", "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "no_filters", xsct_rosetta_bool, "XRW TODO", "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "rmsd_screen", xsct_real, "XRW TODO", "0.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "rmsd_screen", xsct_rosetta_bool, "XRW TODO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "symm_hack_arity", xsct_non_negative_integer, "XRW TODO", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "exhaustive_fragment_insertion", xsct_rosetta_bool, "XRW TODO", "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "save_times", xsct_rosetta_bool, "XRW TODO", "false" );

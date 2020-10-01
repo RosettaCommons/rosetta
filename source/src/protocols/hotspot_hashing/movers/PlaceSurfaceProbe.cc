@@ -217,7 +217,7 @@ PlaceSurfaceProbe::parse_my_tag( utility::tag::TagCOP tag,
 	);
 
 	// Surface Spec
-	search_density_ = tag->getOption< core::Real >( "search_density", 1);
+	search_density_ = tag->getOption< core::Real >( "search_density", 1.0);
 	surface_selection_ = protocols::rosetta_scripts::parse_task_operations( tag, data );
 
 	// Coarse grid spec

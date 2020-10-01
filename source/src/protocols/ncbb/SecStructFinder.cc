@@ -587,15 +587,15 @@ void SecStructFinder::parse_my_tag(
 		max_length_ = min_length_;
 	}
 
-	bin_size_ = tag->getOption<Real>( "bin_size", 10 );
-	dissimilarity_ = tag->getOption<Real>( "dissimilarity", 10 );
+	bin_size_ = tag->getOption<Real>( "bin_size", 10.0 );
+	dissimilarity_ = tag->getOption<Real>( "dissimilarity", 10.0 );
 
 	if ( dissimilarity_ < bin_size_ ) {
 		TR.Warning << "Provided a dissimilarity score less than the bin size, which is meaningless. Setting equal to bin size." << std::endl;
 		dissimilarity_ = bin_size_;
 	}
 
-	dump_threshold_ = tag->getOption<Real>( "dump_threshold", 10 );
+	dump_threshold_ = tag->getOption<Real>( "dump_threshold", 10.0 );
 	dihedral_pattern_ = tag->getOption<std::string>( "dihedral_pattern", "A" );
 
 	TR << "Expanding dihedral pattern to fit the length provided: ";

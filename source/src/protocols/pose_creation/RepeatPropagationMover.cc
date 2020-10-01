@@ -884,8 +884,8 @@ void RepeatPropagationMover::parse_my_tag( utility::tag::TagCOP tag,
 	extract_repeat_template_repeat_ = tag->getOption<core::Size>("extract_repeat_template_repeat",1);
 	deal_with_length_change_scar_ = false;
 	start_pose_numb_repeats_ = tag->getOption<core::Size>("start_pose_numb_repeats",4);
-	start_pose_length_ = tag->getOption<core::Size>("start_pose_length",0);
-	start_pose_duplicate_residues_ = tag->getOption<core::Size>("start_pose_duplicate_residues",0);
+	start_pose_length_ = tag->getOption<core::Size>("start_pose_length", core::Size(0));
+	start_pose_duplicate_residues_ = tag->getOption<core::Size>("start_pose_duplicate_residues", core::Size(0));
 	nTerm_cap_size_=0;
 	cTerm_cap_size_=0;
 	if ( (maintain_cap_ ||maintain_cap_sequence_only_) && !extract_repeat_info_from_pose_ ) {

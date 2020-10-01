@@ -392,7 +392,7 @@ SeedSetupMover::parse_my_tag( TagCOP const tag,
 
 	interface_chi1_ = tag->getOption< bool >("interface_chi1", false );
 	interface_chi2_ = tag->getOption< bool >("interface_chi2", false );
-	interface_distance_cutoff_ = tag->getOption< core::Real >("interface_distance_cutoff" , 8 );
+	interface_distance_cutoff_ = tag->getOption< core::Real >("interface_distance_cutoff" , 8.0 );
 
 	//repacking for packer tasks options
 	repack_target_ = tag->getOption< bool >("repack_target", true );

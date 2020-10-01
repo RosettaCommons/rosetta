@@ -126,7 +126,7 @@ void ComputeLigandRDF::parse_my_tag
 	}
 
 	bin_count_ = tag->getOption<core::Size>("bin_count",100);
-	smoothing_factor_ = tag->getOption<core::Real>("smoothing_factor",100);
+	smoothing_factor_ = tag->getOption<core::Real>("smoothing_factor",100.0);
 	range_squared_ = pow(tag->getOption<core::Real>("range",10.0),2.0);
 
 	auto begin=tag->getTags().begin();

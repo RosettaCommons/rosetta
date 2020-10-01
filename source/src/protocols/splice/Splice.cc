@@ -2133,13 +2133,13 @@ void Splice::parse_my_tag(TagCOP const tag, basic::datacache::DataMap &data ) {
 		source_pdb(tag->getOption<std::string>("source_pdb"));
 	}
 
-	ccd(tag->getOption<bool>("ccd", 1));
-	//dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
-	//coor_const(tag->getOption< core::Real >( "coor_const", 0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
+	ccd(tag->getOption<bool>("ccd", true));
+	//dihedral_const(tag->getOption< core::Real >( "dihedral_const", 0.0 ) );//Added by gideonla Apr13, set here any real posiive value to impose dihedral constraints on loop
+	//coor_const(tag->getOption< core::Real >( "coor_const", 0.0 ) );//Added by gideonla May13, set here any real to impose coordinate constraint on loop
 	design_shell(tag->getOption<core::Real>("design_shell", 6.0)); //Added by gideonla May13,
 	repack_shell(tag->getOption<core::Real>("repack_shell", 8.0)); //Added by gideonla May13,
-	rms_cutoff(tag->getOption<core::Real>("rms_cutoff", 999999));
-	rms_cutoff_loop(tag->getOption<core::Real>("rms_cutoff_loop", -1));//Added by gideonla Sep15, used in concatenation with the "rms_cutoff" sets a different rms cutoff for loop segments
+	rms_cutoff(tag->getOption<core::Real>("rms_cutoff", 999999.0));
+	rms_cutoff_loop(tag->getOption<core::Real>("rms_cutoff_loop", -1.0));//Added by gideonla Sep15, used in concatenation with the "rms_cutoff" sets a different rms cutoff for loop segments
 	runtime_assert(!(tag->hasOption("torsion_database") && tag->hasOption("rms_cutoff"))); // torsion database doesn't specify coordinates so no point in computing rms
 	res_move(tag->getOption<core::Size>("res_move", 1000)); // All resdiues in the backbone can move
 	randomize_cut(tag->getOption<bool>("randomize_cut", false));

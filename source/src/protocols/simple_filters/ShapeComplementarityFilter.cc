@@ -294,8 +294,8 @@ ShapeComplementarityFilter::parse_my_tag(
 )
 {
 	filtered_sc_ = tag->getOption<Real>( "min_sc", 0.50 );
-	filtered_area_ = tag->getOption<Real>( "min_interface", 0 );
-	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0 );
+	filtered_area_ = tag->getOption<Real>( "min_interface", 0.0 );
+	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0.0 );
 	verbose_ = tag->getOption<bool>( "verbose", false );
 	quick_ = tag->getOption<bool>( "quick", false );
 	jump_id_ = tag->getOption<core::Size>( "jump", 1 );

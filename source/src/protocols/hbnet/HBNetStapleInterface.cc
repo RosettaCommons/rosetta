@@ -230,7 +230,7 @@ HBNetStapleInterface::parse_my_tag(
 	min_networks_per_pose_ = tag->getOption<core::Size>("min_networks_per_pose",1);
 	combos_ = tag->getOption<core::Size>("combos",1);
 	min_intermolecular_hbonds_ = tag->getOption<core::Size>("min_intermolecular_hbonds",1);
-	min_helices_contacted_by_network_ = tag->getOption<core::Size>("min_helices_contacted_by_network",0);
+	min_helices_contacted_by_network_ = tag->getOption<core::Size>("min_helices_contacted_by_network", static_cast<core::Size>(0) );
 	min_asp_glu_hbonds_ = tag->getOption<core::Size>("min_asp_glu_hbonds",3);
 	span_all_helices_ = tag->getOption<bool>( "span_all_helices", false );
 	allow_onebody_networks_ = tag->getOption<bool>("allow_onebody_networks",false);

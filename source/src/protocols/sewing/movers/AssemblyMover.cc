@@ -385,7 +385,7 @@ AssemblyMover::parse_my_tag(
 	end_temperature_ = tag->getOption<core::Real>("end_temperature",0.6);
 	add_probability_ = tag->getOption<core::Real>("add_probability",0.05);
 	delete_probability_ = tag->getOption<core::Real>("delete_probability",0.005);
-	conformer_switch_probability_ = tag->getOption< core::Real >( "conformer_switch_probability", 0 );
+	conformer_switch_probability_ = tag->getOption< core::Real >( "conformer_switch_probability", 0.0 );
 	output_pose_per_move_ = tag->getOption<bool>("output_pose_per_move", false);
 	recover_lowest_assembly_ = tag->getOption<bool>("recover_lowest_assembly", true);
 	if ( tag->hasOption( "model_file_name" ) ) {

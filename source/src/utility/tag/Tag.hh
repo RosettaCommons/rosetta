@@ -14,6 +14,12 @@
 #ifndef INCLUDED_utility_tag_tag_HH
 #define INCLUDED_utility_tag_tag_HH
 
+#if defined(__clang__) || defined(__llvm__)
+#if __clang_major__ < 4
+#define OLDER_CLANG
+#endif
+#endif
+
 // Unit headers
 #include <utility/tag/Tag.fwd.hh>
 
@@ -130,15 +136,36 @@ public:
 		return t_default;
 	}
 
-	/// @brief Variant for the case in which the developer has mistakenly provided a string literal
-	/// instead of a value of type T.
+	/// @brief Variant that will only be defined for Sizes.
+	/// @note Older clang compilers have trouble with the general case being
+	/// deleted and then specialized cases being defined, even though this is supposed to be supported
+	/// by the cxx11 standard.
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 	template< class T >
 	T
+#ifdef OLDER_CLANG
+	getOption( std::string const &, int const ) const;
+#else
+	getOption( std::string const &, int const ) const = delete;
+#endif
+
+	/// @brief Variant for the case in which the developer has mistakenly provided a string literal
+	/// instead of a value of type T.  For anything but a boolean or a string type, this produces a
+	/// compilation error.
+	/// @note Older clang compilers have trouble with the general case being
+	/// deleted and then specialized cases being defined, even though this is supposed to be supported
+	/// by the cxx11 standard.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	template< class T >
+	T
+#ifdef OLDER_CLANG
 	getOption(std::string const& key, char const * default_as_string_literal ) const {
 		utility_exit_with_message( "Program error: the developer has erroneously provided the string literal \"" + std::string(default_as_string_literal) + "\" as the default for option key \"" + key + "\".  This is effectively a compilation error, but it is only detectable at runtime.  The temporary workaround is to provide a value for the " + key + " option.  Please also inform a developer." );
 		return T(0);
 	}
+#else
+	getOption(std::string const& key, char const * default_as_string_literal ) const = delete;
+#endif
 
 	/// @brief Retrieve an option from the Tag with the given key name.
 	/// @throws Throws a utility::excn::EXCN_Msg_Exception if the an option
@@ -281,21 +308,64 @@ template<>
 std::string
 Tag::getOption<std::string>( std::string const & key, char const * default_as_string_literal ) const;
 
+// @brief If this were uncommented, this would add a special-case treatment to ensure that integer defaults
+// get interpreted as Reals when setting a Real option.  So, for example, a developer could write
+// tag->getOption<core::Real>("myoption", 1) instead of tag->getOption<core::Real>("myoption", 1.0).
+// @details This has been deliberately REMOVED because there's value in not allowing a Real's default to be set with a Size
+// -- removing this revealed a number of actual errors.  I'm leaving this here, commented out, in case we someday
+// decide to allow a Real option to be given a Size default.
+// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+// template<>
+// platform::Real
+// Tag::getOption<platform::Real>( std::string const & key, int const default_int ) const;
+
+#ifdef OLDER_CLANG
 /// @brief Special-casing the string literal version for integer options, too.
-/// @details Needed since 0 gets interpreted as a char const * and not a Size, which
-/// means that this code is called.
+/// @note Only needed for older clang compilers, which have trouble with the general case being deleted and
+/// specializations being provided.
+/// @details Needed to be deleted explicitly since 0 gets interpreted as a char const * and not a Size.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 template<>
 platform::Size
-Tag::getOption<platform::Size>( std::string const & key, char const * default_as_string_literal ) const;
+Tag::getOption<platform::Size>( std::string const &, char const * ) const = delete;
 
-/// @brief Special-casing the string literal version for float options, too.
-/// @details Needed since 0 gets interpreted as a char const * and not a Real, which
-/// means that this code is called.
+/// @brief Special-casing the string literal version for Real options, too.
+/// @note Only needed for older clang compilers, which have trouble with the general case being deleted and
+/// specializations being provided.
+/// @details Needed to be deleted explicitly since 0 gets interpreted as a char const * and not a Real.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
 template<>
 platform::Real
-Tag::getOption<platform::Real>( std::string const & key, char const * default_as_string_literal ) const;
+Tag::getOption<platform::Real>( std::string const &, char const * ) const = delete;
+
+/// @brief Special-casing the string literal version for single-precision float options, too.
+/// @note Only needed for older clang compilers, which have trouble with the general case being deleted and
+/// specializations being provided.
+/// @details Needed to be deleted explicitly since 0 gets interpreted as a char const * and not a float.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+float
+Tag::getOption<float>( std::string const &, char const * ) const = delete;
+#endif
+
+/// @brief Special-casing to ensure that 0 gets interpreted as Size(0) rather than nullptr.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+platform::Size
+Tag::getOption<platform::Size>( std::string const & key, int const default_int ) const;
+
+/// @brief Special-casing for signed ints.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+int
+Tag::getOption<int>( std::string const & key, int const default_int ) const;
+
+/// @brief Special-casing for int64_t.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+template<>
+int64_t
+Tag::getOption<int64_t>( std::string const & key, int const default_int ) const;
+
 
 } // namespace tag
 } // namespace utility

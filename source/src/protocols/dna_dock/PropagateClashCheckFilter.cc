@@ -236,7 +236,7 @@ PropagateClashCheckFilter::parse_my_tag(
 	omega_ = tag->getOption< core::Real >( "omega", 36.0 );
 	rise_ = tag->getOption< core::Real >( "rise", 3.38 );
 	num_repeats_ = tag->getOption< core::Size >( "num_repeats", 22 );
-	prop_dir_ = tag->getOption< core::Size >( "prop_dir", 0 );
+	prop_dir_ = tag->getOption< core::Size >( "prop_dir", core::Size(0) );
 }
 
 protocols::filters::FilterOP

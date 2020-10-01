@@ -457,7 +457,7 @@ LoophashLoopInserter::parse_my_tag(
 	}
 
 	max_closure_deviation_ =
-		tag->getOption<core::Real>("max_closure_deviation", 1);
+		tag->getOption<core::Real>("max_closure_deviation", 1.0);
 
 	if ( tag->hasOption("loop_sizes") || option[lh::loopsizes].user() ) {
 		if ( tag->hasOption("loop_sizes") ) {

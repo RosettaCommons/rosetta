@@ -578,7 +578,7 @@ CoupledMovesProtocol::parse_my_tag(
 				}
 
 			} else if ( kic_perturber == "walking" ) {
-				set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::WalkingPerturber >( tag->getOption<core::Real>( "walking_perturber_magnitude", 2 ) ) );
+				set_perturber( utility::pointer::make_shared< protocols::kinematic_closure::perturbers::WalkingPerturber >( tag->getOption<core::Real>( "walking_perturber_magnitude", 2.0 ) ) );
 			}
 		} else if ( ( backbone_mover == "backrub" ) || ( backbone_mover == "" ) ) {
 			set_backbone_mover( backbone_mover );
@@ -597,7 +597,7 @@ CoupledMovesProtocol::parse_my_tag(
 		TR << TR.White << "[ WARNING - backbone_mover ] See CoupledMoves wiki or doxygen for more information on available backbone movers." << TR.Reset << std::endl;
 	}
 
-	set_loop_size( tag->getOption<core::Real>( "kic_loop_size", 9 ) );
+	set_loop_size( tag->getOption<core::Size>( "kic_loop_size", 9 ) );
 	core::Size remainder;
 	remainder = loop_size_ % 2;
 	if ( remainder != 1 ) {

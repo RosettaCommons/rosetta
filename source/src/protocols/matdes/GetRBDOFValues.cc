@@ -225,8 +225,8 @@ GetRBDOFValues::parse_my_tag(
 	axis( tag->getOption< char >("axis", 'x') );
 	radial_disp( tag->getOption< bool >("get_disp", false ) );
 	angle( tag->getOption< bool >("get_angle", false ) );
-	init_angle( tag->getOption< core::Real >("init_angle", 0 ) );
-	init_disp( tag->getOption< core::Real >("init_disp", 0 ) );
+	init_angle( tag->getOption< core::Real >("init_angle", 0.0 ) );
+	init_disp( tag->getOption< core::Real >("init_disp", 0.0 ) );
 	get_init_value( tag->getOption< bool >("get_init_value", false ) );
 }
 

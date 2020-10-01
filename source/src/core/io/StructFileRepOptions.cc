@@ -113,7 +113,7 @@ void StructFileRepOptions::parse_my_tag( utility::tag::TagCOP tag )
 	set_write_pdb_link_records( tag->getOption <bool >( "write_pdb_link_records", true ) );
 	set_write_pdb_parametric_info( tag->getOption< bool >("write_pdb_parametric_info", true) );
 	set_write_all_connect_info( tag->getOption< bool >("write_all_connect_info", false) );
-	set_write_seqres_records( tag->getOption< bool >("write_seqres_records", 0) );
+	set_write_seqres_records( tag->getOption< bool >("write_seqres_records", false) );
 	set_chains_whose_residues_are_separate_chemical_entities(
 		tag->getOption< std::string >( "treat_residues_in_these_chains_as_separate_chemical_entities", " " ) );
 

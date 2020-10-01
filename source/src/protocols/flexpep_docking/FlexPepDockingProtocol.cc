@@ -955,11 +955,13 @@ FlexPepDockingProtocol::check_filters( core::pose::Pose & pose) {
 		TR << "Applying score filter " << flags_.score_filter << endl;
 		passed = ((*scorefxn_)(pose) < flags_.score_filter);
 	}
-	if ( flags_.hb_filter!=0 ) {
+	if ( flags_.hb_filter == true ) {
 		//TODO calc HB number: passed = passed && hb
+		utility_exit_with_message( "As of Sept. 2020, the \"hb_filter\" option is not yet supported." );
 	}
-	if ( flags_.hotspot_filter!=0 ) {
+	if ( flags_.hotspot_filter == true ) {
 		//TODO calc number of hotspots: passed = passed && hotspots
+		utility_exit_with_message( "As of Sept. 2020, the \"hotspot_filter\" option is not yet supported." );
 	}
 
 	return passed;
@@ -1778,9 +1780,9 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.place_peptide = tag->getOption<bool>( "place_peptide", flags_.place_peptide ) ;
 	flags_.sample_pc = tag->getOption<core::Size>( "sample_pc", flags_.sample_pc ) ;
 	flags_.slideintocontact = tag->getOption<bool>( "slideintocontact", flags_.slideintocontact ) ;
-	flags_.rb_trans_size = tag->getOption<float>( "rb_trans_size", flags_.rb_trans_size) ;
+	flags_.rb_trans_size = tag->getOption<core::Real>( "rb_trans_size", flags_.rb_trans_size) ;
 	flags_.recal_foldtree = tag->getOption<bool>( "recal_foldtree", flags_.recal_foldtree ) ;
-	flags_.rb_rot_size = tag->getOption<float>( "rb_rot_size", flags_.rb_rot_size) ;
+	flags_.rb_rot_size = tag->getOption<core::Real>( "rb_rot_size", flags_.rb_rot_size) ;
 	if ( tag->hasOption( "rb_trans_size" ) || tag->hasOption( "rb_rot_size" ) ) {
 		flags_.randomRBstart = true;
 	}
@@ -1791,7 +1793,7 @@ void FlexPepDockingProtocol::parse_my_tag(
 		flags_.torsionsMCM = true;
 	}
 	flags_.peptide_loop_model = tag->getOption<bool>( "peptide_loop_model", flags_.peptide_loop_model) ;
-	flags_.smove_angle_range =tag->getOption<float> ( "smove_angle_range", flags_.smove_angle_range) ;
+	flags_.smove_angle_range =tag->getOption<core::Real> ( "smove_angle_range", flags_.smove_angle_range) ;
 	flags_.design_peptide = tag->getOption<bool>( "design_peptide", flags_.design_peptide) ;
 	flags_.backrub_opt = tag->getOption<bool>( "backrub_opt", flags_.backrub_opt) ;
 	flags_.boost_fa_atr = tag->getOption<bool>( "boost_fa_atr", flags_.boost_fa_atr) ;
@@ -1806,12 +1808,12 @@ void FlexPepDockingProtocol::parse_my_tag(
 	flags_.ppk_only = tag->getOption<bool>( "ppk_only", flags_.ppk_only) ;
 	flags_.no_prepack1 = tag->getOption<bool>( "no_prepack1", flags_.no_prepack1) ;
 	flags_.no_prepack2 = tag->getOption<bool>( "no_prepack2", flags_.no_prepack2) ;
-	flags_.score_filter = tag->getOption<bool>( "score_filter", flags_.score_filter) ;
-	flags_.hb_filter  = tag->getOption<bool>( "hb_filter", flags_.hb_filter) ;
-	flags_.hotspot_filter = tag->getOption<bool>( "hotspot_filter", flags_.hotspot_filter) ;
-	flags_.frag3_weight  = tag->getOption<float>( "frag3_weight", flags_.frag3_weight) ;
-	flags_.frag5_weight  = tag->getOption<float>( "frag5_weight", flags_.frag5_weight) ;
-	flags_.frag9_weight  = tag->getOption<float>( "frag9_weight", flags_.frag9_weight) ;
+	flags_.score_filter = tag->getOption<core::Real>( "score_filter", flags_.score_filter) ;
+	flags_.hb_filter  = tag->getOption<core::Size>( "hb_filter", flags_.hb_filter) ;
+	flags_.hotspot_filter = tag->getOption<core::Size>( "hotspot_filter", flags_.hotspot_filter) ;
+	flags_.frag3_weight  = tag->getOption<core::Real>( "frag3_weight", flags_.frag3_weight) ;
+	flags_.frag5_weight  = tag->getOption<core::Real>( "frag5_weight", flags_.frag5_weight) ;
+	flags_.frag9_weight  = tag->getOption<core::Real>( "frag9_weight", flags_.frag9_weight) ;
 	// todo: handle frag files themselves - this is right now in FlexPepDocingAbinitio.cc
 	flags_.pSer2Asp_centroid = tag->getOption<bool>( "pSer2Asp_centroid", flags_.pSer2Asp_centroid) ;
 	flags_.pSer2Glu_centroid = tag->getOption<bool>( "pSer2Glu_centroid", flags_.pSer2Glu_centroid) ;
@@ -1884,8 +1886,8 @@ void FlexPepDockingProtocol::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute( "no_prepack1", xsct_rosetta_bool, "Don't prepack parter 1" );
 	attlist + XMLSchemaAttribute( "no_prepack2", xsct_rosetta_bool, "Don't prepack partner 2" );
 	attlist + XMLSchemaAttribute( "score_filter", xsct_rosetta_bool, "Filter for structures under given score_filter value" );
-	attlist + XMLSchemaAttribute( "hb_filter", xsct_rosetta_bool, "Filter for structures with at least the given numer of hyrogen bonds. As of Aug 2017, this option is still not available" );
-	attlist + XMLSchemaAttribute( "hotspot_filter", xsct_rosetta_bool, "Filter for structures with at least the given numer of hotspots. As of Aug 2017, this option is still not available" );
+	attlist + XMLSchemaAttribute( "hb_filter", xsct_non_negative_integer, "Filter for structures with at least the given numer of hyrogen bonds. As of Aug 2017, this option is still not available" );
+	attlist + XMLSchemaAttribute( "hotspot_filter", xsct_non_negative_integer, "Filter for structures with at least the given numer of hotspots. As of Aug 2017, this option is still not available" );
 	attlist + XMLSchemaAttribute( "pSer2Asp_centroid", xsct_rosetta_bool, "Convert all phospho-ser residues to asp in the low-resolution part" );
 	attlist + XMLSchemaAttribute( "pSer2Glu_centroid", xsct_rosetta_bool, "Convert all phospho-ser residues to glu in the low-resolution part" );
 	attlist + XMLSchemaAttribute( "random_phi_psi_pert_size", xsct_non_negative_integer, "Randomly perturb phi-psi of peptide to a given range." );

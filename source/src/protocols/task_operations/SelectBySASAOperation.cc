@@ -271,8 +271,8 @@ SelectBySASAOperation::parse_tag( TagCOP tag , DataMap & )
 	mode_ = tag->getOption< std::string >("mode", "sc" );
 	state_ = tag->getOption< std::string >("state", "monomer" );
 	probe_radius_ = tag->getOption<core::Real>("probe_radius", 2.2);
-	core_asa_ = tag->getOption<core::Real>("core_asa", 0);
-	surface_asa_ = tag->getOption<core::Real>("surface_asa", 30);
+	core_asa_ = tag->getOption<core::Real>("core_asa", 0.0);
+	surface_asa_ = tag->getOption<core::Real>("surface_asa", 30.0);
 	jump_nums_ = tag->getOption<std::string>("jumps", "1");
 	sym_dof_names_ = tag->getOption<std::string>("sym_dof_names","");
 	core_ = tag->getOption< bool >("core", false );

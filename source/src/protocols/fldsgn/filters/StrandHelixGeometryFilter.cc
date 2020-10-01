@@ -145,7 +145,7 @@ StrandHelixGeometryFilter::parse_my_tag(
 {
 	// Blueprint is for giving secondary structure information, otherwise dssp will run for ss definition
 	// SSPAIR line is read for the topology of strand pairings
-	filter_min_dist_ = tag->getOption<core::Real>( "min_dist", 8 );
+	filter_min_dist_ = tag->getOption<core::Real>( "min_dist", 8.0 );
 	filter_max_dist_ = tag->getOption<core::Real>( "max_dist", 12.0 );
 	filter_min_orthoangle_ = tag->getOption<core::Real>( "min_ortho_angle", -180.0 );
 	filter_max_orthoangle_ = tag->getOption<core::Real>( "max_ortho_angle", 180.0 );

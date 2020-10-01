@@ -79,7 +79,7 @@ MultipleSigmoids::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &data
 ) {
-	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0.0 ) );
 	utility::vector1< std::string > const pdb_names( utility::string_split( tag->getOption< std::string >( "file_names" ), ',' ) ); //split file names
 	operatorF_ = utility::pointer::make_shared< protocols::calc_taskop_filters::Operator >();
 	utility::vector1< utility::tag::TagCOP > const sub_tags( tag->getTags() ); //tags

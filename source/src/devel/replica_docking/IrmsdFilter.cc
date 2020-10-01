@@ -129,7 +129,7 @@ IrmsdFilter::parse_my_tag(
 	// // scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
 	lower_threshold_ = tag->getOption<core::Real>( "threshold", 0.0 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 9999);
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 9999.0);
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
 }

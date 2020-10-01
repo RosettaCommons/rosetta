@@ -458,8 +458,8 @@ void MatchConstraintFileInfo::initialize_from_tag( utility::tag::TagCOP const ta
 				auto xtol = combination_tag->getOption< core::Real >( "xtol", 0. );
 				auto k = combination_tag->getOption< core::Real >( "k", 0. );
 				auto periodicity = combination_tag->getOption< core::Real >( "periodicity", 0. );
-				auto noSamples = combination_tag->getOption< core::Size >( "noSamples", 0 );
-				GeomSampleInfoOP gsi( new GeomSampleInfo( x0, xtol, k, periodicity, noSamples ) );
+				auto noSamples = combination_tag->getOption< core::Size >( "noSamples", static_cast<core::Size>(0) );
+				GeomSampleInfoOP gsi( utility::pointer::make_shared< GeomSampleInfo >( x0, xtol, k, periodicity, noSamples ) );
 
 				gsi->tag( combination_tag->getName() );  // this will let us keep track of which gsi is which
 

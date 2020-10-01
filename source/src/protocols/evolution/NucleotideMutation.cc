@@ -447,7 +447,7 @@ NucleotideMutation::parse_my_tag(
 	init_sequence( tag->getOption< std::string >( "init_sequence", "" ) );
 	continue_if_silent( tag->getOption< bool >( "continue_if_silent", false ) );
 	flexbb( tag->getOption< bool >("flexbb", true ) );
-	bbnbrs( tag->getOption< core::Size >("bbnbrs", 0 ) );
+	bbnbrs( tag->getOption< core::Size >("bbnbrs", core::Size(0) ) );
 	runtime_assert_string_msg( !(bbnbrs()>0 && flexbb()==false), "You have bbnbrs>0, but flexbb=false?! The bbnbrs sets which backbone neighbor residues that should be flexible" );
 
 	cache_task_ = tag->getOption< bool >( "cache_task", false );

@@ -243,7 +243,7 @@ ResidueReplacementRebuildMover::parse_my_tag(
 	//resi_chosen_ =
 	set_resi_chosen( tag->getOption< core::Size >( "seqpos" ) );
 	//resi_len_ =
-	set_resi_len( tag->getOption< core::Size >( "nres_additional", 0 ) );
+	set_resi_len( tag->getOption< core::Size >( "nres_additional", core::Size(0) ) );
 	//resname_ =
 	set_resname( tag->getOption< std::string >( "residue_name" ) );
 

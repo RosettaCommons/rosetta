@@ -274,7 +274,7 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 
 	random_set_ = tag->getOption< bool >( "random", false );
 
-	fold_tree_root_=tag->getOption< core::Size >( "foldtree_root", 0 ); //Get the residue index for the fold tree root for this operation.
+	fold_tree_root_=tag->getOption< core::Size >( "foldtree_root", core::Size(0) ); //Get the residue index for the fold tree root for this operation.
 
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Torsion" ) {
@@ -287,7 +287,7 @@ void SetTorsion::parse_my_tag( utility::tag::TagCOP tag,
 			residues_.push_back((*tag_it)->getOption< std::string >( "residue" ));
 			torsion_name_.push_back((*tag_it)->getOption< std::string >( "torsion_name", ""));
 			custom_rama_map_.push_back( (*tag_it)->getOption< std::string >("custom_rama_table", "") );
-			extending_.push_back((*tag_it)->getOption< core::Size >( "extending", 0 )); // expanding picked residue
+			extending_.push_back((*tag_it)->getOption< core::Size >( "extending", core::Size(0) )); // expanding picked residue
 
 			utility::vector1< utility::tag::TagCOP > const sub_branch_tags( (*tag_it)->getTags() );
 			utility::vector1< utility::tag::TagCOP >::const_iterator sub_tag_it;

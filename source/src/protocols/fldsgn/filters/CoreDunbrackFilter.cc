@@ -205,7 +205,7 @@ CoreDunbrackFilter::parse_my_tag(
 	type_ = tag->getOption<String>( "type", "average" );
 
 	// set threshold
-	filter_value_ = tag->getOption<Real>( "threshold", -1 );
+	filter_value_ = tag->getOption<Real>( "threshold", -1.0 );
 	if ( type_ == "average" ) {}
 	else if ( type_ == "num_frustrated_residue" ) {}
 	else if ( type_ == "total" ) {}

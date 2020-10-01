@@ -533,7 +533,7 @@ void ProteinInterfaceMultiStateDesignMover::parse_my_tag(
 	/// Read additional positive and negative states
 	utility::vector0< TagCOP > const & branch_tags( tag->getTags() );
 	bool at_least_one_negative_state( unfolded_ || unbound_ );
-	compare_energy_to_ground_state_ = tag->getOption< bool >( "compare_to_ground_state", branch_tags.size() );
+	compare_energy_to_ground_state_ = tag->getOption< bool >( "compare_to_ground_state", !(branch_tags.empty()) );
 	TR<<"Compare energy to ground state set to: "<<compare_energy_to_ground_state_<<std::endl;
 	for ( TagCOP btag : branch_tags ) {
 		if ( unfolded_ || unbound_ ) {

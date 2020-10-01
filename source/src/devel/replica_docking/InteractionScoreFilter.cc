@@ -93,8 +93,8 @@ InteractionScoreFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache
 
 	// scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
 
-	lower_threshold_ = tag->getOption<core::Real>( "threshold", -30 );
-	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 0);
+	lower_threshold_ = tag->getOption<core::Real>( "threshold", -30.0 );
+	upper_threshold_ = tag->getOption<core::Real>( "upper_threshold", 0.0 );
 	jump( tag->getOption< core::Size >( "jump", 1 ));
 
 	TR<<"InterfaceScoreFilter with lower threshold of "<<lower_threshold_<<" and jump "<<jump()<<'\n';

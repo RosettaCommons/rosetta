@@ -159,11 +159,11 @@ SpinAroundPartnerMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption("x") ) {
-		x_ = tag->getOption< core::Real >( "x", 0 );
+		x_ = tag->getOption< core::Real >( "x", 0.0 );
 	}
 
 	if ( tag->hasOption("y") ) {
-		y_ = tag->getOption< core::Real >( "y", 0 );
+		y_ = tag->getOption< core::Real >( "y", 0.0 );
 	}
 
 }

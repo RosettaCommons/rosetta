@@ -93,7 +93,7 @@ ResidueSetChainEnergyFilter::parse_my_tag(
 	TR<< "filter for score_type "<< score_type_ <<" with threshold "<< score_type_threshold_ << std::endl;
 
 	string_resnums_ = tag->getOption< std::string >( "resnums" );// these are kept in memory until the pose is available (at apply time)
-	chain_ = tag->getOption< core::Size >( "chain", 0 );
+	chain_ = tag->getOption< core::Size >( "chain", core::Size(0) );
 }
 
 bool

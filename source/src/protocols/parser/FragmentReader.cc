@@ -91,13 +91,13 @@ FragmentReader::parse_tag( TagCOP const & tag )
 	}
 
 	// length of fragments
-	frag_size_ = tag->getOption<core::Size>( "size", 0 );
+	frag_size_ = tag->getOption<core::Size>( "size", core::Size(0) );
 
 	// the begin of sequence positions where fragments are stealed and inserted
-	begin_ = tag->getOption<core::Size>( "begin", 0 );
+	begin_ = tag->getOption<core::Size>( "begin", core::Size(0) );
 
 	// the end of sequence positions where fragments are stealed and inserted
-	end_   = tag->getOption<core::Size>( "end", 0 );
+	end_   = tag->getOption<core::Size>( "end", core::Size(0) );
 
 	// number of fragments per position
 	nfrags_ = tag->getOption<core::Size>( "nfrags", 200 );

@@ -107,9 +107,9 @@ Sigmoid::parse_my_tag(
 	basic::datacache::DataMap & data
 ) {
 	steepness( tag->getOption< core::Real >( "steepness", 1.0 ) );
-	offset( tag->getOption< core::Real >( "offset", 0 ));
+	offset( tag->getOption< core::Real >( "offset", 0.0 ));
 	negate( tag->getOption< bool >( "negate", false ) );
-	threshold( tag->getOption< core::Real >( "threshold", 0 ) );
+	threshold( tag->getOption< core::Real >( "threshold", 0.0 ) );
 	if ( tag->hasOption( "filter" ) ) {
 		filter( protocols::rosetta_scripts::parse_filter( tag->getOption< std::string >( "filter" ), data ) );
 		TR<<" filter: "<<tag->getOption< std::string >( "filter" )<<std::endl;

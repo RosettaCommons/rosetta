@@ -128,7 +128,7 @@ OptimizeMembranePositionMover::parse_my_tag(
 
 	// set best score
 	if ( tag->hasOption( "score_best") ) {
-		score_best_ = tag->getOption< core::Real >("score_best", 999999);
+		score_best_ = tag->getOption< core::Real >("score_best", 999999.0);
 	}
 
 	// starting z and angle and their stepsizes, this requires the protein to be

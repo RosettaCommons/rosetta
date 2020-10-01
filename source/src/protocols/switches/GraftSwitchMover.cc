@@ -442,8 +442,8 @@ GraftSwitchMover::parse_my_tag(
 		if ( tag->hasOption("n_term") ) {
 			TR << "Cannot use both start/end and n_term; start/end residues will be used" << std::endl;
 		}
-		start_graft_ = tag->getOption<core::Size>("start", 0);
-		end_graft_ = tag->getOption<core::Size>("end", 0);
+		start_graft_ = tag->getOption<core::Size>("start", core::Size(0) );
+		end_graft_ = tag->getOption<core::Size>("end", core::Size(0) );
 	} else {
 		n_terminus_ = tag->getOption< bool >("n_term", false);
 		graft_loop_ = tag->getOption< bool >("graft_on_latch_loop", true);
@@ -453,7 +453,7 @@ GraftSwitchMover::parse_my_tag(
 	pack_neighbors_ = tag->getOption< bool >("pack_neighbors", true);
 	seq_in_any_order_ = tag->getOption< bool >("any_order", true);
 	pack_min_ = tag->getOption< bool >("pack_min", true);
-	burial_cutoff_ = tag->getOption< core::Real >("burial_cutoff", 6);
+	burial_cutoff_ = tag->getOption< core::Real >("burial_cutoff", 6.0);
 	sequences_ = utility::string_split( tag->getOption<std::string>("sequence", ""), ',' );
 
 	std::string important_residues_string( tag->getOption<std::string>("important_residues", "") );

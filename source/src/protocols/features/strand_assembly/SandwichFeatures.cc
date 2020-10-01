@@ -871,7 +871,7 @@ SandwichFeatures::parse_my_tag(
 	//"N-O bridges follow only one, that is, they have at least a pair of side-chain functional-group nitrogen and oxygen atoms within 4A distance, but the side-chain functional-group centroids are > 4A apart."
 	// source: 2002_Close-Range Electrostatic Interactions in Proteins
 
-	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 10000);
+	CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 10000.0);
 	// CB_b_factor_cutoff_for_electrostatic_interactions_ = tag->getOption<Real>("CB_b_factor_cutoff_for_electrostatic_interactions", 60);
 	//"Values of 60 or greater may imply disorder (for example, free movement of a side chain or alternative side-chain conformations). Values of 20 and 5 correspond to uncertainties of 0.5 and 0.25 angstroms, respectively."
 	// source: http://spdbv.vital-it.ch/TheMolecularLevel/SPVTut/text/STut09aTN.html
@@ -887,9 +887,9 @@ SandwichFeatures::parse_my_tag(
 
 
 	///////// proline options ///////
-	wt_for_pro_in_starting_loop_ = tag->getOption<Real>("wt_for_pro_in_starting_loop", 20);
-	wt_for_pro_in_1st_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_1st_inter_sheet_loop", 10);
-	wt_for_pro_in_3rd_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_3rd_inter_sheet_loop", 1);
+	wt_for_pro_in_starting_loop_ = tag->getOption<Real>("wt_for_pro_in_starting_loop", 20.0);
+	wt_for_pro_in_1st_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_1st_inter_sheet_loop", 10.0);
+	wt_for_pro_in_3rd_inter_sheet_loop_ = tag->getOption<Real>("wt_for_pro_in_3rd_inter_sheet_loop", 1.0);
 
 
 	///////// writing options ///////

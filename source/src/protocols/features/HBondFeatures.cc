@@ -608,7 +608,7 @@ HBondFeatures::parse_my_tag(
 	}
 
 	definition_threshold_ =
-		tag->getOption<Real>("definition_threshold", 0);
+		tag->getOption<Real>("definition_threshold", 0.0);
 
 }
 

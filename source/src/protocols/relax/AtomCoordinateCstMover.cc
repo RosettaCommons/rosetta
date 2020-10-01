@@ -304,7 +304,7 @@ AtomCoordinateCstMover::parse_my_tag(
 	func_groups( tag->getOption< bool >( "func_groups", false ) );
 	cst_sd( tag->getOption< core::Real >( "coord_dev", 0.5 ) );
 	bounded( tag->getOption< bool >( "bounded", false ) );
-	cst_width( tag->getOption< core::Real >( "bound_width", 0 ) );
+	cst_width( tag->getOption< core::Real >( "bound_width", 0.0 ) );
 	cst_sidechain( tag->getOption< bool >( "sidechain", false ) );
 	ambiguous_hnq( tag->getOption< bool >( "flip_hnq", false ) );
 

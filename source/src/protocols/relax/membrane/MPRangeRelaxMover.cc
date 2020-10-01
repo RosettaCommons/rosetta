@@ -134,7 +134,7 @@ MPRangeRelaxMover::parse_my_tag(
 	}
 
 	if ( tag->hasOption( "center_resnumber" ) ) {
-		center_resnumber_ = tag->getOption< core::Size >("center_resnumber", 0);
+		center_resnumber_ = tag->getOption< core::Size >("center_resnumber", core::Size(0));
 	}
 
 	if ( tag->hasOption( "set_tm_helical" ) ) {

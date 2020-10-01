@@ -300,12 +300,12 @@ SSElementMotifContactFilter::parse_my_tag(
 )
 {
 	// set threshold
-	threshold_ = tag->getOption<Real>("threshold",0);
-	contacts_between_ssElement_threshold_ = tag->getOption<Real>("contacts_between_ssElement_threshold",3);
+	threshold_ = tag->getOption<Real>("threshold", 0.0);
+	contacts_between_ssElement_threshold_ = tag->getOption<Real>("contacts_between_ssElement_threshold", 3.0);
 	report_avg_ = tag->getOption<bool>( "report_avg", true );
-	ignore_n_terminal_SS_ = tag->getOption<core::Size>("ignore_n_terminal_ss",0);
-	ignore_c_terminal_SS_ = tag->getOption<core::Size>("ignore_c_terminal_ss",0);
-	core::Size ignore_terminal_SS = tag->getOption<core::Size>("ignore_terminal_ss",0);
+	ignore_n_terminal_SS_ = tag->getOption<core::Size>("ignore_n_terminal_ss", core::Size(0));
+	ignore_c_terminal_SS_ = tag->getOption<core::Size>("ignore_c_terminal_ss", core::Size(0));
+	core::Size ignore_terminal_SS = tag->getOption<core::Size>("ignore_terminal_ss", core::Size(0));
 	if ( ignore_terminal_SS != 0 ) {
 		ignore_n_terminal_SS_ = ignore_terminal_SS;
 		ignore_c_terminal_SS_ = ignore_terminal_SS;

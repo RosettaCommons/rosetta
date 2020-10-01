@@ -444,7 +444,7 @@ RmsdFilter::parse_my_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & 
 	}
 
 	superimpose_ = tag->getOption<bool>( "superimpose", true );
-	threshold_ = tag->getOption<core::Real>( "threshold", 5 );
+	threshold_ = tag->getOption<core::Real>( "threshold", 5.0 );
 	///
 	if ( tag->hasOption("by_aln") ) {
 		by_aln_ = (tag->getOption<bool>("by_aln"));

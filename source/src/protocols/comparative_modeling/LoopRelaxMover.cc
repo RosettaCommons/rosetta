@@ -1443,7 +1443,7 @@ LoopRelaxMover::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & data
 {
 	cmd_line_csts( tag->getOption< bool >( "cmd_line_csts", true ) );
 	copy_sidechains( tag->getOption< bool >( "copy_sidechains", true ) );
-	rebuild_filter( tag->getOption< core::Real >( "rebuild_filter", 999 ) );
+	rebuild_filter( tag->getOption< core::Real >( "rebuild_filter", 999.0 ) );
 	compute_rmsd( tag->getOption< bool >( "compute_rmsd", true ) );
 	n_rebuild_tries( tag->getOption< core::Size >( "n_rebuild_tries", 10 ) );
 	remodel( tag->getOption< std::string >( "remodel", "quick_ccd" ) );

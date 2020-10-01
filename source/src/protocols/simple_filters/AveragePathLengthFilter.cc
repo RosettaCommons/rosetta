@@ -105,13 +105,13 @@ AveragePathLengthFilter::parse_my_tag(
 ) {
 
 	if ( tag->hasOption("path_tightness") ) {
-		path_tightness(tag->getOption< core::Real >("path_tightness",1));
+		path_tightness(tag->getOption< core::Real >("path_tightness",1.0));
 		TR << "setting path_tightness" << std::endl;
 	}
 
 
 	if ( tag->hasOption("max_path_length") ) {
-		max_path_length(tag->getOption< core::Real >("max_path_length",99999));
+		max_path_length(tag->getOption< core::Real >("max_path_length",99999.0));
 		TR << "setting max_path_length" << std::endl;
 	}
 

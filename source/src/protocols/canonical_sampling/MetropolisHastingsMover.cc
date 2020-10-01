@@ -491,7 +491,7 @@ MetropolisHastingsMover::parse_my_tag(
 		TemperatureControllerOP temp_controller( utility::pointer::dynamic_pointer_cast< protocols::canonical_sampling::TemperatureController > ( mover ) );
 		//figure out if ThermodynamicMover or ThermodynamicObserver
 		if ( th_mover ) { //it's a mover
-			auto const weight( subtag->getOption< core::Real >( "sampling_weight", 1 ) );
+			auto const weight( subtag->getOption< core::Real >( "sampling_weight", 1.0 ) );
 			add_mover( th_mover, weight, subtag );
 			//    add_mover( th_mover, weight );
 		} else if ( th_observer ) { //its an observer

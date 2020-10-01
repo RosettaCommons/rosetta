@@ -335,8 +335,8 @@ SetSecStructEnergies::parse_my_tag(
 	if ( tag->hasOption( "natbias_stwist" ) ) stwist_weight_ = tag->getOption< Real >( "natbias_stwist" );
 
 	/// original secondary structure potential except for sheet potential
-	if ( tag->hasOption( "hs_pair_weight" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair_weight", 2 );
-	if ( tag->hasOption( "ss_pair_weight" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair_weight", 2 );
+	if ( tag->hasOption( "hs_pair_weight" ) ) hs_pair_weight_ = tag->getOption< Real >( "hs_pair_weight", 2.0 );
+	if ( tag->hasOption( "ss_pair_weight" ) ) ss_pair_weight_ = tag->getOption< Real >( "ss_pair_weight", 2.0 );
 	if ( tag->hasOption( "rsigma"  ) ) rsigma_weight_  = tag->getOption< Real >( "rsigma" );
 
 	// params for NatbiasHelixPairPotential

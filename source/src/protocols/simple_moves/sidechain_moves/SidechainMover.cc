@@ -184,7 +184,7 @@ SidechainMover::parse_my_tag(
 	set_prob_uniform( tag->getOption<core::Real>( "prob_uniform", prob_uniform() ) );
 	set_prob_withinrot( tag->getOption<core::Real>( "prob_withinrot", prob_withinrot() ) );
 	set_prob_random_pert_current( tag->getOption<core::Real>( "prob_random_pert_current", prob_random_pert_current() ) );
-	set_change_chi_without_replacing_residue( tag->getOption<core::Real>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
+	set_change_chi_without_replacing_residue( tag->getOption<bool>( "change_chi_without_replacing_residue", change_chi_without_replacing_residue() ) );
 }
 
 /// @details
@@ -1065,7 +1065,7 @@ void SidechainMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute::attribute_w_default("prob_uniform", xsct_real, "The probability of uniform chi sampling.", "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default("prob_withinrot", xsct_real, "The probability of sampling within-rotamer.", "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default("prob_random_pert_current", xsct_real, "The probability of making a random perturbation to the current chi value.", "0.0" )
-		+ XMLSchemaAttribute::attribute_w_default("change_chi_without_replacing_residue", xsct_real, "The probability of changing chi but not replacing the residue.", "0.0" );
+		+ XMLSchemaAttribute::attribute_w_default("change_chi_without_replacing_residue", xsct_rosetta_bool, "The probability of changing chi but not replacing the residue.", "false" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Moves the side chain for a set of residues identified by a task operation in a manner that can be totally independent of rotamer assignments", attlist );
 }
 

@@ -79,7 +79,7 @@ FragmentScoreFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &
 ) {
-	threshold_ = tag->getOption< core::Real >("threshold",1);
+	threshold_ = tag->getOption< core::Real >("threshold",1.0);
 	direction_ = tag->getOption< std::string >("direction","-");
 	score_type_ = tag->getOption< std::string >("scoretype","FragmentCrmsd");
 	if ( tag->hasOption( "start_res" ) ) {

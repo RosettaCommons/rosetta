@@ -81,8 +81,8 @@ KeepRegionMover::parse_my_tag(
 	start_ = tag->getOption<std::string>("start");
 	end_ = tag->getOption<std::string>("end");
 
-	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", 0);
-	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", 0);
+	nter_overhang_ = tag->getOption<core::Size>("nter_overhang", core::Size(0) );
+	cter_overhang_ = tag->getOption<core::Size>("cter_overhang", core::Size(0) );
 }
 
 void

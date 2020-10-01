@@ -210,7 +210,7 @@ InsertResMover::parse_my_tag(
 ){
 	chain_ = ( tag->getOption< std::string >( "chain", "999") );
 	resType_ = ( tag->getOption< std::string >( "resType", "H") );
-	steal_angles_from_res_= (tag->getOption<core::Size>("steal_angles_from_res",0));
+	steal_angles_from_res_= (tag->getOption<core::Size>("steal_angles_from_res", core::Size(0)));
 	residue_ = ( tag->getOption< core::Size >( "residue", 1) );
 	grow_toward_Nterm_ = ( tag->getOption< bool >( "grow_toward_Nterm", false) );
 	ideal_ = ( tag->getOption< bool >( "ideal", true) );

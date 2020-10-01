@@ -249,7 +249,7 @@ SecretionPredictionFilter::parse_my_tag(
 	basic::datacache::DataMap &
 ) {
 	// set threshold
-	threshold_ = tag->getOption<Real>("threshold",-999999);
+	threshold_ = tag->getOption<Real>("threshold",-999999.0);
 	window_size_=19;
 }
 
