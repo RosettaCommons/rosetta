@@ -243,6 +243,13 @@ public:
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
 };
 
+class SimpleMetricSelectorCreator : public ResidueSelectorCreator {
+public:
+	ResidueSelectorOP create_residue_selector() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & ) const override;
+};
+
 } //namespace residue_selector
 } //namespace select
 } //namespace core

@@ -53,9 +53,10 @@ PerResidueRealMetric::PerResidueRealMetric():
 PerResidueRealMetric::~PerResidueRealMetric() = default;
 
 PerResidueRealMetric::PerResidueRealMetric( PerResidueRealMetric const & src ):
-	SimpleMetric( src )
+	SimpleMetric( src ),
+	output_as_pdb_nums_( src.output_as_pdb_nums_ )
 {
-
+	if ( src.selector_ ) selector_ = src.selector_->clone();
 
 }
 

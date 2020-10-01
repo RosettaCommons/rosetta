@@ -862,6 +862,7 @@ sources = {
 		"ScoreTermValueBasedSelector",
 		"SecondaryStructureSelector",
 		"SelectorLogicParser",
+		"SimpleMetricSelector",
 		"SliceResidueSelector",
 		"SSElementSelector",
 		"SymmetricalResidueSelector",
