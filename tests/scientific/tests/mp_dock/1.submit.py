@@ -45,6 +45,7 @@ command_line = '''
 -packing:pack_missing_sidechains false
 -restore_talaris_behavior
 -restore_lazaridis_imm_behavior true
+-detect_disulf false
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #==> EDIT HERE

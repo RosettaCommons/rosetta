@@ -79,13 +79,17 @@ for i in range( 0, len( scorefiles ) ):
 	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
 	# x axis limits
-	if targets[i] in failures:
-		plt.xlim( left=0 )
-	else:
-		plt.xlim( 0, 10 )
+#	if targets[i] in failures:
+#		plt.xlim( left=0 )
+#	else:
+#		plt.xlim( 0, 20 )
+#		plt.ylim( -10, 10 )
+
+	plt.xlim( 0, 30 )
+	plt.ylim( -10, 10 )
 	
 #save figure
 plt.tight_layout()
 plt.savefig( outfile )
 
-benchmark.save_variables('targets nstruct working_dir testname results outfile cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname results outfile cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

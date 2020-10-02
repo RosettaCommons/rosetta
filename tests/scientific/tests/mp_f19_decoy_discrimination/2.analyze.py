@@ -48,6 +48,7 @@ cutoffs_weighted_rms_dict.update( dict( zip ( protein, cutoffs_weighted_rms )))
 
 # open results output file
 with open( outfile, "w" ) as f:
+	f.write( "#pdb\tsampled_rms\tpnear\tweighted_rms\n" )
 
 	for target in targets: 
 		
@@ -83,6 +84,7 @@ with open( outfile, "w" ) as f:
 			failures.append( "sampled_rms " + target + " value: " + str(sampled_rms) )
 
 		# check for pnear better than cutoff
+		# NOTE: Pnear isn't actually used here because it requires better sampling
 		f.write( str(pnear) + "\t" )
 		# if ( pnear < cutoffs_pnear_dict[ target ] ): 
 		# 	failures.append( target )

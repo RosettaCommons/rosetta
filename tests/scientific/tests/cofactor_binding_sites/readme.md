@@ -24,7 +24,7 @@ This dataset that does not involve experimental characterization of binding affi
 #### Is there a publication that describes the protocol?
 #### How many CPU hours does this benchmark take approximately?
 
-The CoupledMoves protocol is described <a href="https://www.rosettacommons.org/docs/wiki/coupled-moves">here</a>.
+The CoupledMoves protocol is described at <a href="https://www.rosettacommons.org/docs/wiki/coupled-moves">https://www.rosettacommons.org/docs/wiki/coupled-moves</a>.
 
 ## PERFORMANCE METRICS
 #### What are the performance metrics used and why were they chosen?

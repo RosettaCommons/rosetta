@@ -1,4 +1,4 @@
-#pdb	correl	slope	intercept
-OmpLA	0.60	0.64	1.65
+#pdb		correl	slope	intercept
+OmpLA		0.60	0.64	1.65
 OmpLA_aro	-1.0	-0.34	0.89
 PagP		0.60	0.61	-0.13

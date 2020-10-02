@@ -40,15 +40,18 @@ protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'"
 cutoffs_ddG_ins = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
 cutoffs_zmin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
 cutoffs_anglemin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $4}'" ).splitlines()
+
 cutoffs_ddG_ins = map( float, cutoffs_ddG_ins ) 
 cutoffs_zmin = map( float, cutoffs_zmin )
 cutoffs_anglemin = map( float, cutoffs_anglemin )
+
 cutoffs_ddG_ins_dict.update( dict( zip ( protein, cutoffs_ddG_ins )))
 cutoffs_zmin_dict.update( dict( zip ( protein, cutoffs_zmin )))
 cutoffs_anglemin_dict.update( dict( zip( protein, cutoffs_anglemin )))
 
 # open results output file
 f = open( outfile, "w" )
+f.write( "target\tdG\tzmin\tanglemin" )
 
 # go through the energy landscape files for each target
 for i in range( 0, len( energy_landscapes ) ): 
@@ -82,27 +85,36 @@ for i in range( 0, len( energy_landscapes ) ):
 	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
 
 	# Is the ddG_ins within +/- 1 REU of the previously established value? 
-	f.write( targets[i] + "\t" )
+	f.write( "\n" + targets[i] + "\t" )
+	f.write( str(dG_transfer) + "\t" )
 	val_cutoff = cutoffs_ddG_ins_dict[targets[i]]
 	target_results.update( dG_transfer = dG_transfer )
-	if ( not dG_transfer <= (val_cutoff+1) and not dG_transfer >= (val_cutoff-1) ): 
-		failures.append( targets[i] )
+
+	if ( not ( dG_transfer <= (val_cutoff+1) and dG_transfer >= (val_cutoff-1) ) ): 
+		f.write( "fails in dG: " + str(val_cutoff) + "\t" )
+		if ( targets[i] not in failures ):
+			failures.append( targets[i] )
 
 	# Is the mimimum energy orinetation within +/- 1angstrom and +/- 5 degrees of the previously estabished value? 
-	f.write( targets[i] + "\t" )
+	f.write( str(round(zmin,3)) + "\t" )
 	val_cutoff = cutoffs_zmin_dict[targets[i]]
 	target_results.update( zmin = zmin )
-	if ( not zmin <= (val_cutoff+1) and not zmin >= (val_cutoff-1) ): 
-		failures.append( targets[i] )
 
-	f.write( targets[i] + "\t" )
+	if ( not ( zmin <= (val_cutoff+1) and zmin >= (val_cutoff-1) ) ): 
+		f.write(  "fails in zmin: " + str(val_cutoff) + "\t" )
+		if ( targets[i] not in failures ):
+			failures.append( targets[i] )
+
+	f.write( str(anglemin) + "\t" )
 	val_cutoff = cutoffs_anglemin_dict[targets[i]]
 	target_results.update( anglemin = anglemin )
-	if ( not anglemin <= (val_cutoff+5) and not anglemin >= (val_cutoff-5) ): 
-		failures.append( targets[i] )
+
+	if ( not ( anglemin <= (val_cutoff+5) and anglemin >= (val_cutoff-5) ) ): 
+		f.write(  "fails in anglemin: " + str(val_cutoff) + "\t" )
+		if ( targets[i] not in failures ):
+			failures.append( targets[i] )
 
 	results.update( {targets[i] : target_results} )
-	f.write( "\n" )
 
 f.close()
 

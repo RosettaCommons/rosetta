@@ -4,10 +4,10 @@ PI: Jeffrey J. Gray (Johns Hopkins ChemBE)
 Test created 6/6/19
 
 ## PURPOSE OF THE TEST
-The purpose of this test is to evaluate the scientific performance of franklin2019, the default energy function for membrane protein structure prediction and design.
+The purpose of this test is to evaluate the scientific performance of franklin2019, the default energy function for membrane protein structure prediction and design. Specifically, the computed insertion depths and tilt angles of 5 peptides are compared to experimental values. 
 
 ## BENCHMARK DATASET
-The benchmark dataset includes five transmembrane peptides. Each peptide has an NMR structure and a tilt angle measured by solid-state NMR. The first four targets (2nr1, 1a11, 1mp6, and 1pje) were taken from [1]. The fifth target, WALP3. was taken from [2].
+The benchmark dataset includes five transmembrane peptides. Each peptide has an NMR structure and a tilt angle measured by solid-state NMR. The first four targets (2nr1, 1a11, 1mp6, and 1pje) were taken from [1]. The fifth target, WALP23 was taken from [2].
 
 	1. Ulmschneider MB, Sansom MSP, Di Nola A (2005) "Evaluating tilt angles of membrane-associated helices: comparison of computational and NMR techniques" Biophys J 90(5): 1650-1660
 	2. Holt A, Koehorst RBM, Rutters-Meijneke T, Gelb MH, Rijkers DTS, Hemminga MA, Antoinette-Killian J (2009) "Tilt and rotation angles of a transmembrane model peptide as studied by fluorescence spectroscopy" Biophys J 97(8): 2258-2266
@@ -21,18 +21,20 @@ For each peptide, the protocol takes approximately 1-2 CPU hours (for a total 10
 
 The membrane energy landscape sampling protocol is described in:
 
-	(Alford RF, Fleming PJ, Fleming KG, Gray JJ (2019) "Protein structure prediction and design in a biologically-realistic implicit membrane" Under Review)
+	(Alford, R. F., Fleming, P. J., Fleming, K. G. & Gray, J. J. Protein Structure Prediction and Design in a Biologically Realistic Implicit Membrane. Biophys. J. 118, 2042–2055 (2020).)
 
 ## PERFORMANCE METRICS
-There are two key performance metrics for this test. The first is the water-to-bilayer partitioning energy of the peptide, calculated as the energy difference between a peptide submerged in water and a peptide oriented vertically in the membrane. The test passes if the calculated partitioning energy is within +/- 1REU of the previously calculated value. The second metric is the minimum energy tilt angle and membrane depth. The test passes if the calculated orientation is within +/- 1Å and +/- 1˚ of the previously calculated orientation. In addition, the energy landscape mapping will be plotted and checked through visual inspection.
+There are two key performance metrics for this test. The first is the water-to-bilayer partitioning energy of the peptide, calculated as the energy difference between a peptide submerged in water and a peptide oriented vertically in the membrane. The test passes if the calculated partitioning energy is within +/- 1REU of the calculated value from the franklin2019 score function. 
+
+The second metric is the minimum energy tilt angle and membrane depth. The test passes if the calculated orientation is within +/- 1Å and +/- 5˚ of the experimentally determined orientation as defined in the cutoffs file.
 
 ## KEY RESULTS
-The water-to-bilayer partitioning energy, delta G should be less than 0 for all peptides. Further, the low-energy peptide orientations should be between 0-45 degrees tilted relative to the membrane normal and no more than +/- 5Å from the membrane center. The results are compared to two prior membrane energy functions, a knowledge-based model and an organic-sovlent based model in Alford et al. 2019. 
+The white dots in the plots are the computed minima in the energy landscape, not the experimentally determined values. The result.txt file contains which measurements are failing, if any. The water-to-bilayer partitioning energy, delta G should be less than 0 for all peptides to ensure that the peptides partition into the membrane. Further, the low-energy peptide orientations should generally be between 0-45 degrees tilted relative to the membrane normal and no more than +/- 5Å from the membrane center. Exceptions here are WALP23 with an 82˚ angle and 2nr1 with a distance of 6.7Å from the membrane center. Note that these values have been experimentally determined.
 
 ## DEFINITIONS AND COMMENTS
 The membrane normal and center, in addition to the coordinate frame setup are described in:
 
-	Alford RF, Koehler Leman J, Weitzner BD, Duran Am, Tiley DC, Elazar A, Gray JJ (2015) "An integrated framework advancing membrane protein modeling and design" PLoS Comput. Biol. 11(9):e1004398.
-
+	Alford RF, Koehler Leman J, Weitzner BD, Duran AM, Tiley DC, Elazar A, Gray JJ (2015) "An integrated framework advancing membrane protein modeling and design" PLoS Comput. Biol. 11(9):e1004398.
+	
 ## LIMITATIONS
-I am working on better quantification metrics for the full landscape.
+Better quantification metrics for the full energy landscape would be beneficial.

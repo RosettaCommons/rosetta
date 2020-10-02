@@ -20,4 +20,4 @@ Because of the high-energy outliers endemic to the fragment assembly method, rea
 n/a
 
 ## LIMITATIONS
-The benchmark could be expanded to include favorites2.txt, challenges.txt, followups.txt, and more of the benchmarking challenges already developed for stepwise Monte Carlo. Furthermore, the protocol could also target the RNA-Puzzles dataset (the equivalent of CASP), where we have pretty predictable performance characteristics as long as we can generate a few thousand models. More CPU power would permit better sampling and therefore more precise cutoffs.
+The benchmark could be expanded to include favorites2.txt, challenges.txt, followups.txt, and more of the benchmarking challenges already developed for stepwise Monte Carlo. These files are located in the publicly available Github repo DasLab/rna_benchmark. Furthermore, the protocol could also target the RNA-Puzzles dataset (the equivalent of CASP), where we have pretty predictable performance characteristics as long as we can generate a few thousand models. More CPU power would permit better sampling and therefore more precise cutoffs.

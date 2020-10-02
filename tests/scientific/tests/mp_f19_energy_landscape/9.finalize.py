@@ -61,7 +61,7 @@ def write_html( failures ) :
 	with open(f'{working_dir}/index.html', 'w') as f:
 		f.write( _index_html_template_.format( failures ) )
 
-	if len(failures) == 0 or config['debug']:
+	if len(failures) == 0 or debug:
 		return _S_passed_
 	else:
 		return _S_failed_

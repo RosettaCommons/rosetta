@@ -22,7 +22,6 @@ from benchmark import *
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
 
-cutoff = 1.0
 # read readme
 with open("readme.md") as f: readme = f.readlines()
 
@@ -37,8 +36,16 @@ if len(failures) > 0:
     _index_html_template_ += "Number of failed cases out of " + str(num - 1) + ": " + str(len(failures)) + "<br>\n"
     for failure in failures:
         _index_html_template_ += str(failure) + "\t"
+
 else:
-    _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
+    _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br><br>\n"
+
+# add cases for which spearman < 0.25
+_index_html_template_ += "Number of cases with Spearman < 0.25 out of " + str(num - 1) + ": " + str(len(below_25)) + "<br>\n"
+for below in below_25:
+    _index_html_template_ += str(below) + "\t"
+
+# results
 _index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
 _index_html_template_ += '<img src="plot_results.png" alt="alternative text" style="max-width: 100%">\n'
 
@@ -65,7 +72,8 @@ def write_html(failures):
     with open(f'{working_dir}/index.html', 'w') as f:
         f.write(_index_html_template_.format(failures))
 
-        if float(len(failures))/(num - 1) <= cutoff or config['debug']:
+#        if float(len(failures))/(num - 1) <= cutoff or config['debug']:
+        if len(failures) == 0 or config['debug']:
             return _S_passed_
         else:
             return _S_failed_

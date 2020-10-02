@@ -30,16 +30,16 @@ working_dir = config['working_dir']
 hpc_driver  = benchmark.hpc_driver()
 extension   = benchmark.calculate_extension()
 
-#-cst_fa_file {rosetta_dir}/tests/scientific/data/{testname}/1B.cst
+#-mute all
 command_line = '''
 -database {rosetta_dir}/database
 
--mute all
 -include_sugars
 -lock_rings
 
 -in:file:s {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
 -in:file:native {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
+-cst_fa_file {rosetta_dir}/tests/scientific/data/{testname}/{target}.cst
 
 -nstruct {nstruct}
 -n_cycles 100

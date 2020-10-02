@@ -36,9 +36,7 @@ The benchmark takes ~150 hours. The debug mode takes ~4 mins.
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
 
-To assess the performance of a docking simulation, we assess the number of structures with a CAPRI-acceptable or better ranking, which the protocol auto-generates from the native structure. After bootstrap resampling, we classify complexes having N5>=3 as successful.
-
-CAPRI model rankings are based on a combination of factors like fraction of native contacts, interface RMSD, and ligand RMSD.
+To assess the performance of a docking simulation, we assess the number of structures with a CAPRI-acceptable or better ranking, which the protocol auto-generates from the native structure. After bootstrap resampling, we classify complexes having N5 >= 3 as successful. N5 >= 3 means that at least 3 out of the top 5 scoring models should be acceptable or better according to CAPRI metrics. CAPRI model rankings are based on a combination of factors like fraction of native contacts, ligand RMSD, and interface RMSD and are described in detail in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.25870"> Lensink, Wodak et al. 2019 PSFBI</a> - Table 3.
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

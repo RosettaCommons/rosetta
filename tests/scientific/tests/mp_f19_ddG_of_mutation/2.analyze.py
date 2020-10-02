@@ -53,6 +53,7 @@ cutoffs_intercept_dict.update( dict( zip ( protein, cutoffs_intercept )))
 
 # open results output file
 f = open( outfile, "w" )
+f.write( "target\tcorrcoeff\tslope\tintercept\n" )
 
 # go through scorefiles of targets
 for i in range( 0, len( ddG_files ) ):
@@ -81,26 +82,27 @@ for i in range( 0, len( ddG_files ) ):
 	exp_no_proline = exp_arr[ np.where( aa_arr != "P" ) ]
 	pred_no_proline = pred_arr[ np.where( aa_arr != "P" ) ]
 	aa_no_proline = aa_arr[ np.where( aa_arr != "P" ) ]
-
+	
 	# Calculate a correlation coefficient
 	pearson_correl = np.corrcoef( exp_no_proline, pred_no_proline ).item((0,1))
 	best_fit = np.polyfit( exp_no_proline, pred_no_proline, 1 )
+
 	slope = best_fit[0]
 	intercept = best_fit[1]
 	
 	# check for correlation above cutoff
 	f.write( targets[i] + "\t" )
-	f.write( str(pearson_correl) + "\t" )
+	f.write( str(round(pearson_correl, 3)) + "\t" )
 	if ( cutoffs_corr_dict[targets[i]] > pearson_correl ): 
 		failures.append( "correl " + targets[i] )
 
 	# check for slope within range
-	f.write( str(slope) + "\t" )
+	f.write( str(round(slope, 3)) + "\t" )
 	if ( cutoffs_slope_dict[targets[i]]+0.5 < slope or cutoffs_slope_dict[targets[i]]-0.5 > slope ):
 		failures.append( "slope " + targets[i] )
 
 	# check for intercept within range
-	f.write( str(intercept) + "\t" )
+	f.write( str(round(intercept, 3)) + "\t" )
 	if ( cutoffs_intercept_dict[targets[i]]+0.5 < intercept or cutoffs_intercept_dict[targets[i]]-0.5 > intercept ): 
 		failures.append( "intercept " + targets[i] )
 

@@ -148,12 +148,28 @@ f2.close()
 if os.path.exists('cstemp'):
 	os.remove('cstemp')
 
-## Find failure clusters for ranking test
+# read cutoff file
+target = subprocess.getoutput( "grep -v Target cutoffs | awk '{print $1}'" ).splitlines()
+cutoff = subprocess.getoutput( "grep -v Target cutoffs | awk '{print $2}'" ).splitlines()
+
+# map values to floats (were strings)
+cutoff = list( map( float, cutoff ))
+
+# create dictionary for easy lookup
+cutoffs = dict( zip( target, cutoff ) )
+
+# list of targets with spearman < 0.25
+below_25 = []
+
+## Find failure targets for ranking test
 cc = pd.read_csv('run_Spearman.results', delim_whitespace=True, engine='python')
 for index, row in cc.iterrows():
+
 	if float(row['spearman']) < 0.25:
+		below_25.append(row['#Target'])
+	if row['spearman'] < cutoffs[row['#Target']]:
 		failures.append(row['#Target'])
 	else:
 		successes.append(row['#Target'])
 
-benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures successes regr_coef regr_intercept testr')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures successes below_25 regr_coef regr_intercept testr')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

@@ -31,7 +31,7 @@ x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).s
 y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
 
 # number of subplots
-ncols = 5
+ncols = 4
 nrows = 1
 
 # figure size
@@ -70,10 +70,10 @@ for i in range( 0, len( scorefiles ) ):
 	plt.axvline(x=float(cutoffs_weighted_rms_dict[targets[i]]), color='r', linestyle='-')
 	
 	# x axis limits
-	# if targets[i] in failures:
-	# 	plt.xlim( left=0 )
-	# else:
-	# 	plt.xlim( 0, 10 )
+	if targets[i] in failures:
+		plt.xlim( left=0 )
+	else:
+		plt.xlim( 0, 10 )
 	
 #save figure
 plt.tight_layout()

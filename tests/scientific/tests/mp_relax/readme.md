@@ -39,7 +39,7 @@ We use the total Rosetta score and RMSD to the native structure as we are intere
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?
 #### Describe outliers in the dataset. 
 
-We use crystal and structures as natives for comparison. The sampling range is TO EDIT
+We use crystal and structures as natives for comparison. The sampling range is up to 4 Angstrom in our examples. 
 
 2kse is an NMR structure of a histidine kinase, which normally has 2 chains but is here modeled as a single chain. That's bad. Not sure why this was chosen. 
 2leg is the NMR structure of DsbB, not a great structure and has a long loop which flops around quite a bit

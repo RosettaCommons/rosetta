@@ -30,13 +30,13 @@ infile = 'run_processed_score.csv'
 outfile = "plot_results.png"
 
 
-## get target info from run_processed_score.csv outputted from 2.analyze.py. Plot each cluster (only 5 points each to see what the outliers look like)
+## get target info from run_processed_score.csv outputted from 2.analyze.py. Plot each target (only 5 points each to see what the outliers look like)
 spearman_vals = pd.read_csv('run_Spearman.results', sep='[,,\t, ]+', engine='python')
 aa = pd.read_csv(infile, sep='[,,\t, ]+', engine='python')
 group = aa.groupby('target')
 num = len(aa.drop_duplicates(subset='target')) + 1
 
-#number of subplots--should always be 58 (57 clusters + 1 for full dataset)
+#number of subplots--should always be 58 (57 targets + 1 for full dataset)
 ncols = 4
 nrows = 1
 if num < 4:
@@ -66,7 +66,7 @@ for i,j in group.__iter__():
 	plt.ylim(min(y)*1.2, 0)
 	plt.xlabel( 'logKa' )
 	plt.ylabel( 'score' )
-	plt.title( "Cluster" + ' ' + str(i) )
+	plt.title( "Target" + ' ' + str(i) )
 	plt.annotate("Spearman Correlation = %0.3f"%(spearman), xy=(0,min(y)*1.1), color='blue')
 	plt.scatter(x, y)
 	for label in range(0,len(x)):
@@ -92,4 +92,4 @@ plt.plot(x,b, linestyle='--')
 plt.tight_layout()
 plt.savefig( outfile )
 
-benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures num')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures below_25 num')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

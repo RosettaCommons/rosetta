@@ -25,6 +25,7 @@ extension   = benchmark.calculate_extension()
 interface_analysis_flags = '''
 -l {prefix}/models.list
 -native {rosetta_dir}/tests/scientific/data/{testname}/natives/{target}.pdb
+-partners HL_G
 -docking_local_refine
 -dock_min
 -out:file:score_only {prefix}/{target}_rmsd.sc

@@ -94,7 +94,7 @@ for i in range( 0, len( ddG_files ) ):
 	# Plot the line of best fit
 	abline_values = [ results[targets[i]][1] * j + results[targets[i]][2] for j in x]
 	plt.plot(x, abline_values, 'b' )
-
+	
 	# scatterplot of the data
 	plt.plot(exp_no_proline, pred_no_proline, 'ko')
 

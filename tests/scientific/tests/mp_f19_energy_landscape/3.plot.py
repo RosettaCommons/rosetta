@@ -39,6 +39,18 @@ height = 6 * nrows
 plt.rc("font", size=20)
 plt.rcParams['figure.figsize'] = width, height #width, height
 
+# read cutoffs
+cutoffs = "cutoffs"
+protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
+cutoffs_zmin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
+cutoffs_anglemin = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $4}'" ).splitlines()
+
+cutoffs_zmin = map( float, cutoffs_zmin )
+cutoffs_anglemin = map( float, cutoffs_anglemin )
+
+cutoffs_zmin_dict.update( dict( zip ( protein, cutoffs_zmin )))
+cutoffs_anglemin_dict.update( dict( zip( protein, cutoffs_anglemin )))
+
 # go through energy landscapes
 for i in range( 0, len( energy_landscapes ) ):
 
@@ -81,9 +93,12 @@ for i in range( 0, len( energy_landscapes ) ):
 	im = ax.pcolormesh( X,Y,Z, cmap=cmap)
 	cbar = plt.colorbar(im)
 
-	# Calculate the minimum energy point
+	# Calculate and plot the minimum energy point from landscape as a white point
 	zmin, anglemin = energy_landscape_metrics.compute_minimum_energy_orientation( zcoords_arr, angles_arr, total_scores_arr )
 	plt.plot( anglemin, zmin, 'wo', markersize=12 )
+	
+	# Plot experimental values as red open squares
+	plt.plot( cutoffs_anglemin_dict[targets[i]], cutoffs_zmin_dict[targets[i]], 'sr', fillstyle='none', markeredgewidth=5, markersize=30 )
 	
 #save figure
 plt.tight_layout()
