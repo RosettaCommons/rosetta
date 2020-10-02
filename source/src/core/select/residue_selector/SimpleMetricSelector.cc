@@ -114,7 +114,7 @@ SimpleMetricSelector::apply( core::pose::Pose const & pose ) const {
 
 	std::map< Size, Real > metric_result = metric_->calculate( pose );
 
-	for ( auto const pair : metric_result ) {
+	for ( auto const & pair : metric_result ) {
 		Size seqpos = pair.first;
 		Real value = pair.second;
 
