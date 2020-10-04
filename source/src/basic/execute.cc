@@ -16,11 +16,15 @@
 
 #include <basic/execute.hh>
 
+
+#include <utility/string_util.hh>
+
 #include <basic/Tracer.hh>
 #include <utility/exit.hh>
 
-
 #include <iostream>
+
+#include <sys/wait.h>
 
 namespace basic {
 
@@ -31,28 +35,47 @@ static basic::Tracer TR("basic.execute");
 #define pclose _pclose
 #endif
 
-ExecutionResult execute(std::string const & message, std::string const & command_line, bool terminate_on_failure, bool silent)
+ExecutionResult execute(std::string const & message, std::string const & command, std::vector<std::string> const & args, bool terminate_on_failure, bool silent)
 {
-	ExecutionResult r;
+	if ( !silent )  TR << message << ' ' << command << ' ' << utility::to_string(args) << std::endl;  // TR.flush();
 
-	if ( !silent )  TR << message << ' ' << command_line << std::endl;  // TR.flush();
+	ExecutionResult r {1, ""};
 
-	FILE *pipe = popen( (command_line+ " 2>&1" ).c_str(), "r"); // we need to redirect std error in to std output so it will got captured by pipe...
+	int pipe_fd[2];
 
-	if ( pipe ) {
-		char buffer[256];
+	if ( pipe(pipe_fd) == -1 ) utility_exit_with_message("Error creating pipe...");
 
-		while ( !feof(pipe) ) {
-			if ( fgets(buffer, 256, pipe) != nullptr ) r.output += buffer;
-		}
+	pid_t pid = fork();
 
-		r.result = pclose(pipe);
-	} else {
-		r.result = 1;
-		r.output = "Could not open pipe!";
+	if ( pid ) { // parent
+		close(pipe_fd[1]); // parent does not write
+
+		int const buffer_size = 256;
+		char buffer[buffer_size];
+
+		while ( int count = read(pipe_fd[0], &buffer, sizeof(buffer)) ) r.output.append(buffer, count);
+
+		waitpid(-1, &r.result, 0);
+
+		close(pipe_fd[0]);
+	} else { // child
+		close(pipe_fd[0]); // child does not read
+
+		dup2(pipe_fd[1], 1); // redirecting stdout
+		dup2(pipe_fd[1], 2); // redirecting stderr
+
+		std::vector<char const *> c_args;
+		c_args.push_back(command.c_str()); // first argument should be program name
+		for ( auto const & s : args ) c_args.push_back(s.c_str());
+		c_args.push_back(nullptr);
+
+		//execvp(command.c_str(), static_cast<char * const *>( c_args.data() ) );
+		execvp(command.c_str(), (char * const *)c_args.data() );
+
+		utility_exit_with_message("ERROR: execvp failed, command: '" + command + "' args: " + utility::to_string(args) );
 	}
 
-	if ( terminate_on_failure && r.result ) utility_exit_with_message("basic.execute encounter error while runnning " + command_line+ '\n'+ r.output +"\nExiting...");
+	if ( terminate_on_failure && r.result ) utility_exit_with_message("basic.execute encounter error while runnning " + command + ' ' + utility::to_string(args) + '\n'+ r.output +"\nExiting...");
 	return r;
 }
 

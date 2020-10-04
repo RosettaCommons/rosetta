@@ -1,2 +1,5 @@
 # Benchmark scripts
 /tests/benchmark/ @lyskov
+
+# ROSIE scripts
+/scripts/rosie/ @lyskov

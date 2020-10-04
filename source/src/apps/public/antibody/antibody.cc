@@ -67,6 +67,7 @@
 
 #include <utility/file/file_sys_util.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/file/file_sys_util.hh>
 
 #include <devel/init.hh>
 
@@ -174,8 +175,11 @@ int antibody_main()
 	for (auto & file_name : file_names) {
 		// check for bz2 and not already unzipped
 		if ( file::file_extension( file_name ) == "bz2" && ! file::file_exists( full_ab_db_path + file::file_basename( file_name ) ) ) {
-				// bzipped files, unzip
-				basic::execute("Unzipping " + file_name ,"cd " + full_ab_db_path + " && bunzip2 -k " + file_name);
+			// bzipped files, unzip
+			auto d = utility::file::cwd();
+			utility::file::change_working_directory(full_ab_db_path);
+			basic::execute("Unzipping " + file_name , "bunzip2", {"-k", "file_name"} );
+			utility::file::change_working_directory(d);
 		}
 	}
 	TR << TR.Magenta << "Done unzipping." << TR.Reset << std::endl;

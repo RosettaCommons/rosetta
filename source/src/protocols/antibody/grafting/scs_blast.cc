@@ -349,14 +349,15 @@ void SCS_BlastPlus::select_template(
 
 	// wordsize, e_value, matrix = (2, 0.00001, 'BLOSUM62') if k.count('FR') or k.count('heavy') or k.count('light') else (2, 2000, 'PAM30')
 	//string extra = (j.name.find("fr") < string::npos  or  j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
-	string extra = (j.name.find("fr") < string::npos  or  \
-					j.name.find("orientation") < string::npos or \
-					j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? "-evalue 0.00001 -matrix BLOSUM62" : "-evalue 2000 -matrix PAM30";
+	std::vector<string> extra = (j.name.find("fr") < string::npos  or  \
+								 j.name.find("orientation") < string::npos or \
+								 j.name.find("heavy") < string::npos  or  j.name.find("light") < string::npos) ? std::vector<string>{"-evalue", "0.00001", "-matrix", "BLOSUM62"} : std::vector<string>{"-evalue", "2000", "-matrix", "PAM30"};
 
 	//string command_line ("cd "+working_dir+" && "+blast+" -db "+blast_database+'.'+db_suffix+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
-	string command_line (blastp_+" -db "+db_to_query+" -query "+fasta_file_name+" -out "+align_file_name+" -word_size 2 -outfmt 7 -max_target_seqs 1024 "+extra);
+	std::vector<string> command_line_arg = {"-db", db_to_query, "-query", fasta_file_name, "-out", align_file_name, "-word_size", "2", "-outfmt", "7", "-max_target_seqs", "1024"};
+	command_line_arg.insert(command_line_arg.end(), extra.begin(), extra.end());
 
-	basic::execute("Running blast+ for " + j.name + "...", command_line);
+	basic::execute("Running blast+ for " + j.name + "...", blastp_, command_line_arg);
 
 	//j.results.name = j.name;
 	//j.results.sequence = j.sequence;

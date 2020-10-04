@@ -10,6 +10,9 @@
 ########### KEEP DIRECTORIES AND FILES IN ALPHABETICAL ORDER ###########
 
 sources = {
+	"" : [
+		"execute",
+	],
 	"options" : [
 		"CmdlineOptionsOrderTests",
 		"options_system",

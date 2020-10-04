@@ -17,6 +17,7 @@
 #define INCLUDED_basic_execute_hh
 
 #include <string>
+#include <vector>
 
 namespace basic {
 
@@ -28,7 +29,7 @@ struct ExecutionResult {
 };
 
 /// @brief excute provided command_line though shell and return exit_code and output
-ExecutionResult execute(std::string const & message, std::string const & command_line, bool terminate_on_failure=true, bool silent=false);
+ExecutionResult execute(std::string const & message, std::string const & command, std::vector<std::string> const & args, bool terminate_on_failure=true, bool silent=false);
 
 
 } // namespace basic

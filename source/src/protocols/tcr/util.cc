@@ -42,6 +42,9 @@
 #include <utility/file/file_sys_util.hh>
 #include <fstream>
 
+#include <basic/options/keys/antibody.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 static basic::Tracer TR( "protocols.tcr.util" );
 /// @brief MINSCORE const value with large negative number
 /// @details used for checking and ignoring templates
@@ -359,8 +362,8 @@ void assign_CDRs_using_anarci( std::string const &seq, std::string const &anarci
 		utility_exit_with_message("ERROR: Your compiler does not have full support for C++11 regex.");
 	}
 	std::regex base_regex("#[/|].*[/|](.*)[/|].*[/|].*[/|]([[:d:]]+)[/|]([[:d:]]+)[/|]");
-	std::string anarci_command (anarci_path+" -r tr -s a -i "+seq+" -o anarci.out");
-	basic::execute("Running ANARCI... ", anarci_command);
+	std::vector<std::string> anarci_command {"-r", "tr", "-s", "a", "-i", seq, "-o", "anarci.out"};
+	basic::execute("Running ANARCI... ", anarci_path, anarci_command);
 	std::ifstream myfile ("anarci.out");
 	int count = 0;
 	if ( myfile.is_open() ) {
@@ -407,9 +410,13 @@ void assign_CDRs_using_anarci( std::string const &seq, std::string const &anarci
 void run_blast( std::string const &query, std::string const &blast_db) {
 	std::string out_file = query+".blastp.out";
 	std::string query_file = query;
-	std::string blastp_exec = "blastp";
-	std::string blast_command (blastp_exec+" -db "+blast_db+" -query "+query_file+" -out "+out_file+" -word_size 7 -outfmt 7 -max_target_seqs 1024 -evalue 0.00001 -matrix BLOSUM62");
-	basic::execute("Running BLASTP... ", blast_command);
+
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+	std::string blastp_exec = option[OptionKeys::antibody::blastp](); //"blastp";
+
+	std::vector<std::string> blast_command {"-db", blast_db, "-query", query_file, "-out", out_file, "-word_size", "7", "-outfmt", "7", "-max_target_seqs", "1024", "-evalue", "0.00001", "-matrix", "BLOSUM62"};
+	basic::execute("Running BLASTP... ", blastp_exec, blast_command);
 	return;
 }
 
@@ -484,4 +491,3 @@ utility::vector1< std::pair<core::Size, core::Size> > get_cdr_pdb_pos_from_input
 } //tcr
 
 #endif // __ANTIBODY_GRAFTING__
-
