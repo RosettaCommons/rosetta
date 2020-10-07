@@ -1917,10 +1917,9 @@ public:
 						assert( &*rotamer == &*rotsets.rotamer( irot_at_position[ seqpos ] ) );
 
 						// Do a repeatable random to get commit status
-						double temp = std::sqrt( repeat * letter1 * seqpos );
-						double deci = temp - (long)temp;
-						bool accept = deci > 0.5;
-						accept = true;
+						//double temp = std::sqrt( repeat * letter1 * seqpos );
+						//double deci = temp - (long)temp;
+						bool accept = true; //deci > 0.5;
 
 						pose.replace_residue( seqpos, *rotamer, false );
 						res_vector[seqpos] = rotamer;
@@ -1936,7 +1935,7 @@ public:
 						}
 
 
-						Real score = helper->calculate_energy( res_vector, seqpos );
+						helper->calculate_energy( res_vector, seqpos );
 
 						// for ( Size i = 1; i<= pose.size(); i++ ) {
 						//     for ( Size j = 0; j< helper->dirty_sasa_[i].size(); j++ ) {
@@ -1953,7 +1952,7 @@ public:
 						assert_saps( pose, res_vector, helper, true );
 						// std::cout << "new after" << std::endl;
 
-						score = helper->current_score_;
+						Real score = helper->current_score_;
 
 
 						// for ( Size i = 1; i <= pose.size(); i++ ) {
@@ -2532,10 +2531,9 @@ public:
 						assert( &*rotamer == &*rotsets.rotamer( irot_at_position[ seqpos ] ) );
 
 						// Do a repeatable random to get commit status
-						double temp = std::sqrt( repeat * letter1 * seqpos );
-						double deci = temp - (long)temp;
-						bool accept = deci > 0.5;
-						accept = true;
+						//double temp = std::sqrt( repeat * letter1 * seqpos );
+						//double deci = temp - (long)temp;
+						bool accept = true; //deci > 0.5;
 
 						pose.replace_residue( seqpos, *rotamer, false );
 						res_vector[seqpos] = rotamer;
@@ -2550,7 +2548,7 @@ public:
 							}
 						}
 
-						Real score = helper->calculate_energy( res_vector, seqpos );
+						helper->calculate_energy( res_vector, seqpos );
 
 						// for ( Size i = 1; i<= pose.size(); i++ ) {
 						//     for ( Size j = 0; j< helper->dirty_sasa_[i].size(); j++ ) {
@@ -2563,7 +2561,7 @@ public:
 
 						// std::cout << "new after" << std::endl;
 
-						score = helper->current_score_;
+						Real score = helper->current_score_;
 
 
 						// for ( Size i = 1; i <= pose.size(); i++ ) {
