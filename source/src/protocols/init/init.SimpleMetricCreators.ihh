@@ -18,6 +18,8 @@
 #include <core/simple_metrics/test_classes_creators.hh>
 
 #include <core/simple_metrics/metrics/CalculatorMetricCreator.hh>
+#include <core/pack/guidance_scoreterms/sap/SapScoreMetricCreator.hh>
+#include <core/pack/guidance_scoreterms/sap/PerResidueSapScoreMetricCreator.hh>
 
 //Simple Metrics in Protocols should go into:
 // protocols/analysis/simple_metrics

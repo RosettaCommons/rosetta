@@ -57,7 +57,15 @@ PerResidueRealMetric::PerResidueRealMetric( PerResidueRealMetric const & src ):
 	output_as_pdb_nums_( src.output_as_pdb_nums_ )
 {
 	if ( src.selector_ ) selector_ = src.selector_->clone();
+}
 
+PerResidueRealMetric &
+PerResidueRealMetric::operator=( PerResidueRealMetric const & ot ) {
+	SimpleMetric::operator=( ot );
+	if ( ot.selector_ ) selector_ = ot.selector_->clone();
+	output_as_pdb_nums_ = ot.output_as_pdb_nums_;
+
+	return *this;
 }
 
 utility::vector1< std::string >

@@ -536,6 +536,8 @@ static MoverRegistrator< simple_moves::AddJobPairDataCreator > reg_AddJobPairDat
 static MoverRegistrator< simple_moves::AddPDBInfoMoverCreator > reg_AddPDBInfoMoverCreator;
 static MoverRegistrator< simple_moves::AddResidueCouplingConstraintCreator> reg_AddResidueCouplingConstraintCreator;
 static MoverRegistrator< simple_moves::AddResidueLabelMoverCreator > reg_AddResidueLabelMoverCreator;
+static MoverRegistrator< simple_moves::AddSapConstraintMoverCreator > reg_AddSapConstraintMoverCreator;
+static MoverRegistrator< simple_moves::AddSapMathConstraintMoverCreator > reg_AddSapMathConstraintMoverCreator;
 static MoverRegistrator< simple_moves::AlignChainMoverCreator > reg_AlignChainCreator;
 static MoverRegistrator< simple_moves::BBGaussianMoverCreator > reg_BBGaussianMoverCreator;
 static MoverRegistrator< simple_moves::ChangeAndResetFoldTreeMoverCreator > reg_ChangeAndResetFoldTreeMoverCreator;

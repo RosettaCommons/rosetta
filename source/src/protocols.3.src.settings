@@ -657,6 +657,8 @@ sources = {
 		"AddResidueCouplingConstraint",		
 		"AddResidueLabelMover",
 		"AddPDBInfoMover",
+		"AddSapConstraintMover",
+		"AddSapMathConstraintMover",
 		"ReportXYZ",
 		"SaveSequenceToCommentsMover",
 		"WriteFiltersToPose",

@@ -95,6 +95,17 @@ sources = {
 	"core/pack/guidance_scoreterms/hbnet_energy": [
 		"HBNetEnergy",
 	],
+	"core/pack/guidance_scoreterms/sap" : [
+		   "SapConstraint",
+		   "SapConstraintEnergy",
+		   "SapConstraintHelper",
+		   "SapConstraintOptions",
+		   "SapMathConstraint",
+		   "SapDatabase",
+		   "SapScoreMetric",
+		   "PerResidueSapScoreMetric",
+		   "util",
+	],
 	"core/pack/guidance_scoreterms/voids_penalty_energy": [
 		"VoidsPenaltyEnergy",
 		"VoidsPenaltyVoxelGrid",
@@ -196,7 +207,7 @@ sources = {
 		"RotamerSampleOptions",
 		"TaskFactory",
 		"util",
-        "xml_util",
+		"xml_util",
 	],
 	"core/pack/task/rna": [
 		"RNA_ResidueLevelTask",

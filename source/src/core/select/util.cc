@@ -19,7 +19,9 @@
 
 #include <basic/Tracer.hh>
 
+#include <core/select/residue_selector/NotResidueSelector.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/SymmetricalResidueSelector.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/conformation/Residue.hh>
@@ -35,10 +37,10 @@
 #include <core/chemical/AtomType.hh>
 
 
-
 #include <numeric/xyzVector.hh>
 
 #include <utility/string_util.hh>
+#include <utility/pointer/memory.hh>
 
 static basic::Tracer TR( "core.select.util" );
 
@@ -83,12 +85,16 @@ get_subset_from_residues( utility::vector1< core::Size > const & residues, core:
 	return subset;
 }
 
-core::select::residue_selector::ResidueIndexSelectorOP
+core::select::residue_selector::ResidueSelectorOP
 get_residue_selector_from_subset(
 	core::select::residue_selector::ResidueSubset subset) {
 
 	utility::vector1<Size> seq_pos = get_residues_from_subset( subset );
 	std::string res_string = utility::join( seq_pos, "," );
+
+	if ( res_string.empty() ) {
+		return utility::pointer::make_shared<residue_selector::NotResidueSelector>( utility::pointer::make_shared<residue_selector::TrueResidueSelector>() );
+	}
 
 	return utility::pointer::make_shared< residue_selector::ResidueIndexSelector >( res_string );
 }

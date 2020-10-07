@@ -668,6 +668,8 @@ enum ScoreType {
 	netcharge, //A penalty for deviating from a desired net charge in a pose or region selected by a ResidueSelector.
 	voids_penalty, //A packer-centric penalty for solutions in which the sum of the buried rotamer volumes differs greatly from the total buried volume to fill.
 
+	sap_constraint,
+
 	// dna env/pair potential
 	dna_env,
 	dna_pair,

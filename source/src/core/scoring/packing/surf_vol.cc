@@ -53,6 +53,12 @@ namespace core {
 namespace scoring {
 namespace packing {
 
+bool
+surf_vol_available() {
+	if ( ! basic::options::option[ basic::options::OptionKeys::holes::dalphaball ].user() ) return false;
+	return basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]() != std::string("");
+}
+
 
 Real
 get_surf_tot(

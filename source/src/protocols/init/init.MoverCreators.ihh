@@ -519,6 +519,8 @@
 #include <protocols/simple_moves/AddPDBInfoMoverCreator.hh>
 #include <protocols/simple_moves/AddResidueCouplingConstraintCreator.hh>
 #include <protocols/simple_moves/AddResidueLabelMoverCreator.hh>
+#include <protocols/simple_moves/AddSapConstraintMoverCreator.hh>
+#include <protocols/simple_moves/AddSapMathConstraintMoverCreator.hh>
 #include <protocols/simple_moves/AlignChainMoverCreator.hh>
 #include <protocols/simple_moves/BackboneMoverCreator.hh>
 #include <protocols/simple_moves/BBGaussianMoverCreator.hh>

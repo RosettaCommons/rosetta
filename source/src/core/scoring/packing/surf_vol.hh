@@ -46,6 +46,9 @@ struct SurfVolDeriv {
 	core::id::AtomID_Map< numeric::xyzVector<core::Real> > dvol;
 };
 
+bool
+surf_vol_available();
+
 Real
 get_surf_tot(
 	pose::Pose const & pose,

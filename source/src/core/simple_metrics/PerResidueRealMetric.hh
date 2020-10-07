@@ -61,6 +61,8 @@ public: // constructors / destructors
 
 	PerResidueRealMetric( PerResidueRealMetric const & other );
 
+	PerResidueRealMetric & operator=( PerResidueRealMetric const & );
+
 	/// @brief Calculate the metric and add it to the pose as a score.
 	///           labeled as prefix+metric+suffix.
 	///

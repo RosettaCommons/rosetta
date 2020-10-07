@@ -63,6 +63,8 @@ public:
 
 	SimpleMetric( SimpleMetric const & other );
 
+	SimpleMetric & operator=( SimpleMetric const & );
+
 	//Every SimpleMetric should implement a calculate method.
 	// Due to the use of a factory and owning pointers, this is not added to the abstract base class.  But please, be aware.
 	// Currently, this code here does nothing useful.

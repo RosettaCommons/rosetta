@@ -42,9 +42,12 @@ RealMetric::~RealMetric() = default;
 
 RealMetric::RealMetric( RealMetric const & src ):
 	SimpleMetric( src )
-{
+{}
 
-
+RealMetric &
+RealMetric::operator=( RealMetric const & ot ) {
+	SimpleMetric::operator=( ot );
+	return *this;
 }
 
 void

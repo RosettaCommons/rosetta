@@ -95,6 +95,7 @@
 #include <core/energy_methods/SecondaryStructureEnergyCreator.hh>
 #include <core/energy_methods/SugarBackboneEnergyCreator.hh>
 #include <core/energy_methods/DFIRE_EnergyCreator.hh>
+#include <core/pack/guidance_scoreterms/sap/SapConstraintEnergyCreator.hh>
 #include <core/scoring/vdwaals/VDW_EnergyCreator.hh>
 #include <core/energy_methods/GoapEnergyCreator.hh>
 #include <core/energy_methods/RingClosureEnergyCreator.hh>
@@ -485,6 +486,7 @@ static EnergyMethodRegistrator< scoring::methods::RamachandranEnergyCreator > Ra
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyCreator > ReferenceEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::ReferenceEnergyNoncanonicalCreator > ReferenceEnergyNoncanonicalCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::SecondaryStructureEnergyCreator > SecondaryStructureEnergyCreator_registrator;
+static EnergyMethodRegistrator< pack::guidance_scoreterms::sap::SapConstraintEnergyCreator > SapConstraintEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::dfire::DFIRE_EnergyCreator > DFIRE_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::vdwaals::VDW_EnergyCreator > VDW_EnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::methods::GoapEnergyCreator > GoapEnergyCreator_registrator;

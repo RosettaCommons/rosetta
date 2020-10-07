@@ -51,6 +51,8 @@ public: // constructors / destructors
 
 	RealMetric( RealMetric const & other );
 
+	RealMetric & operator=( RealMetric const & );
+
 	/// @brief Calculate the metric and add it to the pose as a score.
 	///           labeled as prefix+metric+suffix.
 	///

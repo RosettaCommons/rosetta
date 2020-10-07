@@ -30,6 +30,10 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::RMSDMetricCreator
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SasaMetricCreator                   > reg_SasaMetricCreator;
 
+static SimpleMetricRegistrator< core::pack::guidance_scoreterms::sap::SapScoreMetricCreator        > reg_SapScoreMetricCreator;
+
+static SimpleMetricRegistrator< core::pack::guidance_scoreterms::sap::PerResidueSapScoreMetricCreator > reg_PerResidueSapScoreMetricCreator;
+
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SecondaryStructureMetricCreator     > reg_SecondaryStructureMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::metrics::SelectedResiduesPyMOLMetricCreator  > reg_SelectedResiduesPyMOLMetricCreator;

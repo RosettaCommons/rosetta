@@ -217,6 +217,9 @@ sources = {
 	"pack/guidance_scoreterms/hbnet_energy" : [
 		"HBNetEnergyTests",
 	],
+	"pack/guidance_scoreterms/sap" : [
+		"SapConstraintEnergy",
+	],
 	"pack/guidance_scoreterms/voids_penalty_energy" : [
 		"VoidsPenaltyEnergyTests",
 		"VoidsPenaltyEnergyTests_symm",

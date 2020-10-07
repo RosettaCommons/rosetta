@@ -47,9 +47,16 @@ SimpleMetric::~SimpleMetric(){}
 
 SimpleMetric::SimpleMetric( SimpleMetric const & src ):
 	utility::VirtualBase(),
-	simple_metric_type_(src.simple_metric_type_)
-{
+	simple_metric_type_(src.simple_metric_type_),
+	custom_type_(src.custom_type_)
+{}
 
+SimpleMetric &
+SimpleMetric::operator=( SimpleMetric const & ot ) {
+	utility::VirtualBase::operator=( ot );
+	simple_metric_type_ = ot.simple_metric_type_;
+	custom_type_ = ot.custom_type_;
+	return *this;
 }
 
 void

@@ -42,7 +42,7 @@ get_subset_from_residues( utility::vector1< core::Size > const & selection, core
 /// @detail Not only does this allow one to go from a residue subset back to a selector,
 ///          but by applying a selector to a pose and using this to go back to a selector,
 ///          one can turn context-dependent residue selectors into context-independent residue selectors
-core::select::residue_selector::ResidueIndexSelectorOP
+core::select::residue_selector::ResidueSelectorOP
 get_residue_selector_from_subset(
 	core::select::residue_selector::ResidueSubset subset );
 
