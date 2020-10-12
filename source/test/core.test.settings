@@ -19,6 +19,7 @@ sources = {
 		"automorphism",
 		"bond_support",
 		"CacheableResidueTypeSetsTests",
+		"CtermAmidationTests",
 		"Elements",
 		#"ElementSet",
 		#"IdealBondLengthSet",
