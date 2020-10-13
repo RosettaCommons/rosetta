@@ -107,10 +107,9 @@ PerResidueStringMetric::cached_calculate(pose::Pose const & pose, bool use_cache
 }
 
 void
-PerResidueStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
+PerResidueStringMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 	std::map< core::Size, std::string > const value = calculate( pose );
 
-	std::string out_tag = prefix  + get_final_sm_type() + suffix;
 	MetricKey mk;
 
 	std::map< core::Size, std::string> stored_value;
@@ -120,21 +119,6 @@ PerResidueStringMetric::apply( pose::Pose & pose, std::string prefix, std::strin
 
 	get_sm_data(pose)->set_value(mk, pose, out_tag, value, output_as_pdb_nums_);
 
-	/*
-	std::string strip=" ";
-	for ( auto value_pair : values ) {
-
-	std::string out_number = utility::to_string(value_pair.first);
-
-	if ( output_as_pdb_nums_ ) {
-	out_number = utility::remove_from_string(pose.pdb_info()->pose2pdb(value_pair.first), strip);
-	}
-
-	std::string const out_tag = prefix + get_final_sm_type() + "_"+out_number + suffix;
-	//std::cout << out_tag << std::endl;
-	core::pose::setPoseExtraScore( pose, out_tag, value_pair.second);
-	}
-	*/
 }
 
 } //namespace simple_metrics

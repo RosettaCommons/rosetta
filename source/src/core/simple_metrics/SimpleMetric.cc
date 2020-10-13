@@ -60,6 +60,17 @@ SimpleMetric::operator=( SimpleMetric const & ot ) {
 }
 
 void
+SimpleMetric::apply(
+	pose::Pose & pose,
+	std::string const & prefix,
+	std::string const & suffix,
+	bool override_existing_data
+) const {
+	apply( prefix + get_final_sm_type() + suffix, pose, override_existing_data );
+}
+
+
+void
 SimpleMetric::set_custom_type(std::string const & custom_type){
 	custom_type_ = custom_type;
 }

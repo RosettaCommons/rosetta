@@ -88,11 +88,11 @@ HBP_FinalFullatomRefinementMoveGenerator::generate_monte_carlo_move(
 
 	if ( find_disulfides_ ) {
 		TryDisulfPermutationsOP find_disulf( utility::pointer::make_shared< TryDisulfPermutations >() );
-		pp->add_mover_filter_pair( find_disulf, "Find Disulfides", nullptr, false );
+		pp->add_step( find_disulf, "Find Disulfides", nullptr, false );
 	}
 
 	FastRelaxOP frlx( utility::pointer::make_shared< FastRelax >( sfxn_, fast_relax_rounds_ ) );
-	pp->add_mover_filter_pair( frlx, "Fullatom FastRelax", nullptr, false );
+	pp->add_step( frlx, "Fullatom FastRelax", nullptr, false );
 
 	return pp;
 }

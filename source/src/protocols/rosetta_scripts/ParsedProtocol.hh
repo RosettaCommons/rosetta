@@ -23,7 +23,8 @@
 #include <utility>
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <protocols/filters/Filter.hh>
+#include <protocols/filters/Filter.fwd.hh>
+#include <core/simple_metrics/SimpleMetric.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/exit.hh>
@@ -50,11 +51,13 @@ public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 
-	struct MoverFilterPair {
-		MoverFilterPair (
+	/// @brief Represents a step in the ParsedProtocol
+	/// Note that one or more of mover/filter/metrics may be null/empty.
+	struct ParsedProtocolStep {
+		ParsedProtocolStep (
 			moves::MoverOP mover_in,
 			std::string const & mover_name,
-			filters::FilterOP filter_in,
+			filters::FilterOP filter_in = nullptr,
 			bool report_filter_at_end = false
 		) :
 			mover( mover_in ),
@@ -66,12 +69,14 @@ public:
 		protocols::moves::MoverOP mover;
 		std::string mover_user_name;
 		protocols::filters::FilterOP filter;
+		utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics;
+		utility::vector1< std::string > metric_labels;
 		bool report_filter_at_end_;
 	};
 
-	typedef utility::vector1< MoverFilterPair > MoverFilterVector;
-	typedef MoverFilterVector::iterator iterator;
-	typedef MoverFilterVector::const_iterator const_iterator;
+	typedef utility::vector1< ParsedProtocolStep > ParsedProtocolStepVector;
+	typedef ParsedProtocolStepVector::iterator iterator;
+	typedef ParsedProtocolStepVector::const_iterator const_iterator;
 
 public:
 	ParsedProtocol();
@@ -90,22 +95,28 @@ public:
 
 	// void report_all_sm( std::map< std::string, core::Real > & score_map, Pose const & pose ) const; // ditto, but outputs filter values into score_map object
 	protocols::moves::MoverCOP get_mover( core::Size const mover_number ) const {
-		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
-		return( movers_[ mover_number ].mover );
+		runtime_assert( steps_.size() >= mover_number && mover_number > 0 );
+		return( steps_[ mover_number ].mover );
 	}
-	MoverFilterPair get_mover_filter_pair( core::Size const mover_number ) const {
-		runtime_assert( movers_.size() >= mover_number && mover_number > 0 );
-		return( movers_[ mover_number ] );
+	ParsedProtocolStep get_step( core::Size const step_number ) const {
+		runtime_assert( steps_.size() >= step_number && step_number > 0 );
+		return( steps_[ step_number ] );
 	}
 
 	/// @brief Add a mover-filter pair.
 	/// @details Indended for use OUTSIDE of a RosettaScripts context.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void add_mover_filter_pair(
+	void add_step(
 		protocols::moves::MoverOP mover,
 		std::string const &mover_name,
 		protocols::filters::FilterOP filter,
 		bool const report_filter_at_end=false
+	);
+
+	/// @brief Add a step to the protocol
+	/// @details Indended for use OUTSIDE of a RosettaScripts context.
+	void add_step(
+		ParsedProtocolStep const & step
 	);
 
 	void set_resid( core::Size const resid ) override;
@@ -116,7 +127,7 @@ public:
 	protocols::moves::MoverOP fresh_instance() const override { return utility::pointer::make_shared< ParsedProtocol >(); }
 	void parse_my_tag( utility::tag::TagCOP, basic::datacache::DataMap & ) override; // this is defined as public here, b/c I need to circumvent the name-check, since this is called both by the Movers section (as ParsedProtocol) and the PROTOCOLS section.
 
-	void clear() { movers_.clear(); }
+	void clear() { steps_.clear(); }
 	std::string mode() const{ return mode_; }
 	iterator begin();
 	const_iterator begin() const;
@@ -124,7 +135,7 @@ public:
 	const_iterator end() const;
 	void apply_probability( utility::vector1< core::Real > const & a );
 	utility::vector1< core::Real > apply_probability();
-	core::Size size() { return movers_.size(); }
+	core::Size size() { return steps_.size(); }
 	core::Size last_attempted_mover_idx() { return last_attempted_mover_idx_; }
 	void last_attempted_mover_idx( core::Size const s ){ last_attempted_mover_idx_ = s;}
 	bool report_call_order() const { return report_call_order_; }
@@ -161,26 +172,35 @@ public:
 	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
 
-	core::Size n_filters_passed_in_previous_run() const {
-		return n_filters_passed_in_previous_run_;
+	core::Size n_steps_passed_in_previous_run() const {
+		return n_steps_passed_in_previous_run_;
 	}
 
 private:
 	void finish_protocol(Pose & pose);
 
-	/// @brief apply the mover of the pair
-	void apply_mover(Pose & pose, MoverFilterPair const & mover_pair);
+	/// @brief apply the components of the step
+	/// @details Returns false on failure
+	bool apply_step(Pose & pose, ParsedProtocolStep const & step, bool skip_mover = false);
 
-	/// @brief apply the filter of the pair
-	bool apply_filter(Pose & pose, MoverFilterPair const & mover_pair);
-	void sequence_protocol(Pose & pose, MoverFilterVector::const_iterator mover_it_in);
+	/// @brief apply the mover of the step
+	void apply_mover(Pose & pose, ParsedProtocolStep const & step);
+
+	/// @brief apply the filter of the step
+	/// @details Returns false on failure
+	bool apply_filter(Pose & pose, ParsedProtocolStep const & step);
+
+	/// @brief apply the metric of the step
+	void apply_metrics(Pose & pose, ParsedProtocolStep const & step);
+
+	void sequence_protocol(Pose & pose, ParsedProtocolStepVector::const_iterator mover_it_in);
 
 	void random_order_protocol(Pose & pose);
 	void random_single_protocol(Pose & pose);
 
 private:
 
-	MoverFilterVector movers_;
+	ParsedProtocolStepVector steps_;
 	core::scoring::ScoreFunctionCOP final_scorefxn_ = nullptr;
 	std::string mode_;
 	utility::vector1< core::Real > apply_probability_; // if mode_="single_random", assigns a probability of execution to each mover/filter pair. Defaults to equal probabilities to all.
@@ -190,7 +210,7 @@ private:
 	protocols::moves::MoverOP last_mover_;
 	bool resume_support_;
 
-	core::Size n_filters_passed_in_previous_run_ = 0;
+	core::Size n_steps_passed_in_previous_run_ = 0;
 };
 
 } // rosetta_scripts

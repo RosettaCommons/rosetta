@@ -35,6 +35,7 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 #include <protocols/rosetta_scripts/util.hh>
+#include <protocols/filters/Filter.hh>
 
 // C/C++ headers
 #include <fstream>

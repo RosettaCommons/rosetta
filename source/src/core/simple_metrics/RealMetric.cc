@@ -51,10 +51,7 @@ RealMetric::operator=( RealMetric const & ot ) {
 }
 
 void
-RealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
-
-
-	std::string out_tag = prefix + get_final_sm_type() + suffix;
+RealMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 
 	core::Real value = calculate( pose );
 	MetricKey mk;

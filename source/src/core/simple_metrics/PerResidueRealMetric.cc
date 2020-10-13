@@ -131,10 +131,9 @@ PerResidueRealMetric::cached_calculate(
 }
 
 void
-PerResidueRealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
+PerResidueRealMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 	std::map< core::Size, core::Real > const values = calculate( pose ); //Index to value map
 
-	std::string out_tag = prefix  + get_final_sm_type() + suffix;
 	MetricKey mk;
 
 	std::map< core::Size, core::Real > stored_value;
@@ -145,27 +144,6 @@ PerResidueRealMetric::apply( pose::Pose & pose, std::string prefix, std::string 
 
 	get_sm_data(pose)->set_value(mk, pose, out_tag, values, output_as_pdb_nums_);
 
-	/*
-	//Output sum as well.
-	core::Real sum = 0;
-	std::string strip=" ";
-	for ( auto value_pair : values ) {
-
-	std::string out_number = utility::to_string(value_pair.first);
-
-	if ( output_as_pdb_nums_ ) {
-
-	out_number = utility::remove_from_string(pose.pdb_info()->pose2pdb(value_pair.first), strip);
-	}
-
-	sum += value_pair.second;
-	std::string const out_tag = prefix  + get_final_sm_type() + "_"+ out_number + suffix;
-	core::pose::setPoseExtraScore( pose, out_tag, value_pair.second);
-	}
-
-	std::string const out_tag = prefix + "SUM" + "_" + get_final_sm_type() + suffix;
-	core::pose::setPoseExtraScore(pose, out_tag, sum);
-	*/
 }
 
 

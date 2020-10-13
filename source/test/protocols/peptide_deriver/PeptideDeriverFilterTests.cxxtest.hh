@@ -169,9 +169,9 @@ public:
 			// NOTE : the following assumes that RosettaScriptParser::parse_protocol_tag() returns a pointer ParsedProtocol instance, even though the interface is to a MoverOP.
 			protocols::rosetta_scripts::ParsedProtocolOP protocol(utility::pointer::dynamic_pointer_cast<protocols::rosetta_scripts::ParsedProtocol> (parser.parse_protocol_tag(tag, basic::options::option)) );
 			TS_ASSERT_EQUALS(protocol->size(), 1);
-			protocols::rosetta_scripts::ParsedProtocol::MoverFilterPair pair = protocol->get_mover_filter_pair(1);
-			TS_ASSERT_EQUALS(pair.filter->get_type(), "PeptideDeriverFilter");
-			protocols::peptide_deriver::PeptideDeriverFilter const & filter( dynamic_cast<protocols::peptide_deriver::PeptideDeriverFilter const &> (*pair.filter) );
+			protocols::rosetta_scripts::ParsedProtocol::ParsedProtocolStep step = protocol->get_step(1);
+			TS_ASSERT_EQUALS(step.filter->get_type(), "PeptideDeriverFilter");
+			protocols::peptide_deriver::PeptideDeriverFilter const & filter( dynamic_cast<protocols::peptide_deriver::PeptideDeriverFilter const &> (*step.filter) );
 
 			TS_ASSERT_EQUALS(filter.get_is_skip_zero_isc(), false);
 			TS_ASSERT_EQUALS(filter.get_pep_lengths().size(), 2);

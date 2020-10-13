@@ -225,14 +225,14 @@ HBP_HelixCoilMoveGenerator::add_helix_update_moves(
 	// Set torsions for helix positions
 	if ( ids.size() != 0 ) {
 		TorsionSetMoverOP torsset( utility::pointer::make_shared< TorsionSetMover >(ids, values) );
-		protocol.add_mover_filter_pair( torsset, "Update_Helices", nullptr, false);
+		protocol.add_step( torsset, "Update_Helices", nullptr, false);
 	}
 
 	// Randomize positions that used to be helical, but have frayed:
 	if ( at_least_one_frayed_position ) {
 		RandomizeBBByRamaPreProOP randomize( utility::pointer::make_shared< RandomizeBBByRamaPrePro >() );
 		randomize->set_residue_selector(selector);
-		protocol.add_mover_filter_pair( randomize, "Randomize_Frayed_Positions", nullptr, false );
+		protocol.add_step( randomize, "Randomize_Frayed_Positions", nullptr, false );
 	}
 
 	if ( TR.visible() ) { TR << "Helix pattern: " << helix_residues.str() << std::endl; }
@@ -254,7 +254,7 @@ HBP_HelixCoilMoveGenerator::add_nonhelix_small_moves(
 	protocols::simple_moves::SmallMoverOP smallmover( utility::pointer::make_shared< protocols::simple_moves::SmallMover >( movemap, 5.0, 500 ) );
 	smallmover->scorefxn( ramaprepro_sfxn_ );
 	smallmover->angle_max( 15 );
-	protocol.add_mover_filter_pair( smallmover, "Small", nullptr, false );
+	protocol.add_step( smallmover, "Small", nullptr, false );
 }
 
 

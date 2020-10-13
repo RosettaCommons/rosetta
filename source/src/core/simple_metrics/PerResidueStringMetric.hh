@@ -57,19 +57,20 @@ public: // constructors / destructors
 
 	PerResidueStringMetric( PerResidueStringMetric const & other );
 
+	using SimpleMetric::apply; // Add back the base class implementation
+
 	/// @brief Calculate the metric and add it to the pose as a score.
-	///           labeled as prefix+calc_name+"_"+metric+suffix.
+	///           labeled as out_label.
 	///           calc_name is the individual component of the composite values calculated here
 	///
 	/// @details Score is added to the SimpleMetricData cache in the pose.
-	///            A ReferencePose is created with prefix+final_sm_type+suffix as a name for further access.
+	///            A ReferencePose is created with out_label as a name for further access.
 	///            Data is added to the final score file.
 	///
 	void
 	apply(
+		std::string const & out_label,
 		pose::Pose & pose,
-		std::string prefix="",
-		std::string suffix="",
 		bool override_existing_data=false) const override;
 
 	///@brief Calculate the metric.

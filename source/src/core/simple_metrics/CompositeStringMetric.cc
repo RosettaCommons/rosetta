@@ -67,9 +67,8 @@ CompositeStringMetric::cached_calculate(pose::Pose const & pose, bool use_cache,
 }
 
 void
-CompositeStringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
+CompositeStringMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 
-	std::string out_tag = prefix + get_final_sm_type() + suffix;
 	std::map< std::string, std::string > values = calculate( pose );
 	MetricKey mk;
 	std::map< std::string, std::string > stored_value;
@@ -80,10 +79,6 @@ CompositeStringMetric::apply( pose::Pose & pose, std::string prefix, std::string
 
 	get_sm_data(pose)->set_value( mk, out_tag, values );
 
-	//for ( auto value_pair : values ) {
-	// std::string out_tag = prefix + value_pair.first + "_" + get_final_sm_type() + suffix;
-	// core::pose::setPoseExtraScore( pose, out_tag, value_pair.second);
-	//}
 }
 
 } //namespace simple_metrics

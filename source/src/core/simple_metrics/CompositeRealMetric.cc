@@ -67,9 +67,8 @@ CompositeRealMetric::cached_calculate(pose::Pose const & pose, bool use_cache, s
 }
 
 void
-CompositeRealMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
+CompositeRealMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 
-	std::string out_tag = prefix + get_final_sm_type() + suffix;
 	std::map< std::string, core::Real > value = calculate( pose );
 	MetricKey mk;
 
@@ -80,13 +79,6 @@ CompositeRealMetric::apply( pose::Pose & pose, std::string prefix, std::string s
 
 	get_sm_data(pose)->set_value(mk, out_tag, value);
 
-	/*
-	std::map< std::string, core::Real > final_named_values;
-	for ( auto value_pair : values ) {
-	std::string out_tag = prefix + value_pair.first + "_" + get_final_sm_type() + suffix;
-	final_named_values[out_tag ] = value_pair.second;
-	}
-	*/
 }
 
 } //namespace simple_metrics

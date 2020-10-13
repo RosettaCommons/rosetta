@@ -53,16 +53,17 @@ public: // constructors / destructors
 
 	RealMetric & operator=( RealMetric const & );
 
+	using SimpleMetric::apply; // Add back the base class implementation
+
 	/// @brief Calculate the metric and add it to the pose as a score.
-	///           labeled as prefix+metric+suffix.
+	///           labeled as out_label.
 	///
 	/// @details Score is added to the SimpleMetricData cache
 	///           Data is output into the final score file, but can be accessed if needed through the cache.
 	void
 	apply(
+		std::string const & out_label,
 		pose::Pose & pose,
-		std::string prefix="",
-		std::string suffix="",
 		bool override_existing_data = false) const override;
 
 	///@brief Calculate the metric.

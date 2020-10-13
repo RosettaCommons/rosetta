@@ -317,60 +317,64 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_mpi( core::pose::PoseOP & p
 	for ( core::Size mover_it = 1; mover_it <= protocol->size(); ++mover_it ) {
 
 		protocols::moves::MoverOP current_mover = protocol->
-			get_mover_filter_pair( mover_it ).mover;
+			get_step( mover_it ).mover;
 		protocols::filters::FilterOP current_filter = protocol->
-			get_mover_filter_pair( mover_it ).filter;
+			get_step( mover_it ).filter;
 
-		TR << "=================running mover " << current_mover->get_name() << " - "
-			<< protocol->get_mover_filter_pair( mover_it ).mover_user_name
-			<< "======================" << std::endl;
-		time_t mover_time = time(nullptr);
-		// i refers to mover type -> j refers to each pose
-
-		// Check if current mover is a VectorPoseMover
-		// if so hand it the working poses
-		moves::VectorPoseMoverOP vpm = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
 		core::pose::PoseOP temp_pose = pose->clone();
+		if ( current_mover != nullptr ) {
+			TR << "=================running mover " << current_mover->get_name() << " - "
+				<< protocol->get_step( mover_it ).mover_user_name
+				<< "======================" << std::endl;
+			time_t mover_time = time(nullptr);
+			// i refers to mover type -> j refers to each pose
 
-		if ( vpm ) {
-			vpm->apply_mpi( *temp_pose );
+			// Check if current mover is a VectorPoseMover
+			// if so hand it the working poses
+			moves::VectorPoseMoverOP vpm = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
 
-			/// Synchronize mover status before moving on
+			if ( vpm ) {
+				vpm->apply_mpi( *temp_pose );
+
+				/// Synchronize mover status before moving on
 #ifdef USEMPI
 				MPI_Barrier( MPI_COMM_WORLD );
 #endif
 
-		} else {
-			current_mover->apply( *temp_pose );
+			} else {
+				current_mover->apply( *temp_pose );
+			}
+
+			TR << "mover " << protocol->get_step( mover_it ).mover_user_name << " finished in " << time(nullptr) - mover_time << " seconds" << std::endl;
+			TR << "=================end mover " << "======================" << std::endl;
 		}
 
-		TR << "mover " << protocol->get_mover_filter_pair( mover_it ).mover_user_name << " finished in " << time(nullptr) - mover_time << " seconds" << std::endl;
-		TR << "=================end mover " << "======================" << std::endl;
-		TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
+		bool filter_passed = true;
+		if ( current_filter != nullptr ) {
+			TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
 
-		// Check if current filter is a VectorPoseFilter
-		// if so hand it the working poses
-		filters::VectorPoseFilterOP vpf = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
+			// Check if current filter is a VectorPoseFilter
+			// if so hand it the working poses
+			filters::VectorPoseFilterOP vpf = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
 
-		bool filter_passed;
+			if ( vpf ) {
+				filter_passed = vpf->apply_mpi( *temp_pose );
 
-		if ( vpf ) {
-			filter_passed = vpf->apply_mpi( *temp_pose );
-
-			/// Synchronize mover status before moving on
+				/// Synchronize mover status before moving on
 #ifdef USEMPI
 				MPI_Barrier( MPI_COMM_WORLD );
 #endif
-			/// END Synchronize
+				/// END Synchronize
 
-		} else {
-			filter_passed = current_filter->apply( *temp_pose );
+			} else {
+				filter_passed = current_filter->apply( *temp_pose );
+			}
+
+			TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
 		}
 
-		TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
 		if ( filter_passed ) {
 			pose = temp_pose;
-
 		} else {
 			return false;
 		}
@@ -396,45 +400,54 @@ bool VectorPoseJobDistributor::apply_parsed_protocol_serial( utility::vector1< c
 			current_pose_ = pose_order[ i ];
 
 			protocols::moves::MoverOP current_mover = protocols[ current_pose_ ]->
-				get_mover_filter_pair( mover_it ).mover;
+				get_step( mover_it ).mover;
 			protocols::filters::FilterOP current_filter = protocols[ current_pose_ ]->
-				get_mover_filter_pair( mover_it ).filter;
-			TR << "=================running mover " << current_mover->get_name() << " - "
-				<< protocols[ current_pose_ ]->get_mover_filter_pair( mover_it ).mover_user_name
-				<< "======================" << std::endl;
+				get_step( mover_it ).filter;
 
-			// i refers to mover type -> j refers to each pose
-
-			// Check if current mover is a VectorPoseMover
-			// if so hand it the working poses
-			moves::VectorPoseMoverOP vpm = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
 			core::pose::PoseOP temp_pose = working_poses[ current_pose_ ]->clone();
 
-			if ( vpm ) {
-				vpm->set_poses( working_poses );
-				vpm->apply( *temp_pose );
-			} else {
-				current_mover->apply( *temp_pose );
+			if ( current_mover != nullptr ) {
+				TR << "=================running mover " << current_mover->get_name() << " - "
+					<< protocols[ current_pose_ ]->get_step( mover_it ).mover_user_name
+					<< "======================" << std::endl;
+
+				// i refers to mover type -> j refers to each pose
+
+				// Check if current mover is a VectorPoseMover
+				// if so hand it the working poses
+				moves::VectorPoseMoverOP vpm = utility::pointer::dynamic_pointer_cast< moves::VectorPoseMover >( current_mover );
+
+				if ( vpm ) {
+					vpm->set_poses( working_poses );
+					vpm->apply( *temp_pose );
+				} else {
+					current_mover->apply( *temp_pose );
+				}
+
+
+				TR << "=================end mover " << "======================" << std::endl;
 			}
 
+			bool filter_passed = true;
+			if ( current_filter != nullptr ) {
+				TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
 
-			TR << "=================end mover " << "======================" << std::endl;
-			TR << "=================running filter " << current_filter->get_type() << "======================" << std::endl;
+				// Check if current filter is a VectorPoseFilter
+				// if so hand it the working poses
+				filters::VectorPoseFilterOP vpf = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
 
-			// Check if current filter is a VectorPoseFilter
-			// if so hand it the working poses
-			filters::VectorPoseFilterOP vpf = utility::pointer::dynamic_pointer_cast< filters::VectorPoseFilter >( current_filter );
+				bool filter_passed;
 
-			bool filter_passed;
+				if ( vpf ) {
+					vpf->set_poses( working_poses );
+					filter_passed = vpf->apply( *temp_pose );
+				} else {
+					filter_passed = current_filter->apply( *temp_pose );
+				}
 
-			if ( vpf ) {
-				vpf->set_poses( working_poses );
-				filter_passed = vpf->apply( *temp_pose );
-			} else {
-				filter_passed = current_filter->apply( *temp_pose );
+				TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
 			}
 
-			TR << "=================end filter " << current_filter->get_type() <<": " << (filter_passed ? " passed! " : " failed ;-(" ) << "======================" << std::endl;
 			if ( filter_passed ) {
 				working_poses[ current_pose_ ] = temp_pose;
 

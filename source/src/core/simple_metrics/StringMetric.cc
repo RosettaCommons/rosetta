@@ -67,9 +67,8 @@ StringMetric::cached_calculate(pose::Pose const & pose, bool use_cache, std::str
 }
 
 void
-StringMetric::apply( pose::Pose & pose, std::string prefix, std::string suffix, bool override_existing ) const {
+StringMetric::apply( std::string const & out_tag, pose::Pose & pose, bool override_existing ) const {
 
-	std::string out_tag = prefix + get_final_sm_type() +suffix;
 	std::string value = calculate( pose );
 	MetricKey mk;
 	std::string stored_value;

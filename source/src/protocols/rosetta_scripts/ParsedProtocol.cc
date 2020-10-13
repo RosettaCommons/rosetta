@@ -22,6 +22,8 @@
 #include <basic/datacache/DataMap.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/simple_metrics/SimpleMetric.hh>
+#include <core/simple_metrics/util.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/BasicFilters.hh>
 #include <protocols/moves/ResId.hh>
@@ -100,7 +102,7 @@ ParsedProtocol::~ParsedProtocol() = default;
 void
 ParsedProtocol::apply( Pose & pose )
 {
-	n_filters_passed_in_previous_run_ = 0;
+	n_steps_passed_in_previous_run_ = 0;
 
 	ParsedProtocolAP this_weak_ptr(
 		utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
@@ -117,11 +119,12 @@ ParsedProtocol::apply( Pose & pose )
 		//  pose.update_residue_neighbors();
 
 		//fpd search the mover-filter pairs backwards for movers that have remaining poses
-		MoverFilterVector::const_reverse_iterator rmover_it = movers_.rbegin();
-		const MoverFilterVector::const_reverse_iterator movers_crend = movers_.rend();
+		ParsedProtocolStepVector::const_reverse_iterator rmover_it = steps_.rbegin();
+		const ParsedProtocolStepVector::const_reverse_iterator movers_crend = steps_.rend();
 
 		if ( resume_support_ && mode_ == "sequence" ) {
-			for ( rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+			for ( rmover_it=steps_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+				if ( (*rmover_it).mover == nullptr ) { continue; }
 				core::pose::PoseOP checkpoint = (*rmover_it).mover->get_additional_output();
 
 				// otherwise continue where we left off
@@ -136,7 +139,7 @@ ParsedProtocol::apply( Pose & pose )
 					TR<<"=======================RESUMING FROM "<<mover_name<<"======================="<<std::endl;
 					pose = *checkpoint;
 
-					if ( ! apply_filter( pose, *rmover_it) ) {
+					if ( ! apply_step( pose, *rmover_it, true) ) {
 						//      final_score(pose);
 						if ( protocols::jd2::jd2_used() ) {
 							protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
@@ -148,7 +151,7 @@ ParsedProtocol::apply( Pose & pose )
 				}
 			}
 		} else {
-			rmover_it = movers_.rend();
+			rmover_it = steps_.rend();
 		}
 
 		if ( mode_ == "sequence" ) {
@@ -163,9 +166,9 @@ ParsedProtocol::apply( Pose & pose )
 
 		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) { // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
 			final_score(pose);
-			runtime_assert( n_filters_passed_in_previous_run_ == movers_.size() );
+			runtime_assert( n_steps_passed_in_previous_run_ == steps_.size() );
 		} else {
-			runtime_assert( n_filters_passed_in_previous_run_ < movers_.size() );
+			runtime_assert( n_steps_passed_in_previous_run_ < steps_.size() );
 		}
 
 		if ( protocols::jd2::jd2_used() ) {
@@ -212,12 +215,11 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
-	for ( MoverFilterPair const & mover_pair : movers_ ) {
-		if ( mover_pair.report_filter_at_end_ &&
-				!( mover_pair.filter->get_user_defined_name().empty() && mover_pair.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
-			TR_report<<"============Begin report for "<<mover_pair.filter->get_user_defined_name()<<"=================="<<std::endl;
-			mover_pair.filter->report( TR_report, pose );
-			TR_report<<"============End report for "<<mover_pair.filter->get_user_defined_name()<<"=================="<<std::endl;
+	for ( ParsedProtocolStep const & step : steps_ ) {
+		if ( step.report_filter_at_end_ && step.filter != nullptr ) {
+			TR_report<<"============Begin report for "<<step.filter->get_user_defined_name()<<"=================="<<std::endl;
+			step.filter->report( TR_report, pose );
+			TR_report<<"============End report for "<<step.filter->get_user_defined_name()<<"=================="<<std::endl;
 		}
 	}
 	TR_report.flush();
@@ -225,12 +227,11 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
-	for ( auto const & mover : movers_ ) {
-		if ( mover.report_filter_at_end_ &&
-				!( mover.filter->get_user_defined_name().empty() && mover.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
-			core::Real const filter_value( mover.filter->report_sm( pose ) );
+	for ( auto const & step : steps_ ) {
+		if ( step.report_filter_at_end_ && step.filter != nullptr ) {
+			core::Real const filter_value( step.filter->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
-				job.add_string_real_pair(mover.filter->get_user_defined_name(), filter_value);
+				job.add_string_real_pair(step.filter->get_user_defined_name(), filter_value);
 			}
 		}
 	}
@@ -238,10 +239,10 @@ ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job 
 
 void
 ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
-	for ( auto const & mover_filter_pair : movers_ ) {
-		protocols::filters::Filter const & filter( *mover_filter_pair.filter );
-		if ( filter.get_user_defined_name().empty() && filter.name() == "TrueFilter" ) { continue; } // Skip default TrueFilter
-		if ( mover_filter_pair.report_filter_at_end_ ) {
+	for ( auto const & step : steps_ ) {
+		if ( step.filter == nullptr ) { continue; }
+		protocols::filters::Filter const & filter( *step.filter );
+		if ( step.report_filter_at_end_ ) {
 			core::Real const filter_value( filter.report_sm( pose ) );
 			if ( filter_value > -9999 ) {
 				setPoseExtraScore(pose, filter.get_user_defined_name(), (float)filter_value);
@@ -252,59 +253,74 @@ ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
 
 ParsedProtocol::iterator
 ParsedProtocol::begin(){
-	return movers_.begin();
+	return steps_.begin();
 }
 
 ParsedProtocol::const_iterator
 ParsedProtocol::begin() const{
-	return movers_.begin();
+	return steps_.begin();
 }
 
 ParsedProtocol::iterator
 ParsedProtocol::end(){
-	return movers_.end();
+	return steps_.end();
 }
 
 ParsedProtocol::const_iterator
 ParsedProtocol::end() const{
-	return movers_.end();
+	return steps_.end();
 }
 
 /// @brief Add a mover-filter pair.
 /// @details Indended for use OUTSIDE of a RosettaScripts context.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
-ParsedProtocol::add_mover_filter_pair(
+ParsedProtocol::add_step(
 	protocols::moves::MoverOP mover,
 	std::string const &mover_name,
 	protocols::filters::FilterOP filter,
 	bool const report_filter_at_end
 ) {
-	protocols::moves::MoverOP mover_to_add( new protocols::moves::NullMover );
+	protocols::moves::MoverOP mover_to_add = nullptr;
 	if ( mover ) mover_to_add = mover->clone();
-	protocols::filters::FilterOP filter_to_add( new protocols::filters::TrueFilter );
+	protocols::filters::FilterOP filter_to_add = nullptr;
 	if ( filter ) filter_to_add = filter; //I don't know why the mover is cloned while the filter is not, but I'm keeping this consistent with the parse_my_tag function. VKM 17 Sept 2015.
-	movers_.push_back( MoverFilterPair( mover_to_add, mover_name, filter_to_add, report_filter_at_end ) );
+	steps_.push_back( ParsedProtocolStep( mover_to_add, mover_name, filter_to_add, report_filter_at_end ) );
 	return;
+}
+
+void
+ParsedProtocol::add_step(
+	ParsedProtocolStep const & step
+) {
+	steps_.push_back( step );
 }
 
 /// @details sets resid for the constituent filters and movers
 void
 ParsedProtocol::set_resid( core::Size const resid ){
-	for ( auto & mover : movers_ ) {
+	for ( auto & step : steps_ ) {
 		using namespace protocols::moves;
-		modify_ResId_based_object( mover.mover, resid );
-		modify_ResId_based_object( mover.filter, resid );
+		if ( step.mover != nullptr ) {
+			modify_ResId_based_object( step.mover, resid );
+		}
+		if ( step.filter != nullptr ) {
+			modify_ResId_based_object( step.filter, resid );
+		}
 	}
 }
 
 /// @details sets resid for the constituent filters and movers
 void
 ParsedProtocol::set_resid( core::pose::ResidueIndexDescriptionCOP r ){
-	for ( auto & mover : movers_ ) {
+	for ( auto & step : steps_ ) {
 		using namespace protocols::moves;
-		modify_ResId_based_object( mover.mover, r );
-		modify_ResId_based_object( mover.filter, r );
+		if ( step.mover != nullptr ) {
+			modify_ResId_based_object( step.mover, r );
+		}
+		if ( step.filter != nullptr ) {
+			modify_ResId_based_object( step.filter, r );
+		}
 	}
 }
 
@@ -313,6 +329,7 @@ protocols::moves::MoverOP ParsedProtocol::clone() const
 	return utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >( *this );
 }
 
+/// @details May return nullptr for the Mover if one isn't present in the tag.
 std::pair< moves::MoverOP, std::string >
 parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 	basic::datacache::DataMap& data
@@ -350,8 +367,8 @@ parse_mover_subtag( utility::tag::TagCOP const tag_ptr,
 		mover_to_add = new_mover;
 		mover_name = "OnTheFly("+tag_ptr->getName()+")";
 	} else {
-		mover_to_add = utility::pointer::make_shared< NullMover >();
-		mover_name = "NULL_MOVER";
+		mover_to_add = nullptr;
+		mover_name = "NONE";
 	}
 
 	utility::tag::TagCOP tag_parent( tag_ptr->getParent() );
@@ -374,7 +391,7 @@ ParsedProtocol::parse_my_tag(
 	using namespace protocols::moves;
 	using namespace utility::tag;
 
-	TR<<"ParsedProtocol mover with the following movers and filters" << std::endl;
+	TR<<"ParsedProtocol mover with the following settings" << std::endl;
 
 	mode_=tag->getOption<string>("mode", "sequence");
 	if ( mode_ != "sequence" && mode_ != "random_order" && mode_ != "single_random" ) {
@@ -384,36 +401,74 @@ ParsedProtocol::parse_my_tag(
 	utility::vector0< TagCOP > const & dd_tags( tag->getTags() );
 	utility::vector1< core::Real > a_probability( dd_tags.size(), 1.0/dd_tags.size() );
 	core::Size count( 1 );
-	for ( auto dd_it=dd_tags.begin(); dd_it!=dd_tags.end(); ++dd_it ) {
-		TagCOP const tag_ptr( *dd_it );
-
+	for ( auto const & tag_ptr: dd_tags ) {
+		/////// Mover
 		std::pair< MoverOP, std::string > mover_add_pair = parse_mover_subtag( tag_ptr, data );
 		std::string const& mover_name( mover_add_pair.second );
 		MoverOP mover_to_add( mover_add_pair.first );
 
-		protocols::filters::FilterOP filter_to_add;
-		bool filter_defined( false );
-
-		std::string filter_name="true_filter"; // used in case user does not specify a filter name.
+		/////// Filter
 		runtime_assert( !( tag_ptr->hasOption("filter_name") && tag_ptr->hasOption( "filter" ) ) );
+		std::string filter_name;
 		if ( tag_ptr->hasOption( "filter_name" ) ) {
 			filter_name = tag_ptr->getOption<string>( "filter_name", "true_filter" );
-			filter_defined = true;
 		} else if ( tag_ptr->hasOption( "filter" ) ) {
 			filter_name = tag_ptr->getOption<string>( "filter", "true_filter" );
-			filter_defined = true;
 		}
 
-		if ( filter_defined ) {
+		protocols::filters::FilterOP filter_to_add;
+		if ( ! filter_name.empty() ) {
 			filter_to_add = protocols::rosetta_scripts::parse_filter_or_null( filter_name, data );
 			if ( ! filter_to_add ) {
 				throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Filter " + filter_name + " not found in map");
 			}
-		} else {
-			filter_to_add = utility::pointer::make_shared< protocols::filters::TrueFilter >();
 		}
 
-		TR << "added mover \"" << mover_name << "\" with filter \"" << filter_name << "\"" << std::endl;
+		////// Metrics
+		utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics_to_add;
+		utility::vector1< std::string > metric_labels;
+		if ( tag_ptr->hasOption( "metrics" ) ) {
+			metrics_to_add = core::simple_metrics::get_metrics_from_datamap_and_subtags(tag_ptr, data);
+			utility::vector1< std::string > metric_names = utility::string_split( tag_ptr->getOption<string>( "metrics" ), ',' );
+			runtime_assert( metric_names.size() == metrics_to_add.size() );
+			if ( tag_ptr->hasOption( "labels" ) ) {
+				metric_labels = utility::string_split( tag_ptr->getOption<string>( "labels" ), ',' );
+				if ( metric_labels.size() > metric_names.size() ) {
+					TR.Error << "For metrics=\""<< tag_ptr->getOption<string>( "metrics" ) << "\" there are "
+						<< metric_labels.size() << " labels and only " << metric_names.size() << " metrics." << std::endl;
+					throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Too many labels for the number of metrics.");
+				}
+				TR.Debug << "Resizing metric label length from " << metric_labels.size() << " to " << metric_names.size() << std::endl;
+				metric_labels.resize( metric_names.size() ); // Fill extra with empty
+				for ( core::Size ii(1); ii <= metric_labels.size(); ++ii ) {
+					if ( metric_labels[ii].empty() ) {
+						TR.Debug << "Metric label " << ii << " is empty, replacing with " << metric_names[ii] << std::endl;
+						metric_labels[ii] = metric_names[ii]; // Then use the names.
+					}
+				}
+			} else {
+				TR.Debug << "No metric labels specified, using metric names" << std::endl;
+				metric_labels = metric_names;
+			}
+		}
+
+		////// Report
+
+		TR << "Added";
+		if ( mover_to_add != nullptr ) {
+			TR << " mover \"" << mover_name;
+		}
+		if ( filter_to_add != nullptr ) {
+			TR << " filter " << filter_name;
+		}
+		if ( ! metric_labels.empty() ) {
+			TR << " metrics:";
+			for ( auto const & ml: metric_labels ) {
+				TR << " " << ml;
+			}
+		}
+		TR << std::endl;
+
 		if ( mode_ == "single_random" ) {
 			a_probability[ count ] = tag_ptr->getOption< core::Real >( "apply_probability", 1.0/dd_tags.size() );
 			TR<<"and execution probability of "<<a_probability[ count ]<<std::endl;
@@ -421,7 +476,13 @@ ParsedProtocol::parse_my_tag(
 		count++;
 
 		bool const report_at_end( tag_ptr->getOption< bool >( "report_at_end", true ) );
-		movers_.push_back( MoverFilterPair( mover_to_add->clone(), mover_name, filter_to_add, report_at_end ) );
+		if ( mover_to_add != nullptr ) {
+			mover_to_add = mover_to_add->clone();
+		}
+		ParsedProtocolStep step( mover_to_add, mover_name, filter_to_add, report_at_end );
+		step.metrics = metrics_to_add;
+		step.metric_labels = metric_labels;
+		steps_.push_back( step );
 	}
 	if ( mode_ == "single_random" ) {
 		apply_probability( a_probability );
@@ -443,8 +504,8 @@ ParsedProtocol::get_additional_output( )
 {
 	if ( !resume_support_ ) {
 		// Get output from last specified mover
-		const utility::vector1< MoverFilterPair >::const_reverse_iterator movers_crend = movers_.rend();
-		for ( auto rmover_it=movers_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
+		const ParsedProtocolStepVector::const_reverse_iterator movers_crend = steps_.rend();
+		for ( auto rmover_it=steps_.rbegin() ; rmover_it != movers_crend; ++rmover_it ) {
 			protocols::moves::MoverOP mover = (*rmover_it).mover;
 			if ( mover && mover->get_name() != "NullMover" ) {
 				core::pose::PoseOP additional_pose = mover->get_additional_output();
@@ -461,16 +522,17 @@ ParsedProtocol::get_additional_output( )
 
 	// Legacy Protocol resume suppor
 	core::pose::PoseOP pose = nullptr;
-	auto rmover_it = movers_.rbegin();
+	auto rmover_it = steps_.rbegin();
 
 	//fpd search the mover-filter pairs backwards; look for movers that have remaining poses
-	for ( auto movers_crend = movers_.rend(); rmover_it != movers_crend; ++rmover_it ) {
+	for ( auto movers_crend = steps_.rend(); rmover_it != movers_crend; ++rmover_it ) {
+		if ( (*rmover_it).mover == nullptr ) { continue; }
 		core::pose::PoseOP checkpoint = (*rmover_it).mover->get_additional_output();
 		if ( checkpoint ) {
 			//std::string const mover_name( rmover_it->first.first->get_name() );
 			pose = checkpoint;
 
-			if ( ! apply_filter( *pose, *rmover_it) ) {
+			if ( ! apply_step( *pose, *rmover_it, true ) ) {
 				return pose;
 			} else {
 				break;
@@ -487,12 +549,12 @@ ParsedProtocol::get_additional_output( )
 	}
 
 	// otherwise pick up from the checkpoint
-	for ( auto mover_it = rmover_it.base();
-			mover_it!=movers_.end(); ++mover_it ) {
-		apply_mover( *pose, *mover_it );
-		if ( !apply_filter( *pose, *mover_it ) ) {
+	for ( auto step_it = rmover_it.base();
+			step_it!=steps_.end(); ++step_it ) {
+		if ( ! apply_step( *pose, *step_it ) ) {
 			return pose;
 		}
+		// This used to not increment n_steps_passed_in_previous_run_
 	}
 	protocols::moves::Mover::set_last_move_status( protocols::moves::MS_SUCCESS ); // tell jobdistributor to save pose
 	TR<<"setting status to success"<<std::endl;
@@ -511,70 +573,107 @@ ParsedProtocol::get_additional_output( )
 	return pose;
 }
 
+bool
+ParsedProtocol::apply_step( Pose & pose, ParsedProtocolStep const & step, bool skip_mover /*=false*/ ) {
+	if ( ! skip_mover ) {
+		apply_mover( pose, step );
+	}
+	if ( !apply_filter( pose, step ) ) {
+		return false;
+	}
+	apply_metrics( pose, step );
+	if ( ! skip_mover ) {
+		++n_steps_passed_in_previous_run_;
+	}
+	return true;
+}
+
 void
-ParsedProtocol::apply_mover( Pose & pose, MoverFilterPair const & mover_pair ) {
-	std::string const mover_name( mover_pair.mover->get_name() );
-	std::string const mover_user_name( mover_pair.mover_user_name);
+ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
+	if ( step.mover == nullptr ) { return; }
+
+	std::string const & mover_name( step.mover->get_name() );
+	std::string const & mover_user_name( step.mover_user_name );
 
 	// If the mover about to be applied is a MultiplePoserMover,
 	// tell it about the previous mover where it should pull poses from
-	TR.Debug << "apply_mover_filter_pair: Last mover: " << ( last_mover_ ? last_mover_->get_name() : "(None)" ) << std::endl;
-	TR.Debug << "apply_mover_filter_pair: This mover: " << ( mover_pair.mover ? mover_pair.mover->get_name() : "(None)" ) << std::endl;
+	TR.Debug << "apply_mover: Last mover: " << ( last_mover_ ? last_mover_->get_name() : "(None)" ) << std::endl;
+	TR.Debug << "apply_mover: This mover: " << mover_name << std::endl;
 
-	if ( last_mover_ && mover_pair.mover ) {
+	if ( last_mover_ ) {
 		protocols::rosetta_scripts::MultiplePoseMoverOP mp_mover(
-			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( mover_pair.mover )
+			utility::pointer::dynamic_pointer_cast< protocols::rosetta_scripts::MultiplePoseMover >( step.mover )
 		);
 		if ( mp_mover ) {
 			mp_mover->set_previous_mover(last_mover_);
 		}
 	}
 
-	if ( mover_pair.mover && ( mover_pair.mover->get_name() != "NullMover" || mover_user_name != "NULL_MOVER" ) ) { // Skip default NullMover
-		TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
-		mover_pair.mover->set_native_pose( get_native_pose() );
-		mover_pair.mover->apply( pose );
+	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
+	step.mover->set_native_pose( get_native_pose() );
+	step.mover->apply( pose );
 
-		last_mover_ = mover_pair.mover;
-	}
+	last_mover_ = step.mover;
+
+	info().insert( info().end(), step.mover->info().begin(), step.mover->info().end() );
 }
 
 bool
-ParsedProtocol::apply_filter( Pose & pose, MoverFilterPair const & mover_pair) {
-	std::string const filter_name( mover_pair.filter->get_user_defined_name() );
+ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
+	if ( step.filter == nullptr ) { return true; } // No filter means we pass
 
-	// Shouldin't this really go into apply_mover()?
-	info().insert( info().end(), mover_pair.mover->info().begin(), mover_pair.mover->info().end() );
+	std::string const filter_name( step.filter->get_user_defined_name() );
 
-	moves::MoverStatus status( mover_pair.mover->get_last_move_status() );
-	bool pass( status==protocols::moves::MS_SUCCESS );
-	if ( !( mover_pair.filter->get_user_defined_name().empty() && mover_pair.filter->name() == "TrueFilter" ) ) { // Skip default TrueFilter
-		TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
-		// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
-		pose.update_residue_neighbors();
-		pass = pass && mover_pair.filter->apply( pose );
-		if ( !mover_pair.report_filter_at_end_ ) { //report filter now
-			core::Real const filter_value(  mover_pair.filter->report_sm( pose ) );
-			setPoseExtraScore(pose, mover_pair.filter->get_user_defined_name(), (float)filter_value);
-			TR_report << "============Begin report for " << mover_pair.filter->get_user_defined_name() << "==================" << std::endl;
-			mover_pair.filter->report( TR_report, pose );
-			TR_report << "============End report for " << mover_pair.filter->get_user_defined_name() << "==================" << std::endl;
-		}
-		TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
+	moves::MoverStatus status( protocols::moves::MS_SUCCESS );
+	if ( step.mover != nullptr ) {
+		status = step.mover->get_last_move_status();
 	}
+	bool pass( status==protocols::moves::MS_SUCCESS );
+
+	TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
+	// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
+	pose.update_residue_neighbors();
+	pass = pass && step.filter->apply( pose );
+	if ( !step.report_filter_at_end_ ) { //report filter now
+		core::Real const filter_value( step.filter->report_sm( pose ) );
+		setPoseExtraScore(pose, step.filter->get_user_defined_name(), (float)filter_value);
+		TR_report << "============Begin report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
+		step.filter->report( TR_report, pose );
+		TR_report << "============End report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
+	}
+	TR << "=======================END FILTER " << filter_name << "=======================" << std::endl;
 
 	//filter failed -- set status in mover and return false
 	if ( !pass ) {
 		if ( status != protocols::moves::MS_SUCCESS ) {
-			TR << "Mover " << mover_pair.mover->get_name() << " reports failure!" << std::endl;
-			protocols::moves::Mover::set_last_move_status( status );
+			debug_assert( step.mover != nullptr ); // Shouldn't be, if we have a non-success status
+			TR << "Mover " << step.mover->get_name() << " reports failure!" << std::endl;
+			protocols::moves::Mover::set_last_move_status( status ); // Set status for this ParsedProtocol mover
 		} else {
 			TR << "Filter " << filter_name << " reports failure!" << std::endl;
-			protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY );
+			protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY ); // Set status for this ParsedProtocol mover
 		}
 		return false;
 	}
 	return true;
+}
+
+void
+ParsedProtocol::apply_metrics( Pose & pose, ParsedProtocolStep const & step ) {
+	for ( core::Size ii(1); ii <= step.metrics.size(); ++ii ) {
+		if ( step.metrics[ii] == nullptr ) { continue; }
+
+		std::string metric_label;
+		if ( ii <= step.metric_labels.size() ) {
+			metric_label = step.metric_labels[ii];
+		}
+		if ( metric_label.empty() || metric_label == "-" ) {
+			metric_label = step.metrics[ii]->get_final_sm_type();
+		}
+		TR << "=======================BEGIN METRIC " << metric_label << "=======================" << std::endl;
+		step.metrics[ii]->apply( metric_label, pose );
+		TR << "=======================END METRIC " << metric_label << "=======================" << std::endl;
+	}
 }
 
 /// @brief This mover does not provide citation info for itself, though it might for
@@ -595,12 +694,17 @@ ParsedProtocol::provide_citation_info() const {
 	utility::vector1< CitationCollectionCOP > returnvec;
 
 	// Add citations for all movers and filters:
-	for ( MoverFilterPair const & mf_pair : movers_ ) {
-		if ( mf_pair.mover != nullptr ) {
-			merge_into_citation_collection_vector( mf_pair.mover->provide_citation_info(), returnvec );
+	for ( ParsedProtocolStep const & step : steps_ ) {
+		if ( step.mover != nullptr ) {
+			merge_into_citation_collection_vector( step.mover->provide_citation_info(), returnvec );
 		}
-		if ( mf_pair.filter != nullptr ) {
-			merge_into_citation_collection_vector( mf_pair.filter->provide_citation_info(), returnvec );
+		if ( step.filter != nullptr ) {
+			merge_into_citation_collection_vector( step.filter->provide_citation_info(), returnvec );
+		}
+		for ( auto const & metric: step.metrics ) {
+			if ( metric != nullptr ) {
+				merge_into_citation_collection_vector( metric->provide_citation_info(), returnvec );
+			}
 		}
 	}
 
@@ -623,12 +727,17 @@ bool ParsedProtocol::mover_is_unpublished() const { return false; }
 utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
 ParsedProtocol::provide_authorship_info_for_unpublished() const {
 	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	for ( MoverFilterPair const & mf_pair : movers_ ) {
-		if ( mf_pair.mover != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.mover->provide_authorship_info_for_unpublished(), returnvec );
+	for ( ParsedProtocolStep const & step : steps_ ) {
+		if ( step.mover != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( step.mover->provide_authorship_info_for_unpublished(), returnvec );
 		}
-		if ( mf_pair.filter != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( mf_pair.filter->provide_authorship_info_for_unpublished(), returnvec );
+		if ( step.filter != nullptr ) {
+			basic::citation_manager::merge_into_unpublished_collection_vector( step.filter->provide_authorship_info_for_unpublished(), returnvec );
+		}
+		for ( auto const & metric: step.metrics ) {
+			if ( metric != nullptr ) {
+				basic::citation_manager::merge_into_unpublished_collection_vector( metric->provide_authorship_info_for_unpublished(), returnvec );
+			}
 		}
 	}
 
@@ -656,7 +765,7 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 	if ( report_call_order() ) {
 		std::string job_name ( protocols::jd2::jd2_used() ? protocols::jd2::current_output_name() : "CURRENT_JOB" );
 		TR_call_order << job_name << " ";
-		for ( MoverFilterPair const & p : movers_ ) {
+		for ( ParsedProtocolStep const & p : steps_ ) {
 			TR_call_order<<p.mover_user_name<<" ";
 		}
 		TR_call_order<<std::endl;
@@ -665,15 +774,12 @@ void ParsedProtocol::finish_protocol(Pose & pose) {
 
 void
 ParsedProtocol::sequence_protocol( Pose & pose,
-	MoverFilterVector::const_iterator mover_it_in ) {
+	ParsedProtocolStepVector::const_iterator step_it_in ) {
 
-	for ( auto mover_it = mover_it_in;
-			mover_it!=movers_.end(); ++mover_it ) {
-		apply_mover( pose, *mover_it );
-		if ( !apply_filter( pose, *mover_it ) ) {
+	for ( auto step_it = step_it_in;
+			step_it!=steps_.end(); ++step_it ) {
+		if ( !apply_step( pose, *step_it ) ) {
 			return;
-		} else {
-			++n_filters_passed_in_previous_run_;
 		}
 	}
 	// we're done! mark as success
@@ -681,14 +787,11 @@ ParsedProtocol::sequence_protocol( Pose & pose,
 }
 
 void ParsedProtocol::random_order_protocol(Pose & pose){
-	numeric::random::random_permutation(movers_.begin(),movers_.end(),numeric::random::rg());
+	numeric::random::random_permutation(steps_.begin(),steps_.end(),numeric::random::rg());
 
-	for ( MoverFilterVector::const_iterator it = movers_.begin(); it != movers_.end(); ++it ) {
-		apply_mover( pose, *it );
-		if ( !apply_filter( pose, *it ) ) {
+	for ( ParsedProtocolStepVector::const_iterator it = steps_.begin(); it != steps_.end(); ++it ) {
+		if ( ! apply_step( pose, *it ) ) {
 			return;
-		} else {
-			++n_filters_passed_in_previous_run_;
 		}
 	}
 	// we're done! mark as success
@@ -708,7 +811,7 @@ ParsedProtocol::apply_probability() {
 void
 ParsedProtocol::apply_probability( utility::vector1< core::Real > const & a ){
 	apply_probability_ = a;
-	runtime_assert( apply_probability_.size() == movers_.size() );
+	runtime_assert( apply_probability_.size() == steps_.size() );
 	core::Real sum( 0 );
 	for ( core::Real const prob : apply_probability_ ) {
 		sum += prob;
@@ -727,11 +830,8 @@ void ParsedProtocol::random_single_protocol(Pose & pose){
 		}
 	}
 	last_attempted_mover_idx( mover_index );
-	apply_mover( pose, movers_[ mover_index ] );
-	if ( !apply_filter( pose, movers_[ mover_index ] ) ) {
+	if ( !apply_step( pose, steps_[ mover_index ] ) ) {
 		return;
-	} else {
-		++n_filters_passed_in_previous_run_;
 	}
 
 	// we're done! mark as success
@@ -797,6 +897,8 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		+ XMLSchemaAttribute( "mover", xs_string, "The mover whose execution is desired" );
 	add_subattlist + XMLSchemaAttribute( "filter_name", xs_string, "The filter whose execution is desired" )
 		+ XMLSchemaAttribute( "filter", xs_string, "The filter whose execution is desired" );
+	add_subattlist + XMLSchemaAttribute( "metrics", xs_string, "A comma-separated list of metrics to run at this point." )
+		+ XMLSchemaAttribute( "labels", xs_string, "A comma-separated list of labels to use for the provided metrics in the output. If empty/missing, use the metric names from the metrics setting. If '-', use the metric's default." );
 	add_subattlist + XMLSchemaAttribute("apply_probability", xsct_real,"by default equal probability for all tags");
 	add_subattlist + XMLSchemaAttribute::attribute_w_default(
 		"report_at_end", xsct_rosetta_bool,
@@ -806,7 +908,7 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"true");
 
 
-	ssl.add_simple_subelement( "Add", add_subattlist, "Elements that add a particular mover-filter pair to a ParsedProtocol"/*, 0 minoccurs*/ )
+	ssl.add_simple_subelement( "Add", add_subattlist, "The steps to be applied."/*, 0 minoccurs*/ )
 		.complex_type_naming_func( & complex_type_name_for_parsed_protocol_subelement );
 
 	ssl.add_group_subelement( & protocols::filters::FilterFactory::filter_xml_schema_group_name );

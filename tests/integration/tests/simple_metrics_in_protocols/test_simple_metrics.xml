@@ -1,0 +1,54 @@
+<ROSETTASCRIPTS>
+	<RESIDUE_SELECTORS>
+		<CDR name="L1" cdrs="L1"/>
+		<CDR name="L3" cdrs="L3" />
+		<Not name="not_L1" selector="L1" />
+		<Not name="not_L3" selector="L3" />
+	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<TotalEnergyMetric name="total_energy_pre" custom_type="testing"/>
+
+		<TimingProfileMetric name="timing" />
+		<RMSDMetric name="rmsd" rmsd_type="rmsd_protein_bb_heavy" residue_selector="L1" use_native="1"/>
+		<SasaMetric name="sasa" residue_selector="L1"/>
+		<DihedralDistanceMetric name="dihedral" residue_selector="L1" use_native="1"/>
+
+		<InteractionEnergyMetric name="L3_interactions" residue_selector="L3" residue_selector2="not_L3" custom_type="L1"/>
+		<InteractionEnergyMetric name="L3_fa_rep" residue_selector="L3" residue_selector2="not_L3" scoretypes_only="fa_rep" custom_type="L3_fa_rep"/>
+		<InteractionEnergyMetric name="L3_no_sol" residue_selector="L3" residue_selector2="not_L3" scoretypes_skip="fa_sol,lk_ball_wtd" custom_type="L3_no_sol"/>
+		<SelectedResiduesMetric name="selection" residue_selector="L1" custom_type="PDB"/>
+		<SelectedResiduesMetric name="rosetta_sele" residue_selector="L1" rosetta_numbering="1" custom_type="ROSETTA"/>
+		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="L1" />
+
+		<SequenceMetric name="sequence" residue_selector="L1" />
+		<SequenceSimilarityMetric name="sequenceSim" residue_selector="L1" normalize="true"/>
+		<SecondaryStructureMetric name="ss" residue_selector="L1" />
+		<SequenceRecoveryMetric name="seqrec" residue_selector="L1" use_native="true" />
+		<TotalEnergyMetric name="total_energy" residue_selector="L1" scoretype="fa_atr"/>
+		<CompositeEnergyMetric name="composite_energy" residue_selector="L1" use_native="1"/>
+		<HbondMetric name="hbond" residue_selector="L1" residue_selector2="not_L1" include_self="false"/>
+
+		<TestPerResidueStringMetric name="per_res_string" />
+
+		<ProtocolSettingsMetric name="protocols" custom_type="prot" />
+	</SIMPLE_METRICS>
+	<PROTOCOLS>
+		// Real metrics
+		<Add metrics="total_energy_pre,rmsd,sasa" labels="TotEnergy,my_rmsd,SaSa" />
+		<Add metrics="L3_fa_rep" />
+		<Add metrics="L3_interactions,L3_no_sol" labels="-" /> Test missing labels
+		<Add metrics="L3_fa_rep,ss" labels="interact_rep" />
+
+		// String metrics
+		<Add metrics="sequence" />
+
+		// Per residue real
+		<Add metrics="hbond" labels="pr_hbond" />
+
+		// Per residue string
+		<Add metrics="per_res_string" />
+
+		// Composite string
+		<Add metrics="protocols" />
+	</PROTOCOLS>
+</ROSETTASCRIPTS>

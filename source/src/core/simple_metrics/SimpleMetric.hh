@@ -71,14 +71,21 @@ public:
 	//template < typename T >
 	//T calculate( const pose::Pose & pose ) const;
 
-	///@brief Calculate the metric and add it to the Score, which is output into a scorefile - labeled as prefix+metric+suffix.
+	/// @brief Calculate the metric and add it to the Score, which is output into a scorefile - labeled as `label`
 	/// Must be implemented by derived classes
 	virtual void
 	apply(
+		std::string const & out_label,
 		pose::Pose & pose,
-		std::string prefix="",
-		std::string suffix="",
 		bool override_existing_data=false) const = 0;
+
+	///@brief Calculate the metric and add it to the Score, which is output into a scorefile - labeled as prefix+metric+suffix.
+	void
+	apply(
+		pose::Pose & pose,
+		std::string const & prefix="",
+		std::string const & suffix="",
+		bool override_existing_data=false) const;
 
 	///@brief Get the name of SimpleMetric class
 	virtual std::string

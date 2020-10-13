@@ -36,6 +36,7 @@
 
 // Protocol headers
 #include <protocols/moves/Mover.hh>
+#include <protocols/filters/Filter.hh>
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Utility headers

@@ -3095,18 +3095,18 @@ SimpleCycpepPredictApplication::genkic_close(
 	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
 	set_up_cyclization_mover( update_OH, pose );
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
-		pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
+		pp->add_step( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
 	}
 
 	//Filter for total hydrogen bonds:
-	if ( min_genkic_hbonds_ > 0.0 ) pp->add_mover_filter_pair( nullptr, "Total_Hbonds", total_hbond );
+	if ( min_genkic_hbonds_ > 0.0 ) pp->add_step( nullptr, "Total_Hbonds", total_hbond );
 
 	//Filter out poses with oversaturated hydrogen bond acceptors.
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
 		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
-		pp->add_mover_filter_pair( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
+		pp->add_step( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
 	}
 
 	//If we're filtering by symmetry, do so here:
@@ -3120,7 +3120,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		pep_indices << "1-" << sequence_length();
 		iselector->set_index( pep_indices.str() );
 		symmfilter1->set_selector( iselector );
-		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_1", symmfilter1);
+		pp->add_step(nullptr, "Cycpep_Symmetry_Filter_1", symmfilter1);
 	}
 
 	//If we're considering TBMB, add it here.
@@ -3143,7 +3143,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			threelinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "TBMB_link_" << i;
-			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
+			pp->add_step( threelinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3167,7 +3167,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			threelinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "TMA_link_" << i;
-			pp->add_mover_filter_pair( threelinker, movername.str(), nullptr );
+			pp->add_step( threelinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3187,7 +3187,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "trigonal_pyramidal_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3207,7 +3207,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "trigonal_planar_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3227,7 +3227,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "square_pyramidal_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3247,7 +3247,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "square_planar_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3267,7 +3267,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "tetrahedral_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3287,7 +3287,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			metallinker->set_sidechain_frlx_rounds(3);
 			std::stringstream movername;
 			movername << "octahedral_metal_link_" << i;
-			pp->add_mover_filter_pair( metallinker, movername.str(), nullptr );
+			pp->add_step( metallinker, movername.str(), nullptr );
 		}
 	}
 
@@ -3312,7 +3312,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		}
 		disulf_count = disulf_res_count / 2; //Div operator -- gives correct number of disulfides even in odd disulfide-forming residue case.
 		protocols::score_filters::ScoreTypeFilterOP disulf_filter1( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
-		pp->add_mover_filter_pair( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
+		pp->add_step( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
 	}
 
 	//Add the FastRelax with high hbond weight to the pre-selection parsed protocol.
@@ -3324,7 +3324,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_L_alpha->initialize_from_file_contents_and_check( abba_bins_ );
 			L_alpha_cst->create_constraint_from_file_contents( comp_file_contents_L_alpha_ );
 			L_alpha_cst->add_residue_selector( select_L_alpha );
-			pp->add_mover_filter_pair( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", nullptr );
+			pp->add_step( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( D_alpha_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP D_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -3333,7 +3333,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_D_alpha->initialize_from_file_contents_and_check( abba_bins_ );
 			D_alpha_cst->create_constraint_from_file_contents( comp_file_contents_D_alpha_ );
 			D_alpha_cst->add_residue_selector( select_D_alpha );
-			pp->add_mover_filter_pair( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", nullptr );
+			pp->add_step( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( L_beta_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP L_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -3342,7 +3342,7 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_L_beta->initialize_from_file_contents_and_check( abba_bins_ );
 			L_beta_cst->create_constraint_from_file_contents( comp_file_contents_L_beta_ );
 			L_beta_cst->add_residue_selector( select_L_beta );
-			pp->add_mover_filter_pair( L_beta_cst, "Add_L_Beta_AACompositionConstraints", nullptr );
+			pp->add_step( L_beta_cst, "Add_L_Beta_AACompositionConstraints", nullptr );
 		}
 		if ( D_beta_comp_file_exists_ ) {
 			protocols::aa_composition::AddCompositionConstraintMoverOP D_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
@@ -3351,74 +3351,74 @@ SimpleCycpepPredictApplication::genkic_close(
 			select_D_beta->initialize_from_file_contents_and_check( abba_bins_ );
 			D_beta_cst->create_constraint_from_file_contents( comp_file_contents_D_beta_ );
 			D_beta_cst->add_residue_selector( select_D_beta );
-			pp->add_mover_filter_pair( D_beta_cst, "Add_D_Beta_AACompositionConstraints", nullptr );
+			pp->add_step( D_beta_cst, "Add_D_Beta_AACompositionConstraints", nullptr );
 		}
 
 		if ( fast_relax_rounds_ > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
 			set_up_design_taskoperations( fdes, cyclic_offset, pose->size(), pose );
-			pp->add_mover_filter_pair( fdes, "High_Hbond_FastDesign", nullptr );
+			pp->add_step( fdes, "High_Hbond_FastDesign", nullptr );
 		}
 		if ( angle_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes2( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_relax_rounds()) );
 			fdes2->minimize_bond_angles(true);
 			set_up_design_taskoperations( fdes2, cyclic_offset, pose->size(), pose );
-			pp->add_mover_filter_pair( fdes2, "High_Hbond_FastDesign_angle_relax", nullptr );
+			pp->add_step( fdes2, "High_Hbond_FastDesign_angle_relax", nullptr );
 		}
 		if ( angle_length_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes3( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_length_relax_rounds()) );
 			fdes3->minimize_bond_angles(true);
 			fdes3->minimize_bond_lengths(true);
 			set_up_design_taskoperations( fdes3, cyclic_offset, pose->size(), pose );
-			pp->add_mover_filter_pair( fdes3, "High_Hbond_FastDesign_angle_length_relax", nullptr );
+			pp->add_step( fdes3, "High_Hbond_FastDesign_angle_length_relax", nullptr );
 		}
 		if ( cartesian_relax_rounds() > 0 ) {
 			protocols::denovo_design::movers::FastDesignOP fdes4( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, cartesian_relax_rounds()) );
 			fdes4->cartesian(true);
 			set_up_design_taskoperations( fdes4, cyclic_offset, pose->size(), pose );
-			pp->add_mover_filter_pair( fdes4, "High_Hbond_FastDesign_Cartesian_relax", nullptr );
+			pp->add_step( fdes4, "High_Hbond_FastDesign_Cartesian_relax", nullptr );
 		}
 
 		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
-		pp->add_mover_filter_pair( clear_aacomp_cst, "Clear_AACompositionConstraints", nullptr );
+		pp->add_step( clear_aacomp_cst, "Clear_AACompositionConstraints", nullptr );
 	} else {
 		if ( fast_relax_rounds_ > 0 ) {
 			protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
-			pp->add_mover_filter_pair( frlx, "High_Hbond_FastRelax", nullptr );
+			pp->add_step( frlx, "High_Hbond_FastRelax", nullptr );
 		}
 		if ( angle_relax_rounds() > 0 ) {
 			protocols::relax::FastRelaxOP frlx2( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_relax_rounds() ) );
 			frlx2->minimize_bond_angles(true);
-			pp->add_mover_filter_pair( frlx2, "High_Hbond_FastRelax_angles", nullptr );
+			pp->add_step( frlx2, "High_Hbond_FastRelax_angles", nullptr );
 		}
 		if ( angle_length_relax_rounds() > 0 ) {
 			protocols::relax::FastRelaxOP frlx3( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_length_relax_rounds() ) );
 			frlx3->minimize_bond_angles(true);
-			pp->add_mover_filter_pair( frlx3, "High_Hbond_FastRelax_angles_bondlengths", nullptr );
+			pp->add_step( frlx3, "High_Hbond_FastRelax_angles_bondlengths", nullptr );
 		}
 		if ( cartesian_relax_rounds() > 0 ) {
 			protocols::relax::FastRelaxOP frlx4( new protocols::relax::FastRelax(sfxn_highhbond_cart, cartesian_relax_rounds() ) );
 			frlx4->minimize_bond_angles(true);
-			pp->add_mover_filter_pair( frlx4, "High_Hbond_FastRelax_Cartesian", nullptr );
+			pp->add_step( frlx4, "High_Hbond_FastRelax_Cartesian", nullptr );
 		}
 	}
 
 	//Update O and H atoms at the cyclization point:
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
-		pp->add_mover_filter_pair( update_OH, "Update_cyclization_point_polymer_dependent_atoms_2", nullptr );
+		pp->add_step( update_OH, "Update_cyclization_point_polymer_dependent_atoms_2", nullptr );
 	}
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
 		protocols::score_filters::ScoreTypeFilterOP disulf_filter2( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
-		pp->add_mover_filter_pair( nullptr, "Postrelax_disulfide_filter", disulf_filter2 );
+		pp->add_step( nullptr, "Postrelax_disulfide_filter", disulf_filter2 );
 	}
 
 	if ( filter_oversaturated_hbond_acceptors_ ) {
 		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
 		oversat2->set_scorefxn( sfxn_default );
 		oversat2->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
-		pp->add_mover_filter_pair( nullptr, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
+		pp->add_step( nullptr, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
 	}
 
 	//If we're filtering by symmetry, do so again here:
@@ -3432,7 +3432,7 @@ SimpleCycpepPredictApplication::genkic_close(
 		pep_indices << "1-" << sequence_length();
 		iselector->set_index( pep_indices.str() );
 		symmfilter2->set_selector( iselector );
-		pp->add_mover_filter_pair(nullptr, "Cycpep_Symmetry_Filter_2", symmfilter2);
+		pp->add_step(nullptr, "Cycpep_Symmetry_Filter_2", symmfilter2);
 	}
 
 	//Create the mover and set options:
