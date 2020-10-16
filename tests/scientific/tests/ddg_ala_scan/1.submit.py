@@ -10,7 +10,7 @@
 
 ## @file  _template_/1.submit.py
 ## @brief this script is part of <template> scientific test
-## @author Sergey Lyskov
+## @author Ajasja Ljubetic
 
 import os, sys, time
 import benchmark
@@ -29,12 +29,14 @@ hpc_driver  = benchmark.hpc_driver()
 extension   = benchmark.calculate_extension()
 
 #==> EDIT HERE
-
 command_line = '''
 -database {rosetta_dir}/database
 -out:file:scorefile {prefix}/out.score
--parser:view -inout:dbms:mode sqlite3 
--inout:dbms:database_name {prefix}/out.db3 -no_optH true -restore_talaris_behavior
+-parser:view 
+-inout:dbms:mode sqlite3 
+-inout:dbms:database_name {prefix}/out.db3 
+-no_optH true 
+-restore_talaris_behavior
 -multiple_processes_writing_to_one_directory
 -no_color
 
@@ -42,8 +44,6 @@ command_line = '''
 -parser:protocol {working_dir}/{testname}.xml
 -parser:script_vars {script_vars}
 '''.replace('\n', ' ').replace('  ', ' ')
-
-
 
 #==> EDIT HERE
 nstruct = 1
@@ -65,16 +65,19 @@ hpc_logs = f'{working_dir}/hpc-logs'
 if not os.path.exists(hpc_logs): os.makedirs(hpc_logs)
 hpc_job_ids = []
 for n, target in enumerate(targets):
+
     target = target.replace('/','__')
     prefix = f'{working_dir}/output/{target}'
     print('PREFIX:')
     print(prefix)
+
     if not os.path.exists(prefix): 
         os.makedirs(prefix)
         print("MADE DIRECTORY: ",prefix)
 
     target_pdb = targets_command_line[n]["-in:file:s"]
     script_vars = " ".join(targets_command_line[n]["-parser:script_vars"])
+
     #format_map must be called at least twice, since script_vars contain replacment tags as well
     cmd_line = command_line.format_map(vars())
     cmd_line = cmd_line.format_map(vars())

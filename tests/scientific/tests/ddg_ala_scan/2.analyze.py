@@ -28,6 +28,7 @@ benchmark.load_variables()  # Python black magic: load all variables saved by pr
 #debug targets nstruct working_dir testname
 config = benchmark.config()
 
+#============================================
 def parse_db_output(db_output_file, ddg_data):
     """Function to parse ddg calculated data from dbe sqlite files. Files created by ReportToDB Mover"""
     query = 'SELECT ddG.resNum, ddg.mutated_to_name3, ddg.ddG_value, ' \
@@ -54,6 +55,7 @@ def parse_db_output(db_output_file, ddg_data):
     conn.close()
     return ddg_data
 
+#============================================
 def get_fraction_correctly_classified(df, e_cutoff = 1):
     """Returns the fraction of mutations that are correctl classified. 
     So both experimental and calculated ddg are either neutral, both positive or both negative.
@@ -65,6 +67,8 @@ def get_fraction_correctly_classified(df, e_cutoff = 1):
     all_mut = len(ddg_df)
     fraction_correct_classified = (num_both_positive + num_both_negative + num_both_neutral)/ all_mut
     return fraction_correct_classified
+
+#============================================
 
 #Load calculated ddgs
 db_files = glob(f"{working_dir}/output/*/*.db3")
@@ -95,7 +99,8 @@ ddg_df.to_csv(f"{working_dir}/output/calc_vs_exp.csv")
 
 
 score_function = 'talaris2014'
-#fit the correlation coeficient
+
+#fit the correlation coefficient
 from scipy.stats import linregress
 import numpy as np
 
@@ -109,23 +114,24 @@ print("rvalue: ", fit.rvalue)
 print("pvalue: ", fit.pvalue)
 print("stderr: ", fit.stderr)
 
-cut_df=pd.read_csv('cutoffs',sep='\t')
-cut_df.set_index('scorefunct', drop=False, inplace=True)
+# read cutoffs and put that into a dictionary
+measures = subprocess.getoutput( "awk '{print $1}' cutoffs" ).splitlines()
+cutoffs = subprocess.getoutput( "awk '{print $2}' cutoffs" ).splitlines()
+cutoff_dict = dict( zip( measures, cutoffs ) )
 
 results[score_function] = {'fit':fit, 'R':fit.rvalue, 'MAE':MAE, 'FCC':FCC}
-print(fit)
 
-
-min_R = cut_df.loc[score_function,'min_R']
-if fit.rvalue<min_R:
+# compare and get failures
+min_R = float( cutoff_dict['min_R'] )
+if fit.rvalue < min_R:
     failures += [f'{score_function}: R is too low! Should be higher than {min_R} but is {fit.rvalue}.']
 
-max_MAE = cut_df.loc[score_function,'max_MAE']
-if MAE>max_MAE:
+max_MAE = float( cutoff_dict['max_MAE'] )
+if MAE > max_MAE:
     failures += [f'{score_function}: MAE (MEAN ABSOLUTE ERROR) is too High! Should be lower than {max_MAE} but is {MAE}.']
 
-min_FCC = cut_df.loc[score_function,'min_FCC']
-if FCC<min_FCC:
+min_FCC = float( cutoff_dict['min_FCC'] )
+if FCC < min_FCC:
     failures += [f'{score_function}: FCC (Fraction correctly classified) is too low! Should be higher than {min_FCC} but is {FCC}.']
 
 benchmark.save_variables('debug targets nstruct working_dir testname results  failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
