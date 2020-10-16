@@ -67,14 +67,16 @@ for i in range( 0, len( scorefiles ) ):
 	x = list( map( float, x ))
 	y = list( map( float, y ))
 	y, x = (list(t) for t in zip(*sorted(zip(y, x))))
-	y = y[0:int(len(y)*0.9)]
-	x = x[0:int(len(x)*0.9)]
-	
 
-	# check for RMSDs below cutoff
+	# only look at top10 scores
+	y = y[0:10]
+	x = x[0:10]
+
+	# check for RMSDs below cutoff - 80% of the top10-scoring points should be below cutoff
 	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f ,10.0/float(len(x)))
+	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f, 80)
 	target_results.update( val_cutoff )
+
     # add to failues
 	if val_cutoff['All rmsds < cutoff'] == False:
 		failures.append( targets[i] )
@@ -88,11 +90,6 @@ for i in range( 0, len( scorefiles ) ):
 	# if val_cutoff['All scores < cutoff'] == False:
 		# failures.append( targets[i] )
 
-	# check lowest scoring model has low RMSD
-#		f.write( targets[i] + "\t" )
-#		val_topscoring = check_rmsd_of_topscoring( x, cutoffs_rmsd_dict[targets[i]], f )
-#		target_results.update( val_topscoring )
-
 	# check for RMSD range
 	f.write( targets[i] + "\t" )
 	val_rms = qm.check_range( x, "rmsBB_if", f )
@@ -102,23 +99,6 @@ for i in range( 0, len( scorefiles ) ):
 	f.write( targets[i] + "\t" )
 	val_score = qm.check_range( y, "reweighted_sc", f )
 	target_results.update( val_score )
-
-	# check runtime
-	# runtime = subprocess.getoutput( "grep \"reported success\" " + logfiles[i] + " | awk '{print $6}'" ).splitlines()
-	# runtime = list( map( float, runtime ))
-	# if len(runtime) > 0:
-	# 	print (targets[i], "\t"),
-	# 	val_runtime = check_range( runtime, "runtime" )
-	# 	target_results.update( val_runtime )
-
-	# TODO: check discrimination score
-	# discrimination score is likely better for abinitio sampling + refinement
-	# few options:
-	# 1) ff_metric script in this directory: easy + simple but need to test the metric
-	# 2) discrimination score script in https://github.com/RosettaCommons/bakerlab_scripts/tree/master/boinc/scoring_methods
-	# => gives me 0, a little too complicated
-	# 3) https://github.com/RosettaCommons/bakerlab_scripts/blob/master/boinc/score_energy_landscape.py
-	# => requires lots of dependent scripts, even more complicated
 
 	results.update( {targets[i] : target_results} )
 	f.write( "\n" )

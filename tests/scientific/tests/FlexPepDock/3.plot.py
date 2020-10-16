@@ -57,6 +57,8 @@ for i in range( 0, len( scorefiles ) ):
 	x = list( map( float, x ) )
 	y = list( map( float, y ) )
 	y, x = (list(t) for t in zip(*sorted(zip(y, x))))
+
+	# for scaling on y-axis to get rid of highest-scoring points that we don't care about
 	y = y[0:int(len(y)*0.85)]
 	x = x[0:int(len(x)*0.85)]
 	

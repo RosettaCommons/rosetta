@@ -1,4 +1,2 @@
-scorefunct	talaris2014
-min_R		0.33
-max_MAE		1.1
-min_FCC		0.71
+scorefunct	min_R	max_MAE	min_FCC
+talaris2014	0.33	1.1	0.71
