@@ -19,9 +19,6 @@
 #include <map>
 
 
-#include <boost/geometry.hpp>
-#include <boost/geometry/index/rtree.hpp>
-
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 

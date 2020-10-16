@@ -27,7 +27,7 @@
 #include <utility/assert.hh>
 
 // boost headers
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 #include <boost/function.hpp>
 
 // C++ headers
@@ -266,6 +266,7 @@ protected: // re-usable link container methods
 	inline
 	Link connect( MemFn fn, Ptr ptr, LinkUnits & links ) const {
 		using namespace boost;
+		using namespace boost::placeholders;
 
 		remove_invalid( links ); // search and destroy first
 
@@ -289,6 +290,7 @@ protected: // re-usable link container methods
 	inline
 	bool disconnect( MemFn fn, Ptr ptr, LinkUnits & links ) const {
 		using namespace boost;
+		using namespace boost::placeholders;
 
 		remove_invalid( links ); // search and destroy first
 
