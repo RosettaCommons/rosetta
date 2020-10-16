@@ -34,7 +34,7 @@
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_QuickCCD.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/simple_moves/MissingDensityToJumpMover.hh>
 
 #include <protocols/relax/RelaxProtocolBase.hh>

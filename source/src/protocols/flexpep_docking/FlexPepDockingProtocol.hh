@@ -22,7 +22,7 @@
 #include <core/pack/task/operation/TaskOperations.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
+#include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
 #include <protocols/moves/MonteCarlo.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/flexpep_docking/FlexPepDockingFlags.fwd.hh>
@@ -275,7 +275,7 @@ private:
 	core::kinematics::MoveMapOP movemap_minimizer_;
 
 	// loop mover for modeling loop closure
-	protocols::comparative_modeling::LoopRelaxMoverOP loop_relax_mover_;
+	protocols::relax::loop::LoopRelaxMoverOP loop_relax_mover_;
 
 	// int num_jumps_;
 

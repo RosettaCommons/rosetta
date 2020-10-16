@@ -18,6 +18,7 @@
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
+#include <protocols/loops/util.hh>
 
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>

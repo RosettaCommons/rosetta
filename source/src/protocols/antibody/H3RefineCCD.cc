@@ -40,7 +40,7 @@
 
 #include <protocols/antibody/H3RefineCCD.hh>
 #include <protocols/antibody/util.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>

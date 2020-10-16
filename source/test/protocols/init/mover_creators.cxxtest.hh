@@ -55,7 +55,7 @@
 #include <protocols/carbohydrates/SimpleGlycosylateMoverCreator.hh>
 #include <protocols/cryst/cryst_movers_creator.hh>
 #include <protocols/cryst/refinable_lattice_creator.hh>
-#include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
+#include <protocols/relax/loop/LoopRelaxMoverCreator.hh>
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/HybridizeProtocolCreator.hh>
 #include <protocols/hybridization/BackboneTorsionSamplerCreator.hh>
@@ -526,7 +526,7 @@ public:
 	{ protocols::cryst::MakeLayerMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "MakeLayerMover" ); }
 
 	void test_protocols_comparative_modeling_LoopRelaxMoverCreator_name()
-	{ protocols::comparative_modeling::LoopRelaxMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopRelaxMover" ); }
+	{ protocols::relax::loop::LoopRelaxMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "LoopRelaxMover" ); }
 
 	void test_protocols_hybridization_HybridizeProtocolCreator_name()
 	{ protocols::hybridization::HybridizeProtocolCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Hybridize" ); }
@@ -1700,7 +1700,7 @@ public:
 	// { protocols::cryst::MakeLayerMoverCreator cr; std::cout << "protocols::cryst::MakeLayerMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_comparative_modeling_LoopRelaxMoverCreator()
-	// { protocols::comparative_modeling::LoopRelaxMoverCreator cr; std::cout << "protocols::comparative_modeling::LoopRelaxMoverCreator " << cr.keyname() << std::endl; }
+	// { protocols::relax::loop::LoopRelaxMoverCreator cr; std::cout << "protocols::comparative_modeling::LoopRelaxMoverCreator " << cr.keyname() << std::endl; }
 	//
 	// void test_protocols_hybridization_HybridizeProtocolCreator()
 	// { protocols::hybridization::HybridizeProtocolCreator cr; std::cout << "protocols::hybridization::HybridizeProtocolCreator " << cr.keyname() << std::endl; }

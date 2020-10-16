@@ -86,7 +86,7 @@ static MoverRegistrator< carbohydrates::RingPlaneFlipMoverCreator > reg_RingPlan
 static MoverRegistrator< carbohydrates::SimpleGlycosylateMoverCreator > reg_SimpleGlycosylateMoverCreator;
 static MoverRegistrator< carbohydrates::TautomerizeAnomerMoverCreator > reg_TautomerizeAnomerMoverCreator;
 
-static MoverRegistrator< comparative_modeling::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
+static MoverRegistrator< relax::loop::LoopRelaxMoverCreator > reg_LoopRelaxMoverCreator;
 
 static MoverRegistrator< constraint_movers::AddConstraintsToCurrentConformationMoverCreator > reg_AddConstraintsToCurrentConformationMoverCreator;
 static MoverRegistrator< constraint_movers::ClearConstraintsMoverCreator > reg_ClearConstraintsMoverCreator;

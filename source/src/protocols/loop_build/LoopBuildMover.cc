@@ -34,7 +34,7 @@
 //#include <basic/resource_manager/ResourceManager.hh>
 //#include <basic/resource_manager/util.hh>
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
@@ -60,7 +60,7 @@ namespace protocols {
 namespace loop_build {
 
 
-LoopBuildMover::LoopBuildMover(protocols::comparative_modeling::LoopRelaxMover loop_relax_mover) :
+LoopBuildMover::LoopBuildMover(protocols::relax::loop::LoopRelaxMover loop_relax_mover) :
 	loop_relax_mover_( loop_relax_mover)
 {}
 

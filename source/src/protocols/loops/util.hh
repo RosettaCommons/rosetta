@@ -179,6 +179,18 @@ has_severe_pep_bond_geom_issues(
 	core::Real allowed_c_n_ca_deviation = 25.0);
 
 
+LoopsOP pick_loops_unaligned(
+	core::Size nres,
+	utility::vector1< core::Size > const & unaligned_residues,
+	core::Size min_loop_size
+);
+
+LoopsOP pick_loops_chainbreak(
+	core::pose::Pose & query_pose,
+	core::Size min_loop_size
+);
+
+
 } //loops
 } //protocols
 

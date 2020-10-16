@@ -23,6 +23,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.tmpl.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 
@@ -38,6 +39,8 @@
 
 #include <core/scoring/func/HarmonicFunc.hh>
 
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/util.hh> //idealize
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameList.hh>
@@ -828,6 +831,103 @@ has_severe_pep_bond_geom_issues(
 
 	return std::make_pair(false, 0);
 }
+
+LoopsOP pick_loops_unaligned(
+	core::Size nres,
+	utility::vector1< core::Size > const & unaligned_residues,
+	core::Size min_loop_size
+) {
+	protocols::loops::LoopsOP query_loops( new protocols::loops::Loops() );
+	if ( unaligned_residues.size() == 0 ) {
+		TR.Warning << "No unaligned residues, no loops found." << std::endl;
+		return query_loops;
+	}
+
+	core::Size loop_start( *unaligned_residues.begin() );
+
+	for ( auto it = unaligned_residues.begin(),
+			next = it + 1,
+			end  = unaligned_residues.end();
+			next != end; ++it, ++next
+			) {
+		TR.Debug << "residue " << *it << " is unaligned." << std::endl;
+		if ( *next - *it > 1 ) {
+			// add loop
+			core::Size loop_stop = *it;
+			while ( (loop_stop - loop_start + 1) < min_loop_size ) {
+				if ( loop_stop < nres ) {
+					++loop_stop;
+				}
+				if ( loop_start > 1 && (loop_stop - loop_start + 1) < min_loop_size ) {
+					--loop_start;
+				}
+			}
+			TR.Debug << "adding loop from " << loop_start << " to " << loop_stop
+				<< std::endl;
+			protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
+			query_loops->add_loop( loop, 1 );
+
+			loop_start = *next;
+		}
+	}
+
+	core::Size loop_stop = ( *(unaligned_residues.end() - 1) );
+
+	while ( (loop_stop - loop_start + 1) < min_loop_size ) {
+		if ( loop_stop < nres ) ++loop_stop;
+		if ( loop_start > 1 ) --loop_start;
+	}
+	TR.Debug << "adding loop from " << loop_start << " to " << loop_stop
+		<< std::endl;
+	protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
+	query_loops->add_loop( loop , 1 );
+
+	TR.flush_all_channels();
+
+	return query_loops;
+} // pick_loops
+
+LoopsOP pick_loops_chainbreak(
+	core::pose::Pose & query_pose,
+	core::Size min_loop_size
+) {
+	core::Real const chainbreak_cutoff( 4.0 );
+	core::Size nres = query_pose.size();
+
+	//fpd symm
+	if ( core::pose::symmetry::is_symmetric(query_pose) ) {
+		auto & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( query_pose.conformation()) );
+		core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
+		nres = symm_info->num_independent_residues();
+	}
+
+	utility::vector1< core::Size > residues_near_chainbreak;
+	for ( core::Size i = 1; i <= nres - 1; ++i ) {
+		if ( query_pose.residue_type(i).is_protein() &&  query_pose.residue_type(i+1).is_protein() ) {
+			core::Real dist = query_pose.residue(i).xyz("CA").distance(
+				query_pose.residue(i+1).xyz("CA")
+			);
+			//std::cout << "dist(" << i << "," << i+1 << ") = " << dist << std::endl;
+			if ( dist > chainbreak_cutoff ) {
+				residues_near_chainbreak.push_back( i );
+			}
+		}
+	} // for ( core::Size i )
+
+	if ( residues_near_chainbreak.size() == 0 ) {
+		TR.Warning << "No chainbreaks found, so not picking any loops!"
+			<< std::endl;
+	}
+
+	TR.flush();
+
+	return pick_loops_unaligned(
+		query_pose.size(),
+		residues_near_chainbreak,
+		min_loop_size
+	);
+} // pick_loops
 
 
 } // loops

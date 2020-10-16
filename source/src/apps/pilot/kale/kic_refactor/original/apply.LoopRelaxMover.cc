@@ -78,7 +78,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// try to load loops from command line
 	if ( loops->size() == 0 ) {
 		TR.Debug << "picking loops by chainbreak score." << std::endl;
-		protocols::loops::LoopsOP loops_picked = protocols::comparative_modeling::pick_loops_chainbreak(
+		protocols::loops::LoopsOP loops_picked = protocols::loops::pick_loops_chainbreak(
 			start_pose, option[ cm::min_loop_size ]() );
 		*loops = *loops_picked; // copy the loops we just read in into the guarded_loops_ object
 

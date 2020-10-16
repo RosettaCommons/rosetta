@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/comparative_modeling/LoopRelaxMover.fwd.hh
+/// @file protocols/relax/loop/LoopRelaxMover.fwd.hh
 /// @brief forward declaration for LoopRelaxMover class
 /// @author James Thompson
 
-#ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxMover_fwd_hh
-#define INCLUDED_protocols_comparative_modeling_LoopRelaxMover_fwd_hh
+#ifndef INCLUDED_protocols_relax_loop_LoopRelaxMover_fwd_hh
+#define INCLUDED_protocols_relax_loop_LoopRelaxMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.fwd.hh>
 
 namespace protocols {
-namespace comparative_modeling {
+namespace relax {
+namespace loop {
 
 class LoopRelaxMover;
 
@@ -31,7 +32,8 @@ typedef  utility::pointer::shared_ptr< LoopRelaxThreadingMover >  LoopRelaxThrea
 typedef  utility::pointer::shared_ptr< LoopRelaxThreadingMover const >  LoopRelaxThreadingMoverCOP;
 
 
-} // namespace comparative_modeling
+} // namespace loop
+} // namespace relax
 } // namespace protocols
 
 #endif

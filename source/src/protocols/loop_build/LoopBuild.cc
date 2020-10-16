@@ -39,7 +39,7 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
@@ -104,7 +104,7 @@ LoopBuild_main( bool  ) {
 	}
 
 	//setup of looprelax_mover
-	comparative_modeling::LoopRelaxMover looprelax_mover;
+	relax::loop::LoopRelaxMover looprelax_mover;
 	looprelax_mover.frag_libs( frag_libs );
 	looprelax_mover.relax( relax );
 	looprelax_mover.refine( refine );

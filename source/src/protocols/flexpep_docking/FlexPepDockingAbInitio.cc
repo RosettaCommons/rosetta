@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/FragmentMover.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/moves/MonteCarlo.hh>
@@ -93,7 +93,7 @@ FlexPepDockingAbInitio::FlexPepDockingAbInitio
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: LoopRelaxMover is a wrapper, perhaps user the LoopModel class explicitly
-	loop_relax_mover_ = utility::pointer::make_shared< protocols::comparative_modeling::LoopRelaxMover >();
+	loop_relax_mover_ = utility::pointer::make_shared< protocols::relax::loop::LoopRelaxMover >();
 	// loop_relax_mover_->centroid_scorefxn(scorefxn_); // TODO: we need a chain brteak score here, so let's leave it for modeller default?
 	loop_relax_mover_->refine("no"); // centroid modeling only
 	loop_relax_mover_->relax("no"); // centroid modeling only

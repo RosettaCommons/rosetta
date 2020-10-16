@@ -42,7 +42,7 @@
 #include <protocols/loops/make_loops.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loop_build/LoopBuildMover.hh>
 #include <protocols/jd2/util.hh>
 
@@ -161,7 +161,7 @@ IndelOptimizationMover::apply(
 	}
 
 	//setup of looprelax_mover
-	comparative_modeling::LoopRelaxMover looprelax_mover;
+	relax::loop::LoopRelaxMover looprelax_mover;
 	looprelax_mover.loops( loops );
 	TR << ( *looprelax_mover.get_loops() ) << std::endl;
 	looprelax_mover.frag_libs( frag_libs );

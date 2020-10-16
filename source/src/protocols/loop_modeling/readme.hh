@@ -24,7 +24,7 @@
 /// modeling simulation.  It also provides a lot of configurability, especially
 /// from rosetta scripts.
 ///
-/// Below is an excerpt from protocols::comparative_modeling::LoopRelaxMover
+/// Below is an excerpt from protocols::relax::loop::LoopRelaxMover
 /// that shows some of the classes from this namespace in action.  This code
 /// creates a protocol featuring KIC moves followed by a rotamer trials and
 /// local minimization.  Full repacking is done once every 20 iterations.  The

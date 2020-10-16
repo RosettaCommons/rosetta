@@ -15,8 +15,8 @@
 
 // include these first for building on Visual Studio
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
-#include <protocols/comparative_modeling/LoopRelaxMoverCreator.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMoverCreator.hh>
 
 // Package headers
 #include <protocols/loops/Loops.hh>
@@ -61,7 +61,6 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <protocols/checkpoint/CheckPointer.hh>
-#include <protocols/comparative_modeling/util.hh>
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <protocols/simple_filters/RmsdEvaluator.hh>
 #include <protocols/evaluation/EvaluatorFactory.hh>
@@ -145,7 +144,8 @@
 
 
 namespace protocols {
-namespace comparative_modeling {
+namespace relax {
+namespace loop {
 
 static basic::Tracer TR( "protocols.looprelax" );
 
@@ -317,7 +317,7 @@ void LoopRelaxMover::apply( core::pose::Pose & pose ) {
 	// try to load loops from command line
 	if ( loops->size() == 0 ) {
 		TR.Debug << "picking loops by chainbreak score." << std::endl;
-		protocols::loops::LoopsOP loops_picked = protocols::comparative_modeling::pick_loops_chainbreak(
+		protocols::loops::LoopsOP loops_picked = protocols::loops::pick_loops_chainbreak(
 			start_pose, option[ cm::min_loop_size ]() );
 		*loops = *loops_picked; // copy the loops we just read in into the guarded_loops_ object
 
@@ -1528,5 +1528,6 @@ void
 LoopRelaxMover::task_factory( core::pack::task::TaskFactoryOP tf ){ task_factory_ = tf; }
 */
 
-} // namespace loops
+} // namespace loop
+} // namespace relax
 } // namespace protocols

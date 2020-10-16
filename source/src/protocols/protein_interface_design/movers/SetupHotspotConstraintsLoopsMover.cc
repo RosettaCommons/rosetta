@@ -108,7 +108,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>

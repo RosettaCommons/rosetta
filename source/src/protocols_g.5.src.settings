@@ -21,7 +21,6 @@ sources = {
 		"ExtraThreadingMover",
 		"GenericJobInputter",
 		"IgnoreSubsetConstraintSet",
-		"LoopRelaxMover",
 		"LoopRelaxThreadingMover",
 		"MultiThreadingMover",
 		"PartialThreadingMover",

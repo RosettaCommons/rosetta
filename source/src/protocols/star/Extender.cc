@@ -111,7 +111,7 @@ Extender::Extender(core::sequence::SequenceAlignmentCOP alignment, int num_resid
 	unaligned_res.resize(i - unaligned_res.begin());
 
 	int min_len = option[OptionKeys::abinitio::star::min_unaligned_len]();
-	unaligned_ = protocols::comparative_modeling::pick_loops_unaligned(num_residues, unaligned_res, min_len);
+	unaligned_ = protocols::loops::pick_loops_unaligned(num_residues, unaligned_res, min_len);
 	unaligned_->sequential_order();
 
 	aligned_ = utility::pointer::make_shared< Loops >(unaligned_->invert(num_residues));

@@ -34,7 +34,7 @@
 #include <protocols/simple_moves/ReturnSidechainMover.hh>
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loop_mover/perturb/LoopMover_KIC.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loop_modeling/LoopProtocol.hh>
 #include <protocols/loop_modeling/types.hh>
 #include <protocols/kinematic_closure/KicMover.hh>

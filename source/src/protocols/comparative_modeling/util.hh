@@ -63,17 +63,6 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 	core::Size const min_loop_size
 );
 
-protocols::loops::LoopsOP pick_loops_unaligned(
-	core::Size nres,
-	utility::vector1< core::Size > const & unaligned_residues,
-	core::Size min_loop_size
-);
-
-protocols::loops::LoopsOP pick_loops_chainbreak(
-	core::pose::Pose & query_pose,
-	core::Size min_loop_size
-);
-
 void rebuild_loops_until_closed(
 	core::pose::Pose & query_pose,
 	core::Size const min_loop_size,

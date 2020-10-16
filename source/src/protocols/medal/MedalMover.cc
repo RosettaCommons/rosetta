@@ -56,7 +56,7 @@
 #include <core/util/kinematics_util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/comparative_modeling/ThreadingJob.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/simple_moves/BackboneMover.hh>
@@ -253,7 +253,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose, core::util::ChainbreakU
 	using namespace basic::options::OptionKeys;
 	using core::kinematics::FoldTree;
 	using core::util::ChainbreakUtil;
-	using protocols::comparative_modeling::LoopRelaxMover;
+	using protocols::relax::loop::LoopRelaxMover;
 	using protocols::loops::LoopsOP;
 	debug_assert(pose);
 
@@ -263,7 +263,7 @@ void MedalMover::do_loop_closure(core::pose::Pose* pose, core::util::ChainbreakU
 
 	// Choose chainbreaks automatically
 	LoopsOP empty( new protocols::loops::Loops() );
-	protocols::comparative_modeling::LoopRelaxMover closure;
+	protocols::relax::loop::LoopRelaxMover closure;
 	closure.remodel("quick_ccd");
 	closure.intermedrelax("no");
 	closure.refine("no");

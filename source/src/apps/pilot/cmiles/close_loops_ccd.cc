@@ -24,7 +24,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 		using core::fragment::FragSetOP;
 		using core::fragment::FragSetOP;
 		using core::pose::PoseOP;
-		using protocols::comparative_modeling::LoopRelaxMover;
+		using protocols::relax::loop::LoopRelaxMover;
 		using protocols::loops::Loops;
 		using protocols::loops::LoopsOP;
 		using protocols::simple_moves::SwitchResidueTypeSetMover;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
 
 		// Choose chainbreaks automatically
 		LoopsOP empty = new protocols::loops::Loops();
-		protocols::comparative_modeling::LoopRelaxMover closure;
+		protocols::relax::loop::LoopRelaxMover closure;
 		closure.remodel("quick_ccd");
 		closure.intermedrelax("no");
 		closure.refine("no");

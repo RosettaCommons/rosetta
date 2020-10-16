@@ -7,17 +7,18 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/comparative_modeling/LoopRelaxMoverCreator.hh
+/// @file protocols/relax/loop/LoopRelaxMoverCreator.hh
 /// @brief
 /// @author Sarel
 
-#ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh
-#define INCLUDED_protocols_comparative_modeling_LoopRelaxMoverCreator_hh
+#ifndef INCLUDED_protocols_relax_loop_LoopRelaxMoverCreator_hh
+#define INCLUDED_protocols_relax_loop_LoopRelaxMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
 namespace protocols {
-namespace comparative_modeling {
+namespace relax {
+namespace loop {
 
 class LoopRelaxMoverCreator : public protocols::moves::MoverCreator {
 public:
@@ -26,6 +27,7 @@ public:
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
+}
 }
 }
 

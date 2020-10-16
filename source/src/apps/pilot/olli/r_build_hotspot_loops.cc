@@ -100,7 +100,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/edensity.OptionKeys.gen.hh>
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <protocols/electron_density/SetupForDensityScoringMover.hh>
@@ -392,7 +392,7 @@ LoopBuild_main() {
 	// load loopfile
 	protocols::loops::LoopsOP my_loops = new protocols::loops::Loops( true );
 
-	comparative_modeling::LoopRelaxMoverOP mover = new comparative_modeling::LoopRelaxMover;
+	relax::loop::LoopRelaxMoverOP mover = new comparative_modeling::LoopRelaxMover;
 	mover->frag_libs( frag_libs );
 	mover->loops( my_loops );
 	mover->relax( relax );

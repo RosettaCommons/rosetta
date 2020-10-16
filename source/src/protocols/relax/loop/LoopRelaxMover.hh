@@ -10,8 +10,10 @@
 /// @brief LoopRelaxMover.hh
 /// @author James Thompson
 
-#ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxMover_hh
-#define INCLUDED_protocols_comparative_modeling_LoopRelaxMover_hh
+#ifndef INCLUDED_protocols_relax_loop_LoopRelaxMover_hh
+#define INCLUDED_protocols_relax_loop_LoopRelaxMover_hh
+
+#include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
 
 #include <core/types.hh>
 #include <core/fragment/FragSet.hh>
@@ -23,7 +25,6 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/LoopsFileIO.fwd.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <string>
@@ -34,7 +35,8 @@
 
 
 namespace protocols {
-namespace comparative_modeling {
+namespace relax {
+namespace loop {
 
 class LoopRelaxMover : public moves::Mover {
 
@@ -110,19 +112,19 @@ public:
 		n_rebuild_tries_ = setting;
 	}
 
-	void remodel( std::string val ) {
+	void remodel( std::string const & val ) {
 		remodel_ = val;
 	}
 
-	void intermedrelax( std::string val ) {
+	void intermedrelax( std::string const & val ) {
 		intermedrelax_ = val;
 	}
 
-	void refine( std::string val ) {
+	void refine( std::string const & val ) {
 		refine_ = val;
 	}
 
-	void relax( std::string val ) {
+	void relax( std::string const & val ) {
 		relax_ = val;
 	}
 
@@ -230,8 +232,9 @@ private:
 	// core::pack::task::TaskFactoryOP task_factory_; //dflt NULL; a way to restrict packing from outside the mover
 };
 
-} // namespace loops
+} // namespace loop
+} // namespace relax
 } // namespace protocols
 
-#endif // INCLUDED_protocols_loops_LoopRelaxMover_HH
+#endif // INCLUDED
 

@@ -42,7 +42,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.hh>
@@ -786,7 +786,7 @@ public:
 			scorefxn->set_weight(core::scoring::chainbreak, 1);
 
 			read_loop_fragments(frag_libs_);
-			protocols::comparative_modelling::LoopRelaxMoverOP lr_mover( new  protocols::comparative_modeling::LoopRelaxMover );
+			protocols::comparative_modelling::LoopRelaxMoverOP lr_mover( new  protocols::relax::loop::LoopRelaxMover );
 			lr_mover->frag_libs(frag_libs_);
 			lr_mover->loops(loops_target_);
 			lr_mover->cen_scorefxn(scorefxn);
@@ -919,7 +919,7 @@ my_main( void* ) {
 
 		utility::vector1< core::fragment::FragSetOP > frag_libs;
 		read_loop_fragments(frag_libs);
-		protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
+		protocols::relax::loop::LoopRelaxMoverOP lr_mover( new protocols::comparative_modeling::LoopRelaxMover );
 		lr_mover->frag_libs(frag_libs);
 		//lr_mover->loops(loops_target);
 		lr_mover->cen_scorefxn(scorefxn);

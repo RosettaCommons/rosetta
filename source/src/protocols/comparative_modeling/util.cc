@@ -24,12 +24,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 
-// Symmetry
-#include <core/pose/symmetry/util.hh>
-
-#include <core/conformation/symmetry/SymmetricConformation.hh>
-#include <core/conformation/symmetry/SymmetryInfo.hh>
-
 #include <core/sequence/util.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/Sequence.fwd.hh>
@@ -52,6 +46,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loop_mover/LoopMover.hh>
 #include <protocols/loops/LoopMoverFactory.hh>
+#include <protocols/loops/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -191,7 +186,7 @@ void bounded_loops_from_alignment(
 
 	// Ensure the unaligned regions meet size constraints.
 	// Aligned regions are incorrect at this point.
-	protocols::loops::LoopsOP unaligned_ok = pick_loops_unaligned(num_residues, unaligned_residues, min_size);
+	protocols::loops::LoopsOP unaligned_ok = protocols::loops::pick_loops_unaligned(num_residues, unaligned_residues, min_size);
 
 	// Ensure the aligned regions meet size constraints.
 	unaligned_residues.clear();
@@ -219,7 +214,7 @@ void bounded_loops_from_alignment(
 	std::sort(bounded_unaligned_residues.begin(), bounded_unaligned_residues.end());
 
 	// Retrieve loops without affecting unaligned region length
-	unaligned_regions = pick_loops_unaligned(num_residues, bounded_unaligned_residues, NO_LOOP_SIZE_CST);
+	unaligned_regions = protocols::loops::pick_loops_unaligned(num_residues, bounded_unaligned_residues, NO_LOOP_SIZE_CST);
 }
 
 protocols::loops::LoopsOP loops_from_alignment(
@@ -254,7 +249,7 @@ protocols::loops::LoopsOP loops_from_alignment(
 
 	tr.flush_all_channels();
 
-	return pick_loops_unaligned(
+	return protocols::loops::pick_loops_unaligned(
 		nres,
 		unaligned_residues,
 		min_loop_size
@@ -311,109 +306,12 @@ protocols::loops::LoopsOP loops_from_transitive_alignments(
 
 	tr.flush_all_channels();
 
-	return pick_loops_unaligned(
+	return protocols::loops::pick_loops_unaligned(
 		nres1,
 		unaligned_residues,
 		min_loop_size
 	);
 }
-
-protocols::loops::LoopsOP pick_loops_unaligned(
-	core::Size nres,
-	utility::vector1< core::Size > const & unaligned_residues,
-	core::Size min_loop_size
-) {
-	protocols::loops::LoopsOP query_loops( new protocols::loops::Loops() );
-	if ( unaligned_residues.size() == 0 ) {
-		tr.Warning << "No unaligned residues, no loops found." << std::endl;
-		return query_loops;
-	}
-
-	core::Size loop_start( *unaligned_residues.begin() );
-
-	for ( auto it = unaligned_residues.begin(),
-			next = it + 1,
-			end  = unaligned_residues.end();
-			next != end; ++it, ++next
-			) {
-		tr.Debug << "residue " << *it << " is unaligned." << std::endl;
-		if ( *next - *it > 1 ) {
-			// add loop
-			core::Size loop_stop = *it;
-			while ( (loop_stop - loop_start + 1) < min_loop_size ) {
-				if ( loop_stop < nres ) {
-					++loop_stop;
-				}
-				if ( loop_start > 1 && (loop_stop - loop_start + 1) < min_loop_size ) {
-					--loop_start;
-				}
-			}
-			tr.Debug << "adding loop from " << loop_start << " to " << loop_stop
-				<< std::endl;
-			protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
-			query_loops->add_loop( loop, 1 );
-
-			loop_start = *next;
-		}
-	}
-
-	core::Size loop_stop = ( *(unaligned_residues.end() - 1) );
-
-	while ( (loop_stop - loop_start + 1) < min_loop_size ) {
-		if ( loop_stop < nres ) ++loop_stop;
-		if ( loop_start > 1 ) --loop_start;
-	}
-	tr.Debug << "adding loop from " << loop_start << " to " << loop_stop
-		<< std::endl;
-	protocols::loops::Loop loop( loop_start, loop_stop, 0, 0, false );
-	query_loops->add_loop( loop , 1 );
-
-	tr.flush_all_channels();
-
-	return query_loops;
-} // pick_loops
-
-protocols::loops::LoopsOP pick_loops_chainbreak(
-	core::pose::Pose & query_pose,
-	core::Size min_loop_size
-) {
-	core::Real const chainbreak_cutoff( 4.0 );
-	core::Size nres = query_pose.size();
-
-	//fpd symm
-	if ( core::pose::symmetry::is_symmetric(query_pose) ) {
-		auto & SymmConf (
-			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( query_pose.conformation()) );
-		core::conformation::symmetry::SymmetryInfoCOP symm_info = SymmConf.Symmetry_Info();
-		nres = symm_info->num_independent_residues();
-	}
-
-	vector1< core::Size > residues_near_chainbreak;
-	for ( core::Size i = 1; i <= nres - 1; ++i ) {
-		if ( query_pose.residue_type(i).is_protein() &&  query_pose.residue_type(i+1).is_protein() ) {
-			core::Real dist = query_pose.residue(i).xyz("CA").distance(
-				query_pose.residue(i+1).xyz("CA")
-			);
-			//std::cout << "dist(" << i << "," << i+1 << ") = " << dist << std::endl;
-			if ( dist > chainbreak_cutoff ) {
-				residues_near_chainbreak.push_back( i );
-			}
-		}
-	} // for ( core::Size i )
-
-	if ( residues_near_chainbreak.size() == 0 ) {
-		tr.Warning << "No chainbreaks found, so not picking any loops!"
-			<< std::endl;
-	}
-
-	tr.flush();
-
-	return pick_loops_unaligned(
-		query_pose.size(),
-		residues_near_chainbreak,
-		min_loop_size
-	);
-} // pick_loops
 
 void rebuild_loops_until_closed(
 	core::pose::Pose & query_pose,
@@ -425,7 +323,7 @@ void rebuild_loops_until_closed(
 	using namespace basic::options::OptionKeys;
 
 	// switch to centroid ResidueTypeSet for loop remodeling
-	protocols::loops::LoopsOP my_loops = pick_loops_chainbreak(
+	protocols::loops::LoopsOP my_loops = protocols::loops::pick_loops_chainbreak(
 		query_pose,
 		min_loop_size
 	);
@@ -445,7 +343,7 @@ void rebuild_loops_until_closed(
 		);
 		loop_mover->apply( query_pose );
 
-		my_loops = pick_loops_chainbreak(
+		my_loops = protocols::loops::pick_loops_chainbreak(
 			query_pose,
 			min_loop_size
 		);
@@ -573,7 +471,7 @@ templates_from_cmd_line() {
 }
 
 bool loops_are_closed( core::pose::Pose & pose ) {
-	return ( pick_loops_chainbreak(pose, 3)->size() == 0 ) ;
+	return ( protocols::loops::pick_loops_chainbreak(pose, 3)->size() == 0 ) ;
 }
 
 std::map< std::string, core::pose::Pose >

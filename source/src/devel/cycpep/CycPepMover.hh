@@ -40,8 +40,8 @@
 #include <core/conformation/Residue.hh>
 ////#include <core/io/pdb/pose_io.hh>
 #include <basic/options/util.hh>//option.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <protocols/loops/Loops.hh>
@@ -93,7 +93,7 @@ private:
 	Real scoreNoConstraint(pose::Pose& workpose);
 	core::scoring::constraints::ConstraintSetOP createDihedralConstraint(pose::Pose& workpose);
 	void modelSSLoop(core::Size startCys, core::Size endCys, pose::Pose& workpose);
-	protocols::comparative_modeling::LoopRelaxMover _loop_relax_mover;
+	protocols::relax::loop::LoopRelaxMover _loop_relax_mover;
 	core::scoring::ScoreFunctionOP _scorefxn;
 	pack::task::PackerTaskOP _packTask;
 	//prevents repacking of disulfides bonds

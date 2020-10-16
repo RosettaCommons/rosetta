@@ -36,7 +36,7 @@
 //#include <protocols/loops/LoopMover_CCD.hh>
 //#include <protocols/loops/LoopMover_KIC.hh>
 //#include <protocols/loops/LoopMoverFactory.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -310,7 +310,7 @@ CloseFold::fast_loopclose( core::pose::Pose &pose, protocols::loops::LoopsOP con
 	}
 
 	if ( kic ) {
-		protocols::comparative_modeling::LoopRelaxMoverOP lr_mover( new  protocols::comparative_modeling::LoopRelaxMover );
+		protocols::relax::loop::LoopRelaxMoverOP lr_mover( new  protocols::relax::loop::LoopRelaxMover );
 		lr_mover->scorefxns( cen_scorefxn_, fa_scorefxn_ );   // should only use the centroid anyway
 		lr_mover->loops( loops );
 		lr_mover->remodel( "perturb_kic" );
@@ -331,7 +331,7 @@ CloseFold::quick_closure( core::pose::Pose &pose, protocols::loops::LoopsOP cons
 
 	core::kinematics::FoldTree f_orig( pose.fold_tree() );
 
-	protocols::comparative_modeling::LoopRelaxMoverOP ccd_closure( new  protocols::comparative_modeling::LoopRelaxMover );
+	protocols::relax::loop::LoopRelaxMoverOP ccd_closure( new  protocols::relax::loop::LoopRelaxMover );
 	ccd_closure->scorefxns( cen_scorefxn_, fa_scorefxn_ );
 	ccd_closure->remodel("quick_ccd");
 	ccd_closure->intermedrelax("no");

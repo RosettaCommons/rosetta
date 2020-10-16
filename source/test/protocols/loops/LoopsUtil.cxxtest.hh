@@ -14,87 +14,18 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/protocols/init_util.hh>
+#include <test/util/pose_funcs.hh>
 
 // Project headers
 #include <core/types.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
+#include <core/id/NamedAtomID.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/util.hh>
 
-//Auto Headers
-#include <platform/types.hh>
-#include <core/chemical/AA.hh>
-#include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
-#include <core/conformation/signals/XYZEvent.fwd.hh>
-#include <core/fragment/FragSet.fwd.hh>
-#include <core/fragment/SecondaryStructure.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
-#include <core/id/DOF_ID.fwd.hh>
-#include <core/id/NamedAtomID.fwd.hh>
-#include <core/id/NamedStubID.fwd.hh>
-#include <core/id/TorsionID.fwd.hh>
-#include <core/id/types.hh>
-#include <core/kinematics/AtomTree.fwd.hh>
-#include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.fwd.hh>
-#include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/Stub.fwd.hh>
-#include <core/pose/PDBInfo.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/datacache/ObserverCache.fwd.hh>
-#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
-#include <core/pose/signals/ConformationEvent.fwd.hh>
-#include <core/pose/signals/DestructionEvent.fwd.hh>
-#include <core/pose/signals/EnergyEvent.fwd.hh>
-#include <core/pose/signals/GeneralEvent.fwd.hh>
-#include <core/scoring/Energies.fwd.hh>
-#include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/scoring/constraints/Constraint.fwd.hh>
-#include <core/scoring/constraints/ConstraintSet.fwd.hh>
-#include <protocols/loops/Loop.fwd.hh>
-#include <protocols/loops/Loops.fwd.hh>
-#include <utility/down_cast.hh>
-#include <utility/vector1.fwd.hh>
-#include <utility/vector1.hh>
-#include <utility/vector1_bool.hh>
-#include <utility/vectorL.fwd.hh>
-#include <utility/vectorL.hh>
-#include <utility/vectorL_Selector.hh>
-#include <utility/vectorL_bool.hh>
-#include <utility/VirtualBase.fwd.hh>
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.hh>
-#include <utility/signals/BufferedSignalHub.fwd.hh>
-#include <utility/signals/BufferedSignalHub.hh>
-#include <utility/signals/Link.fwd.hh>
-#include <utility/signals/Link.hh>
-#include <utility/signals/LinkUnit.fwd.hh>
-#include <utility/signals/LinkUnit.hh>
-#include <utility/signals/SignalHub.fwd.hh>
-#include <utility/signals/SignalHub.hh>
-#include <numeric/xyzMatrix.fwd.hh>
-#include <numeric/xyzVector.fwd.hh>
-#include <algorithm>
-#include <cassert>
-#include <cstddef>
-#include <iosfwd>
-#include <limits>
-#include <ostream>
-#include <utility>
-#include <vector>
-#include <basic/MetricValue.fwd.hh>
-#include <basic/Tracer.fwd.hh>
-#include <basic/datacache/BasicDataCache.fwd.hh>
-
+#include <numeric/xyzVector.hh>
 
 namespace {
 
@@ -105,6 +36,9 @@ using protocols::loops::Loop;
 using protocols::loops::Loops;
 
 class LoopsUtilTest : public CxxTest::TestSuite {
+
+private:
+	core::pose::Pose query_pose_;
 
 private:
 	bool equal_torsions(const Pose& p1, const Pose& p2) {
@@ -128,6 +62,7 @@ private:
 public:
 	void setUp() {
 		protocols_init();
+		query_pose_ = create_test_in_pdb_pose(); // 116 residues
 	}
 
 	void testSafeExtendLoopsAndIdealize() {
@@ -142,6 +77,74 @@ public:
 		protocols::loops::safe_set_extended_torsions_and_idealize_loops(loops, &other);
 		TS_ASSERT(!equal_torsions(*pose, other));
 	}
+
+	void test_loop_picking_aligned() {
+		utility::vector1< core::Size > unaligned_residues;
+
+		unaligned_residues.push_back(   1 );
+		unaligned_residues.push_back(   2 );
+		unaligned_residues.push_back(   3 );
+		unaligned_residues.push_back(  10 );
+		unaligned_residues.push_back(  11 );
+		unaligned_residues.push_back( 116 );
+
+		protocols::loops::LoopsOP myloops = protocols::loops::pick_loops_unaligned(
+			query_pose_.size(),
+			unaligned_residues,
+			5 // min_loop_size
+		);
+
+		// expected loops are:
+		// 1-5
+		// 8-13
+		// 112-116
+		TS_ASSERT( myloops->size() == 3 );
+
+		protocols::loops::Loops::const_iterator it = myloops->begin();
+		TS_ASSERT( it->start() ==   1 );
+		TS_ASSERT( it->stop()  ==   5 );
+		++it;
+		TS_ASSERT( it->start() ==   9 );
+		TS_ASSERT( it->stop()  ==  13 );
+		++it;
+		TS_ASSERT( it->start() == 112 );
+		TS_ASSERT( it->stop()  == 116 );
+		++it;
+	} // void test_loop_picking_aligned()
+
+	void test_loop_picking_chainbreak() {
+		utility::vector1< core::Size > unaligned_residues;
+
+		using namespace protocols::loops;
+
+		// translate a couple of residues to weird places to make picking
+		// loops by chainbreak find something.
+		core::id::NamedAtomID id( "CA", 81 );
+		query_pose_.set_xyz( id, query_pose_.xyz(id) + 15.0 );
+
+		LoopsOP myloops = pick_loops_chainbreak(
+			query_pose_,
+			5 // min_loop_size
+		);
+
+		// expected loops is for five residues around residue 81.
+		//TR << myloops << std::endl;
+		//for ( protocols::loops::Loops::const_iterator it = myloops.begin(),
+		//    it_end = myloops.end();
+		//   it != it_end; ++it
+		//) {
+		// TR << "start,stop = " << it->start() << "," << it->stop()
+		//  << std::endl;
+		//}
+
+		TS_ASSERT( myloops->size() == 1 );
+
+		protocols::loops::Loops::const_iterator it = myloops->begin();
+		TS_ASSERT( it->start() == 78 );
+		TS_ASSERT( it->stop()  == 83 );
+		++it;
+
+	} // test_save_and_restore
 };
 
 }  // anonymous namespace

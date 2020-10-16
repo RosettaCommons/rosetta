@@ -13,7 +13,7 @@
 #include <protocols/loop_build/LoopBuildMover.hh>
 
 // Protocol headers
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loops/loops_main.hh>
 
 // Utility headers
@@ -110,7 +110,7 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 		loops::read_loop_fragments( frag_libs );
 	}
 
-	comparative_modeling::LoopRelaxMover looprelax_mover;
+	relax::loop::LoopRelaxMover looprelax_mover;
 	looprelax_mover.frag_libs( frag_libs );
 	looprelax_mover.relax( relax );
 	looprelax_mover.refine( refine );

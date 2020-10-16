@@ -72,7 +72,7 @@
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/loops/loops_main.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/viewer/viewers.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -257,7 +257,7 @@ void FlexPepDockingProtocol::set_default()
 	// Loop modeling options
 	// NOTE: most LoopRelax options are initiated automatically from cmd-line
 	// TODO: should refine be set to default? we want to guarantee a full-atom output
-	loop_relax_mover_ = utility::pointer::make_shared< protocols::comparative_modeling::LoopRelaxMover >();
+	loop_relax_mover_ = utility::pointer::make_shared< protocols::relax::loop::LoopRelaxMover >();
 	loop_relax_mover_->fa_scorefxn(scorefxn_); // TODO: for now we do not touch the centroid part...
 	loop_relax_mover_->remodel("no"); // remodel only in centroid part, if at all? // TODO: rethink this
 	loop_relax_mover_->relax("no"); // We don't want structure relaxation by all means // TODO: inform user

@@ -98,7 +98,6 @@ sources = {
 	"comparative_modeling" : [
 		"ExtraThreadingMover",
 		"ThreadingMover",
-		"util",
 	],
 
 	"constraint_generator": [

@@ -25,7 +25,7 @@
 #include <protocols/rbsegment_relax/util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 // Protocol headers
 #include <protocols/moves/Mover.hh>
@@ -476,7 +476,7 @@ void RBSegmentRelax::apply( core::pose::Pose & pose ) {
 		core::scoring::electron_density::add_dens_scores_from_cmdline_to_scorefxn( *lr_fa_scorefxn );
 
 		// call looprelax
-		protocols::comparative_modeling::LoopRelaxMover mover;
+		protocols::relax::loop::LoopRelaxMover mover;
 		mover.fa_scorefxn( lr_fa_scorefxn );
 		mover.frag_libs( frag_libs_ );
 		mover.loops( loops );

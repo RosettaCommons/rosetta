@@ -71,7 +71,7 @@
 #include <protocols/hybridization/AllResiduesChanged.hh>
 
 // for KICCloser
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -490,7 +490,7 @@ WorkUnit_KicCloser::run()
 	pert = "perturb_kic"; //this is just perturbing w/o closure
 	refine = get_options(); //this is "THE CLOSURE"
 
-	comparative_modeling::LoopRelaxMover sampler( pert, "no", refine, "no", loops );
+	relax::loop::LoopRelaxMover sampler( pert, "no", refine, "no", loops );
 	sampler.scorefxns( sfxn_cen, sfxn_sampling );
 
 	TR << "Executing WorkUnit_KicCloser on " << get_res1() << " " << get_res2() << ", using method ";

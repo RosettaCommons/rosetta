@@ -13,8 +13,9 @@
 // include these first for building on Visual Studio
 
 #include <protocols/loops/loops_main.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/comparative_modeling/LoopRelaxThreadingMover.hh>
+#include <protocols/loops/util.hh>
 
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
@@ -109,7 +110,7 @@ void LoopRelaxThreadingMover::apply( core::pose::Pose & pose ) {
 		pre_mover.apply( pose );
 	}
 
-	LoopRelaxMoverOP lr_mover( new LoopRelaxMover );
+	relax::loop::LoopRelaxMoverOP lr_mover( new relax::loop::LoopRelaxMover );
 	lr_mover->frag_libs( frag_libs_ );
 	lr_mover->loops( my_loops );
 	lr_mover->relax( relax );

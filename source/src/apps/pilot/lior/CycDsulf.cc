@@ -40,8 +40,8 @@
 #include <core/conformation/util.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <basic/options/util.hh>//option.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.fwd.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <numeric/random/random.hh>
 #include <protocols/loops/Loops.hh>
@@ -117,7 +117,7 @@ std::string int2string(int n){
 }
 
 void modelSSLoop(Size startCys, Size endCys, pose::Pose& workpose, core::scoring::ScoreFunctionOP scorefxn){
-	protocols::comparative_modeling::LoopRelaxMover loop_relax_mover;
+	protocols::relax::loop::LoopRelaxMover loop_relax_mover;
 	utility::vector1< std::pair<Size, Size> > dss;
 	std::pair<Size,Size> bond(startCys,endCys);
 	dss.push_back(bond);

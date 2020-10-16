@@ -12,7 +12,7 @@
 
 #include <core/pose/Pose.hh>
 
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loop_build/LoopBuildMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
@@ -23,14 +23,14 @@ namespace loop_build {
 class LoopBuildMover : public moves::Mover {
 public:
 
-	LoopBuildMover(protocols::comparative_modeling::LoopRelaxMover loop_relax_mover);
+	LoopBuildMover(protocols::relax::loop::LoopRelaxMover loop_relax_mover);
 
 	void apply( core::pose::Pose & pose ) override;
 
 	std::string get_name() const override;
 
 private:
-	protocols::comparative_modeling::LoopRelaxMover loop_relax_mover_;
+	protocols::relax::loop::LoopRelaxMover loop_relax_mover_;
 
 private:
 	void setup_loop_definition();

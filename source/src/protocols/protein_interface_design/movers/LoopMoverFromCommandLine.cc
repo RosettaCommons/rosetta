@@ -25,7 +25,7 @@
 #include <protocols/loops/loop_mover/refine/LoopMover_KIC.hh>
 #include <protocols/loops/loops_main.hh> // for various loop utility fxns
 #include <protocols/loops/Loops.hh>
-#include <protocols/comparative_modeling/LoopRelaxMover.hh>
+#include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <core/conformation/Conformation.hh>
 #include <basic/Tracer.hh>
 
@@ -169,7 +169,7 @@ LoopMoverFromCommandLine::apply ( core::pose::Pose & pose)
 				utility::vector1< core::fragment::FragSetOP > frag_libs;
 				protocols::loops::read_loop_fragments( frag_libs );
 
-				protocols::comparative_modeling::LoopRelaxMover lrm;
+				protocols::relax::loop::LoopRelaxMover lrm;
 				lrm.frag_libs( frag_libs );
 				lrm.loops( single_loop );
 				lrm.relax( relax() );

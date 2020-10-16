@@ -194,6 +194,9 @@ sources = {
 		"MPRangeRelaxMover",
 		"util",
 	],
+	"protocols/relax/loop": [
+		"LoopRelaxMover",
+	],
 	"protocols/relax/loop_closure": [
 		"FASelectSlidingWindowLoopClosure",
 	],
