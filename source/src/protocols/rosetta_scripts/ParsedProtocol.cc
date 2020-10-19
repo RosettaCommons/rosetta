@@ -456,15 +456,15 @@ ParsedProtocol::parse_my_tag(
 
 		TR << "Added";
 		if ( mover_to_add != nullptr ) {
-			TR << " mover \"" << mover_name;
+			TR << " mover \"" << mover_name << "\"";
 		}
 		if ( filter_to_add != nullptr ) {
-			TR << " filter " << filter_name;
+			TR << " filter \"" << filter_name << "\"";
 		}
 		if ( ! metric_labels.empty() ) {
 			TR << " metrics:";
 			for ( auto const & ml: metric_labels ) {
-				TR << " " << ml;
+				TR << " \"" << ml << "\"";
 			}
 		}
 		TR << std::endl;
@@ -576,7 +576,9 @@ ParsedProtocol::get_additional_output( )
 bool
 ParsedProtocol::apply_step( Pose & pose, ParsedProtocolStep const & step, bool skip_mover /*=false*/ ) {
 	if ( ! skip_mover ) {
-		apply_mover( pose, step );
+		if ( ! apply_mover( pose, step ) ) {
+			return false;
+		}
 	}
 	if ( !apply_filter( pose, step ) ) {
 		return false;
@@ -588,9 +590,9 @@ ParsedProtocol::apply_step( Pose & pose, ParsedProtocolStep const & step, bool s
 	return true;
 }
 
-void
+bool
 ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
-	if ( step.mover == nullptr ) { return; }
+	if ( step.mover == nullptr ) { return true; } // No mover no failure
 
 	std::string const & mover_name( step.mover->get_name() );
 	std::string const & mover_user_name( step.mover_user_name );
@@ -616,6 +618,15 @@ ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
 	last_mover_ = step.mover;
 
 	info().insert( info().end(), step.mover->info().begin(), step.mover->info().end() );
+
+	moves::MoverStatus status( step.mover->get_last_move_status() );
+	if ( status != protocols::moves::MS_SUCCESS ) {
+		TR << "Mover " << step.mover->get_name() << " reports failure!" << std::endl;
+		protocols::moves::Mover::set_last_move_status( status ); // Set status for this ParsedProtocol mover
+		return false;
+	}
+
+	return true;
 }
 
 bool
@@ -624,16 +635,10 @@ ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
 
 	std::string const filter_name( step.filter->get_user_defined_name() );
 
-	moves::MoverStatus status( protocols::moves::MS_SUCCESS );
-	if ( step.mover != nullptr ) {
-		status = step.mover->get_last_move_status();
-	}
-	bool pass( status==protocols::moves::MS_SUCCESS );
-
 	TR << "=======================BEGIN FILTER " << filter_name << "=======================" << std::endl;
 	// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
 	pose.update_residue_neighbors();
-	pass = pass && step.filter->apply( pose );
+	bool pass = step.filter->apply( pose );
 	if ( !step.report_filter_at_end_ ) { //report filter now
 		core::Real const filter_value( step.filter->report_sm( pose ) );
 		setPoseExtraScore(pose, step.filter->get_user_defined_name(), (float)filter_value);
@@ -645,14 +650,8 @@ ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
 
 	//filter failed -- set status in mover and return false
 	if ( !pass ) {
-		if ( status != protocols::moves::MS_SUCCESS ) {
-			debug_assert( step.mover != nullptr ); // Shouldn't be, if we have a non-success status
-			TR << "Mover " << step.mover->get_name() << " reports failure!" << std::endl;
-			protocols::moves::Mover::set_last_move_status( status ); // Set status for this ParsedProtocol mover
-		} else {
-			TR << "Filter " << filter_name << " reports failure!" << std::endl;
-			protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY ); // Set status for this ParsedProtocol mover
-		}
+		TR << "Filter " << filter_name << " reports failure!" << std::endl;
+		protocols::moves::Mover::set_last_move_status( protocols::moves::FAIL_RETRY ); // Set status for this ParsedProtocol mover
 		return false;
 	}
 	return true;

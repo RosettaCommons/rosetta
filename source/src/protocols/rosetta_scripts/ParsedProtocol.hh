@@ -184,7 +184,7 @@ private:
 	bool apply_step(Pose & pose, ParsedProtocolStep const & step, bool skip_mover = false);
 
 	/// @brief apply the mover of the step
-	void apply_mover(Pose & pose, ParsedProtocolStep const & step);
+	bool apply_mover(Pose & pose, ParsedProtocolStep const & step);
 
 	/// @brief apply the filter of the step
 	/// @details Returns false on failure

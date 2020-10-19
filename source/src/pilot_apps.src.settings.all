@@ -832,6 +832,7 @@ sources = {
 		"dna_test",
 	        "screen_phosphates",
 	        "rb_entropy", #hey I've added a demo do not delete.
+		"read_tensor", # Needed for the database_md5 integration test
 	        "homolog_finder_farna",
 	        "pack_polar_hydrogens",
 	        #"rna_protein_test",
