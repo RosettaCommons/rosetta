@@ -76,15 +76,20 @@ public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 	/// @return  true
 	bool defines_dof_derivatives( pose::Pose const & /* pose */ ) const override { return true; }
 
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const override;
+
 	/// @brief    Evaluate the DoF derivative for a particular residue.
-	core::Real eval_residue_dof_derivative(
+	core::Real
+	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
 		ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
 		ScoreFunction const & sf,
-		EnergyMap const & weights ) const override;
+		EnergyMap const & weights
+	) const override;
 
 
 private:  // Private methods //////////////////////////////////////////////////

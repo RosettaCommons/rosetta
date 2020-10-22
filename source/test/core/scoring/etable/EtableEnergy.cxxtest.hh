@@ -17,6 +17,7 @@
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/util/deriv_funcs.hh>
+#include <test/util/cart_deriv_funcs.hh>
 
 #include <core/types.hh>
 
@@ -930,6 +931,59 @@ public:
 		adv.set_nblist_auto_update( true );
 
 		adv.simple_deriv_check( true, 1e-6 );
+	}
+
+
+	void test_etable_cart_derivatives_w_autoupdate_intraresidue_terms_and_partial_bb_flex_analytic_version()
+	{
+		core::pose::Pose pose = create_trpcage_ideal_pose();
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		CartAtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		adv.set_nblist_auto_update( true );
+
+		adv.simple_deriv_check( true, 1e-6 );
+	}
+
+	void test_etable_symm_cart_derivatives_w_intraresidue_terms_and_partial_bb_flex_analytic_version()
+	{
+		//core::pose::Pose pose = create_trpcage_ideal_pose();
+		core_init_with_additional_options( "-symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat" );
+		core::pose::Pose pose;
+		core::import_pose::pose_from_file(
+			pose, "core/scoring/symmetry/test_in.pdb", core::import_pose::PDB_file );
+		core::pose::symmetry::make_symmetric_pose( pose );
+
+		core::scoring::ScoreFunction sfxn;
+		core::scoring::methods::EnergyMethodOptions options;
+		options.analytic_etable_evaluation( true );
+		sfxn.set_energy_method_options( options );
+		sfxn.set_weight( fa_atr, 0.5 );
+		sfxn.set_weight( fa_rep, 0.25 );
+		sfxn.set_weight( fa_sol, 0.125 );
+		sfxn.set_weight( fa_intra_atr, 0.5 );
+		sfxn.set_weight( fa_intra_rep, 0.25 );
+		sfxn.set_weight( fa_intra_sol, 0.125 );
+		kinematics::MoveMap movemap( create_trpcage_movemap_to_allow_bb10_freedom() );
+		CartAtomDerivValidator adv;
+		adv.set_pose( pose );
+		adv.set_score_function( sfxn );
+		adv.set_movemap( movemap );
+		// adv.set_nblist_auto_update( true );
+
+		adv.simple_deriv_check( false, 1e-6 );
 	}
 
 	void dont_test_atom_tree_minimize_with_autoupdate()

@@ -20,6 +20,8 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Package headers
+#include <core/id/AtomID.fwd.hh>
+#include <core/id/PartialAtomID.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/orbitals/OrbitalXYZCoords.hh>
@@ -1367,6 +1369,12 @@ public:
 		Size const otherres,
 		Size const other_connid
 	);
+
+	/// @brief Resolve a partial atom ID into an AtomID for this residue
+	id::AtomID
+	resolve_partial_atom_id(
+		id::PartialAtomID const & partial_id
+	) const;
 
 	/// @brief Distance between a potential residue connection match and the position of the expected atom
 	Distance

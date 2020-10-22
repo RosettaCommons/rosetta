@@ -66,6 +66,8 @@ sources = {
 		"DunbrackConstraint",
 		"DunbrackEnergy",
 		"DunbrackRotamer",
+		"PeptoidDOFReporters",
+		"ResidueDOFReporter",
 		"RotamerConstraint",
 		"RotamerLibrary",
 		"RotamerLibraryScratchSpace",
@@ -73,6 +75,7 @@ sources = {
 		"SemiRotamericSingleResidueDunbrackLibrary",
 		"SingleResidueDunbrackLibrary",
 		"SingleResidueDunbrackLibraryCreator",
+		"StandardDOFReporters",
 	],
 	"core/pack/dunbrack/cenrot": [
 		"CenrotLibrary",

@@ -21,6 +21,7 @@
 #include <core/conformation/util.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/chemical/AtomType.hh>
@@ -1502,6 +1503,52 @@ Residue::residue_connection_partner(
 	//   connections_to_residues_[ otherres ] = newlist;
 	//  }
 	determine_nonstandard_polymer_status();
+}
+
+id::AtomID
+Residue::resolve_partial_atom_id(
+	id::PartialAtomID const & partial_id
+) const
+{
+	debug_assert( partial_id.valid() );
+	debug_assert( seqpos() == partial_id.rsd() );
+
+	if ( partial_id.complete() ) {
+		return id::AtomID( partial_id.atomno(), partial_id.rsd() );
+	}
+
+	Size const conn_id = partial_id.resconnid();
+	Size const bond_offset = partial_id.bonds_from_resconn();
+	Size atomno = residue_connection( partial_id.resconnid() ).atomno();
+
+	if ( bond_offset == 0 ) {
+		return id::AtomID( atomno, partial_id.rsd() );
+	}
+
+	if ( has_lower_connect() && lower_connect().index() == static_cast<int>(conn_id) ) {
+		debug_assert( atomno == mainchain_atoms()[1] );
+		if ( mainchain_atoms().size() > bond_offset ) {
+			atomno = mainchain_atoms()[ 1 + bond_offset ];
+		} else {
+			atomno = 0;
+		}
+	} else if ( has_upper_connect() && upper_connect().index() == (int) conn_id ) {
+		debug_assert( atomno == mainchain_atoms()[ mainchain_atoms().size() ] );
+		if ( mainchain_atoms().size() > bond_offset ) {
+			atomno = mainchain_atoms()[ mainchain_atoms().size() - bond_offset ];
+		} else {
+			atomno = 0;
+		}
+	} else {
+		// traverse backwards through the residue type's atom "tree"
+		for ( Size ii = 1; ii <= bond_offset; ++ii ) {
+			atomno = type().atom_base( atomno );
+		}
+	}
+	if ( atomno == 0 ) {
+		return id::AtomID::BOGUS_ATOM_ID();
+	}
+	return id::AtomID( atomno, partial_id.rsd() );
 }
 
 

@@ -14,11 +14,13 @@
 // Test headers
 #include <cxxtest/TestSuite.h>
 #include <test/util/deriv_funcs.hh>
+#include <test/util/cart_deriv_funcs.hh>
 #include <test/util/pose_funcs.hh>
 #include <test/core/init_util.hh>
 
 #include <platform/types.hh>
 
+#include <core/id/PartialAtomID.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/Pose.hh>
 
@@ -27,6 +29,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 
+#include <core/pack/dunbrack/DunbrackEnergy.hh>
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.tmpl.hh>
@@ -37,6 +40,7 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
+
 
 static basic::Tracer TR( "DunbrackEnergyTests" );
 
@@ -216,5 +220,96 @@ public:
 		//TR << "-150 vs -140 " << std::endl;
 		TS_ASSERT_DELTA( peptoid_cis.energies().total_energy(), peptoid_cislike.energies().total_energy(), 1e-6 );
 	}
+
+
+	void test_get_dof_deriv_atoms() {
+		Pose pose = create_trpcage_ideal_pose();
+		core::pack::dunbrack::DunbrackEnergy dun_energy;
+		utility::vector1< id::PartialAtomID > ids;
+
+		// N-term
+		ids = dun_energy.atoms_with_dof_derivatives( pose.residue(1), pose );
+		TS_ASSERT_EQUALS( ids.size(), 4);
+		TS_ASSERT_EQUALS( ids[1], id::PartialAtomID(1, 1));
+		TS_ASSERT_EQUALS( ids[2], id::PartialAtomID(2, 1));
+		TS_ASSERT_EQUALS( ids[3], id::PartialAtomID(3, 1));
+		TS_ASSERT_EQUALS( ids[4], id::PartialAtomID(1, 2, 0));
+
+		// mid-protein
+		ids = dun_energy.atoms_with_dof_derivatives( pose.residue(5), pose );
+		TS_ASSERT_EQUALS( ids.size(), 5);
+		TS_ASSERT_EQUALS( ids[1], id::PartialAtomID(2, 4, 0));
+		TS_ASSERT_EQUALS( ids[2], id::PartialAtomID(1, 5));
+		TS_ASSERT_EQUALS( ids[3], id::PartialAtomID(2, 5));
+		TS_ASSERT_EQUALS( ids[4], id::PartialAtomID(3, 5));
+		TS_ASSERT_EQUALS( ids[5], id::PartialAtomID(1, 6, 0));
+
+		// c-term
+		ids = dun_energy.atoms_with_dof_derivatives( pose.residue(20), pose );
+		TS_ASSERT_EQUALS( ids.size(), 4);
+		TS_ASSERT_EQUALS( ids[1], id::PartialAtomID(2, 19, 0));
+		TS_ASSERT_EQUALS( ids[2], id::PartialAtomID(1, 20));
+		TS_ASSERT_EQUALS( ids[3], id::PartialAtomID(2, 20));
+		TS_ASSERT_EQUALS( ids[4], id::PartialAtomID(3, 20));
+	}
+
+	void test_dunbrack_deriv_check_full_flexibility()
+	{
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn; sfxn.set_weight( fa_dun, 0.4 );
+		kinematics::MoveMap movemap; movemap.set_bb( true );
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( true, 1e-6 );
+	}
+
+	void test_dunbrack_deriv_check_partial_flexibility()
+	{
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn; sfxn.set_weight( fa_dun, 0.4 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( 10, true );
+		movemap.set_bb( 11, true );
+		movemap.set_bb( 12, true );
+
+		AtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( true, 1e-6 );
+	}
+
+
+	void test_dunbrack_cart_deriv_check_partial_flexibility()
+	{
+		Pose pose = create_trpcage_ideal_pose();
+		ScoreFunction sfxn; sfxn.set_weight( fa_dun, 0.4 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( 10, true );
+		movemap.set_bb( 11, true );
+		movemap.set_bb( 13, true );
+
+		CartAtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-5 );
+	}
+
+	void test_dunbrack_symm_cart_deriv_check_partial_flexibility()
+	{
+		core_init_with_additional_options( "-symmetry:symmetry_definition core/scoring/symmetry/sym_def.dat" );
+		Pose pose;
+		core::import_pose::pose_from_file(
+			pose, "core/scoring/symmetry/test_in.pdb", core::import_pose::PDB_file );
+		core::pose::symmetry::make_symmetric_pose( pose );
+
+		ScoreFunction sfxn; sfxn.set_weight( fa_dun, 0.4 );
+
+		kinematics::MoveMap movemap;
+		movemap.set_bb( 10, true );
+		movemap.set_bb( 11, true );
+		movemap.set_bb( 12, true );
+		movemap.set_bb( 14, true );
+
+		CartAtomDerivValidator adv( pose, sfxn, movemap );
+		adv.simple_deriv_check( false, 1e-5 );
+	}
+
 
 };

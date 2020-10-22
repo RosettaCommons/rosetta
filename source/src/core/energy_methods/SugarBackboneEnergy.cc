@@ -25,6 +25,8 @@
 #include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
 
 // Project Headers
+#include <core/id/AtomID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/carbohydrates/CarbohydrateInfo.hh>
@@ -73,7 +75,9 @@ SugarBackboneEnergy::clone() const
 
 
 // OneBodyEnergy Methods //////////////////////////////////////////////////////
-// Evaluate the one-body carbohydrate backbone energies for a particular residue.
+/// @details Evaluate the one-body carbohydrate backbone energies for a particular residue.
+/// @note This is not a one body energy. It reaches into the pose to get the coordinates of
+/// a second residue. This is a two body energy.
 void
 SugarBackboneEnergy::residue_energy(
 	conformation::Residue const & rsd,
@@ -123,7 +127,6 @@ SugarBackboneEnergy::residue_energy(
 
 	Energy score( 0.0 );
 
-
 	// Calculate phi component. ///////////////////////////////////////////////
 	// L-Sugars use the mirror image of the score functions.
 	if ( info->is_L_sugar() ) {
@@ -169,6 +172,80 @@ SugarBackboneEnergy::residue_energy(
 
 	emap[ sugar_bb ] += score;
 }
+
+utility::vector1< id::PartialAtomID >
+SugarBackboneEnergy::atoms_with_dof_derivatives(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose
+) const
+{
+	utility::vector1< id::PartialAtomID > atoms;
+
+	// TO DO!
+	// The dihedral angles for a particular residue are
+	// defined mostly by the coordinates of the atom in
+	// the parent residue, therefore this term should
+	// be defined as a two-body energy.
+
+	// This is a carbohydrate-only scoring method.
+	if ( ! rsd.is_carbohydrate() ) { return atoms; }
+
+	// Phi, psi, and omega are meaningless for reducing-end sugars.
+	if ( rsd.is_lower_terminus() ) { return atoms; }
+
+	// Ignore REPLONLY variants.
+	if ( rsd.has_variant_type( chemical::REPLONLY ) ) { return atoms; }
+
+	// Ignore VIRTUAL residues.
+	if ( rsd.is_virtual_residue() ) { return atoms; }
+
+	// Get parent residue, CarbohydrateInfo, and exocyclic state for convenience.
+	chemical::carbohydrates::CarbohydrateInfoCOP info( rsd.carbohydrate_info() );
+
+	core::Size prev_rsd_num;
+
+	if ( pose.glycan_tree_set() ) {
+		prev_rsd_num =  pose.glycan_tree_set()->get_parent( rsd.seqpos() );
+	} else {
+		prev_rsd_num =  find_seqpos_of_saccharides_parent_residue( rsd );
+	}
+
+	if ( prev_rsd_num == 0 ) return atoms;
+
+	std::pair< conformation::ResidueCOP, conformation::ResidueCOP > rsd_and_parent =
+		conformation::carbohydrates::get_glycosidic_bond_residues(
+		pose.conformation(), rsd.seqpos() );
+	if ( rsd_and_parent.first->seqpos() == rsd_and_parent.second->seqpos() ) {
+		return atoms;
+	}
+
+	utility::vector1< id::AtomID > phi_ats = conformation::carbohydrates::get_reference_atoms_for_phi(
+		pose.conformation(), rsd.seqpos() );
+	//std::set< id::PartialAtomID > atoms;
+	atoms.reserve(5);
+	atoms.push_back( id::PartialAtomID( phi_ats[1].atomno(), phi_ats[1].rsd() ));
+	atoms.push_back( id::PartialAtomID( phi_ats[2].atomno(), phi_ats[2].rsd() ));
+
+	// Find how the parent connects to res
+	auto find_conn = [&]() {
+		for ( Size ii = 1; ii <= rsd.connect_map_size(); ++ii ) {
+			if ( rsd.connect_map(ii).resid() == rsd_and_parent.second->seqpos() ) {
+				return rsd.connect_map(ii).connid();
+			}
+		}
+		return Size(0);
+	};
+	Size const conn_to_phi_res = find_conn();
+	Size const parent_res = rsd_and_parent.second->seqpos();
+	if ( conn_to_phi_res != 0 ) {
+		atoms.push_back( id::PartialAtomID( conn_to_phi_res, parent_res, 0 )); // phi, psi, omega
+		atoms.push_back( id::PartialAtomID( conn_to_phi_res, parent_res, 1 )); // phi, psi, omega
+		atoms.push_back( id::PartialAtomID( conn_to_phi_res, parent_res, 2 )); // psi, omega
+		atoms.push_back( id::PartialAtomID( conn_to_phi_res, parent_res, 3 )); // omega
+	}
+	return atoms;
+}
+
 
 // Evaluate the DoF derivative for a particular residue.
 core::Real

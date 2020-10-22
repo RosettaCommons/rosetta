@@ -81,7 +81,7 @@ find_seqpos_of_saccharides_parent_residue( conformation::Residue const & residue
 			residue.type().residue_connection_id_for_atom( residue.carbohydrate_info()->anomeric_carbon_index() ) );
 		return residue.residue_connection_partner( id_of_connection_to_parent );
 	} else  {
-		TR.Debug << "This residue is a lower terminus! Returning 0." << std::endl;
+		TR.Debug << "This residue (" << residue.seqpos() << ") is a lower terminus! Returning 0." << std::endl;
 		return 0;
 	}
 
@@ -1009,18 +1009,13 @@ get_n_glycosidic_torsions_in_res( Conformation const & conf, uint const sequence
 {
 	core::Size n_torsions( 0 );
 
-	//std::cout << "seq position: " << sequence_position << std::endl;
 	for ( core::Size torsion_id = 1; torsion_id <= 4; ++torsion_id ) {
-		//std::cout << "Torsion: " << torsion_id << std::endl;
 		utility::vector1< id::AtomID > const ref_atoms = get_reference_atoms( torsion_id, conf, sequence_position );
-		//std::cout << "size: " << ref_atoms.size() << std::endl;
 		if ( ref_atoms.size() != 0 ) {
-			//std::cout << "adding torsion: "<< torsion_id << std::endl;
 			n_torsions+=1;
 		}
 	}
 
-	//std::cout << "n_torsions: " << n_torsions << std::endl;
 	return n_torsions;
 }
 

@@ -16,6 +16,7 @@
 #include <core/pack/dunbrack/DunbrackEnergyCreator.hh>
 
 // Package Headers
+#include <core/id/PartialAtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
@@ -110,6 +111,25 @@ DunbrackEnergy::residue_energy(
 }
 
 bool DunbrackEnergy::defines_dof_derivatives( pose::Pose const & ) const { return true; }
+
+utility::vector1< id::PartialAtomID >
+DunbrackEnergy::atoms_with_dof_derivatives(
+	conformation::Residue const & res,
+	pose::Pose const & pose
+) const
+{
+	utility::vector1< id::PartialAtomID > retlist;
+	pack::rotamers::SingleResidueRotamerLibraryCOP rotlib =
+		rotamers::SingleResidueRotamerLibraryFactory::get_instance()->get( res.type() );
+	if ( ! rotlib || res.has_variant_type( core::chemical::SC_BRANCH_POINT ) )  { return retlist; }
+
+	std::set< id::PartialAtomID > atoms = rotlib->atoms_w_dof_derivatives(res, pose);
+
+	retlist.resize(atoms.size());
+	std::copy(atoms.begin(), atoms.end(), retlist.begin());
+	return retlist;
+}
+
 
 Real
 DunbrackEnergy::eval_residue_dof_derivative(

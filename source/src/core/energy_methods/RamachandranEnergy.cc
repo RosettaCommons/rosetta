@@ -23,8 +23,10 @@
 #include <core/chemical/VariantType.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
 
@@ -111,6 +113,33 @@ bool
 RamachandranEnergy::defines_dof_derivatives( pose::Pose const & ) const
 {
 	return true;
+}
+
+utility::vector1< id::PartialAtomID >
+RamachandranEnergy::atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & ) const
+{
+
+	utility::vector1< id::PartialAtomID > retlist;
+
+	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
+	if ( res.has_variant_type( core::chemical::REPLONLY ) )  return retlist;
+
+	if ( res.is_protein() &&
+			( (res.aa() <= chemical::num_canonical_aas) ||
+			(res.aa() >= core::chemical::aa_dal && res.aa() <= core::chemical::aa_dty /*D-amino acids*/) ||
+			(res.backbone_aa() <= chemical::num_canonical_aas)
+			) ) {
+
+		std::set< id::PartialAtomID > atoms;
+		for ( Size tor_ind = 1; tor_ind <= 2; ++tor_ind ) {
+			conformation::insert_partial_atom_ids_for_mainchain_torsion(
+				res, tor_ind, atoms );
+		}
+		retlist.resize(atoms.size());
+		std::copy(atoms.begin(), atoms.end(), retlist.begin());
+	}
+	return retlist;
+
 }
 
 Real

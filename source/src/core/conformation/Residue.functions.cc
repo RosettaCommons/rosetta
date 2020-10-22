@@ -16,13 +16,19 @@
 
 // Package headers
 #include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueConnection.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 #include <core/chemical/AtomICoor.hh>
 #include <core/types.hh>
 
+// Utility headers
 #include <utility/vector1.hh>
 #include <numeric/xyz.functions.hh>
+
+// C++ headers
+#include <set>
 
 
 namespace core {
@@ -105,6 +111,54 @@ void set_chi_according_to_coordinates(
 	}
 	if ( rotamer.is_protein() ) {}
 }
+
+/// @details Inserts the partial atom ids for atoms along the mainchain,
+/// retrieving the residue connection indices for the atoms that extend
+/// off into the lower- and upper residues from the ResConnIDs stored
+/// in the Residue's connect_map. Note that if torsion 1 is requested,
+/// then the input Residue must have a lower connection and that if a
+/// torsion within 2 chemical bonds of the end of the mainchain atoms
+/// for a residue is requested (e.g. psi for canonical AAs), then
+/// the input Residue must have an upper connection.
+///
+/// @note The typical context in which this is used is when a term
+/// is inserting the partial atom IDs for the mainchain torsions and
+/// and these torsions are defined by overlapping sets of atoms.
+/// Since the terms that are reporting these partial atom IDs should
+/// probably not be reporting a single atom multiple times, inserting
+/// these atoms into a std::set will produce non-redundancy.
+void
+insert_partial_atom_ids_for_mainchain_torsion(
+	Residue const & rsd,
+	Size const mainchain_torsion,
+	std::set< id::PartialAtomID > & atoms
+)
+{
+	debug_assert( mainchain_torsion > 0 );
+	int mc_tor_int = static_cast<int>(mainchain_torsion);
+	for ( int ii = mc_tor_int - 1; ii <= mc_tor_int + 2; ++ii ) {
+		if ( ii < 1 ) {
+			Size const lower_connect_ind = rsd.lower_connect().index();
+			Size const conn_id_on_lower_residue = rsd.residue_connection_conn_id( lower_connect_ind );
+			Size const lower_connect_rsd = rsd.residue_connection_partner( lower_connect_ind );
+			atoms.insert( id::PartialAtomID(
+				conn_id_on_lower_residue,
+				lower_connect_rsd,
+				0 ));
+		} else if ( ii <= (int) rsd.mainchain_atoms().size() ) {
+			atoms.insert( id::PartialAtomID( ii, rsd.seqpos() ));
+		} else {
+			Size const upper_connect_ind = rsd.upper_connect().index();
+			Size const conn_id_on_upper_residue = rsd.residue_connection_conn_id( upper_connect_ind );
+			Size const upper_connect_rsd = rsd.residue_connection_partner( upper_connect_ind );
+			atoms.insert( id::PartialAtomID(
+				conn_id_on_upper_residue,
+				upper_connect_rsd,
+				ii - 1 - (int) rsd.mainchain_atoms().size() ) );
+		}
+	}
+}
+
 
 }
 }

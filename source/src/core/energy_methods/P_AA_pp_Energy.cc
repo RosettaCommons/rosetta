@@ -24,9 +24,11 @@
 #include <core/chemical/VariantType.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 
 // Numeric headers
 #include <numeric/conversions.hh>
@@ -97,6 +99,24 @@ P_AA_pp_Energy::defines_dof_derivatives( pose::Pose const & ) const
 	return true;
 }
 
+utility::vector1< id::PartialAtomID >
+P_AA_pp_Energy::atoms_with_dof_derivatives( conformation::Residue const & rsd, pose::Pose const & ) const
+{
+	if ( ! p_aa_.defines_p_aa_pp_energy_for_res(rsd) ||
+			rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return  utility::vector1< id::PartialAtomID >();
+	}
+
+	std::set< id::PartialAtomID > atoms;
+	for ( Size tor_ind = 1; tor_ind <= 2; ++tor_ind ) {
+		conformation::insert_partial_atom_ids_for_mainchain_torsion(
+			rsd, tor_ind, atoms );
+	}
+	utility::vector1< id::PartialAtomID > retlist(atoms.size());
+	std::copy(atoms.begin(), atoms.end(), retlist.begin());
+	return retlist;
+
+}
 
 Real
 P_AA_pp_Energy::eval_residue_dof_derivative(

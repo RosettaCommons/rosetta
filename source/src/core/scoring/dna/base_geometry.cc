@@ -200,6 +200,21 @@ get_sugar_pucker_distr(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+utility::vector1< utility::vector1< std::string > >
+sugar_torsion_atom_names() {
+	using std::string;
+	using utility::vector1;
+	using namespace utility::tools;
+
+	vector1< vector1< string > > chi_atoms
+		( make_vector1( make_vector1( string(  "X"), string(  "X"), string(  "X"), string(  "X") ),
+		make_vector1( string("C5'"), string("C4'"), string("O4'"), string("C1'") ),
+		make_vector1( string("C4'"), string("O4'"), string("C1'"), string("C2'") ),
+		make_vector1( string("O4'"), string("C1'"), string("C2'"), string("H2''") ) ) ); // need to CHECK H
+	return chi_atoms;
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
 void
 get_sugar_torsions(
 	conformation::Residue const & rsd,
@@ -207,15 +222,10 @@ get_sugar_torsions(
 )
 {
 	using std::string;
-	using utility::tools::make_vector1;
 	using utility::vector1;
 	using namespace id;
 
-	vector1< vector1< string > > chi_atoms
-		( make_vector1( make_vector1( string(  "X"), string(  "X"), string(  "X"), string(  "X") ),
-		make_vector1( string("C5'"), string("C4'"), string("O4'"), string("C1'") ),
-		make_vector1( string("C4'"), string("O4'"), string("C1'"), string("C2'") ),
-		make_vector1( string("O4'"), string("C1'"), string("C2'"), string("H2''") ) ) ); // need to CHECK H
+	vector1< vector1< string > > chi_atoms = sugar_torsion_atom_names();
 	// if ( rsd.has_variant_type("RNA") ) chi_atoms[4][4] = "O2'";
 
 	torsions.clear(); torsions.resize( 4, 0.0 );

@@ -15,10 +15,12 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/id/PartialAtomID.hh>
 
 // Project headers
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 #include <core/chemical/ResidueType.hh>
 #include <utility/graph/Graph.hh>
 #include <core/conformation/ResidueFactory.hh>
@@ -38,6 +40,7 @@
 
 // Utility headers
 #include <utility/exit.hh>
+#include <utility/fixedsizearray1.hh>
 #include <utility/io/izstream.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/vector1.hh>
@@ -47,6 +50,10 @@
 #include <numeric/constants.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
+
+// C++ headers
+#include <set>
+#include <tuple>
 
 
 namespace core {
@@ -202,6 +209,23 @@ Real SingleResidueCenrotLibrary::rotamer_energy(
 ) const {
 	return eval_rotameric_energy_deriv(rsd, scratch, false);
 }
+
+std::set< id::PartialAtomID >
+SingleResidueCenrotLibrary::atoms_w_dof_derivatives(
+	conformation::Residue const & rsd,
+	pose::Pose const &
+) const
+{
+	std::set< id::PartialAtomID > atoms;
+	utility::fixedsizearray1< Size, 2 > mc_tors({RSD_PHI_INDEX, RSD_PSI_INDEX});
+	for ( auto const tor_ind: mc_tors ) {
+		conformation::insert_partial_atom_ids_for_mainchain_torsion(
+			rsd, tor_ind, atoms );
+	}
+	return atoms;
+}
+
+
 
 Real SingleResidueCenrotLibrary::eval_rotameric_energy_deriv(
 	conformation::Residue const & rsd,

@@ -114,6 +114,7 @@ sources = {
 		#"PoseFromFile", # this seems to be a complete duplication of PoseResourceLoader (previously PoseFromPDBResourceLoader)
 	],
 	"id" : [
+		"PartialAtomIDTests",
 		"SequenceMapping",
 	],
 	"io" : [
@@ -552,8 +553,10 @@ sources = {
 		"ProClosureEnergy_noringclose",
 		"RamachandranEnergy",
 		"RamachandranEnergy_symmgly",
+		"RamaPreProEnergy",
 		"RG_Energy",
 		"RingClosureEnergy",
+		"SugarBackboneEnergy",
 		"SplitUnfoldedTwoBodyEnergy",
 		"UnfoldedStateEnergy",
 		"YHHPlanarityEnergy",

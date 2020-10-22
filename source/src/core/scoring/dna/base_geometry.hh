@@ -65,6 +65,9 @@ get_sugar_pucker_distr(
 	utility::vector1<core::Real> & puckerProb
 );
 
+utility::vector1< utility::vector1< std::string > >
+sugar_torsion_atom_names();
+
 void
 get_sugar_torsions(
 	conformation::Residue const & rsd,

@@ -16,6 +16,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 
 // Package headers
+#include <core/optimization/cartesian_minimize.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Minimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
@@ -98,6 +99,7 @@ CartesianMinimizer::run(
 	}
 
 	scorefxn.setup_for_minimizing( pose, min_map );
+	activate_dof_deriv_terms_for_cart_min( pose, scorefxn, min_map );
 
 	// setup the function that we will pass to the low-level minimizer
 	CartesianMultifunc f( pose, min_map, scorefxn,

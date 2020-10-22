@@ -18,6 +18,19 @@
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/OneBodyEnergy.hh>
 #include <core/scoring/methods/TwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextDependentLRTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
+#include <core/scoring/ScoreFunction.hh>
+#include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
+#include <core/scoring/LREnergyContainer.hh>
+#include <core/scoring/symmetry/SymmetricEnergies.hh>
+
+#include <core/kinematics/MinimizerMapBase.hh>
+#include <core/conformation/symmetry/SymmetricConformation.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+#include <core/pose/Pose.hh>
+#include <core/pose/symmetry/util.hh>
 
 // Numeric headers
 
@@ -115,6 +128,48 @@ bool MinimizationNode::add_twobody_enmeth(
 	twobody_enmeths_.push_back( enmeth );
 	return classify_twobody_enmeth( enmeth, rsd, pose, weights, domain_map_color );
 }
+
+/// @details basically the logic of classify_onebody_enmeth without
+/// the decision of whether or not residue should be active
+void
+MinimizationNode::activate_dof_deriv_one_body_method(
+	OneBodyEnergyCOP enmeth,
+	pose::Pose const & pose
+)
+{
+	debug_assert( enmeth->defines_dof_derivatives( pose ) );
+
+	if ( std::find( dof_deriv_1benmeths_.begin(), dof_deriv_1benmeths_.end(), enmeth ) !=
+			dof_deriv_1benmeths_.end() ) {
+		// Do not add the method twice; if it is already in the dof_deriv_1benmeths_
+		// list, then it is already in the other lists
+		return;
+	}
+
+	_activate_1benmeth( enmeth );
+	add_dof_deriv_1benmeth( enmeth );
+	_check_sfs_and_sfd_for_1benmeth( enmeth, pose );
+}
+
+void MinimizationNode::activate_dof_deriv_two_body_method(
+	TwoBodyEnergyCOP enmeth,
+	pose::Pose const & pose
+)
+{
+	debug_assert( enmeth->defines_intrares_dof_derivatives( pose ) );
+
+	// Do not add the energy method twice. If it is already in the
+	// dof_deriv_2beneths_ list, it is already in the other lists
+	if ( std::find( dof_deriv_2benmeths_.begin(), dof_deriv_2benmeths_.end(), enmeth ) !=
+			dof_deriv_2benmeths_.end() ) {
+		return;
+	}
+
+	_activate_2benmeth( enmeth );
+	add_dof_deriv_2benmeth( enmeth );
+	_check_sfs_and_sfd_for_2benmeth( enmeth, pose );
+}
+
 
 void
 MinimizationNode::setup_for_minimizing(
@@ -246,22 +301,12 @@ MinimizationNode::classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue cons
 {
 	if ( domain_map_color == 0 || enmeth->method_type() == methods::cd_1b ) {
 		if ( enmeth->defines_score_for_residue( rsd ) ) {
-			if ( enmeth->use_extended_residue_energy_interface() ) {
-				add_active_1benmeth_ext( enmeth );
-			} else {
-				add_active_1benmeth_std( enmeth );
-			}
+			_activate_1benmeth( enmeth );
+
 			if ( enmeth->defines_dof_derivatives( pose ) ) {
 				add_dof_deriv_1benmeth( enmeth );
 			}
-			if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
-				add_sfs_dm_1benmeth( enmeth );
-			} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
-				add_sfs_drs_enmeth( enmeth );
-			}
-			if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
-				add_sfd_1benmeth( enmeth );
-			}
+			_check_sfs_and_sfd_for_1benmeth( enmeth, pose );
 			return true;
 		} else {
 			return false;
@@ -280,28 +325,17 @@ bool MinimizationNode::classify_twobody_enmeth(
 )
 {
 	bool added( false );
-	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
-		/// should we let energy methods setup for scoring for a residue even if they
-		/// don't define an intrares energy for that residue?  Yes.  These
-		add_sfs_dm_2benmeth( enmeth );
-	} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
-		add_sfs_drs_enmeth( enmeth );
-	}
-	if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
-		/// should we let energy methods setup for scoring for a residue even if they
-		/// don't define an intrares energy for that residue?  Yes.  These
-		add_sfd_2benmeth( enmeth );
-	}
+	// should we let energy methods setup for scoring for a residue even if they
+	// don't define an intrares energy for that residue?  Yes.  These methods
+	// may need to initialize per-residue data that is used during two-body scoring,
+	// such as water coordinates for LKBall term.
+	_check_sfs_and_sfd_for_2benmeth( enmeth, pose );
 
-	/// Domain map check only prevents intra-residue sfxn/deriv evaluations; but not
-	/// SFS or SFD registration.
+	// Domain map check only prevents intra-residue sfxn/deriv evaluations; but not
+	// SFS or SFD registration.
 	if ( domain_map_color == 0 ) {
 		if ( enmeth->defines_intrares_energy( weights ) && enmeth->defines_intrares_energy_for_residue( rsd ) ) {
-			if ( enmeth->use_extended_intrares_energy_interface() ) {
-				add_active_2benmeth_ext( enmeth );
-			} else {
-				add_active_2benmeth_std( enmeth );
-			}
+			_activate_2benmeth( enmeth );
 			added = true;
 		} else {
 			added = false;
@@ -311,6 +345,58 @@ bool MinimizationNode::classify_twobody_enmeth(
 		}
 	}
 	return added;
+}
+
+void
+MinimizationNode::_activate_1benmeth( OneBodyEnergyCOP enmeth )
+{
+	if ( enmeth->use_extended_residue_energy_interface() ) {
+		add_active_1benmeth_ext( enmeth );
+	} else {
+		add_active_1benmeth_std( enmeth );
+	}
+}
+
+
+void
+MinimizationNode::_check_sfs_and_sfd_for_1benmeth(
+	OneBodyEnergyCOP enmeth,
+	pose::Pose const & pose
+)
+{
+	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
+		add_sfs_dm_1benmeth( enmeth );
+	} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+		add_sfs_drs_enmeth( enmeth );
+	}
+	if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
+		add_sfd_1benmeth( enmeth );
+	}
+}
+
+void
+MinimizationNode::_activate_2benmeth( TwoBodyEnergyCOP enmeth ) {
+	if ( enmeth->use_extended_intrares_energy_interface() ) {
+		add_active_2benmeth_ext( enmeth );
+	} else {
+		add_active_2benmeth_std( enmeth );
+	}
+}
+
+void
+MinimizationNode::_check_sfs_and_sfd_for_2benmeth(
+	TwoBodyEnergyCOP enmeth,
+	pose::Pose const & pose
+)
+{
+	if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose ) ) {
+		add_sfs_dm_2benmeth( enmeth );
+	} else if ( enmeth->requires_a_setup_for_scoring_for_residue_opportunity_during_regular_scoring( pose ) ) {
+		add_sfs_drs_enmeth( enmeth );
+	}
+	if ( enmeth->requires_a_setup_for_derivatives_for_residue_opportunity( pose ) ) {
+		add_sfd_2benmeth( enmeth );
+	}
 }
 
 
@@ -531,6 +617,23 @@ bool MinimizationEdge::add_twobody_enmeth(
 
 }
 
+void
+MinimizationEdge::activate_dof_deriv_two_body_method(
+	TwoBodyEnergyCOP enmeth,
+	pose::Pose const & pose
+)
+{
+	debug_assert( enmeth->defines_intrares_dof_derivatives( pose ) );
+	if ( std::find( active_2benmeths_.begin(), active_2benmeths_.end(), enmeth ) !=
+			active_2benmeths_.end() ) {
+		return;
+	}
+
+	_activate_2benmeth( enmeth );
+	_check_sfs_and_sfd_for_2benmeth( enmeth, pose );
+}
+
+
 void MinimizationEdge::setup_for_minimizing(
 	Residue const & rsd1,
 	Residue const & rsd2,
@@ -618,21 +721,30 @@ bool MinimizationEdge::classify_twobody_enmeth(
 {
 	if ( ! enmeth->defines_score_for_residue_pair( rsd1, rsd2, res_moving_wrt_eachother ) ) return false;
 
+	_activate_2benmeth( enmeth );
+	_check_sfs_and_sfd_for_2benmeth( enmeth, pose );
+	return true;
+}
+
+void
+MinimizationEdge::_activate_2benmeth( TwoBodyEnergyCOP enmeth ) {
 	if ( enmeth->use_extended_residue_pair_energy_interface() ) {
 		add_active_enmeth_ext( enmeth );
 	} else {
 		add_active_enmeth_std( enmeth );
 	}
+}
 
+void
+MinimizationEdge::_check_sfs_and_sfd_for_2benmeth( TwoBodyEnergyCOP enmeth, Pose const & pose )
+{
 	if ( enmeth->requires_a_setup_for_scoring_for_residue_pair_opportunity( pose ) ) {
 		add_sfs_enmeth( enmeth );
 	}
 	if ( enmeth->requires_a_setup_for_derivatives_for_residue_pair_opportunity( pose ) ) {
 		add_sfd_enmeth( enmeth );
 	}
-	return true;
 }
-
 
 MinimizationEdge::TwoBodyEnergiesIterator
 MinimizationEdge::active_2benmeths_begin() const {
@@ -1089,6 +1201,397 @@ eval_weighted_dof_deriv_for_minnode(
 			rsd, min_node.res_min_data(), dof_id, torsion_id, pose, sfxn, weights );
 	}
 	return deriv * min_node.weight();
+}
+
+void
+create_and_store_atom_tree_minimization_graph_asym(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+);
+
+void
+create_and_store_atom_tree_minimization_graph_symm(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+);
+
+void
+create_and_store_atom_tree_minimization_graph(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+)
+{
+	if ( core::pose::symmetry::is_symmetric( pose ) ) {
+		create_and_store_atom_tree_minimization_graph_symm( sfxn, min_map, pose );
+	} else {
+		create_and_store_atom_tree_minimization_graph_asym( sfxn, min_map, pose );
+	}
+}
+
+void
+create_and_store_atom_tree_minimization_graph_asym(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+)
+{
+	/// 1. Initialize the nodes in the energy graph with one-body
+	/// and the intra-residue two-body energy methods
+
+	/// 2. Initialize the short-ranged edges in the energy graph with
+	/// the short-ranged two-body energy methods.
+
+	/// 3. Initialize any additional edges with the long-range
+	/// two-body energies
+
+	/// 4. Drop any edges from the minimization graph that produce no
+	/// energies, and call setup-for-minimization on all edges that remain
+
+	/// 5. Setup whole-structure energies and energy methods that opt-out
+	/// of the minimization-graph control over derivative evaluation.
+
+	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
+	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
+	for ( auto const & all_method : sfxn.all_methods() ) {
+		if ( all_method->defines_high_order_terms( pose ) || all_method->minimize_in_whole_structure_context( pose ) ) {
+			eval_derivs_with_pose_enmeths.push_back( all_method );
+		}
+	}
+
+	EnergyMap fixed_energies; // portions of the score function that will not change over the course of minimization.
+
+	kinematics::DomainMap const & domain_map = min_map.domain_map();
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+		sfxn.setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ), pose.residue_data( ii ),
+			min_map, pose, true, fixed_energies );
+	}
+
+	g->copy_connectivity( pose.energies().energy_graph() );
+	// 2. Now initialize the edges of the minimization graph using the edges of the EnergyGraph;
+	// The energy graph should be up-to-date before this occurs
+	for ( utility::graph::Graph::EdgeListIter
+			edge_iter = g->edge_list_begin(),
+			edge_iter_end = g->edge_list_end(),
+			ee_edge_iter = pose.energies().energy_graph().edge_list_begin();
+			edge_iter != edge_iter_end; ++edge_iter, ++ee_edge_iter ) {
+		Size const node1 = (*edge_iter)->get_first_node_ind();
+		Size const node2 = (*edge_iter)->get_second_node_ind();
+		debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+		// domain map check here?
+		bool const res_moving_wrt_eachother(
+			domain_map( node1 ) == 0 ||
+			domain_map( node2 ) == 0 ||
+			domain_map( node1 ) != domain_map( node2 ) );
+
+		sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
+			pose.residue( node1 ), pose.residue( node2 ),
+			minedge, min_map, pose, res_moving_wrt_eachother, true,
+			static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies );
+	}
+
+	/// 3. Long range energies need time to get included into the graph, which may require the addition of new edges
+	/// 3a: CILR2B energies
+	///    i.   Iterate across all ci2b long range energy methods
+	///    ii.  Iterate across all residue pairs indicated in the long-range energy containers
+	///    iii. If two residues have the same non-zero domain-map coloring, then accumulate their interaction energy and move on
+	///    iv.  otherwise, find the corresponding minimization-graph edge for this residue pair
+	///    v.   adding a new edge if necessary,
+	///    vi.  and prepare the minimization data for this edge
+
+	for ( auto
+			iter = sfxn.long_range_energies_begin(),
+			iter_end = sfxn.long_range_energies_end();
+			iter != iter_end; ++iter ) {
+
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+		if ( !lrec || lrec->empty() ) continue;
+
+		// Potentially O(N^2) operation...
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+				Size const jj = rni->upper_neighbor_id();
+				bool const res_moving_wrt_eachother(
+					domain_map( ii ) == 0 ||
+					domain_map( jj ) == 0 ||
+					domain_map( ii ) != domain_map( jj ) );
+				sfxn.setup_for_lr2benmeth_minimization_for_respair(
+					pose.residue( ii ), pose.residue( jj ), *iter, *g, min_map, pose,
+					res_moving_wrt_eachother, true, rni, fixed_energies );
+			}
+		}
+	}
+
+	/// 4. Call setup_for_minimizing on each edge that has active twobody energies, and drop
+	/// all other edges.
+	for ( utility::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
+			edge_iter_end = g->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
+		Size const node1 = (*edge_iter)->get_first_node_ind();
+		Size const node2 = (*edge_iter)->get_second_node_ind();
+
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		++edge_iter_next;
+
+		if ( minedge.any_active_enmeths() ) {
+			minedge.setup_for_minimizing( pose.residue(node1), pose.residue(node2), pose, sfxn, min_map );
+		} else {
+			/// The edge will not contribute anything to scoring during minimization,
+			/// so delete it from the graph, so we don't have to pay the expense of traversing
+			/// through it.
+			g->delete_edge( *edge_iter );
+		}
+		edge_iter = edge_iter_next;
+	}
+
+	/// 5.  Whole structure energies and energies that are opting out of the MinimizationGraph
+	/// routines get a chance to setup for minimizing (using the entire pose as context) and
+	for ( std::list< methods::EnergyMethodCOP >::const_iterator
+			iter     = eval_derivs_with_pose_enmeths.begin(),
+			iter_end = eval_derivs_with_pose_enmeths.end();
+			iter != iter_end; ++iter ) {
+		(*iter)->setup_for_minimizing( pose, sfxn, min_map );
+		g->add_whole_pose_context_enmeth( *iter, pose );
+	}
+
+
+	//std::cout << "Fixed energies: ";
+	//fixed_energies.show_if_nonzero_weight( std::cout, weights_ );
+	//std::cout << std::endl;
+
+	g->set_fixed_energies( fixed_energies );
+	pose.energies().set_minimization_graph( g );
+}
+
+void
+create_and_store_atom_tree_minimization_graph_symm(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+)
+{
+	/// 1. Initialize the nodes of the minimization graph
+	/// 2. Initialize the edges with the short-ranged two-body energies
+	/// 3. Initialize the edges with the long-ranged two-body energies
+	/// 4. Run setup-for-minimization on the edges of the mingraph; dropping edges with no active 2b enmeths.
+	/// 5. Let whole-structure energies initialize themselves
+
+	using namespace core::conformation::symmetry;
+	using namespace core::scoring::symmetry;
+
+	auto & symm_conf ( dynamic_cast<SymmetricConformation &> ( pose.conformation()) );
+	SymmetryInfo const & symm_info( * symm_conf.Symmetry_Info() );
+	auto & symm_energies( dynamic_cast< SymmetricEnergies & > ( pose.energies()) );
+
+	MinimizationGraphOP g( new MinimizationGraph( pose.size() ) );
+	MinimizationGraphOP dg( new MinimizationGraph( pose.size() ) ); // derivative graph
+
+	std::list< methods::EnergyMethodCOP > eval_derivs_with_pose_enmeths;
+	for ( auto const & iter : sfxn.all_methods() ) {
+		if ( iter->defines_high_order_terms( pose ) || iter->minimize_in_whole_structure_context( pose ) ) {
+			eval_derivs_with_pose_enmeths.push_back( iter );
+		}
+	}
+
+	EnergyMap fixed_energies; // portions of the score function that will not change over the course of minimization.
+
+	/// Accumulate the portions of the scoring function for those residues with non-zero domain-map values
+	/// but also let all energy methods register with each node, since some may require a setup-for-scoring opportunity
+	for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+
+		bool accumulate_fixed_energies( symm_info.fa_is_independent(ii) &&
+			ii > symm_info.num_total_residues_without_pseudo() );
+
+		sfxn.setup_for_minimizing_for_node( * g->get_minimization_node( ii ), pose.residue( ii ),
+			pose.residue_data( ii ), min_map, pose, accumulate_fixed_energies, fixed_energies );
+		g->get_minimization_node( ii )->weight( symm_info.score_multiply_factor() );
+		sfxn.setup_for_minimizing_for_node( * dg->get_minimization_node( ii ), pose.residue( ii ),
+			pose.residue_data( ii ), min_map, pose, false, fixed_energies ); // only accumulate once
+	}
+	g->copy_connectivity(  pose.energies().energy_graph() );
+	dg->copy_connectivity( pose.energies().energy_graph() );
+
+	kinematics::DomainMap const & domain_map( min_map.domain_map() );
+	for ( utility::graph::Graph::EdgeListIter
+			edge_iter = g->edge_list_begin(),
+			edge_iter_end = g->edge_list_end(),
+			dedge_iter = dg->edge_list_begin(),
+			//dedge_iter_end = dg->edge_list_end(),
+			ee_edge_iter = pose.energies().energy_graph().edge_list_begin();
+			edge_iter != edge_iter_end; ++edge_iter, ++dedge_iter, ++ee_edge_iter ) {
+		Size const node1 = (*edge_iter)->get_first_node_ind();
+		Size const node2 = (*edge_iter)->get_second_node_ind();
+		debug_assert( node1 == (*ee_edge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node2 == (*ee_edge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node1 == (*dedge_iter)->get_first_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( node2 == (*dedge_iter)->get_second_node_ind() ); // copy_connectivity should preserve the energy-graph edge ordering
+		debug_assert( symm_info.bb_follows( node1 ) == 0 || symm_info.bb_follows( node2 ) == 0 );
+
+		// domain map check here?
+		bool const res_moving_wrt_eachother(
+			domain_map( node1 ) == 0 ||
+			domain_map( node2 ) == 0 ||
+			domain_map( node1 ) != domain_map( node2 ) );
+
+		Real edge_weight = symm_info.score_multiply( node1, node2 );
+		Real edge_dweight = symm_info.deriv_multiply( node1, node2 );
+
+		// fd, 7/17, removing this separate logic for old_sym_min and new_sym_min
+		//  the reason is that the derivative weights serve 2 purposes:
+		//    1) handing scaling of jumps in lattice systems
+		//    2) handing computation of derivatives on edges where the weight on scoring is 0
+		//  the new_sym_min logic (commented out) was meant to address the first case but broke the second case
+		//  instead, we will address the first case in SymmetryInfo and restore old_sym_min behavior here
+
+		//bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+		// if ( new_sym_min ) { // new way
+		// } else { // classic way
+		if ( edge_weight != 0.0 ) {
+			auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+			sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
+				pose.residue( node1 ), pose.residue( node2 ),
+				minedge, min_map, pose, res_moving_wrt_eachother, true,
+				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies, edge_weight );
+			minedge.weight( edge_weight );
+			minedge.dweight( edge_dweight );
+		} else {
+			auto & minedge( static_cast< MinimizationEdge & > (**dedge_iter) );
+			sfxn.setup_for_minimizing_sr2b_enmeths_for_minedge(
+				pose.residue( node1 ), pose.residue( node2 ),
+				minedge, min_map, pose, res_moving_wrt_eachother, false,
+				static_cast< EnergyEdge const * > (*ee_edge_iter), fixed_energies ); // edge weight of 1
+			minedge.dweight( edge_dweight );
+		}
+	}
+
+	/// 3. Long range energies need time to get included into the graph, which may require the addition of new edges
+	/// 3a: CILR2B energies
+	///    i.   Iterate across all ci2b long range energy methods
+	///    ii.  Iterate across all residue pairs indicated in the long-range energy containers
+	///    iii. If two residues have the same non-zero domain-map coloring, then accumulate their interaction energy and move on
+	///    iv.  otherwise, find the corresponding minimization-graph edge for this residue pair
+	///    v.   adding a new edge if necessary,
+	///    vi.  and prepare the minimization data for this edge
+
+	for ( auto
+			iter = sfxn.long_range_energies_begin(),
+			iter_end = sfxn.long_range_energies_end();
+			iter != iter_end; ++iter ) {
+		// NO! add these terms to the minimization graph for scoring, even if not for derivative evaluation
+		///if ( (*iter)->minimize_in_whole_structure_context( pose ) ) continue;
+
+		LREnergyContainerCOP lrec = pose.energies().long_range_container( (*iter)->long_range_type() );
+		if ( !lrec || lrec->empty() ) continue;
+
+		// Potentially O(N^2) operation...
+		for ( Size ii = 1; ii <= pose.size(); ++ii ) {
+			for ( ResidueNeighborConstIteratorOP
+					rni = lrec->const_upper_neighbor_iterator_begin( ii ),
+					rniend = lrec->const_upper_neighbor_iterator_end( ii );
+					(*rni) != (*rniend); ++(*rni) ) {
+				Size const jj = rni->upper_neighbor_id();
+				bool const res_moving_wrt_eachother(
+					domain_map( ii ) == 0 ||
+					domain_map( jj ) == 0 ||
+					domain_map( ii ) != domain_map( jj ) );
+
+				Real edge_weight = symm_info.score_multiply( ii, jj );
+
+				// fd, 7/17, removing this separate logic for old and new
+				//  see comment above
+
+				//bool const new_sym_min( !basic::options::option[ basic::options::OptionKeys::optimization::old_sym_min ]() );
+				// if ( new_sym_min ) { // new way
+				// } else { // classic way
+
+				if ( edge_weight != 0.0 ) {
+					// adjust/add the edge to the scoring graph
+					sfxn.setup_for_lr2benmeth_minimization_for_respair(
+						pose.residue( ii ), pose.residue( jj ), *iter, *g, min_map, pose,
+						res_moving_wrt_eachother, true, rni, fixed_energies, edge_weight );
+				} else {
+					// adjust/add this edge to the derivative graph
+					sfxn.setup_for_lr2benmeth_minimization_for_respair(
+						pose.residue( ii ), pose.residue( jj ), *iter, *dg, min_map, pose,
+						res_moving_wrt_eachother, false, rni, fixed_energies ); // no edge weight
+				}
+			}
+		}
+	}
+
+	/// 4a. drop unused edges from the scoring graph; call setup for minimizing on those remaining
+	for ( utility::graph::Graph::EdgeListIter edge_iter = g->edge_list_begin(),
+			edge_iter_end = g->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
+		Size const node1 = (*edge_iter)->get_first_node_ind();
+		Size const node2 = (*edge_iter)->get_second_node_ind();
+
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		++edge_iter_next;
+
+		if ( minedge.any_active_enmeths() ) {
+			//std::cout << " active scoring graph edge: " << node1 << " " << node2 << std::endl;
+			minedge.setup_for_minimizing( pose.residue(node1), pose.residue(node2), pose, sfxn, min_map );
+		} else {
+			/// The edge will not contribute anything to scoring during minimization,
+			/// so delete it from the graph, so we don't have to pay the expense of traversing
+			/// through it.
+			g->delete_edge( *edge_iter );
+		}
+		edge_iter = edge_iter_next;
+	}
+
+	/// 4b. drop unused edges from the derivatives graph; call setup for minimizing on those remaining
+	for ( utility::graph::Graph::EdgeListIter edge_iter = dg->edge_list_begin(),
+			edge_iter_end = dg->edge_list_end(); edge_iter != edge_iter_end; /* no increment */ ) {
+		Size const node1 = (*edge_iter)->get_first_node_ind();
+		Size const node2 = (*edge_iter)->get_second_node_ind();
+
+		auto & minedge( static_cast< MinimizationEdge & > (**edge_iter) );
+
+		utility::graph::Graph::EdgeListIter edge_iter_next( edge_iter );
+		++edge_iter_next;
+
+		if ( minedge.any_active_enmeths() ) {
+			//std::cout << " active deriv graph edge: " << node1 << " " << node2 << std::endl;
+			minedge.setup_for_minimizing( pose.residue(node1), pose.residue(node2), pose, sfxn, min_map );
+		} else {
+			/// The edge will not contribute anything to derivative evaluation during minimization;
+			/// it either represents an interaction that is not changing as the result of minimization,
+			/// or the interaction is handled by the scoring graph. Delete it from the graph so
+			/// we don't have to pay the expense of traversing through it.
+			g->delete_edge( *edge_iter );
+		}
+		edge_iter = edge_iter_next;
+	}
+
+	/// 5.  Whole structure energies and energies that are opting out of the MinimizationGraph
+	/// routines get a chance to setup for minimizing (using the entire pose as context) and
+	for ( std::list< methods::EnergyMethodCOP >::const_iterator
+			iter     = eval_derivs_with_pose_enmeths.begin(),
+			iter_end = eval_derivs_with_pose_enmeths.end();
+			iter != iter_end; ++iter ) {
+		(*iter)->setup_for_minimizing( pose, sfxn, min_map );
+		g->add_whole_pose_context_enmeth( *iter, pose );
+	}
+
+	//std::cout << "Fixed energies: ";
+	//fixed_energies.show_if_nonzero_weight( std::cout, weights() );
+	//std::cout << std::endl;
+
+	g->set_fixed_energies( fixed_energies );
+	symm_energies.set_minimization_graph( g );
+	symm_energies.set_derivative_graph( dg );
 }
 
 

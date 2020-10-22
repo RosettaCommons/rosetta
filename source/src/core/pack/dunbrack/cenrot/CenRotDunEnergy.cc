@@ -33,6 +33,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <numeric/conversions.hh>
 
@@ -129,6 +130,32 @@ void CenRotDunEnergy::residue_energy(
 // has dU/dphi and dU/dpsi term, cz it's bb dependent
 
 bool CenRotDunEnergy::defines_dof_derivatives( pose::Pose const & ) const { return true; }
+
+utility::vector1< id::PartialAtomID >
+CenRotDunEnergy::atoms_with_dof_derivatives(
+	conformation::Residue const & rsd,
+	pose::Pose const & pose
+) const
+{
+	utility::vector1< id::PartialAtomID > atoms;
+
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return atoms;
+	if ( rsd.aa() > core::chemical::num_canonical_aas ) return atoms;
+	debug_assert(rsd.type().mode() == chemical::CENTROID_ROT_t);
+
+	//cal single residue cenrot lib
+	SingleResidueRotamerLibraryFactory const & rotlibfact = *SingleResidueRotamerLibraryFactory::get_instance();
+	SingleResidueRotamerLibraryCOP rotlib(rotlibfact.get( rsd.type() ));
+
+	if ( rotlib == nullptr ) return atoms;
+
+	std::set< id::PartialAtomID > atom_set = rotlib->atoms_w_dof_derivatives(rsd, pose);
+
+	atoms.resize(atom_set.size());
+	std::copy(atom_set.begin(), atom_set.end(), atoms.begin());
+	return atoms;
+}
+
 
 /// @brief Evaluate the phi/psi and chi dihedral derivatives
 /// for the input residue.

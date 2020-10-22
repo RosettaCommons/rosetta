@@ -87,6 +87,12 @@ public:
 	bool
 	defines_dof_derivatives( pose::Pose const & p ) const override;
 
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives(
+		conformation::Residue const & res,
+		pose::Pose const & pose
+	) const override;
+
 	/// @brief Evaluate the phi/psi and chi dihedral derivatives
 	/// for the input residue.
 	Real

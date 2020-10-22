@@ -36,6 +36,7 @@
 #include <core/chemical/AA.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/ScoringManager.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
@@ -161,6 +162,18 @@ RamaPreProEnergy::residue_pair_energy(
 	emap[ rama_prepro ] += rama_score;
 }
 
+utility::vector1< id::PartialAtomID >
+RamaPreProEnergy::atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const
+{
+	if (
+			!is_allowed_type(res.type()) ||
+			res.is_terminus() ||
+			! res.has_lower_connect() ||
+			! res.has_upper_connect() ) {
+		return utility::vector1< id::PartialAtomID >();
+	}
+	return potential_.atoms_w_dof_derivatives( res, pose );
+}
 
 Real
 RamaPreProEnergy::eval_intraresidue_dof_derivative(
@@ -174,8 +187,6 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 ) const
 {
 	using namespace numeric;
-
-	//std::cerr << "!" << std::endl;
 
 	Real deriv(0.0);
 	if ( tor_id.valid() && tor_id.type() == id::BB ) {

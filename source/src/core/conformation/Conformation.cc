@@ -43,6 +43,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -1733,8 +1734,16 @@ Conformation::inter_residue_connection_partner(
 	return residues_[ seqpos ]->inter_residue_connection_partner( connection_index, *this );
 }
 
-/// @brief Returns a boolean for two atomIDs to be bonded.
+id::AtomID
+Conformation::resolve_partial_atom_id(
+	id::PartialAtomID const & partial_id
+) const
+{
+	return const_residue_( partial_id.rsd() ).resolve_partial_atom_id(partial_id);
+}
 
+
+/// @brief Returns a boolean for two atomIDs to be bonded.
 bool
 Conformation::is_bonded(
 	core::id::AtomID const & atomid1,

@@ -84,6 +84,9 @@ public:
 		EnergyMap &
 	) const override { }
 
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const override;
+
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,

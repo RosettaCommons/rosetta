@@ -751,6 +751,18 @@ public:
 	LR_2B_MethodIterator
 	long_range_energies_end() const;
 
+	CI_1B_Methods::const_iterator
+	ci_1b_methods_begin() const;
+
+	CI_1B_Methods::const_iterator
+	ci_1b_methods_end() const;
+
+	CD_1B_Methods::const_iterator
+	cd_1b_methods_begin() const;
+
+	CD_1B_Methods::const_iterator
+	cd_1b_methods_end() const;
+
 	TWO_B_MethodIterator
 	ci_2b_intrares_begin() const;
 

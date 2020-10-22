@@ -70,6 +70,10 @@ public:
 	bool
 	defines_dof_derivatives( pose::Pose const & p ) const override;
 
+	/// @brief Return a vector of the atoms that determine the phi/psi DOFs
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const override;
+
 	/// @brief Evaluate the P_AA_pp DOF derivative for a particular residue.
 	Real
 	eval_residue_dof_derivative(

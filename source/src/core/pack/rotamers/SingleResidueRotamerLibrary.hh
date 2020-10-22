@@ -23,6 +23,7 @@
 #include <core/pack/dunbrack/DunbrackRotamer.fwd.hh> // ChiVector
 
 //Project Headers
+#include <core/id/PartialAtomID.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/graph/Graph.fwd.hh>
@@ -39,6 +40,9 @@
 
 // Numeric headers
 #include <numeric/random/random.fwd.hh>
+
+// C++ headers
+#include <set>
 
 namespace core {
 namespace pack {
@@ -73,6 +77,17 @@ public:
 		pose::Pose const & pose,
 		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const = 0;
+
+	/// @brief Return the set of atoms ids (or, if they come from another residue, PartialAtomIDs)
+	/// for the set of atoms that are used in defining the DOF derivatives for a particular
+	/// residue
+	virtual
+	std::set< id::PartialAtomID >
+	atoms_w_dof_derivatives(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
+	) const = 0;
+
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
 	/// (based on e.g. its current phi and psi values).

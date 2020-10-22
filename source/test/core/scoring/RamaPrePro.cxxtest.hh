@@ -11,6 +11,9 @@
 /// @brief  Unit tests for the RamaPrePro energy.
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
+// Unit headers
+#include <core/scoring/RamaPrePro.hh>
+#include <core/energy_methods/RamaPreProEnergy.hh>
 
 // Test headers
 #include <test/UMoverTest.hh>
@@ -23,6 +26,7 @@
 #include <core/scoring/RamaPrePro.hh>
 
 // Core Headers
+#include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/import_pose/import_pose.hh>
@@ -180,6 +184,56 @@ public:
 		ramaprepro.get_mainchain_torsions_covered( pose.conformation(), pose.residue_type_ptr(2),pose.residue_type_ptr(3) ); //Fails if bug is present.
 	}
 
+	void test_get_atoms_w_dof_derivatives() {
+		core::scoring::RamaPrePro rpp;
+		core::scoring::methods::RamaPreProEnergy rpp_e;
+		core::pose::Pose pose( pdb1ubq5to13_pose() );
+
+		{
+			auto partial_ats = rpp_e.atoms_with_dof_derivatives( pose.residue(1), pose );
+			TS_ASSERT_EQUALS( partial_ats.size(), 0 );
+		}
+
+		// First residue -- connects to N-term residue
+		{
+			auto partial_ats = rpp_e.atoms_with_dof_derivatives( pose.residue(2), pose );
+			TS_ASSERT_EQUALS( partial_ats.size(), 5 );
+			TS_ASSERT_EQUALS( partial_ats[1], core::id::PartialAtomID( 1, 1, 0 ) );
+			TS_ASSERT_EQUALS( partial_ats[2], core::id::PartialAtomID( 1, 2 ) );
+			TS_ASSERT_EQUALS( partial_ats[3], core::id::PartialAtomID( 2, 2 ) );
+			TS_ASSERT_EQUALS( partial_ats[4], core::id::PartialAtomID( 3, 2 ) );
+			TS_ASSERT_EQUALS( partial_ats[5], core::id::PartialAtomID( 1, 3, 0 ) );
+		}
+
+		// Middle residue
+		{
+			auto partial_ats = rpp_e.atoms_with_dof_derivatives( pose.residue(5), pose );
+			TS_ASSERT_EQUALS( partial_ats.size(), 5 );
+			TS_ASSERT_EQUALS( partial_ats[1], core::id::PartialAtomID( 2, 4, 0 ) );
+			TS_ASSERT_EQUALS( partial_ats[2], core::id::PartialAtomID( 1, 5 ) );
+			TS_ASSERT_EQUALS( partial_ats[3], core::id::PartialAtomID( 2, 5 ) );
+			TS_ASSERT_EQUALS( partial_ats[4], core::id::PartialAtomID( 3, 5 ) );
+			TS_ASSERT_EQUALS( partial_ats[5], core::id::PartialAtomID( 1, 6, 0 ) );
+		}
+
+		// second-to-last residue
+		{
+			auto partial_ats = rpp_e.atoms_with_dof_derivatives( pose.residue(8), pose );
+			TS_ASSERT_EQUALS( partial_ats.size(), 5 );
+			TS_ASSERT_EQUALS( partial_ats[1], core::id::PartialAtomID( 2, 7, 0 ) );
+			TS_ASSERT_EQUALS( partial_ats[2], core::id::PartialAtomID( 1, 8 ) );
+			TS_ASSERT_EQUALS( partial_ats[3], core::id::PartialAtomID( 2, 8 ) );
+			TS_ASSERT_EQUALS( partial_ats[4], core::id::PartialAtomID( 3, 8 ) );
+			TS_ASSERT_EQUALS( partial_ats[5], core::id::PartialAtomID( 1, 9, 0 ) );
+		}
+
+		// last residue
+		{
+			auto partial_ats = rpp_e.atoms_with_dof_derivatives( pose.residue(9), pose );
+			TS_ASSERT_EQUALS( partial_ats.size(), 0 );
+		}
+
+	}
 
 };
 

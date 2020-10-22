@@ -45,9 +45,7 @@ class CartesianMinimizerMap : public kinematics::MinimizerMapBase
 public:
 
 
-	CartesianMinimizerMap()
-	{}
-
+	CartesianMinimizerMap();
 
 	~CartesianMinimizerMap() override;
 
@@ -119,6 +117,10 @@ public:
 
 	inline Size
 	get_atom_index(id::AtomID x) const { return atom_indices_[x]; }
+
+	inline
+	bool
+	atom_is_moving(id::AtomID x) const { return atom_indices_[x] != 0; }
 
 	utility::vector1< core::scoring::DerivVectorPair > &
 	atom_derivatives( Size resid ) {

@@ -35,6 +35,16 @@ namespace optimization {
 
 typedef boost::tuple< Vector,Vector,Vector,Vector > VectorQuad;
 
+/// @brief Activate DOF-derivative defining terms for stationary residues
+/// if the atoms defining the DOFs these terms depend on are moving
+void
+activate_dof_deriv_terms_for_cart_min(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scorefxn,
+	CartesianMinimizerMap const & min_map
+);
+
+
 void
 cartesian_dfunc(
 	pose::Pose & pose,

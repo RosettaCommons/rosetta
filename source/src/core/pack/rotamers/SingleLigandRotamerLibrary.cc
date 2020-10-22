@@ -21,6 +21,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 //#include <core/chemical/automorphism.hh>
 //#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -156,6 +157,17 @@ SingleLigandRotamerLibrary::rotamer_energy(
 {
 	return ref_energy_; //0.0;
 }
+
+
+std::set< id::PartialAtomID >
+SingleLigandRotamerLibrary::atoms_w_dof_derivatives(
+	conformation::Residue const & ,
+	pose::Pose const &
+) const
+{
+	return std::set< id::PartialAtomID >();
+}
+
 
 
 /// @details Not currently implemented -- returns 0.

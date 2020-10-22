@@ -1449,6 +1449,7 @@ ScoringManager::get_rama_prepro_mainchain_torsion_potential(
 	bool const use_polycubic_interpolation,
 	bool const prepro_table
 ) const {
+
 	using namespace core::chemical::mainchain_potential;
 
 	std::string const & mapname( restype->get_rama_prepro_mainchain_torsion_potential_name(prepro_table) );

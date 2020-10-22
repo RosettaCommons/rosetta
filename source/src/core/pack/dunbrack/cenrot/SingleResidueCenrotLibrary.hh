@@ -191,6 +191,12 @@ public:
 		RotamerLibraryScratchSpace & scratch
 	) const override;
 
+	std::set< id::PartialAtomID >
+	atoms_w_dof_derivatives(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
+	) const override;
+
 	//eval cart version
 	Real eval_rotameric_energy_deriv(
 		conformation::Residue const & rsd,

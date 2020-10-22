@@ -2113,6 +2113,32 @@ ScoreFunction::long_range_energies_end() const
 	return lr_2b_methods_.end();
 }
 
+
+ScoreFunction::CI_1B_Methods::const_iterator
+ScoreFunction::ci_1b_methods_begin() const
+{
+	return ci_1b_methods_.begin();
+}
+
+ScoreFunction::CI_1B_Methods::const_iterator
+ScoreFunction::ci_1b_methods_end() const
+{
+	return ci_1b_methods_.end();
+}
+
+ScoreFunction::CD_1B_Methods::const_iterator
+ScoreFunction::cd_1b_methods_begin() const
+{
+	return cd_1b_methods_.begin();
+}
+
+ScoreFunction::CD_1B_Methods::const_iterator
+ScoreFunction::cd_1b_methods_end() const
+{
+	return cd_1b_methods_.end();
+}
+
+
 ScoreFunction::TWO_B_MethodIterator
 ScoreFunction::ci_2b_intrares_begin() const
 {

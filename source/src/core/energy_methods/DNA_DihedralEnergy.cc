@@ -31,10 +31,12 @@
 
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 #include <core/chemical/VariantType.hh>
 
-#include <core/id/TorsionID.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/id/PartialAtomID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 
 #include <core/pose/Pose.hh>
@@ -239,6 +241,39 @@ DNA_DihedralEnergy::residue_pair_energy(
 	//
 }
 
+
+utility::vector1< id::PartialAtomID >
+DNA_DihedralEnergy::atoms_with_dof_derivatives(
+	conformation::Residue const & rsd,
+	pose::Pose const &
+) const
+{
+	std::set< id::PartialAtomID > atoms;
+	for ( Size tor=1; tor<= 6; ++tor ) {
+		if ( tor == 1 && rsd.is_lower_terminus() ) continue;
+		if ( tor >= 5 && rsd.is_upper_terminus() ) continue;
+		//  if ( tor == 4 ) continue; // delta handled in sugar score
+		// tor 4 is handled by the sugar torsion component, even if not by the mainchain torsion
+		// component
+		conformation::insert_partial_atom_ids_for_mainchain_torsion( rsd, tor, atoms );
+	}
+
+	for ( Size at : rsd.chi_atoms()[1] ) {
+		atoms.insert( id::PartialAtomID( at, rsd.seqpos() ));
+	}
+
+	utility::vector1< utility::vector1< std::string > > sugar_torsion_atoms = scoring::dna::sugar_torsion_atom_names();
+	for ( Size ii = 1; ii <= 4; ++ii ) {
+		for ( Size jj = 1; jj <= 4; ++jj ) {
+			atoms.insert( id::PartialAtomID( rsd.atom_index(sugar_torsion_atoms[ii][jj]), rsd.seqpos() ));
+		}
+	}
+
+	utility::vector1< id::PartialAtomID > retlist(atoms.size());
+	std::copy(atoms.begin(), atoms.end(), retlist.begin());
+	return retlist;
+
+}
 
 Real
 DNA_DihedralEnergy::eval_intraresidue_dof_derivative(

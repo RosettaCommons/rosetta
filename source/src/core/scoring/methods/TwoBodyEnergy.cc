@@ -15,6 +15,7 @@
 #include <core/scoring/methods/TwoBodyEnergy.hh>
 
 // Package Headers
+#include <core/id/PartialAtomID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -291,6 +292,12 @@ bool
 TwoBodyEnergy::defines_intrares_dof_derivatives( pose::Pose const & ) const
 {
 	return false;
+}
+
+utility::vector1< id::PartialAtomID >
+TwoBodyEnergy::atoms_with_dof_derivatives( conformation::Residue const &, pose::Pose const & ) const
+{
+	return utility::vector1< id::PartialAtomID >();
 }
 
 Real

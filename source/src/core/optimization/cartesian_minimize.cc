@@ -10,7 +10,7 @@
 /// @file   core/optimization/cartesian_minimize.cc
 /// @brief  Atom tree minimization functions
 /// @author Frank DiMaio
-
+/// @author Andrew Leaver-Fay
 
 // Unit headers
 #include <core/optimization/cartesian_minimize.hh>
@@ -26,14 +26,21 @@
 #include <core/optimization/NumericalDerivCheckResult.hh>
 
 // Project headers
+#include <core/id/AtomID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/DerivVectorPair.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
+#include <core/scoring/EnergyGraph.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/MinimizationGraph.hh>
+#include <core/scoring/methods/ContextIndependentOneBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
+#include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
+#include <core/scoring/LREnergyContainer.hh>
 
 #include <ObjexxFCL/format.hh>
 
@@ -57,7 +64,212 @@ namespace optimization {
 static basic::Tracer TR( "core.optimization" );
 
 /////////////////////////////////////////////////////////////////////////////
-/// @details
+/// @details One-body and two-body energies that define DOF derivatives
+/// are activated for nodes and edges in the minimization graph if the
+/// terms depend on atoms that are moving. The terms report which atoms
+/// define the DOFs they depend on as PartialAtomIDs. These are resolved into
+/// full-fledged atom IDs using the Residues in the Pose's Conformation.
+///
+/// When 1-body energies are activated, they need only be activated on
+/// the inactive residue. When 2-body energies are activated, they need
+/// to be activated on the inactive residue, and on the edges between
+/// the inactive residue and the other inactive neighbors that define the
+/// DOFs that they term depends on.
+///
+/// This code activates terms on residues that the ScoreFunction's
+/// setup_for_minimizing function determined were inactive. This causes
+/// the MinimizationGraph's "fixed_energies" EMap to be inaccurate:
+/// it "double counts" these terms contributions for these residues,
+/// which leads to the cosmetic discrepancy between the energy that's
+/// seen by the minimizer and the actual total energy for the Pose.
+/// This is only a cosmetic discrepancy because the minimizer will
+/// produce exactly the same results with a constant offset to the
+/// score. However, this discrepancy is ugly, so it had to be fixed.
+///
+/// So to compensate, the unfixed energies are re-accumulated out
+/// of the Energies object and then subtracted out of the
+/// fixed_energies.
+void
+activate_dof_deriv_terms_for_cart_min(
+	pose::Pose & pose,
+	scoring::ScoreFunction const & scorefxn,
+	CartesianMinimizerMap const & min_map
+)
+{
+	using id::AtomID;
+	using scoring::methods::OneBodyEnergyCOP;
+	using scoring::methods::TwoBodyEnergyCOP;
+	using scoring::methods::LongRangeTwoBodyEnergy;
+	using scoring::LREnergyContainerCOP;
+	using scoring::ResidueNeighborConstIteratorOP;
+	using scoring::MinimizationGraphOP;
+	using scoring::MinimizationEdge;
+	using scoring::EnergyMap;
+	using scoring::EnergyGraph;
+	using scoring::EnergyEdge;
+	typedef utility::vector1< id::PartialAtomID > PartialAtomIDs;
+
+	MinimizationGraphOP min_graph = pose.energies().minimization_graph();
+	EnergyGraph const & energy_graph = pose.energies().energy_graph();
+
+	core::conformation::symmetry::SymmetryInfoOP symm_info;
+	if ( core::pose::symmetry::is_symmetric(pose) ) {
+		auto & SymmConf (
+			dynamic_cast<core::conformation::symmetry::SymmetricConformation &> ( pose.conformation()) );
+		symm_info = SymmConf.Symmetry_Info();
+	}
+
+	// Collect the 1-body energies that we'll be examining on a residue-by-residue
+	// basis below.
+	std::list< OneBodyEnergyCOP > ddd1b_enmeths;
+	for ( auto iter = scorefxn.ci_1b_methods_begin();
+			iter != scorefxn.ci_1b_methods_end(); ++iter ) {
+		if ( (*iter)->defines_dof_derivatives( pose ) ) {
+			ddd1b_enmeths.push_back( *iter );
+		}
+	}
+
+	// Collect the 2-body energies that we'll be examining on a residue-by-residue
+	// basis below; both short and long range in the same list, since range is
+	// not relevant.
+	std::list< TwoBodyEnergyCOP > ddd2b_enmeths;
+	for ( auto iter = scorefxn.ci_2b_begin();
+			iter != scorefxn.ci_2b_end(); ++iter ) {
+		if ( (*iter)->defines_intrares_dof_derivatives( pose ) ) {
+			ddd2b_enmeths.push_back( *iter );
+		}
+	}
+	for ( auto iter = scorefxn.ci_lr_2b_methods_begin();
+			iter != scorefxn.ci_lr_2b_methods_end(); ++iter ) {
+		if ( (*iter)->defines_intrares_dof_derivatives( pose ) ) {
+			ddd2b_enmeths.push_back( *iter );
+		}
+	}
+
+	std::map< TwoBodyEnergyCOP, std::set< std::pair< Size, Size > > > newly_activated_terms;
+	EnergyMap unfixed_energies; // energies that we thought were fixed but are actually changing
+
+	// One by one, look at all residues and all of the DDD-enmeths,
+	// and activate an enmeth for a residue if one of the atoms
+	// that the enmeth uses for that residue is moving in another residue
+	for ( Size ii = 1; ii <= pose.total_residue(); ++ii ) {
+
+		if ( min_map.domain_map()( ii ) == 0 ) {
+			// Residues with a domain_map color of 0 are already active
+			continue;
+		}
+
+		// OK, now lets look at all the context-independent 1-body energies
+		// and ask which ones define dof derivatives, and for those, we'll ask
+		// for the set of PartialAtomIDs that define their DOFs. The
+		// context-dependent two-body energies are already active.
+
+		for ( auto const & enmeth1b : ddd1b_enmeths ) {
+			PartialAtomIDs partial_ids = enmeth1b->atoms_with_dof_derivatives(
+				pose.residue( ii ), pose );
+			for ( auto const & partial_id : partial_ids ) {
+				AtomID id = pose.conformation().resolve_partial_atom_id( partial_id );
+				if ( ! id.valid() ) continue;
+				if ( min_map.atom_is_moving( id ) ) {
+					// Activate this term in the minimization graph for residue ii
+					min_graph->get_minimization_node( ii )->activate_dof_deriv_one_body_method(
+						enmeth1b, pose );
+					unfixed_energies.accumulate(
+						pose.energies().onebody_energies( ii ),
+						enmeth1b->score_types() );
+					break;
+				}
+			}
+		}
+
+		for ( auto const & enmeth2b : ddd2b_enmeths ) {
+			PartialAtomIDs partial_ids = enmeth2b->atoms_with_dof_derivatives(
+				pose.residue( ii ), pose );
+			for ( auto const & partial_id : partial_ids ) {
+				AtomID id = pose.conformation().resolve_partial_atom_id( partial_id );
+				if ( ! id.valid() ) continue;
+				if ( min_map.atom_is_moving( id ) ) {
+					// We need to activate the two body energy on the node
+					// and also on all the edges that connect ii to the other residues
+					// that define the DOF derivatives.
+
+					min_graph->get_minimization_node( ii )->activate_dof_deriv_two_body_method(
+						enmeth2b, pose );
+					unfixed_energies.accumulate(
+						pose.energies().onebody_energies( ii ),
+						enmeth2b->score_types() );
+
+					for ( auto const & partial_id2 : partial_ids ) {
+						AtomID id2 = pose.conformation().resolve_partial_atom_id( partial_id2 );
+						if ( ! id2.valid() ) continue;
+						Size other_rsd = id2.rsd();
+						if ( other_rsd == ii ) {
+							continue;
+						}
+						if ( min_map.domain_map()( other_rsd ) == 0 ) {
+							// This term will already be active on the edge connecting
+							// ii and other_rsd because all edges to a node with
+							// internal DOF changes are going to have all their
+							// terms active
+							continue;
+						}
+						Size lores = ii < other_rsd ? ii : other_rsd;
+						Size hires = ii < other_rsd ? other_rsd : ii;
+						std::pair< Size, Size > respair({lores, hires});
+						if ( newly_activated_terms[ enmeth2b ].count( respair ) != 0 ) {
+							// we have already activated this term on this edge
+							continue;
+						}
+						newly_activated_terms[ enmeth2b ].insert( respair );
+
+						MinimizationEdge * edge = min_graph->find_minimization_edge( ii, other_rsd );
+						if ( ! edge ) {
+							// This can happen if both ii and other_rsd are held fixed
+							min_graph->add_edge( ii, other_rsd );
+							edge = min_graph->find_minimization_edge( ii, other_rsd );
+							if ( symm_info ) {
+								edge->weight( symm_info->score_multiply( ii, other_rsd ) );
+								edge->dweight( symm_info->deriv_multiply( ii, other_rsd ) );
+							}
+						}
+						edge->activate_dof_deriv_two_body_method( enmeth2b, pose );
+
+						// Now let's subtract out the fixed energies from this edge
+						if ( enmeth2b->method_type() == scoring::methods::ci_2b ) {
+							EnergyEdge const * energy_edge = energy_graph.find_energy_edge( lores, hires );
+							energy_edge->add_to_energy_map(
+								unfixed_energies,
+								enmeth2b->score_types() );
+						} else {
+							// enmeth2b->method_type() == scoring::methods::ci_lr_2b
+							auto enmethlr2b = utility::pointer::dynamic_pointer_cast< LongRangeTwoBodyEnergy const > ( enmeth2b );
+							debug_assert( enmethlr2b );
+							LREnergyContainerCOP energy_container = pose.energies().long_range_container(
+								enmethlr2b->long_range_type() );
+							for ( ResidueNeighborConstIteratorOP lr_iter =
+									energy_container->const_upper_neighbor_iterator_begin( lores ),
+									lr_iter_end = energy_container->const_upper_neighbor_iterator_end( lores );
+									(*lr_iter) != (*lr_iter_end); ++(*lr_iter) ) {
+								if ( lr_iter->upper_neighbor_id() != hires ) {
+									continue;
+								}
+								EnergyMap emap;
+								lr_iter->retrieve_energy( emap );
+								unfixed_energies.accumulate( emap, enmeth2b->score_types() );
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	EnergyMap new_fixed_energies = min_graph->fixed_energies();
+	new_fixed_energies -= unfixed_energies;
+	min_graph->set_fixed_energies( new_fixed_energies );
+}
 
 
 void

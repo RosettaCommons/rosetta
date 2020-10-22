@@ -27,6 +27,7 @@
 #include <core/conformation/signals/IdentityEvent.hh>
 #include <core/conformation/signals/LengthEvent.hh>
 #include <core/conformation/signals/XYZEvent.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.hh>
@@ -37,6 +38,7 @@
 #include <core/pose/variant_util.hh>
 
 #include <test/util/pose_funcs.hh>
+#include <test/util/pdb1rpb.hh>
 #include <test/UTracer.hh>
 
 //Auto Headers
@@ -506,6 +508,114 @@ public:
 		TS_ASSERT_EQUALS( id3[5].atomno(), pose.residue(3).atom_index("N") );
 		TS_ASSERT_EQUALS( id4[5].rsd(), 3 );
 		TS_ASSERT_EQUALS( id4[5].atomno(), pose.residue(3).atom_index("CA") );
+	}
+
+	void test_Conformation_resolve_partial_atom_id_peptide()
+	{
+		pose::Pose pose( create_trpcage_ideal_pose() );
+		conformation::Conformation const & conf( pose.conformation() );
+
+		// Mid-protein, upper connection
+		{
+			id::PartialAtomID partial_id( 2, 5, 0 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("C"), 5 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 2, 5, 1 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("CA"), 5 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 2, 5, 2);
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("N"), 5 ));
+		}
+
+		// Mid-protein, lower connection
+		{
+			id::PartialAtomID partial_id( 1, 5, 0 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("N"), 5 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 5, 1 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("CA"), 5 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 5, 2);
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(5).atom_index("C"), 5 ));
+		}
+
+
+		// N term, upper connection
+		{
+			id::PartialAtomID partial_id( 1, 1, 0 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(1).atom_index("C"), 1 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 1, 1 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(1).atom_index("CA"), 1 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 1, 2);
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(1).atom_index("N"), 1 ));
+		}
+
+		// C term, lower connection
+		{
+			id::PartialAtomID partial_id( 1, 20, 0 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(20).atom_index("N"), 20 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 20, 1 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(20).atom_index("CA"), 20 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 1, 20, 2);
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(20).atom_index("C"), 20 ));
+		}
+
+	}
+
+	void test_Conformation_resolve_partial_atom_id_dslf()
+	{
+		pose::Pose pose( pdb1rpb_pose() );
+		conformation::Conformation const & conf( pose.conformation() );
+
+		{
+			id::PartialAtomID partial_id( 3, 7, 0 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(7).atom_index("SG"), 7 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 3, 7, 1 );
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(7).atom_index("CB"), 7 ));
+		}
+
+		{
+			id::PartialAtomID partial_id( 3, 7, 2);
+			id::AtomID atom_id = conf.resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, id::AtomID( conf.residue(7).atom_index("CA"), 7 ));
+		}
 	}
 
 };

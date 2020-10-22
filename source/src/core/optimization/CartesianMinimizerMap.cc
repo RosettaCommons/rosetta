@@ -44,6 +44,13 @@
 namespace core {
 namespace optimization {
 
+/// @details Initialize atom_indices_ AtomID_Map default value to "0"
+/// with this sentinel value meaning that an atom is not moving.
+CartesianMinimizerMap::CartesianMinimizerMap()
+{
+	atom_indices_.default_value( 0 );
+}
+
 
 /////////////////////////////////////////////////////////////////////////////
 CartesianMinimizerMap::~CartesianMinimizerMap() {

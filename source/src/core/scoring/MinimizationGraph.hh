@@ -92,13 +92,39 @@ public:
 	ResSingleMinimizationData const & res_min_data() const { return res_min_data_; }
 	ResSingleMinimizationData & res_min_data() { return res_min_data_; }
 
-	bool add_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue const & rsd, Pose const & pose, int domain_map_color );
+	bool add_onebody_enmeth(
+		OneBodyEnergyCOP enmeth,
+		Residue const & rsd,
+		Pose const & pose,
+		int domain_map_color
+	);
+
 	bool add_twobody_enmeth(
 		TwoBodyEnergyCOP enmeth,
 		Residue const & rsd,
 		Pose const & pose,
 		EnergyMap const & weights,
 		int domain_map_color
+	);
+
+	/// @brief Energy methods that define DOF derivatives sometimes have to
+	/// be activated for residues that are not having internal-DOF changes
+	/// because the DOFs they rely on extend into residues whose coordinates
+	/// are changing. The code constructing the MinimizationGraph has to
+	/// have already decided that the input energy method *should* be active.
+	void activate_dof_deriv_one_body_method(
+		OneBodyEnergyCOP enmeth,
+		pose::Pose const & pose
+	);
+
+	/// @brief Energy methods that define DOF derivatives sometimes have to
+	/// be activated for residues that are not having internal-DOF changes
+	/// because the DOFs they rely on extend into residues whose coordinates
+	/// are changing. The code constructing the MinimizationGraph has to
+	/// have already decided that the input energy method *should* be active.
+	void activate_dof_deriv_two_body_method(
+		TwoBodyEnergyCOP enmeth,
+		pose::Pose const & pose
 	);
 
 	void setup_for_minimizing(
@@ -146,6 +172,7 @@ public:
 
 private:
 	bool classify_onebody_enmeth( OneBodyEnergyCOP enmeth, Residue const & rsd, Pose const & pose,int domain_map_color );
+
 	bool classify_twobody_enmeth(
 		TwoBodyEnergyCOP enmeth,
 		Residue const & rsd,
@@ -153,6 +180,26 @@ private:
 		EnergyMap const & weights,
 		int domain_map_color
 	);
+
+	/// @brief invoked when classify_onebody_enmeth decides an energy method should
+	/// be activated; shuttles enmeth into either active_1benmeths_std_ or
+	/// active_1benmeths_ext_
+	void _activate_1benmeth( OneBodyEnergyCOP enmeth );
+
+	/// @brief invoked when classify_onebody_enmeth decides an energy method should
+	/// be activated; shuttles enmeth into sfs_dm_req_1benmeths_, sfs_dm_req_1benmeths_,
+	/// and/or sfd_req_1benmeths_ as appropriate.
+	void _check_sfs_and_sfd_for_1benmeth( OneBodyEnergyCOP enmeth, Pose const & pose );
+
+	/// @brief invoked when classify_twobody_enmeth decides an energy method should
+	/// be activated; shuttles enmeth into either active_2benmeths_std_ or
+	/// active_2benmeths_ext_
+	void _activate_2benmeth( TwoBodyEnergyCOP enmeth );
+
+	/// @brief invoked when classify_twobody_enmeth decides an energy method should
+	/// be activated; shuttles enmeth into sfs_dm_req_2benmeths_, sfd_req_2benmeths_,
+	/// and sfs_drs_req_enmeths_ as appropriate.
+	void _check_sfs_and_sfd_for_2benmeth( TwoBodyEnergyCOP enmeth, Pose const & pose );
 
 public:
 	OneBodyEnergiesIterator active_1benmeths_begin() const;
@@ -205,6 +252,7 @@ private:
 	OneBodyEnergies sfs_dm_req_1benmeths_;
 	// one-body energy methods that require a setup-for-derivatives (sfd) opportunity
 	OneBodyEnergies sfd_req_1benmeths_;
+
 
 
 	// The list of all active and inactive 2body energy methods; inactive methods are not used during score evaluation,
@@ -266,6 +314,15 @@ public:
 	/// residues.
 	bool add_twobody_enmeth( TwoBodyEnergyCOP enmeth, Residue const & rsd1, Residue const & rsd2, Pose const & pose, bool residues_mwrt_eachother );
 
+	/// @brief Activate a particular two body energy method as part of this edge.
+	/// Sometimes energy methods defining DOF derivatives have to be evaluated even
+	/// when the residues defining the interaction are not moving with respect to
+	/// each other (causing the energy method to be activated when given to the
+	/// edge in the add_twobody_enmeth function above) because the DOFs that
+	/// define the interaction spill into a *third* residue and that third
+	/// residue's coordinates are changing, causing the DOF to change.
+	void activate_dof_deriv_two_body_method( TwoBodyEnergyCOP enmeth, pose::Pose const & pose );
+
 	/// @brief It may be possible to determine that an edge does not need to belong to the
 	/// minimization graph if there are no active two-body energy methods; this is a convenience
 	/// function that answers quickly if active_2benmths_.begin() == active_2benmeths_.end().
@@ -308,6 +365,9 @@ private:
 		Pose const & pose,
 		bool res_moving_wrt_eachother
 	);
+
+	void _activate_2benmeth( TwoBodyEnergyCOP enmeth );
+	void _check_sfs_and_sfd_for_2benmeth( TwoBodyEnergyCOP enmeth, Pose const & pose );
 
 public:
 	TwoBodyEnergiesIterator active_2benmeths_begin() const;
@@ -663,6 +723,15 @@ eval_weighted_dof_deriv_for_minnode(
 	ScoreFunction const & sfxn,
 	EnergyMap const & weights
 );
+
+void
+create_and_store_atom_tree_minimization_graph(
+	ScoreFunction const & sfxn,
+	kinematics::MinimizerMapBase const & min_map,
+	pose::Pose & pose
+);
+
+
 
 
 } //namespace scoring

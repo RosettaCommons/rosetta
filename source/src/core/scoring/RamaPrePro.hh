@@ -20,6 +20,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <core/id/PartialAtomID.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -130,6 +131,13 @@ public:
 		core::chemical::ResidueTypeCOP res2
 	) const;
 
+	/// @brief Return a vector of the atoms that determine the DOFs covered by
+	/// the %RamaPrePro tables; these may extend beyond the residue in question
+	/// and therefore must be described using PartialAtomIDs.
+	utility::vector1< id::PartialAtomID >
+	atoms_w_dof_derivatives( conformation::Residue const & res, pose::Pose const & ) const;
+
+
 	/// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
 	/// residue, biased by the Ramachandran probabilities for its type.
 	/// @details This version is for canonical residues only.
@@ -160,6 +168,19 @@ private: //Private methods.
 	/// @brief Return the input vector multiplied by -1.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	utility::vector1< core::Real > invert_vector( utility::vector1 < core::Real > const & input_vect ) const;
+
+	/// @brief Get a const reference to the vector of mainchain torsions indices that the mainchain potential for a given noncanonical ResidueType covers.
+	/// @details For example, for an oligourea, this would return {1, 2, 3}, since the Rama maps for oligoureas cover
+	/// phi, theta, and psi (mainchain torsions 1, 2, and 3, respectively), but not mu or omega (mainchain torsions 4 and 5).
+	/// @param[in] conf The current conformation, for reference.
+	/// @param[in] res1 The current residue, for which we're drawing mainchain torsions.
+	/// @param[in] res2 The next residue, used to determine whether to use pre-proline tables or not.
+	utility::vector1< core::Size > const &
+	get_mainchain_torsions_covered(
+		core::conformation::Conformation const & conf,
+		core::chemical::ResidueTypeCOP res,
+		bool res_next_n_substituted
+	) const;
 
 private: //Private member variables.
 

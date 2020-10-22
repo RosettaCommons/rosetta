@@ -17,6 +17,7 @@
 #include <core/chemical/rotamers/BasicRotamerLibrarySpecification.hh>
 
 // Package headers
+#include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
@@ -84,6 +85,16 @@ SingleBasicRotamerLibrary::rotamer_energy(
 {
 	return 0;
 }
+
+std::set< id::PartialAtomID >
+SingleBasicRotamerLibrary::atoms_w_dof_derivatives(
+	conformation::Residue const &,
+	pose::Pose const &
+) const
+{
+	return std::set< id::PartialAtomID >();
+}
+
 
 /// @details Single rotamer - best is zero
 Real

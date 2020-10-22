@@ -80,6 +80,12 @@ public:
 		dunbrack::RotamerLibraryScratchSpace & scratch
 	) const override;
 
+	std::set< id::PartialAtomID >
+	atoms_w_dof_derivatives(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
+	) const override;
+
 	Real
 	best_rotamer_energy(
 		conformation::Residue const & rsd,

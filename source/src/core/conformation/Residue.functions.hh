@@ -14,8 +14,17 @@
 #ifndef INCLUDED_core_conformation_Residue_functions_hh
 #define INCLUDED_core_conformation_Residue_functions_hh
 
+// Package headers
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
+
+// Project headers
+#include <core/types.hh>
+#include <core/id/PartialAtomID.fwd.hh>
+
+// C++ headers
+#include <set>
+
 
 namespace core {
 namespace conformation {
@@ -29,6 +38,16 @@ idealize_hydrogens(
 /// @brief rotamer chi-update from coords useful for building rotamers from coordinates
 void set_chi_according_to_coordinates(
 	conformation::Residue & rotamer
+);
+
+/// @brief For a given mainchain torsion, report the partial atom IDs that
+/// define it, inserting these partial atom IDs into a std::set (to avoid redundancy
+/// perhaps with other torsions that also depend on the same atoms).
+void
+insert_partial_atom_ids_for_mainchain_torsion(
+	Residue const & res,
+	Size const mainchain_torsion,
+	std::set< id::PartialAtomID > & atoms
 );
 
 }

@@ -373,6 +373,19 @@ void P_AA::symmetrize_gly_table()
 	if ( TR.Debug.visible() ) TR.Debug.flush();
 }
 
+bool
+P_AA::defines_p_aa_pp_energy_for_res( conformation::Residue const & res ) const
+{
+	using namespace core::chemical;
+	if ( res.is_terminus() || res.is_virtual_residue() ) return false;
+
+	AA const aa( get_aa_to_use( res.aa(), res.backbone_aa() ) );
+
+	//Excludes noncanonicals that aren't templated on a canonical.
+	if ( aa > chemical::num_canonical_aas ) return false;
+
+	return true;
+}
 
 /// @brief Probability energies from P(aa|phi,psi)
 /// This function handles L- and D- canonical amino acids, as well as noncanonical alpha amino acids templated on canonical alpha amino acids.
@@ -382,11 +395,11 @@ P_AA::P_AA_pp_energy( conformation::Residue const & res ) const
 	using namespace core::chemical;
 	using numeric::conversions::degrees;
 
-	if ( res.is_terminus() || res.is_virtual_residue() ) return Energy( 0.0 );
+	if ( !defines_p_aa_pp_energy_for_res( res ) ) {
+		return Energy( 0.0 );
+	}
 
 	AA const aa( get_aa_to_use( res.aa(), res.backbone_aa() ) );
-
-	if ( aa > chemical::num_canonical_aas ) return 0.0; //Excludes noncanonicals that aren't templated on a canonical.
 
 	// sets up for eventual removal of prior condition
 	const core::Real d_multiplier = res.has_property( "D_AA" ) ? -1.0 : 1.0 ; //A multiplier that's -1 for D-amino acids and 1 for L-amino acids, used to invert phi and psi for D.

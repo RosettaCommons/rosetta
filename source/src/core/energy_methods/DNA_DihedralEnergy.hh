@@ -56,14 +56,17 @@ public:
 	) const override;
 
 	bool
+	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
+
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const override;
+
+	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
 		Size res1,
 		Size res2
 	) const override;
-
-	bool
-	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
 
 	void
 	residue_pair_energy(

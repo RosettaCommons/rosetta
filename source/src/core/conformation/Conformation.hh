@@ -46,6 +46,7 @@
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/id/PartialAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/environment/DofPassport.fwd.hh>
 
@@ -95,6 +96,7 @@ public:  // typedefs
 	typedef kinematics::AtomTree   AtomTree;
 	typedef kinematics::AtomTreeOP AtomTreeOP;
 	typedef id::AtomID AtomID;
+	typedef id::PartialAtomID PartialAtomID;
 
 	typedef core::conformation::parametric::ParametersSet ParametersSet;
 	typedef core::conformation::parametric::ParametersSetOP ParametersSetOP;
@@ -768,6 +770,12 @@ public:  // Bonds, Connections, Atoms, & Stubs
 	inter_residue_connection_partner(
 		Size seqpos,
 		int connection_index
+	) const;
+
+	/// @brief Resolve a partial atom ID into an AtomID that is specific for this %Conformation
+	AtomID
+	resolve_partial_atom_id(
+		PartialAtomID const & partial_id
 	) const;
 
 	/// @brief Returns a boolean for two atomIDs to be bonded.

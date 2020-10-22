@@ -22,6 +22,7 @@
 #include <core/chemical/VariantType.hh>
 
 // Project headers
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
@@ -97,6 +98,25 @@ bool
 YHHPlanarityEnergy::defines_dof_derivatives( pose::Pose const & ) const
 {
 	return true;
+}
+
+utility::vector1< id::PartialAtomID >
+YHHPlanarityEnergy::atoms_with_dof_derivatives(
+	conformation::Residue const & rsd,
+	pose::Pose const &
+) const
+{
+	utility::vector1< id::PartialAtomID > atoms;
+	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) {
+		return atoms;
+	}
+	if ( defines_score_for_rsd(rsd) ) {
+		atoms.reserve(4);
+		for ( Size ii = 1; ii <= 4; ++ii ) {
+			atoms.push_back( id::PartialAtomID( rsd.chi_atoms()[3][ii], rsd.seqpos() ));
+		}
+	}
+	return atoms;
 }
 
 Real

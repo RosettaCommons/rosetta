@@ -20,14 +20,18 @@
 #include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
+#include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/chemical/ResidueConnection.hh>
+#include <core/chemical/ResConnID.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/mainchain_potential/MainchainScoreTable.hh>
 #include <basic/basic.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 #include <core/conformation/Conformation.hh>
 
 // Numeric Headers
@@ -311,28 +315,28 @@ RamaPrePro::get_mainchain_torsions_covered(
 	core::chemical::ResidueTypeCOP res1,
 	core::chemical::ResidueTypeCOP res2
 ) const {
-	//Otherwise, this is a noncanonical, and the logic becomes more complicated.
-	//First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
-	bool const is_d( res1->is_mirrored_type() );
+	return get_mainchain_torsions_covered(conf, res1, is_N_substituted( res2 ));
+}
 
-	//Get the L-equivalent type:
-	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res1->mode() )->get_mirrored_type( res1 )  : res1 );
-
-	//If we have a backbone aa type defined, use it.
-	core::chemical::AA const bbaa( ltype->backbone_aa() );
-	if ( bbaa != ltype->aa() && bbaa != core::chemical::aa_unk ) {
-		ltype = conf.residue_type_set_for_conf( res1->mode() )->get_representative_type_aa( bbaa );
+/// @details The PartialAtomID is currently only able to represent the connect atoms
+/// themselves -- they cannot specify the atoms away from the connect atoms that
+/// might also define torsions. If any RamaPrePro table were to use the
+/// last mainchain torsion in a residue (e.g. omega for amino acids), then the
+/// last atom defining that torsion would be excluded from the list.
+utility::vector1< id::PartialAtomID >
+RamaPrePro::atoms_w_dof_derivatives( conformation::Residue const & res, pose::Pose const & pose ) const
+{
+	std::set< id::PartialAtomID > atoms;
+	utility::vector1< Size > const & mainchain_torsion_inds =
+		get_mainchain_torsions_covered(pose.conformation(), res.type_ptr(), true);
+	for ( Size tor_ind : mainchain_torsion_inds ) {
+		conformation::insert_partial_atom_ids_for_mainchain_torsion(
+			res, tor_ind, atoms );
 	}
 
-	//Get an instance of the ScoringManager, and the proper MainchainScoreTable:
-	ScoringManager* manager( ScoringManager::get_instance() );
-	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table(
-		manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, is_N_substituted( res2 ) )
-	);
-	runtime_assert_string_msg( cur_table, "Error in core::scoring::RamaPrePro::get_mainchain_torsions_covered(): No mainchain score table for residue type " + res1->name() + " exists." );
-
-	return cur_table->get_mainchain_torsions_covered();
+	return utility::vector1< id::PartialAtomID >( atoms.begin(), atoms.end() );
 }
+
 
 /// @brief Given the current residue (res1) and the next one (res2), randomly draw mainchain torsion values for the current
 /// residue, biased by the Ramachandran probabilities for its type.
@@ -424,6 +428,35 @@ RamaPrePro::invert_vector(
 		output_vect[i] = -1*input_vect[i];
 	}
 	return output_vect;
+}
+
+utility::vector1< core::Size > const &
+RamaPrePro::get_mainchain_torsions_covered(
+	core::conformation::Conformation const & conf,
+	core::chemical::ResidueTypeCOP res,
+	bool res_next_n_substituted
+) const {
+	// Otherwise, this is a noncanonical, and the logic becomes more complicated.
+	// First, we must determine whether this is a D-amino acid.  (Score tables are for L-versions.)
+	bool const is_d( res->is_mirrored_type() );
+
+	// Get the L-equivalent type:
+	core::chemical::ResidueTypeCOP ltype( is_d ? conf.residue_type_set_for_conf( res->mode() )->get_mirrored_type( res )  : res );
+
+	// If we have a backbone aa type defined, use it.
+	core::chemical::AA const bbaa( ltype->backbone_aa() );
+	if ( bbaa != ltype->aa() && bbaa != core::chemical::aa_unk ) {
+		ltype = conf.residue_type_set_for_conf( res->mode() )->get_representative_type_aa( bbaa );
+	}
+
+	// Get an instance of the ScoringManager, and the proper MainchainScoreTable:
+	ScoringManager* manager( ScoringManager::get_instance() );
+	core::chemical::mainchain_potential::MainchainScoreTableCOP cur_table(
+		manager->get_rama_prepro_mainchain_torsion_potential( ltype, true, res_next_n_substituted )
+	);
+	runtime_assert_string_msg( cur_table, "Error in core::scoring::RamaPrePro::get_mainchain_torsions_covered(): No mainchain score table for residue type " + res->name() + " exists." );
+
+	return cur_table->get_mainchain_torsions_covered();
 }
 
 } //namespace scoring

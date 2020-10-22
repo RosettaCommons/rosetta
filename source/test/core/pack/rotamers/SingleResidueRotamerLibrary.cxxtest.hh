@@ -17,6 +17,7 @@
 #include <cxxtest/TestSuite.h>
 #include <test/core/init_util.hh>
 
+#include <core/id/PartialAtomID.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueType.hh>
@@ -27,6 +28,7 @@
 
 #include <basic/Tracer.hh>
 
+
 static basic::Tracer TR("core.pack.rotamers.SingleResidueRotamerLibrary.cxxtest");
 
 using namespace core;
@@ -36,34 +38,40 @@ using namespace core::pack::task;
 class DummySRRL: public core::pack::rotamers::SingleResidueRotamerLibrary {
 
 public:
-	virtual
+
 	core::Real
 	rotamer_energy_deriv(
 		conformation::Residue const &,
 		pose::Pose const &,
 		dunbrack::RotamerLibraryScratchSpace &
-	) const {
+	) const override {
 		utility_exit_with_message("UNIMPLEMENTED");
 	}
 
-	virtual
 	core::Real
 	rotamer_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		dunbrack::RotamerLibraryScratchSpace &
-	) const { utility_exit_with_message("UNIMPLEMENTED"); }
+	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
-	virtual
+	std::set< id::PartialAtomID >
+	atoms_w_dof_derivatives(
+		conformation::Residue const &,
+		pose::Pose const &
+	) const override {
+		utility_exit_with_message("UNIMPLEMENTED");
+		return std::set< id::PartialAtomID >();
+	}
+
 	core::Real
 	best_rotamer_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
 		bool,
 		dunbrack::RotamerLibraryScratchSpace &
-	) const { utility_exit_with_message("UNIMPLEMENTED"); }
+	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
-	virtual
 	void
 	assign_random_rotamer_with_bias(
 		conformation::Residue const & ,
@@ -72,9 +80,8 @@ public:
 		numeric::random::RandomGenerator &,
 		dunbrack::ChiVector &,
 		bool
-	) const { utility_exit_with_message("UNIMPLEMENTED"); }
+	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
-	virtual
 	void
 	fill_rotamer_vector(
 		pose::Pose const &,
@@ -86,11 +93,10 @@ public:
 		utility::vector1< utility::vector1< Real > > const &,
 		bool,
 		core::pack::rotamers::RotamerVector &
-	) const { utility_exit_with_message("UNIMPLEMENTED"); }
+	) const override { utility_exit_with_message("UNIMPLEMENTED"); }
 
-	virtual
 	void
-	write_to_file( utility::io::ozstream & ) const {
+	write_to_file( utility::io::ozstream & ) const override {
 		utility_exit_with_message("UNIMPLEMENTED");
 	}
 

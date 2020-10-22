@@ -15,16 +15,23 @@
 #include <cxxtest/TestSuite.h>
 
 // Unit Headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.functions.hh>
 #include <core/conformation/PseudoBond.hh>
+
+// Project headers
+#include <core/id/AtomID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/FoldTree.hh>
 
-// Project headers
+// test headers
 #include <test/core/init_util.hh>
 #include <test/util/pose_funcs.hh>
+#include <test/util/pdb1rpb.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -43,7 +50,10 @@
 
 static basic::Tracer TR( "core.conformation.Residue.cxxtest" );
 
+using core::id::AtomID;
+using core::id::PartialAtomID;
 using core::pose::Pose;
+using core::conformation::Conformation;
 using core::conformation::PseudoBond;
 using core::conformation::PseudoBondCollection;
 using core::conformation::PseudoBondCollectionOP;
@@ -443,7 +453,165 @@ public:
 				TSM_ASSERT_DELTA( restype.atom_name(ii) + " Z", residue.xyz(ii).z(), pose->residue(2).xyz(ii).z(), 0.0001 );
 			}
 		}
+	}
+
+	void test_Residue_resolve_partial_atom_id_peptide()
+	{
+		Pose pose( create_trpcage_ideal_pose() );
+		Conformation const & conf( pose.conformation() );
+
+		// Mid-protein, upper connection
+		{
+			PartialAtomID partial_id( 2, 5, 0 );
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("C"), 5 ));
+		}
+
+		{
+			PartialAtomID partial_id( 2, 5, 1 );
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("CA"), 5 ));
+		}
+
+		{
+			PartialAtomID partial_id( 2, 5, 2);
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("N"), 5 ));
+		}
+
+		// Mid-protein, lower connection
+		{
+			PartialAtomID partial_id( 1, 5, 0 );
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("N"), 5 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 5, 1 );
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("CA"), 5 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 5, 2);
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(5).atom_index("C"), 5 ));
+		}
+
+
+		// N term, upper connection
+		{
+			PartialAtomID partial_id( 1, 1, 0 );
+			AtomID atom_id = conf.residue(1).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(1).atom_index("C"), 1 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 1, 1 );
+			AtomID atom_id = conf.residue(1).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(1).atom_index("CA"), 1 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 1, 2);
+			AtomID atom_id = conf.residue(1).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(1).atom_index("N"), 1 ));
+		}
+
+		// C term, lower connection
+		{
+			PartialAtomID partial_id( 1, 20, 0 );
+			AtomID atom_id = conf.residue(20).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(20).atom_index("N"), 20 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 20, 1 );
+			AtomID atom_id = conf.residue(20).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(20).atom_index("CA"), 20 ));
+		}
+
+		{
+			PartialAtomID partial_id( 1, 20, 2);
+			AtomID atom_id = conf.residue(20).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(20).atom_index("C"), 20 ));
+		}
+
+		// Out of bounds IDs
+		{
+			PartialAtomID partial_id( 1, 5, 3);
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID::BOGUS_ATOM_ID() );
+		}
+
+		{
+			PartialAtomID partial_id( 2, 5, 3);
+			AtomID atom_id = conf.residue(5).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID::BOGUS_ATOM_ID() );
+		}
 
 	}
+
+	void test_Residue_resolve_partial_atom_id_dslf()
+	{
+		Pose pose( pdb1rpb_pose() );
+		Conformation const & conf( pose.conformation() );
+
+		{
+			PartialAtomID partial_id( 3, 7, 0 );
+			AtomID atom_id = conf.residue(7).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(7).atom_index("SG"), 7 ));
+		}
+
+		{
+			PartialAtomID partial_id( 3, 7, 1 );
+			AtomID atom_id = conf.residue(7).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(7).atom_index("CB"), 7 ));
+		}
+
+		{
+			PartialAtomID partial_id( 3, 7, 2);
+			AtomID atom_id = conf.residue(7).resolve_partial_atom_id( partial_id );
+			TS_ASSERT_EQUALS( atom_id, AtomID( conf.residue(7).atom_index("CA"), 7 ));
+		}
+	}
+
+	void test_insert_partial_atom_ids_for_mainchain_torsion()
+	{
+		Pose pose( create_trpcage_ideal_pose() );
+
+		{
+			std::set< PartialAtomID > atoms;
+			insert_partial_atom_ids_for_mainchain_torsion(
+				pose.residue(5), 1, atoms );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 2, 4, 0 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 1, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 2, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 3, 5 )) != atoms.end() );
+		}
+
+		{
+			std::set< PartialAtomID > atoms;
+			insert_partial_atom_ids_for_mainchain_torsion(
+				pose.residue(5), 2, atoms );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 1, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 2, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 3, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 1, 6, 0 )) != atoms.end() );
+		}
+
+		{
+			std::set< PartialAtomID > atoms;
+			insert_partial_atom_ids_for_mainchain_torsion(
+				pose.residue(5), 3, atoms );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 2, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 3, 5 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 1, 6, 0 )) != atoms.end() );
+			TS_ASSERT( std::find( atoms.begin(), atoms.end(), PartialAtomID( 1, 6, 1 )) != atoms.end() );
+		}
+
+
+	}
+
 };
 

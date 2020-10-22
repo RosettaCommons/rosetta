@@ -12,6 +12,9 @@
 /// @author Vikram K. Mulligan (vmullig@u.washington.edu)
 
 
+// Unit headers
+#include <core/pack/dunbrack/DunbrackEnergy.hh>
+
 // Test headers
 #include <test/UMoverTest.hh>
 #include <test/UTracer.hh>
@@ -26,8 +29,8 @@
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pack/dunbrack/DunbrackEnergy.hh>
 #include <core/id/DOF_ID.hh>
+#include <core/id/PartialAtomID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/Energies.hh>
@@ -145,6 +148,30 @@ public:
 			TS_ASSERT_DELTA( score1c, 0.0, 0.00001 );
 			TS_ASSERT_LESS_THAN( 0.1, std::abs(score1d) );
 		}
+	}
+
+
+	void test_peptoid_IV_reporting() {
+		using core::id::PartialAtomID;
+
+		protocols::cyclic_peptide::PeptideStubMover builder;
+		builder.add_residue("Append", "GLY:NtermProteinFull", 1, true, "", 0, 1, nullptr, "");
+		builder.add_residue("Append", "601", 2, false, "N", 0, 1, nullptr, "C");
+		builder.add_residue("Append", "GLY:CtermProteinFull", 3, false, "N", 0, 2, nullptr, "C");
+		core::pose::Pose pose;
+		builder.apply(pose); //Build the peptide.
+
+		core::pack::dunbrack::DunbrackEnergy dunE;
+		utility::vector1< PartialAtomID > partial_ids = dunE.atoms_with_dof_derivatives( pose.residue(2), pose );
+
+		TS_ASSERT_EQUALS( partial_ids.size(), 6 );
+		TS_ASSERT_EQUALS( partial_ids[1], PartialAtomID( 1, 1, 0 ));
+		TS_ASSERT_EQUALS( partial_ids[2], PartialAtomID( 1, 1, 1 ));
+		TS_ASSERT_EQUALS( partial_ids[3], PartialAtomID( 1, 2 ));
+		TS_ASSERT_EQUALS( partial_ids[4], PartialAtomID( 2, 2 ));
+		TS_ASSERT_EQUALS( partial_ids[5], PartialAtomID( 3, 2 ));
+		TS_ASSERT_EQUALS( partial_ids[6], PartialAtomID( 1, 3, 0 ));
+
 	}
 
 };

@@ -28,6 +28,7 @@
 #include <core/conformation/RotamerSetBase.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
+#include <core/id/PartialAtomID.fwd.hh>
 #include <core/id/TorsionID.fwd.hh>
 #include <core/id/DOF_ID.fwd.hh>
 #include <core/kinematics/MinimizerMapBase.fwd.hh>
@@ -436,6 +437,13 @@ public:
 	virtual
 	bool
 	defines_intrares_dof_derivatives( pose::Pose const & p ) const;
+
+	/// @brief For a particular residue, list which atoms go into defining the DOF derivatives,
+	/// including any atoms on adjacent residues. The Pose is provided for context, but there
+	/// is no requirement that res be a member of that Pose.
+	virtual
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & p ) const;
 
 	/// @brief Evaluate the DOF derivative for a particular residue.  The Pose merely serves as context,
 	/// and the input residue is not required to be a member of the Pose.

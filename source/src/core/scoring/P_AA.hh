@@ -103,6 +103,11 @@ private:
 	void symmetrize_gly_table();
 
 public:
+
+	/// @brief Do the tables define a non-zero energy for a given residue?
+	bool
+	defines_p_aa_pp_energy_for_res( conformation::Residue const & res ) const;
+
 	/// @brief Probability energies from P(aa|phi,psi)
 	//Energy
 	//P_AA_pp_energy( conformation::amino::AminoAcid const & aa );

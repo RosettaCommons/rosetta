@@ -15,6 +15,7 @@
 #include <core/scoring/methods/OneBodyEnergy.hh>
 
 // Package headers
+#include <core/id/PartialAtomID.hh>
 #include <core/scoring/methods/EnergyMethod.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -131,6 +132,12 @@ bool
 OneBodyEnergy::defines_dof_derivatives( pose::Pose const & ) const
 {
 	return false;
+}
+
+utility::vector1< id::PartialAtomID >
+OneBodyEnergy::atoms_with_dof_derivatives( conformation::Residue const &, pose::Pose const & ) const
+{
+	return utility::vector1< id::PartialAtomID >();
 }
 
 Real

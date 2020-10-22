@@ -73,6 +73,12 @@ public:
 	bool
 	defines_dof_derivatives( pose::Pose const & p ) const override;
 
+	/// @brief Return a vector of the atoms that determine the DOFs covered by
+	/// the rotamer libraries; these may extend beyond the residue in question
+	/// and therefore must be described using PartialAtomIDs.
+	utility::vector1< id::PartialAtomID >
+	atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & ) const override;
+
 	/// @brief Evaluate the phi/psi and chi dihedral derivatives
 	/// for the input residue.
 	Real

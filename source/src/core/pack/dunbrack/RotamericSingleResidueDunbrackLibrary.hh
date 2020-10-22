@@ -23,6 +23,7 @@
 #include <core/pack/dunbrack/SingleResidueDunbrackLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/DunbrackRotamer.hh>
+#include <core/pack/dunbrack/ResidueDOFReporter.fwd.hh>
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
@@ -89,6 +90,12 @@ public:
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
 		RotamerLibraryScratchSpace & scratch
+	) const override;
+
+	std::set< id::PartialAtomID >
+	atoms_w_dof_derivatives(
+		conformation::Residue const & rsd,
+		pose::Pose const & pose
 	) const override;
 
 	/// @brief Returns the energy of the lowest-energy rotamer accessible to the given residue
@@ -252,14 +259,6 @@ public:
 	utility::fixedsizearray1< Real, N > BB_BINRANGE;
 
 	utility::fixedsizearray1< utility::vector1< core::Size >, N> BIN_EQUIVALENTS;
-
-	// Public by convention!
-	// This array describes function objects that, given a residue and some context, return some
-	// computable value on which this rotamer library depends.
-	// Typical rotamer libraries depend on backbone dihedrals, but not all!
-	// Note: would use lambdas -- minutely lighter-weight, better syntax for types -- but we need
-	// C++14 for the full deduction.
-	utility::fixedsizearray1< std::function< Real( conformation::Residue const & rsd, pose::Pose const & pose ) >, N > IVs;
 
 protected:
 	/// Read and write access for derived classes and parser class
@@ -563,6 +562,12 @@ private:
 	/// @brief If true, the order of rotamer wells is auto-corrected from the input rotamer file.  False by default -- shouldn't be necessary
 	/// any more, with voronoi-based rotamer interpolation.
 	bool correct_rotamer_well_order_on_read_;
+
+	/// @brief This array holds objects that report the set of DOFs that the rotamer
+	/// library willdepend upon to compute its values, and which will report the atoms
+	/// that define those DOFs. Typical rotamer libraries depend on backbone dihedrals,
+	/// but not all!
+	utility::fixedsizearray1< ResidueDOFReporterCOP, N > iv_reporters_;
 
 };
 

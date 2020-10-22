@@ -217,6 +217,7 @@ sources = {
 		"JumpID",
 		"NamedAtomID",
 		"NamedStubID",
+		"PartialAtomID",
 		"SequenceMapping",
 		"TorsionID",
 		"TorsionID_Range",
