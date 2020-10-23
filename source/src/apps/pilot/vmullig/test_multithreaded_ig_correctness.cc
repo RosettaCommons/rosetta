@@ -67,7 +67,7 @@ void register_options() {
 /// @brief Are two packer energy values equal to within a (hard-coded) cutoff?
 bool
 values_equal( core::PackerEnergy const val1, core::PackerEnergy const val2 ) {
-	return std::abs( val1 - val2 ) < 1.0e-5;
+	return std::abs( val1 - val2 ) < 1.0e-4;
 }
 
 /// @brief Entry point for program execution.
