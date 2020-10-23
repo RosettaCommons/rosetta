@@ -1,7 +1,7 @@
-#pdb	#rmsd	#discrim #==> EDIT HERE
-1ahw	2.33	3.831
-1jps	2.026	2.553
-1mlc	2.593	1.695
-1ztx	1.859	3.482
-2aep	2.721	5.015
-2jel	2.453	3.047
+#pdb	#rmsd	#discrim
+1ahw	2.73	3.831
+1jps	2.426	2.553
+1mlc	2.993	1.695
+1ztx	2.259	3.482
+2aep	3.121	5.015
+2jel	2.853	3.047
