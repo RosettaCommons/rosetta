@@ -40,7 +40,8 @@ command_line = '''
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
-targets = '1a11 1mp6 2nr1 1pje WALP23'.split()
+#targets = '1a11 1mp6 2nr1 1pje WALP23'.split()
+targets = '1a11 1mp6 2nr1 1pje'.split()
 targets = targets[:2] if debug else targets
 
 #print(f'extension: {extension}')

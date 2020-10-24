@@ -29,7 +29,7 @@ config = benchmark.config()
 outfile = "plot_results.png"
 
 #number of subplots
-ncols = 5
+ncols = 4
 nrows = 1
 
 # figure size

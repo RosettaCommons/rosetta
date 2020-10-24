@@ -61,39 +61,37 @@ kl_divergence = seqrecov_metrics.compute_kl_divergence( seqdata )
 
 # read cutoffs
 cutoff_info = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $0}'" ).splitlines()[0].split(' ')
-cutoffs_non_random = float( cutoff_info[1] )
 cutoffs_recov = float( cutoff_info[0] )
+cutoffs_non_random = float( cutoff_info[1] )
 cutoffs_kl_div_subset = float( cutoff_info[2] )
 cutoffs_kl_div_all = float( cutoff_info[3] )
 
 # open results output file
 f = open( outfile, "w" )
 
+subset = "all lipid aqueous".split()
+
 # check for non_random above cutoff
-for v in non_random_recov: 
-	if v < cutoffs_non_random: 
+for v in range( 0, len(non_random_recov)): 
+	f.write( "non_random\t" + subset[v] + "\t" + str(non_random_recov[v]) + "\n")
+	if non_random_recov[v] < cutoffs_non_random: 
 		failures.append( "non_random\n" ) 
-	else: 
-		f.write( "non_random\n")
 
 # check for recov above cutoff
-for v in recov: 
-	if v < cutoffs_recov: 
+for v in range( 0, len(recov)): 
+	f.write( "recovery\t" + subset[v] + "\t" + str(round(recov[v],3)) + "\n")
+	if recov[v] < cutoffs_recov: 
 		failures.append( "recovery\n" )
-	else: 
-		f.write( "recovery\n" )
 
 # check for kl values below cutoff
+for v in range( 0, len(recov)): 
+	f.write( "kl_divergence\t" + subset[v] + "\t" + str(round(kl_divergence[v],3)) + "\n")
 if kl_divergence[0] > cutoffs_kl_div_all: 
 	failures.append( "kl_div_all\n" )
-else: 
-	f.write( "kl_div_all\n" )
 
 # check for kl values below cutoff
 if kl_divergence[1] > cutoffs_kl_div_subset and kl_divergence[2] > cutoffs_kl_div_subset: 
 	failures.append( "kl_div_subset\n" )
-else: 
-	f.write( "kl_div_subset\n" )
 
 f.close()
 

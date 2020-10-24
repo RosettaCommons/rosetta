@@ -29,7 +29,7 @@ The second metric is the recovery rate for individual amino acids relative to th
 
 The third metric is the Kullback-Leibler divergence which is a measure of the divergence of the amino acid distribution in the designed sequences from the distribution in the native sequences. Unlike recovery and non-random rates, the goal is to minimize the KL-divergence. Ideal values for a membrane protein set are under 5.0, delineated by the yellow solid line on the plot.
 
-For sequence recovery, pass/fail is defined by comparing newly computed with established values computed in [Alford et al. 2020: Protein structure prediction...]. For Non-random recovery, a passing value is greater than 10%. A KL divergence pass value is defined by a value less than 5.0.
+For sequence recovery, pass/fail is defined by comparing newly computed with established values computed in [Alford et al. 2020: Protein structure prediction...], which 0.2. For Non-random recovery, a passing value is greater than 10%. A KL divergence failure is defined by a value < 5.0 for the 'all' subset and if both subsets lipid and aqueous have a KL divergence < 5.0
 
 ## KEY RESULTS
 The key results of this scientific test are twofold:

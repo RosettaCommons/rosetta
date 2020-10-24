@@ -100,16 +100,17 @@ for i in range( 0, len( energy_landscapes ) ):
 	val_cutoff = cutoffs_zmin_dict[targets[i]]
 	target_results.update( zmin = zmin )
 
-	if ( not ( zmin <= (val_cutoff+1) and zmin >= (val_cutoff-1) ) ): 
+	if ( not ( zmin <= (val_cutoff+2) and zmin >= (val_cutoff-2) ) ): 
 		f.write(  "fails in zmin: " + str(val_cutoff) + "\t" )
 		if ( targets[i] not in failures ):
 			failures.append( targets[i] )
 
+	# test for angle_min
 	f.write( str(anglemin) + "\t" )
 	val_cutoff = cutoffs_anglemin_dict[targets[i]]
 	target_results.update( anglemin = anglemin )
-
-	if ( not ( anglemin <= (val_cutoff+5) and anglemin >= (val_cutoff-5) ) ): 
+	
+	if ( not ( anglemin <= (val_cutoff+10) and anglemin >= (val_cutoff-10) ) ): 
 		f.write(  "fails in anglemin: " + str(val_cutoff) + "\t" )
 		if ( targets[i] not in failures ):
 			failures.append( targets[i] )
