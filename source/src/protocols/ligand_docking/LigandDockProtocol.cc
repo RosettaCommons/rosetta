@@ -38,6 +38,8 @@
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
 
+#include <core/util/SwitchResidueTypeSet.hh> // iphold
+
 //#include <protocols/relax_protocols.hh>
 #include <protocols/docking/DockingInitialPerturbation.hh>
 #include <protocols/rigid/RB_geometry.hh>
@@ -58,6 +60,8 @@
 #include <protocols/moves/JumpOutMover.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
 
+#include <protocols/relax/loop/LoopRelaxMover.hh> //iphold
+#include <protocols/loops/loops_main.hh> //iphold
 
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
@@ -74,16 +78,16 @@
 #include <fstream>
 #include <sstream>
 
-
 // option key includes
 
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 
+#include <basic/options/keys/loops.OptionKeys.gen.hh> // iphold
+
 #include <core/pose/Pose.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.hh>
 #include <utility/vector0.hh>
-
 
 namespace protocols {
 namespace ligand_docking {
@@ -219,10 +223,52 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 
 	if ( protocol_ != "unbound" ) random_conformer(pose); // now only "pose" parameter is needed, actually
 
-	move_ligand_to_desired_centroid(pose, jump_id, start_from_pts_);
+	// iphold BEGIN
+	// default is 0 for both
+	core::Size const cen_cycles = basic::options::option
+		[basic::options::OptionKeys::docking::ligand::iphold_cen_cycles]();
+	core::Size const fa_cycles = basic::options::option
+		[basic::options::OptionKeys::docking::ligand::iphold_fa_cycles]();
 
-	// Includes initial random perturbation (-dock_pert, -randomize2, etc)
-	if ( protocol_ != "unbound" ) optimize_orientation3(pose, jump_id, lig_id);
+	// remains a null-pointer if no iphold-cycles are defined
+	relax::loop::LoopRelaxMoverOP loop_mover;
+
+	if ( cen_cycles | fa_cycles ) {
+		using namespace basic::options;
+		using namespace utility;
+
+		// Initialize loop_mover
+		loop_mover = pointer::make_shared<relax::loop::LoopRelaxMover>();
+
+		protocols::loops::LoopsOP loops( new protocols::loops::Loops( true ) );
+		loop_mover->loops( loops );
+
+		if ( option[OptionKeys::loops::frag_files].user() ) {
+			vector1<core::fragment::FragSetOP> frag_libs;
+			loops::read_loop_fragments( frag_libs );
+			loop_mover->frag_libs( frag_libs );
+		}
+	}
+	if ( cen_cycles ) {
+		using namespace basic::options;
+		// no full-atom options during centroid cycle
+		loop_mover->refine( "no" );
+		loop_mover->relax( "no" );
+	}
+	core::Size i = 1;
+	do {
+		if ( cen_cycles )  TR << "Centroid cycle " << i << " of " << cen_cycles << std::endl;
+		move_ligand_to_desired_centroid( pose, jump_id, start_from_pts_ );
+
+		// Includes initial random perturbation (-dock_pert, -randomize2, etc)
+		if ( protocol_ != "unbound" ) optimize_orientation3(pose, jump_id, lig_id);
+		if ( cen_cycles ) loop_mover->apply( pose );
+	} while (++i <= cen_cycles);
+
+	if ( cen_cycles ) { // loop_mover is not automatically switching to FA
+		core::util::switch_to_residue_type_set( pose, core::chemical::FA_STANDARD );
+	}
+	// iphold END
 
 	// Safer to add these after the initial rotamer juggling, especially in grid mode.
 	// However, it means there should be no minimization done before this point!!
@@ -248,32 +294,51 @@ LigandDockProtocol::apply( core::pose::Pose & pose )
 	// Put the move-map here so the interface matches up with the backbone constraints!
 	core::kinematics::MoveMapOP movemap = make_movemap(pose, jump_id, sc_interface_padding_, minimize_all_rsds_, minimize_backbone_, minimize_ligand_, minimize_water_);
 
-	// Only want to do this once the ligand is in its "final" starting place.
-	core::scoring::constraints::ConstraintOP ligand_tether( nullptr );
-	if ( protocol_ != "unbound" ) {
-		if ( tether_ligand_ ) ligand_tether = restrain_ligand_nbr_atom(pose, lig_id, ligand_tether_stddev_Ang_);
+	// iphold BEGIN
+	if ( fa_cycles ) {
+		using namespace basic::options;
+
+		// No more remodelling
+		loop_mover->remodel( "no" );
+
+		// Resetting refine and relax (were set false for cendroid cycle)
+		loop_mover->refine( option[OptionKeys::loops::refine]() );
+		loop_mover->relax( option[OptionKeys::loops::relax]() );
 	}
+	i = 1;
+	do {
+		if ( fa_cycles ) TR << "Full Atom cycle " << i << " of " << fa_cycles << std::endl;
 
-	// Create a MonteCarlo object
-	// Want to do this after perturb so we don't reset to pre-perturb state
-	MonteCarloOP monteCarlo( new MonteCarlo(pose, *scorefxn_, 2.0 /* temperature, from RosettaLigand paper */) );
+		// Only want to do this once the ligand is in its "final" starting place.
+		core::scoring::constraints::ConstraintOP ligand_tether( nullptr );
+		if ( protocol_ != "unbound" ) {
+			if ( tether_ligand_ ) ligand_tether = restrain_ligand_nbr_atom(pose, lig_id, ligand_tether_stddev_Ang_);
+		}
 
-	if ( protocol_ == "meiler2006" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 50, 8); // Meiler and Baker 2006
-	// pack - rottrials - rottrials - rottrials - pack
-	else if ( protocol_ == "abbreviated" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 5, 4); // Davis ca. 2007
-	// pack - RT - RT - pack - RT - RT (avoids ending on pack to avoid noise?)
-	else if ( protocol_ == "abbrev2" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 6, 3); // Davis ca. April 2008
-	else if ( protocol_ == "shear_min" ) shear_min_protocol(pose, jump_id, scorefxn_, monteCarlo, 20);
-	else if ( protocol_ == "min_only" || protocol_ == "unbound" ) {} // no docking steps, just minimize (mostly for debugging/testing)
-	else utility_exit_with_message("Unknown protocol '"+protocol_+"'");
+		// Create a MonteCarlo object
+		// Want to do this after perturb so we don't reset to pre-perturb state
+		MonteCarloOP monteCarlo( new MonteCarlo(pose, *scorefxn_, 2.0 /* temperature, from RosettaLigand paper */) );
 
-	// Remove the ligand tether.  Could wait until after the final minimization,
-	// but have to do it *some* time, or it will interfere with value of interface_delta.
-	if ( tether_ligand_ ) pose.remove_constraint( ligand_tether );
+		if ( protocol_ == "meiler2006" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 50, 8); // Meiler and Baker 2006
+		// pack - rottrials - rottrials - rottrials - pack
+		else if ( protocol_ == "abbreviated" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 5, 4); // Davis ca. 2007
+		// pack - RT - RT - pack - RT - RT (avoids ending on pack to avoid noise?)
+		else if ( protocol_ == "abbrev2" ) classic_protocol(pose, jump_id, scorefxn_, monteCarlo, 6, 3); // Davis ca. April 2008
+		else if ( protocol_ == "shear_min" ) shear_min_protocol(pose, jump_id, scorefxn_, monteCarlo, 20);
+		else if ( protocol_ == "min_only" || protocol_ == "unbound" ) {} // no docking steps, just minimize (mostly for debugging/testing)
+		else utility_exit_with_message("Unknown protocol '"+protocol_+"'");
 
-	// keep the best structure we found, not the current one
-	monteCarlo->show_scores();
-	monteCarlo->recover_low(pose);
+		// Remove the ligand tether.  Could wait until after the final minimization,
+		// but have to do it *some* time, or it will interfere with value of interface_delta.
+		if ( tether_ligand_ ) pose.remove_constraint( ligand_tether );
+
+		// keep the best structure we found, not the current one
+		monteCarlo->show_scores();
+		monteCarlo->recover_low(pose);
+
+		if ( fa_cycles ) loop_mover->apply( pose );
+	} while (++i <= fa_cycles);
+	// iphold END
 
 	// Run most of search with soft-rep, but do final minimization and scoring with hard-rep.
 	scorefxn_ = hard_scorefxn_;
