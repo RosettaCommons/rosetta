@@ -47,6 +47,9 @@
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
 
+// Numeric headers
+#include <numeric/xyz.functions.hh>
+
 // Basic headers
 #include <basic/Tracer.hh>
 
