@@ -215,9 +215,9 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
             for f in files:
                 if f == 'command.sh': continue
                 fname = dir_ + '/' + f
-                data = file(fname).read()
+                data = open(fname).read()
                 if rosetta_dir in data:
-                    with file(fname, 'w') as f: f.write( data.replace(rosetta_dir, 'ROSETTA_MAIN') )
+                    with open(fname, 'w') as f: f.write( data.replace(rosetta_dir, 'ROSETTA_MAIN') )
 
     # Analyze results
     print()
@@ -231,7 +231,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
         #    print "SUMMARY: TOTAL:%i PASSED:%i FAILED:%i." % (len(tests), len(tests), 0)
 
         if options.yaml:
-            f = file(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
+            f = open(options.yaml, 'w');  f.write("{total : %s, failed : 0, details : {}}" % len(tests));  f.close()
 
     else:
         if options.skip_comparison:
@@ -280,7 +280,7 @@ rm -r ref/; ./ScoreVersion.py    # create reference results using only default s
                 print( "All tests passed." )
 
             if options.yaml:
-                f = file(options.yaml, 'w')
+                f = open(options.yaml, 'w')
                 brief = makeBriefResults(full_log)
                 brief = brief.replace('"', '\\"')
                 brief = '"' + brief.replace('\n', '\\n') + '"'
@@ -345,10 +345,10 @@ class Worker:
                         extras = self.opts.extras if self.opts.extras else 'default'
                         binext = extras+"."+platform+compiler+mode
                         # Read the command from the file "command"
-                        cmd = file(path.join(workdir, "command")).read().strip()
+                        cmd = open(path.join(workdir, "command")).read().strip()
                         cmd = cmd % vars() # variable substitution using Python printf style
                         cmd_line_sh = path.join(workdir, "command.sh")
-                        f = file(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
+                        f = open(cmd_line_sh, 'w');  f.write(cmd);  f.close() # writing back so test can be easily re-run by user lately...
                         #if "'" in cmd: raise ValueError("Can't use single quotes in command strings!")
                         #print cmd; print
                         if self.host is None:
@@ -380,7 +380,7 @@ class Worker:
                             print( error_string, end='')
 
                             # Writing error_string to a file, so integration test should fail for sure
-                            file(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
+                            open(path.join(workdir, ".test_did_not_run.log"), 'w').write(error_string)
 
 
                     finally: # inner try
@@ -388,7 +388,7 @@ class Worker:
                         print( "Finished %s in %i seconds\t [~%s test (%s%%) started, %s in queue]" % (test, time.time() - start, self.queue.TotalNumberOfTasks-self.queue.qsize(), percent, self.queue.qsize()) )
                         self.queue.task_done()
 
-                except Exception, e: # middle try
+                except Exception as e: # middle try
                     print(e)
         except Empty: # outer try
             pass # we're done, just return
@@ -423,21 +423,21 @@ def copytree(src, dst, symlinks=False, accept=lambda srcname, dstname: True):
             else:
                 shutil.copy2(srcname, dstname)
             # XXX What about devices, sockets etc.?
-        except (IOError, os.error), why:
+        except (IOError, os.error) as why:
             errors.append((srcname, dstname, str(why)))
         # catch the Error from the recursive copytree so that we can
         # continue with other files
-        except shutil.Error, err:
+        except shutil.Error as err:
             errors.extend(err.args[0])
     try:
         shutil.copystat(src, dst)
     #except WindowsError:
         # can't copy file access times on Windows
         pass
-    except OSError, why:
+    except OSError as why:
         errors.extend((src, dst, str(why)))
     if errors:
-        raise shutil.Error, errors
+        raise shutil.Error( str(errors) )
 
 ################################################################################
 # Python 2.4 lacks support for join() / task_done() in the Queue class,

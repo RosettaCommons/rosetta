@@ -73,7 +73,7 @@ public:
 	/// @brief default c-tor
 	ResidueTypeSet( TypeSetMode mode = INVALID_t );
 
-	~ResidueTypeSet();
+	virtual ~ResidueTypeSet();
 
 	// Const pointers only - subclasses can implement the modifiable version.
 	inline ResidueTypeSetCOP get_self_ptr() const { return shared_from_this(); }

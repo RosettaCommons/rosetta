@@ -392,7 +392,7 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
                    sqlite3 = 'SQLITE_DISABLE_LFS SQLITE_OMIT_LOAD_EXTENSION SQLITE_THREADSAFE=0')
 
     scons_file_extension = '.external.settings'
-    external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)  and (Options.zmq  or  not f.startswith('libzmq.') ) ]
+    external_scons_files = [f for f in os.listdir(rosetta_source_path+'/external') if f.endswith(scons_file_extension)  and (Options.zmq  or  not f.startswith('libzmq.') ) and (not f.startswith('zlib.') ) ]
     for scons_file in external_scons_files:
         G = {}
         sources = []
@@ -418,6 +418,10 @@ def generate_rosetta_external_cmake_files(rosetta_source_path, prefix):
         t += 'set_property(TARGET {} PROPERTY POSITION_INDEPENDENT_CODE ON)\n'.format(l)
         if defines[l]: t += 'target_compile_options({} PRIVATE {})\n'.format(l, ' '.join( ['-D'+d for d in defines[l].split()] ) )   #  target_compile_definitions
         #t += 'target_compile_options({} PUBLIC -fPIC {})\n'.format(l, ' '.join([ '-D'+d for d in defines[l].split() ] ) )   #  target_compile_definitions
+
+        #t += 'set_target_properties(cifparse PROPERTIES COMPILE_FLAGS "-Wno-implicit-function-declaration")\n'
+        t += 'target_compile_options({l} PRIVATE "-Wno-implicit-function-declaration")\n'.format(l=l)
+
         modified |= update_source_file(prefix + l + '.cmake', t)
 
     return list( libs.keys() ), modified
@@ -488,7 +492,7 @@ def generate_cmake_file(rosetta_source_path, extra_sources):
     l2, m2 = generate_rosetta_external_cmake_files(rosetta_source_path, prefix)
     libs, modified = l1 + l2, m1 or m2
 
-    with open('cmake.template') as f: cmake = f.read()
+    with open('rosetta.cmake') as f: cmake = f.read()
 
     build_config = '# PyRosetta build config: {})'.format(
         dict(compiler = execute('Getting compiler path...', 'which gcc && which g++' if Options.compiler == 'gcc' else 'which clang && which clang++', return_ = 'output', silent = True),

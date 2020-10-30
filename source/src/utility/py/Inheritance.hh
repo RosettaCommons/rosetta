@@ -51,6 +51,8 @@ class Base
 public:
 	Base() : int_value_(0) { std::cout << "Base::Base()" << std::endl; }
 
+	virtual ~Base() = default;
+
 	int int_value_;
 	std::string string_value_;
 
@@ -65,6 +67,8 @@ class OverloadTest
 {
 public:
 	Value value_;
+
+	virtual ~OverloadTest() = default;
 
 	void self_test_virtual_ref() {
 		std::cout << "OverloadTest::self_test_virtual_ref..." << std::endl;

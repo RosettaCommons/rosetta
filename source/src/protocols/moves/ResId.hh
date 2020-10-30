@@ -31,6 +31,9 @@ class ResId{
 public:
 	ResId() = default;
 	ResId( core::Size const r );
+
+	virtual ~ResId() = default;
+
 	virtual void set_resid( core::Size const r );
 	virtual void set_resid( core::pose::ResidueIndexDescriptionCOP r );
 	virtual core::Size get_resid( core::pose::Pose const & ) const;

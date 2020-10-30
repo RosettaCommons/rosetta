@@ -24,24 +24,24 @@
 // From https://github.com/ndarray/ndarray/blob/1.4.2/include/ndarray/converter/PyConverter.h
 inline void intrusive_ptr_add_ref(PyObject * obj) { Py_INCREF(obj); }
 inline void intrusive_ptr_release(PyObject * obj) { Py_DECREF(obj); }
-NAMESPACE_BEGIN(ndarray)
+PYBIND11_NAMESPACE_BEGIN(ndarray)
 typedef boost::intrusive_ptr<PyObject> PyPtr;
-NAMESPACE_END(ndarray)
+PYBIND11_NAMESPACE_END(ndarray)
 
 // From https://github.com/ndarray/ndarray/blob/1.4.2/include/ndarray/converter/PyManager.h
-NAMESPACE_BEGIN(ndarray)
-NAMESPACE_BEGIN(detail)
+PYBIND11_NAMESPACE_BEGIN(ndarray)
+PYBIND11_NAMESPACE_BEGIN(detail)
 inline void destroyCapsule(PyObject * p) {
     void * m = PyCapsule_GetPointer(p, "ndarray.Manager");
     Manager::Ptr * b = reinterpret_cast<Manager::Ptr*>(m);
     delete b;
 };
-NAMESPACE_END(detail)
-NAMESPACE_END(ndarray)
+PYBIND11_NAMESPACE_END(detail)
+PYBIND11_NAMESPACE_END(ndarray)
 
 
-NAMESPACE_BEGIN(pybind11)
-NAMESPACE_BEGIN(detail)
+PYBIND11_NAMESPACE_BEGIN(pybind11)
+PYBIND11_NAMESPACE_BEGIN(detail)
 
 /* @brief A pybind11 type_caster for ndarray::Array
  */
@@ -149,5 +149,5 @@ public:
 
 };
 
-NAMESPACE_END(detail)
-NAMESPACE_END(pybind11)
+PYBIND11_NAMESPACE_END(detail)
+PYBIND11_NAMESPACE_END(pybind11)

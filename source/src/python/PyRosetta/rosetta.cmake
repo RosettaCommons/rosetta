@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
+# enabling IN_LIST operator https://cmake.org/cmake/help/v3.7/policy/CMP0057.html
+# cmake_policy(SET CMP0057 NEW)
+
 # string below should form comment unique for given build config (compiler, gcc-install-prefix, python-include-dir, python-lib) options (we use this for dependency tracking
 #%__PyRosetta_build_config__%#
 
@@ -21,6 +24,10 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
     "MinSizeRel" "RelWithDebInfo")
 endif()
+# if( CMAKE_BUILD_TYPE MATCHES "Debug" OR CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo") # if( CMAKE_BUILD_TYPE IN_LIST "Debug" "RelWithDebInfo")
+#   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mcmodel=large")
+#   add_compile_options(-mcmodel=large)
+# endif()
 string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 # Try to autodetect Python (can be overridden manually if needed)
@@ -73,6 +80,13 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     # endif()
   endif()
 endif()
+
+# if ( (CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "9.0") )
+# else()
+#     add_compile_options(-Werror=non-virtual-dtor -Werror=delete-abstract-non-virtual-dtor) # -pedantic-errors -pedantic -Werror
+# endif()
+
+add_compile_options(-Werror=non-virtual-dtor) # -pedantic-errors -pedantic -Werror -Werror=delete-abstract-non-virtual-dtor
 
 
 # work-around for: pybind11.h:147:36: error: invalid conversion from 'std::enable_if<true, void*>::type {aka void*}' to 'const pybind11::detail::void_type*' [-fpermissive]

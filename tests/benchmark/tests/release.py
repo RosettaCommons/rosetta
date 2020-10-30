@@ -436,9 +436,6 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
 
     release_root = config['release_root']
 
-    python_environment = local_python_install(platform, config)
-    ve = setup_python_virtual_environment(working_dir+'/ve', python_environment, 'sphinx')
-
     package_name = 'PyRosetta4.{kind}.python{python_version}.{platform}'.format(kind=kind, platform='.'.join([platform['os']]+platform['extras']), python_version=platform['python'][:3].replace('.', ''))
     package_name = '{package_name}.{branch}-{revision}'.format(package_name=package_name, branch=config['branch'], revision=config['revision'])
 
@@ -446,6 +443,9 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=package_name, url='http://www.pyrosetta.org', file_name=version_file)   # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
     result = build_pyrosetta(rosetta_dir, platform, jobs, config, mode=kind, skip_compile=debug, version=version_file)
+
+    packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=') + ' sphinx'
+    python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
     res = result.exitcode
     output = result.output
@@ -466,7 +466,7 @@ def py_rosetta4_documentaion(kind, rosetta_dir, working_dir, platform, config, h
     else:
         documentation_dir = os.path.abspath(working_dir+'/documentation')
 
-        res, output2 = execute('Generating PyRosetta-4 documentation...', "{ve.activate} && {build_command_line} -s -d --documentation {documentation_dir}".format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
+        res, output2 = execute('Generating PyRosetta-4 documentation...', "{python_virtual_environment.activate} && {build_command_line} -s -d --documentation {documentation_dir}".format(**vars()), return_='tuple', add_message_and_command_line_to_output=True)
 
         if res:
             res_code = _S_build_failed_

@@ -57,6 +57,8 @@ void get_cluster_data(utility::vector1<T> &data_in,ClusteringTreeNodeOP cluster,
 
 class AgglomerativeHierarchicalClusterer {
 public:
+	virtual ~AgglomerativeHierarchicalClusterer() = default;
+
 	utility::vector1<ClusteringTreeNodeOP>cluster( utility::vector1< utility::vector1<Real> > & dm, Size n );
 	virtual void comparator(utility::vector1< utility::vector1<Real> > &distance_matrix,
 		utility::vector1<Size> const & members1,

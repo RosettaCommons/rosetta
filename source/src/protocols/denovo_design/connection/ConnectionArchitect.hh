@@ -213,6 +213,8 @@ public:
 public:
 	AreConnectablePredicate( bool const allow_cyclic );
 
+	virtual ~AreConnectablePredicate() = default;
+
 	virtual bool
 	operator()(
 		components::StructureData const & sd,

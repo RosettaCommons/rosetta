@@ -113,6 +113,8 @@ def run_release_test(rosetta_dir, working_dir, platform, config):
 
 def run_python_test(rosetta_dir, working_dir, platform, config):
 
+    import zlib, ssl
+
     python_environment = local_python_install(platform, config)
 
     if platform['python'][0] == '2': pass

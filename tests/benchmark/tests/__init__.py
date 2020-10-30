@@ -380,7 +380,7 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
     packages = '\
     attrs>=19.3.0        \
     billiard>=3.6.3.0    \
-    blosc>=1.7.0         \
+    blosc>=1.8.3         \
     cloudpickle>=1.4.1   \
     dask>=2.16.0         \
     dask-jobqueue>=0.7.0 \
@@ -415,7 +415,7 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
         IMPORTANT: there should be no spaces between package name and version number
     '''
     packages = '\
-    blosc>=1.7.0         \
+    blosc>=1.8.3         \
     cloudpickle>=1.4.1   \
     dask>=2.16.0         \
     dask-jobqueue>=0.7.0 \
@@ -606,6 +606,7 @@ def local_python_install(platform, config):
         '3.6' : 'https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz',
         '3.7' : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
         '3.8' : 'https://www.python.org/ftp/python/3.8.3/Python-3.8.3.tgz',
+        '3.9' : 'https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')

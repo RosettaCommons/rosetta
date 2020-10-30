@@ -135,8 +135,8 @@ objects are provided to the Viewer, the `Pose`(s) pointer location(s) in memory 
 the Viewer can dynamically update upon `Pose` conformational changes by calling the `show()` method.
 The Viewer applies visualization modules in the same order they are added (from left to right),
 so layering different styles (and `ResidueSelector`s) on top of one another becomes possible.
-The user must have already initialized PyRosetta providing `.params` files for any ligands and 
-non-canonical residues in the input molecule(s), otherwise `pyrosetta.distributed` automatically 
+The user must have already initialized PyRosetta providing `.params` files for any ligands and
+non-canonical residues in the input molecule(s), otherwise `pyrosetta.distributed` automatically
 initializes PyRosetta with default command line options.
 """
 
@@ -148,7 +148,6 @@ from pyrosetta.distributed.viewer.core import (
 )
 from pyrosetta.distributed.viewer.modules import *
 from pyrosetta.distributed.viewer import presets
-
 
 __all__ = [
     "expand_notebook",

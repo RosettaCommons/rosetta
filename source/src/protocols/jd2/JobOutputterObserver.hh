@@ -25,6 +25,8 @@ namespace jd2 {
 
 class JobOutputterObserver {
 public:
+	virtual ~JobOutputterObserver() = default;
+
 	virtual
 	void add_values_to_job( core::pose::Pose const& pose, protocols::jd2::Job & ) const = 0;
 };
@@ -40,4 +42,3 @@ typedef utility::pointer::shared_ptr< JobOutputterObserver const > JobOutputterO
 
 
 #endif //INCLUDED_protocols_jd2_JobOutputterObserver_HH
-

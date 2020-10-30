@@ -48,7 +48,7 @@ public:
 	RNA_HelixAssembler();
 
 	/// @brief Destroy the protocol object
-	~RNA_HelixAssembler();
+	virtual ~RNA_HelixAssembler();
 
 	/// @brief Apply the loop-rebuild protocol to the input pose
 	void apply( core::pose::Pose & pose );
