@@ -63,9 +63,16 @@ public:
 	/// to their total score
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) override {
-		return (scoring_->total_score(first_candidate.second)
-			< scoring_->total_score(second_candidate.second));
+		ScoredCandidate second_candidate) override
+	{
+		core::Real s1 = scoring_->total_score(first_candidate.second);
+		core::Real s2 = scoring_->total_score(second_candidate.second);
+		if ( s1 < s2 ) return true;
+		if ( s1 == s2 ) {
+			// Resolve ties by their fragment ID.
+			return first_candidate.first->key() < second_candidate.first->key();
+		}
+		return false;
 	}
 
 	~CompareTotalScore() override = default;
@@ -104,7 +111,12 @@ public:
 			t1 += first_candidate.second->at( components_[i] ) * weights_[i];
 			t2 += second_candidate.second->at( components_[i] ) * weights_[i];
 		}
-		return (t1 < t2);
+		if ( t1 < t2 ) return true;
+		if ( t1 == t2 ) {
+			// Resolve ties by their fragment ID.
+			return first_candidate.first->key() < second_candidate.first->key();
+		}
+		return false;
 	}
 
 	~CompareByScoreCombination() override = default;
@@ -130,9 +142,16 @@ public:
 	/// to their total score
 	bool operator()(
 		ScoredCandidate first_candidate,
-		ScoredCandidate second_candidate) override {
-		return (first_candidate.second->get_score_components()[component_id_]
-			< second_candidate.second->get_score_components()[component_id_]);
+		ScoredCandidate second_candidate) override
+	{
+		core::Real s1 = first_candidate.second->get_score_components()[component_id_];
+		core::Real s2 = second_candidate.second->get_score_components()[component_id_];
+		if ( s1 < s2 ) return true;
+		if ( s1 == s2 ) {
+			// Resolve ties by their fragment ID.
+			return first_candidate.first->key() < second_candidate.first->key();
+		}
+		return false;
 	}
 
 private:

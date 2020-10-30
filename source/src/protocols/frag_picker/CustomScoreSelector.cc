@@ -32,7 +32,12 @@ static basic::Tracer trCustomScoreSelector( "protocols.frag_picker.CustomScoreSe
 typedef utility::vector1<std::pair< ScoredCandidate, core::Real> > ExtraScoreVector;
 
 bool sort_function( ExtraScoreVector::value_type p1, ExtraScoreVector::value_type p2 ) {
-	return ( p1.second < p2.second );
+	if ( p1.second < p2.second ) { return true; }
+	// In case they're equal, split ties by the frag ID.
+	if ( p1.second == p2.second ) {
+		return p1.first.first->key() < p2.first.first->key();
+	}
+	return false;
 }
 
 void CustomScoreSelector::select_fragments(
