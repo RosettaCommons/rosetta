@@ -51,8 +51,6 @@ public:
 	PoseResidueTypeSetOP
 	clone() const;
 
-	virtual ~PoseResidueTypeSet();
-
 	/// @brief Set the default fall-back ResidueTypeSet
 	void
 	default_rts(core::chemical::ResidueTypeSetCOP setting);

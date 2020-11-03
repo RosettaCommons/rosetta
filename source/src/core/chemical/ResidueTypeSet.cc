@@ -91,8 +91,6 @@ ResidueTypeSet::ResidueTypeSet( TypeSetMode mode /*= INVALID_t*/ ) :
 	cache_( utility::pointer::make_shared< ResidueTypeSetCache >( *this ) )
 {}
 
-ResidueTypeSet::~ResidueTypeSet() = default;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void
@@ -1102,6 +1100,7 @@ ResidueTypeSet::set_merge_behavior_manager( MergeBehaviorManagerCOP mbm) {
 // The semantics are that we want a semi-shallow copy: all const data is shared (including ResidueTypes), but non-const
 // data gets copied. This means we need to clone the ResidueTypeSetCache, so that two RTS don't share the same ResidueTypeSetCache
 ResidueTypeSet::ResidueTypeSet( ResidueTypeSet const & src ) :
+	VirtualBase( src ),
 	utility::pointer::enable_shared_from_this< ResidueTypeSet >( src ),
 	atom_types_( src.atom_types_), // const, so can share
 	elements_( src.elements_ ), // const, so can share

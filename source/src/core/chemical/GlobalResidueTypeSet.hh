@@ -56,8 +56,6 @@ public:
 		std::string const & directory
 	);
 
-	virtual ~GlobalResidueTypeSet();
-
 	////////////////////////////
 	// Private Initializer Functions
 private:

@@ -65,15 +65,13 @@ Though two different AtomTypeSets with the same mode may be permitted. (RM-11/16
 **/
 
 /// @brief An abstract interface to a set of ResidueTypes
-class ResidueTypeSet : public utility::pointer::enable_shared_from_this< ResidueTypeSet >
+class ResidueTypeSet : public utility::VirtualBase, public utility::pointer::enable_shared_from_this< ResidueTypeSet >
 {
 
 public:
 
 	/// @brief default c-tor
 	ResidueTypeSet( TypeSetMode mode = INVALID_t );
-
-	virtual ~ResidueTypeSet();
 
 	// Const pointers only - subclasses can implement the modifiable version.
 	inline ResidueTypeSetCOP get_self_ptr() const { return shared_from_this(); }
