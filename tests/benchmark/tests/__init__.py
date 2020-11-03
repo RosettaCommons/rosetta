@@ -55,7 +55,7 @@ _multi_step_config_ = 'config.json'
 _multi_step_error_  = 'error.json'
 _multi_step_result_ = 'result.json'
 
-PyRosetta_unix_memory_requirement_per_cpu = 2.5  # Memory per sub-process in Gb's
+PyRosetta_unix_memory_requirement_per_cpu = 6  # Memory per sub-process in Gb's
 PyRosetta_unix_unit_test_memory_requirement_per_cpu = 3.0  # Memory per sub-process in Gb's for running PyRosetta unit tests
 
 # Commands to run all the scripts needed for setting up Rosetta compiles. (Run from main/source directory)
