@@ -649,6 +649,7 @@ sources = {
 		"ResiduePDBInfoHasLabelSelector",
 		"ChainSelector",
 		"InterGroupInterfaceByVectorSelector",
+		"LogicResidueSelector",
 		"NotResidueSelector",
 		"NumNeighborsSelector",
 		"OrResidueSelector",

@@ -839,6 +839,7 @@ sources = {
 		"JumpDownstreamSelector",
 		"JumpUpstreamSelector",
 		"LayerSelector",
+		"LogicResidueSelector",
 		"NeighborhoodResidueSelector",
 		"NotResidueSelector",
 		"NumNeighborsSelector",

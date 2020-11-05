@@ -313,7 +313,7 @@
 #include <core/select/residue_selector/SymmetricalResidueSelectorCreator.hh>
 #include <core/pack/task/residue_selector/ClashBasedShellSelectorCreator.hh>
 #include <core/select/residue_selector/CloseContactResidueSelectorCreator.hh>
-
+#include <core/select/residue_selector/LogicResidueSelectorCreator.hh>
 
 #include <core/select/residue_selector/ResidueSelectorRegistrator.hh>
 
@@ -796,6 +796,7 @@ static ResidueSelectorRegistrator< InterGroupInterfaceByVectorSelectorCreator > 
 static ResidueSelectorRegistrator< JumpDownstreamSelectorCreator > reg_JumpDownstreamSelectorCreator;
 static ResidueSelectorRegistrator< JumpUpstreamSelectorCreator > reg_JumpUpstreamSelectorCreator;
 static ResidueSelectorRegistrator< AsymmetricUnitSelectorCreator > reg_AsymmetricUnitSelectorCreator;
+static ResidueSelectorRegistrator< LogicResidueSelectorCreator > reg_LogicResidueSelectorCreator;
 static ResidueSelectorRegistrator< NeighborhoodResidueSelectorCreator > reg_NeighborhoodResidueSelectorCreator;
 static ResidueSelectorRegistrator< NotResidueSelectorCreator > reg_NotResidueSelectorCreator;
 static ResidueSelectorRegistrator< NumNeighborsSelectorCreator > reg_NumNeighborsSelectorCreator;
