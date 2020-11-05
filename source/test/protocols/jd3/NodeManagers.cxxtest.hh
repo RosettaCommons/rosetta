@@ -52,9 +52,11 @@ public:
 		//job 3 has 3 results
 		//job 4 has 5 results
 
-		manager.get_next_local_jobid();
-		manager.note_job_completed( GlobalJobID( 1 ), 4 );
-		{
+		{//Job 1
+			core::Size const next_id = manager.get_next_local_jobid();
+			TS_ASSERT_EQUALS( next_id, 1 );
+
+			manager.note_job_completed( GlobalJobID( next_id ), 4 );
 			GlobalJobID const id1( 1 );
 			manager.register_result( id1, 1, -50 );
 			manager.register_result( id1, 2, -40 );
@@ -62,12 +64,17 @@ public:
 			manager.register_result( id1, 4, 4 );
 		}
 
-		manager.get_next_local_jobid();
-		manager.note_job_completed( GlobalJobID( 2 ), 0 );
+		{//Job 2
+			core::Size const next_id = manager.get_next_local_jobid();
+			TS_ASSERT_EQUALS( next_id, 2 );
+			manager.note_job_completed( GlobalJobID( next_id ), 0 );
+		}
 
-		{
-			GlobalJobID const id3( 3 );
-			manager.get_next_local_jobid();
+		{//Job 3
+			core::Size const next_id = manager.get_next_local_jobid();
+			TS_ASSERT_EQUALS( next_id, 3 );
+
+			GlobalJobID const id3( next_id );
 			manager.note_job_completed( id3, 3 );
 			manager.register_result( id3, 1, -30 );
 			manager.register_result( id3, 2, 4 );
@@ -77,11 +84,13 @@ public:
 		utility::vector1< ResultElements > const & elems = manager.results_to_keep();
 		TS_ASSERT( manager.done_submitting() );
 
-		manager.get_next_local_jobid();
 		{
-			GlobalJobID const id4( 4 );
+			core::Size const next_id = manager.get_next_local_jobid();
+			TS_ASSERT_EQUALS( next_id, 0 ); //0, not 4, because the manager is done submitting
+
+			GlobalJobID const id4( next_id );
 			manager.note_job_completed( id4, 5 );
-			manager.register_result( id4, 1, -60 );
+			manager.register_result( id4, 1, -60 ); //We expect these to be ignored because the manager is done
 			manager.register_result( id4, 2, -70 );
 			manager.register_result( id4, 3, -80 );
 			manager.register_result( id4, 4, -90 );
@@ -89,10 +98,13 @@ public:
 		}
 
 		TS_ASSERT_EQUALS( elems.size(), 3 );
+		TS_ASSERT_EQUALS( elems[ 1 ].score, -50 );
+		TS_ASSERT_EQUALS( elems[ 2 ].score, -40 );
+		TS_ASSERT_EQUALS( elems[ 3 ].score, -30 );
 
 		int sum = 0;
 		for ( ResultElements const & elem : elems ) {
-			sum += core::Size( elem.score );
+			sum += int( elem.score );
 		}
 		TS_ASSERT_EQUALS( sum, int( -50 - 40 - 30 ) );
 
