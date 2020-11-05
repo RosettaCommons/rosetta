@@ -62,7 +62,7 @@ def load_from_rcsb(pdb_code, pdb_filename=None):
         >>> load_from_rcsb("1YY8")
     """
     pdb_code = pdb_code.upper()
-    pdb_url = "http://www.rcsb.org/pdb/files/" + pdb_code + ".pdb"
+    pdb_url = "http://files.rcsb.org/download/" + pdb_code + ".pdb"
 
     if not pdb_filename:
         pdb_filename = pdb_code + ".pdb"
