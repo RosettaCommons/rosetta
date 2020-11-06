@@ -32,7 +32,13 @@ cd %(workdir)s
 # Generate some cached files which may or may not exist depending on test history.
 if [ -x %(bin)s/read_tensor.%(binext)s ]; then
     for s in `seq 1 7`; do
-	%(bin)s/read_tensor.%(binext)s -tensor_file %(database)s/scoring/loop_close/6D_potentials/rna/loop_0${s}/potential.txt.gz -database %(database)s -testing:INTEGRATION_TEST 2>&1 >> generate.ignore 
+	%(bin)s/read_tensor.%(binext)s -tensor_file %(database)s/scoring/loop_close/6D_potentials/rna/loop_0${s}/potential.txt.gz -database %(database)s -testing:INTEGRATION_TEST 2>&1 >> generate.ignore
+	if [ "$(echo mpi_log*)" != "mpi_log*" ]; then # Only run if we have logs.
+	    for f in mpi_log*; do
+		cat ${f} >> generate.ignore
+		rm ${f}
+	    done
+	fi
     done
 fi
 
