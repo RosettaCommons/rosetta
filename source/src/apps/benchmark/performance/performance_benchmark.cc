@@ -74,9 +74,11 @@ DockingBenchmark_high DockingHigh("protocols.docking.DockingHighRes");
 //DesignBenchmark design("protocols.moves.PackRotamersMover");
 
 
-
-#include <apps/benchmark/performance/LigandDock.bench.hh>
-LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
+// RM: This test is noisy and is testing an old, outdated protocol
+// The confusion due to the spurious brekages outweigh the
+// minimal benefit of keeping the test.
+//#include <apps/benchmark/performance/LigandDock.bench.hh>
+//LigandDockBenchmark ligand_dock("protocols.ligand_docking.LigandDockProtocol");
 
 // AMW: there is a problem in SlideTogether as of 6/29/15
 // that kills the performance benchmarks if this is allowed to run
