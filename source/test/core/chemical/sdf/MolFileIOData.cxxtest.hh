@@ -677,6 +677,48 @@ public:
 		paramslist.close();
 	} //  test_sdf_reader
 
+	void test_sdfreader_v3000() {
+		using namespace core::chemical;
+		ChemicalManager * cm(ChemicalManager::get_instance());
+		ResidueTypeSetCOP rsd_types( cm->residue_type_set(FA_STANDARD) );
+
+		sdf::MolFileIOReader molfile_reader;
+
+		//This file should contain names for paired sdf/params files.
+		utility::io::izstream paramslist("core/chemical/sdf/paired_listi_v3.txt");
+		std::string molfile, paramsfile;
+		paramslist >> molfile >> paramsfile;
+		while ( paramslist ) {
+			if ( molfile[0] != '#' ) {
+				TR << "------- Comparing  " << molfile << " and " << paramsfile << std::endl;
+
+				// Read reference
+				core::chemical::MutableResidueTypeOP rsd_ref = read_topology_file(paramsfile, rsd_types );
+
+				// Read molfile (reader has sensible defaults for typesets in use)
+				utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( molfile ) );
+				utility::vector1< MutableResidueTypeOP > rtvec( sdf::convert_to_ResidueTypes( data, false ) );
+				TS_ASSERT( rtvec.size() == 1 ); // These should all have a single entry.
+				if ( rtvec.size() > 0 ) {
+					bool restypes_match( match_restype( *rtvec[1], *rsd_ref ) );
+					if ( ! restypes_match ) {
+						//core::chemical::write_topology_file( *rtvec[1] ); // TODO: add params file writer for MutableResidueType
+						core::chemical::MutableResidueType const & rsd1( *rtvec[1] );
+						core::chemical::MutableResidueType const & rsd2( *rsd_ref );
+						core::chemical::sdf::MolWriter write;
+						write.output_residue( rsd1.name() + "_rsd1.sdf", rsd1 );
+						write.output_residue( rsd2.name() + "_rsd2.sdf", rsd2 );
+					} else {
+						TR << ">>>>>>" << rtvec[1]->name() << " PASSES <<<<<<<<" << std::endl;
+					}
+					TS_ASSERT( restypes_match );
+				}
+			}
+			paramslist >> molfile >> paramsfile;
+		} // while( paramslist )
+		paramslist.close();
+	} //  test_sdf_reader_v3000
+
 	void test_extra_data() {
 		sdf::MolFileIOReader molfile_reader;
 		utility::vector1< sdf::MolFileIOMoleculeOP > data( molfile_reader.parse_file( "core/chemical/sdf/example.sdf" ) );

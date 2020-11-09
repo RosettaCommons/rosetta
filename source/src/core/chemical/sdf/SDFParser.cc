@@ -57,16 +57,15 @@ SDFParser::parse(std::istream & filein, core::Size n_entries /*=0*/ ) {
 			eat_until_delimiter( filein );
 			continue;
 		}
-		std::string version(versionline,33,6);
 		MolFileIOMoleculeOP molecule( new MolFileIOMolecule );
 		molecule->name( name );
-		if ( version == "V3000" ) {
+		if ( utility::contains( versionline, "V3000" ) ) {
 			if ( ! V3000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Skipping V3000 sdf file entry for " << name << "'" << std::endl;
 				eat_until_delimiter( filein );
 				continue;
 			}
-		} else if ( version == "V2000" ) {
+		} else if ( utility::contains( versionline, "V2000" ) ) {
 			if ( ! V2000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Skipping V2000 sdf file entry for " << name << "'" << std::endl;
 				eat_until_delimiter( filein );
@@ -74,6 +73,7 @@ SDFParser::parse(std::istream & filein, core::Size n_entries /*=0*/ ) {
 			}
 		} else {
 			// Try parsing as V2000 - sometimes these omit the version line.
+			TR.Warning << "SDF version format line not recognized. Attempting to parse as V2000" << std::endl;
 			if ( ! V2000parser.parse(filein, versionline, *molecule) ) {
 				TR.Warning << "Attempted to parse '" << name << "' as V2000 but failed. Skipping." << std::endl;
 				eat_until_delimiter( filein );

@@ -252,7 +252,7 @@ def external_main(path_to_mini, argv, project_external_callback = None):
 
         buildable_externals = dict()
     for external in externals:
-        print("Examining external" + external)
+        print("Examining external " + external)
         if external not in KNOWN_EXTERNAL:
             print('unknown external project: ' + external)
             sys.exit(-1)

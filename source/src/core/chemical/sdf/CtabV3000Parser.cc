@@ -32,12 +32,12 @@ static basic::Tracer TR( "core.chemical.sdf.CtabV3000Parser" );
 
 bool CtabV3000Parser::parse(std::istream & tablein, std::string const & ASSERT_ONLY(headerline), MolFileIOMolecule & molecule) {
 
-	debug_assert( headerline.compare(33,5,"V3000") == 0 );
+	debug_assert( utility::contains( headerline, "V3000") );
 
 	std::string line;
 	std::string M, V30, entry, tag;
 	core::Size natoms(0),nbonds(0); //,nsg(0),n3d(0),chiral(0);
-	for ( getline(tablein,line); tablein; getline(tablein,line) ) {
+	for ( std::getline(tablein,line); tablein; std::getline(tablein,line) ) {
 		std::stringstream lstream( line );
 		lstream >> M >> V30;
 		if ( V30 == "END" ) { break; } // The "M  END" line ends the Ctab
@@ -53,22 +53,22 @@ bool CtabV3000Parser::parse(std::istream & tablein, std::string const & ASSERT_O
 		lstream >> tag;
 		if ( tag == "ATOM" ) {
 			std::string line2;
-			for ( getline(tablein,line2); tablein; getline(tablein,line2) ) {
-				if ( line2.compare(7,3,"END") == 0 ) {
+			for ( std::getline(tablein,line2); tablein; std::getline(tablein,line2) ) {
+				if ( utility::contains( line2, "END") && utility::contains( line2, "ATOM") ) {
 					break;
 				}
 				MolFileIOAtomOP atom( new MolFileIOAtom );
-				if ( !parse_atom_line( line, *atom) ) { return false; }
+				if ( !parse_atom_line( line2, *atom) ) { return false; }
 				molecule.add_atom(atom);
 			}
 		} else if ( tag == "BOND" ) {
 			std::string line2;
-			for ( getline(tablein,line2); tablein; getline(tablein,line2) ) {
-				if ( line2.compare(7,3,"END") == 0 ) {
+			for ( std::getline(tablein,line2); tablein; std::getline(tablein,line2) ) {
+				if ( utility::contains( line2, "END") && utility::contains( line2, "BOND") ) {
 					break;
 				}
 				MolFileIOBondOP bond( new MolFileIOBond );
-				if ( !parse_bond_line( line, *bond) ) { return false; }
+				if ( !parse_bond_line( line2, *bond) ) { return false; }
 				molecule.add_bond(bond);
 			}
 
