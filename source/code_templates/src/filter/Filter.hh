@@ -23,8 +23,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-//#include <utility/tag/Tag.fwd.hh> //transcluded from Filter.hh
-//#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Filter.hh
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 --namespace--
 
@@ -73,6 +72,9 @@ public:
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::filters::FilterOP
 	clone() const override;
+
+	/// @brief This filter is unpublished.  It returns --name-- as its author.
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

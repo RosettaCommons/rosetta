@@ -20,6 +20,8 @@
 #include <protocols/filters/filter_schemas.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -49,6 +51,20 @@ protocols::filters::FilterOP
 	return utility::pointer::make_shared< --class-- >( *this );
 }
 
+/// @brief This filter is unpublished.  It returns --name-- as its author.
+void
+--class--::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		"--class--", basic::citation_manager::CitedModuleType::Filter,
+		--name--,
+		"TODO: institution",
+		"--email--",
+		"Wrote the --class--."
+		)
+	);
+}
+
 
 protocols::filters::FilterOP
 --class--::fresh_instance() const
@@ -59,6 +75,13 @@ protocols::filters::FilterOP
 bool
 --class--::apply( core::pose::Pose const & ) const
 {
+	/*
+		NOTE: If you are implementing a filter that computes something, it is STRONGLY
+		recommended that you implement this as a simple metric instead.  This allows the
+		value's use in more contexts.  For filtering, a simple wrapper around a simple
+		metric (which runs the simple metric and returns true or false based on the value
+		returned) may be implemented.
+	*/
 	return true;
 }
 

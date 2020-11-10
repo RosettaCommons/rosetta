@@ -109,33 +109,13 @@ void MoverContainer::set_current_tag( std::string const & new_tag ){
 
 }
 
-/// @brief Provide the citations for the movers contained in this MoverContainer.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-MoverContainer::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
+/// @brief Provide the citation.
+void
+MoverContainer::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	for ( MoverOP const & mover : movers_ ) {
-		if ( mover != nullptr ) {
-			basic::citation_manager::merge_into_citation_collection_vector( mover->provide_citation_info(), returnvec );
-		}
+		citations.add( mover );
 	}
-	return returnvec;
 }
-
-/// @brief Provide a list of authors for the movers contained in this MoverContainer.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-MoverContainer::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	for ( MoverOP const & mover : movers_ ) {
-		if ( mover != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( mover->provide_authorship_info_for_unpublished(), returnvec );
-		}
-	}
-	return returnvec;
-}
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// Sequence Mover //////////////////////////////////////////////

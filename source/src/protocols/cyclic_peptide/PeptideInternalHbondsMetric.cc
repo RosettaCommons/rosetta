@@ -246,42 +246,10 @@ PeptideInternalHbondsMetric::set_residue_selector(
 
 ////////// CITATION MANAGER FUNCTIONS //////////
 
-/// @brief Does this simple metric provide information about how to cite it?
-/// @details Returns false.
-bool
-PeptideInternalHbondsMetric::simple_metric_provides_citation_info() const {
-	return false;
-}
-
 /// @brief Provide the citation.
-/// @returns An empty vector for this simple metric, since it's unpublished.  Provides citations for the scorefunction
-/// and residue selector, if available, however.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-PeptideInternalHbondsMetric::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-
-	if ( residue_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( residue_selector_->provide_citation_info(), returnvec );
-	}
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( scorefxn_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
-
-/// @brief Does this simple metric indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @returns True, since this is unpublished.
-bool
-PeptideInternalHbondsMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @details Also provides unpublished author information for residue selectors and scorefunctions used.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-PeptideInternalHbondsMetric::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{
+void
+PeptideInternalHbondsMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name_static(),
 		basic::citation_manager::CitedModuleType::SimpleMetric,
@@ -289,15 +257,10 @@ PeptideInternalHbondsMetric::provide_authorship_info_for_unpublished() const {
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		};
+	);
 
-	if ( residue_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( residue_selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( scorefxn_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( residue_selector_ );
+	citations.add( scorefxn_ );
 }
 
 //////////////// PRIVATE METHODS: ////////////////

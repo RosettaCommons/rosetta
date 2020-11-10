@@ -36,6 +36,9 @@
 #include <core/scoring/DerivVectorPair.fwd.hh>
 #include <utility/vector1.hh>
 
+// Basic headers
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
+
 --namespace--
 
 ///@brief --brief--
@@ -164,6 +167,11 @@ public:
 		EnergyMap const & weights,
 		utility::vector1< DerivVectorPair > & atom_derivs
 	) const;
+
+public: //Citation manager functions:
+
+	/// @brief This energy method is unpublished.  It returns --name-- as its author.
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

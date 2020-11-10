@@ -167,23 +167,8 @@ public: //Accessors
 
 public: //Functions needed for the citation manager
 
-	/// @brief Does this filter provide information about how to cite it?
-	/// @details Returns false.
-	bool filter_provides_citation_info() const override;
-
 	/// @brief Provide the citation.
-	/// @returns An empty vector for this filter, since it's unpublished.  Provides citations for the scorefunction
-	/// and residue selector, if available, however.
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
-
-	/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
-	/// included in publications resulting from it)?
-	/// @returns True, since this is unpublished.
-	bool filter_is_unpublished() const override;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	/// @details Also provides unpublished author information for residue selectors and scorefunctions used.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private: // Data:
 

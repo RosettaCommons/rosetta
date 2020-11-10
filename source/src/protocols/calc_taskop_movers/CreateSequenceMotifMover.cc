@@ -99,17 +99,12 @@ CreateSequenceMotifMover::CreateSequenceMotifMover( CreateSequenceMotifMover con
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 CreateSequenceMotifMover::~CreateSequenceMotifMover(){}
 
-bool
-CreateSequenceMotifMover::mover_provides_citation_info() const {
-	return true;
-}
-
-// Provide a list of authors and their e-mail addresses, as strings.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-CreateSequenceMotifMover::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+CreateSequenceMotifMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
 
-	utility::vector1< UnpublishedModuleInfoCOP > returnvec {
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		mover_name(),
 		CitedModuleType::Mover,
@@ -117,24 +112,9 @@ CreateSequenceMotifMover::provide_authorship_info_for_unpublished() const {
 		"The Scripps Research Institute, La Jolla, CA",
 		"jadolfbr@gmail.com"
 		)
-		};
+	);
 
-	if ( selector_!=nullptr ) {
-		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-
-	return returnvec;
-}
-
-/// @brief Although this mover is unpublished and provides no citation info of its own,
-/// it can provide citation info for modules that it calls.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-CreateSequenceMotifMover::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	if ( selector_ !=nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( selector_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
+	citations.add( selector_ );
 }
 
 ////////////////////////////////////////////////////////////////////////////////

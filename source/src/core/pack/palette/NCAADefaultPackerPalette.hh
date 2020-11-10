@@ -83,13 +83,8 @@ public:
 
 public: //Functions for the CitationManager:
 
-	/// @brief Returns true (this packer palette is unpublished).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool packer_palette_is_unpublished() const override;
-
-	/// @brief Returns Andy Watkins as the author.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 protected:
 

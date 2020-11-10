@@ -114,15 +114,13 @@ RosettaThreadManager::create_thread_pool() {
 void
 RosettaThreadManager::register_thread_manager_with_citation_manager() const {
 	using namespace basic::citation_manager;
-	CitationManager::get_instance()->add_unpublished_modules(
-		utility::vector1< UnpublishedModuleInfoCOP > {
+	CitationManager::get_instance()->add_citation(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		"RosettaThreadManager", CitedModuleType::Singleton,
 		"Vikram K. Mulligan",
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		}
 	);
 }
 

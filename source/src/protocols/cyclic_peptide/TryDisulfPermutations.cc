@@ -449,23 +449,17 @@ void TryDisulfPermutations::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Mover that tries different sets of possible disulfide bonds between existing residues capable of forming disulfides", attlist );
 }
 
-/// @brief Indicate that this mover is unpublished.
-bool
-TryDisulfPermutations::mover_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide authorship information for an unpublished Rosetta module.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-TryDisulfPermutations::provide_authorship_info_for_unpublished() const {
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
+/// @brief Provide the citation.
+void
+TryDisulfPermutations::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"TryDisulfPermutations", basic::citation_manager::CitedModuleType::Mover,
 		"Vikram K. Mulligan",
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		};
+	);
 }
 
 std::string TryDisulfPermutationsCreator::keyname() const {

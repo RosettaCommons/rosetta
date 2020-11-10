@@ -93,15 +93,8 @@ public:
 
 public: //CitationManager functions:
 
-	/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
-	/// included in publications resulting from it)?  Yes, it does.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool filter_is_unpublished() const override;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	/// @returns A pairs of ("Tom Linsky", "tlinsky@gmail.com").
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:   // private functions
 

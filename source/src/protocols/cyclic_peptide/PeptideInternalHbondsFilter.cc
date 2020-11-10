@@ -237,45 +237,10 @@ PeptideInternalHbondsFilter::residue_selector() const {
 
 ////////// CITATION MANAGER FUNCTIONS //////////
 
-/// @brief Does this filter provide information about how to cite it?
-/// @details Returns false.
-bool
-PeptideInternalHbondsFilter::filter_provides_citation_info() const {
-	return false;
-}
-
 /// @brief Provide the citation.
-/// @returns An empty vector for this filter, since it's unpublished.  Provides citations for the scorefunction
-/// and residue selector, if available, however.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-PeptideInternalHbondsFilter::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	debug_assert( hbond_metric_ != nullptr );
-	core::select::residue_selector::ResidueSelectorCOP selector( hbond_metric_->residue_selector() );
-	core::scoring::ScoreFunctionCOP sfxn( hbond_metric_->scorefxn() );
-
-	if ( selector != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( selector->provide_citation_info(), returnvec );
-	}
-	if ( sfxn != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( sfxn->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
-
-/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @returns True, since this is unpublished.
-bool
-PeptideInternalHbondsFilter::filter_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @details Also provides unpublished author information for residue selectors and scorefunctions used.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-PeptideInternalHbondsFilter::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{
+void
+PeptideInternalHbondsFilter::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		class_name(),
 		basic::citation_manager::CitedModuleType::Filter,
@@ -283,19 +248,11 @@ PeptideInternalHbondsFilter::provide_authorship_info_for_unpublished() const {
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		};
+	);
 
 	debug_assert( hbond_metric_ != nullptr );
-	core::select::residue_selector::ResidueSelectorCOP selector( hbond_metric_->residue_selector() );
-	core::scoring::ScoreFunctionCOP sfxn( hbond_metric_->scorefxn() );
-
-	if ( selector != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( selector->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( sfxn != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( sfxn->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( hbond_metric_->residue_selector() );
+	citations.add( hbond_metric_->scorefxn() );
 }
 
 /////////////// Creator ///////////////

@@ -301,18 +301,9 @@ void InterfaceScoreCalculator::provide_xml_schema( utility::tag::XMLSchemaDefini
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "InterfaceScoreCalculator calculates a myriad of ligand specific scores and appends them to the output file. After scoring the complex the ligand is moved 1000 Å away from the protein. The model is then scored again. An interface score is calculated for each score term by subtracting separated energy from complex energy.", attlist );
 }
 
-///@brief Does this mover provide information about how to cite it?
-///@details Returns true.
-bool
-InterfaceScoreCalculator::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules that it invokes.
-/// @details Also provides citations for movers called by the InterfaceScoreCalculator.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-InterfaceScoreCalculator::provide_citation_info() const {
+void
+InterfaceScoreCalculator::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"InterfaceScoreCalculator", basic::citation_manager::CitedModuleType::Mover
@@ -320,17 +311,8 @@ InterfaceScoreCalculator::provide_citation_info() const {
 	);
 
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1007/978-1-61779-465-0_10" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	return returnvec;
-}
 
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing for itself,
-/// but can return  information for preselection filters and movers.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-InterfaceScoreCalculator::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	return returnvec;
+	citations.add( cc );
 }
 
 std::string InterfaceScoreCalculatorCreator::keyname() const {

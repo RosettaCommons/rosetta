@@ -29,7 +29,6 @@ CitationCollection::CitationCollection(
 	std::string const & module_name,
 	CitedModuleType const module_type
 ) :
-	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(module_type)
 {
@@ -43,7 +42,6 @@ CitationCollection::CitationCollection(
 	std::string const & module_name,
 	std::string const & module_type_name
 ) :
-	utility::VirtualBase(),
 	module_name_( module_name ),
 	module_type_( CitedModuleType::CustomType ),
 	module_type_name_( module_type_name )
@@ -56,6 +54,16 @@ CitationCollection::CitationCollection(
 CitationCollectionOP
 CitationCollection::clone() const {
 	return utility::pointer::make_shared< CitationCollection >( *this );
+}
+
+bool
+CitationCollection::operator==( CitationCollectionBase const & other ) const {
+	CitationCollection const * ptr = dynamic_cast< CitationCollection const * >( &other ); // Raw pointer safe here, as the caller will preserve the lifetime.
+	if ( ptr == nullptr ) {
+		return false;
+	} else {
+		return *this == *ptr; // Defer to same-type equality
+	}
 }
 
 /// @brief Comparison operator.
@@ -140,34 +148,6 @@ CitationCollection::has_multiple_citations() const {
 
 
 //////////////////////////////// UTILITY FUNCTIONS ////////////////////////////////
-
-/// @brief Utility function to determine whether a particular CitationCollection is already in a vector.
-bool
-has_citation_collection(
-	CitationCollection const & collection,
-	utility::vector1< CitationCollectionCOP > const & vec
-) {
-	for ( CitationCollectionCOP const & entry : vec ) {
-		if ( (*entry) == collection ) return true;
-	}
-	return false;
-}
-
-/// @brief Utility function that takes all of the citation collections from vector A that are NOT in vector
-/// B and appends them to vector B.
-void
-merge_into_citation_collection_vector(
-	utility::vector1< CitationCollectionCOP > const & source_vector,
-	utility::vector1< CitationCollectionCOP > & destination_vector
-) {
-	if ( source_vector.empty() ) return;
-	for ( CitationCollectionCOP const & collection : source_vector ) { // const & so as not to increment reference count.
-		if ( !has_citation_collection( *collection, destination_vector ) ) {
-			destination_vector.push_back( collection ); // COP is copied here, so this is only place where reference count is incremented.
-		}
-	}
-}
-
 
 } //basic
 } //citation_manager

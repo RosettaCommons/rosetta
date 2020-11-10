@@ -83,14 +83,12 @@ NoDesignPackerPalette::parse_my_tag(
 	TR.Debug << "Parsing XML for NoDesignPackerPalette.  (No user-configurable options)." << std::endl;
 
 	// Only register this PackerPalette with the CitationManager if it is explicitly RosettaScripts-scripted:
-	basic::citation_manager::CitationManager::get_instance()->add_unpublished_modules(
-		utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
+	basic::citation_manager::CitationManager::get_instance()->add_citation(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::PackerPalette,
 		"Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		}
 	);
 }
 

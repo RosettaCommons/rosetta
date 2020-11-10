@@ -22,8 +22,7 @@
 
 // Basic headers
 #include <basic/datacache/DataMap.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
-#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationCollectionBase.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -187,33 +186,11 @@ AndResidueSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 }
 
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
-/// itself and for any modules that it invokes.
-/// @details This residue selector provides no citation information of its own, but it can provide citation
-/// information for the residue selectors that it contains.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-AndResidueSelector::provide_citation_info() const {
-	using namespace basic::citation_manager;
-	utility::vector1< CitationCollectionCOP > returnvec;
+void
+AndResidueSelector::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	for ( auto const & selector : selectors_ ) {
-		merge_into_citation_collection_vector( selector->provide_citation_info(), returnvec );
+		selector->provide_citation_info( citations );
 	}
-	return returnvec;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns An empty list for this residue selector.  Unpublished information for residue selectors that it
-/// contains.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-AndResidueSelector::provide_authorship_info_for_unpublished() const {
-	using namespace basic::citation_manager;
-	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
-	for ( auto const & selector : selectors_ ) {
-		merge_into_unpublished_collection_vector( selector->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
 }
 
 ResidueSelectorOP

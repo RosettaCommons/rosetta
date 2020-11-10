@@ -47,8 +47,7 @@
 #include <utility/vector1.fwd.hh>
 
 // Basic Headers
-#include <basic/citation_manager/CitationCollection.fwd.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // C++ Headers
 #include <string>
@@ -264,31 +263,11 @@ public:
 
 public: //Functions needed for the citation manager
 
-	/// @brief Does this mover provide information about how to cite it?
-	/// @details Defaults to false.  Derived classes may override this to provide citation info.  If set to
-	/// true, the provide_citation_info() override should also be provided.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual bool mover_provides_citation_info() const;
-
-	/// @brief Provide the citation.
-	/// @returns A vector of citation collections.  This allows the mover to provide citations for
-	/// itself and for any modules that it invokes.
-	/// @details The default implementation of this function provides an empty vector.  It may be
-	/// overriden by Movers wishing to provide citation information.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const;
-
-	/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
-	/// included in publications resulting from it)?
-	/// @details Defaults to false.  Derived classes may override this to provide authorship info.  If set to
-	/// true, the provide_authorship_info_for_unpublished() override should also be provided.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual bool mover_is_unpublished() const;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const;
+	/// @brief Provide citations to the passed CitationCollectionList
+	/// Subclasses should add the info for themselves and any other classes they use.
+	/// @details The default implementation of this function does nothing.  It may be
+	/// overriden by movers wishing to provide citation information.
+	virtual void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const;
 
 protected:
 	/// @brief nonvirtual setter for MoverStatus last_status_.  Protected means that only the mover itself will be able to change its own status.  The job distributor (august 08 vintage) is aware of status set with this function and will do what the MoverStatus says.

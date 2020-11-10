@@ -30,8 +30,6 @@
 #include <protocols/filters/Filter.hh>
 
 // Basic Headers
-#include <basic/citation_manager/Citation.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 // tracer
 #include <basic/Tracer.hh>
@@ -163,41 +161,14 @@ Mover::show(std::ostream & output) const
 
 //////////////////FUNCTIONS NEEDED FOR THE CITATION MANAGER/////////////////////////////
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Defaults to false.  Derived classes may override this to provide citation info.  If set to
-/// true, the provide_citation_info() override should also be provided.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-Mover::mover_provides_citation_info() const { return false; }
-
-/// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for
-/// itself and for any modules that it invokes.
-/// @details The default implementation of this function provides an empty vector.  It may be
-/// overriden by Movers wishing to provide citation information.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-Mover::provide_citation_info() const {
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
+/// @brief Provide citations to the passed CitationCollectionList
+/// Subclasses should add the info for themselves and any other classes they use.
+/// @details The default implementation of this function does nothing.  It may be
+/// overriden by movers wishing to provide citation information.
+void
+Mover::provide_citation_info(basic::citation_manager::CitationCollectionList & ) const {
+	// Do nothing
 }
-
-/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @details Defaults to false.  Derived classes may override this to provide authorship info.  If set to
-/// true, the provide_authorship_info_for_unpublished() override should also be provided.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-Mover::mover_is_unpublished() const { return false; }
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-Mover::provide_authorship_info_for_unpublished() const {
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >();
-}
-
-
 
 } // moves
 

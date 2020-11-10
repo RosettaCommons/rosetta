@@ -80,12 +80,9 @@ public:
 	apply( core::pose::Pose & pose ) override;
 
 public:  // Citation Management ///////////////////////////////////////////////
-	/// @brief Does this mover provide information about how to cite it?
-	bool mover_provides_citation_info() const override;
 
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-	provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 public:
 

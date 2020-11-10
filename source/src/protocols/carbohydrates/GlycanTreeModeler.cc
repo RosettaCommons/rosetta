@@ -907,19 +907,13 @@ GlycanTreeModeler::apply( core::pose::Pose & pose){
 
 
 // Citation Management
-// Does this mover provide information about how to cite it?
-/// @returns  true
-bool
-GlycanTreeModeler::mover_provides_citation_info() const {
-	return true;
-}
 
-// Provide a list of authors and their e-mail addresses, as strings.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-GlycanTreeModeler::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+GlycanTreeModeler::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
 
-	return utility::vector1< UnpublishedModuleInfoCOP > {
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		mover_name(),
 		CitedModuleType::Mover,
@@ -927,7 +921,7 @@ GlycanTreeModeler::provide_authorship_info_for_unpublished() const {
 		"Institute for Protein Innovation (IPI), Boston, MA",
 		"jadolfbr@gmail.com"
 		)
-		};
+	);
 }
 
 

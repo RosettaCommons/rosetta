@@ -86,13 +86,9 @@ public: // Standard Rosetta methods ///////////////////////////////////////////
 
 
 public:  // Citation Management ///////////////////////////////////////////////
-	/// @brief  Does this mover provide information about how to cite it?
-	bool mover_provides_citation_info() const override;
 
-	/// @brief  Provide the citation.
-	utility::vector1< basic::citation_manager::CitationCollectionCOP >
-	provide_citation_info() const override;
-
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 public: // Accessors/Mutators /////////////////////////////////////////////////
 	/// @brief  Get the current MoveMap, creating it if needed.

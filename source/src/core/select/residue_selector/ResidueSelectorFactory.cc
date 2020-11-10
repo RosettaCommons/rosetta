@@ -85,9 +85,9 @@ ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(
 	new_selector->parse_my_tag( tag, datamap );
 
 	//Register with the CitationManager:
-	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
-	cm->add_citations( new_selector->provide_citation_info() );
-	cm->add_unpublished_modules( new_selector->provide_authorship_info_for_unpublished() );
+	basic::citation_manager::CitationCollectionList citations;
+	new_selector->provide_citation_info( citations );
+	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 	return new_selector;
 }

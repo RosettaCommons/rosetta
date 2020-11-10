@@ -14,13 +14,14 @@
 /// indexed by DOI, once in a threadsafe manner on object creation.  This allows modules to only specify
 /// the DOI.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #ifndef INCLUDED_basic_citation_manager_CitationManager_hh
 #define INCLUDED_basic_citation_manager_CitationManager_hh
 
 // Unit headers
 #include <basic/citation_manager/CitationManager.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.hh>
 #include <basic/citation_manager/CitationCollection.fwd.hh>
 #include <basic/citation_manager/Citation.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
@@ -58,34 +59,15 @@ public:  // Accessors //////////////////////////////////////////////////////////
 	/// @details Threadsafe.
 	void clear_citations();
 
-	/// @brief Has the CitationModule accumulated at least one module to cite?
-	/// @details Threadsafe.
-	bool has_modules_to_cite() const;
-
-	/// @brief Has the CitationModule accumulated at least one unpublished module?
-	/// @details Threadsafe.
-	bool has_unpublished_modules() const;
-
 	/// @brief Add citations to the list of citations that have been collected.
-	/// @note Checks module names and types, and only adds citations that have not
-	/// been already added.
+	/// @note Only adds citations that have not been already added.
 	/// @details Threadsafe.
-	void add_citations( utility::vector1< CitationCollectionCOP > const & input );
+	void add_citations( CitationCollectionList const & input );
 
-	/// @brief Add information for one or more unpublished modules to the list that has been collected.
-	/// @note Checks that these modules haven't been added, and only adds new ones.
-	/// @details Threadsafe.
-	void add_unpublished_modules( utility::vector1< UnpublishedModuleInfoCOP > const & input );
-
-	/// @brief Get a summary of all the citations that we've collected so far.
-	/// @note This is ONLY a list of citations, in a given format, on separate lines, with
-	/// header lines indicating the relevant module.  This does NOT include an overall header
-	/// explaining the context in which citations were collected.
-	/// @details Threadsafe.
-	void write_collected_citations( std::ostream & outstream, CitationFormat const citation_format = CitationFormat::DefaultStyle ) const;
-
-	/// @brief Write out a list of the unpublished modules.
-	void write_unpublished_modules( std::ostream & outstream ) const;
+	/// @brief Add a single citation to the citation manger
+	/// @note Will not add if a duplicate
+	/// @details Threadsafe
+	void add_citation( CitationCollectionBaseCOP const & input );
 
 	/// @brief Write out all unpublished modules and citations to the CitationManager's tracer.
 	void write_all_citations_and_unpublished_author_info() const;
@@ -93,6 +75,18 @@ public:  // Accessors //////////////////////////////////////////////////////////
 	/// @brief Given a DOI string, get a Rosetta citation.
 	/// @details Throws if the DOI string isn't in the list of Rosetta papers in the database.
 	CitationCOP get_citation_by_doi( std::string const & doi ) const;
+
+public:
+
+	/// @brief Get a summary of all the citations passed in the list
+	/// @note This is ONLY a list of citations, in a given format, on separate lines, with
+	/// header lines indicating the relevant module.  This does NOT include an overall header
+	/// explaining the context in which citations were collected.
+	/// @details Threadsafe.
+	void write_collected_citations( std::ostream & outstream, utility::vector1< CitationCollectionCOP > const & published, CitationFormat const citation_format = CitationFormat::DefaultStyle ) const;
+
+	/// @brief Write out a list of the unpublished modules.
+	void write_unpublished_modules( std::ostream & outstream, utility::vector1< UnpublishedModuleInfoCOP > const & unpublished ) const;
 
 private: // Private fxns /////////////////////////////////////////////////////
 
@@ -106,6 +100,14 @@ private: // Private fxns /////////////////////////////////////////////////////
 	/// database file.
 	void populate_doi_rosetta_citation_map( std::string const & database_file_contents );
 
+	/// @brief Split the citations into published & unpublished vectors
+	/// @details Return by reference.
+	/// Threadsafe
+	void split_citations(
+		utility::vector1< CitationCollectionCOP > & published,
+		utility::vector1< UnpublishedModuleInfoCOP > & unpublished
+	) const;
+
 private: // Private data /////////////////////////////////////////////////////
 
 #ifdef MULTI_THREADED
@@ -116,11 +118,8 @@ private: // Private data /////////////////////////////////////////////////////
 	/// @brief A map of DOI->Rosetta citations.
 	std::map< std::string, CitationCOP > doi_rosetta_citation_map_;
 
-	/// @brief A list of everything that has been cited so far.
-	utility::vector1< CitationCollectionCOP > citation_collections_;
-
-	/// @brief A list of the modules that are unpublished that have been used so far.
-	utility::vector1< UnpublishedModuleInfoCOP > unpublished_;
+	/// @brief A list of all the citations (and unpublished moduled) used so far.
+	CitationCollectionList citation_list_;
 
 };
 

@@ -27,7 +27,8 @@
 
 // Basic/Utility headers
 #include <utility/vector1.hh> 
-#include <core/types.hh> 
+#include <core/types.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 --namespace--
 
@@ -69,6 +70,9 @@ public:
 
 	virtual
 	core::Real atomic_interaction_cutoff() const;
+
+	/// @brief This energy method is unpublished.  It returns --name-- as its author.
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

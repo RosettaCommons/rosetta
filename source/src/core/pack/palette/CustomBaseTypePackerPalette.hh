@@ -98,13 +98,8 @@ public:
 
 public: //Functions for the CitationManager:
 
-	/// @brief This packer palette does provide citation info.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool packer_palette_provides_citation_info() const override;
-
-	/// @brief Provide the citation (Mulligan et al. 2020).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 protected:
 

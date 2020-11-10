@@ -234,11 +234,8 @@ public:
 	void
 	attributes_for_report_to_db( utility::tag::AttributeList &, utility::tag::XMLSchemaDefinition & );
 
-	/// @brief Indiciate that this mover is published
-	bool mover_provides_citation_info() const override;
-
-	/// @brief Provide authorship information for a published Rosetta module
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 protected:
 

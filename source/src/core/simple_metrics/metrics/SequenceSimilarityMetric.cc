@@ -206,28 +206,9 @@ SequenceSimilarityMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 		"A metric for measuring sequence similarity between the trajectry pose and the native pose. Sums the score of each selected position using BLOSUM62 (note that the score of an unmutated pose is almost certainly not 0). Must use the -native flag for this to work correctly.", attlist);
 }
 
-/// @brief This simple metric is unpublished, but can provide citation information for the residue
-/// selector that it uses.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-SequenceSimilarityMetric::provide_citation_info() const {
-	if ( selector_ != nullptr ) {
-		return selector_->provide_citation_info();
-	}
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
-}
-
-/// @brief This simple metric is unpublished (returns true).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SequenceSimilarityMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-/// @brief This simple metric is unpublished.  It returns Jack Maguire.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SequenceSimilarityMetric::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+SequenceSimilarityMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::UnpublishedModuleInfoOP authors (
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
@@ -236,11 +217,8 @@ SequenceSimilarityMetric::provide_authorship_info_for_unpublished() const {
 		"jackmaguire1444@gmail.com"
 		)
 	);
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
-	if ( selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( authors );
+	citations.add( selector_ );
 }
 
 void

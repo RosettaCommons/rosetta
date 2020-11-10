@@ -124,13 +124,8 @@ public:
 	Citation Manager functions:
 	***************************/
 
-	/// @brief Returns true (this method is published).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool energy_method_provides_citation_info() const override;
-
-	/// @brief Provide the citation (Hosseinzadeh, Bhardwaj, Mulligan et al. Science 2017).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

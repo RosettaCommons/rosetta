@@ -2407,17 +2407,9 @@ void GeneralizedKIC::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 }
 
 
-/// @brief This mover provides citation information.
-bool
-GeneralizedKIC::mover_provides_citation_info() const {
-	return true;
-}
-
-/// @brief Citation information for the GeneralizedKIC mover.
-/// @details Will also include citation information for any preselection movers, if these
-/// have been configured.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-GeneralizedKIC::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+GeneralizedKIC::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP collection(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"GeneralizedKIC",
@@ -2426,33 +2418,10 @@ GeneralizedKIC::provide_citation_info() const {
 	);
 	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1038/nature19791") );
 
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ collection };
-
-	if ( pre_selection_mover_ != nullptr ) {
-		// Get additional citation collections for contained modules, and append them to the return vector.
-		basic::citation_manager::merge_into_citation_collection_vector( pre_selection_mover_->provide_citation_info(), returnvec );
-	}
+	citations.add( collection );
+	citations.add( pre_selection_mover_ );
 
 	// TODO: merge in the information from the scoring function.
-
-	return returnvec;
-}
-
-/// @brief This mover is not unpublished, so this returns false.  (Nevertheless, it may provide
-/// information about authorship for unpublished movers or filters that it invokes.)
-bool
-GeneralizedKIC::mover_is_unpublished() const {
-	return false;
-}
-
-/// @brief This mover provides no information about its authorship with this function, since it is published.  However,
-/// if a preselection mover is set up, it may provide authorship information about that if it is unpublished.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-GeneralizedKIC::provide_authorship_info_for_unpublished() const {
-	if ( pre_selection_mover_ != nullptr ) {
-		return pre_selection_mover_->provide_authorship_info_for_unpublished();
-	}
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >(); //Empty vector if no preselection mover.
 }
 
 std::string GeneralizedKICCreator::keyname() const {

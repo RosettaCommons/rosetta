@@ -740,52 +740,19 @@ void BundleGridSampler::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "The BundleGridSampler is a mover that generates helical bundles using the Crick parameterization.  It can sample regular N-dimensional grids of parameter values, with efficient parallelization.", attlist, ssl );
 }
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Returns true.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-BundleGridSampler::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for
-/// itself and for any modules that it invokes.
-/// @details Also provides citations for movers called by the BundleGridSampler.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-BundleGridSampler::provide_citation_info() const {
+void
+BundleGridSampler::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"BundleGridSampler", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
-
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1073/pnas.1710695114" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	if ( pre_selection_filter_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( pre_selection_filter_->provide_citation_info(), returnvec );
-	}
-	if ( pre_selection_mover_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( pre_selection_mover_->provide_citation_info(), returnvec);
-	}
-	return returnvec;
-}
 
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing
-/// for itself, but can return  information for preselection filters and movers.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-BundleGridSampler::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	if ( pre_selection_filter_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( pre_selection_filter_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( pre_selection_mover_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( pre_selection_mover_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( cc );
+	citations.add( pre_selection_filter_ );
+	citations.add( pre_selection_mover_ );
 }
 
 std::string BundleGridSamplerCreator::keyname() const {

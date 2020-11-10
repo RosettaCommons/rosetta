@@ -54,8 +54,7 @@
 
 // Basic headers
 #include <basic/datacache/BasicDataCache.fwd.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>
@@ -1193,20 +1192,11 @@ public:
 
 public: //Functions needed for the citation manager
 
-	/// @brief Provide the citation.
-	/// @returns A vector of citation collections.  This allows the scorefunction to provide citations for
+	/// @brief Provide citations to the passed CitationCollectionList
+	/// This allows the scorefunciton to provide citaitons for itself
 	/// itself and for any modules that it invokes (particularl energy methods).
 	/// @details The default implementation of this provides a vector of citations from all energy methods that
-	/// this scorefunction has that have nonzero weights.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	/// @returns A list of pairs of (author, e-mail address).  Empty list if not unpublished.
-	/// @details The default implementation of this provides a vector of unpublished author info from all energy methods that
-	/// this scorefunction has that have nonzero weights.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	virtual utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const;
+	virtual void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// private methods

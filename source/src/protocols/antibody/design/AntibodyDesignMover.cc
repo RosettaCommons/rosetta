@@ -342,29 +342,19 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 
 }
 
-bool
-AntibodyDesignMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-AntibodyDesignMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+AntibodyDesignMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"AntibodyDesignMover", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	return returnvec;
+
+	citations.add( cc );
 }
 
-
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-AntibodyDesignMover::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	return returnvec;
-}
 
 void
 AntibodyDesignMover::parse_my_tag(

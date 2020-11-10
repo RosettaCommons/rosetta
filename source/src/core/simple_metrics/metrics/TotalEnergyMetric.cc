@@ -229,34 +229,10 @@ TotalEnergyMetric::calculate(const core::pose::Pose & pose) const {
 	}
 }
 
-/// @brief This simple metric is unpublished, but can provide citation information for the residue
-/// selector that it uses.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-TotalEnergyMetric::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	if ( residue_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( residue_selector_->provide_citation_info(), returnvec );
-	}
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( scorefxn_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
-
-/// @brief This simple metric is unpublished (returns true).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-TotalEnergyMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle (original author) and
-/// Vikram K. Mulligan (expanded funcitionality) as authors.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-TotalEnergyMetric::provide_authorship_info_for_unpublished() const {
-	basic::citation_manager::UnpublishedModuleInfoOP authors (
+/// @brief Provide the citation.
+void
+TotalEnergyMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Jared Adolf-Bryfogle",
@@ -264,14 +240,8 @@ TotalEnergyMetric::provide_authorship_info_for_unpublished() const {
 		"jadolfbr@gmail.com"
 		)
 	);
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
-	if ( residue_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( residue_selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( scorefxn_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( residue_selector_ );
+	citations.add( scorefxn_ );
 }
 
 void

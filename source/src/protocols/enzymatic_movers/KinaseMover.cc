@@ -83,21 +83,12 @@ KinaseMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		.write_complex_type_to_schema( xsd );
 }
 
-
-// Citation Management
-// Does this EnzymaticMover provide information about how to cite it?
-/// @returns  true
-bool
-KinaseMover::mover_provides_citation_info() const {
-	return true;
-}
-
-// Provide a list of authors and their e-mail addresses, as strings.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-KinaseMover::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+KinaseMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
 
-	return utility::vector1< UnpublishedModuleInfoCOP > {
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		mover_name(),
 		CitedModuleType::Mover,
@@ -105,7 +96,7 @@ KinaseMover::provide_authorship_info_for_unpublished() const {
 		"Department of Chemistry, Johns Hopkins University, Baltimore, MD",
 		"JWLabonte@jhu.edu"
 		)
-		};
+	);
 }
 
 

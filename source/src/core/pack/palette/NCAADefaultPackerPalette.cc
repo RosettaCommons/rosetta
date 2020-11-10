@@ -113,23 +113,15 @@ NCAADefaultPackerPalette::name() const {
 	return myname;
 }
 
-/// @brief Returns true (this packer palette is unpublished).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-NCAADefaultPackerPalette::packer_palette_is_unpublished() const {
-	return true;
-}
-
-/// @brief Returns Andy Watkins as the author.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-NCAADefaultPackerPalette::provide_authorship_info_for_unpublished() const {
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
+/// @brief Provide the citation.
+void
+NCAADefaultPackerPalette::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::PackerPalette,
 		"Andrew Watkins", "Dept. of Biochemistry, Stanford University", "amw579@stanford.edu"
 		)
-		};
+	);
 }
 
 /// @brief Set up the NCAADefaultPackerPalette with the default set of position-specific behaviours.

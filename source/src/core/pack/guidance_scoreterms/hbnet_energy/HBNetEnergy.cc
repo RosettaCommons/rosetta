@@ -310,27 +310,18 @@ void HBNetEnergy::max_network_size( core::Size const setting ) { max_network_siz
 
 //////////////////////////////CITATION MANAGER FUNCTIONS/////////////////////////////////
 
-/// @brief This energy method IS unpublished (returns true).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-HBNetEnergy::energy_method_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-HBNetEnergy::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+HBNetEnergy::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
-	return utility::vector1< UnpublishedModuleInfoCOP > {
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		"HBNetEnergy", CitedModuleType::EnergyMethod,
 		"Vikram K. Mulligan",
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-		};
+	);
 }
 
 //////////////////////////////////PRIVATE FUNCTIONS//////////////////////////////////////

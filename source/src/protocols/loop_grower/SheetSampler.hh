@@ -116,12 +116,8 @@ public:
 
 	std::string get_name() const override { return "SheetSampler"; }
 
-	/// @brief Indiciate that this mover is published
-	bool mover_provides_citation_info() const override;
-
-	/// @brief Provide authorship information for a published Rosetta module
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
-
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 	core::Size start_, end_, frag_;

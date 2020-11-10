@@ -619,19 +619,9 @@ bool sort_by_second(std::pair<core::Size, core::Real> left_lig, std::pair<core::
 	return left_lig.second < right_lig.second;
 }
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Returns true.
-bool
-HighResEnsemble::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for itself
-/// and for any modules that it invokes.
-/// @details Also provides citations for movers called by the HighResEnsemble.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-HighResEnsemble::provide_citation_info() const {
+void
+HighResEnsemble::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"HighResEnsemble", basic::citation_manager::CitedModuleType::Mover
@@ -639,16 +629,8 @@ HighResEnsemble::provide_citation_info() const {
 	);
 
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1021/acsomega.7b02059" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	return returnvec;
-}
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).  This mover IS published, so it returns nothing for
-/// itself, but can return  information for preselection filters and movers.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-HighResEnsemble::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	return returnvec;
+
+	citations.add( cc );
 }
 
 

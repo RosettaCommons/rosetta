@@ -98,9 +98,9 @@ PackerPaletteFactory::newPackerPalette(
 		if ( tag.get() != nullptr ) packer_palette->parse_my_tag( tag, datamap );
 
 		//Register this packer palette with the citation manager:
-		basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
-		cm->add_citations( packer_palette->provide_citation_info() );
-		cm->add_unpublished_modules( packer_palette->provide_authorship_info_for_unpublished() );
+		basic::citation_manager::CitationCollectionList citations;
+		packer_palette->provide_citation_info( citations );
+		basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 		return packer_palette;
 	} else {

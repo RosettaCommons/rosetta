@@ -229,26 +229,16 @@ void CavityVolumeFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition &
 		attlist );
 }
 
-/// @brief Does this filter indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?  Yes, it does.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-CavityVolumeFilter::filter_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A pairs of ("Tom Linsky", "tlinsky@gmail.com").
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-CavityVolumeFilter::provide_authorship_info_for_unpublished() const {
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >{
+/// @brief Provide the citation.
+void
+CavityVolumeFilter::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		class_name(), basic::citation_manager::CitedModuleType::Filter,
 		"Tom Linsky", "Institute for Protein Design, University of Washington", "tlinsky@gmail.com",
 		"Created this filter."
 		)
-		};
+	);
 }
 
 std::string CavityVolumeFilterCreator::keyname() const {

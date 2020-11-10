@@ -150,9 +150,9 @@ FilterFactory::newFilter(
 	filter->parse_my_tag( tag, data );
 
 	//Register with the citation manager:
-	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );
-	cc->add_citations( filter->provide_citation_info() );
-	cc->add_unpublished_modules( filter->provide_authorship_info_for_unpublished() );
+	basic::citation_manager::CitationCollectionList citations;
+	filter->provide_citation_info( citations );
+	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 	// if confidence specified, link to StochasticFilter and wrap inside CompoundFilter
 	core::Real const confidence( tag->getOption< core::Real >( "confidence", 1.0 ) );
@@ -163,8 +163,9 @@ FilterFactory::newFilter(
 		FilterOP stochastic_filter( new StochasticFilter( (1.0-confidence), filter->clone(), /*run_subfilter_on*/ false ) );
 		stochastic_filter->set_user_defined_name( tag->getOption<std::string>("name") );
 
-		cc->add_citations( stochastic_filter->provide_citation_info() );
-		cc->add_unpublished_modules( stochastic_filter->provide_authorship_info_for_unpublished() );
+		basic::citation_manager::CitationCollectionList citations;
+		stochastic_filter->provide_citation_info( citations );
+		basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 		return stochastic_filter;
 	}

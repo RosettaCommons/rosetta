@@ -155,13 +155,9 @@ AnchoredGraftMover::fresh_instance() const
 	return utility::pointer::make_shared< AnchoredGraftMover >();
 }
 
-bool
-AnchoredGraftMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-AnchoredGraftMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+AnchoredGraftMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"AnchoredGraftMover", basic::citation_manager::CitedModuleType::Mover
@@ -174,24 +170,11 @@ AnchoredGraftMover::provide_citation_info() const {
 	//Adolf-Bryfogle; RosettaAntibodyDesign
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
 
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
+	citations.add( cc );
+	citations.add( setup_default_min_mover() );
 
 	protocols::simple_moves::SmallMover tempmover;
-	basic::citation_manager::merge_into_citation_collection_vector( setup_default_min_mover()->provide_citation_info(), returnvec );
-	basic::citation_manager::merge_into_citation_collection_vector( tempmover.provide_citation_info(), returnvec );
-
-	return returnvec;
-}
-
-/// @brief Although this mover is published, it can also provide information for unpublished modules that it invokes.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-AnchoredGraftMover::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > vec;
-
-	protocols::simple_moves::SmallMover tempmover;
-	basic::citation_manager::merge_into_unpublished_collection_vector( setup_default_min_mover()->provide_authorship_info_for_unpublished(), vec );
-	basic::citation_manager::merge_into_unpublished_collection_vector( tempmover.provide_authorship_info_for_unpublished(), vec );
-	return vec;
+	citations.add( tempmover );
 }
 
 void

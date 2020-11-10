@@ -103,42 +103,19 @@ ParatopeEpitopeSiteConstraintMover::ParatopeEpitopeSiteConstraintMover( Paratope
 protocols::moves::MoverOP
 ParatopeEpitopeSiteConstraintMover::clone() const { return utility::pointer::make_shared< protocols::antibody::constraints::ParatopeEpitopeSiteConstraintMover >( *this ); }
 
-bool
-ParatopeEpitopeSiteConstraintMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-ParatopeEpitopeSiteConstraintMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+ParatopeEpitopeSiteConstraintMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"ParatopeEpitopeSiteConstraintMover", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	if ( paratope_residues_!=nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( paratope_residues_->provide_citation_info(), returnvec );
-	}
-	if ( epitope_residues_!=nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( epitope_residues_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
 
-/// @brief Although this mover is published, the residue selectors that it invokes
-/// could be unpublished.  This function returns unpublished info for the modules
-/// invoked by this mover that are unpublished.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-ParatopeEpitopeSiteConstraintMover::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	if ( paratope_residues_!=nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( paratope_residues_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( epitope_residues_!=nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( epitope_residues_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( cc );
+	citations.add( paratope_residues_ );
+	citations.add( epitope_residues_ );
 }
 
 void

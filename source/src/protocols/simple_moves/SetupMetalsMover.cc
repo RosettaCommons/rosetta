@@ -370,58 +370,19 @@ SetupMetalsMover::set_defaults_from_command_line(){
 	//prevent_setup_metal_bb_variants_ = basic::options::option[ in::prevent_auto_setup_metal_bb_variants ].value();
 }
 
-/// @brief Does this mover provide information about how to cite it?  Returns false.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SetupMetalsMover::mover_provides_citation_info() const {
-	return false;
-}
-
 /// @brief Provide the citation.
-/// @returns Nothing for this mover, since it is unpublished.  Can return citations for residue selectors
-/// that this mover links.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-SetupMetalsMover::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	if ( metal_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( metal_selector_->provide_citation_info(), returnvec );
-	}
-	if ( contact_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( contact_selector_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
-
-/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @details Returns true.  This mover is unpublished.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SetupMetalsMover::mover_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns Sharon Guffy's authorship information.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SetupMetalsMover::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{
+void
+SetupMetalsMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"SetupMetalsMover", basic::citation_manager::CitedModuleType::Mover,
 		"Sharon Guffy",
 		"Pairwise, Durham NC (formerly UNC Chapel Hill)",
 		"guffy@email.unc.edu"
 		)
-		};
-	if ( metal_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( metal_selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( contact_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( contact_selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	);
+	citations.add( metal_selector_ );
+	citations.add( contact_selector_ );
 }
 
 std::ostream &operator<< (std::ostream &os, SetupMetalsMover const &mover)

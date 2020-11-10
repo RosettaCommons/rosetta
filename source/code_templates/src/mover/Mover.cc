@@ -136,20 +136,18 @@ void --class--Creator::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	--class--::provide_xml_schema( xsd );
 }
 
-/// @brief Indicate that this mover is unpublished.
-bool
---class--::mover_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide authorship information for an unpublished Rosetta module.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
---class--::provide_authorship_info_for_unpublished() const {
-	using namespace basic::citation_manager;
-	UnpublishedModuleInfoOP moduleinfo =
-		utility::pointer::make_shared< UnpublishedModuleInfo >( "--class--", CitedModuleType::Mover );
-	moduleinfo->add_author( "--name--", "TODO: institution", "--email--" );
-	return utility::vector1< UnpublishedModuleInfoCOP > { moduleinfo };
+/// @brief This mover is unpublished.  It returns --name-- as its author.
+void
+--class--::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		"--class--", basic::citation_manager::CitedModuleType::Mover,
+		--name--,
+		"TODO: institution",
+		"--email--",
+		"Wrote the --class--."
+		)
+	);
 }
 
 

@@ -34,7 +34,6 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & module_name,
 	CitedModuleType const & module_type
 ) :
-	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(module_type)
 {
@@ -47,7 +46,6 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & module_name,
 	std::string const & module_type_name
 ) :
-	utility::VirtualBase(),
 	module_name_(module_name),
 	module_type_(CitedModuleType::CustomType),
 	module_type_name_(module_type_name)
@@ -65,7 +63,6 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & affiliation,
 	std::string const & email
 ) :
-	utility::VirtualBase(),
 	authors_({ utility::pointer::make_shared< UnpublishedModuleAuthor >( author_name, affiliation, email ) }),
 	module_name_(module_name),
 	module_type_(module_type)
@@ -84,13 +81,22 @@ UnpublishedModuleInfo::UnpublishedModuleInfo(
 	std::string const & email,
 	std::string const & notes
 ) :
-	utility::VirtualBase(),
 	authors_({ utility::pointer::make_shared< UnpublishedModuleAuthor >( author_name, affiliation, email, notes ) }),
 	module_name_(module_name),
 	module_type_(module_type)
 {
 	runtime_assert( !module_name_.empty() );
 	runtime_assert( module_type_ != CitedModuleType::CustomType );
+}
+
+bool
+UnpublishedModuleInfo::operator==( CitationCollectionBase const & other ) const {
+	UnpublishedModuleInfo const * ptr = dynamic_cast< UnpublishedModuleInfo const * >( &other ); // Raw pointer safe here, as the caller will preserve the lifetime.
+	if ( ptr == nullptr ) {
+		return false;
+	} else {
+		return *this == *ptr; // Defer to same-type equality
+	}
 }
 
 /// @brief Comparison operator.
@@ -152,31 +158,6 @@ UnpublishedModuleInfo::get_author_list(
 		if ( !(author->email_address().empty()) ) outstream << " <" << author->email_address() << ">";
 		if ( !(author->notes().empty()) ) outstream << "  (" << author->notes() << ")";
 		outstream << "\n";
-	}
-}
-
-
-////////////////////////////////// HELPER FUNCTIONS //////////////////////////////////
-///////////////////////////////// (Not part of class) ////////////////////////////////
-
-/// @brief Helper function that compares two lists of UnpublishedModuleInfoCOPs and appends
-/// all the ones from list A that aren't already in list B onto the end of list B.
-void
-merge_into_unpublished_collection_vector(
-	utility::vector1< UnpublishedModuleInfoCOP > const & source,
-	utility::vector1< UnpublishedModuleInfoCOP > & destination
-) {
-	if ( source.empty() ) return;
-	for ( auto const & moduleinfo : source ) {
-		bool already_present( false );
-		for ( auto const & destinfo : destination ) {
-			if ( (*moduleinfo) == (*destinfo) ) {
-				already_present = true;
-				break;
-			}
-		}
-		if ( already_present ) continue;
-		destination.push_back( moduleinfo );
 	}
 }
 

@@ -22,25 +22,6 @@
 namespace basic {
 namespace citation_manager {
 
-/// @brief What type of Rosetta module are we providing a citation for?
-/// @details If this list is added to, then the CitationCollection::get_enumerated_module_type_name()
-/// function must be updated.
-enum class CitedModuleType {
-	Mover = 1, //Keep this first
-	Filter,
-	ScoreTerm,
-	ResidueSelector,
-	TaskOperation,
-	PackerPalette,
-	ScoreFunction,
-	EnergyMethod,
-	SimpleMetric,
-	Singleton,
-	Application,
-	CustomType, //Keep second-to-last
-	end_of_list = CustomType //Keep last
-};
-
 class CitationCollection;
 
 typedef utility::pointer::shared_ptr< CitationCollection > CitationCollectionOP;

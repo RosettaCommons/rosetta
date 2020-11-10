@@ -88,12 +88,8 @@ public:
 	static void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
-	/// @brief Does this residue selector indicate that it is unpublished?
-	bool residue_selector_is_unpublished() const override;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-	provide_authorship_info_for_unpublished() const override;
+	/// @brief This residue selector is unpublished.  It returns --name-- as its author.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

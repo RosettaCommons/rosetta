@@ -35,6 +35,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility/tag/Tag.hh>
 
 static basic::Tracer TR( "--namespace_dot--.--class--" );
@@ -307,6 +309,20 @@ void
 	EnergyMap const & weights,
 	utility::vector1< EnergyMap > & emaps
 ) const;
+
+/// @brief This energy method is unpublished.  It returns --name-- as its author.
+void
+--class--::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		"--class--", basic::citation_manager::CitedModuleType::EnergyMethod,
+		--name--,
+		"TODO: institution",
+		"--email--",
+		"Wrote the --class-- energy method."
+		)
+	);
+}
 
 --end_namespace--
 

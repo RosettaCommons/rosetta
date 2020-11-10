@@ -221,15 +221,20 @@ CalculatorMetric::calculate(const core::pose::Pose & pose ) const {
 	return value;
 }
 
-bool
-CalculatorMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-CalculatorMetric::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > retlist;
-	return retlist;
+/// @brief Provide the citation.
+void
+CalculatorMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
+		"Rocco Moretti",
+		"Vanderbilt University",
+		"rmorettiase@gmail.com"
+		)
+	);
+	for ( auto const & pair: metrics_ ) {
+		citations.add( pair.second );
+	}
 }
 
 

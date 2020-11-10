@@ -185,20 +185,16 @@ void KeepRegionMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	KeepRegionMover::provide_xml_schema( xsd );
 }
 
-bool
-KeepRegionMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-KeepRegionMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+KeepRegionMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"KeepRegionMover", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { cc };
+	citations.add( cc );
 }
 
 }

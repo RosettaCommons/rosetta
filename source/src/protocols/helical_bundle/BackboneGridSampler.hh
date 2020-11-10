@@ -271,18 +271,8 @@ public:
 
 public: //Function overrides needed for the citation manager:
 
-	/// @brief Provides citation info for any published pre-scoring movers or filters, though this mover is
-	/// unpublished and has no citation information of its own.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
-
-	/// @brief Indicate that this mover is unpublished.
-	/// @returns True.
-	bool mover_is_unpublished() const override;
-
-	/// @brief Provide authorship information for an unpublished Rosetta module.
-	/// @details Also provides authorship information for unpublished pre-scoring movers or filters, if provided.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 	////////////////////////////////////////////////////////////////////////////////

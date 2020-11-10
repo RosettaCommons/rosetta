@@ -116,18 +116,8 @@ public:
 
 public: //Functions needed for the citation manager
 
-	/// @brief This simple metric is unpublished, but can provide citation information for the residue
-	/// selector that it uses.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
-
-	/// @brief This simple metric is unpublished (returns true).
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	bool simple_metric_is_unpublished() const override;
-
-	/// @brief This simple metric is unpublished.  It returns Jack Maguire.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 	core::select::residue_selector::ResidueSelectorCOP selector_;

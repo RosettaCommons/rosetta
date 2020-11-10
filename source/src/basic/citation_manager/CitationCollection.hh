@@ -16,18 +16,18 @@
 #define INCLUDED_basic_citation_manager_CitationCollection_hh
 
 #include <basic/citation_manager/CitationCollection.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.hh>
 #include <basic/citation_manager/Citation.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace basic {
 namespace citation_manager {
 
 /// @brief A class for keeping track of a collection of citations for a particular Rosetta module.
-class CitationCollection : public utility::VirtualBase {
+class CitationCollection : public CitationCollectionBase {
 
 public:
 
@@ -52,6 +52,11 @@ public:
 
 	/// @brief Clone operator: copy this object and return an owning pointer to the copy.
 	CitationCollectionOP clone() const;
+
+	/// @brief Comparison operator, generalized on the base class
+	/// @details Checks if both are CitationCollection, and if so defers to the operator== below.
+	bool
+	operator==( CitationCollectionBase const & other ) const override;
 
 	/// @brief Comparison operator.
 	/// @details Compares only module name and module type, not reference list.
@@ -100,21 +105,6 @@ private:
 	std::string module_type_name_;
 
 };
-
-/// @brief Utility function to determine whether a particular CitationCollection is already in a vector.
-bool
-has_citation_collection(
-	CitationCollection const & collection,
-	utility::vector1< CitationCollectionCOP > const & vec
-);
-
-/// @brief Utility function that takes all of the citation collections from vector A that are NOT in vector
-/// B and appends them to vector B.
-void
-merge_into_citation_collection_vector(
-	utility::vector1< CitationCollectionCOP > const & source_vector,
-	utility::vector1< CitationCollectionCOP > & destination_vector
-);
 
 } //basic
 } //citation_manager

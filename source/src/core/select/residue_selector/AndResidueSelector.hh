@@ -100,19 +100,7 @@ public:
 public: //Functions needed for the citation manager
 
 	/// @brief Provide the citation.
-	/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
-	/// itself and for any modules that it invokes.
-	/// @details This residue selector provides no citation information of its own, but it can provide citation
-	/// information for the residue selectors that it contains.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
-
-	/// @brief Provide a list of authors and their e-mail addresses, as strings.
-	/// @returns An empty list for this residue selector.  Unpublished information for residue selectors that it
-	/// contains.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > provide_authorship_info_for_unpublished() const override;
-
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private: // data members
 

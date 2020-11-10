@@ -675,78 +675,21 @@ ParsedProtocol::apply_metrics( Pose & pose, ParsedProtocolStep const & step ) {
 	}
 }
 
-/// @brief This mover does not provide citation info for itself, though it might for
-/// movers or filters that it invokes.  It therefore returns false.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-ParsedProtocol::mover_provides_citation_info() const {
-	return false;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for
-/// itself and for any modules that it invokes.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-ParsedProtocol::provide_citation_info() const {
+void
+ParsedProtocol::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
-	utility::vector1< CitationCollectionCOP > returnvec;
 
 	// Add citations for all movers and filters:
 	for ( ParsedProtocolStep const & step : steps_ ) {
-		if ( step.mover != nullptr ) {
-			merge_into_citation_collection_vector( step.mover->provide_citation_info(), returnvec );
-		}
-		if ( step.filter != nullptr ) {
-			merge_into_citation_collection_vector( step.filter->provide_citation_info(), returnvec );
-		}
-		for ( auto const & metric: step.metrics ) {
-			if ( metric != nullptr ) {
-				merge_into_citation_collection_vector( metric->provide_citation_info(), returnvec );
-			}
+		citations.add( step.mover );
+		citations.add( step.filter );
+		for ( core::simple_metrics::SimpleMetricCOP const & metric: step.metrics ) {
+			citations.add( metric );
 		}
 	}
 
-	//TODO scorefunction, etc.
-
-	//Additional mover:
-	if ( last_mover_ != nullptr ) {
-		merge_into_citation_collection_vector( last_mover_->provide_citation_info(), returnvec );
-	}
-
-	return returnvec;
-}
-
-/// @brief This mover is not unpublished.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool ParsedProtocol::mover_is_unpublished() const { return false; }
-
-/// @brief This mover does provide information for unpublished movers and filters that it invokes.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-ParsedProtocol::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	for ( ParsedProtocolStep const & step : steps_ ) {
-		if ( step.mover != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( step.mover->provide_authorship_info_for_unpublished(), returnvec );
-		}
-		if ( step.filter != nullptr ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( step.filter->provide_authorship_info_for_unpublished(), returnvec );
-		}
-		for ( auto const & metric: step.metrics ) {
-			if ( metric != nullptr ) {
-				basic::citation_manager::merge_into_unpublished_collection_vector( metric->provide_authorship_info_for_unpublished(), returnvec );
-			}
-		}
-	}
-
-	//TODO scorefunction, etc.
-
-	//Additional mover:
-	if ( last_mover_ != nullptr ) {
-		merge_into_unpublished_collection_vector( last_mover_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( last_mover_ );
 }
 
 

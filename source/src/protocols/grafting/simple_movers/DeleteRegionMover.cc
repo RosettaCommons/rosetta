@@ -83,32 +83,18 @@ DeleteRegionMover::DeleteRegionMover( DeleteRegionMover const & src ):
 	if ( src.selector_ ) selector_ = src.selector_->clone();
 }
 
-bool
-DeleteRegionMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-DeleteRegionMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+DeleteRegionMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"DeleteRegionMover", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	if ( selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( selector_->provide_citation_info(), returnvec);
-	}
-	return returnvec;
-}
 
-/// @brief This mover is published, and provides citation info.  It can also provide unpublished info for the
-/// residue selector that it uses.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-DeleteRegionMover::provide_authorship_info_for_unpublished() const {
-	if ( selector_ != nullptr ) return selector_->provide_authorship_info_for_unpublished();
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >();
+	citations.add( cc );
+	citations.add( selector_ );
 }
 
 void

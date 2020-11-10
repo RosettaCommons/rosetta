@@ -371,71 +371,22 @@ void RelaxProtocolBase::ramp_down_constraints( bool ramp_down_constraints ) {
 void RelaxProtocolBase::minimize_bond_lengths( bool minimize_bond_lengths ) { minimize_bond_lengths_ = minimize_bond_lengths; }
 void RelaxProtocolBase::minimize_bond_angles( bool minimize_bond_angles ) { minimize_bond_angles_ = minimize_bond_angles; }
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Defaults to false.  Derived relax protocols may override this to provide citation info.  If set to
-/// true, the provide_citation_info() override should also be provided.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-RelaxProtocolBase::mover_provides_citation_info() const {
-	return false;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for
-/// itself and for any modules that it invokes.
-/// @details The default implementation of this function provides citations only for the task operations
-/// in the task factory.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-RelaxProtocolBase::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( scorefxn_->provide_citation_info(), returnvec );
-	}
+void
+RelaxProtocolBase::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+
+	citations.add( scorefxn_ );
+
 	if ( task_factory_ != nullptr ) {
 		if ( task_factory_->has_packer_palette() ) {
 			debug_assert( task_factory_->packer_palette() != nullptr ); //Should be true.
-			basic::citation_manager::merge_into_citation_collection_vector( task_factory_->packer_palette()->provide_citation_info(), returnvec );
+			citations.add( task_factory_->packer_palette() );
 		}
-		for ( std::list< core::pack::task::operation::TaskOperationCOP >::const_iterator entry( task_factory_->begin() ); entry != task_factory_->end(); ++entry ) {
-			basic::citation_manager::merge_into_citation_collection_vector( (*entry)->provide_citation_info(), returnvec );
-		}
-	}
-	return returnvec;
-}
-
-/// @brief Does this mover indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @details Defaults to false.  Derived relax protocols may override this to provide authorship info.  If set to
-/// true, the provide_authorship_info_for_unpublished() override should also be provided.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-RelaxProtocolBase::mover_is_unpublished() const {
-	return false;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns A list of pairs of (author, e-mail address).  The default version only provides authorship information
-/// for gthe task operations in the task factory.  Empty list if not unpublished.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-RelaxProtocolBase::provide_authorship_info_for_unpublished() const {
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec;
-	if ( scorefxn_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( scorefxn_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	if ( task_factory_ != nullptr ) {
-		if ( task_factory_->has_packer_palette() ) {
-			debug_assert( task_factory_->packer_palette() != nullptr ); //Should be true.
-			basic::citation_manager::merge_into_unpublished_collection_vector( task_factory_->packer_palette()->provide_authorship_info_for_unpublished(), returnvec );
-		}
-		for ( std::list< core::pack::task::operation::TaskOperationCOP >::const_iterator entry( task_factory_->begin() ); entry != task_factory_->end(); ++entry ) {
-			basic::citation_manager::merge_into_unpublished_collection_vector( (*entry)->provide_authorship_info_for_unpublished(), returnvec );
+		for ( auto const & entry: *task_factory_ ) {
+			citations.add( entry );
 		}
 	}
-	return returnvec;
 }
-
 
 core::scoring::ScoreFunctionOP RelaxProtocolBase::get_scorefxn() { return scorefxn_; }
 

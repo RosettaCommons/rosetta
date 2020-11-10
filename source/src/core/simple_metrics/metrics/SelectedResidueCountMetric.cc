@@ -136,29 +136,10 @@ SelectedResidueCountMetric::remove_residue_selector() {
 	residue_selector_ = nullptr;
 }
 
-/// @brief This simple metric is unpublished, but can provide citation information for the residue
-/// selector that it uses.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-SelectedResidueCountMetric::provide_citation_info() const {
-	if ( residue_selector_ != nullptr ) {
-		return residue_selector_->provide_citation_info();
-	}
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
-}
-
-/// @brief This simple metric is unpublished (returns true).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SelectedResidueCountMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-/// @brief This simple metric is unpublished.  It returns Vikram K. Mulligan.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SelectedResidueCountMetric::provide_authorship_info_for_unpublished() const {
-	basic::citation_manager::UnpublishedModuleInfoOP authors (
+/// @brief Provide the citation.
+void
+SelectedResidueCountMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
 		"Vikram K. Mulligan",
@@ -166,11 +147,7 @@ SelectedResidueCountMetric::provide_authorship_info_for_unpublished() const {
 		"vmulligan@flatironinstitute.org"
 		)
 	);
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
-	if ( residue_selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( residue_selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( residue_selector_ );
 }
 
 void

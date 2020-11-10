@@ -17,11 +17,10 @@
 
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleAuthor.fwd.hh>
-#include <basic/citation_manager/CitationCollection.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 
 namespace basic {
@@ -29,7 +28,7 @@ namespace citation_manager {
 
 /// @brief Authorship information for an unpublished Rosetta module.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class UnpublishedModuleInfo : public utility::VirtualBase {
+class UnpublishedModuleInfo : public CitationCollectionBase {
 
 public:
 
@@ -69,6 +68,11 @@ public:
 
 	/// @brief Destructor.
 	~UnpublishedModuleInfo() override = default;
+
+	/// @brief Comparison operator, generalized on the base class
+	/// @details Checks if both are UnpublishedModuleInfo, and if so defers to the operator== below.
+	bool
+	operator==( CitationCollectionBase const & other ) const override;
 
 	/// @brief Comparison operator.
 	bool operator==( UnpublishedModuleInfo const & other ) const;
@@ -114,14 +118,6 @@ private:
 	std::string module_type_name_;
 
 };
-
-/// @brief Helper function that compares two lists of UnpublishedModuleInfoCOPs and appends
-/// all the ones from list A that aren't already in list B onto the end of list B.
-void
-merge_into_unpublished_collection_vector(
-	utility::vector1< UnpublishedModuleInfoCOP > const & source,
-	utility::vector1< UnpublishedModuleInfoCOP > & destination
-);
 
 } //citation_manager
 } //basic

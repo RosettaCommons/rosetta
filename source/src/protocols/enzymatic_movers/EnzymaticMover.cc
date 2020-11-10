@@ -192,21 +192,12 @@ EnzymaticMover::apply( Pose & input_pose )
 	TR << "Move(s) complete." << endl;
 }
 
-
-// Citation Management
-// Does this EnzymaticMover provide information about how to cite it?
-/// @returns  true
-bool
-EnzymaticMover::mover_provides_citation_info() const {
-	return true;
-}
-
-// Provide a list of authors and their e-mail addresses, as strings.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-EnzymaticMover::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+EnzymaticMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
 
-	return utility::vector1< UnpublishedModuleInfoCOP > {
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		get_name(),
 		CitedModuleType::Mover,
@@ -214,7 +205,7 @@ EnzymaticMover::provide_authorship_info_for_unpublished() const {
 		"Department of Chemistry, Johns Hopkins University, Baltimore, MD",
 		"JWLabonte@jhu.edu"
 		)
-		};
+	);
 }
 
 

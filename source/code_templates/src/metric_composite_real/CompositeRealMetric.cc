@@ -117,26 +117,18 @@ std::map< std::string, core::Real >
 
 }
 
-bool
---class--::simple_metric_is_unpublished() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
---class--::provide_authorship_info_for_unpublished() const {
-	basic::citation_manager::UnpublishedModuleInfoOP authors (
+/// @brief This simple metric is unpublished.  It returns --name-- as its author.
+void
+--class--::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
-			name(),
-			basic::citation_manager::CitedModuleType::SimpleMetric,
-			"--name--",
-			"TODO: institution",
-			"--email--",
-			"Wrote the --class--."
+		"--class--", basic::citation_manager::CitedModuleType::SimpleMetric,
+		--name--,
+		"TODO: institution",
+		"--email--",
+		"Wrote the --class--."
 		)
 	);
-
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
-	return returnvec;
 }
 
 void

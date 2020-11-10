@@ -121,9 +121,9 @@ ScoreFunctionFactory::create_score_function(
 	scorefxn->name( weights_tag );
 
 	// Register this scorefunction with the citation manager:
-	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
-	cm->add_citations( scorefxn->provide_citation_info() );
-	cm->add_unpublished_modules( scorefxn->provide_authorship_info_for_unpublished() );
+	basic::citation_manager::CitationCollectionList citations;
+	scorefxn->provide_citation_info( citations );
+	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 	return scorefxn;
 }

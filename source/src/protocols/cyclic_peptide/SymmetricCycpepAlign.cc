@@ -235,18 +235,13 @@ SymmetricCycpepAlign::set_trim_info(
 	repeat_to_preserve_ = repeat_to_preserve;
 }
 
-/// @brief Indicate that this mover is unpublished.
-bool
-SymmetricCycpepAlign::mover_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide authorship information for an unpublished Rosetta module.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SymmetricCycpepAlign::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+SymmetricCycpepAlign::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::UnpublishedModuleInfoOP moduleinfo( utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >( "SymmetricCycpepAlign", basic::citation_manager::CitedModuleType::Mover ) );
 	moduleinfo->add_author( "Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute", "vmulligan@flatironinstitute.org" );
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > { moduleinfo };
+
+	citations.add( moduleinfo );
 }
 
 /////////////// Private methods ///////

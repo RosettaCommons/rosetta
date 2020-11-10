@@ -79,34 +79,19 @@ ParatopeSiteConstraintMover::ParatopeSiteConstraintMover( ParatopeSiteConstraint
 protocols::moves::MoverOP
 ParatopeSiteConstraintMover::clone() const { return utility::pointer::make_shared< protocols::antibody::constraints::ParatopeSiteConstraintMover >( *this ); }
 
-bool
-ParatopeSiteConstraintMover::mover_provides_citation_info() const {
-	return true;
-}
-
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-ParatopeSiteConstraintMover::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+ParatopeSiteConstraintMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		"ParatopeSiteConstraintMover", basic::citation_manager::CitedModuleType::Mover
 		)
 	);
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1371/journal.pcbi.1006112" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	if ( paratope_residues_!=nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( paratope_residues_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
 
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-ParatopeSiteConstraintMover::provide_authorship_info_for_unpublished() const {
-	if ( paratope_residues_!=nullptr ) {
-		return paratope_residues_->provide_authorship_info_for_unpublished();
-	}
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >();
+	citations.add( cc );
+	citations.add( paratope_residues_ );
 }
-
 
 void
 ParatopeSiteConstraintMover::set_defaults() {

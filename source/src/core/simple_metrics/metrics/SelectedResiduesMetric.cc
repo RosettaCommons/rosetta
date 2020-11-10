@@ -104,28 +104,9 @@ SelectedResiduesMetric::set_output_in_rosetta_num(bool output_in_rosetta_num ){
 	rosetta_nums_ = output_in_rosetta_num;
 }
 
-/// @brief This simple metric is unpublished, but can provide citation information for the residue
-/// selector that it uses.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-SelectedResiduesMetric::provide_citation_info() const {
-	if ( selector_ != nullptr ) {
-		return selector_->provide_citation_info();
-	}
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP >();
-}
-
-/// @brief This simple metric is unpublished (returns true).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SelectedResiduesMetric::simple_metric_is_unpublished() const {
-	return true;
-}
-
-/// @brief This simple metric is unpublished.  It returns Jared Adolf-Bryfogle.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SelectedResiduesMetric::provide_authorship_info_for_unpublished() const {
+/// @brief Provide the citation.
+void
+SelectedResiduesMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::UnpublishedModuleInfoOP authors (
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		name(), basic::citation_manager::CitedModuleType::SimpleMetric,
@@ -134,11 +115,9 @@ SelectedResiduesMetric::provide_authorship_info_for_unpublished() const {
 		"jadolfbr@gmail.com"
 		)
 	);
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > returnvec{ authors };
-	if ( selector_ != nullptr ) {
-		basic::citation_manager::merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( authors );
+
+	citations.add( selector_ );
 }
 
 void

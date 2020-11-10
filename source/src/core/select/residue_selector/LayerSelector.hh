@@ -132,11 +132,7 @@ public:
 public:
 
 	/// @brief Provide the citation.
-	/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
-	/// itself and for any modules that it invokes.
-	/// @details This residue selector was published in Dang, Hu, Mulligan et al. 2017.
-	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > provide_citation_info() const override;
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private: // data members
 

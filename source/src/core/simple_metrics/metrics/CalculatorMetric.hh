@@ -99,12 +99,8 @@ public:
 	std::string
 	metric() const override;
 
-	/// @brief This simple metric is unpublished (returns true).
-	bool simple_metric_is_unpublished() const override;
-
-	/// @brief This simple metric is unpublished.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-	provide_authorship_info_for_unpublished() const override;
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 public:
 

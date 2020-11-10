@@ -141,9 +141,9 @@ MoverFactory::newMover(
 	mover->parse_my_tag( tag, data );
 
 	//Register the new mover with the citation manager:
-	basic::citation_manager::CitationManager * cc( basic::citation_manager::CitationManager::get_instance() );
-	cc->add_citations( mover->provide_citation_info() );
-	cc->add_unpublished_modules( mover->provide_authorship_info_for_unpublished() );
+	basic::citation_manager::CitationCollectionList citations;
+	mover->provide_citation_info( citations );
+	basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 	return mover;
 }

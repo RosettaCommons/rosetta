@@ -98,12 +98,8 @@ public:
 
 public: //Function overrides needed for the citation manager:
 
-	/// @brief Indicate that this mover is unpublished.
-	bool mover_is_unpublished() const override;
-
-	/// @brief Provide authorship information for an unpublished Rosetta module.
-	utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-	provide_authorship_info_for_unpublished() const override;
+	/// @brief This mover is unpublished.  It returns --name-- as its author.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private: // methods
 

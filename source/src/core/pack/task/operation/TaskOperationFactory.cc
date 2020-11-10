@@ -135,9 +135,9 @@ TaskOperationFactory::newTaskOperation(
 		if ( tag.get() != nullptr ) task_operation->parse_tag( tag, datamap );
 
 		// Register this task operation with the citation manager:
-		basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
-		cm->add_citations( task_operation->provide_citation_info() );
-		cm->add_unpublished_modules( task_operation->provide_authorship_info_for_unpublished() );
+		basic::citation_manager::CitationCollectionList citations;
+		task_operation->provide_citation_info( citations );
+		basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 		return task_operation;
 	} else {

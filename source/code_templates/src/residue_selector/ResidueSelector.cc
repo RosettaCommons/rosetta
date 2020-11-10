@@ -116,29 +116,19 @@ void --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & /*xsd*/ 
 
 }
 
-/// @brief Does this residue selector indicate that it is unpublished?
-/// @details Returns true (this residue selector is unpublished).
-bool
---class--::residue_selector_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
---class--::provide_authorship_info_for_unpublished() const {
-	using namespace basic::citation_manager;
-	utility::vector1< UnpublishedModuleInfoCOP > returnvec{
-		utility::pointer::make_shared< UnpublishedModuleInfo >(
-		"--class--",
-		CitedModuleType::ResidueSelector,
-		"--name--",
+/// @brief This residue selector is unpublished.  It returns --name-- as its author.
+void
+--class--::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		"--class--", basic::citation_manager::CitedModuleType::ResidueSelector,
+		--name--,
 		"TODO: institution",
-		"--email--"
+		"--email--",
+		"Wrote the --class--."
 		)
-		};
-	return returnvec;
+	);
 }
-
 
 core::select::residue_selector::ResidueSelectorOP
 --class--Creator::create_residue_selector() const {

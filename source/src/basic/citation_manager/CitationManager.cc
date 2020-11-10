@@ -14,6 +14,7 @@
 /// indexed by DOI, once in a threadsafe manner on object creation.  This allows modules to only specify
 /// the DOI.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
+/// @author Rocco Moretti (rmorettiase@gmail.com)
 
 #include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
@@ -60,59 +61,32 @@ CitationManager::clear_citations() {
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > guard( mutex_ );
 #endif
-	citation_collections_.clear();
-	unpublished_.clear();
-}
-
-/// @brief Has the CitationModule accumulated at least one module to cite?
-/// @details Threadsafe.
-bool
-CitationManager::has_modules_to_cite() const {
-#ifdef MULTI_THREADED
-	std::lock_guard< std::mutex > guard( mutex_ );
-#endif
-	return !citation_collections_.empty();
-}
-
-/// @brief Has the CitationModule accumulated at least one unpublished module?
-/// @details Threadsafe.
-bool
-CitationManager::has_unpublished_modules() const {
-#ifdef MULTI_THREADED
-	std::lock_guard< std::mutex > guard( mutex_ );
-#endif
-	return !unpublished_.empty();
+	citation_list_ = CitationCollectionList{};
 }
 
 /// @brief Add citations to the list of citations that have been collected.
-/// @details Checks module names and types, and only adds citations that have not
-/// been already added.
+/// @note Only adds citations that have not been already added.
 /// @details Threadsafe.
 void
-CitationManager::add_citations(
-	utility::vector1< CitationCollectionCOP > const & input
-) {
+CitationManager::add_citations( CitationCollectionList const & input ) {
 	if ( input.empty() ) return;
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > guard( mutex_ );
 #endif
-	merge_into_citation_collection_vector( input, citation_collections_ );
+	citation_list_.add( input );
 }
 
-/// @brief Add information for one or more unpublished modules to the list that has been collected.
-/// @note Checks that these modules haven't been added, and only adds new ones.
-/// @details Threadsafe.
+/// @brief Add a single citation to the citation manger
+/// @note Will not add if a duplicate
+/// @details Threadsafe
 void
-CitationManager::add_unpublished_modules(
-	utility::vector1< UnpublishedModuleInfoCOP > const & input
-) {
-	if ( input.empty() ) return;
+CitationManager::add_citation( CitationCollectionBaseCOP const & input ) {
+	if ( input == nullptr ) return;
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > guard( mutex_ );
 #endif
-	merge_into_unpublished_collection_vector( input, unpublished_ );
+	citation_list_.add( input );
 }
-
 
 /// @brief Get a summary of all the citations that we've collected so far.
 /// @note This is ONLY a list of citations, in a given format, on separate lines, with
@@ -122,12 +96,10 @@ CitationManager::add_unpublished_modules(
 void
 CitationManager::write_collected_citations(
 	std::ostream & outstream,
+	utility::vector1< CitationCollectionCOP > const & published,
 	CitationFormat const citation_format
 ) const {
-#ifdef MULTI_THREADED
-	std::lock_guard< std::mutex > guard( mutex_ );
-#endif
-	for ( auto const & collection : citation_collections_ ) {
+	for ( auto const & collection : published ) {
 		outstream << collection->module_name() << " " << collection->module_type() << "'s citation(s):\n";
 		collection->get_citations_formatted(outstream, citation_format);
 		outstream << "\n";
@@ -137,12 +109,10 @@ CitationManager::write_collected_citations(
 /// @brief Write out a list of the unpublished modules.
 void
 CitationManager::write_unpublished_modules(
-	std::ostream & outstream
+	std::ostream & outstream,
+	utility::vector1< UnpublishedModuleInfoCOP > const & unpublished
 ) const {
-#ifdef MULTI_THREADED
-	std::lock_guard< std::mutex > guard( mutex_ );
-#endif
-	for ( auto const & module : unpublished_ ) {
+	for ( auto const & module : unpublished ) {
 		outstream << module->module_name() << " " << module->module_type() << "'s author(s):\n";
 		module->get_author_list( outstream );
 		outstream << "\n";
@@ -154,19 +124,23 @@ void
 CitationManager::write_all_citations_and_unpublished_author_info() const {
 	bool anything_written(false);
 
-	if ( has_modules_to_cite() ) {
+	utility::vector1< CitationCollectionCOP > published;
+	utility::vector1< UnpublishedModuleInfoCOP > unpublished;
+	split_citations( published, unpublished );
+
+	if ( ! published.empty() ) {
 		TR << TR.bgBlue << TR.White << TR.Bold << TR.Underline;
 		TR << "\nThe following Rosetta modules were used during this run of Rosetta, and should be cited:\n\n";
 		TR << TR.Reset << TR.bgBlue << TR.White;
-		write_collected_citations( TR );
+		write_collected_citations( TR, published );
 		anything_written = true;
 	}
 
-	if ( has_unpublished_modules() ) {
+	if ( ! unpublished.empty() ) {
 		TR << TR.Reset << TR.bgBlue <<  TR.White << TR.Bold << TR.Underline;
 		TR << "\nThe following UNPUBLISHED Rosetta modules were used during this run of Rosetta.  Their authors should be included in the author list when this work is published:\n\n";
 		TR << TR.Reset << TR.bgBlue << TR.White;
-		write_unpublished_modules( TR );
+		write_unpublished_modules( TR, unpublished );
 		anything_written = true;
 	}
 	if ( anything_written ) {
@@ -242,6 +216,33 @@ CitationManager::populate_doi_rosetta_citation_map(
 		}
 	}
 	TR.Debug << "Parsed " << doi_rosetta_citation_map_.size() << " Rosetta citations from database file contents." << std::endl;
+}
+
+/// @brief Split the citations into published & unpublished vectors
+/// @details Return by reference.
+void
+CitationManager::split_citations(
+	utility::vector1< CitationCollectionCOP > & published,
+	utility::vector1< UnpublishedModuleInfoCOP > & unpublished
+) const {
+	if ( citation_list_.empty() ) { return; }
+#ifdef MULTI_THREADED
+	std::lock_guard< std::mutex > guard( mutex_ );
+#endif
+	for ( CitationCollectionBaseCOP const & entry : citation_list_.citations() ) {
+		CitationCollectionCOP cc = utility::pointer::dynamic_pointer_cast< CitationCollection const >( entry );
+		if ( cc ) {
+			published.push_back( cc );
+			continue;
+		}
+		UnpublishedModuleInfoCOP um = utility::pointer::dynamic_pointer_cast< UnpublishedModuleInfo const >( entry );
+		if ( um ) {
+			unpublished.push_back( um );
+			continue;
+		}
+		//TR.Error << "Unrecognized citation collection type. Typeid: " << typeid(*entry).name() << std::endl;
+		utility_exit_with_message("Unable to determine the type of a citation collection.");
+	}
 }
 
 } //citation_manager

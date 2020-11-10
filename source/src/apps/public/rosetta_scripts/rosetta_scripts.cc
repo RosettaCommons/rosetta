@@ -90,9 +90,7 @@ main( int argc, char * argv [] )
 				utility::pointer::make_shared< basic::citation_manager::CitationCollection > ( "rosetta_scripts", basic::citation_manager::CitedModuleType::Application )
 			);
 			rosettascripts_citationcollection->add_citation( cm->get_citation_by_doi( "10.1371/journal.pone.0020161" ) );
-			cm->add_citations(
-				utility::vector1< basic::citation_manager::CitationCollectionCOP > { rosettascripts_citationcollection }
-			);
+			cm->add_citation( rosettascripts_citationcollection );
 		}
 
 		if ( option[ parser::info ].user() ) { // If the -parser::info option is used, just print information about the requested component(s) and exit.

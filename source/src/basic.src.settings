@@ -28,6 +28,7 @@ sources = {
 	],
 	"basic/citation_manager" : [
 		"Citation",
+		"CitationCollectionBase",
 		"CitationCollection",
 		"CitationManager",
 		"UnpublishedModuleAuthor",

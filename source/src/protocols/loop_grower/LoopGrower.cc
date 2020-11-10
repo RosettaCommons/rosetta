@@ -3896,27 +3896,16 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	return bestdensity;
 }
 
-bool
-LoopGrower::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for
-/// itself and for any modules that it invokes.
-/// @details Also provides citations for movers called by the BundleGridSampler.
-/// @author Brandon Frenz (brandon.frenz@brandon.frenz@gmail.com)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-LoopGrower::provide_citation_info() const {
+void
+LoopGrower::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		get_name(), basic::citation_manager::CitedModuleType::Mover
 		)
 	);
-
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1038/nmeth.4340" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	return returnvec;
+	citations.add( cc );
 }
 
 }

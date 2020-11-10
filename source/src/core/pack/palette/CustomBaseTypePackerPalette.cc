@@ -195,24 +195,16 @@ CustomBaseTypePackerPalette::name() const {
 	return myname;
 }
 
-/// @brief This packer palette does provide citation info.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-CustomBaseTypePackerPalette::packer_palette_provides_citation_info() const {
-	return true;
-}
-
-/// @brief Provide the citation (Mulligan et al. 2020).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-CustomBaseTypePackerPalette::provide_citation_info() const {
+/// @brief Provide the citation.
+void
+CustomBaseTypePackerPalette::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP my_citation(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection > (
 		name(), basic::citation_manager::CitedModuleType::PackerPalette
 		)
 	);
 	my_citation->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "Mulligan_2020_underreview" ) );
-	return utility::vector1< basic::citation_manager::CitationCollectionCOP > { my_citation };
+	citations.add( my_citation );
 }
 
 /// @brief Set up the CustomBaseTypePackerPalette with the default set of position-specific behaviours.

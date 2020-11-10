@@ -511,28 +511,17 @@ void PerturbBundle::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "Perturb helical bundles by direct manipulation of their bundle parameters", attlist, ssl );
 }
 
-/// @brief Indicate that this mover is unpublished.
-bool
-PerturbBundle::mover_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide authorship information for an unpublished Rosetta module.
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-PerturbBundle::provide_authorship_info_for_unpublished() const {
-
-	// To provide an author for an unpublished module, return a vector containing UnpublishedModuleInfo objects,
-	// each of which is initialized with the name, affiliation, and e-mail address of an author:
-	return utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP > {
-
+/// @brief Provide the citation.
+void
+PerturbBundle::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"PerturbBundle", basic::citation_manager::CitedModuleType::Mover,
 		"Vikram K. Mulligan",
 		"Systems Biology, Center for Computational Biology, Flatiron Institute",
 		"vmulligan@flatironinstitute.org"
 		)
-
-		};
+	);
 }
 
 std::string PerturbBundleCreator::keyname() const {

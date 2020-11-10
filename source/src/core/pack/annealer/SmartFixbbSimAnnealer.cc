@@ -117,7 +117,8 @@ void
 register_unpublished_author_info() {
 	using namespace basic::citation_manager;
 
-	UnpublishedModuleInfoOP info( utility::pointer::make_shared< UnpublishedModuleInfo >(
+	CitationManager::get_instance()->add_citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		"SmartFixbbSimAnnealer",
 		CitedModuleType::Mover,
 		"Jack Magure",
@@ -125,9 +126,6 @@ register_unpublished_author_info() {
 		"jackmaguire1444@gmail.com",
 		"Created the SmartFixbbSimAnnealer."
 		) );
-
-	utility::vector1< UnpublishedModuleInfoCOP > infovect{ info };
-	CitationManager::get_instance()->add_unpublished_modules( infovect );
 }
 
 

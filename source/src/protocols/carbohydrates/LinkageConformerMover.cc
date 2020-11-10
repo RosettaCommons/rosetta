@@ -357,60 +357,19 @@ void LinkageConformerMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		"Mover to sample glycan linkages using conformers generated from the PDB using adaptive kernal density estimates.", attlist );
 }
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Returns true -- this mover does.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-LinkageConformerMover::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This mover was published in Labonte et al. (2017).
-/// @details Also provides citations for modules invoked by this mover.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-LinkageConformerMover::provide_citation_info() const {
+void
+LinkageConformerMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
 
 	CitationCollectionOP collection( utility::pointer::make_shared<CitationCollection>( get_name(), CitedModuleType::Mover ) );
 	collection->add_citation(CitationManager::get_instance()->get_citation_by_doi( "10.1002/jcc.24679" ));
 
-	utility::vector1< CitationCollectionCOP > returnvec{ collection };
-
-	debug_assert( phi_sampler_mover_ != nullptr );
-	debug_assert( psi_sampler_mover_ != nullptr );
-	debug_assert( omega_sampler_mover_ != nullptr );
-	merge_into_citation_collection_vector( phi_sampler_mover_->provide_citation_info(), returnvec );
-	merge_into_citation_collection_vector( psi_sampler_mover_->provide_citation_info(), returnvec );
-	merge_into_citation_collection_vector( omega_sampler_mover_->provide_citation_info(), returnvec );
-
-	if ( selector_ != nullptr ) {
-		merge_into_citation_collection_vector( selector_->provide_citation_info(), returnvec );
-	}
-
-	return returnvec;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns Empty list by default, since this mover is published.  Can provide information about
-/// modules that this mover invokes.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-LinkageConformerMover::provide_authorship_info_for_unpublished() const {
-	using namespace basic::citation_manager;
-	utility::vector1< UnpublishedModuleInfoCOP > returnvec;
-	debug_assert( phi_sampler_mover_ != nullptr );
-	debug_assert( psi_sampler_mover_ != nullptr );
-	debug_assert( omega_sampler_mover_ != nullptr );
-	merge_into_unpublished_collection_vector( phi_sampler_mover_->provide_authorship_info_for_unpublished(), returnvec );
-	merge_into_unpublished_collection_vector( psi_sampler_mover_->provide_authorship_info_for_unpublished(), returnvec );
-	merge_into_unpublished_collection_vector( omega_sampler_mover_->provide_authorship_info_for_unpublished(), returnvec );
-
-	if ( selector_ != nullptr ) {
-		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
-	}
-	return returnvec;
+	citations.add( collection );
+	citations.add( phi_sampler_mover_ );
+	citations.add( psi_sampler_mover_ );
+	citations.add( omega_sampler_mover_ );
+	citations.add( selector_ );
 }
 
 

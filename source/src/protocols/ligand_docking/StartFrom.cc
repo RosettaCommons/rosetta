@@ -394,18 +394,9 @@ void StartFrom::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		attlist, subelement_list );
 }
 
-/// @brief Does this mover provide information about how to cite it?
-/// @details Returns true.
-bool
-StartFrom::mover_provides_citation_info() const {
-	return true;
-}
-
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the mover to provide citations for itself and for any modules
-/// that it invokes.
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-StartFrom::provide_citation_info() const {
+void
+StartFrom::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	basic::citation_manager::CitationCollectionOP cc(
 		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
 		get_name(), basic::citation_manager::CitedModuleType::Mover
@@ -413,8 +404,8 @@ StartFrom::provide_citation_info() const {
 	);
 
 	cc->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1007/978-1-61779-465-0_10" ) );
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec{ cc };
-	return returnvec;
+
+	citations.add( cc );
 }
 
 std::string StartFromCreator::keyname() const {

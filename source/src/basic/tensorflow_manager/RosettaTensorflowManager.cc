@@ -236,8 +236,7 @@ RosettaTensorflowManager::register_unpublished_author_info() const {
         "Added testing infrastructure and helped to create the Rosetta-Tensorflow linked build."
     );
 
-    utility::vector1< UnpublishedModuleInfoCOP > infovect{ info };
-    CitationManager::get_instance()->add_unpublished_modules( infovect );
+    CitationManager::get_instance()->add_citation( info );
 }
 
 #endif //USE_TENSORFLOW

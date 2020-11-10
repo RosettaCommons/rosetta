@@ -273,47 +273,21 @@ SliceResidueSelector::show_selection_logic(
 }
 
 /// @brief Provide the citation.
-/// @returns A vector of citation collections.  This allows the residue selector to provide citations for
-/// itself and for any modules that it invokes.
-/// @details This residue selector has no citation.  It may provide citations for the residue selector that
-/// it calls, though.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::CitationCollectionCOP >
-SliceResidueSelector::provide_citation_info() const {
-	utility::vector1< basic::citation_manager::CitationCollectionCOP > returnvec;
-	if ( selector_ != nullptr ) {
-		basic::citation_manager::merge_into_citation_collection_vector( selector_->provide_citation_info(), returnvec );
-	}
-	return returnvec;
-}
-
-/// @brief Does this residue selector indicate that it is unpublished (and, by extension, that the author should be
-/// included in publications resulting from it)?
-/// @details Returns true (this residue selector is unpublished).
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-bool
-SliceResidueSelector::residue_selector_is_unpublished() const {
-	return true;
-}
-
-/// @brief Provide a list of authors and their e-mail addresses, as strings.
-/// @returns This residue selector was created by Brian Coventry.
-/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-utility::vector1< basic::citation_manager::UnpublishedModuleInfoCOP >
-SliceResidueSelector::provide_authorship_info_for_unpublished() const {
+void
+SliceResidueSelector::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
-	utility::vector1< UnpublishedModuleInfoCOP > returnvec{
+	citations.add(
 		utility::pointer::make_shared< UnpublishedModuleInfo >(
 		"SliceResidueSelector", CitedModuleType::ResidueSelector,
 		"Brian Coventry",
 		"Baker Laboratory, Institute for Protein Design, Dept. of Biochemistry, University of Washington",
 		"bcov@uw.edu"
 		)
-		};
+	);
+
 	if ( selector_ != nullptr ) {
-		merge_into_unpublished_collection_vector( selector_->provide_authorship_info_for_unpublished(), returnvec );
+		selector_->provide_citation_info( citations );
 	}
-	return returnvec;
 }
 
 void SliceResidueSelector::parse_my_tag(
