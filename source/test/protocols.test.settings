@@ -494,6 +494,9 @@ sources = {
 	"membrane/symmetry" : [
 		"SymmetricAddMembraneMover",
 	],
+	"metal_interface" : [
+		"RemoveMetalConnectionsMoverTests",
+	],
 	"minimization_packing" : [
 		"GreenPacker",
 	],
@@ -1175,6 +1178,7 @@ testinputfiles = [
 	"membrane/symmetry/1afo_tr.span",
 	"membrane/symmetry/1afo_tr_input.pdb",
 	"membrane/symmetry/1afo_tr.c2.symm",
+	"metal_interface/1spd_cleaned.pdb",
 	"multistage_rosetta_scripts/job_def_file.xml",
 	"multistage_rosetta_scripts/job_def_file.pdblist.xml",
 	"multistage_rosetta_scripts/job_def_file.bad1.xml",

@@ -51,6 +51,7 @@ sources = {
                 "FindClosestAtom",
                 "MatchGrafter",
                 "MetalSiteResidue",
+		"RemoveMetalConnectionsMover",
                 "ZincHeterodimerMover",
                 "ZincSiteFinder",
 	],

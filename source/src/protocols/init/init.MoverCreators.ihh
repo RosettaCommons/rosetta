@@ -358,6 +358,8 @@
 #include <protocols/membrane/visualize/VisualizeMembraneMoverCreator.hh>
 #include <protocols/membrane/visualize/VisualizeEmbeddingMoverCreator.hh>
 
+#include <protocols/metal_interface/RemoveMetalConnectionsMoverCreator.hh>
+
 #include <protocols/motifs/MotifDnaPackerCreator.hh>
 
 #include <protocols/motif_grafting/movers/MotifGraftCreator.hh>

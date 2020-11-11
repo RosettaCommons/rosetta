@@ -1004,6 +1004,21 @@ replace_in( std::string const & name_in, std::string const & find_string, std::s
 	return name;
 }
 
+std::string
+replace_first_in(
+	std::string const & name_in,
+	std::string const & find_string,
+	std::string const & replace_string
+) {
+	std::string name = name_in;
+	// WARNING WARNING WARNING: Do not change pos back to platform::Size. In general platform::Size type
+	//                          is not the same as size_t and algorithm below is sensitive to this
+	size_t pos = name.find( find_string );
+	if ( pos != std::string::npos ) {
+		name = name.replace( pos, find_string.size(), replace_string );
+	}
+	return name;
+}
 
 std::string
 remove_from_string( std::string const & source, std::string const & remove){

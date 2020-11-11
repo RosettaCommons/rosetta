@@ -400,6 +400,11 @@ replace_in( std::string & s, const char from, const char *to )
 std::string
 replace_in( std::string const & source, std::string const & from, std::string const & to );
 
+/// @brief Generate new string from 'source' by replacing the first occurrence of 'from' to 'to' string.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+replace_first_in( std::string const & source, std::string const & from, std::string const & to );
+
 /// @brief Call boost to erase all instances of erase_str from source.
 std::string
 remove_from_string( std::string const & source, std::string const & erase_str);

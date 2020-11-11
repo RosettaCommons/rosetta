@@ -366,6 +366,8 @@ static MoverRegistrator< membrane::symmetry::SymmetricAddMembraneMoverCreator > 
 static MoverRegistrator< membrane::visualize::VisualizeMembraneMoverCreator > reg_VisualizeMembraneMoverCreator;
 static MoverRegistrator< membrane::visualize::VisualizeEmbeddingMoverCreator > reg_VisualizeEmbeddingMoverCreator;
 
+static MoverRegistrator< metal_interface::RemoveMetalConnectionsMoverCreator > reg_RemoveMetalConnectionsMoverCreator;
+
 static MoverRegistrator< motifs::MotifDnaPackerCreator > reg_MotifDnaPackerCreator;
 
 static MoverRegistrator< motif_grafting::movers::MotifGraftCreator> reg_MotifGraftCreator;
