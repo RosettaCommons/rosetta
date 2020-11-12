@@ -535,18 +535,7 @@ Ramachandran::eval_rama_score_residue(
 
 	debug_assert( rsd.is_protein() );
 
-	if ( //0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(1) ) ||
-			//0.0 == nonnegative_principal_angle_degrees( rsd.mainchain_torsion(2) ) ||
-			rsd.is_terminus() ||
-			rsd.is_virtual_residue() ||
-			!rsd.has_lower_connect() ||
-			!rsd.has_upper_connect() ||
-			rsd.residue_connection_partner( rsd.type().lower_connect_id() ) == 0 ||
-			rsd.residue_connection_partner( rsd.type().upper_connect_id() ) == 0 ||
-			rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ||
-			rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ||
-			polymeric_termini_incomplete( rsd )
-			) { // begin or end of chain -- don't calculate rama score
+	if ( ! defines_score_for_residue(rsd) ) {
 		rama = 0.0;
 		drama_dphi = 0.0;
 		drama_dpsi = 0.0;
@@ -717,6 +706,23 @@ Ramachandran::is_normally_connected (
 
 	return (firstconn && secondconn);
 }
+
+bool
+Ramachandran::defines_score_for_residue( conformation::Residue const & rsd ) const
+{
+	return ! (
+		rsd.is_terminus() ||
+		rsd.is_virtual_residue() ||
+		!rsd.has_lower_connect() ||
+		!rsd.has_upper_connect() ||
+		rsd.residue_connection_partner( rsd.type().lower_connect_id() ) == 0 ||
+		rsd.residue_connection_partner( rsd.type().upper_connect_id() ) == 0 ||
+		rsd.type().has_variant_type( core::chemical::UPPER_TERMINUS_VARIANT ) ||
+		rsd.type().has_variant_type( core::chemical::LOWER_TERMINUS_VARIANT ) ||
+		polymeric_termini_incomplete( rsd ) );
+
+}
+
 
 Size Ramachandran::n_phi_bins() const { return n_phi_; }
 

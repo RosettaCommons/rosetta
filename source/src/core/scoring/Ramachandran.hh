@@ -265,6 +265,10 @@ public:
 	/// @author Vikram K. Mulligan
 	bool is_normally_connected ( conformation::Residue const & res ) const;
 
+	/// @brief Function to report whether the Ramachandran class will assign a non-zero
+	/// score for this residue
+	bool defines_score_for_residue( conformation::Residue const & rsd ) const;
+
 	Size n_phi_bins() const;
 	Size n_psi_bins() const;
 

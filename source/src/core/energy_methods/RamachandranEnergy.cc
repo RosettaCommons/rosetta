@@ -115,6 +115,23 @@ RamachandranEnergy::defines_dof_derivatives( pose::Pose const & ) const
 	return true;
 }
 
+inline
+bool
+polymeric_termini_incomplete( conformation::Residue res ) {
+	for ( Size i = 1; i <= res.n_polymeric_residue_connections(); ++i ) {
+		if ( res.connection_incomplete( i ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+
+/// @details Report which atoms define the score for the %RamachandranEnergy,
+/// carefully making sure that if a residue is not elegible for a non-zero
+/// score that we don't refer to non-existant atoms (e.g. the atoms before
+/// the N-terminus). Use the logic in the Ramachandran class to filter out
+/// the termini.
 utility::vector1< id::PartialAtomID >
 RamachandranEnergy::atoms_with_dof_derivatives( conformation::Residue const & res, pose::Pose const & ) const
 {
@@ -123,6 +140,11 @@ RamachandranEnergy::atoms_with_dof_derivatives( conformation::Residue const & re
 
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( res.has_variant_type( core::chemical::REPLONLY ) )  return retlist;
+
+	//
+	if ( ! potential_.defines_score_for_residue( res ) ) {
+		return retlist;
+	}
 
 	if ( res.is_protein() &&
 			( (res.aa() <= chemical::num_canonical_aas) ||
