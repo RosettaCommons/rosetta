@@ -562,9 +562,16 @@ Residue::connected_residue_at_lower() const {
 	return connected_residue_at_resconn( rsd_type_.lower_connect_id() );
 }
 
+/// @brief Attempt to take residue connection info from src_rsd
+/// @details If suppress_warnings is true, we don't warn if residue connections on other residues are invalidated
+/// by a change of residue connection numbering in this residue.  (Useful if we're calling this function from a
+/// context in which we know that we're going to update residue connections after the function call.)  Note that
+/// warnings are never suppressed if high verbosity is set (TR.Debug.visible() == true).
 void
-Residue::copy_residue_connections( Residue const & src_rsd )
-{
+Residue::copy_residue_connections(
+	Residue const & src_rsd,
+	bool const suppress_warnings/*=false*/
+) {
 
 	/// ASSUMPTION: if two residue types have the same number of residue connections,
 	// then their residue connections are "the same" residue connections.
@@ -618,7 +625,7 @@ Residue::copy_residue_connections( Residue const & src_rsd )
 							this_connid,
 							src_rsd.connect_map( ii ).resid(),
 							src_rsd.connect_map( ii ).connid() );
-						if ( this_connid != ii ) {
+						if ( this_connid != ii && TR.Warning.visible() && (TR.Debug.visible() || (!suppress_warnings) ) ) {
 							TR.Warning << "Residue connection id changed when creating a new residue at seqpos " << seqpos() << std::endl;
 							TR.Warning << "ResConnID info stored on the connected residue (residue " << src_rsd.connect_map( ii ).resid();
 							TR.Warning << ") is now out of date!" << std::endl;

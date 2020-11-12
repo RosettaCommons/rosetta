@@ -1345,9 +1345,13 @@ public:
 		return connect_map_[ resconn_index ].resid();
 	}
 
-	/// attempt to take residue connection info from src_rsd
+	/// @brief Attempt to take residue connection info from src_rsd
+	/// @details If suppress_warnings is true, we don't warn if residue connections on other residues are invalidated
+	/// by a change of residue connection numbering in this residue.  (Useful if we're calling this function from a
+	/// context in which we know that we're going to update residue connections after the function call.)  Note that
+	/// warnings are never suppressed if high verbosity is set (TR.Debug.visible() == true).
 	void
-	copy_residue_connections( Residue const & src_rsd );
+	copy_residue_connections( Residue const & src_rsd, bool const suppress_warnings=false );
 
 
 	/// @brief Returns the connection id on the OTHER residue connected to this residue at this residue's
