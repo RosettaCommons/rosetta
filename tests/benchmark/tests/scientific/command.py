@@ -142,7 +142,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         antibody_grafting    = 'numpy matplotlib',
         antibody_h3_modeling = 'numpy matplotlib',
-        antibody_snugdock    = 'numpy matplotlib',
+        antibody_snugdock    = 'numpy matplotlib pandas',
 
         loop_modeling_ngk_12res           = 'numpy matplotlib',
         loop_modeling_kic_fragments_12res = 'numpy matplotlib',

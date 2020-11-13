@@ -8,12 +8,13 @@
 # (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-## @file  cartesian_relax/2.analyze.py
-## @brief this script is part of cartesian_relax scientific test
-## @author Sergey Lyskov
+## @file  antibody_snugdock/2.analyze.py
+## @brief this script is part of antibody_snugdock scientific test
+## @author Jeliazko Jeliazkov
 
 import os, sys, subprocess, math
 import numpy as np
+import pandas as pd
 import benchmark
 from benchmark.util import quality_measures as qm
 
@@ -27,68 +28,72 @@ cutoffs_rmsd_dict = {}
 cutoffs_discrim_dict = {}
 failures = []
 
-# inputs are header labels from the scorefile, for instance "total_score" and "rmsd"
-# => it figures out the column numbers from there
-#x_label = "H3_new" # change to H3_RMS after testing
-x_label = "Irms"
-y_label = "I_sc"
+# name of output file and cutoff source file
 outfile = "result.txt"
 cutoffs = "cutoffs"
 
 # scorefiles and logfiles
 scorefiles.extend( [ f'{working_dir}/output/{t}/{t}_rmsd.sc' for t in targets ] )
 
-# get column numbers from labels, 1-indexed
-x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
-y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
-
 # read cutoffs
-protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
-cutoffs_rmsd = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
-cutoffs_discrim = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
-cutoffs_rmsd = map( float, cutoffs_rmsd )
-cutoffs_discrim = map( float, cutoffs_discrim )
-cutoffs_rmsd_dict.update( dict( zip ( protein, cutoffs_rmsd )))
-cutoffs_discrim_dict.update( dict( zip ( protein, cutoffs_discrim )))
+cutoff_df = pd.read_csv(cutoffs, sep='\t')
+# first col is the number of ** (CAPRI crit.) models in the top10 by I_sc
+# second col is the number of * (CAPRI crit.) models in the top10 by I_sc
+# final col is the min number of * (CAPRI crit.) models at all
 
 # open results output file
 f = open( outfile, "w" )
-f.write("target\t" + "min_rms\t" + "discrim\t\n") # min rms is of the interface
+f.write("target\t" + "top10_#2star\t" + "top10_#1star\t" + "overall_#1star\n") # min rms is of the interface
 
-# go through scorefiles of targets
+# go through scorefiles of targets and compare -- very hard coded -- sorry
 for i in range( 0, len( scorefiles ) ):
-	target_results = {}
+    test_pass = None
 
-	# read in score file, scores are sorted, first one is lowest
-	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
+    # read in score file, scores are sorted, first one is lowest
+    sf = pd.read_csv(scorefiles[i], skiprows=1, sep='\s+')
+    
+    # sort by I_sc
+    sf.sort_values(by=['I_sc'],inplace=True)
+    
+    # count number of structures in top 10 with capri criteria 2 or better
+    nb2 = sum(sf.loc[:,'CAPRI_rank'][:10] >= 2)
+    
+    # get index for comparison by pdb id
+    idx = cutoff_df[cutoff_df.iloc[:,0] == targets[i]].index
 
-	# map values to floats (were strings)
-	x = list( map( float, x )) # x is Irms
-	y = list( map( float, y )) # y is I_sc
+    # count number of structures at all with capri criteria 1 or better
+    # every structure should pass this
+    nb1_all = sum(sf.loc[:,'CAPRI_rank'] >= 1)
+    if nb1_all >= int(cutoff_df.loc[idx,'#n1']):
+        test_pass = True
+    
+    # only one of the two criteria below must be passed (limits failures due to noise)
 
-	# check for minimum RMSD below cutoff
-	target_results["min_rms"] = min(x)
-	f.write( targets[i] + "\t" + str(target_results["min_rms"]) + "\t" )
+    # compare to expected, if expected is 0, skip -- assumes length 1, but that should be the case
+    pass_one = False
+    if nb2 > int(cutoff_df.loc[idx,'#top_n2star']) and int(cutoff_df.loc[idx,'#top_n2star']) > 0:
+        pass_one = True
+    elif int(cutoff_df.loc[idx,'#top_n2star']) <= 0:
+        pass_one = True
+    
+    # count number of structures in top 10 with capri criteria 1 or better
+    nb1 = sum(sf.loc[:,'CAPRI_rank'][:10] >= 1)
+    # compare to expected, if expected is 0, skip -- assumes length 1 again
+    pass_two = False
+    if nb1 > int(cutoff_df.loc[idx,'#top_n1star']) and int(cutoff_df.loc[idx,'#top_n1star']) > 0:
+        pass_two = True
+    elif int(cutoff_df.loc[idx,'#top_n1star']) <= 0:
+        pass_two = True
+   
+    if not (pass_one or pass_two):
+        test_pass= False
 
-    # add to failues
-	if target_results["min_rms"] > cutoffs_rmsd_dict[targets[i]]:
-		failures.append( targets[i] )
-
-	# check for discrimination scores below cutoff -- can't do this in debug mode (really)
-	if config['debug']:
-		target_results["discrim"] = 0.0
-		print("debuggin!")
-	else: # [1, 2, 3, 4, 6] are the offsets from the min(rmsd) for discrim calculation
-		target_results["discrim"] = qm.calc_Conway_discrim_score( x, y, [0, 1, 2, 3, 4, 6] )
-	f.write( str(target_results["discrim"]) )
-
-    # add to failures
-	if target_results["discrim"] > cutoffs_discrim_dict[targets[i]]:
-		failures.append( targets[i] )
-
-	results.update( {targets[i] : target_results} )
-	f.write( "\n" )
+    if not test_pass:
+        failures.append( targets[i] )
+    
+    f.write(f'{targets[i]}\t{nb2}\t{nb1}\t{nb1_all}\n')
+    target_results = {'nb2':nb2, 'nb1':nb1, 'nb1_all':nb1_all}
+    results.update( {targets[i] : target_results} )
 
 f.close()
 

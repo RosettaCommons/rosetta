@@ -36,7 +36,10 @@ if len( failures ) > 0:
 else:
     _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
 _index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
-_index_html_template_ += '<img src="plot_results.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += "<p> Funnel plots are not used to assess quality, but may helpful to the user.</p>\n"
+_index_html_template_ += '<img src="funnel.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += "<p> Two conditions must be met to pass the test. (1) At least one model of acceptable quality must be among all models and (2) either enough medium quality or enough acceptable quality models are in the top 10 (lowest interface energy) models.</p>\n" 
+_index_html_template_ += '<img src="cc_qual.png" alt="alternative text" style="max-width: 100%">\n'
 
 # add text from readme
 for l in readme:
