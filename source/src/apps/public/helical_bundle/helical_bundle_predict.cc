@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file apps/pilot/vmullig/helical_bundle_predict.cc
+/// @file apps/public/helical_bundle/helical_bundle_predict.cc
 /// @brief An application that attempts to predict helical bundle structures, without using PDB fragments.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
@@ -40,8 +40,10 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>
 #include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
-static basic::Tracer TR("helical_bundle_predict");
+static basic::Tracer TR("apps.public.helical_bundle.helical_bundle_predict");
 
 
 /// @brief Indicate what options are relevant for this application.
@@ -138,14 +140,14 @@ main( int argc, char * argv [] )
 		std::string output_filename("");
 		core::Real lambda( 0.5 );
 		core::Real kbt( 1.0 );
-		core::Size threads_per_slave(1);
+		core::Size threads_per_worker(1);
 		bool compute_rmsd_to_lowest( false );
 		core::Real compute_pnear_to_lowest_fract(0.0);
 		bool compute_sasa_metrics( false );
 		protocols::cyclic_peptide_predict::set_MPI_vars(
 			MPI_rank, MPI_n_procs, total_hierarchy_levels, procs_per_hierarchy_level, batchsize_per_level,
 			sort_by, select_highest, output_fraction, output_filename, lambda, kbt, compute_rmsd_to_lowest,
-			compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_slave, "helical_bundle_predict"
+			compute_pnear_to_lowest_fract, compute_sasa_metrics, threads_per_worker, "helical_bundle_predict"
 		); //Get the values of these vars (only used in MPI mode).
 #endif
 
@@ -155,7 +157,7 @@ main( int argc, char * argv [] )
 			HelicalBundlePredictApplication::create_fullatom_scorefunction(), total_hierarchy_levels,
 			procs_per_hierarchy_level, batchsize_per_level, sort_by, select_highest, output_fraction,
 			output_filename, lambda, kbt, compute_rmsd_to_lowest, compute_pnear_to_lowest_fract, compute_sasa_metrics,
-			threads_per_slave
+			threads_per_worker
 		);
 		application.set_options( options );
 #else // !USEMPI
@@ -171,29 +173,50 @@ main( int argc, char * argv [] )
 				) {
 			TR << "Starting helical_bundle_predict application." << std::endl;
 			TR << "Application created 15 October 2018 by Vikram K. Mulligan, Flatiron Institute." << std::endl;
+			TR << "Note that this application is currently unpublished.  If you use it in a publication, please include the original author." << std::endl;
 			TR << "For questions, please contact vmulligan@flatironinstitute.org." << std::endl;
 		}
 
+		//Register with citation manager:
+		basic::citation_manager::CitationManager::get_instance()->add_citation(
+			utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+			"helical_bundle_predict",
+			basic::citation_manager::CitedModuleType::Application,
+			"Vikram K. Mulligan",
+			"Center for Computational Biology, Flatiron Institute",
+			"vmulligan@flatironinstitute.org",
+			"Wrote the application and developed the protocol."
+			)
+		);
+
 #ifdef USEMPI
+	if( MPI_rank == 0 ) {
 		TR << "The MPI mode of helical_bundle_predict is using " << MPI_n_procs << " MPI processes distributed into " << total_hierarchy_levels << " layers." << std::endl;
 #ifdef MULTI_THREADED
-		if( threads_per_slave > 1 ) {
-			TR << "Each process will launch " << threads_per_slave << " threads." << std::endl;
+		if( threads_per_worker > 1 ) {
+			TR << "Each process will launch " << threads_per_worker << " threads." << std::endl;
 		}
 #endif //MULTI_THREADED
+	}
 #endif //USEMPI
 
 		application.run();
 
+#ifdef USEMPI
+		if( MPI_rank == 0 )
+#endif
+		{
+			//Output from CitationManager:
+			basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
+			if ( TR.visible() ) {
+				TR << "Finished execution of helical_bundle_predict application." << std::endl;
+				TR.flush();
+			}
+		}
 
 	} catch ( utility::excn::Exception const & e ) {
 		std::cout << "caught exception " << e.msg() << std::endl;
 		return -1;
-	}
-
-	if ( TR.visible() ) {
-		TR << "Finished helical_bundle_predict.cc.  Exiting." << std::endl;
-		TR.flush();
 	}
 
 #ifdef USEMPI

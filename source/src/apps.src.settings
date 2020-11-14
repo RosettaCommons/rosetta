@@ -220,6 +220,9 @@ sources = {
 		"BuildPeptide",
 		"FlexPepDocking", # /* Barak,doc/public/flexpep_docking/barak/FlexPepDocking.dox, test/integration/tests/flexpepdock/ */
 	],
+	"public/helical_bundle" : [
+		"helical_bundle_predict",
+	],
 	"public/hydrate": [
 		"hydrate",
 	],
