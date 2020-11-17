@@ -510,13 +510,70 @@ if ($ncs_mode == 1) {
 	}
 
 	# find the equation for the energy of the complex
-	# simple version: "2" for self, "1" for all others
+	# we need to identify duplicates
 	my @syminterfaces = sort { $symminterface{$a} <=> $symminterface{$b} } keys %symminterface;
 	my %energy_counter;
 	foreach my $interface (@syminterfaces) {
 		$energy_counter{ $interface } = 1;
 	}
 	delete ($energy_counter{ $syminterfaces[0] });
+	# delete self-interface(???)
+	delete ($energy_counter{ $syminterfaces[0] });
+
+	##
+	OUTER1: foreach my $i (1..$#syminterfaces) {
+		next if (!defined  $energy_counter{ $syminterfaces[$i] } );
+
+		my $subtree_i = get_subtree ( $NCS_ops, $syminterfaces[ $i ] );
+		my $R_i = $subtree_i->{R};
+		my $T_i = vsub( $subtree_i->{T} , $COM_0 );
+
+		foreach my $j ($i+1..$#syminterfaces) {
+			my $subtree_j = get_subtree ( $NCS_ops, $syminterfaces[ $j ] );
+			my $R_j = $subtree_j->{R};
+			my $T_j = vsub( $subtree_j->{T} , $COM_0 );
+
+			# if transform i is the inverse of transform j we have our (i,j) pair
+			if ( is_inverse( $R_i,$T_i, $R_j,$T_j ) ) {
+				$energy_counter{ $syminterfaces[$i] } = 2;
+				delete ($energy_counter{ $syminterfaces[$j] });
+				next OUTER1;
+			}
+		}
+
+
+	}
+
+	# now, for each unique 1->n interface
+	# sum up the number of equivalent i->j interfaces
+	foreach my $i (1..scalar(@{ $symops })-1) {  # no need to test 0
+		my $symop_i = $symops->[$i];
+		my $R_i = $symop_i->{R};
+		my $T_i = vsub( $symop_i->{T} , $COM_0 );
+
+		foreach my $j ($i+1..scalar(@{ $symops })-1) {
+			my $symop_j = $symops->[$j];
+			my $R_j = $symop_j->{R};
+			my $T_j = vsub( $symop_j->{T} , $COM_0 );
+
+			foreach my $inter_n (keys %energy_counter) {
+				my $subtree_n = get_subtree ( $NCS_ops, $inter_n );
+				my $R_n = $subtree_n->{R};
+				my $T_n = vsub( $subtree_n->{T} , $COM_0 );
+
+				# is the transform (Rn,Tn) equivalent to the transform (Ri,Ti)->(Rj,Tj)
+				if ( is_equivalent( $R_n,$T_n, $R_i,$T_i, $R_j,$T_j ) ) {
+					$energy_counter{ $inter_n }++;
+					next;
+				}
+				# how about (Rj,Tj)->(Ri,Ti)
+				if ( is_equivalent( $R_n,$T_n, $R_j,$T_j, $R_i,$T_i ) ) {
+					$energy_counter{ $inter_n }++;
+					next;
+				}
+			}
+		}
+	}
 
 	## symm file gen
 	## write output symm file
@@ -1512,10 +1569,15 @@ if ($helix_mode == 1) {
 
     my $basetag = $symops->[0]->{PATH};
     print "connect_virtual JUMP0 VRT VRT_".(-$nsubunits_to_gen)."_".$basetag."\n";
-	foreach my $subunit (-$nsubunits_to_gen .. $nsubunits_to_gen) {
-        if ($subunit != -$nsubunits_to_gen) {
-            print "connect_virtual JUMP_".$subunit."_".$basetag." VRT_".($subunit-1)."_".$basetag." VRT_".$subunit."_".$basetag."\n";
-        }
+    # 1) build array of virtuals running up the helix
+	foreach my $subunit (-$nsubunits_to_gen+1 .. $nsubunits_to_gen) {
+    	print "connect_virtual JUMP_".$subunit."_".$basetag." VRT_".($subunit-1)."_".$basetag." VRT_".$subunit."_".$basetag."\n";
+	}
+
+
+    # 2) build each layer.  Make sure center subunit is generated first
+	foreach my $subunit (0 .. $nsubunits_to_gen) {
+		# plus direction
 		foreach my $symop (@{ $symops }) {
             if ($symop->{PATH} ne $basetag) {
                 print "connect_virtual JUMP_".$subunit."_".$symop->{PATH}." VRT_".$subunit."_".$basetag." VRT_".$subunit."_".$symop->{PATH}."\n";
@@ -1524,7 +1586,20 @@ if ($helix_mode == 1) {
                 print "connect_virtual JUMP_".$subunit."_".$symop->{PATH}."_to_sub VRT_".$subunit."_".$symop->{PATH}." SUBUNIT\n";
             }
         }
-    }
+
+        # minus direction
+        if ($subunit != 0) {
+			foreach my $symop (@{ $symops }) {
+	            if ($symop->{PATH} ne $basetag) {
+	                print "connect_virtual JUMP_".-$subunit."_".$symop->{PATH}." VRT_".-$subunit."_".$basetag." VRT_".-$subunit."_".$symop->{PATH}."\n";
+	            }
+	            if (defined $symminterface{$subunit}{$symop->{PATH}}) {
+	                print "connect_virtual JUMP_".-$subunit."_".$symop->{PATH}."_to_sub VRT_".-$subunit."_".$symop->{PATH}." SUBUNIT\n";
+	            }
+	        }
+        }
+	}
+
 	if ($rbminAll == 1) {
 		print "set_dof JUMP0 x y z angle_x angle_y angle_z\n";
 	}
