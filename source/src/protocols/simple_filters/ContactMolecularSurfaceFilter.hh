@@ -125,6 +125,8 @@ private:
 private:
 	Real filtered_area_;
 	Real distance_weight_;
+	Real near_squared_size_;
+	bool apolar_target_;
 	bool quick_ = false;
 	bool verbose_ = false;
 	core::select::residue_selector::ResidueSelectorCOP selector1_;

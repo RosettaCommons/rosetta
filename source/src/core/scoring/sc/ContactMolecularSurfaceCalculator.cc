@@ -126,6 +126,33 @@ int ContactMolecularSurfaceCalculator::AssignAttentionNumbers(std::vector<Atom> 
 	return 1;
 }
 
+void
+get_n_neighbors(
+	DOT const &dot1,
+	std::vector<DOT> const &dots,
+	Real distance,
+	std::vector<Size> & neighbors,
+	Size & n_neighbors
+) {
+	Real distance2 = distance*distance;
+	MolecularSurfaceCalculator::ScValue d;
+
+	n_neighbors = 0;
+	for ( Size idot = 0; idot < dots.size(); idot++ ) {
+		DOT const &dot2 = dots[idot];
+		if ( !dot2.buried ) continue;
+
+		d = dot2.coor.distance_squared(dot1.coor);
+
+		if ( d > 0.001 && d < distance2 ) {
+			neighbors[n_neighbors++] = idot;
+			if ( n_neighbors == neighbors.size() ) {
+				neighbors.resize( neighbors.size() * 2, 0 );
+			}
+		}
+	}
+}
+
 
 ContactMolecularSurfaceCalculator::ScValue ContactMolecularSurfaceCalculator::CalcContactMolecularSurface(
 	std::vector<DOT> const & my_dots,
@@ -140,14 +167,47 @@ ContactMolecularSurfaceCalculator::ScValue ContactMolecularSurfaceCalculator::Ca
 		if ( dot.buried ) buried_their_dots.push_back( &dot );
 	}
 
-	for ( auto idot = my_dots.begin(); idot < my_dots.end(); ++idot ) {
-		DOT const &dot = *idot;
+	std::vector<Real> areas( my_dots.size(), 0.0 );
+
+	for ( Size idot = 0; idot < my_dots.size(); idot++ ) {
+		DOT const &dot = my_dots[idot];
 		if ( !dot.buried ) continue;
 		DOT const *neighbor = nullptr;
 		neighbor = CalcNeighborDistanceFindClosestNeighbor(dot, buried_their_dots);
 		if ( !neighbor ) continue;
 		ScValue distmin = neighbor->coor.distance(dot.coor);
-		area += dot.area * exp( - pow(distmin, 2) * settings.weight );
+		areas[idot] = dot.area * exp( - pow(distmin, 2) * settings.weight );
+		area += areas[idot];
+	}
+
+
+	if ( settings.near_squared_size > 0 ) {
+		// slow af, maybe make faster someday
+
+		// hopefull this won't overflow, no worries if it does though
+		std::vector<Size> neighbors(10000);
+		Size n_neighbors = 0;
+		area = 0;
+
+		for ( Size idot = 0; idot < my_dots.size(); idot++ ) {
+			DOT const &dot = my_dots[idot];
+			if ( !dot.buried ) continue;
+
+			n_neighbors = 0;
+			get_n_neighbors(dot, my_dots, settings.near_squared_size, neighbors, n_neighbors);
+
+			Real this_sum = 0;
+			for ( Size indot = 0; indot < n_neighbors; indot++ ) {
+				Size ndot = neighbors[indot];
+				this_sum += areas[ndot];
+			}
+
+			area += this_sum*this_sum;
+		}
+
+		area = std::sqrt( area );
+
+
 	}
 	return area;
 }

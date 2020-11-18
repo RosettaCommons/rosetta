@@ -293,7 +293,8 @@ int MolecularSurfaceCalculator::ReadScRadii()
 
 core::Size MolecularSurfaceCalculator::AddResidue(
 	int molecule,
-	core::conformation::Residue const & residue)
+	core::conformation::Residue const & residue,
+	bool apolar_only)
 {
 	std::vector<Atom> scatoms;
 
@@ -311,6 +312,8 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 
 		// Skip metal atoms (for now -- add support later):
 		if ( residue.type().is_metal() ) continue;
+
+		if ( apolar_only && ( residue.atom_type(i).is_acceptor() || residue.atom_type(i).is_donor() ) ) continue;
 
 		Atom scatom;
 		numeric::xyzVector<Real> xyz = residue.xyz(i);

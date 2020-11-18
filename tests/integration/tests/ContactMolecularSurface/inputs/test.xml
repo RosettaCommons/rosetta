@@ -5,8 +5,12 @@
     </RESIDUE_SELECTORS>
    	<FILTERS>
         <ContactMolecularSurface name="contact_molecular_surface" distance_weight="0.5" target_selector="chainH" binder_selector="chainL" confidence="0" />
+        <ContactMolecularSurface name="contact_molecular_surface_ap" distance_weight="0.5" target_selector="chainH" binder_selector="chainL" confidence="0" apolar_target="true"/>
+        <ContactMolecularSurface name="contact_molecular_surface_sq5" distance_weight="0.5" target_selector="chainH" binder_selector="chainL" confidence="0" near_squared_size="5"/>
 	</FILTERS>
 	<PROTOCOLS>
 		<Add filter="contact_molecular_surface"/>
+        <Add filter="contact_molecular_surface_ap"/>
+        <Add filter="contact_molecular_surface_sq5"/>
 	</PROTOCOLS>
 </ROSETTASCRIPTS>

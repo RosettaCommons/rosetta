@@ -198,6 +198,7 @@ public:
 		core::Real weight;
 		core::Real binwidth_dist;
 		core::Real binwidth_norm;
+		core::Real near_squared_size;
 
 #ifdef USEOPENCL
 		core::SSize gpu;
@@ -214,7 +215,7 @@ public:
 #else
 	int AddAtom(int molecule, Atom &atom);
 #endif
-	core::Size AddResidue(int molecule, core::conformation::Residue const &residue);
+	core::Size AddResidue(int molecule, core::conformation::Residue const &residue, bool apolar_only=false);
 
 	/// @brief Generate molecular surfaces for the given pose.
 	///// @details

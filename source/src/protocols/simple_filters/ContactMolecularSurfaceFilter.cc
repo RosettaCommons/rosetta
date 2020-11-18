@@ -52,6 +52,8 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter():
 	Filter( "ContactMolecularSurface" ),
 	filtered_area_( 250 ),
 	distance_weight_( 1 ),
+	near_squared_size_( 0 ),
+	apolar_target_( false ),
 	quick_( false ),
 	verbose_( false ),
 	selector1_(),
@@ -65,6 +67,8 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filte
 	Filter( "ContactMolecularSurface" ),
 	filtered_area_( filtered_area ),
 	distance_weight_( distance_weight ),
+	near_squared_size_( 0 ),
+	apolar_target_( false ),
 	quick_( quick ),
 	verbose_( verbose ),
 	selector1_(),
@@ -95,6 +99,7 @@ ContactMolecularSurfaceFilter::compute( Pose const & pose ) const
 	}
 
 	scc.settings.weight = distance_weight_;
+	scc.settings.near_squared_size = near_squared_size_;
 	if ( quick_ ) {
 		scc.settings.density = 5.0;
 	}
@@ -169,8 +174,10 @@ ContactMolecularSurfaceFilter::parse_my_tag(
 ) {
 	filtered_area_ = tag->getOption<Real>( "min_interface", 1.0 );
 	distance_weight_ = tag->getOption<Real>( "distance_weight", 1.0 );
+	near_squared_size_ = tag->getOption<Real>( "near_squared_size", 0.0 );
 	verbose_ = tag->getOption<bool>( "verbose", false );
 	quick_ = tag->getOption<bool>( "quick", false );
+	apolar_target_ = tag->getOption<bool>( "apolar_target", false );
 
 	std::string const selector1name = tag->getOption< std::string >( "target_selector", "" );
 	if ( !selector1name.empty() ) selector1_ = core::select::residue_selector::get_residue_selector( selector1name, data );
@@ -216,7 +223,7 @@ ContactMolecularSurfaceFilter::setup_from_selectors( Pose const & pose, ContactM
 	}
 
 	for ( core::Size r : residues1 ) {
-		scc.AddResidue( 0, pose.residue( r ) );
+		scc.AddResidue( 0, pose.residue( r ), apolar_target_ );
 	}
 
 	for ( core::Size r : residues2 ) {
@@ -238,9 +245,11 @@ void ContactMolecularSurfaceFilter::provide_xml_schema( utility::tag::XMLSchemaD
 	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "min_interface" , xsct_real , "The filter fails is the calculated interface area is less than the given value." , "0" )
-		+ XMLSchemaAttribute::attribute_w_default( "distance_weight" , xsct_real , "The weight factor of the cloest distance between the distance that is multiplied by the area by each surface dot." , "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "distance_weight" , xsct_real , "The weight factor of the cloest distance betweent the distance that is multiplied by the area by each surface dot." , "1.0" )
+		+ XMLSchemaAttribute::attribute_w_default( "near_squared_size" , xsct_real , "The weight factor of the cloest distance betweent the distance that is multiplied by the area by each surface dot." , "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If true, print extra calculation details to the tracer." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "quick" , xsct_rosetta_bool , "If true, do a quicker, less accurate calculation by reducing the density." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "apolar_target" , xsct_rosetta_bool , "Only look at non-polar atoms on the target side." , "false" )
 		+ XMLSchemaAttribute( "target_selector" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
 		+ XMLSchemaAttribute( "binder_selector" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
 
