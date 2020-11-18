@@ -420,7 +420,7 @@ void MinMover::parse_movemap_factory( TagCOP const tag, basic::datacache::DataMa
 		// string 'ALL' makes all jumps movable
 		if ( jumps.size() == 1 && (jumps[1] == "ALL" || jumps[1] == "All" || jumps[1] == "all" || jumps[1] == "*") ) {
 			mmf->all_jumps( true );
-		// int 0 makes all jumps unmovable
+			// int 0 makes all jumps unmovable
 		} else if ( jumps.size() == 1 && std::atoi( jumps[1].c_str() ) == 0 ) {
 			mmf->all_jumps( false );
 		} else {
