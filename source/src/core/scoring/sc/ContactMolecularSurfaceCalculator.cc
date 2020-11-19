@@ -175,8 +175,8 @@ ContactMolecularSurfaceCalculator::ScValue ContactMolecularSurfaceCalculator::Ca
 		DOT const *neighbor = nullptr;
 		neighbor = CalcNeighborDistanceFindClosestNeighbor(dot, buried_their_dots);
 		if ( !neighbor ) continue;
-		ScValue distmin = neighbor->coor.distance(dot.coor);
-		areas[idot] = dot.area * exp( - pow(distmin, 2) * settings.weight );
+		ScValue distmin = neighbor->coor.distance_squared(dot.coor);
+		areas[idot] = dot.area * exp( -distmin * settings.weight );
 		area += areas[idot];
 	}
 
