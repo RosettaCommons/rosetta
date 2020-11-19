@@ -439,9 +439,12 @@ FilterScanFilter::apply(core::pose::Pose const & p ) const
 		using namespace ObjexxFCL::format;
 		for ( std::map< std::pair< core::Size, AA >, std::pair< core::Real, bool > >::const_iterator pair = residue_id_val_map.begin(); pair != residue_id_val_map.end(); ++pair ) {
 			core::conformation::Residue const native_res( pose.conformation().residue( pair->first.first ) );
-			scorefile << pair->first.first << '\t'
-				<< p.residue( pair->first.first ).name1() <<'\t'
-				<< oneletter_code_from_aa( pair->first.second )<<'\t'
+			scorefile << pair->first.first << log_separator_;
+			if ( log_pdb_number_ ) {
+				scorefile << p.pdb_info()->number(pair->first.first) << log_separator_;
+			}
+			scorefile << p.residue( pair->first.first ).name1() << log_separator_
+				<< oneletter_code_from_aa( pair->first.second )<< log_separator_
 				<< F(9,6, pair->second.first) <<std::endl;
 		}
 		scorefile.close();
@@ -536,6 +539,9 @@ FilterScanFilter::parse_my_tag( utility::tag::TagCOP tag,
 	dump_pdb( tag->getOption< bool >( "dump_pdb", false ) );
 	runtime_assert( !(dump_pdb_name_ != "" && !dump_pdb() ) );
 
+	log_pdb_number(tag->getOption<bool>("log_pdb_number", false));
+	log_separator(tag->getOption<std::string>("log_separator", "\t"));
+
 	utility::vector1< std::string > delta_filter_names;
 	delta_filter_names.clear();
 	if ( tag->hasOption( "delta_filters" ) ) {
@@ -616,6 +622,8 @@ void FilterScanFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 		+ XMLSchemaAttribute::attribute_w_default( "dump_pdb", xsct_rosetta_bool, "Dump PDBs", "false" )
 		+ XMLSchemaAttribute( "delta_filters", xs_string, "Comma-separated list of filters to run" )
 		+ XMLSchemaAttribute( "delta_filter_thresholds", xsct_real_cslist, "Comma-separated list of filter thresholds" );
+	attlist + XMLSchemaAttribute::attribute_w_default("log_pdb_number", xsct_rosetta_bool, "Does score log includes pdb numbering", "false")
+		+ XMLSchemaAttribute::attribute_w_default("log_separator", xs_string, "Which seperator character to use in score log", "\t");
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Scan all mutations allowed by a particular set of TaskOperations and test them against a filter", attlist );
 }

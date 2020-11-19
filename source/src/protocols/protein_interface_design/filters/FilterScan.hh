@@ -107,6 +107,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	bool log_pdb_number() const{ return log_pdb_number_; }
+	void log_pdb_number( bool const log ){ log_pdb_number_ = log; }
+
+	std::string log_separator() const{ return log_separator_; }
+	void log_separator( std::string const & sep ){ log_separator_ = sep; }
+
 private:
 	core::pack::task::TaskFactoryOP task_factory_;
 	protocols::filters::FilterOP triage_filter_;//dflt null; mutations that are categorically rejected, no matter what
@@ -127,6 +133,8 @@ private:
 	std::string dump_pdb_name_; //dflt "" ; give a user-defined name to the dumped-pdbs
 	bool keep_native_; // dflt false ; always write the native residue into the resfile
 	utility::vector1< core::Real > delta_filter_thresholds_; //dflt empty; in case you want to write resfiles for a variety of energy cutoffs
+	bool log_pdb_number_;
+	std::string log_separator_;
 };
 
 } // filters
