@@ -25,6 +25,7 @@ sources = {
 		"OrderedTuple",
 		"recent_history_queue",
 		"simulate_mpi",
+		"small_vector1",
 		"sort.functions",
 		"string_util",
 		'type_traits',
