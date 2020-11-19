@@ -26,6 +26,7 @@
 
 #include <iosfwd>
 #include <utility/json_utilities.hh>
+#include <utility/io/ozstream.hh>
 
 //Auto Headers
 #include <utility/vector1.hh>
@@ -131,6 +132,11 @@ public:
         }
     }
 
+    void
+    set_tag(std::string newtag){
+        tag_ = newtag;
+    }
+
     //@brief returns a json object with the data stored in this mutation set.
     nlohmann::json
     to_json(core::pose::Pose & pose);
@@ -142,6 +148,7 @@ private:
     utility::vector1<char> wild_types_; //One letter code of the matching wild type residues;
 	std::map<core::Size,core::fragment::FragSetOP> fragments_;//These are the fragments used to optimize proline
 	utility::vector1<core::Real> scores_; //Scores for this mutation set
+    std::string tag_ = "";
 };
 
 utility::vector1<core::Size>
@@ -189,9 +196,46 @@ optimize_native(
 	core::pose::Pose & pose,
 	core::scoring::ScoreFunctionOP fa_scorefxn,
     const bool flex_bb,
+	const core::Size bbnbrs,
+	utility::io::ozstream ofp,
+    core::Size ncycles,
+    std::string jsonout,
+    nlohmann::json & results_json,
 	const bool cartesian=true,
-	const core::Size bbnbrs=0,
     const core::Real heavyatom_distance_threshold = 6
+);
+
+///@brief Separates the two interfaces and then runs the optimazation calcuations and writes the results.
+void
+interface_separate_and_score(
+    MutationSet mutations, 
+    core::pose::Pose & work_pose, 
+    core::scoring::ScoreFunctionOP score_fxn,
+    utility::vector1< core::Size > neighbors,
+    const core::Size bbnbrs, 
+    const core::Size interface_ddg,
+    bool flex_bb,
+    bool cartesian,
+	utility::io::ozstream & ofp
+);
+
+///@brief Runs a single mutation optimization and reporting iteration.
+void
+run_single_iteration(
+    MutationSet mutations, 
+    core::pose::Pose & work_pose, 
+    core::scoring::ScoreFunctionOP score_fxn,
+    const core::Size round,
+    utility::vector1< core::Size > neighbors,
+    const core::Size bbnbrs, 
+    const core::Size ncycles, 
+    const core::Size interface_ddg,
+    bool flex_bb,
+    bool cartesian,
+	utility::io::ozstream & ofp,
+    std::string jsonout,
+	nlohmann::json & results_json,
+    nlohmann::json & mutationset_results
 );
 
 /// @brief Cartesian Minimizer the residues in the set
