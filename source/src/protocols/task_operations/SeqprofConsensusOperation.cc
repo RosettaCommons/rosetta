@@ -57,6 +57,7 @@
 // C++ headers
 #include <string>
 #include <functional>
+#include <vector>
 
 static basic::Tracer tr( "protocols.task_operations.SeqprofConsensusOperation" );
 
@@ -100,13 +101,14 @@ SeqprofConsensusOperation::SeqprofConsensusOperation():
 	restrict_to_repacking_(true)
 
 {
+	use_occurrence_data_ = basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value();
 	if ( basic::options::option[ basic::options::OptionKeys::in::file::pssm ].user() ) {
 		seqprof_filename_ = basic::options::option[ basic::options::OptionKeys::in::file::pssm ][1];
 	} else {
 		seqprof_filename_ = "";
 	}
 	if ( utility::file::file_exists( seqprof_filename_ ) ) {
-		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_ ) );
+		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_ , use_occurrence_data_) );
 		seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		seqprof_ = seqprof;
 	}
@@ -141,41 +143,7 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 
 	SequenceProfileOP seqprof = seqprof_;
 	if ( !seqprof ) {
-		seqprof = utility::pointer::make_shared< core::sequence::SequenceProfile >();
-		tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
-
-		core::pose::PoseOP chain;
-		ConstraintCOPs constraints;
-		if ( chain_num_ ) {
-			chain = pose.split_by_chain( chain_num_ );
-			constraints = chain->constraint_set()->get_all_constraints();
-			tr<<"total number of residues in chain:"<<chain->size()<<std::endl;
-			tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
-		} else {
-			constraints = pose.constraint_set()->get_all_constraints();
-			tr<<"total number of residues in pose:"<<pose.size()<<std::endl;
-			tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
-		}
-
-		core::Size cst_num( 0 );
-		for ( ConstraintCOP c : constraints ) {
-			if ( c->type() == "SequenceProfile" ) {
-				SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
-				runtime_assert( seqprof_cst != nullptr );
-				core::Size const seqpos( seqprof_cst->seqpos() );
-				SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
-				seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
-				if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
-
-					seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
-					tr<<"Testing occurence_data for pos "<<seqpos<<std::endl;
-					tr<<seqprof_pos->occurrence_data()[ seqpos ]<<std::endl;
-
-				}
-				cst_num++;
-			}
-		}
-		tr<<"Added "<<cst_num<<" sequence profile positions to seqprof, taken from the pose's SequenceProfile constraints"<<std::endl;
+		seqprof = parse_profile_from_pose(pose);
 	}
 	if ( !seqprof ) {
 		utility_exit_with_message("No sequence profile set. option -in:file:pssm not specified? no filename in tag specified? Sequence profile constraints not added to pose by other movers/filters?");
@@ -189,7 +157,6 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		auto const & SymmConf (
 			dynamic_cast<core::conformation::symmetry::SymmetricConformation const &> ( pose.conformation()) );
 		asymmetric_unit_res = SymmConf.Symmetry_Info()->num_independent_residues();
-		//  task.request_symmetrize_by_intersection();
 	} else {
 		tr<<"Pose is NOT--SYMMETRIC!!!"<<std::endl;
 		last_res = asymmetric_unit_res <= seqprof->profile().size() ? pose.size() : seqprof->profile().size() - 1 /*seqprof has size n+1 compared to its real contents; heaven knows why...*/;
@@ -214,118 +181,74 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 	}
 	tr<<"Allowing the following identities:"<<std::endl;
 
+	utility::vector1<core::Size> chain_aas;
 	core::Size const resi_begin = ( chain_num_ == 0 ? 1 : pose.conformation().chain_begin( chain_num_ ) );
 	core::Size const resi_end   = ( chain_num_ == 0 ? pose.size() : pose.conformation().chain_end( chain_num_ ) );
 
-	runtime_assert( (seqprof->profile()).size()>=resi_end - resi_begin );
-
 	for ( core::Size i = resi_begin; i <= resi_end; ++i ) {
+		if ( !pose.residue_type( i ).is_protein() ) continue;
+		if ( chain_num_ != 0 and pose.residue( i ).chain() != chain_num_ ) continue;
+		chain_aas.push_back(i);
+	}
+
+	runtime_assert( (seqprof->profile()).size()>=chain_aas.size());
+
+	for ( auto aa_idx : chain_aas ) {
+
+		if ( !pose.residue_type( aa_idx ).is_protein() ) continue;
+
+		if ( use_occurrence_data_ && protein_interface_design() != nullptr &&
+				std::find(designable_interface.begin(), designable_interface.end(), aa_idx) != designable_interface.end() ) {
+			tr << "Residue " << aa_idx << " is in the interface, not applying occurrence data" << std::endl;
+			continue;
+		}
 
 		core::Real position_min_prob = min_aa_probability_;
-		if ( protein_interface_design() != nullptr && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
+		if ( protein_interface_design() != nullptr && std::find( designable_interface.begin(), designable_interface.end(), aa_idx ) != designable_interface.end() ) {
 			position_min_prob = conservation_cutoff_protein_interface_design();
-		} else if ( restrict_to_aligned_segments() != nullptr && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
+		} else if ( restrict_to_aligned_segments() != nullptr && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), aa_idx ) != designable_aligned_segments.end() ) {
 			position_min_prob = conservation_cutoff_aligned_segments();
 		}
 
 		if ( debug() ) {
-			tr<<"At position "<<i<<", min_probability is: "<<position_min_prob<<std::endl;
+			tr<<"At position "<<aa_idx<<", min_probability is: "<<position_min_prob;
+			if ( use_occurrence_data_ ) tr<<", using occurrence cutoff of 0";
+			tr<<"."<<std::endl;
 		}
 
-		if ( !pose.residue_type( i ).is_protein() ) continue;
-		//std::cout << "SCO at pos " << i << " allows the following residues: ";
-		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
-		//actual aa proballities and not pssm scores
-
+		utility::vector1< Real > const & pos_profile( (seqprof->profile())[ aa_idx - resi_begin + 1 ] );
 		utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
-		runtime_assert( pose.residue_type( i ).aa() <= (int) pos_profile.size() );
-		core::Real current_prob( pos_profile[ pose.residue_type( i ).aa() ] );
-		core::Real max_prob( -1000.0 ); // at this position, what is the maximal probability for a residue? these identities should always be allowed in design
-		for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
-			if ( max_prob <= pos_profile[ aa ] ) {
-				max_prob = pos_profile[ aa ];
-			}
-		}
-		for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
-			core::Real prob( pos_profile[ aa ] );
-			if ( prob >= position_min_prob || prob >= max_prob ) {
-				if ( prob_larger_current_ ) {
-					if ( prob >= current_prob ) keep_aas[ aa ] = true;
-				} else keep_aas[ aa ] = true;
-				//std::cout << " " << static_cast<core::chemical::AA>(aa) << " prob=" << prob << ", ";
-			}
-			if ( keep_native_ ) {
-				keep_aas[ pose.residue_type(i).aa() ] = true;
-			}
-			if ( keep_aas[ aa ] && debug() ) {
-				tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
-			}
-		}
+		runtime_assert( pose.residue_type( aa_idx ).aa() <= (int) pos_profile.size() );
+		aa_probability_filter(pose, pos_profile, position_min_prob, aa_idx, keep_aas);
+
+		task.nonconst_residue_task(aa_idx).restrict_absent_canonical_aas( keep_aas );
 		if ( debug() ) {
+			tr<<"After probability filter the following AAs are allowed: ";
+			for ( core::Size aa = core::chemical::aa_ala; aa <= keep_aas.size(); ++aa ) {
+				if ( keep_aas[aa] ) tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
+			}
 			tr<<std::endl;
 		}
-		//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
 
-		task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
+		if ( use_occurrence_data_ ) {
+			utility::vector1< Real > const & pos_occurrence( (seqprof->occurrence_data())[ aa_idx - resi_begin + 1 ] );
+			runtime_assert( pose.residue_type( aa_idx ).aa() <= (int) pos_occurrence.size() );
+			// Using hard-coded minimum occurrence at this point
+			aa_occurrence_filter(pos_occurrence, 0, keep_aas);
 
-	} //loop over all residues for which profile information exists
+			task.nonconst_residue_task(aa_idx).restrict_absent_canonical_aas( keep_aas );
 
-	if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
-		for ( core::Size i = resi_begin; i <= resi_end; ++i ) {
-			//for all non interface reisdues we allow only reidues that acctualy appear in native proteins.
-			if ( protein_interface_design() != nullptr && std::find( designable_interface.begin(), designable_interface.end(), i ) != designable_interface.end() ) {
-				tr <<"Residue "<<i<<" is in the interface, not applying occurrence data"<<std::endl;
-				continue;
-			}
-			utility::vector1< Real > const & pos_probability( (seqprof->occurrence_data())[ i - resi_begin + 1 ] );
-			utility::vector1< bool > keep_aas( core::chemical::num_canonical_aas, false );
-
-			// tr<<"The size for the probabilty vector is:"<<pos_probability.size()<<std::endl;
-
-			if ( !pose.residue_type( i ).is_protein() ) continue;
-			runtime_assert( pose.residue_type( i ).aa() <= (int) pos_probability.size() );
-			bool has_probabilty=false;
-			for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
-				if ( pos_probability[ aa ] >0 ) {
-					has_probabilty=true;
-				}
-			}
-			if ( has_probabilty ) {
-				for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
-					core::Real prob( pos_probability[ aa ] );
-					if ( prob >0 ) {
-						keep_aas[ aa ] = true;
-					}
-					if ( keep_aas[ aa ] && debug() ) {
-						tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
-					}
-				}
-			} else { //if profile doesn't have probability data we revert to using pssm data
-				core::Real position_min_prob = min_aa_probability_;
-				if ( restrict_to_aligned_segments() != nullptr && std::find( designable_aligned_segments.begin(), designable_aligned_segments.end(), i ) != designable_aligned_segments.end() ) {
-					position_min_prob = conservation_cutoff_aligned_segments();
-				}
-				utility::vector1< Real > const & pos_profile( (seqprof->profile())[ i - resi_begin + 1 ] );
-
-				for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
-					core::Real prob( pos_profile[ aa ] );
-					if ( prob >= position_min_prob  ) {
-						keep_aas[ aa ] = true;
-					}
-					if ( keep_aas[ aa ] && debug() ) {
-						tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
-					}
-				}
-			}
 			if ( debug() ) {
+				tr<<"After occurrence filter the following AAs are allowed: ";
+				for ( core::Size aa = core::chemical::aa_ala; aa <= keep_aas.size(); ++aa ) {
+					if ( keep_aas[aa] ) tr<<core::chemical::oneletter_code_from_aa( static_cast< core::chemical::AA >( aa ) );
+				}
 				tr<<std::endl;
 			}
-			//std::cout << " native " << pose.residue_type(i).aa() << " prob=" << native_prob << "." << std::endl;
+		}
 
-			task.nonconst_residue_task(i).restrict_absent_canonical_aas( keep_aas );
+	} //loop over all residues for which profile or occurrence information exists
 
-		} //loop over all residues for which profile information exists
-	}
 	bool prot_res_without_profile_information_exist(false);
 	for ( core::Size i = last_res + 1; i <= asymmetric_unit_res; ++i ) {
 		if ( restrict_to_repacking_ ) { // Gideon Oct14, For cases where we want residues that don't have sequence constraints to design
@@ -334,22 +257,111 @@ SeqprofConsensusOperation::apply( Pose const & pose, PackerTask & task ) const
 		if ( pose.residue_type( i ).is_protein() ) prot_res_without_profile_information_exist = true;
 	}
 
-	if ( prot_res_without_profile_information_exist ) {
-		if ( ignore_pose_profile_length_mismatch_ ) tr.Warning << tr.bgRed << "the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."<<tr.Reset<<std::endl;
-
-		else utility_exit_with_message("The passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct.");
+	// Left to keep old scripts and code from breaking
+	if ( chain_num_ == 0 ) {
+		if ( prot_res_without_profile_information_exist ) {
+			if ( ignore_pose_profile_length_mismatch_ ) {
+				tr.Warning << basic::Tracer::bgRed
+					<< "the passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct. Setting every excess pose residue to repacking."
+					<< basic::Tracer::Reset << std::endl;
+			} else {
+				utility_exit_with_message(
+					"The passed in pose is longer than the sequence profile specified. Double check whether the used sequence profile is correct.");
+			}
+		}
 	}
 } // apply
+
+core::sequence::SequenceProfileOP
+SeqprofConsensusOperation::parse_profile_from_pose( Pose const & pose ) const {
+	using namespace core::scoring::constraints;
+	using namespace core::sequence;
+
+	SequenceProfileOP seqprof;
+	tr<<"Sequence profile was not set until now. Attempting to read sequence profile from the pose's sequenceprofile constraints..."<<std::endl;
+
+	core::pose::PoseOP chain;
+	ConstraintCOPs constraints;
+	if ( chain_num_ ) {
+		chain = pose.split_by_chain( chain_num_ );
+		constraints = chain->constraint_set()->get_all_constraints();
+		tr<<"total number of residues in chain:"<<chain->size()<<std::endl;
+		tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+	} else {
+		constraints = pose.constraint_set()->get_all_constraints();
+		tr<<"total number of residues in pose:"<<pose.size()<<std::endl;
+		tr<<"Total number of constraints in pose: "<<constraints.size()<<std::endl;
+	}
+
+	core::Size cst_num( 0 );
+	for ( ConstraintCOP c : constraints ) {
+		if ( c->type() == "SequenceProfile" ) {
+			SequenceProfileConstraintCOP seqprof_cst( utility::pointer::dynamic_pointer_cast< core::scoring::constraints::SequenceProfileConstraint const > ( c ) );
+			runtime_assert( seqprof_cst != nullptr );
+			core::Size const seqpos( seqprof_cst->seqpos() );
+			SequenceProfileCOP seqprof_pos( seqprof_cst->sequence_profile() );
+			seqprof->prof_row( seqprof_pos->profile()[ seqpos ], seqpos );
+			if ( use_occurrence_data_ ) {
+
+				seqprof->probabilty_row( seqprof_pos->occurrence_data()[ seqpos ], seqpos );
+				tr<<"Testing occurence_data for pos "<<seqpos<<std::endl;
+				tr<<seqprof_pos->occurrence_data()[ seqpos ]<<std::endl;
+
+			}
+			cst_num++;
+		}
+	}
+	tr<<"Added "<<cst_num<<" sequence profile positions to seqprof, taken from the pose's SequenceProfile constraints"<<std::endl;
+	return seqprof;
+}
+
+void
+SeqprofConsensusOperation::aa_probability_filter(Pose const &pose, utility::vector1<Real> const &pos_profile,
+	core::Real const position_min_prob, core::Size const aa_idx,
+	utility::vector1<bool> &keep_aas
+) const {
+	runtime_assert(pose.residue_type(aa_idx).aa() <= (int) pos_profile.size());
+	core::Real current_prob(pos_profile[pose.residue_type(aa_idx).aa()]);
+	core::Real max_prob(-1000.0); // at this position, what is the maximal probability for a residue? these identities should always be allowed in design
+	for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
+		if ( max_prob <= pos_profile[aa] ) {
+			max_prob = pos_profile[aa];
+		}
+	}
+	for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
+		core::Real prob(pos_profile[aa]);
+		if ( prob >= position_min_prob || prob >= max_prob ) {
+			if ( prob_larger_current_ ) {
+				if ( prob >= current_prob ) keep_aas[aa] = true;
+			} else keep_aas[aa] = true;
+		}
+		if ( keep_native_ ) {
+			keep_aas[pose.residue_type(aa_idx).aa()] = true;
+		}
+	}
+}
+
+void
+SeqprofConsensusOperation::aa_occurrence_filter(utility::vector1<Real> const &pos_occurrence,
+	core::Real const pos_min_occurrence,
+	utility::vector1<bool> &keep_aas) {
+	for ( core::Size aa = core::chemical::aa_ala; aa <= core::chemical::num_canonical_aas; ++aa ) {
+		if ( pos_occurrence[aa] <= pos_min_occurrence ) {
+			keep_aas[aa] = false;
+		}
+	}
+}
 
 void
 SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 {
+	use_occurrence_data_=tag->getOption< bool >("use_occurrence_data", use_occurrence_data_  );
 	restrict_to_repacking_=tag->getOption< bool >("restrict_to_repacking", true  );
 	convert_scores_to_probabilities( tag->getOption< bool >("convert_scores_to_probabilities", true  ) );
 	if ( tag->hasOption("filename") ) {
 		seqprof_filename_ = tag->getOption< String >( "filename" );
 		tr<<"Loading seqprof from a file named: "<<seqprof_filename_<<std::endl;
-		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_ ) );
+		core::sequence::SequenceProfileOP seqprof( new core::sequence::SequenceProfile( seqprof_filename_, use_occurrence_data_ ) );
 		if ( convert_scores_to_probabilities() ) {
 			seqprof->convert_profile_to_probs(); // was previously implicit in from-filename constructor
 		}
@@ -382,12 +394,12 @@ SeqprofConsensusOperation::parse_tag( TagCOP tag , DataMap & datamap )
 			utility_exit_with_message( "SeqprofConsensus subtag not recognized: " + sub_tag->getName() );
 		}
 	}//foreach
-	if ( !(conservation_cutoff_protein_interface_design() <= conservation_cutoff_aligned_segments() ) ) {
-		tr<<tr.bgRed<<"WARNING! conservation_cutoff_protein_interface_design() > conservation_cutoff_aligned_segments() "<<tr.Reset<<std::endl;
+	if ( conservation_cutoff_protein_interface_design() > conservation_cutoff_aligned_segments() ) {
+		tr<<basic::Tracer::bgRed<<"WARNING! conservation_cutoff_protein_interface_design() > conservation_cutoff_aligned_segments() "<<basic::Tracer::Reset<<std::endl;
 	}
 
-	if ( !( conservation_cutoff_aligned_segments() <= min_aa_probability_ ) ) {
-		tr<<tr.bgRed<<"WARNING!conservation_cutoff_aligned_segments()>min_aa_probability_ )"<<tr.Reset<<std::endl;
+	if ( conservation_cutoff_aligned_segments() > min_aa_probability_ ) {
+		tr<<basic::Tracer::bgRed<<"WARNING!conservation_cutoff_aligned_segments()>min_aa_probability_ )"<<basic::Tracer::Reset<<std::endl;
 	}
 	debug( tag->getOption< bool >( "debug", false ) );
 }
@@ -416,6 +428,7 @@ SeqprofConsensusOperation::create_complex_type_generator( XMLSchemaDefinition & 
 
 	AttributeList attributes;
 	attributes
+		+ XMLSchemaAttribute::attribute_w_default(  "use_occurrence_data", xsct_rosetta_bool, "Should we restrict positions to mutations that have occurrence larger than zero",  "true"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "restrict_to_repacking", xsct_rosetta_bool, "XRW TO DO",  "true"  )
 		+ XMLSchemaAttribute::attribute_w_default(  "convert_scores_to_probabilities", xsct_rosetta_bool, "XRW TO DO",  "true"  )
 		+ XMLSchemaAttribute( "filename", xs_string , "XRW TO DO" )

@@ -24,7 +24,6 @@
 #include <core/sequence/Sequence.hh>
 #include <core/chemical/AA.hh>
 
-
 // Utility headers
 #include <utility/file/FileName.fwd.hh>
 
@@ -45,15 +44,16 @@ class SequenceProfile : public Sequence {
 public:
 
 	/// @brief ctors
-	SequenceProfile() :
-		temp_( 1.0 ),
-		negative_better_(false)
-	{}
+	SequenceProfile();
 
-	SequenceProfile( FileName const & fn ) :
-		temp_( 1.0 ),
-		negative_better_(false)
+	SequenceProfile( FileName const & fn ) : SequenceProfile()
 	{
+		read_from_file( fn );
+	}
+
+	SequenceProfile( FileName const & fn , bool use_occurrence_data) : SequenceProfile()
+	{
+		use_occurrence_data_ = use_occurrence_data;
 		read_from_file( fn );
 	}
 
@@ -62,11 +62,13 @@ public:
 		std::string const & sequence,
 		std::string const & id,
 		Size start = 1,
-		bool negative_better = false
+		bool negative_better = false,
+		bool use_occurrence_data = false
 	) :
 		Sequence( sequence, id, start ),
 		temp_( 1.0 ),
-		negative_better_(negative_better)
+		negative_better_(negative_better),
+		use_occurrence_data_(use_occurrence_data)
 	{
 		profile( prof );
 		debug_assert( profile().size() == length() );
@@ -81,7 +83,7 @@ public:
 
 	/// @brief Read an profile matrix from the given filename using the NCBI
 	/// PSSM format for a position-specific scoring matrix.
-	void read_from_file( FileName const & fn ) override;
+	void read_from_file( FileName const & fn) override;
 
 	/// @brief Generate the profile matrix from a sequence and a given substitution matrix
 	virtual void generate_from_sequence( Sequence const & seq, std::string matrix="BLOSUM62" );
@@ -206,11 +208,12 @@ private:
 	utility::vector1< utility::vector1< Real > > occurrence_data_;//This matrix holds the the % of occurrences of an amino acid in the data base used to construct the pssm matrix.
 	// This data is genrated by psi-blast program as an additional matrix along side the pssm matrix
 
-
 	/// @brief temp used to convert arbitrary scores to/from probabilities
-	core::Real temp_;
+	core::Real temp_ = 1.0;
 	/// @brief The orientation of the values. Are negative values better than zero/positive ones?
-	bool negative_better_;
+	bool negative_better_ = false;
+	/// @brief Should only AAs for which we have occurrence data will be considered?
+	bool use_occurrence_data_ = false;
 
 #ifdef    SERIALIZATION
 public:

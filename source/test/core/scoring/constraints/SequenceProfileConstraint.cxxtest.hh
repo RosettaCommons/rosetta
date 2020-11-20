@@ -17,6 +17,9 @@
 // basic headers
 #include <basic/Tracer.hh>
 
+// Test util headers
+#include <test/core/init_util.hh>
+
 // unit headers
 #include <core/scoring/constraints/SequenceProfileConstraint.hh>
 
@@ -34,6 +37,9 @@ class SequenceProfileConstraintTests : public CxxTest::TestSuite
 {
 public:
 
+	void setUp() {
+		core_init();
+	}
 
 	void test_serialize_SequenceProfileConstraint() {
 		TS_ASSERT( true ); // for non-serialization builds

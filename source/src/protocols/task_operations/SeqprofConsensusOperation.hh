@@ -70,6 +70,13 @@ public:
 
 	/// @brief apply
 	void apply( Pose const & pose, PackerTask & task ) const override;
+	core::sequence::SequenceProfileOP parse_profile_from_pose( Pose const & pose ) const;
+	void aa_probability_filter(Pose const &pose, utility::vector1<Real> const &pos_profile,
+		core::Real const position_min_prob, core::Size const aa_idx,
+		utility::vector1<bool> &keep_aas) const;
+	static void aa_occurrence_filter(utility::vector1<Real> const &pos_occurance,
+		core::Real const pos_min_occurance,
+		utility::vector1<bool> &keep_aas) ;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static utility::tag::XMLSchemaComplexTypeGeneratorOP create_complex_type_generator( utility::tag::XMLSchemaDefinition & xsd );
 	static std::string keyname() { return "SeqprofConsensus"; }
@@ -100,6 +107,8 @@ public:
 	void chain_num(core::Size const d) { chain_num_=d; }
 	bool keep_native() const{ return keep_native_; }
 	void keep_native(bool const b) { keep_native_=b; }
+	bool use_occurrence_data() const{ return use_occurrence_data_; }
+	void use_occurrence_data(bool const b) { use_occurrence_data_=b; }
 private:
 
 	std::string seqprof_filename_;
@@ -126,8 +135,7 @@ private:
 	bool keep_native_;//if set to true then the the native sequence of the protein is allowed in design, even if not favored by the PSSM, Gideon Lapidoth 2014
 	core::Size chain_num_; //dflt set to 1
 	bool restrict_to_repacking_;
-
-
+	bool use_occurrence_data_;
 };
 
 /// @brief a Task operation that will check whether the amino acid at a

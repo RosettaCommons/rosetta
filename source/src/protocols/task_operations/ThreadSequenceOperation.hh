@@ -22,6 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
+#include <core/pack/task/operation/TaskOperations.fwd.hh>
 
 // Utility Headers
 #include <core/types.hh>
@@ -53,6 +54,7 @@ public:
 
 	void
 	apply( core::pose::Pose const &, core::pack::task::PackerTask & ) const override;
+	static void restrict_aas(core::Size const resi, char const aa, core::pose::Pose const & pose, core::pack::task::PackerTask & task);
 
 	void parse_tag( TagCOP, DataMap & ) override;
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
@@ -62,10 +64,17 @@ public:
 	void start_res( core::Size const s );
 	bool allow_design_around() const{ return allow_design_around_;}
 	void allow_design_around( bool const b ){ allow_design_around_ = b ; }
+	core::Size chain_num() const{ return chain_num_; }
+	void chain_num( core::Size const s ) { chain_num_ = s;}
+	bool filter_non_aas() const{ return filter_non_aas_;}
+	void filter_non_aas( bool const b ){ filter_non_aas_ = b ; }
+
 private:
 	std::string target_sequence_;
 	core::Size start_res_; // dflt 1; which residue number to start threading (useful for partial threads)
 	bool allow_design_around_; //dflt true; if false restricts rest of the pose to repakcing
+	core::Size chain_num_; //dflt 0; which chain to start threading on. 0 equals entire pose
+	bool filter_non_aas_; //dflt false; if true restricts threading to amino acids only
 };
 
 } //namespace protocols

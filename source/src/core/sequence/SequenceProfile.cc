@@ -53,6 +53,10 @@ namespace sequence {
 
 static  basic::Tracer tr( "core.sequence.SequenceProfile" );
 
+SequenceProfile::SequenceProfile() {
+	use_occurrence_data_ = basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value();
+}
+
 void SequenceProfile::read_from_checkpoint(
 	utility::file::FileName const & fn,
 	bool negative_better
@@ -311,7 +315,7 @@ void SequenceProfile::read_from_file(
 
 		//using the same while loop to read % matrix in the pssm file. All the numbers after index 20 are stored in the percentage matrix. I am doing it this way
 		// So I don't have to change anything in the existing code , gideonla 120214
-		if ( basic::options::option[ basic::options::OptionKeys::out::file::use_occurrence_data ].value() ) {
+		if ( use_occurrence_data_ ) {
 			index=1;
 			while ( !line_stream.fail() && index <= order.size() ) {
 				// tr <<"Percentage :"<<score<<std::endl;
@@ -583,6 +587,7 @@ core::sequence::SequenceProfile::save( Archive & arc ) const {
 	arc( CEREAL_NVP( occurrence_data_ ) ); // utility::vector1<utility::vector1<Real> >
 	arc( CEREAL_NVP( temp_ ) ); // core::Real
 	arc( CEREAL_NVP( negative_better_ ) ); // _Bool
+	arc( CEREAL_NVP( use_occurrence_data_ ) ); // _Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -595,6 +600,7 @@ core::sequence::SequenceProfile::load( Archive & arc ) {
 	arc( occurrence_data_ ); // utility::vector1<utility::vector1<Real> >
 	arc( temp_ ); // core::Real
 	arc( negative_better_ ); // _Bool
+	arc( use_occurrence_data_ ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::sequence::SequenceProfile );
