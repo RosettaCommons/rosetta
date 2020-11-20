@@ -76,12 +76,16 @@ using namespace operation;
 using namespace scoring;
 using namespace constraints;
 
+//Debugging utility, defined at the bottom of the page
+#ifndef NDEBUG
+void assert_that_all_atoms_are_moved_by_chi_angle( conformation::Residue const & res, Size chino, Size atomno_begin, Size atomno_end );
+#endif
+
+
 AddConstraintsToCurrentConformationMover::AddConstraintsToCurrentConformationMover():
 	protocols::moves::Mover( AddConstraintsToCurrentConformationMover::mover_name() ),
 	use_distance_cst_( false ),
 	use_harmonic_func_( false ),
-	CA_only_( true ),
-	bb_only_( false ),
 	inter_chain_( true ),
 	cst_weight_( 1.0 ),
 	max_distance_( 12.0 ),
@@ -193,14 +197,25 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 		if ( pose.residue_type(ires).is_DNA() ) {
 			iatom_stop = 0;
 		} else if ( pose.residue_type(ires).is_protein() ) {
-			if ( CA_only_ && pose.residue_type(ires).has("CA") ) {
+			if ( CA_only() && pose.residue_type(ires).has("CA") ) {
 				iatom_start = iatom_stop = pose.residue_type(ires).atom_index("CA");
-			} else if ( bb_only_ ) {
+			} else if ( bb_only() ) {
 				iatom_stop = pose.residue_type(ires).last_backbone_atom();
+			} else if ( sc_tip_only() ) {
+				utility::vector1< core::Size > const & final_chi_atoms =
+					pose.residue( ires ).chi_atoms().back();;
+#ifndef NDEBUG
+				//core::Size const nchi = pose.residue( ires ).nchi();
+				//core::Size const final_chi_atom = final_chi_atoms.back()
+				//assert_that_all_atoms_are_moved_by_chi_angle( pose.residue( ires ), nchi, final_chi_atom, iatom_stop );
+				//This assert is bad because it doesn't handle residues like TYR where there are atoms that shouldn't move
+#endif
+				iatom_start = final_chi_atoms[3]; //[3] instead of [4] to preserve verctor to [4]
 			}
 		} else {
 			continue;
 		}
+		TR.Debug << "Registering constraints for resid " << ires << " from atom " << iatom_start << " through " << iatom_stop << std::endl;
 
 		// add constraints
 		core::scoring::func::FuncOP cc_func; //NULL
@@ -226,6 +241,10 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 	core::pose::Pose const & pose,
 	core::select::residue_selector::ResidueSubset const & subset ) const
 {
+	if ( sc_tip_only() ) {
+		utility_exit_with_message( "generate_atom_pair_constraints is not yet compatible with sc_tip_only" );
+	}
+
 	core::scoring::constraints::ConstraintCOPs csts;
 
 	core::Size const nres =
@@ -234,11 +253,12 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 	for ( core::Size ires=1; ires<=nres; ++ires ) {
 		if ( !subset[ ires ] ) continue;
 		if ( pose.residue(ires).aa() == core::chemical::aa_vrt ) continue;
+
 		utility::fixedsizearray1<core::Size,2> iatoms(0); // both are 0
 		if ( pose.residue_type(ires).has("CA")  ) {
 			iatoms[1] = pose.residue_type(ires).atom_index("CA");
 		}
-		if ( !CA_only_ ) {
+		if ( !CA_only() ) {
 			iatoms[2] = pose.residue_type(ires).nbr_atom();
 		}
 		///I think this fails across chains
@@ -252,7 +272,7 @@ AddConstraintsToCurrentConformationMover::generate_atom_pair_constraints(
 			if ( pose.residue_type(jres).has("CA") ) {
 				jatoms[1] = pose.residue_type(jres).atom_index("CA");
 			}
-			if ( !CA_only_ ) {
+			if ( !CA_only() ) {
 				jatoms[2] = pose.residue_type(jres).nbr_atom();
 			}
 
@@ -312,9 +332,35 @@ AddConstraintsToCurrentConformationMover::parse_my_tag(
 	bound_width_ = tag->getOption< core::Real >( "bound_width", bound_width_ );
 	min_seq_sep_ = tag->getOption< core::Size>( "min_seq_sep", min_seq_sep_ );
 	cst_weight_ = tag->getOption< core::Real >( "cst_weight", cst_weight_ );
-	CA_only_ = tag->getOption< bool >( "CA_only", CA_only_ );
-	bb_only_ = tag->getOption< bool >( "bb_only", bb_only_ );
 	inter_chain_ = tag->getOption< bool >( "inter_chain", inter_chain_ );
+
+	AtomSelector sele = AtomSelector::ALL;
+
+	if ( tag->hasOption( "bb_only" ) ) {
+		bool const bb_only = tag->getOption< bool >( "bb_only" );
+		if ( bb_only ) {
+			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
+			sele = AtomSelector::BB_ONLY;
+		}
+	}
+
+	if ( tag->hasOption( "CA_only" ) ) {
+		bool const CA_only = tag->getOption< bool >( "CA_only" );
+		if ( CA_only ) {
+			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
+			sele = AtomSelector::CA_ONLY;
+		}
+	}
+
+	if ( tag->hasOption( "sc_tip_only" ) ) {
+		bool const sc_tip_only = tag->getOption< bool >( "sc_tip_only" );
+		if ( sc_tip_only ) {
+			runtime_assert_msg( sele == AtomSelector::ALL, "Please use only one of 'bb_only', 'ca_only', and 'sc_tip_only'" );
+			sele = AtomSelector::SC_TIP_ONLY;
+		}
+	}
+
+	set_atom_selector( sele );
 
 	if ( bound_width_ < 1e-3 && cst_weight_ < 1e-3 ) {
 		use_harmonic_func_ = true;
@@ -393,8 +439,9 @@ void AddConstraintsToCurrentConformationMover::provide_xml_schema( utility::tag:
 		+ XMLSchemaAttribute( "bound_width", xsct_real, "BoundFunc zero basin width BoundFunc; also activates use of BoundFunc (if non-zero)" )
 		+ XMLSchemaAttribute( "min_seq_sep", xsct_non_negative_integer, "Do not generate distance constraints between residues within this sequence separation.  Only active with use_distance_cst." )
 		+ XMLSchemaAttribute( "cst_weight", xsct_real, "use ScalarWeightedFunc to reweight constraints by this; also activates use of HarmonicFunc (if this and bound_width are both zero)" )
-		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms." )
-		+ XMLSchemaAttribute( "bb_only", xsct_rosetta_bool, "constrain only backbone atoms." )
+		+ XMLSchemaAttribute( "CA_only", xsct_rosetta_bool, "constrain only CA atoms. Sets bb_only and sc_tip_only to false." )
+		+ XMLSchemaAttribute( "bb_only", xsct_rosetta_bool, "constrain only backbone atoms. Sets CA_only and sc_tip_only to false." )
+		+ XMLSchemaAttribute( "sc_tip_only", xsct_rosetta_bool, "constrain only atoms affected by the final chi angle. Sets CA_only and bb_only to false." )
 		+ XMLSchemaAttribute( "inter_chain", xsct_rosetta_bool, "Generate distance constraints between residues on different chains if true.  (Does not appear to generate ONLY interchain constraints.)  If false, skips constraints that would go between chains.  Only active with use_distance_cst." );
 
 	rosetta_scripts::attributes_for_parse_task_operations(attlist);
@@ -417,6 +464,27 @@ void AddConstraintsToCurrentConformationMoverCreator::provide_xml_schema( utilit
 	AddConstraintsToCurrentConformationMover::provide_xml_schema( xsd );
 }
 
+//Debugging utilities
+#ifndef NDEBUG
+void
+assert_that_all_atoms_are_moved_by_chi_angle(
+	core::conformation::Residue const & res,
+	core::Size const chino,
+	core::Size const atomno_begin,
+	core::Size const atomno_end
+) {
+	core::conformation::Residue res0( res );
+	core::conformation::Residue res180( res );
+	res0.set_chi(   chino, 0   );
+	res180.set_chi( chino, 180 );
+	for ( core::Size atom = atomno_begin; atom <= atomno_end; ++atom ) {
+		auto const & xyz0 = res0.xyz( atom );
+		auto const & xyz180 = res180.xyz( atom );
+		//This isn't perfect because it doesn't handle atoms that are colinear with the rotation axis.
+		debug_assert( xyz0.distance( xyz180 ) != 0 );
+	}
+}
+#endif
 
 } // moves
 } // protocols

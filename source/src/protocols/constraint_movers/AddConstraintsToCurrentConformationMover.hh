@@ -26,6 +26,13 @@ namespace protocols {
 namespace constraint_movers {
 
 class AddConstraintsToCurrentConformationMover : public moves::Mover {
+public:
+	enum class AtomSelector {
+		ALL,
+		CA_ONLY,
+		BB_ONLY,
+		SC_TIP_ONLY//only atoms affected by the final chi angle
+	};
 
 public:
 	typedef core::pack::task::TaskFactoryOP TaskFactoryOP;
@@ -49,12 +56,22 @@ public:
 	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
+	AtomSelector atom_selector() const {
+		return atom_sele_;
+	}
+
+	void set_atom_selector( AtomSelector const setting ) {
+		atom_sele_ = setting;
+	}
+
+	bool CA_only() const { return atom_sele_ == AtomSelector::CA_ONLY; }
+	bool bb_only() const { return atom_sele_ == AtomSelector::BB_ONLY; }
+	bool sc_tip_only() const { return atom_sele_ == AtomSelector::SC_TIP_ONLY; }
+
 
 	bool       & use_distance_cst() { return use_distance_cst_; }
 	bool       & use_harmonic_func() { return use_harmonic_func_; }
 	bool       & use_bounded_func() { return use_bounded_func_; }
-	bool       & CA_only() { return CA_only_; }
-	bool       & bb_only() { return bb_only_; }
 	bool       & inter_chain() { return inter_chain_; }
 	core::Real & cst_weight() { return cst_weight_; }
 	core::Real & max_distance() { return max_distance_; }
@@ -64,8 +81,6 @@ public:
 	bool       const & use_distance_cst() const { return use_distance_cst_; }
 	bool       const & use_harmonic_func() const { return use_harmonic_func_; }
 	bool       const & use_bounded_func() const { return use_bounded_func_; }
-	bool       const & CA_only() const { return CA_only_; }
-	bool       const & bb_only() const { return bb_only_; }
 	bool       const & inter_chain() const { return inter_chain_; }
 	core::Real const & cst_weight() const { return cst_weight_; }
 	core::Real const & max_distance() const { return max_distance_; }
@@ -108,8 +123,7 @@ private:
 private:
 	bool use_distance_cst_;
 	bool use_harmonic_func_;
-	bool CA_only_;
-	bool bb_only_;
+	AtomSelector atom_sele_ = AtomSelector::CA_ONLY;
 	bool inter_chain_;
 	core::Real cst_weight_;
 	core::Real max_distance_;
