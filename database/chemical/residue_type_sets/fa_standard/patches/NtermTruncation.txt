@@ -42,7 +42,7 @@ BEGIN_CASE ## OTHER PROLINES ############################################
 
 ## these define which residues match this case
 BEGIN_SELECTOR
-NAME3 B19 C89 B59 HPR 0AZ B3P
+NAME3 B19 C89 B59 HYP 0AZ DHY D0A B3P
 END_SELECTOR
 
 ## these are the operations involved

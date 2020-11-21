@@ -28,7 +28,7 @@ NOT VARIANT_TYPE HYDROXYLATION1 # PRO variants that resist selection by NAME3
 NOT VARIANT_TYPE HYDROXYLATION2 # PRO variants that resist selection by NAME3
 NOT AA PRO # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 DPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
-NOT NAME3 HPR # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
+NOT NAME3 HYP 0AZ # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 B19 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 C89 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N
 NOT NAME3 B59 # only primary amines can be cyclized in OOPs, also tricky to model with 4 bonded N

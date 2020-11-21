@@ -526,7 +526,7 @@ END_CASE
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
-NAME3 DPR HYP 0AZ
+NAME3 DPR DHY D0A
 END_SELECTOR
 
 ADD_ATOM  CO  CObb   C     0.62
@@ -613,7 +613,7 @@ END_CASE
 #############################################################################################
 BEGIN_CASE
 BEGIN_SELECTOR
-NAME3 HPR
+NAME3 HYP 0AZ
 END_SELECTOR
 
 ADD_ATOM  CO  CObb   C     0.62

@@ -1497,6 +1497,35 @@ ConnectSulfurAndMakeVirtualProton::name() const {
 	return "ConnectSulfurAndMakeVirtualProton";
 }
 
+/// @brief Constructor.
+SetBaseName::SetBaseName(
+	std::string const & new_base_name
+) :
+	new_base_name_(new_base_name)
+{}
+
+/// @brief Apply this patch to generate a new base residue type.
+bool
+SetBaseName::apply(
+	MutableResidueType & rsd
+) const {
+	rsd.name( new_base_name_ );
+	rsd.base_name( new_base_name_ );
+	return false;
+}
+
+/// @brief Return the name of this PatchOperation ("SetBaseName").
+std::string
+SetBaseName::name() const {
+	return "SetBaseName";
+}
+
+/// @brief This patch operaton DOES result in a new base residue type.
+bool
+SetBaseName::generates_base_residue_type() const {
+	return true;
+}
+
 bool
 ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 
@@ -1571,8 +1600,16 @@ ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 			rsd.interchangeability_group( "DAN" );
 		} else if ( rsd.aa() == aa_dpr ) {
 			//( igroup == "DPRO" || igroup == "PRO" ) {
-			rsd.name3( "DPR" );
-			rsd.interchangeability_group( "DPR" );
+			if ( rsd.name3() == "HYP" ) {
+				rsd.name3( "DHY" );
+				rsd.interchangeability_group( "DHY" );
+			} else if ( rsd.name3() == "0AZ" ) {
+				rsd.name3( "D0A" );
+				rsd.interchangeability_group( "D0A" );
+			} else {
+				rsd.name3( "DPR" );
+				rsd.interchangeability_group( "DPR" );
+			}
 		} else if ( rsd.aa() == aa_dgn ) {
 			//( igroup == "DGLN" || igroup == "GLN" ) {
 			rsd.name3( "DGN" );
@@ -1602,7 +1639,6 @@ ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 			rsd.name3( "DTY" );
 			rsd.interchangeability_group( "DTY" );
 		}
-
 	} else if ( rsd.aa() == na_rad ) {
 		rsd.aa( na_lra );
 		rsd.name3( " 0A" );
@@ -1632,6 +1668,12 @@ ChiralFlipNaming::apply( MutableResidueType & rsd ) const {
 std::string
 ChiralFlipNaming::name() const {
 	return "ChiralFlipNaming";
+}
+
+/// @brief This patch operaton DOES result in a new base residue type.
+bool
+ChiralFlipNaming::generates_base_residue_type() const {
+	return true;
 }
 
 bool
@@ -2778,7 +2820,11 @@ patch_operation_from_patch_file_line(
 		std::string aa;
 		l >> aa;
 		return utility::pointer::make_shared< Set_AA >( aa );
-
+	} else if ( tag == "SET_BASE_NAME" ) {
+		std::string newname;
+		l >> newname;
+		runtime_assert_string_msg( !newname.empty(), "Could not parse patch operation line \"" + line + "\"." );
+		return utility::pointer::make_shared< SetBaseName >( newname );
 	} else if ( tag == "SET_IO_STRING" ) { // 13 character tag
 		// NOTE - USE FIXED WIDTH IO SINCE NAME3 CAN CONTAIN INTERNAL WHITESPACE (EG DNA,RNA)
 		if ( line.size() < 19 ) {
@@ -3771,6 +3817,25 @@ core::chemical::PatchOperation::load( Archive & ) {}
 SAVE_AND_LOAD_SERIALIZABLE( core::chemical::PatchOperation );
 CEREAL_REGISTER_TYPE( core::chemical::PatchOperation )
 
+
+/// @brief Automatically generated serialization method
+template< class Archive >
+void
+core::chemical::SetBaseName::save( Archive & arc ) const {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( CEREAL_NVP( new_base_name_ ) ); // std::string
+}
+
+/// @brief Automatically generated deserialization method
+template< class Archive >
+void
+core::chemical::SetBaseName::load( Archive & arc ) {
+	arc( cereal::base_class< core::chemical::PatchOperation >( this ) );
+	arc( new_base_name_ ); // std::string
+}
+
+SAVE_AND_LOAD_SERIALIZABLE( core::chemical::SetBaseName );
+CEREAL_REGISTER_TYPE( core::chemical::SetBaseName )
 
 /// @brief Automatically generated serialization method
 template< class Archive >

@@ -17,7 +17,7 @@
 	</SCOREFXNS>
 	# The PACKER_PALETTES section defines the total set of residues with which we're designing.
 	<PACKER_PALETTES>
-		<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA,DGLU,DASP,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR" /> 
+		<CustomBaseTypePackerPalette name="palette" additional_residue_types="DALA,DGLU,DASP,DPHE,DHIS,DILE,DLYS,DLEU,DMET,DASN,DPRO,DGLN,DARG,DSER,DTHR,DVAL,DTRP,DTYR,HYP,DHYP" /> 
 	</PACKER_PALETTES>
 	# The RESIDUE_SELECTORS section allows users to configure tools to select residues,
 	# which are used when setting up other Rosetta modules.

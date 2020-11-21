@@ -581,8 +581,8 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 	//  look for "MET:protein_centroid_with_HA" and know about this patch.
 	// For now, apply them first, and force application/instantiation later.
 	// -- rhiju
-	for ( PatchCOP p : patches() ) {
-		for ( ResidueTypeCOP rsd_type : base_residue_types() ) {
+	for ( PatchCOP const & p : patches() ) {
+		for ( ResidueTypeCOP const & rsd_type : base_residue_types() ) {
 			if ( p->applies_to( *rsd_type ) ) {
 				if ( p->replaces( *rsd_type ) ) {
 					ResidueTypeCOP rsd_type_new( ResidueType::make( *p->apply( *rsd_type ) ) );
@@ -595,9 +595,9 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 
 	// separate this to handle a set of base residue types and a set of patches.
 	// this would allow addition of patches and/or base_residue_types at stages after initialization.
-	for ( PatchCOP p : patches() ) {
-		for ( ResidueTypeCOP rsd_type : base_residue_types() ) {
-			if ( p->applies_to( *rsd_type ) && ( p->adds_properties( *rsd_type ).has_value( "D_AA" ) || p->adds_properties(*rsd_type).has_value( "R_PEPTOID" ) ) ) {
+	for ( PatchCOP const & p : patches() ) {
+		for ( ResidueTypeCOP const & rsd_type : base_residue_types() ) {
+			if ( p->applies_to( *rsd_type ) && ( p->generates_base_residue_type() ) ) {
 				MutableResidueTypeOP patched_rsd_type = p->apply( *rsd_type );
 				patched_rsd_type->base_name( patched_rsd_type->name() ); //D-residues have their own base names.
 				patched_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
@@ -606,36 +606,26 @@ GlobalResidueTypeSet::deal_with_patch_special_cases()
 
 				ResidueTypeCOP new_rsd_type( name_mapOP( patched_rsd_type->name() ) ); // We want the (potentially modified) version added to this RTS.
 
-				// Store the D-to-L and L-to-D mappings:
-				runtime_assert_string_msg(
-					l_to_d_mapping().count( rsd_type ) == 0,
-					"Error in core::chemical::ResidueTypeSet::apply_patches: A D-equivalent for " + rsd_type->name() + " has already been defined."
-				);
-				l_to_d_mapping()[ rsd_type ] = new_rsd_type;
-				runtime_assert_string_msg(
-					d_to_l_mapping().count( new_rsd_type ) == 0,
-					"Error in core::chemical::ResidueTypeSet::apply_patches: An L-equivalent for " + new_rsd_type->name() + " has already been defined."
-				);
-				d_to_l_mapping()[ new_rsd_type ] = rsd_type;
-			}
-
-			if ( p->applies_to( *rsd_type ) && p->adds_properties( *rsd_type ).has_value( "L_RNA" ) ) {
-				MutableResidueTypeOP patched_rsd_type = p->apply( *rsd_type );
-				patched_rsd_type->base_name( patched_rsd_type->name() ); //L-RNA residues have their own base names.
-				patched_rsd_type->reset_base_type_cop(); //This is now a base type, so its base type pointer must be NULL.
-
-				add_base_residue_type( patched_rsd_type );
-
-				ResidueTypeCOP new_rsd_type( name_mapOP( patched_rsd_type->name() ) ); // We want the (potentially modified) version added to this RTS.
-				// Store the D-to-L and L-to-D mappings -- in reverse, of course!
-				runtime_assert_string_msg(
-					l_to_d_mapping().count( new_rsd_type ) == 0,
-					"Error in core::chemical::ResidueTypeSet::apply_patches: A D-equivalent for " + rsd_type->name() + " has already been defined." );
-				l_to_d_mapping()[ new_rsd_type ] = rsd_type;
-				runtime_assert_string_msg(
-					d_to_l_mapping().count( rsd_type ) == 0,
-					"Error in core::chemical::ResidueTypeSet::apply_patches: An L-equivalent for " + new_rsd_type->name() + " has already been defined." );
-				d_to_l_mapping()[ rsd_type ] = new_rsd_type;
+				// Store the D-to-L and L-to-D mappings if this is a chirality-inverting patch:
+				bool const adds_l_rna( p->adds_properties( *rsd_type ).has_value( "L_RNA" ) );
+				if (
+						p->adds_properties( *rsd_type ).has_value( "D_AA" ) ||
+						p->adds_properties(*rsd_type).has_value( "R_PEPTOID" ) ||
+						adds_l_rna
+						) {
+					ResidueTypeCOP l_type( adds_l_rna ? new_rsd_type : rsd_type );
+					ResidueTypeCOP d_type( adds_l_rna ? rsd_type : new_rsd_type );
+					runtime_assert_string_msg(
+						l_to_d_mapping().count( l_type ) == 0,
+						"Error in core::chemical::GlobalResidueTypeSet::apply_patches: A D-equivalent for " + l_type->name() + " has already been defined."
+					);
+					l_to_d_mapping()[ l_type ] = d_type;
+					runtime_assert_string_msg(
+						d_to_l_mapping().count( d_type ) == 0,
+						"Error in core::chemical::GlobalResidueTypeSet::apply_patches: An L-equivalent for " + d_type->name() + " has already been defined."
+					);
+					d_to_l_mapping()[ d_type ] = l_type;
+				}
 			}
 		}
 	}

@@ -124,7 +124,7 @@ public:
 	/// @brief Generates base residue -- legacy for D_AA -- do not use otherwise.
 	virtual
 	bool
-	generates_base_residue(){ return false; }
+	generates_base_residue_type() const { return false; }
 
 	/// @brief Special -- does this apply to 'minimal', placeholder types? Generally true, unless updating aa or name3.
 	virtual
@@ -1720,12 +1720,51 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Alter the base name.
+/// @details This creates a new base residue type, clearing anything after the colon in the name.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+class SetBaseName : public PatchOperation {
+public:
+	/// @brief Deafult constructor -- defaulted.
+	SetBaseName() = default;
+
+	/// @brief Constructor.
+	SetBaseName( std::string const & new_base_name );
+
+	/// @brief Generates a new aa
+	bool
+	may_change_aa() override{ return true; }
+
+	/// @brief Apply this patch to generate a new base residue type.
+	bool
+	apply( MutableResidueType & rsd ) const override;
+
+	/// @brief Return the name of this PatchOperation ("SetBaseName").
+	std::string
+	name() const override;
+
+	/// @brief This patch operaton DOES result in a new base residue type.
+	bool
+	generates_base_residue_type() const override;
+
+private:
+
+	std::string new_base_name_;
+
+#ifdef    SERIALIZATION
+public:
+	template< class Archive > void save( Archive & arc ) const;
+	template< class Archive > void load( Archive & arc );
+#endif // SERIALIZATION
+
+};
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Execute chiral flip (primarily: at CA)
 class ChiralFlipNaming : public PatchOperation {
 public:
 	/// @brief constructor
 	ChiralFlipNaming() {}// std::string const atom1, std::string const atom2 ): atom1_( atom1 ), atom2_( atom2 ) {};
-
 
 	bool
 	applies_to_placeholder() const override { return true; }
@@ -1742,6 +1781,10 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
 	std::string
 	name() const override;
+
+	/// @brief This patch operaton DOES result in a new base residue type.
+	bool
+	generates_base_residue_type() const override;
 
 private:
 

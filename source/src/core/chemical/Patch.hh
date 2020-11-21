@@ -79,10 +79,7 @@ public:
 
 	/// @brief add one more operation in this PatchCase
 	void
-	add_operation( PatchOperationOP operation )
-	{
-		operations_.push_back( operation );
-	}
+	add_operation( PatchOperationOP operation );
 
 	/// @brief to which ResidueTypes this PatchCase applies to?
 	ResidueTypeSelector &
@@ -136,6 +133,13 @@ public:
 	std::string
 	generates_interchangeability_group() const;
 
+	/// @brief Does this PatchCase result in a new base residue type?
+	inline
+	bool
+	generates_base_residue_type() const {
+		return generates_base_residue_type_;
+	}
+
 	bool
 	may_change_aa() const;
 
@@ -149,6 +153,10 @@ private:
 	ResidueTypeSelector selector_;
 	/// @brief operations to done in this PatchCase
 	utility::vector1< PatchOperationOP > operations_;
+
+	/// @brief Does this PatchCase result in a new base residue type?
+	bool generates_base_residue_type_ = false;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;
@@ -201,6 +209,13 @@ public:
 	replaces( ResidueTypeBase const & rsd ) const
 	{
 		return  applies_to( rsd ) && replaces_residue_type_;
+	}
+
+	/// @brief Is this a special patch that expands the list of base residue types?
+	inline
+	bool
+	generates_base_residue_type() const {
+		return generates_base_residue_type_;
 	}
 
 	/// @brief returns patched residue, 0 if patch failed
@@ -314,8 +329,9 @@ public:
 	bool
 	changes_connections_on( ResidueType const & rsd_in, std::string const & atom ) const;
 
-	inline void
-	add_case( PatchCaseOP pcase ) { cases_.push_back( pcase ); }
+	/// @brief Add a patch case to this patch.
+	void
+	add_case( PatchCaseOP pcase );
 
 	/// @brief returns new name3, if changed. Only one new name3 allowed.
 	std::string
@@ -358,6 +374,10 @@ private:
 
 	/// @brief if set this patch will not change the name of the ResidueType and returns true for replaces()
 	bool replaces_residue_type_ = false;
+
+	/// @brief If true, this patch adds to the list of base residue types.  Note that this increases the
+	/// initializaton cost and base memory footprint of Rosetta!
+	bool generates_base_residue_type_ = false;
 
 #ifdef    SERIALIZATION
 public:

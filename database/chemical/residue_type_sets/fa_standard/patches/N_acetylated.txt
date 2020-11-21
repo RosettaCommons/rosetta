@@ -58,9 +58,9 @@ DELETE_PROPERTY CANONICAL_NUCLEIC
 END_CASE
 
 ###########################################
-BEGIN_CASE ### HPR
+BEGIN_CASE ### HYP 0AZ
 BEGIN_SELECTOR
-NAME3 HPR
+NAME3 HYP 0AZ
 END_SELECTOR
 
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln
@@ -143,9 +143,9 @@ DELETE_PROPERTY CANONICAL_NUCLEIC
 END_CASE
 
 ###########################################
-BEGIN_CASE ### DHPRO
+BEGIN_CASE ### DHYP DOAZ
 BEGIN_SELECTOR
-NAME3 DHP
+NAME3 DHY D0A
 END_SELECTOR
 
 ADD_ATOM  CP  CNH2 CC   0.55  ## Copied from the amide C in Gln

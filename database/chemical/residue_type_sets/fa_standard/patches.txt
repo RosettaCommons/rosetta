@@ -1,6 +1,11 @@
-## protein standard
+## Patches that create new base types are a special case that must come first.
+## The D_AA and RPEPTOID patches must be last in this list to ensure that mirrored base types are created.
+patches/pro_hydroxylated_case1.txt
+patches/pro_hydroxylated_case2.txt
 patches/D_AA.txt
 patches/RPEPTOID.txt
+
+## protein standard
 patches/CtermProteinFull.txt
 patches/NtermProteinFull.txt
 patches/N_methylation.txt #Methyl group replacing amide proton in residues in the middle of a sequence (NOT N-termini).  Must precede protein_cutpoint_upper, unfortunately.
@@ -114,8 +119,6 @@ patches/PtermProteinFull.txt
 
 ## The following were added by Andy M. Chen in June 2009
 ##   for post-translational modifications
-patches/pro_hydroxylated_case1.txt
-patches/pro_hydroxylated_case2.txt
 patches/ser_phosphorylated.txt
 patches/thr_phosphorylated.txt
 patches/tyr_phosphorylated.txt

@@ -81,6 +81,7 @@ enum SpecialPackerPaletteBehaviour {
 	EXCLUDE_ADDUCT_VARIANT_AT_DNA_POSITIONS, //If a given position is DNA, when designing it, don't match on the ADDUCT_VARIANT type.  This is a special behaviour that has to be carried over from ResidueLevelTask_ to preserve old functionality.
 	STRIP_VIRTUAL_SIDE_CHAIN, //If a given position has a virtual side chain, we convert it automatically to the same without a virtual side chain.
 	pH_MODE_EXCEPTIONS, //Are we using exceptions for pH mode, so that PROTONATED/DEPROTONATED variants can be matched?
+	HYDROXYPROLINE_EXCEPTIONS, //Are we allowing exceptions for HYDROXYLATION1 and HYDROXYLATION2 variants, so that HYP can design?
 	KEEP_EXISTING_TERMINAL_VARIANT_TYPES_AT_POSITIONS, //If a position has a modified terminus, only allow types at that position with that modified terminus.
 	KEEP_EXISTING_NONTERMINAL_VARIANT_TYPES_FOR_EXISTING_BASE_TYPE, // At a given position, keep the existing variant types in the allowed list (e.g. if phosphorylation is present on a serine, keep phosophoserine as an allowed type at that position).
 	KEEP_EXISTING_NONTERMINAL_VARIANT_TYPES_AND_DISALLLOW_INCOMPATIBLE_BASE_TYPES, //At a given position, keep the existing variant types.  Disallow base types that don't have that variant type.

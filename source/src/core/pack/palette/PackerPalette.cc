@@ -296,7 +296,7 @@ PackerPalette::add_base_residue_type(
 	runtime_assert_string_msg( type_to_add != nullptr, "Error in core::pack::palette::PackerPalette::add_base_residue_type(): No base type corresponding to \"" + name + "\" could be found." );
 
 	base_types.add(name, type_to_add);
-	if ( TR.Debug.visible() ) TR.Debug << "Adding base type " << name << " to PackerPalette." << std::endl;
+	if ( TR.Debug.visible() ) TR.Debug << "Adding base type " << type_to_add->name() << " to PackerPalette." << std::endl;
 }
 
 /// @brief  Add a group of base ResidueTypes and names to the PackerPalette by properties.
@@ -335,6 +335,7 @@ PackerPalette::set_up_default_special_behaviours() {
 	special_behaviours_[ EXCLUDE_ADDUCT_VARIANT_AT_DNA_POSITIONS ] = true;
 	special_behaviours_[ STRIP_VIRTUAL_SIDE_CHAIN ] = true;
 	special_behaviours_[ pH_MODE_EXCEPTIONS ] = pH_mode();
+	special_behaviours_[ HYDROXYPROLINE_EXCEPTIONS ] = true;
 	special_behaviours_[ ONLY_RNA_AT_RNA_POSITIONS ] = true;
 	special_behaviours_[ KEEP_EXISTING_TERMINAL_VARIANT_TYPES_AT_POSITIONS ] = true;
 	special_behaviours_[ KEEP_EXISTING_NONTERMINAL_VARIANT_TYPES_FOR_EXISTING_BASE_TYPE ] = true;
@@ -498,6 +499,7 @@ PackerPalette::decide_what_to_do_with_existing_type(
 	debug_assert( special_behaviours_.count( KEEP_EXISTING_NONTERMINAL_VARIANT_TYPES_AND_DISALLLOW_INCOMPATIBLE_BASE_TYPES) );
 	debug_assert( special_behaviours_.count( KEEP_EXISTING_DISULFIDES ) );
 	debug_assert( special_behaviours_.count( pH_MODE_EXCEPTIONS ) );
+	debug_assert( special_behaviours_.count( HYDROXYPROLINE_EXCEPTIONS ) );
 	debug_assert( special_behaviours_.count( NO_METAPATCHES ) );
 	debug_assert( special_behaviours_.count( ALLOW_ALTERNATE_BACKBONE_MATCHING ) );
 
@@ -550,6 +552,17 @@ PackerPalette::decide_what_to_do_with_existing_type(
 		for ( core::Size i(1), imax(pH_exceptions.size()); i<=imax; ++i ) {
 			exception_variants.push_back( pH_exceptions[i] );
 		}
+	}
+
+	//Allow exceptions for hydroxyproline variant types?
+	if ( special_behaviours_.at( HYDROXYPROLINE_EXCEPTIONS ) &&
+			(
+			existing_residue.type().has_variant_type( core::chemical::HYDROXYLATION1 ) ||
+			existing_residue.type().has_variant_type( core::chemical::HYDROXYLATION2 )
+			)
+			) {
+		exception_variants.push_back( core::chemical::HYDROXYLATION1 );
+		exception_variants.push_back( core::chemical::HYDROXYLATION2 );
 	}
 
 	//Keeping the terminal variant types:
@@ -646,6 +659,7 @@ PackerPalette::decide_what_to_do_with_base_type(
 	debug_assert( special_behaviours_.count( EXCLUDE_ADDUCT_VARIANT_AT_DNA_POSITIONS ) );
 	debug_assert( special_behaviours_.count( ONLY_RNA_AT_RNA_POSITIONS ) );
 	debug_assert( special_behaviours_.count( pH_MODE_EXCEPTIONS ) );
+	debug_assert( special_behaviours_.count( HYDROXYPROLINE_EXCEPTIONS ) );
 	debug_assert( special_behaviours_.count( KEEP_EXISTING_TERMINAL_VARIANT_TYPES_AT_POSITIONS ) );
 	debug_assert( special_behaviours_.count( KEEP_EXISTING_NONTERMINAL_VARIANT_TYPES_AND_DISALLLOW_INCOMPATIBLE_BASE_TYPES ) );
 	debug_assert( special_behaviours_.count( KEEP_EXISTING_DISULFIDES ) );
@@ -780,6 +794,21 @@ PackerPalette::decide_what_to_do_with_base_type(
 		for ( core::Size i(1), imax(pH_exceptions.size()); i<=imax; ++i ) {
 			exception_variants.push_back( pH_exceptions[i] );
 		}
+	}
+
+	//Allow exceptions for hydroxyproline variant types?
+	if ( special_behaviours_.at( HYDROXYPROLINE_EXCEPTIONS ) &&
+			((
+			existing_residue.type().has_variant_type( core::chemical::HYDROXYLATION1 ) ||
+			existing_residue.type().has_variant_type( core::chemical::HYDROXYLATION2 )
+			) ||
+			(
+			candidate_base_type->has_variant_type( core::chemical::HYDROXYLATION1 ) ||
+			candidate_base_type->has_variant_type( core::chemical::HYDROXYLATION2 )
+			))
+			) {
+		exception_variants.push_back( core::chemical::HYDROXYLATION1 );
+		exception_variants.push_back( core::chemical::HYDROXYLATION2 );
 	}
 
 	//Keeping the terminal variant types:
