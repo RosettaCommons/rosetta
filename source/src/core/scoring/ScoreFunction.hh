@@ -431,7 +431,7 @@ public:
 	///     name_from_score_type
 	///     score_type_from_name
 	void
-	set_weight( ScoreType const & t, Real const & setting );
+	set_weight( ScoreType const & t, Real const setting );
 
 	/// @brief Sets the weight for ScoreType  <t>  to  <setting> if weight is originally zero
 	///
@@ -446,7 +446,7 @@ public:
 	///     name_from_score_type
 	///     score_type_from_name
 	void
-	set_weight_if_zero( ScoreType const & t, Real const & setting);
+	set_weight_if_zero( ScoreType const & t, Real const setting);
 
 
 	/// @brief Increments the weight for ScoreType  <t>  by  <setting>

@@ -162,6 +162,10 @@ public:
 	/// @brief Returns the func::Func object associated with this Constraint object.
 	core::scoring::func::Func const & get_func() const override;
 
+	Vector const & xyz_target() const {
+		return xyz_target_;
+	}
+
 private:
 
 	// functions

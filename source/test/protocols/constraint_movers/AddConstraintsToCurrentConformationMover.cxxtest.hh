@@ -16,6 +16,11 @@
 #include <test/core/init_util.hh>
 #include <test/util/rosettascripts.hh>
 #include <test/util/pose_funcs.hh>
+#include <core/pose/annotated_sequence.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <protocols/minimization_packing/MinMover.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 // Project Headers
 #include <core/types.hh>
@@ -24,11 +29,13 @@
 
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/func/Func.hh>
 
 // Utility Headers
 #include <basic/Tracer.hh>
 #include <utility/string_util.hh>
+#include <memory>
 
 static basic::Tracer TR("protocols.constraint_movers.AddConstraintsToCurrentConformationMover.cxxtest.hh");
 
@@ -168,6 +175,106 @@ public:
 		//cst_shower();
 		multi_test(4, "CoordinateConstraint", "HARMONIC");
 
+	}
+
+	void helper__test_coord_recovery(){
+
+	}
+
+	void test_sc_tip(){
+		using namespace protocols::constraint_movers;
+		AddConstraintsToCurrentConformationMover actccm;
+		actccm.use_distance_cst() = false;
+		actccm.set_atom_selector( AddConstraintsToCurrentConformationMover::AtomSelector::SC_TIP_ONLY );
+
+		using namespace core::scoring;
+		ScoreFunctionOP sfxn = ScoreFunctionFactory::create_score_function( "none.wts" );
+		sfxn->set_weight( coordinate_constraint, 100.0 );
+
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence( pose, "E/E", "fa_standard" );
+		TS_ASSERT_EQUALS( pose.num_chains(), 2 );
+
+		core::Size const cst_resid = 2; //we'll be moving this one later
+
+		// STORE STARTING XYZs FOR RES 2:
+		utility::vector1< numeric::xyzVector< core::Real > > starting_xyzs;
+		for ( core::Size a = 1; a <= pose.residue( cst_resid ).nheavyatoms(); ++a ) {
+			starting_xyzs.push_back( pose.residue( cst_resid ).xyz( a ) );
+		}
+
+		// APPLY CSTS AND ASSERT LOW SCORE
+		// (score should be low because nothing has moved yet
+		actccm.apply( pose );
+		TS_ASSERT_DELTA( sfxn->score( pose ), 0.0, 0.001 );
+
+		// ANALYZE CSTS
+		core::scoring::constraints::ConstraintCOPs const & csts =
+			pose.constraint_set()->get_all_constraints();
+		core::Size n_csts_for_resid = 0;
+		for ( core::scoring::constraints::ConstraintCOP cst : csts ) {
+			core::scoring::constraints::CoordinateConstraintCOP cc =
+				std::dynamic_pointer_cast< core::scoring::constraints::CoordinateConstraint const >( cst );
+			auto const atomid = cc->atom( 1 );
+			if ( atomid.rsd() == cst_resid ) {
+				++n_csts_for_resid;
+
+				// ASSERT THAT THE CST XYZs MATCH OUR STARTING STATE
+				auto const & vec = cc->xyz_target();
+				TS_ASSERT_DELTA( starting_xyzs[ atomid.atomno() ].x(), vec.x(), 0.0001 );
+				TS_ASSERT_DELTA( starting_xyzs[ atomid.atomno() ].y(), vec.y(), 0.0001 );
+				TS_ASSERT_DELTA( starting_xyzs[ atomid.atomno() ].z(), vec.z(), 0.0001 );
+			}
+		}
+
+		// ASSERT THAT WE HAVE THE NUMBER OF CSTS WE EXPECT
+		constexpr core::Size atoms_per_E = 3; //only the 3 atoms at the tip of E should be included
+		constexpr core::Size nE = 2; //We have 2 E residues in this pose
+		TS_ASSERT_EQUALS( n_csts_for_resid, atoms_per_E );
+		TS_ASSERT_EQUALS( csts.size(), atoms_per_E*nE );
+
+		//MINIMIZE AND ASSERT THAT NOTHING MOVES
+		core::select::movemap::MoveMapFactory mmf;
+		mmf.all_bb( false );
+		mmf.all_chi( false );
+		mmf.all_jumps( true );
+
+		using namespace protocols::minimization_packing;
+		MinMover min;
+		min.score_function( sfxn );
+		min.movemap_factory( mmf.clone() );
+		min.tolerance( 0.000001 );
+		min.max_iter( 999999999 );
+		min.min_type( "dfpmin" );//No hill-climbing according to VKM
+
+		min.apply( pose );
+
+		TS_ASSERT_DELTA( sfxn->score( pose ), 0.0, 0.001 );
+
+		// MOVER THE POSE JUST A LITTLE
+		// Chi 3 += 15 degrees
+		pose.set_chi( 3, cst_resid, pose.chi( 3, cst_resid ) + 15.0 );
+		//Both of these two atoms should move
+		core::Size const atm1 = starting_xyzs.size() - 1;
+		core::Size const atm2 = starting_xyzs.size();
+
+		// ASSERT THAT THE TWO ATOMS MOVE MORE THAN 0.1 ANGSTROMS
+		TS_ASSERT( starting_xyzs[ atm1 ].distance( pose.residue( cst_resid ).xyz( atm1 ) ) > 0.1 );
+		TS_ASSERT( starting_xyzs[ atm2 ].distance( pose.residue( cst_resid ).xyz( atm2 ) ) > 0.1 );
+		TS_ASSERT( sfxn->score( pose ) > 0.0 );
+		core::Real const bad_score = sfxn->score( pose );
+		TR << "Score after chi move: " << bad_score << std::endl;
+
+		// REVERT TO ORIGINAL STATE
+		min.apply( pose );
+		TR << "Score after min: " << sfxn->score( pose ) << std::endl;
+
+		// ASSERT REVERSION
+		// Score might not go down to 0 but should be close and better than before
+		TS_ASSERT( sfxn->score( pose ) < bad_score );
+		TS_ASSERT( starting_xyzs[ atm1 ].distance( pose.residue( cst_resid ).xyz( atm1 ) ) < 0.1 );//THIS FAILS
+		TS_ASSERT( starting_xyzs[ atm2 ].distance( pose.residue( cst_resid ).xyz( atm2 ) ) < 0.1 );//THIS FAILS
+		TS_ASSERT_DELTA( sfxn->score( pose ), 0.0, 0.01 );
 	}
 
 };
