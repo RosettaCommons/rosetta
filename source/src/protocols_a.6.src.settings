@@ -28,6 +28,7 @@ sources = {
 		"TryDisulfPermutations",
 	],
 	"protocols/cyclic_peptide/crosslinker": [
+		"1_4_BBMB_Helper",
 		"CrosslinkerMoverHelper",
 		"Metal_HelperBase",
 		"OctahedralMetal_Helper",

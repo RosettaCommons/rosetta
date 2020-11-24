@@ -104,6 +104,7 @@
 #include <protocols/cyclic_peptide/CrosslinkerMover.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/1_4_BBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPyramidalMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TrigonalPlanarMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/SquarePyramidalMetal_Helper.hh>
@@ -193,6 +194,11 @@ protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::register_opti
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::n_methyl_positions                   );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::lariat_sidechain_index               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::sidechain_isopeptide_indices         );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions                       );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_paraBBMB_filters                     );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_sidechain_distance_filter_multiplier  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::paraBBMB_constraints_energy_filter_multiplier  );
+	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB               );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_positions                       );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::use_TBMB_filters                     );
 	option.add_relevant( basic::options::OptionKeys::cyclic_peptide::TBMB_sidechain_distance_filter_multiplier  );
@@ -371,6 +377,11 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	cartesian_relax_rounds_(0),
 	use_rama_prepro_for_sampling_(true),
 	n_methyl_positions_(),
+	parabbmb_positions_(),
+	link_all_cys_with_parabbmb_(false),
+	use_parabbmb_filters_(true),
+	parabbmb_sidechain_distance_filter_multiplier_(1.0),
+	parabbmb_constraints_energy_filter_multiplier_(1.0),
 	tbmb_positions_(),
 	link_all_cys_with_tbmb_(false),
 	use_tbmb_filters_(true),
@@ -497,6 +508,11 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	cartesian_relax_rounds_(src.cartesian_relax_rounds_),
 	use_rama_prepro_for_sampling_(src.use_rama_prepro_for_sampling_),
 	n_methyl_positions_(src.n_methyl_positions_),
+	parabbmb_positions_(src.parabbmb_positions_),
+	link_all_cys_with_parabbmb_(src.link_all_cys_with_parabbmb_),
+	use_parabbmb_filters_(src.use_parabbmb_filters_),
+	parabbmb_sidechain_distance_filter_multiplier_(src.parabbmb_sidechain_distance_filter_multiplier_),
+	parabbmb_constraints_energy_filter_multiplier_(src.parabbmb_constraints_energy_filter_multiplier_),
 	tbmb_positions_(src.tbmb_positions_),
 	link_all_cys_with_tbmb_(src.link_all_cys_with_tbmb_),
 	use_tbmb_filters_(src.use_tbmb_filters_),
@@ -565,12 +581,17 @@ SimpleCycpepPredictApplication::initialize_from_options(
 	runtime_assert_string_msg( type_from_options != SCPA_invalid_type, "Error in simple_cycpep_predict app: the provided cyclization type is not an allowed type!" );
 	set_cyclization_type( type_from_options );
 	runtime_assert_string_msg(
-		!( option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]() && cyclization_type() == SCPA_terminal_disulfide ),
-		"Error in simple-cycpep_predict_app: linking all cysteine residues with TBMB (\"-cyclic_peptide:link_all_cys_with_TBMB\" flag) is incompatible with teriminal disulfide cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+		!( (option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]() || option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB]() )
+		&& cyclization_type() == SCPA_terminal_disulfide ),
+		"Error in simple_cycpep_predict app: linking all cysteine residues with a crosslinker (\"-cyclic_peptide:link_all_cys_with_TBMB\" or \"-cyclic_peptide:link_all_cys_with_paraBBMB\" flags) is incompatible with teriminal disulfide cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
 	);
 	runtime_assert_string_msg(
 		!( option[basic::options::OptionKeys::cyclic_peptide::require_symmetry_repeats]() > 2 && (cyclization_type() == SCPA_terminal_disulfide || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide) ),
-		"Error in simple-cycpep_predict_app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+		"Error in simple_cycpep_predict app: quasi-symmetric sampling (\"-cyclic_peptide:require_symmetry_repeats\" flag) is incompatible with teriminal disulfide cyclization or with isopeptide bond cyclization (\"-cyclic_peptide:cyclization_type\" flag)."
+	);
+	runtime_assert_string_msg(
+		!(option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB]() && option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB]() ),
+		"Error in simple_cycpep_predict app: The \"-link_all_cys_with_TBMB\" and \"-link_all_cys_with_paraBBMB\" options are mutually incompatible."
 	);
 
 	//Set whether to use chainbreak energy:
@@ -752,8 +773,32 @@ SimpleCycpepPredictApplication::initialize_from_options(
 		}
 	}
 
+	//Store the paraBBMB positions.
+	if ( option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions].user() ) {
+		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-paraBBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
+		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB].user(), "Error in simple_cycpep_predict application: The \"-paraBBMB_positions\" flag and the \"-link_all_cys_with_paraBBMB\" flag cannot be used together." );
+		core::Size const nparabbmbres(option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions]().size());
+		runtime_assert_string_msg( nparabbmbres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:paraBBMB_positions\" commandline option must be followed by a list of residues to link with 1,4-bis(bromomethyl)benzene." );
+		runtime_assert_string_msg( nparabbmbres % 2 == 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:paraBBMB_positions\" commandline option must be followed by a list of residues, where the number of residues in the list is a multiple of two.  Paris residues will be linked with 1,4-bis(bromomethyl)benzene." );
+		core::Size count(0);
+		parabbmb_positions_.resize(nparabbmbres / 2);
+		for ( core::Size i(1), imax(nparabbmbres / 2); i<=imax; ++i ) {
+			utility::vector1 <core::Size> innervect(2);
+			for ( core::Size j=1; j<=2; ++j ) {
+				++count;
+				innervect[j] = option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_positions]()[count];
+			}
+			parabbmb_positions_[i] = innervect;
+		}
+	}
+	use_parabbmb_filters_ = option[basic::options::OptionKeys::cyclic_peptide::use_paraBBMB_filters]();
+	parabbmb_sidechain_distance_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_sidechain_distance_filter_multiplier]();
+	parabbmb_constraints_energy_filter_multiplier_ = option[basic::options::OptionKeys::cyclic_peptide::paraBBMB_constraints_energy_filter_multiplier]();
+	link_all_cys_with_parabbmb_ = option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB]();
+
 	//Store the TBMB positions.
 	if ( option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions].user() ) {
+		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_paraBBMB].user(), "Error in simple_cycpep_predict application: The \"-TBMB_positions\" flag and the \"-link_all_cys_with_paraBBMB\" flag cannot be used together." );
 		runtime_assert_string_msg( !option[basic::options::OptionKeys::cyclic_peptide::link_all_cys_with_TBMB].user(), "Error in simple_cycpep_predict application: The \"-TBMB_positions\" flag and the \"-link_all_cys_with_TBMB\" flag cannot be used together." );
 		core::Size const ntbmbres(option[basic::options::OptionKeys::cyclic_peptide::TBMB_positions]().size());
 		runtime_assert_string_msg( ntbmbres > 0, "Error in simple_cycpep_predict application: The \"-cyclic_peptide:TBMB_positions\" commandline option must be followed by a list of residues to link with 1,3,5-tris(bromomethyl)benzene." );
@@ -1570,6 +1615,17 @@ SimpleCycpepPredictApplication::run() const {
 			sequence_length_ % required_symmetry_repeats_ == 0,
 			"Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): Symmetry has been specified by the user, but the number of residues in the peptide is not an integral multiple of the number of symmetry repeats."
 		);
+	}
+
+	//Check that, if the link_all_cys_with_paraBBMB flag is used, the sequence has exactly two cysteine residues:
+	if ( link_all_cys_with_parabbmb_ ) {
+		debug_assert( parabbmb_positions_.size() == 0 ); //Should be true
+		utility::vector1 < core::Size > cys_positions;
+		for ( core::Size i=1; i<=sequence_length(); ++i ) {
+			if ( resnames[i] == "CYS" || resnames[i] == "DCYS" ) cys_positions.push_back(i);
+		}
+		runtime_assert_string_msg( cys_positions.size() == 2, "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::run(): The \"-cyclic_peptide:link_all_cys_with_paraBBMB\" flag was used, but the sequence does not contain exactly two CYS/DCYS residues." );
+		parabbmb_positions_.push_back( cys_positions );
 	}
 
 	//Check that, if the link_all_cys_with_TBMB flag is used, the sequence has exactly three cysteine residues:
@@ -3123,6 +3179,30 @@ SimpleCycpepPredictApplication::genkic_close(
 		pp->add_step(nullptr, "Cycpep_Symmetry_Filter_1", symmfilter1);
 	}
 
+	//If we're considering paraBBMB, add it here.
+	if ( parabbmb_positions_.size() > 0 ) {
+		for ( core::Size i=1, imax=parabbmb_positions_.size(); i<=imax; ++i ) { //Loop through all sets of triples of residues.
+			debug_assert(parabbmb_positions_[i].size() == 2); //Should always be true.
+			std::stringstream cys_indices;
+			for ( core::Size j=1; j<=2; ++j ) {
+				cys_indices << current_position( parabbmb_positions_[i][j], cyclic_offset, nres );
+				if ( j<3 ) cys_indices << ",";
+			}
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
+			index_selector->set_index( cys_indices.str() );
+			protocols::cyclic_peptide::CrosslinkerMoverOP twolinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
+			twolinker->set_residue_selector(index_selector);
+			twolinker->set_linker_name("1_4_BBMB");
+			twolinker->set_behaviour( true, true, true, false );
+			twolinker->set_filter_behaviour( use_parabbmb_filters_, use_parabbmb_filters_, false, 0.0, parabbmb_sidechain_distance_filter_multiplier_, parabbmb_constraints_energy_filter_multiplier_ );
+			twolinker->set_scorefxn( sfxn_highhbond );
+			twolinker->set_sidechain_frlx_rounds(3);
+			std::stringstream movername;
+			movername << "paraBBMB_link_" << i;
+			pp->add_step( twolinker, movername.str(), nullptr );
+		}
+	}
+
 	//If we're considering TBMB, add it here.
 	if ( tbmb_positions_.size() > 0 ) {
 		for ( core::Size i=1, imax=tbmb_positions_.size(); i<=imax; ++i ) { //Loop through all sets of triples of residues.
@@ -3945,6 +4025,11 @@ SimpleCycpepPredictApplication::depermute (
 	//Re-form the disulfides:
 	rebuild_disulfides( newpose, new_disulfides );
 
+	//Re-append paraBBMB linker residues:
+	if ( parabbmb_positions_.size() > 0 ) {
+		re_append_linker_residues( pose, newpose, offset, parabbmb_positions_, "BB4" );
+	}
+
 	//Re-append TBMB linker residues:
 	if ( tbmb_positions_.size() > 0 ) {
 		re_append_linker_residues( pose, newpose, offset, tbmb_positions_, "TBM" );
@@ -4187,7 +4272,7 @@ void SimpleCycpepPredictApplication::erase_random_seed_info() const {
 	return;
 }
 
-/// @brief Given a pose with a linker (e.g. TBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
+/// @brief Given a pose with a linker (e.g. TBMB, paraBBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
 /// and add back covalent bonds.
 /// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
 void
@@ -4211,19 +4296,31 @@ SimpleCycpepPredictApplication::re_append_linker_residues(
 		}
 		newpose->append_residue_by_jump( pose->residue(lastres), linker_positions[i][1] ); //Jump from the first residue that links this linker, to the linker itself.
 		protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
+		bool twofold_linker(false);
 		if ( linker_name == "TBM" ) {
 			helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
 		} else if ( linker_name == "TMA" ) {
 			helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
+		} else if ( linker_name == "BB4" ) {
+			helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::One_Four_BBMB_Helper >();
+			twofold_linker=true;
 		}
 
-		utility::vector1< core::Size > res_indices(3);
-		if ( offset >= linker_positions[i][3] || offset < linker_positions[i][1] ) {
-			res_indices[1] = linker_positions[i][1]; res_indices[2] = linker_positions[i][2]; res_indices[3] = linker_positions[i][3];
-		} else if ( offset >= linker_positions[i][2] ) {
-			res_indices[1] = linker_positions[i][3]; res_indices[2] = linker_positions[i][1]; res_indices[3] = linker_positions[i][2];
+		utility::vector1< core::Size > res_indices( twofold_linker ? 2 : 3);
+		if ( twofold_linker ) {
+			if ( offset >= linker_positions[i][2] || offset < linker_positions[i][1] ) {
+				res_indices[1] = linker_positions[i][1]; res_indices[2] = linker_positions[i][2];
+			} else {
+				res_indices[1] = linker_positions[i][2]; res_indices[2] = linker_positions[i][1];
+			}
 		} else {
-			res_indices[1] = linker_positions[i][2]; res_indices[2] = linker_positions[i][3]; res_indices[3] = linker_positions[i][1];
+			if ( offset >= linker_positions[i][3] || offset < linker_positions[i][1] ) {
+				res_indices[1] = linker_positions[i][1]; res_indices[2] = linker_positions[i][2]; res_indices[3] = linker_positions[i][3];
+			} else if ( offset >= linker_positions[i][2] ) {
+				res_indices[1] = linker_positions[i][3]; res_indices[2] = linker_positions[i][1]; res_indices[3] = linker_positions[i][2];
+			} else {
+				res_indices[1] = linker_positions[i][2]; res_indices[2] = linker_positions[i][3]; res_indices[3] = linker_positions[i][1];
+			}
 		}
 		helper->add_linker_bonds_asymmetric( *newpose, res_indices, newpose->total_residue() );
 	}

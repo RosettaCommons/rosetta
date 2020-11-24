@@ -1,0 +1,45 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+	</SCOREFXNS>
+	<TASKOPERATIONS>
+	</TASKOPERATIONS>
+	<FILTERS>
+	</FILTERS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_ligands" resnums="12,72" />
+	</RESIDUE_SELECTORS>
+	<MOVERS>
+
+		<BundleGridSampler name="bgs1" helix_length="20" scorefxn="r15" use_degrees="true"
+				r0="8.0" nstruct_mode="true" max_samples="36" crick_params_file="alpha_helix"  >
+			<Helix invert="false" delta_omega0="3" omega0="0" z1_offset_min="-2.0" z1_offset_max="2.0" z1_offset_samples="6" delta_omega1_min="25" delta_omega1_max="90" delta_omega1_samples="6" />
+			<Helix delta_omega0="60" r0="9.3" invert="true" crick_params_file="L_alpha_helix" pitch_from_helix="1" z1_offset="0" />
+			<Helix r0_copies_helix="1" delta_omega0="120" invert="false" pitch_from_helix="1" z1_offset="2.75" delta_omega1="6" />
+			<Helix invert="true" crick_params_file="L_alpha_helix" delta_omega0="180" pitch_from_helix="1" z1_offset="0" delta_omega1="-80" />
+			<Helix delta_omega0="240" r0="9.3" invert="false" pitch_from_helix="1" z1_offset="0" />
+			<Helix r0_copies_helix="1" delta_omega0="300" invert="true" crick_params_file="L_alpha_helix" pitch_from_helix="1" z1_offset="2.75" delta_omega1="6" />
+		</BundleGridSampler>
+
+		<DeclareBond name="add_termini" add_termini="true" res1="1" res2="2" atom1="C" atom2="N" />
+		
+		<MutateResidue name="mut1" target="12" new_res="CYS" />		
+		<MutateResidue name="mut2" target="72" new_res="CYS" />
+
+		<CrosslinkerMover name="xlink" scorefxn="r15"
+			linker_name="1_4_BBMB"
+			residue_selector="select_ligands"
+		/>
+
+	</MOVERS>
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		<Add mover="bgs1" />
+		<Add mover="add_termini" />
+		<Add mover="mut1" />
+		<Add mover="mut2" />
+		<Add mover="xlink" />
+	</PROTOCOLS>
+
+</ROSETTASCRIPTS>

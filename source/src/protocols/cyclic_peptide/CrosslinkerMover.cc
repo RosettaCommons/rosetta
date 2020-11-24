@@ -18,6 +18,7 @@
 #include <protocols/cyclic_peptide/CrosslinkerMoverCreator.hh>
 #include <protocols/cyclic_peptide/crosslinker/CrosslinkerMoverHelper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TBMB_Helper.hh>
+#include <protocols/cyclic_peptide/crosslinker/1_4_BBMB_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TMA_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/TetrahedralMetal_Helper.hh>
 #include <protocols/cyclic_peptide/crosslinker/OctahedralMetal_Helper.hh>
@@ -65,28 +66,8 @@ namespace cyclic_peptide {
 
 /// @brief Default constructor
 CrosslinkerMover::CrosslinkerMover():
-	protocols::moves::Mover( CrosslinkerMover::class_name() ),
-	residue_selector_(), //Defaults to NULL pointer.
-	linker_(no_crosslinker), //Defaults to no_crosslinker
-	add_linker_(true),
-	constrain_linker_(true),
-	pack_and_minimize_linker_and_sidechains_(true),
-	do_final_fastrelax_(false),
-	sfxn_(),
-	sidechain_frlx_rounds_(3),
-	final_frlx_rounds_(3),
-	filter_by_sidechain_distance_(true),
-	filter_by_constraints_energy_(true),
-	filter_by_total_score_(false),
-	filter_by_total_score_cutoff_energy_(0.0),
-	sidechain_distance_filter_multiplier_(1.0),
-	constraints_energy_filter_multiplier_(1.0),
-	symm_type_('A'),
-	symm_count_(1),
-	metal_type_("Zn")
-{
-
-}
+	protocols::moves::Mover( CrosslinkerMover::class_name() )
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// @brief Copy constructor
@@ -115,28 +96,31 @@ CrosslinkerMover::apply( core::pose::Pose& pose){
 	//Create the helper, which has the functions that set up specific types of crosslinkers:
 	protocols::cyclic_peptide::crosslinker::CrosslinkerMoverHelperOP helper;
 	switch( linker_ ) {
-	case TBMB :
+	case CrossLinker::TBMB :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TBMB_Helper >();
 		break;
-	case TMA :
+	case CrossLinker::One_Four_BBMB :
+		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::One_Four_BBMB_Helper >();
+		break;
+	case CrossLinker::TMA :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TMA_Helper >();
 		break;
-	case tetrahedral_metal :
+	case CrossLinker::tetrahedral_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TetrahedralMetal_Helper >( metal_type() );
 		break;
-	case octahedral_metal :
+	case CrossLinker::octahedral_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::OctahedralMetal_Helper >( metal_type() );
 		break;
-	case trigonal_planar_metal :
+	case CrossLinker::trigonal_planar_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPlanarMetal_Helper >( metal_type() );
 		break;
-	case trigonal_pyramidal_metal :
+	case CrossLinker::trigonal_pyramidal_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::TrigonalPyramidalMetal_Helper >( metal_type() );
 		break;
-	case square_planar_metal :
+	case CrossLinker::square_planar_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePlanarMetal_Helper >(metal_type() );
 		break;
-	case square_pyramidal_metal :
+	case CrossLinker::square_pyramidal_metal :
 		helper = utility::pointer::make_shared< protocols::cyclic_peptide::crosslinker::SquarePyramidalMetal_Helper >(metal_type() );
 		break;
 	default :
@@ -159,24 +143,26 @@ std::string
 CrosslinkerMover::get_crosslinker_name(
 	CrossLinker const crosslinker
 ) {
-	switch( crosslinker) {
-	case no_crosslinker :
+	switch( crosslinker ) {
+	case CrossLinker::no_crosslinker :
 		return "no_crosslinker";
-	case TBMB :
+	case CrossLinker::TBMB :
 		return "TBMB";
-	case TMA :
+	case CrossLinker::One_Four_BBMB :
+		return "1_4_BBMB";
+	case CrossLinker::TMA :
 		return "TMA";
-	case tetrahedral_metal :
+	case CrossLinker::tetrahedral_metal :
 		return "tetrahedral_metal";
-	case octahedral_metal :
+	case CrossLinker::octahedral_metal :
 		return "octahedral_metal";
-	case trigonal_planar_metal :
+	case CrossLinker::trigonal_planar_metal :
 		return "trigonal_planar_metal";
-	case trigonal_pyramidal_metal :
+	case CrossLinker::trigonal_pyramidal_metal :
 		return "trigonal_pyramidal_metal";
-	case square_planar_metal :
+	case CrossLinker::square_planar_metal :
 		return "square_planar_metal";
-	case square_pyramidal_metal :
+	case CrossLinker::square_pyramidal_metal :
 		return "square_pyramidal_metal";
 	default :
 		break;
@@ -190,12 +176,12 @@ CrossLinker
 CrosslinkerMover::get_crosslinker_enum(
 	std::string const &name
 ) {
-	for ( core::Size i(2); i < static_cast<core::Size>(end_of_crosslinker_list); ++i ) {
+	for ( core::Size i(2); i < static_cast<core::Size>(CrossLinker::end_of_crosslinker_list); ++i ) {
 		if ( name == get_crosslinker_name( static_cast<CrossLinker>(i) ) ) {
 			return static_cast<CrossLinker>(i);
 		}
 	}
-	return unknown_crosslinker;
+	return CrossLinker::unknown_crosslinker;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -262,7 +248,7 @@ CrosslinkerMover::provide_xml_schema(
 	using namespace utility::tag;
 
 	XMLSchemaRestriction linker_names_allowed;
-	std::string const linker_possibles("TBMB|TMA|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
+	std::string const linker_possibles("TBMB|1_4_BBMB|TMA|tetrahedral_metal|octahedral_metal|trigonal_planar_metal|trigonal_pyramidal_metal|square_planar_metal|square_pyramidal_metal");
 	linker_names_allowed.name("linker_names_allowed");
 	linker_names_allowed.base_type( xs_string );
 	linker_names_allowed.add_restriction( xsr_pattern, linker_possibles + "(," + linker_possibles + ")+" );
@@ -346,7 +332,7 @@ CrosslinkerMover::set_linker_name(
 ) {
 	runtime_assert_string_msg( !name_in.empty(), "Error in protocols::cyclic_peptide::CrosslinkerMover::set_linker_name(): An empty string was passed to this function." );
 	CrossLinker linker_in( get_crosslinker_enum( name_in ) );
-	runtime_assert_string_msg( linker_in != unknown_crosslinker, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_linker_name(): Could not interpret the linker name \"" + name_in + "\"." );
+	runtime_assert_string_msg( linker_in != CrossLinker::unknown_crosslinker, "Error in protocols::cyclic_peptide::CrosslinkerMover::set_linker_name(): Could not interpret the linker name \"" + name_in + "\"." );
 	linker_ = linker_in;
 }
 

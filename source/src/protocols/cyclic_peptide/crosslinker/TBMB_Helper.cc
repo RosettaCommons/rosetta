@@ -27,6 +27,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/AtomID.hh>
 #include <core/chemical/AA.hh>
@@ -34,7 +35,7 @@
 
 // Protocols headers
 #include <protocols/rosetta_scripts/util.hh>
-#include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/simple_moves/ModifyVariantTypeMover.hh>
 #include <protocols/cyclic_peptide/DeclareBond.hh>
 #include <protocols/cyclic_peptide/CreateDistanceConstraint.hh>
 #include <protocols/cyclic_peptide/CreateAngleConstraint.hh>
@@ -92,16 +93,19 @@ TBMB_Helper::add_linker_asymmetric(
 	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
-	//Mutate the cysteines to CYX:
-	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
-	protocols::simple_moves::MutateResidue mut2( cys2, pose.residue_type(cys2).is_d_aa() ? "DCYX" : "CYX" );
-	protocols::simple_moves::MutateResidue mut3( cys3, pose.residue_type(cys3).is_d_aa() ? "DCYX" : "CYX" );
-	mut1.set_preserve_atom_coords(true);
-	mut2.set_preserve_atom_coords(true);
-	mut3.set_preserve_atom_coords(true);
-	mut1.apply(pose);
-	mut2.apply(pose);
-	mut3.apply(pose);
+	//Add the sidechain conjugation variant:
+	{
+		core::select::residue_selector::ResidueIndexSelectorOP indsel(
+			utility::pointer::make_shared<core::select::residue_selector::ResidueIndexSelector>()
+		);
+		indsel->append_index(cys1);
+		indsel->append_index(cys2);
+		indsel->append_index(cys3);
+		protocols::simple_moves::ModifyVariantTypeMover modvar;
+		modvar.set_residue_selector(indsel);
+		modvar.set_additional_type_to_add("SIDECHAIN_CONJUGATION");
+		modvar.apply(pose);
+	}
 
 	//Create the TBMB and put it into a pose of its own:
 	core::chemical::ResidueTypeSetCOP standard_residues( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );
@@ -176,10 +180,17 @@ TBMB_Helper::add_linker_symmetric(
 	runtime_assert_string_msg( pose.residue_type(cys3).aa() == core::chemical::aa_cys || pose.residue_type(cys3).aa() == core::chemical::aa_dcs,
 		"Error in protocols::cyclic_peptide::crosslinker::TBMB_Helper::add_linker_asymmetric(): The third residue selected by the ResidueSelector is not an L- or D-cysteine.");
 
-	//Mutate the cysteines to CYX:
-	protocols::simple_moves::MutateResidue mut1( cys1, pose.residue_type(cys1).is_d_aa() ? "DCYX" : "CYX" );
-	mut1.set_preserve_atom_coords(true);
-	mut1.apply(pose);
+	//Add the sidechain conjugation variant:
+	{
+		core::select::residue_selector::ResidueIndexSelectorOP indsel(
+			utility::pointer::make_shared<core::select::residue_selector::ResidueIndexSelector>()
+		);
+		indsel->append_index(cys1);
+		protocols::simple_moves::ModifyVariantTypeMover modvar;
+		modvar.set_residue_selector(indsel);
+		modvar.set_additional_type_to_add("SIDECHAIN_CONJUGATION");
+		modvar.apply(pose);
+	}
 
 	//Create the TBMB and put it into a pose of its own:
 	core::chemical::ResidueTypeSetCOP standard_residues( core::chemical::ChemicalManager::get_instance()->residue_type_set( core::chemical::FA_STANDARD ) );

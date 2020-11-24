@@ -655,7 +655,7 @@ private:
 	/// @details This is also the index of the last sequence residue.  Crosslinker residues follow this position.
 	inline core::Size sequence_length() const { return sequence_length_; }
 
-	/// @brief Given a pose with a linker (e.g. TBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
+	/// @brief Given a pose with a linker (e.g. TBMB, paraBBMB, TMA) in it and another pose without the linker, copy the linker residues from the first to the second,
 	/// and add back covalent bonds.
 	/// @details This function is called at the end of the protocol, and therefore doesn't bother to add back constraints.
 	void re_append_linker_residues( core::pose::PoseCOP pose, core::pose::PoseOP newpose, core::Size const offset, utility::vector1< utility::vector1< core::Size > > const &linker_positions, std::string const & linker_name ) const;
@@ -1030,6 +1030,27 @@ private:
 	/// @brief List of positions (in original sequence indexing -- not permuted) that are N-methylated.
 	/// @details Defaults to empty list.
 	utility::vector1< core::Size > n_methyl_positions_;
+
+	/// @brief List of positions linked by 1,4-bis(bromomethyl)benzene.
+	/// @details This is a vector of vectors of two residues.
+	mutable utility::vector1< utility::vector1 < core::Size >  > parabbmb_positions_;
+
+	/// @brief Should all cysteine residues be linked with 1,3,5-tris(bromomethyl)benzene?
+	/// @details False by default.
+	bool link_all_cys_with_parabbmb_ = false;
+
+	/// @brief If true, filters are applied based on distance between paraBBMB cysteines and on constraints to discard
+	/// GenKIC solutions that can't be crosslinked easily.
+	/// @details True by default.
+	bool use_parabbmb_filters_ = true;
+
+	/// @brief Multiplier to make the paraBBMB distance filter more permissive.
+	/// @details Default 1.0.
+	core::Real parabbmb_sidechain_distance_filter_multiplier_ = 1.0;
+
+	/// @brief Multiplier to make the paraBBMB constraints energy filter more permissive.
+	/// @details Default 1.0.
+	core::Real parabbmb_constraints_energy_filter_multiplier_ = 1.0;
 
 	/// @brief List of positions linked by 1,3,5-tris(bromomethyl)benzene.
 	/// @details This is a vector of lists of three residues.

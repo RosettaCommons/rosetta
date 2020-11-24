@@ -1,0 +1,62 @@
+# Rosetta params file for 1,4-bis(bromomethyl)benzene,
+# a cysteine-crosslinker.  File created 7 Oct 2020
+# by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org).
+# 
+# This version is for modelling C2- or S2-symmetric structures,
+# and contains only half the molecule.
+# This residue type has four virtual atoms.  V1 is meant to overlap
+# the sulphur atom that binds CM1 (from a cysteine), V4 is meant to
+# overlap C1 of a symmetric copy, V3 is meant to overlap C6 of a symmetric
+# copy, and V2 is meant to overlap C5 of a symmetric copy.
+NAME paraBBMB_symm
+IO_STRING B4S X
+TYPE LIGAND
+AA UNK
+ATOM  CM1 CH2  CT2  0.01
+ATOM  C1  aroC CA   -0.07
+ATOM  C6  aroC CA   -0.07
+ATOM  C5  aroC CA   -0.07
+ATOM  1HM Hapo HA   0.04
+ATOM  2HM Hapo HA   0.04
+ATOM  H5  Haro HP   0.06
+ATOM  H6  Haro HP   0.06
+ATOM  V1  VIRT VIRT 0.00
+ATOM  V2  VIRT VIRT 0.00
+ATOM  V3  VIRT VIRT 0.00
+ATOM  V4  VIRT VIRT 0.00
+CONNECT CM1
+CONNECT C1
+CONNECT C5
+BOND_TYPE  CM1  C1  1   
+BOND_TYPE  C1   V2  ARO
+BOND_TYPE  V2   V3  ARO
+BOND_TYPE  V3   V4  ARO
+BOND_TYPE  V4   C5  ARO
+BOND_TYPE  C5   C6  ARO
+BOND_TYPE  C6   C1  ARO
+BOND_TYPE  CM1  V1  1   
+BOND_TYPE  CM1  1HM 1   
+BOND_TYPE  CM1  2HM 1   
+BOND_TYPE  C5   H5  1   
+BOND_TYPE  C6   H6  1   
+CUT_BOND C1 V2
+CHI 1  C6   C1   CM1  V1
+PROTON_CHI 1 SAMPLES 3 -60 60 180 EXTRA 1 20
+NBR_ATOM  C1 
+NBR_RADIUS 7.0
+PROPERTIES AROMATIC
+ICOOR_INTERNAL    CM1    0.000000    0.000000    0.000000   CM1    C1    C6
+ICOOR_INTERNAL    C1     0.000000  180.000000    1.507049   CM1    C1    C6
+ICOOR_INTERNAL    C6     0.000000   59.405647    1.401338   C1     CM1   C6
+ICOOR_INTERNAL    C5   179.867752   59.374771    1.396991   C6    C1    CM1
+ICOOR_INTERNAL    V4    -0.550709   59.414329    1.401327   C5    C6    C1
+ICOOR_INTERNAL    V3     0.570112   61.175054    1.401282   V4    C5    C6 
+ICOOR_INTERNAL    V2    -0.570187   59.408407    1.397387   V3    V4    C5 
+ICOOR_INTERNAL   CONN1   0.000000   68.352568    1.793000   CM1   C1    C6
+ICOOR_INTERNAL   CONN2   0.000000   59.408407    1.397387   V3    V4    V2 #Same as V2
+ICOOR_INTERNAL   CONN3   0.000000   59.414329    1.401327   C5    C6    V4 #Same as V4
+ICOOR_INTERNAL    V1     0.000000   68.352568    1.793000   CM1   C1   CONN1 #Same as CONN1
+ICOOR_INTERNAL    1HM -121.306274   70.326847    1.095888   CM1   C1   CONN1
+ICOOR_INTERNAL    2HM -117.375436   70.318934    1.095815   CM1   C1    1HM
+ICOOR_INTERNAL    H5   179.913714   60.861872    1.087783   C5    C6    V4 
+ICOOR_INTERNAL    H6   179.327264   60.843667    1.087865   C6    C5    V4

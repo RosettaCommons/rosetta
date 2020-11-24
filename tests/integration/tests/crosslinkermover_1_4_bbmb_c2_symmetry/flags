@@ -1,0 +1,8 @@
+-parser:protocol inputs/test.xml
+-in:file:fasta inputs/dummy.fasta
+-extra_res_fa crosslinker/1.4_bisbromomethylbenzene_symm.params
+-nstruct 36
+-output_virtual true
+-write_all_connect_info
+-jd2:failed_job_exception false
+-out:levels protocols.cyclic_peptide.CrosslinkerMover:500 protocols.cyclic_peptide.crosslinker.TetrahedralMetal_Helper:500

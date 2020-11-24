@@ -37,12 +37,13 @@ namespace protocols {
 namespace cyclic_peptide {
 
 /// @brief Enumeration of allowed crosslinkers.
-enum CrossLinker {
+enum class CrossLinker {
 	//When adding an effect to this enum, add its name to the get_crosslinker_name() function, and its helper to the switch statement
 	//in the apply() function.
 	no_crosslinker = 1, //Keep this first
 
 	TBMB,
+	One_Four_BBMB,
 	TMA,
 	tetrahedral_metal,
 	octahedral_metal,
@@ -317,23 +318,23 @@ private: // data
 
 	/// @brief The crosslinker to use.
 	/// @details Must be set.  See definition of CrossLinker enum in CrosslinkerMover.hh.
-	CrossLinker linker_;
+	CrossLinker linker_ = CrossLinker::no_crosslinker;
 
 	/// @brief Should we add the linker?
 	/// @details Default true.
-	bool add_linker_;
+	bool add_linker_ = true;
 
 	/// @brief Should we set up constraints for the linker?
 	/// @details Default true.
-	bool constrain_linker_;
+	bool constrain_linker_ = true;
 
 	/// @brief Should we pack and minimize the linker and the side-chains to which it connects?
 	/// @details Default true.
-	bool pack_and_minimize_linker_and_sidechains_;
+	bool pack_and_minimize_linker_and_sidechains_ = true;
 
 	/// @brief Should we FastRelax the whole structure?
 	/// @details Default false.
-	bool do_final_fastrelax_;
+	bool do_final_fastrelax_ = false;
 
 	/// @brief The scorefunction to use for packing and minimization.
 	/// @details Cloned at apply time.
@@ -342,48 +343,48 @@ private: // data
 	/// @brief The number of rounds of FastRelax to apply when packing and minimizing
 	/// side-chains and the linker.
 	/// @details Default 3.
-	core::Size sidechain_frlx_rounds_;
+	core::Size sidechain_frlx_rounds_ = 3;
 
 	/// @brief The number of rounds of FastRelax to apply at the end of the protocol.
 	/// @details Default 3.
-	core::Size final_frlx_rounds_;
+	core::Size final_frlx_rounds_ = 3;
 
 	/// @brief Should we filter based on initial distance between residues that are to be linked?
 	/// @details Default true.  Each linker helper has its own evaluator to decide whether or not to discard poses.
-	bool filter_by_sidechain_distance_;
+	bool filter_by_sidechain_distance_ = true;
 
 	/// @brief Should we filter based on constraints energy after the initial minimization of the linker?
 	/// @details Default true.  Each linker helper has its own evaluator for this.
-	bool filter_by_constraints_energy_;
+	bool filter_by_constraints_energy_ = true;
 
 	/// @brief Should we filter by total score (including constraints energy) at the end?
 	/// @details Default false.
-	bool filter_by_total_score_;
+	bool filter_by_total_score_ = false;
 
 	/// @brief If we're filtering by total score, this is the cutoff energy.
 	/// @details Defaults to 0.
-	core::Real filter_by_total_score_cutoff_energy_;
+	core::Real filter_by_total_score_cutoff_energy_ = 0.0;
 
 	/// @brief Multiplier to affect stringency of sidechain distance filter.  Higher values are more permissive.
 	/// @details Default 1.0.
-	core::Real sidechain_distance_filter_multiplier_;
+	core::Real sidechain_distance_filter_multiplier_ = 1.0;
 
 	/// @brief Multiplier to affect stringency of constraints energy filter.  Higher values are more permissive.
 	/// @details Default 1.0.
-	core::Real constraints_energy_filter_multiplier_;
+	core::Real constraints_energy_filter_multiplier_ = 1.0;
 
 	/// @brief The symmetry type.
 	/// @details 'C' for cylic, 'S' for mirror cyclic, 'D' for dihedral, 'A' for asymmetric.
 	/// @note 'A' (asymmetric) by default.
-	char symm_type_;
+	char symm_type_ = 'A';
 
 	/// @brief The symmetry copy count.  For example, symm_type_='C' and symm_count_=3 would
 	/// specify C3 symmetry.  A value of 1 means asymmetry.  1 by default.
-	core::Size symm_count_;
+	core::Size symm_count_ = 1;
 
 	/// @brief For metal-mediated crosslinkers, what metal mediates the crosslink?
 	/// @details Defaults to "Zn".
-	std::string metal_type_;
+	std::string metal_type_ = "Zn";
 
 };
 
