@@ -48,8 +48,8 @@
 static basic::Tracer TR( "core.scoring.methods.PoissonBoltzmannEnergy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 //*****************************************************************
 //
@@ -76,7 +76,7 @@ PBLifetimeCache::set_energy_state( const std::string& energy_state )
 void
 PBLifetimeCache::set_conformational_data( const std::string& energy_state,
 	const core::pose::Pose & pose,
-	PoissonBoltzmannPotentialOP pbp )
+	core::scoring::PoissonBoltzmannPotentialOP pbp )
 {
 	pose_by_state_[energy_state] = utility::pointer::make_shared< core::pose::Pose >(pose);
 	pb_by_state_[energy_state] = pbp;
@@ -103,7 +103,8 @@ PBLifetimeCache::get_pose( const std::string& energy_state )
 	//TR << " }" << std::endl;
 	return pose_by_state_[energy_state];
 }
-PoissonBoltzmannPotentialOP
+
+core::scoring::PoissonBoltzmannPotentialOP
 PBLifetimeCache::get_pbp( const std::string& energy_state )
 {
 	return pb_by_state_[energy_state];
@@ -121,15 +122,16 @@ PBLifetimeCache::has_cache( const std::string& energy_state ) const
 //*****************************************************************
 /// @details This must return a fresh instance of the PoissonBoltzmannEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PoissonBoltzmannEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< PoissonBoltzmannEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 PoissonBoltzmannEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( PB_elec );
 	return sts;
@@ -155,20 +157,21 @@ PoissonBoltzmannEnergy::PoissonBoltzmannEnergy() :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PoissonBoltzmannEnergy::clone() const
 {
 	return utility::pointer::make_shared< PoissonBoltzmannEnergy >( *this );
 }
-methods::LongRangeEnergyType
-PoissonBoltzmannEnergy::long_range_type() const { return methods::PB_elec_lr; }
+core::scoring::methods::LongRangeEnergyType
+PoissonBoltzmannEnergy::long_range_type() const { return core::scoring::methods::PB_elec_lr; }
 
 void
 PoissonBoltzmannEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn
+	core::scoring::ScoreFunction const & scorefxn
 ) const {
-	using namespace methods;
+	using namespace core::scoring;
+	using namespace core::scoring::methods;
 
 	// If the cached object is not in the pose data-cache, it suggests that the setup protocol has not
 	// been called in prior.  Warn and get out!
@@ -176,7 +179,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 		TR << "PB_LIFETIME_CACHE object is not initialized.  Did you call SetupPoissonBoltzmannPotential mover?  Terminaing the program..." << std::endl;
 		TR.flush();
 		// Register the empty cache holder if not done so yet.
-		PoissonBoltzmannEnergy::PBLifetimeCacheOP new_cache( new PoissonBoltzmannEnergy::PBLifetimeCache() );
+		PBLifetimeCacheOP new_cache( utility::pointer::make_shared< PBLifetimeCache >() );
 		pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, new_cache );
 	}
 	PBLifetimeCacheOP cached_data =
@@ -244,15 +247,15 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 	cached_data->set_conformational_data( energy_state, pose, poisson_boltzmann_potential_ );
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
@@ -261,7 +264,7 @@ PoissonBoltzmannEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( fixed_residue_, pose.size(), PB_elec ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::OneToAllEnergyContainer >( fixed_residue_, pose.size(), PB_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -283,8 +286,8 @@ void
 PoissonBoltzmannEnergy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	return;
 }
@@ -338,8 +341,8 @@ PoissonBoltzmannEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	//check fixed_residue_
 	conformation::Residue const &rsd (rsd1.seqpos() == fixed_residue_? rsd2 : rsd1 );
@@ -362,9 +365,9 @@ PoissonBoltzmannEnergy::residue_pair_energy(
 		PB_burial_weight );
 
 	if ( basic::options::option[basic::options::OptionKeys::pb_potential::sidechain_only]() ) {
-		emap[ PB_elec ] += PB_score_sidechain;
+		emap[ core::scoring::PB_elec ] += PB_score_sidechain;
 	} else {
-		emap[ PB_elec ] += PB_score_residue;
+		emap[ core::scoring::PB_elec ] += PB_score_residue;
 	}
 }
 
@@ -444,7 +447,6 @@ PoissonBoltzmannEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

@@ -160,7 +160,7 @@ private :
 	bool solvate_, solvate_unbound_, solvate_rbmin_, min_water_jump_; //fd solvate the bound and unbound states
 
 	/// info carrier for poisson-boltzmann potential energy computation
-	core::scoring::methods::PBLifetimeCacheOP pb_cached_data_;
+	core::energy_methods::PBLifetimeCacheOP pb_cached_data_;
 
 	/// true when PB potential is part of scorefxn
 	bool pb_enabled_;

@@ -38,17 +38,18 @@
 
 
 namespace core {
-namespace scoring {
-namespace aa_repeat_energy {
+namespace energy_methods {
 
 /// @brief AARepeatEnergy, an energy function to penalize stretches of the same residue,
 /// derived from base class for EnergyMethods, which are meaningful only on entire structures.
 /// These EnergyMethods do all of their work in the "finalize_total_energy" section of score
 /// function evaluation.
-class AARepeatEnergy : public methods::WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy  {
+class AARepeatEnergy : public core::scoring::methods::WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy  {
 public:
-	typedef methods::WholeStructureEnergy parent1;
+	typedef core::scoring::methods::WholeStructureEnergy parent1;
 	typedef core::scoring::annealing::ResidueArrayAnnealableEnergy parent2;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMap EnergyMap;
 
 public:
 
@@ -66,7 +67,7 @@ public:
 
 	/// @brief Clone: create a copy of this object, and return an owning pointer
 	/// to the copy.
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// @brief AARepeatEnergy is context-independent and thus indicates that no context graphs need to be maintained by
 	/// class Energies.
@@ -78,7 +79,7 @@ public:
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called by finalize_total_energy().
@@ -118,8 +119,7 @@ private:
 
 };
 
-} // aa_repeat_energy
-} // scoring
+} // energy_methods
 } // core
 
 

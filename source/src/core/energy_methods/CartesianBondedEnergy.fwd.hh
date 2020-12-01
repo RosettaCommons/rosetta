@@ -11,15 +11,15 @@
 /// @brief
 /// @author Frank DiMaio
 
-#ifndef INCLUDED_core_scoring_methods_CartesianBondedEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_CartesianBondedEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_CartesianBondedEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_CartesianBondedEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class ResidueCartBondedParameters;
 typedef  utility::pointer::weak_ptr< ResidueCartBondedParameters > ResidueCartBondedParametersAP;
@@ -39,8 +39,7 @@ typedef  utility::pointer::weak_ptr< CartesianBondedEnergy const > CartesianBond
 typedef  utility::pointer::shared_ptr< CartesianBondedEnergy > CartesianBondedEnergyOP;
 typedef  utility::pointer::shared_ptr< CartesianBondedEnergy const > CartesianBondedEnergyCOP;
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
-#endif // INCLUDED_core_scoring_methods_CartesianBondedEnergy_HH
+#endif // INCLUDED_core_energy_methods_CartesianBondedEnergy_HH

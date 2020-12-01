@@ -49,8 +49,7 @@
 static basic::Tracer TR( "core.scoring.geometric_solvation.exact_model" );
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 using namespace core;
 using namespace core::scoring;
@@ -277,7 +276,7 @@ core::Real compute_exact_geosol(
 	residue_energies.resize( input_pose.size(), 0.);
 
 	// Get a copy of the Etable (to lookup atomic radii)
-	core::scoring::etable::EtableOP etable_ptr( new core::scoring::etable::Etable( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ), core::scoring::etable::EtableOptions() ) );
+	core::scoring::etable::EtableOP etable_ptr( utility::pointer::make_shared< core::scoring::etable::Etable >( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ), core::scoring::etable::EtableOptions() ) );
 
 	// Allocate memory for grid of occluded sites
 	std::vector< std::vector< std::vector< bool > > > occluded_sites;
@@ -299,7 +298,7 @@ core::Real compute_exact_geosol(
 		// loop over donors in polar_rsd
 		for ( Size const polar_atom : polar_rsd.Hpos_polar() ) {
 			Size const base_atom( polar_rsd.atom_base( polar_atom ) );
-			hbonds::HBEvalTuple const curr_hbond_eval_tuple(
+			core::scoring::hbonds::HBEvalTuple const curr_hbond_eval_tuple(
 				get_hb_don_chem_type( polar_atom, polar_rsd ),
 				hbacc_H2O, seq_sep_other);
 
@@ -331,7 +330,7 @@ core::Real compute_exact_geosol(
 
 		// loop over acceptors in polar_rsd
 		for ( Size const polar_atom : polar_rsd.accpt_pos() ) {
-			hbonds::HBEvalType const curr_hbeval_type = (*hbonds::HBEval_lookup)( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+			core::scoring::hbonds::HBEvalType const curr_hbeval_type = (*hbonds::HBEval_lookup)( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 			// Figure out max LK energy
 			core::Real max_possible_LK = etable_ptr->lk_dgfree( polar_rsd.atom_type_index( polar_atom ) );
@@ -362,7 +361,6 @@ core::Real compute_exact_geosol(
 }
 
 
-} // geometric_solvation
 } // scoring
 } // core
 

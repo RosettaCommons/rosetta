@@ -12,8 +12,8 @@
 /// carbonyl carbon of residue N and nitrogen of residue N+1.
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_methods_PeptideBondEnergy_hh
-#define INCLUDED_core_scoring_methods_PeptideBondEnergy_hh
+#ifndef INCLUDED_core_energy_methods_PeptideBondEnergy_hh
+#define INCLUDED_core_energy_methods_PeptideBondEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/PeptideBondEnergy.fwd.hh>
@@ -32,24 +32,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief PeptideBondEnergy class iterates across all residues in finalize()
 /// and determines the penalty between residues i and i+1 by the distance
 /// the C-N bond. Evantually I'd also like to add bond angle constraints as
 /// well, but that's handled by OmegaTether at the moment.
-//class PeptideBondEnergy : public WholeStructureEnergy  {
-class PeptideBondEnergy : public ContextIndependentTwoBodyEnergy  {
+//class PeptideBondEnergy : public core::scoring::methods::WholeStructureEnergy  {
+class PeptideBondEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
 	PeptideBondEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override
 	{
 		return utility::pointer::make_shared< PeptideBondEnergy >();
@@ -60,8 +60,8 @@ public:
 	//void
 	//finalize_total_energy(
 	// pose::Pose & pose,
-	// ScoreFunction const &,
-	// EnergyMap & totals
+	// core::scoring::ScoreFunction const &,
+	// core::scoring::EnergyMap & totals
 	//) const;
 
 	void
@@ -69,16 +69,16 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	/// called during gradient-based minimization inside dfunc
@@ -91,8 +91,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -101,7 +101,7 @@ public:
 	indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override {
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override {
 		return false;
 	}
 
@@ -113,7 +113,6 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 

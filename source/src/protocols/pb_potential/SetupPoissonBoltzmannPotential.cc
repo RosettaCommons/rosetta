@@ -71,13 +71,13 @@ SetupPoissonBoltzmannPotential::apply(core::pose::Pose & pose ) {
 
 	// Register the empty cache holder if not done so yet.
 	if ( !pose.data().has( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ) ) {
-		PoissonBoltzmannEnergy::PBLifetimeCacheOP new_cache( new PoissonBoltzmannEnergy::PBLifetimeCache() );
+		core::energy_methods::PBLifetimeCacheOP new_cache( utility::pointer::make_shared< core::energy_methods::PBLifetimeCache>() );
 		pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, new_cache );
 	}
 
 	// Cache the "which chain" info
-	PoissonBoltzmannEnergy::PBLifetimeCacheOP cached_data =
-		static_cast< PoissonBoltzmannEnergy::PBLifetimeCacheOP >(pose.data().get_ptr< PoissonBoltzmannEnergy::PBLifetimeCache>(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
+	core::energy_methods::PBLifetimeCacheOP cached_data =
+		static_cast< core::energy_methods::PBLifetimeCacheOP >(pose.data().get_ptr< core::energy_methods::PBLifetimeCache>(pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 	pose.data().set( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE, cached_data );
 
 

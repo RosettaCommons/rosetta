@@ -36,14 +36,13 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Membrane Environemtn Residue Pair Energy Term
 class MPPairEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy {
 
 public:
-	typedef methods::ContextDependentTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextDependentTwoBodyEnergy parent;
 
 public: // constructors
 
@@ -58,7 +57,7 @@ public: // scoring methods
 
 	/// @brief Setup for Scoring - compute cen env and update neighbors
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Compute residue pair energy in th emembrane
 	void
@@ -66,8 +65,8 @@ public: // scoring methods
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -75,19 +74,19 @@ public: // scoring methods
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return false; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	/// @brief Define Atomic Interaction Cutoff == 6A
@@ -115,14 +114,13 @@ public: // energy methods
 private: // data
 
 	// MP Potential Base Instance
-	MembraneData const & mpdata_;
+	core::scoring::membrane::MembraneData const & mpdata_;
 
 	// User option
 	bool no_interpolate_mpair_;
 
 };
 
-} // membrane
 } // scoring
 } // core
 

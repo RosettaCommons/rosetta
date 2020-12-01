@@ -32,16 +32,14 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
-
+namespace energy_methods {
 
 class ArgCationPiEnergy : public scoring::methods::ContextIndependentTwoBodyEnergy {
 
 public:
 	ArgCationPiEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
-	scoring::methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
@@ -74,8 +72,8 @@ public:
 		scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
 		scoring::EnergyMap const & weights,
-		utility::vector1< scoring::DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< scoring::DerivVectorPair > & r2_atom_derivs
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 
@@ -155,8 +153,7 @@ private:
 
 };
 
-} // methods
-} // scoring
+} // energy_methods
 } // core
 
 #endif

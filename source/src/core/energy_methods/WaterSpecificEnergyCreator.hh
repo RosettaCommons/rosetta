@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   src/core/scoring/methods/WaterSpecificEnergyCreator.hh
+/// @file src/core/energy_methods/WaterSpecificEnergyCreator.hh
 /// @brief  Declaration for the class that connects WaterSpecificEnergy with the ScoringManager
 /// @author Joaquin Ambia, Jason K. Lai
 
-#ifndef INCLUDED_core_scoring_methods_WaterSpecificEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_WaterSpecificEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_WaterSpecificEnergyCreator_hh
+#define INCLUDED_core_energy_methods_WaterSpecificEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -23,26 +23,25 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class WaterSpecificEnergyCreator : public EnergyMethodCreator
+
+class WaterSpecificEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new WaterSpecificEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-}
 }
 }
 

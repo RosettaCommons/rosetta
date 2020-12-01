@@ -26,14 +26,12 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 class MPResidueLipophilicityEnergy;
 typedef utility::pointer::shared_ptr< MPResidueLipophilicityEnergy > MPResidueLipophilicityEnergyOP;
 typedef utility::pointer::shared_ptr< MPResidueLipophilicityEnergy const > MPResidueLipophilicityEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 

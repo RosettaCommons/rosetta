@@ -13,8 +13,8 @@
 
 
 
-#ifndef INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonical_hh
-#define INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonical_hh
+#ifndef INCLUDED_core_energy_methods_ReferenceEnergyNoncanonical_hh
+#define INCLUDED_core_energy_methods_ReferenceEnergyNoncanonical_hh
 
 // Unit headers
 #include <core/energy_methods/ReferenceEnergyNoncanonical.fwd.hh>
@@ -35,13 +35,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class ReferenceEnergyNoncanonical : public ContextIndependentOneBodyEnergy
+
+class ReferenceEnergyNoncanonical : public core::scoring::methods::ContextIndependentOneBodyEnergy
 {
 public:
-	typedef ContextIndependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy parent;
 
 public:
 
@@ -54,7 +54,7 @@ public:
 	///
 	~ReferenceEnergyNoncanonical() override;
 
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -76,8 +76,8 @@ public:
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
@@ -93,7 +93,6 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 

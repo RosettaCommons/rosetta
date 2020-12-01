@@ -25,13 +25,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 class RNA_VDW_Energy;
 
-} //rna
 } //scoring
 } //core
 

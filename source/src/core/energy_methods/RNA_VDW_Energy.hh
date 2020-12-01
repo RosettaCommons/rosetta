@@ -32,13 +32,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_VDW_Energy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_VDW_Energy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -46,7 +45,7 @@ public:
 	RNA_VDW_Energy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,10 +53,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
@@ -67,8 +66,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -76,8 +75,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 
@@ -86,14 +85,14 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -117,7 +116,7 @@ private:
 	evaluate_rnp_vdw_score(
 		conformation::Residue const & rna_rsd,
 		conformation::Residue const & protein_rsd,
-		rna::RNA_ScoringInfo const & rna_scoring_info,
+		core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info,
 		bool const & centroid_mode ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -132,14 +131,13 @@ private:
 
 	// Data!
 	// const-ref to scoring database
-	rna::RNA_AtomVDW const & rna_atom_vdw_;
+	core::scoring::rna::RNA_AtomVDW const & rna_atom_vdw_;
 
 	Real const vdw_scale_factor_;
 	core::Size version() const override;
 };
 
 
-} //rna
 } //scoring
 } //core
 

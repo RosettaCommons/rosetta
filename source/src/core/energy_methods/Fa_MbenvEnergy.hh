@@ -11,8 +11,8 @@
 /// @author Patrick Barth
 
 
-#ifndef INCLUDED_core_scoring_methods_Fa_MbenvEnergy_hh
-#define INCLUDED_core_scoring_methods_Fa_MbenvEnergy_hh
+#ifndef INCLUDED_core_energy_methods_Fa_MbenvEnergy_hh
+#define INCLUDED_core_energy_methods_Fa_MbenvEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/Fa_MbenvEnergy.fwd.hh>
@@ -36,32 +36,32 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class Fa_MbenvEnergy : public ContextDependentOneBodyEnergy {
+
+class Fa_MbenvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 public:
 
-	Fa_MbenvEnergy( etable::MembEtable const & memb_etable_in );
+	Fa_MbenvEnergy( core::scoring::etable::MembEtable const & memb_etable_in );
 
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
-	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
+	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, core::scoring::EnergyMap & emap ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const & scfxn
+		core::scoring::ScoreFunction const & scfxn
 	) const override;
 
 	void
@@ -69,8 +69,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & emap,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -79,15 +79,15 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
 
-	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & ) const;
-	Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & ) const;
-	MembraneEmbed const & MembraneEmbed_from_pose( pose::Pose const & ) const;
+	core::scoring::MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & ) const;
+	core::scoring::Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & ) const;
+	core::scoring::MembraneEmbed const & MembraneEmbed_from_pose( pose::Pose const & ) const;
 
 
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const override;
 
 private:
@@ -107,15 +107,14 @@ private:
 	ObjexxFCL::FArray1< Real > const & lk_dgrefce_;
 	ObjexxFCL::FArray1< Real > const & memb_lk_dgrefce_;
 
-	Membrane_FAPotential const & potential_;
+	core::scoring::Membrane_FAPotential const & potential_;
 	mutable Real fa_mbenv_weight_; // hold this while calculating derivatives.
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_Fa_MbenvEnergy_HH
+#endif // INCLUDED_core_energy_methods_Fa_MbenvEnergy_HH

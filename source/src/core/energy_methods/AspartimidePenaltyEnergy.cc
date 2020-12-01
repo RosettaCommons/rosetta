@@ -68,23 +68,24 @@
 #include <core/pose/PDBInfo.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 static basic::Tracer TR( "core.scoring.AspartimidePenaltyEnergy" );
 
 /// @brief EnergyMethod creator, called by the machinery that sets up the scorefunction.
 ///
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 AspartimidePenaltyEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< AspartimidePenaltyEnergy >( options.aspartimide_penalty_value() );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 AspartimidePenaltyEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( aspartimide_penalty );
 	return sts;
@@ -111,7 +112,7 @@ AspartimidePenaltyEnergy::~AspartimidePenaltyEnergy( ) = default;
 
 /// @brief Copy this energy object and return an owning pointer to the copy.
 ///
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 AspartimidePenaltyEnergy::clone() const {
 	return utility::pointer::make_shared< AspartimidePenaltyEnergy >( *this );
 }
@@ -121,7 +122,7 @@ AspartimidePenaltyEnergy::clone() const {
 void
 AspartimidePenaltyEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &/*sfxn*/
+	core::scoring::ScoreFunction const &/*sfxn*/
 ) const {
 	create_long_range_energy_container( pose, core::scoring::aspartimide_penalty, long_range_type() );
 }
@@ -136,15 +137,15 @@ AspartimidePenaltyEnergy::defines_residue_pair_energy(
 	Size rsd2
 ) const {
 	bool res1_is_lo(false), res2_is_lo(false);
-	determine_lo_and_hi_residues( pose, rsd1, rsd2, res1_is_lo, res2_is_lo );
+	core::scoring::methods::determine_lo_and_hi_residues( pose, rsd1, rsd2, res1_is_lo, res2_is_lo );
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::AspartimidePenaltyEnergy::defines_residue_pair_energy(): The aspartimide_penalty energy term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
 	return (res1_is_lo || res2_is_lo);
 }
 
-methods::LongRangeEnergyType
+core::scoring::methods::LongRangeEnergyType
 AspartimidePenaltyEnergy::long_range_type() const {
-	return methods::aspartimide_penalty_lr;
+	return core::scoring::methods::aspartimide_penalty_lr;
 }
 
 void
@@ -152,14 +153,14 @@ AspartimidePenaltyEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace core::chemical;
 
 	bool res1_is_lo(false), res2_is_lo(false);
 
-	determine_lo_and_hi_residues( pose, rsd1.seqpos(), rsd2.seqpos(), res1_is_lo, res2_is_lo );
+	core::scoring::methods::determine_lo_and_hi_residues( pose, rsd1.seqpos(), rsd2.seqpos(), res1_is_lo, res2_is_lo );
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::AspartimidePenaltyEnergy::residue_pair_energy(): The aspartimide_penalty energy term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
 	conformation::Residue const &res_lo = (res1_is_lo) ? rsd1 : rsd2;
@@ -181,7 +182,7 @@ AspartimidePenaltyEnergy::residue_pair_energy(
 	}
 
 	//We've ruled out all of the cases in which we do nothing.  Now, since this IS a pair to be penalized, add the penalty value:
-	emap[ aspartimide_penalty ] += aspartimide_penalty_value_;
+	emap[ core::scoring::aspartimide_penalty ] += aspartimide_penalty_value_;
 }
 
 /// @brief Does nothing, since this term is spatially invariant (i.e. has no DoF derivatives, because
@@ -189,12 +190,12 @@ AspartimidePenaltyEnergy::residue_pair_energy(
 Real
 AspartimidePenaltyEnergy::eval_intraresidue_dof_derivative(
 	conformation::Residue const & /*res_lo*/,
-	ResSingleMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const & /*min_data*/,
 	id::DOF_ID const & /*dof_id*/,
 	id::TorsionID const & /*tor_id*/,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap const & /*weights*/
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap const & /*weights*/
 ) const
 {
 	return 0.0;
@@ -226,6 +227,5 @@ AspartimidePenaltyEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

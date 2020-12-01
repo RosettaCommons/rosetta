@@ -16,12 +16,10 @@
 #define INCLUDED_core_scoring_elec_FA_ElecEnergyAroAro_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace elec {
+namespace energy_methods {
 
 class FA_ElecEnergyAroAro;
 
-}
 }
 }
 

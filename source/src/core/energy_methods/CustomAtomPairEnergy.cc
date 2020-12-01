@@ -48,22 +48,23 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer tr( "core.scoring.methods.CustomAtomPairEnergy" );
 
 /// @details This must return a fresh instance of the CustomAtomPairEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CustomAtomPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & opts
+	core::scoring::methods::EnergyMethodOptions const & opts
 ) const {
 	return utility::pointer::make_shared< CustomAtomPairEnergy >( opts.cst_max_seq_sep() );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CustomAtomPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( custom_atom_pair );
 	return sts;
@@ -75,7 +76,7 @@ CustomAtomPairEnergy::CustomAtomPairEnergy( Size const max_cst_seq_sep ) :
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CustomAtomPairEnergy::clone() const
 {
 	return utility::pointer::make_shared< CustomAtomPairEnergy >(max_cst_seq_sep_);
@@ -103,7 +104,7 @@ void swap_seqpos(
 
 
 void
-CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	pose.update_actcoords();
@@ -134,8 +135,8 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 	Size const n_res( pose.size() );
 	// could save some space by only doing upper triangle (resi < resj)
 	have_cst_ = vector1< vector1< bool > >( n_res, vector1< bool >( n_res, false ) );
-	funcs_ = vector1< vector1< func::SOGFunc_Impl > >(
-		n_res, vector1< func::SOGFunc_Impl >( n_res, func::SOGFunc_Impl() )
+	funcs_ = vector1< vector1< core::scoring::func::SOGFunc_Impl > >(
+		n_res, vector1< core::scoring::func::SOGFunc_Impl >( n_res, core::scoring::func::SOGFunc_Impl() )
 	);
 
 	string line;
@@ -148,7 +149,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 			>> func_tag;
 
 		if ( cst_tag == "AtomPair" && func_tag == "SOGFUNC" ) {
-			func::SOGFunc_Impl func;
+			core::scoring::func::SOGFunc_Impl func;
 			func.read_data( line_stream );
 			//swap_seqpos(resi,resj);
 			have_cst_[resi][resj] = true;
@@ -169,7 +170,7 @@ CustomAtomPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const 
 
 void
 CustomAtomPairEnergy::setup_for_derivatives(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 	pose.update_residue_neighbors();
 	pose.update_actcoords();
@@ -203,8 +204,8 @@ CustomAtomPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -213,7 +214,7 @@ CustomAtomPairEnergy::residue_pair_energy(
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
 	// return early if we don't have a weight for this ScoreType
-	if ( scorefxn.has_zero_weight(custom_atom_pair) ) return;
+	if ( scorefxn.has_zero_weight( core::scoring::custom_atom_pair) ) return;
 
 	// return early if we don't have constraints
 	if ( !have_cst_[seqpos1][seqpos2] ) return;
@@ -225,7 +226,7 @@ CustomAtomPairEnergy::residue_pair_energy(
 	if ( !( rsd1.type().has(atom_name) && rsd2.type().has(atom_name) ) ) return;
 	Distance dist( rsd1.xyz(atom_name).distance( rsd2.xyz(atom_name) ) );
 	if ( dist > interaction_cutoff() ) {
-		emap[ custom_atom_pair ] += dist - interaction_cutoff();
+		emap[ core::scoring::custom_atom_pair ] += dist - interaction_cutoff();
 	}
 } // residue_pair_energy
 
@@ -235,12 +236,12 @@ CustomAtomPairEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & /*domain_map*/,
-	ScoreFunction const & scorefxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
-	if ( scorefxn.has_zero_weight(custom_atom_pair) ) return;
+	if ( scorefxn.has_zero_weight( core::scoring::custom_atom_pair) ) return;
 
 	using core::Real;
 	using core::Size;
@@ -260,7 +261,7 @@ CustomAtomPairEnergy::eval_atom_derivative(
 
 		if ( dist <= interaction_cutoff() ) {
 			Real const wderiv(
-				weights[ custom_atom_pair ] * funcs_[seqpos1][seqpos2].dfunc(dist)
+				weights[ core::scoring::custom_atom_pair ] * funcs_[seqpos1][seqpos2].dfunc(dist)
 			);
 			F1 += f1 * wderiv;
 			F2 += f2 * wderiv;
@@ -291,7 +292,7 @@ CustomAtomPairEnergy::indicate_required_context_graphs(
 /// @brief CustomAtomPairEnergy does not define intraresidue interactions
 bool
 CustomAtomPairEnergy::defines_intrares_energy(
-	EnergyMap const & /*weights*/
+	core::scoring::EnergyMap const & /*weights*/
 ) const {
 	return false;
 }
@@ -300,8 +301,8 @@ void
 CustomAtomPairEnergy::eval_intrares_energy(
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap &
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap &
 ) const {}
 core::Size
 CustomAtomPairEnergy::version() const
@@ -309,6 +310,5 @@ CustomAtomPairEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

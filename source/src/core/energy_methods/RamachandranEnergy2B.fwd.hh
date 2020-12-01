@@ -13,22 +13,21 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_RamachandranEnergy2B_fwd_hh
-#define INCLUDED_core_scoring_methods_RamachandranEnergy2B_fwd_hh
+#ifndef INCLUDED_core_energy_methods_RamachandranEnergy2B_fwd_hh
+#define INCLUDED_core_energy_methods_RamachandranEnergy2B_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class RamachandranEnergy2B;
 
 typedef utility::pointer::shared_ptr< RamachandranEnergy2B > RamachandranEnergy2BOP;
 typedef utility::pointer::shared_ptr< RamachandranEnergy2B const > RamachandranEnergy2BCOP;
 
-} // methods
 } // scoring
 } // core
 

@@ -34,21 +34,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the RMS_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RMS_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RMS_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RMS_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rms );
 	return sts;
@@ -74,7 +75,7 @@ RMS_Energy::RMS_Energy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RMS_Energy::clone() const
 {
 	return utility::pointer::make_shared< RMS_Energy >();
@@ -93,8 +94,8 @@ RMS_Energy::clone() const
 void
 RMS_Energy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 
 	// PROF_START( basic::RMS );
@@ -108,7 +109,7 @@ RMS_Energy::finalize_total_energy(
 	} else {
 		rmsd = core::scoring::CA_rmsd( native_pose_, pose );
 	}
-	totals[ rms ]  = std::abs( rms_target_ - rmsd );
+	totals[ core::scoring::rms ]  = std::abs( rms_target_ - rmsd );
 
 	// PROF_STOP( basic::RMS );
 }
@@ -118,6 +119,5 @@ RMS_Energy::version() const
 	return 1; // Initial versioning
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

@@ -68,20 +68,20 @@ static basic::Tracer TR( "core.scoring.rna.RNA_FullAtomVDW_BasePhosphateEnergy",
 using namespace core::chemical::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNA_FullAtomVDW_BasePhosphateCreator class
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphateCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< RNA_FullAtomVDW_BasePhosphate >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fa_intra_RNA_base_phos_atr );
 	sts.push_back( fa_intra_RNA_base_phos_rep );
@@ -92,16 +92,17 @@ RNA_FullAtomVDW_BasePhosphateCreator::score_types_for_method() const {
 
 /// constructor
 RNA_FullAtomVDW_BasePhosphate::RNA_FullAtomVDW_BasePhosphate(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ):
 	parent( utility::pointer::make_shared< RNA_FullAtomVDW_BasePhosphateCreator >() )
 	//options_( options )
 {
-	etable::Etable const & etable = *(ScoringManager::get_instance()->etable( options ).lock());
+	using namespace core::scoring;
+	core::scoring::etable::Etable const & etable = *( core::scoring::ScoringManager::get_instance()->etable( options ).lock());
 	if ( options.analytic_etable_evaluation() ) {
-		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEvaluator >( etable );
 	} else {
-		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::TableLookupEvaluator >( etable );
 	}
 
 	etable_evaluator_->set_scoretypes(
@@ -115,7 +116,7 @@ RNA_FullAtomVDW_BasePhosphate::~RNA_FullAtomVDW_BasePhosphate() = default;
 
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_FullAtomVDW_BasePhosphate::clone() const
 {
 
@@ -132,11 +133,11 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 	Size const at1hend,
 	Size const at2hbegin,
 	Size const at2hend,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	using conformation::Atom;
 
-	Weight weight( 1.0 );
+	core::scoring::Weight weight( 1.0 );
 
 	Atom const & atom1( res1.atom( atomno1 ) );
 	Atom const & atom2( res2.atom( atomno2 ) );
@@ -169,7 +170,7 @@ RNA_FullAtomVDW_BasePhosphate::residue_fast_pair_energy_attached_H(
 void
 RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	conformation::Residue const & rsd,
-	EnergyMap & emap  ) const {
+	core::scoring::EnergyMap & emap  ) const {
 	using conformation::Atom;
 
 	if ( rsd.is_RNA() == false ) return;
@@ -212,7 +213,7 @@ void
 RNA_FullAtomVDW_BasePhosphate::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap  ) const {
+	core::scoring::EnergyMap & emap  ) const {
 
 	return residue_energy( rsd, emap );
 }
@@ -224,17 +225,17 @@ RNA_FullAtomVDW_BasePhosphate::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & /*sfxn*/, // needed for non-nblist minimization
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & /*sfxn*/, // needed for non-nblist minimization
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
-	if ( weights[ fa_intra_RNA_base_phos_sol] != 0.0 ) {
+	if ( weights[ core::scoring::fa_intra_RNA_base_phos_sol] != 0.0 ) {
 		//Please refer to paragraph at the end of RNA_FullAtomVDW_BasePhosphate::residue_energy for explanation.
 		//Again, if you want to implement this term, please ensure your implementation works properly (i.e. perform numerical_derivative_check() and etc),
 		//before committing the code to TRUNK!)
 		// Parin S. (sripakpa@stanford.edu). Jan 11, 2012
-		utility_exit_with_message( "weights[ fa_intra_RNA_base_phos_sol ] != 0.0, but this term is not yet implemented!" );
+		utility_exit_with_message( "weights[ core::scoring::fa_intra_RNA_base_phos_sol ] != 0.0, but this term is not yet implemented!" );
 	}
 
 	Size const seq_num = id.rsd();
@@ -277,7 +278,6 @@ RNA_FullAtomVDW_BasePhosphate::version() const
 }
 
 
-} //rna
 } //scoring
 } //core
 

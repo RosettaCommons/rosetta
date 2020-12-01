@@ -1863,7 +1863,7 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 		} // if ( bRelax_ )
 
 		//Add contact order to score file as an extra column
-		core::scoring::methods::ContactOrderEnergy co_energy;
+		core::energy_methods::ContactOrderEnergy co_energy;
 		Real contact_order = co_energy.calculate_contact_order( fold_pose );
 		core::pose::setPoseExtraScore( fold_pose, "co", contact_order );
 

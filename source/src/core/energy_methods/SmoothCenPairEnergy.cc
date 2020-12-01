@@ -33,20 +33,21 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+
+core::scoring::methods::EnergyMethodOP
 SmoothCenPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return utility::pointer::make_shared< methods::SmoothCenPairEnergy >();
+	return utility::pointer::make_shared< SmoothCenPairEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
 /// this EnergyMethodCreator creates in its create_energy_method() function
-ScoreTypes
+core::scoring::ScoreTypes
 SmoothCenPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_pair_smooth );
 	sts.push_back( cenpack_smooth );
@@ -57,12 +58,12 @@ SmoothCenPairEnergyCreator::score_types_for_method() const {
 /// c-tor
 SmoothCenPairEnergy::SmoothCenPairEnergy() :
 	parent( utility::pointer::make_shared< SmoothCenPairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SmoothCenPairEnergy::clone() const {
 	return utility::pointer::make_shared< SmoothCenPairEnergy >();
 }
@@ -74,7 +75,7 @@ SmoothCenPairEnergy::clone() const {
 
 
 void
-SmoothCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+SmoothCenPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	potential_.compute_centroid_environment( pose );
@@ -94,8 +95,8 @@ SmoothCenPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
@@ -114,27 +115,27 @@ SmoothCenPairEnergy::residue_pair_energy(
 	cenpack_score *= 2.0f;
 
 	//fpd Get rid of secstruct weighing
-	emap[ cen_pair_smooth ] += pair_score;
-	emap[ cenpack_smooth ]  += cenpack_score;
+	emap[ core::scoring::cen_pair_smooth ] += pair_score;
+	emap[ core::scoring::cenpack_smooth ]  += cenpack_score;
 }
 
 void
 SmoothCenPairEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
-	Real weight1 = weights[ cen_pair_smooth ];
-	Real weight2 = weights[ cenpack_smooth ];
+	Real weight1 = weights[ core::scoring::cen_pair_smooth ];
+	Real weight2 = weights[ core::scoring::cenpack_smooth ];
 
 	/// assumes centroids are being used
 	conformation::Atom const & cen1 ( rsd1.atom( rsd1.nbr_atom() ) ), cen2 (rsd2.atom( rsd2.nbr_atom() ) );
@@ -168,8 +169,8 @@ SmoothCenPairEnergy::eval_residue_pair_derivatives(
 void
 SmoothCenPairEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	potential_.finalize( pose );
 }
@@ -185,6 +186,5 @@ SmoothCenPairEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-}
 }
 }

@@ -12,18 +12,17 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_SymmetricLigandEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_SymmetricLigandEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_SymmetricLigandEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_SymmetricLigandEnergy_fwd_hh
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class SymmetricLigandEnergy;
 
-} // methods
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_SymmetricLigandEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_SymmetricLigandEnergy_FWD_HH

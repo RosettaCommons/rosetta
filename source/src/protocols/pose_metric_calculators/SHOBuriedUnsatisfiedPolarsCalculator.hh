@@ -122,7 +122,7 @@ private:
 	SearchTyp search_typ_;
 
 	/// @brief SHO energy calculator
-	core::scoring::geometric_solvation::ExactOccludedHbondSolEnergyOP sho_meth_;
+	core::energy_methods::ExactOccludedHbondSolEnergyOP sho_meth_;
 
 	/// @brief maximum SHO energy value for a polar group to be considered as
 	///  exposed (i.e., not buried)

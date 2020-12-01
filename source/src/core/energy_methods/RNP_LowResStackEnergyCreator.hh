@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/rna/RNP_LowResStackEnergyCreator.hh
+/// @file src/core/energy_methods/RNP_LowResStackEnergyCreator.hh
 /// @brief  Energy method creator for the low resolution RNA/protein potential
 /// @author Kalli Kappel
 
@@ -23,26 +23,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
-class RNP_LowResStackEnergyCreator : public methods::EnergyMethodCreator
+class RNP_LowResStackEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new RNP_LowResStackEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //rna
 } //scoring
 } //core
 

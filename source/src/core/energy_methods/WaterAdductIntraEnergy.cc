@@ -28,21 +28,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the WaterAdductIntraEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterAdductIntraEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< WaterAdductIntraEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 WaterAdductIntraEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( h2o_intra );
 	return sts;
@@ -55,7 +56,7 @@ WaterAdductIntraEnergy::WaterAdductIntraEnergy() :
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterAdductIntraEnergy::clone() const
 {
 	return utility::pointer::make_shared< WaterAdductIntraEnergy >();
@@ -70,12 +71,12 @@ void
 WaterAdductIntraEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// Sum over all waters
 	for ( int atm = 1, atme = rsd.natoms() ; atm <= atme ; ++atm ) {
-		if ( rsd.atom_type( atm ).is_h2o() ) emap[ h2o_intra ] += 1.0;
+		if ( rsd.atom_type( atm ).is_h2o() ) emap[ core::scoring::h2o_intra ] += 1.0;
 	}
 }
 
@@ -85,8 +86,8 @@ WaterAdductIntraEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const &, //  tor_id
 	pose::Pose const &, // pose
-	ScoreFunction const &, //sfxn
-	EnergyMap const & // weights
+	core::scoring::ScoreFunction const &, //sfxn
+	core::scoring::EnergyMap const & // weights
 ) const
 {
 	return 0.0;
@@ -104,7 +105,6 @@ WaterAdductIntraEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

@@ -25,15 +25,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
 
 class RNA_DataBackboneEnergy;
 
-} //data
-} //rna
 } //scoring
 } //core
 

@@ -26,13 +26,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace hackaro {
+namespace energy_methods {
 
 
-class HackAroEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class HackAroEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -40,7 +39,7 @@ public:
 	HackAroEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -48,18 +47,18 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -67,8 +66,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 
@@ -77,14 +76,14 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -113,14 +112,14 @@ private:
 	residue_pair_energy_aro_aro(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		EnergyMap & emap) const;
+		core::scoring::EnergyMap & emap) const;
 
 
 	void
 	eval_atom_derivative_aro_aro(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		EnergyMap const & weights,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const;
@@ -131,7 +130,6 @@ private:
 };
 
 
-}
 }
 }
 

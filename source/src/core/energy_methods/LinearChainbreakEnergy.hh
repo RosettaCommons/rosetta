@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDED_core_scoring_methods_LinearChainbreakEnergy_hh
-#define INCLUDED_core_scoring_methods_LinearChainbreakEnergy_hh
+#ifndef INCLUDED_core_energy_methods_LinearChainbreakEnergy_hh
+#define INCLUDED_core_energy_methods_LinearChainbreakEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/LinearChainbreakEnergy.fwd.hh>
@@ -38,8 +38,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief LinearChainbreakEnergy class iterates across all residues in finalize()
 /// and determines the penalty between residues i and i+1 by how much their
@@ -57,9 +57,9 @@ namespace methods {
 ///
 ///   See Also: protocols/forge/chainbreak_eval.hh
 ///
-class LinearChainbreakEnergy : public WholeStructureEnergy {
+class LinearChainbreakEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 	// @brief Creates a new LinearChainbreakEnergy with the default allowable sequence
 	// separation (+inf)
@@ -80,15 +80,15 @@ public:
 	~LinearChainbreakEnergy() override;
 
 	/// clone
-	EnergyMethodOP clone() const override {
+	core::scoring::methods::EnergyMethodOP clone() const override {
 		return utility::pointer::make_shared< LinearChainbreakEnergy >(*this);
 	}
 
 	/// called at the end of energy evaluation
 	void finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals) const override;
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals) const override;
 
 	/// called during gradient-based minimization inside dfunc
 	/**
@@ -98,8 +98,8 @@ public:
 	void eval_atom_derivative(id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2) const override;
 
@@ -141,7 +141,6 @@ private:
 	core::Size version() const override;
 };
 
-} // methods
 } // scoring
 } // core
 #endif

@@ -57,21 +57,21 @@ using namespace core::scoring;
 using namespace core::scoring::methods;
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the MPSpanInsertionEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPSpanInsertionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPSpanInsertionEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MPSpanInsertionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( span_ins );
 	return sts;
@@ -104,16 +104,16 @@ MPSpanInsertionEnergy::MPSpanInsertionEnergy() :
 void
 MPSpanInsertionEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
 	core::Real result = compute( const_cast< const pose::Pose &>( pose ) );
-	totals[ span_ins ] = result;
+	totals[ core::scoring::span_ins ] = result;
 }
 
 /// @brief Create a clone of this energy method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPSpanInsertionEnergy::clone() const
 {
 	return utility::pointer::make_shared< MPSpanInsertionEnergy >( *this );
@@ -122,7 +122,7 @@ MPSpanInsertionEnergy::clone() const
 void
 MPSpanInsertionEnergy::setup_for_derivatives(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 }
@@ -133,8 +133,8 @@ MPSpanInsertionEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const {
@@ -336,6 +336,5 @@ MPSpanInsertionEnergy::version() const
 }
 
 
-} // membrane
 } // scoring
 } // core

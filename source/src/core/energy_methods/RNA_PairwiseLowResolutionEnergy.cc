@@ -44,21 +44,21 @@ using namespace core::chemical;
 using namespace core::chemical::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RNA_PairwiseLowResolutionEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_PairwiseLowResolutionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_PairwiseLowResolutionEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_PairwiseLowResolutionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_base_pair );
 	sts.push_back( rna_base_axis );
@@ -95,11 +95,11 @@ using Matrix = numeric::xyzMatrix<Real>;
 // AMW TODO: We really should be reaching into the options here but I'm tired and this won't matter soon..
 RNA_PairwiseLowResolutionEnergy::RNA_PairwiseLowResolutionEnergy() :
 	parent( utility::pointer::make_shared< RNA_PairwiseLowResolutionEnergyCreator >() ),
-	rna_low_resolution_potential_( *( ScoringManager::get_instance()->get_RNA_LowResolutionPotential( "scoring/rna/rna_base_pair_xy.dat" ) ) )
+	rna_low_resolution_potential_( *( core::scoring::ScoringManager::get_instance()->get_RNA_LowResolutionPotential( "scoring/rna/rna_base_pair_xy.dat" ) ) )
 {}
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_PairwiseLowResolutionEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_PairwiseLowResolutionEnergy >();
@@ -112,12 +112,12 @@ RNA_PairwiseLowResolutionEnergy::clone() const
 
 
 void
-RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	// Use mini's residue_pair_energy to keep track of the book-keeping, instead of this...
@@ -128,12 +128,12 @@ RNA_PairwiseLowResolutionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunc
 
 
 void
-RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_PairwiseLowResolutionEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	// Just make sure that everything has been calculated. This doesn't use residue_pair_energy for bookkeeping,
@@ -153,7 +153,7 @@ RNA_PairwiseLowResolutionEnergy::setup_for_packing(
 	pose.update_residue_neighbors();
 	rna_low_resolution_potential_.update_rna_centroid_info( pose );
 
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	rna_raw_base_base_info_ = &rna_scoring_info.rna_raw_base_base_info();
 
 	might_be_designing_ = false;
@@ -175,8 +175,8 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
@@ -192,19 +192,19 @@ RNA_PairwiseLowResolutionEnergy::residue_pair_energy(
 
 	// Note that following are used in packing/designing, although for full de novo modeling
 	//  there's a score that filters out base pairings that oversubscribe any one base edge.
-	emap[ rna_base_pair_pairwise ]       += rna_base_pair_pairwise_pair_energy( rsd1, rsd2 );
-	emap[ rna_base_axis_pairwise ]       += rna_base_axis_pairwise_pair_energy( rsd1, rsd2 );
-	emap[ rna_base_stagger_pairwise ]    += rna_base_stagger_pairwise_pair_energy( rsd1, rsd2 );
-	emap[ rna_base_stack_pairwise ]      += rna_base_stack_pairwise_pair_energy( rsd1, rsd2 );
-	emap[ rna_base_stack_axis_pairwise ] += rna_base_stack_axis_pairwise_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_base_pair_pairwise ]       += rna_base_pair_pairwise_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_base_axis_pairwise ]       += rna_base_axis_pairwise_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_base_stagger_pairwise ]    += rna_base_stagger_pairwise_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_base_stack_pairwise ]      += rna_base_stack_pairwise_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_base_stack_axis_pairwise ] += rna_base_stack_axis_pairwise_pair_energy( rsd1, rsd2 );
 
 	////////////////////////////////////////////////////////////////////////////////
-	emap[ rna_base_backbone ]     += rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
+	emap[ core::scoring::rna_base_backbone ]     += rna_low_resolution_potential_.rna_base_backbone_pair_energy( rsd1, rsd2,
 		centroid1, centroid2, stub1, stub2 );
 
 	////////////////////////////////////////////////////////////////////////////////
-	emap[ rna_backbone_backbone ] += rna_low_resolution_potential_.rna_backbone_backbone_pair_energy( rsd1, rsd2 );
-	emap[ rna_repulsive ]         += rna_low_resolution_potential_.rna_repulsive_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_backbone_backbone ] += rna_low_resolution_potential_.rna_backbone_backbone_pair_energy( rsd1, rsd2 );
+	emap[ core::scoring::rna_repulsive ]         += rna_low_resolution_potential_.rna_repulsive_pair_energy( rsd1, rsd2 );
 }
 
 ///////////////////////////////////////////////////////////////
@@ -222,8 +222,8 @@ RNA_PairwiseLowResolutionEnergy::get_centroid_information(
 	// This is not very elegant -- should we consider making the
 	// centroid a virtual atom on the residue, and stubs defined by
 	// three more virtual atoms?
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	if ( might_be_designing_ ) {
 		//Recalculate from scratch.
 		centroid1 = rna_centroid_info.get_base_centroid( rsd1 );
@@ -326,24 +326,24 @@ RNA_PairwiseLowResolutionEnergy::rna_base_stack_axis_pairwise_pair_energy(
 void
 RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap & totals
 ) const {
 
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 	pose::rna::RNA_RawBaseBaseInfo & raw_base_base_info( rna_scoring_info.rna_raw_base_base_info() );
 	clean_up_rna_two_body_energy_tables( raw_base_base_info, pose );
 
 	//This needs to take care of a bunch of base pair book-keeping.
 	// Get Pose cached pairwise "raw" base-base info. This was
 	// updated above.
-	if ( sfxn.has_nonzero_weight( rna_base_pair ) ||
-			sfxn.has_nonzero_weight( rna_base_axis ) ||
-			sfxn.has_nonzero_weight( rna_base_stagger ) ||
-			sfxn.has_nonzero_weight( rna_base_stack ) ||
-			sfxn.has_nonzero_weight( rna_base_stack_axis ) ||
-			sfxn.has_nonzero_weight( rna_data_base ) ||
-			sfxn.has_nonzero_weight( rna_motif )
+	if ( sfxn.has_nonzero_weight( core::scoring::rna_base_pair ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_base_axis ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_base_stagger ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_base_stack ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_base_stack_axis ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_data_base ) ||
+			sfxn.has_nonzero_weight( core::scoring::rna_motif )
 			) {
 
 		// Create Pose cached non-pairwise, "filtered" base-base info.
@@ -354,19 +354,19 @@ RNA_PairwiseLowResolutionEnergy::finalize_total_energy(
 		rna_filtered_base_base_info.carry_out_filtering( raw_base_base_info );
 
 		// From filtered base-base info, pull out total scores.
-		totals[ rna_base_pair ]        = rna_filtered_base_base_info.get_total_base_pair_score();
-		totals[ rna_base_axis ]        = rna_filtered_base_base_info.get_total_base_axis_score();
-		totals[ rna_base_stagger ]     = rna_filtered_base_base_info.get_total_base_stagger_score();
-		totals[ rna_base_stack ]       = rna_filtered_base_base_info.get_total_base_stack_score();
-		totals[ rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
+		totals[ core::scoring::rna_base_pair ]        = rna_filtered_base_base_info.get_total_base_pair_score();
+		totals[ core::scoring::rna_base_axis ]        = rna_filtered_base_base_info.get_total_base_axis_score();
+		totals[ core::scoring::rna_base_stagger ]     = rna_filtered_base_base_info.get_total_base_stagger_score();
+		totals[ core::scoring::rna_base_stack ]       = rna_filtered_base_base_info.get_total_base_stack_score();
+		totals[ core::scoring::rna_base_stack_axis ]  = rna_filtered_base_base_info.get_total_base_stack_axis_score();
 
-		if ( sfxn.has_nonzero_weight( rna_data_base ) ) {
+		if ( sfxn.has_nonzero_weight( core::scoring::rna_data_base ) ) {
 			pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
-			totals[ rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
+			totals[ core::scoring::rna_data_base ] += rna_filtered_base_base_info.get_data_score( rna_data_info );
 		}
 
-		if ( sfxn.has_nonzero_weight( rna_motif ) ) {
-			totals[ rna_motif ] += get_rna_motif_score( pose, rna_low_resolution_potential_, rna_filtered_base_base_info );
+		if ( sfxn.has_nonzero_weight( core::scoring::rna_motif ) ) {
+			totals[ core::scoring::rna_motif ] += get_rna_motif_score( pose, rna_low_resolution_potential_, rna_filtered_base_base_info );
 		}
 	}
 
@@ -381,8 +381,8 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & /*domain_map*/,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -390,22 +390,22 @@ RNA_PairwiseLowResolutionEnergy::eval_atom_derivative(
 	// NOTE -- currently have not put in derivatives for pairwise terms!!!! Would not be too hard actually!
 	Vector f1( 0.0 ), f2( 0.0 );
 
-	if ( weights[ rna_base_backbone ] != 0.0 ) {
+	if ( weights[ core::scoring::rna_base_backbone ] != 0.0 ) {
 		rna_low_resolution_potential_.eval_atom_derivative_rna_base_backbone( atom_id, pose, f1, f2 );
-		F1 += weights[ rna_base_backbone ] * f1;
-		F2 += weights[ rna_base_backbone ] * f2;
+		F1 += weights[ core::scoring::rna_base_backbone ] * f1;
+		F2 += weights[ core::scoring::rna_base_backbone ] * f2;
 	}
 
-	if ( weights[ rna_repulsive ] != 0.0 ) {
+	if ( weights[ core::scoring::rna_repulsive ] != 0.0 ) {
 		rna_low_resolution_potential_.eval_atom_derivative_rna_repulsive( atom_id, pose, f1, f2 );
-		F1 += weights[ rna_repulsive ] * f1;
-		F2 += weights[ rna_repulsive ] * f2;
+		F1 += weights[ core::scoring::rna_repulsive ] * f1;
+		F2 += weights[ core::scoring::rna_repulsive ] * f2;
 	}
 
-	if ( weights[ rna_backbone_backbone ] != 0.0 ) {
+	if ( weights[ core::scoring::rna_backbone_backbone ] != 0.0 ) {
 		rna_low_resolution_potential_.eval_atom_derivative_rna_backbone_backbone( atom_id, pose, f1, f2 );
-		F1 += weights[ rna_backbone_backbone ] * f1;
-		F2 += weights[ rna_backbone_backbone ] * f2;
+		F1 += weights[ core::scoring::rna_backbone_backbone ] * f1;
+		F2 += weights[ core::scoring::rna_backbone_backbone ] * f2;
 	}
 
 	// Non-pairwise terms.
@@ -452,6 +452,5 @@ RNA_PairwiseLowResolutionEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} //rna
 } //scoring
 } //core

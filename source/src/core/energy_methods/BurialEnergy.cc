@@ -35,20 +35,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the BurialEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 BurialEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< BurialEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 BurialEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back(burial);
 	return sts;
@@ -56,13 +57,13 @@ BurialEnergyCreator::score_types_for_method() const {
 
 void
 BurialEnergy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 	pose.update_residue_neighbors();
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 BurialEnergy::clone() const {
 	return utility::pointer::make_shared< BurialEnergy >();
 }
@@ -75,12 +76,12 @@ void
 BurialEnergy::residue_energy(
 	core::conformation::Residue const & rsd,
 	core::pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	static const core::Real dist_sq_cutoff(100);
 	static const core::Size NN_cutoff(16);
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 
 	core::conformation::Atom const & atom_i = rsd.atom(rsd.nbr_atom());
 
@@ -104,9 +105,9 @@ BurialEnergy::residue_energy(
 	Real const & burial_prediction( pred_burial_[rsd.seqpos()] );
 	Real score = burial_prediction;
 	if ( countN < NN_cutoff ) {
-		emap[ burial ] += -1 * score;
+		emap[ core::scoring::burial ] += -1 * score;
 	} else {
-		emap[ burial ] += score;
+		emap[ core::scoring::burial ] += score;
 	}
 }
 
@@ -119,7 +120,7 @@ BurialEnergy::version() const
 void
 BurialEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 void BurialEnergy::init_from_file() {
@@ -153,6 +154,5 @@ void BurialEnergy::init_from_file() {
 	}
 }
 
-} // methods
 } // scoring
 } // core

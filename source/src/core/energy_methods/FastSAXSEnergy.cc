@@ -53,8 +53,7 @@
 //Auto Headers
 //#include <core/import_pose/import_pose.hh>
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 // tracer
 static basic::Tracer TR( "core.scoring.saxs.FastSAXSEnergy" );
@@ -114,13 +113,14 @@ core::Real ref_spectrum[][21] = {
 {  13.429, 16.122, 16.070,  8.492,  5.115,  8.209,  9.842,  8.817, 14.105,  7.768, 0.832, 1.064, 2.204,  8.227, 2.715, 1.187, 3.629, 6.077, 10.749, 7.011, 0.983  }
 };
 
-ScoreTypes FastSAXSEnergyCreator::score_types_for_method() const {
+core::scoring::ScoreTypes FastSAXSEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fastsaxs );
 	return sts;
 }
 
-methods::EnergyMethodOP FastSAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP FastSAXSEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 	return utility::pointer::make_shared< FastSAXSEnergy >();
 }
 
@@ -132,11 +132,11 @@ FastSAXSEnergy::FastSAXSEnergy() :
 }
 
 /// clone
-methods::EnergyMethodOP FastSAXSEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP FastSAXSEnergy::clone() const {
 	return utility::pointer::make_shared< FastSAXSEnergy >( *this );
 }
 
-void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	using namespace core::chemical;
 
 	// 1 compute backbone and sidechain mass centers
@@ -294,13 +294,13 @@ void FastSAXSEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 	TR.Debug << "  c=" << c << ", chi2=" << chi2 << std::endl;
 }
 
-void FastSAXSEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
+void FastSAXSEnergy::finalize_total_energy(pose::Pose & /*pose*/, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const {
 	// all the work is done in setup for scoring
 	// just return results here
-	emap[ fastsaxs ] += chi2;  // should we scale by #reses?
+	emap[ core::scoring::fastsaxs ] += chi2;  // should we scale by #reses?
 }
 
-void FastSAXSEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+void FastSAXSEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	using namespace core::chemical;
 
 	// 1 compute backbone and sidechain mass centers'
@@ -434,8 +434,8 @@ void FastSAXSEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -471,8 +471,8 @@ void FastSAXSEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 	Vector const f1( atom_x.cross( atom_y ) );
 
-	F1 += weights[ fastsaxs ] * f1;
-	F2 += weights[ fastsaxs ] * f2;
+	F1 += weights[ core::scoring::fastsaxs ] * f1;
+	F2 += weights[ core::scoring::fastsaxs ] * f2;
 }
 
 // remaps core::chem::AA enums to indices in the formfactor table
@@ -611,7 +611,6 @@ FastSAXSEnergy::version() const
 }
 
 
-} // saxs
 } // scoring
 } // core
 

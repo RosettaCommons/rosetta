@@ -36,21 +36,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the PairEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< PairEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 PairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fa_pair );
 	sts.push_back( fa_pair_aro_aro );
@@ -62,12 +63,12 @@ PairEnergyCreator::score_types_for_method() const {
 
 PairEnergy::PairEnergy() :
 	parent( utility::pointer::make_shared< PairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_PairEPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_PairEPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PairEnergy::clone() const
 {
 	return utility::pointer::make_shared< PairEnergy >();
@@ -82,14 +83,14 @@ PairEnergy::setup_for_packing( pose::Pose & pose, utility::vector1< bool > const
 
 
 void
-PairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+PairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 
 void
-PairEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+PairEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -125,8 +126,8 @@ PairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -147,7 +148,7 @@ PairEnergy::residue_pair_energy(
 	DistanceSquared const nbr_dist2 = rsd1.xyz( rsd1.nbr_atom() ).distance_squared( rsd2.xyz( rsd2.nbr_atom() ) );
 	if ( nbr_dist2 > intxn_dist2 ) return;
 
-	TenANeighborGraph const & tenA_neighbor_graph
+	core::scoring::TenANeighborGraph const & tenA_neighbor_graph
 		( pose.energies().tenA_neighbor_graph() );
 
 	Real pairE = potential_.pair_term_energy(
@@ -159,12 +160,12 @@ PairEnergy::residue_pair_energy(
 		num_neighbors_counting_self_static() );
 
 	if ( rsd1.is_polar() && rsd2.is_polar() ) {
-		emap[ fa_pair_pol_pol ] += pairE;
-		emap[ fa_pair ] += pairE;
+		emap[ core::scoring::fa_pair_pol_pol ] += pairE;
+		emap[ core::scoring::fa_pair ] += pairE;
 	} else if ( rsd1.is_aromatic() && rsd2.is_aromatic() ) {
-		emap[ fa_pair_aro_aro ] += pairE;
+		emap[ core::scoring::fa_pair_aro_aro ] += pairE;
 	} else {
-		emap[ fa_pair_aro_pol ] += pairE;
+		emap[ core::scoring::fa_pair_aro_pol ] += pairE;
 	}
 
 	//if ( rsd1.actcoord_atoms().size() == 1 && rsd1.actcoord().distance( rsd1.xyz( rsd1.actcoord_atoms()[ 1 ] )) > 0.0001 ) {
@@ -186,17 +187,17 @@ PairEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
 	using namespace conformation;
 	using namespace numeric;
 
-	EnergyMap emap;
+	core::scoring::EnergyMap emap;
 
-	bool const any_aro( weights[ fa_pair_aro_pol ] != 0 || weights[ fa_pair_aro_aro ] != 0 );
+	bool const any_aro( weights[ core::scoring::fa_pair_aro_pol ] != 0 || weights[ core::scoring::fa_pair_aro_aro ] != 0 );
 
 	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
 		if ( set1.get_n_rotamers_for_residue_type( ii ) == 0 ) continue;
@@ -226,16 +227,16 @@ PairEnergy::evaluate_rotamer_pair_energies(
 					Size const ll_rot_id = jj_offset + ll - 1;
 
 					//emap.zero();
-					emap[ fa_pair ] = 0;
-					emap[ fa_pair_aro_aro ] = 0;
-					emap[ fa_pair_aro_pol ] = 0;
-					emap[ fa_pair_pol_pol ] = 0;
+					emap[ core::scoring::fa_pair ] = 0;
+					emap[ core::scoring::fa_pair_aro_aro ] = 0;
+					emap[ core::scoring::fa_pair_aro_pol ] = 0;
+					emap[ core::scoring::fa_pair_pol_pol ] = 0;
 					PairEnergy::residue_pair_energy( set1.rotamer_ref( kk_rot_id ), set2.rotamer_ref( ll_rot_id ), pose, sfxn, emap );
 					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy > (
-						weights[ fa_pair ] * emap[ fa_pair ] +
-						weights[ fa_pair_aro_aro ] * emap[ fa_pair_aro_aro ] +
-						weights[ fa_pair_aro_pol ] * emap[ fa_pair_aro_pol ] +
-						weights[ fa_pair_pol_pol ] * emap[ fa_pair_pol_pol ]
+						weights[ core::scoring::fa_pair ] * emap[ core::scoring::fa_pair ] +
+						weights[ core::scoring::fa_pair_aro_aro ] * emap[ core::scoring::fa_pair_aro_aro ] +
+						weights[ core::scoring::fa_pair_aro_pol ] * emap[ core::scoring::fa_pair_aro_pol ] +
+						weights[ core::scoring::fa_pair_pol_pol ] * emap[ core::scoring::fa_pair_pol_pol ]
 					);
 				}
 			}
@@ -249,19 +250,19 @@ PairEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
 	if ( ! residue.is_protein() || ! ( residue.is_polar() || residue.is_aromatic() ) ) return;
-	EnergyMap emap;
+	core::scoring::EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		//emap.zero();
-		emap[ fa_pair ] = 0;
-		emap[ fa_pair_aro_aro ] = 0;
-		emap[ fa_pair_aro_pol ] = 0;
-		emap[ fa_pair_pol_pol ] = 0;
+		emap[ core::scoring::fa_pair ] = 0;
+		emap[ core::scoring::fa_pair_aro_aro ] = 0;
+		emap[ core::scoring::fa_pair_aro_pol ] = 0;
+		emap[ core::scoring::fa_pair_pol_pol ] = 0;
 		if ( ! set.rotamer(ii)->is_protein() || ! ( set.rotamer(ii)->is_polar() || set.rotamer(ii)->is_aromatic() ) ) continue;
 		PairEnergy::residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
 		energy_vector[ ii ] += static_cast< core::PackerEnergy > (weights.dot( emap ) );
@@ -274,19 +275,19 @@ PairEnergy::evaluate_rotamer_background_energy_maps(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap const & , // weights
-	utility::vector1< EnergyMap > & emaps
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & , // weights
+	utility::vector1< core::scoring::EnergyMap > & emaps
 ) const
 {
 	if ( ! residue.is_protein() || ! residue.is_polar() || ! residue.is_aromatic()  ) return;
-	EnergyMap emap;
+	core::scoring::EnergyMap emap;
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 		//emap.zero();
-		emap[ fa_pair ] = 0;
-		emap[ fa_pair_aro_aro ] = 0;
-		emap[ fa_pair_aro_pol ] = 0;
-		emap[ fa_pair_pol_pol ] = 0;
+		emap[ core::scoring::fa_pair ] = 0;
+		emap[ core::scoring::fa_pair_aro_aro ] = 0;
+		emap[ core::scoring::fa_pair_aro_pol ] = 0;
+		emap[ core::scoring::fa_pair_pol_pol ] = 0;
 		if ( ! set.rotamer(ii)->is_protein() || ! ( set.rotamer(ii)->is_polar() || set.rotamer(ii)->is_aromatic() ) ) continue;
 		PairEnergy::residue_pair_energy( *set.rotamer( ii ), residue, pose, sfxn, emap );
 		emaps[ ii ] += emap;
@@ -315,13 +316,13 @@ void
 PairEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -331,7 +332,7 @@ PairEnergy::eval_residue_pair_derivatives(
 
 	debug_assert( (rsd1.is_polar() || rsd1.is_aromatic()) && (rsd2.is_polar() || rsd2.is_aromatic() ) );
 
-	TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
+	core::scoring::TenANeighborGraph const & tenA_neighbor_graph( pose.energies().tenA_neighbor_graph() );
 	int const nbr_count1( tenA_neighbor_graph.get_node( rsd1.seqpos() )->
 		num_neighbors_counting_self_static() );
 	int const nbr_count2( tenA_neighbor_graph.get_node( rsd2.seqpos() )->
@@ -346,13 +347,13 @@ PairEnergy::eval_residue_pair_derivatives(
 	}
 	switch (naros ) {
 	case 0 :
-		weight = std::max( weights[ fa_pair ], weights[ fa_pair_pol_pol ] );
+		weight = std::max( weights[ core::scoring::fa_pair ], weights[ core::scoring::fa_pair_pol_pol ] );
 		break;
 	case 1 :
-		weight = weights[ fa_pair_aro_pol ];
+		weight = weights[ core::scoring::fa_pair_aro_pol ];
 		break;
 	case 2 :
-		weight = weights[ fa_pair_aro_aro ];
+		weight = weights[ core::scoring::fa_pair_aro_aro ];
 		break;
 	default :
 		utility_exit_with_message( "ERROR in fa_pair derivaties, too many aromatics!!!");
@@ -414,16 +415,16 @@ PairEnergy::interaction_cutoff() const
 	return potential_.range();
 }
 
-/// @brief PairEnergy requires that Energies class maintains a TenANeighborGraph
+/// @brief PairEnergy requires that Energies class maintains a core::scoring::TenANeighborGraph
 void
 PairEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ ten_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::ten_A_neighbor_graph ] = true;
 }
 
 /// @brief PairEnergy does not define intraresidue interactions
 bool
-PairEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+PairEnergy::defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const
 {
 	return false;
 }
@@ -432,8 +433,8 @@ void
 PairEnergy::eval_intrares_energy(
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap &
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap &
 ) const {}
 core::Size
 PairEnergy::version() const
@@ -442,6 +443,5 @@ PairEnergy::version() const
 }
 
 
-}
 }
 }

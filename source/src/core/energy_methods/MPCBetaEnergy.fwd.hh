@@ -23,15 +23,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Membrane Potential Based CBeta Energy Term
 class MPCbetaEnergy;
 typedef utility::pointer::shared_ptr< MPCbetaEnergy > MPCbetaEnergyOP;
 typedef utility::pointer::shared_ptr< MPCbetaEnergy const > MPCbetaEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 

@@ -41,20 +41,21 @@
 #include <cstdio>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the RingClosureEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RingClosureEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RingClosureEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RingClosureEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( ring_close );
 	return sts;
@@ -78,7 +79,7 @@ RingClosureEnergy::RingClosureEnergy( RingClosureEnergy const &src ):
 
 /// @brief Clone -- creates a copy and returns an owning pointer to the copy.
 ///
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RingClosureEnergy::clone() const
 {
 	return utility::pointer::make_shared< RingClosureEnergy >();
@@ -92,7 +93,7 @@ void
 RingClosureEnergy::residue_energy(
 	conformation::Residue const &rsd,
 	pose::Pose const & ,//pose,
-	EnergyMap &emap
+	core::scoring::EnergyMap &emap
 ) const
 {
 	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
@@ -103,7 +104,7 @@ RingClosureEnergy::residue_energy(
 		if ( ia2==0 ) continue; //If this atom doesn't shadow anything, continue.
 
 		Distance const distsq ( rsd.xyz( ia ).distance_squared( rsd.xyz( ia2 ) ) ); //Measure the square of the distance between the atom that shadows and the atom being shadowed.
-		emap[ ring_close ] += distsq / ( std_dev_sq_ ); //Note that std_dev_sq_ is actually the SQUARE of the standard deviation.  This is a harmonic potential.
+		emap[ core::scoring::ring_close ] += distsq / ( std_dev_sq_ ); //Note that std_dev_sq_ is actually the SQUARE of the standard deviation.  This is a harmonic potential.
 	}
 }
 
@@ -112,10 +113,10 @@ RingClosureEnergy::residue_energy(
 void
 RingClosureEnergy::eval_residue_derivatives(
 	conformation::Residue const &rsd,
-	ResSingleMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const & /*min_data*/,
 	pose::Pose const & /*pose*/,
-	EnergyMap const &weights,
-	utility::vector1< DerivVectorPair > &atom_derivs
+	core::scoring::EnergyMap const &weights,
+	utility::vector1< core::scoring::DerivVectorPair > &atom_derivs
 ) const {
 
 	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
@@ -141,7 +142,7 @@ RingClosureEnergy::eval_residue_derivatives(
 
 		//Calculate df(dist)/d_dist.
 		//Since f = dist^2/stdev^2, df/d_dist = 2*dist/stdev^2, which must be premultiplied by the ring_close weight:
-		core::Real const deriv( weights[ ring_close ] * 2 * dist / std_dev_sq_ );
+		core::Real const deriv( weights[ core::scoring::ring_close ] * 2 * dist / std_dev_sq_ );
 
 		//Multiply the f1 and f2 vectors by the derivative:
 		f1 *= deriv;
@@ -172,7 +173,6 @@ RingClosureEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

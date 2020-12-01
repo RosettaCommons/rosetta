@@ -52,7 +52,7 @@ namespace pose_metric_calculators {
 using core::Size;
 using core::Real;
 using core::id::AtomID;
-using core::scoring::geometric_solvation::create_ExactSHOEnergy_from_cmdline;
+using core::energy_methods::create_ExactSHOEnergy_from_cmdline;
 
 
 static basic::Tracer TR("protocols.toolbox.pose_metric_calculators.SHOBuriedUnsatisfiedPolarsCalculator");
@@ -117,9 +117,7 @@ SHOBuriedUnsatisfiedPolarsCalculator::SHOBuriedUnsatisfiedPolarsCalculator(
 ///
 core::pose::metrics::PoseMetricCalculatorOP
 SHOBuriedUnsatisfiedPolarsCalculator::clone() const {
-
-	return core::pose::metrics::PoseMetricCalculatorOP(
-		new SHOBuriedUnsatisfiedPolarsCalculator(*this));
+	return utility::pointer::make_shared< SHOBuriedUnsatisfiedPolarsCalculator >(*this);
 }
 
 

@@ -11,15 +11,15 @@
 /// @brief
 /// @author Frank DiMaio
 
-#ifndef INCLUDED_core_scoring_methods_RamaPreProEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_RamaPreProEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_RamaPreProEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_RamaPreProEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class RamaPreProEnergy;
 typedef  utility::pointer::weak_ptr< RamaPreProEnergy > RamaPreProEnergyAP;
@@ -27,8 +27,7 @@ typedef  utility::pointer::weak_ptr< RamaPreProEnergy const > RamaPreProEnergyCA
 typedef  utility::pointer::shared_ptr< RamaPreProEnergy > RamaPreProEnergyOP;
 typedef  utility::pointer::shared_ptr< RamaPreProEnergy const > RamaPreProEnergyCOP;
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
-#endif // INCLUDED_core_scoring_methods_RamaPreProEnergy_HH
+#endif // INCLUDED_core_energy_methods_RamaPreProEnergy_HH

@@ -12,21 +12,20 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_SequenceDependentRefEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_SequenceDependentRefEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_SequenceDependentRefEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_SequenceDependentRefEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class SequenceDependentRefEnergy;
 
 typedef utility::pointer::shared_ptr< SequenceDependentRefEnergy > SequenceDependentRefEnergyOP;
 typedef utility::pointer::shared_ptr< SequenceDependentRefEnergy const > SequenceDependentRefEnergyCOP;
 
-} // methods
 } // scoring
 } // core
 

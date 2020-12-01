@@ -56,20 +56,21 @@ static basic::Tracer TR( "core.scoring.methods.SASAEnergy" );
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the SASAEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SASAEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< SASAEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SASAEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fa_sasa );
 	return sts;
@@ -79,15 +80,15 @@ SASAEnergyCreator::score_types_for_method() const {
 SASAEnergy::SASAEnergy( SASAEnergy const & /*src*/ ) = default;
 
 
-SASAEnergy::SASAEnergy( EnergyMethodOptions const & options ):
+SASAEnergy::SASAEnergy( core::scoring::methods::EnergyMethodOptions const & options ):
 	parent( utility::pointer::make_shared< SASAEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_SASAPotential() ),
+	potential_( core::scoring::ScoringManager::get_instance()->get_SASAPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SASAEnergy::clone() const
 {
 	return utility::pointer::make_shared< SASAEnergy >( *this );
@@ -145,28 +146,28 @@ SASAEnergy::update_residue_for_packing(
 
 ///
 void
-SASAEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+SASAEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	potential_.setup_for_scoring( pose );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_sasa );
+		core::scoring::LREnergyContainerOP new_dec = utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::fa_sasa );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -175,28 +176,28 @@ SASAEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 
 ///
 void
-SASAEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+SASAEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	potential_.setup_for_scoring( pose );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), fa_sasa );
+		core::scoring::LREnergyContainerOP new_dec = utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::fa_sasa );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -212,14 +213,14 @@ SASAEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	//using core::pose::datacache::CacheableDataType::VDWTINKER_POSE_INFO;
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
-	emap[ fa_sasa ] += potential_.get_res_res_sasa( rsd1, rsd2 );
+	emap[ core::scoring::fa_sasa ] += potential_.get_res_res_sasa( rsd1, rsd2 );
 }
 
 
@@ -231,10 +232,10 @@ void
 SASAEnergy::setup_for_minimizing_for_residue(
 	conformation::Residue const & ,
 	pose::Pose const & , // pose,
-	ScoreFunction const &, // scorefxn,
+	core::scoring::ScoreFunction const &, // scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	basic::datacache::BasicDataCache &,
-	ResSingleMinimizationData &
+	core::scoring::ResSingleMinimizationData &
 ) const
 {
 	return;
@@ -246,11 +247,11 @@ SASAEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const &, // rsd1,
 	conformation::Residue const &, // rsd2,
 	pose::Pose const &,
-	ScoreFunction const &, //scorefxn,
+	core::scoring::ScoreFunction const &, //scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData &
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData &
 ) const
 {
 	return;
@@ -266,8 +267,8 @@ void
 SASAEnergy::setup_for_scoring_for_residue(
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const &, // sfxn,
-	ResSingleMinimizationData &
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::ResSingleMinimizationData &
 ) const
 {
 }
@@ -287,8 +288,8 @@ void
 SASAEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	ResSingleMinimizationData &,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::ResSingleMinimizationData &,
 	basic::datacache::BasicDataCache &
 ) const
 {
@@ -304,17 +305,17 @@ void
 SASAEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & , // pairdata,
+	core::scoring::ResPairMinimizationData const & , // pairdata,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	//TR << "Calculating residue pair energy ext" << std::endl;
 
-	emap[ fa_sasa ] += potential_.get_res_res_sasa( rsd1, rsd2 );
+	emap[ core::scoring::fa_sasa ] += potential_.get_res_res_sasa( rsd1, rsd2 );
 
 }
 
@@ -327,17 +328,17 @@ SASAEnergy::use_extended_intrares_energy_interface() const
 void
 SASAEnergy::eval_intrares_energy_ext(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	//TR << "Calculating intraresidue energy ext" << std::endl;
 
-	emap[ fa_sasa ] += potential_.get_res_res_sasa( rsd, rsd );
+	emap[ core::scoring::fa_sasa ] += potential_.get_res_res_sasa( rsd, rsd );
 }
 
 
@@ -349,7 +350,7 @@ void
 SASAEnergy::evaluate_rotamer_intrares_energies(
 	conformation::RotamerSetBase const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
+	core::scoring::ScoreFunction const & ,
 	utility::vector1< core::PackerEnergy > &
 ) const
 {
@@ -360,8 +361,8 @@ void
 SASAEnergy::evaluate_rotamer_intrares_energy_maps(
 	conformation::RotamerSetBase const & ,
 	pose::Pose const & ,
-	ScoreFunction const & , // sxfn,
-	utility::vector1< EnergyMap > &
+	core::scoring::ScoreFunction const & , // sxfn,
+	utility::vector1< core::scoring::EnergyMap > &
 ) const
 {
 	// using namespace conformation;
@@ -375,8 +376,8 @@ SASAEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & ,
 	conformation::RotamerSetBase const & ,
 	pose::Pose const & ,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & ,
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & ,
 	ObjexxFCL::FArray2D< core::PackerEnergy > &
 ) const
 {
@@ -388,8 +389,8 @@ SASAEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & ,
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & ,
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & ,
 	utility::vector1< core::PackerEnergy > &
 ) const
 {
@@ -403,9 +404,9 @@ SASAEnergy::evaluate_rotamer_background_energy_maps(
 	conformation::RotamerSetBase const & ,
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & ,
-	utility::vector1< EnergyMap > &
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & ,
+	utility::vector1< core::scoring::EnergyMap > &
 ) const
 {
 
@@ -429,7 +430,7 @@ SASAEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) const
 
 /// @brief SASAEnergy does define intraresidue interactions
 bool
-SASAEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+SASAEnergy::defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const
 {
 	return true;
 }
@@ -438,25 +439,25 @@ void
 SASAEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 
-	emap[ fa_sasa ] += potential_.get_res_res_sasa( rsd, rsd  );
+	emap[ core::scoring::fa_sasa ] += potential_.get_res_res_sasa( rsd, rsd  );
 }
 
 void
 SASAEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
 
-	Real const factor( weights[ fa_sasa] );
+	Real const factor( weights[ core::scoring::fa_sasa] );
 
 	potential_.eval_residue_pair_derivatives( rsd, rsd, pose, factor,
 		atom_derivs, atom_derivs );
@@ -467,17 +468,17 @@ void
 SASAEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & ,
-	ResSingleMinimizationData const & ,
-	ResPairMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
+	core::scoring::ResPairMinimizationData const & ,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 
-	potential_.eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[ fa_sasa ],
+	potential_.eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[ core::scoring::fa_sasa ],
 		r1_atom_derivs, r2_atom_derivs );
 
 }
@@ -489,6 +490,5 @@ SASAEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

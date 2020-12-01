@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_DNA_DihedralEnergy_HH
-#define INCLUDED_core_scoring_methods_DNA_DihedralEnergy_HH
+#ifndef INCLUDED_core_energy_methods_DNA_DihedralEnergy_HH
+#define INCLUDED_core_energy_methods_DNA_DihedralEnergy_HH
 
 // Unit headers
 #include <core/energy_methods/DNA_DihedralEnergy.fwd.hh>
@@ -24,13 +24,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 ///
-class DNA_DihedralEnergy : public ContextIndependentLRTwoBodyEnergy {
+class DNA_DihedralEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 public:
 
 	/// ctor
@@ -38,17 +38,17 @@ public:
 	DNA_DihedralEnergy( DNA_DihedralEnergy const & src);
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
 	configure_from_options_system();
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return true; }
 
 	bool
 	defines_intrares_energy_for_residue(
@@ -73,28 +73,28 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	///  this function is used for most torsions
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const &, // min_data,
+		core::scoring::ResSingleMinimizationData const &, // min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 
@@ -102,10 +102,10 @@ public:
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	///  this function is used for bb torsions spanning 2 residues
@@ -113,16 +113,16 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 	core::Size version() const override { return 2; }
@@ -131,13 +131,12 @@ public:
 
 	// data
 private:
-	dna::DNA_DihedralPotential const & potential_;
+	core::scoring::dna::DNA_DihedralPotential const & potential_;
 	bool score_delta_;
 	bool score_chi_;
 
 };
 
-} // methods
 } // scoring
 } // core
 

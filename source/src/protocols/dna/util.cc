@@ -1194,7 +1194,7 @@ show_dna_geometry_extra_details(
 	std::ostream & out
 )
 {
-	core::scoring::methods::DNA_DihedralEnergy dna_dihedral_energy_method;
+	core::energy_methods::DNA_DihedralEnergy dna_dihedral_energy_method;
 
 	// dihedrals + a/g bin + typeI,II + pucker
 	Size const nres( pose.total_residue() );

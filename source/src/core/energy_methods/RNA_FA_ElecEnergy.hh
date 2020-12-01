@@ -37,47 +37,46 @@ enum RNAAtomType { PHOSPHATE=1, SUGAR=2, BASE=3 };
 
 
 namespace core {
-namespace scoring {
-namespace elec {
+namespace energy_methods {
 
 
 ///
-class RNA_FA_ElecEnergy : public FA_ElecEnergy  {
+class RNA_FA_ElecEnergy : public core::scoring::elec::FA_ElecEnergy  {
 public:
 	typedef FA_ElecEnergy parent;
-	typedef ContextIndependentTwoBodyEnergy grandparent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy grandparent;
 
 public:
 
 
-	RNA_FA_ElecEnergy( methods::EnergyMethodOptions const & options );
+	RNA_FA_ElecEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 
 	RNA_FA_ElecEnergy( RNA_FA_ElecEnergy const & src );
 
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
-		ScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
@@ -104,8 +103,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
@@ -113,21 +112,21 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
+		core::scoring::ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData & pair_data
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData & pair_data
 	) const override;
 
 	void
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Returns "true" because this energy method has not been updated to
@@ -149,8 +148,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	//@brief overrides default rotamer/rotamer energy calculation
@@ -160,8 +159,8 @@ public:
 		conformation::RotamerSetBase const & set1,
 		conformation::RotamerSetBase const & set2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const override;
 
@@ -171,8 +170,8 @@ public:
 		conformation::Residue const & rsd2,
 		Size const at1,
 		Size const at2,
-		EnergyMap & emap,
-		ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap,
+		core::scoring::ScoreFunction const & sfxn,
 		Real const cpweight,
 		Real & d2
 	) const;
@@ -182,8 +181,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -194,8 +193,8 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const override;
 
@@ -205,8 +204,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -215,17 +214,17 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
@@ -256,7 +255,7 @@ public:
 		Size const i,
 		conformation::Residue const & rsd2,
 		Size const j,
-		EnergyMap const & weights,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const;
@@ -266,7 +265,6 @@ public:
 };
 
 
-}
 }
 }
 

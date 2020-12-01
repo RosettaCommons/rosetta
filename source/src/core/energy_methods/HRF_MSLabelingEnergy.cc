@@ -35,20 +35,21 @@
 #include <numeric/NumericTraits.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the HRF_MSLabelingEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HRF_MSLabelingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< HRF_MSLabelingEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 HRF_MSLabelingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back(hrf_ms_labeling);
 	return sts;
@@ -56,7 +57,7 @@ HRF_MSLabelingEnergyCreator::score_types_for_method() const {
 
 void
 HRF_MSLabelingEnergy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 	pose.update_residue_neighbors();
 
@@ -64,7 +65,7 @@ HRF_MSLabelingEnergy::setup_for_scoring(
 
 // constructor
 HRF_MSLabelingEnergy::HRF_MSLabelingEnergy() :
-	methods::ContextDependentOneBodyEnergy( utility::pointer::make_shared< HRF_MSLabelingEnergyCreator >() )
+	core::scoring::methods::ContextDependentOneBodyEnergy( utility::pointer::make_shared< HRF_MSLabelingEnergyCreator >() )
 {
 	init_from_file();
 	dist_midpoint_ = basic::options::option[ basic::options::OptionKeys::score::ms_dist_midpoint ]();
@@ -76,7 +77,7 @@ HRF_MSLabelingEnergy::HRF_MSLabelingEnergy() :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HRF_MSLabelingEnergy::clone() const {
 	return utility::pointer::make_shared< HRF_MSLabelingEnergy >();
 }
@@ -89,7 +90,7 @@ void
 HRF_MSLabelingEnergy::residue_energy(
 	core::conformation::Residue const & residue,
 	core::pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
 	core::Size const number_residues (pose.total_residue());
@@ -106,10 +107,10 @@ HRF_MSLabelingEnergy::residue_energy(
 					neighbor_count += 1.0/(1.0 + std::exp(dist_exponent_*(distance-dist_midpoint_)));
 				}
 			}
-			func::FuncOP hrf_ms_labeling_score_ (utility::pointer::make_shared< func::FadeFunc >(-fade_outer_, fade_outer_, fade_dist_, -1.0));
+			core::scoring::func::FuncOP hrf_ms_labeling_score_ (utility::pointer::make_shared< core::scoring::func::FadeFunc >(-fade_outer_, fade_outer_, fade_dist_, -1.0));
 			core::Real const number_of_neighbors_difference (std::abs(neighbor_count - (slope_*lnPF_from_file + intercept_)));
 			core::Real const burial_score = hrf_ms_labeling_score_->func(number_of_neighbors_difference);
-			emap[hrf_ms_labeling] += burial_score;
+			emap[ core::scoring::hrf_ms_labeling] += burial_score;
 		}
 	}
 }
@@ -117,7 +118,7 @@ HRF_MSLabelingEnergy::residue_energy(
 void
 HRF_MSLabelingEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 
@@ -154,6 +155,5 @@ void HRF_MSLabelingEnergy::init_from_file() {
 
 }
 
-} // methods
 } // scoring
 } // core

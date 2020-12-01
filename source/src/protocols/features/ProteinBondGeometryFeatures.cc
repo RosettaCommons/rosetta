@@ -68,7 +68,7 @@ ProteinBondGeometryFeatures::ProteinBondGeometryFeatures(){
 		basic::options::option[ basic::options::OptionKeys::score::linear_bonded_potential ]();
 
 	// initialize databases
-	db_ = utility::pointer::make_shared< core::scoring::methods::IdealParametersDatabase >(-1.0,-1.0,-1.0,-1.0,-1.0);
+	db_ = utility::pointer::make_shared< core::energy_methods::IdealParametersDatabase >(-1.0,-1.0,-1.0,-1.0,-1.0);
 }
 
 void

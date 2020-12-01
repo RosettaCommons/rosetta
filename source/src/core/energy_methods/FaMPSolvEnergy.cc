@@ -59,25 +59,25 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 using namespace core::scoring::methods;
 
 /// @brief Create Fresh Instance of the Energy Method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPSolvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 
 	return utility::pointer::make_shared< FaMPSolvEnergy >(
-		( ScoringManager::get_instance()->etable( options ) ),
-		( ScoringManager::get_instance()->memb_etable( options.etable_type() ))
+		( core::scoring::ScoringManager::get_instance()->etable( options ) ),
+		( core::scoring::ScoringManager::get_instance()->memb_etable( options.etable_type() ))
 	);
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 FaMPSolvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( FaMPSolv );
 	return sts;
@@ -86,8 +86,8 @@ FaMPSolvEnergyCreator::score_types_for_method() const {
 
 /// @brief Construct MP Solv energy from standard and membrane etable
 FaMPSolvEnergy::FaMPSolvEnergy(
-	etable::EtableCAP etable_in,
-	etable::MembEtableCAP memb_etable_in
+	core::scoring::etable::EtableCAP etable_in,
+	core::scoring::etable::MembEtableCAP memb_etable_in
 ) :
 	parent( utility::pointer::make_shared< FaMPSolvEnergyCreator >() ),
 	etable_( etable_in ),
@@ -106,12 +106,12 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() )
 	//verbose_( false )
 {
-	// etable::MembEtableCOP memb_etable( memb_etable_in );
+	// core::scoring::etable::MembEtableCOP memb_etable( memb_etable_in );
 }
 
 
 /// @brief Clone Energy Method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPSolvEnergy::clone() const {
 	return utility::pointer::make_shared< FaMPSolvEnergy >( *this );
 }
@@ -120,12 +120,12 @@ FaMPSolvEnergy::clone() const {
 void
 FaMPSolvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const & scfxn
+	core::scoring::ScoreFunction const & scfxn
 ) const {
 
 	init( pose );
 	pose.update_residue_neighbors();
-	fa_weight_ = scfxn.weights()[ FaMPSolv ];
+	fa_weight_ = scfxn.weights()[ core::scoring::FaMPSolv ];
 }
 
 /// @brief Evaluate Derivatives
@@ -136,8 +136,8 @@ FaMPSolvEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -153,8 +153,8 @@ FaMPSolvEnergy::eval_atom_derivative(
 	bool const pos1_fixed( domain_map( i ) != 0 );
 
 	// Grab neighbor graphs from energies object
-	Energies const & energies( pose.energies() );
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::Energies const & energies( pose.energies() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 
 	for ( utility::graph::Graph::EdgeListConstIter
@@ -170,7 +170,7 @@ FaMPSolvEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
-		using namespace etable::count_pair;
+		using namespace core::scoring::etable::count_pair;
 		CountPairFunctionOP cpfxn( nullptr );
 
 		if ( same_res ) {
@@ -220,13 +220,13 @@ FaMPSolvEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	Real fa_mbsolv_score( 0.0 );
 	get_residue_pair_energy( rsd1, rsd2, pose, fa_mbsolv_score);
-	emap[ FaMPSolv ] += fa_mbsolv_score;
+	emap[ core::scoring::FaMPSolv ] += fa_mbsolv_score;
 }
 
 /// @brief Evaluate Intra-Residue Energies
@@ -234,19 +234,19 @@ void
 FaMPSolvEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	Real fa_mbsolv_score( 0.0 );
 	get_residue_pair_energy( rsd, rsd, pose, fa_mbsolv_score);
-	emap[ FaMPSolv ] += fa_mbsolv_score;
+	emap[ core::scoring::FaMPSolv ] += fa_mbsolv_score;
 }
 
 /// @brief Specify Interaction Cutoff for computing pair energies
 Distance
 FaMPSolvEnergy::atomic_interaction_cutoff() const {
-	etable::EtableCOP etable( etable_ );
+	core::scoring::etable::EtableCOP etable( etable_ );
 	return etable->max_dis();
 }
 
@@ -257,7 +257,7 @@ FaMPSolvEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) c
 /// @brief Setup Energy Method for Scoring
 void
 FaMPSolvEnergy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 
 	// Initialize fullatom data
@@ -269,8 +269,8 @@ FaMPSolvEnergy::setup_for_scoring(
 void
 FaMPSolvEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & // totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & // totals
 ) const {}
 
 ///// Helper Methods //////////////////////
@@ -289,7 +289,7 @@ FaMPSolvEnergy::get_residue_pair_energy(
 	Real score (0.0);
 
 	// Initialize Count Pair Function
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn( nullptr );
 
 	if ( same_res ) {
@@ -390,7 +390,7 @@ Real
 FaMPSolvEnergy::eval_dE_dR_over_r(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
-	EnergyMap const &,
+	core::scoring::EnergyMap const &,
 	Vector & F1,
 	Vector & F2,
 	Real const & f1,
@@ -498,8 +498,7 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 	}
 }
 
-} // membrane
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPSolvEnergy_cc
+#endif // INCLUDED_core_energy_methods_FaMPSolvEnergy_cc

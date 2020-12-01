@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/fiber_diffraction/FiberDiffractionEnergyDensCreator.hh
+/// @file src/core/energy_methods/FiberDiffractionEnergyDensCreator.hh
 /// @brief  Energy Creator for FiberDiffractionEnergyDens
 /// @author Ingemar Andre
 
@@ -18,23 +18,21 @@
 #include <core/types.hh>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
-class FiberDiffractionEnergyDensCreator : public methods::EnergyMethodCreator {
+class FiberDiffractionEnergyDensCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	FiberDiffractionEnergyDensCreator() {}
 
 	/// @brief Instantiate a new FiberDiffractionEnergy
-	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-}
 }
 }
 

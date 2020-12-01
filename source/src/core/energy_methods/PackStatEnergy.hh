@@ -12,8 +12,8 @@
 /// @author Will Sheffler
 
 
-#ifndef INCLUDED_core_scoring_methods_PackStatEnergy_hh
-#define INCLUDED_core_scoring_methods_PackStatEnergy_hh
+#ifndef INCLUDED_core_energy_methods_PackStatEnergy_hh
+#define INCLUDED_core_energy_methods_PackStatEnergy_hh
 
 
 // Package headers
@@ -34,13 +34,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class PackStatEnergy : public WholeStructureEnergy  {
+
+class PackStatEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 	PackStatEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 	core::Size version() const override;
 
@@ -74,7 +74,6 @@ private:
 };
 
 
-} // methods
 } // scoring
 } // core
 

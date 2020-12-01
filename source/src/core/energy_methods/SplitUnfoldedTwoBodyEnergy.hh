@@ -12,8 +12,8 @@
 /// @author Riley Simmons-Edler (rse231@nyu.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_SplitUnfoldedTwoBodyEnergy_hh
-#define INCLUDED_core_scoring_methods_SplitUnfoldedTwoBodyEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SplitUnfoldedTwoBodyEnergy_hh
+#define INCLUDED_core_energy_methods_SplitUnfoldedTwoBodyEnergy_hh
 
 #include <core/energy_methods/SplitUnfoldedTwoBodyEnergy.fwd.hh>
 
@@ -32,25 +32,25 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class SplitUnfoldedTwoBodyEnergy : public ContextIndependentOneBodyEnergy
+
+class SplitUnfoldedTwoBodyEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy
 {
 
 public:
-	typedef ContextIndependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy parent;
 
 	//instantiate using the weights from the data file
 	SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type);
 	//instantiate using given weight emap
-	SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type, const EnergyMap & emap_in);
+	SplitUnfoldedTwoBodyEnergy(std::string const & label_type,std::string const & value_type, std::string const & score_func_type, const core::scoring::EnergyMap & emap_in);
 	~SplitUnfoldedTwoBodyEnergy() override;
 
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
-	void residue_energy(conformation::Residue const & rsd,pose::Pose const &, EnergyMap & emap) const override;
+	void residue_energy(conformation::Residue const & rsd,pose::Pose const &, core::scoring::EnergyMap & emap) const override;
 
 	bool minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
@@ -60,15 +60,14 @@ private:
 	std::string label_type_; //the atom type set for this two body energy, e.g. rosetta types, mm types, elemental types, etc.
 	std::string value_type_; //the statistical value that is recorded for each energy for each atom type in the above set, e.g. mean, median, mode, boltzmann weighted average.
 	std::string score_func_type_; //the base score function in use, specifies the internal two body weights that will be used.
-	SplitUnfoldedTwoBodyPotential const & sutbp_;
-	EnergyMap score_type_weights_;
+	core::scoring::SplitUnfoldedTwoBodyPotential const & sutbp_;
+	core::scoring::EnergyMap score_type_weights_;
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_SplitUnfoldedTwoBodyEnergy_HH
+#endif // INCLUDED_core_energy_methods_SplitUnfoldedTwoBodyEnergy_HH

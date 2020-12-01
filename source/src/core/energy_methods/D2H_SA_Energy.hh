@@ -12,8 +12,8 @@
 /// @author Björn Wallner
 
 
-#ifndef INCLUDED_core_scoring_methods_D2H_SA_Energy_hh
-#define INCLUDED_core_scoring_methods_D2H_SA_Energy_hh
+#ifndef INCLUDED_core_energy_methods_D2H_SA_Energy_hh
+#define INCLUDED_core_energy_methods_D2H_SA_Energy_hh
 
 
 // Package headers
@@ -31,20 +31,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class D2H_SA_Energy : public WholeStructureEnergy  {
+
+class D2H_SA_Energy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 public:
 
 	/// @brief call sasa.cc to calculate the surface area
 	D2H_SA_Energy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 	core::Size version() const override;
 
@@ -93,6 +93,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_D2H_SA_Energy_HH
+#endif // INCLUDED_core_energy_methods_D2H_SA_Energy_HH

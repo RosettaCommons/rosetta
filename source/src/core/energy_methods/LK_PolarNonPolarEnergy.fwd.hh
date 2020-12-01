@@ -13,17 +13,16 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_LK_PolarNonPolarEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_LK_PolarNonPolarEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class LK_PolarNonPolarEnergy;
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_LK_PolarNonPolarEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_LK_PolarNonPolarEnergy_FWD_HH

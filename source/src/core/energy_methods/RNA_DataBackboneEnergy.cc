@@ -47,23 +47,22 @@
 using namespace core::chemical::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
 using Vector = numeric::xyzVector<core::Real>;
 
 /// @details This must return a fresh instance of the RNA_DataBackboneEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_DataBackboneEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_DataBackboneEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_DataBackboneEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_data_backbone );
 	return sts;
@@ -77,14 +76,14 @@ RNA_DataBackboneEnergy::RNA_DataBackboneEnergy() :
 	dist_fade_( 1.0  ),
 	well_depth_burial_( -0.05 ),
 	well_depth_exposed_( 0.01 ),
-	burial_function_( utility::pointer::make_shared< func::FadeFunc >( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) )
+	burial_function_( utility::pointer::make_shared< core::scoring::func::FadeFunc >( -10.0 /*cutoff_lower*/, dist_cutoff_, dist_fade_, 1.0 /*well_depth*/ ) )
 {
 	initialize_atom_numbers_sugar();
 }
 
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_DataBackboneEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_DataBackboneEnergy >();
@@ -113,17 +112,17 @@ RNA_DataBackboneEnergy::initialize_atom_numbers_sugar() {
 
 
 void
-RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_DataBackboneEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// need to make sure scoring info is in there...
-	rna::nonconst_rna_scoring_info_from_pose( pose );
+	core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose );
 
 	pose.update_residue_neighbors();
 }
 
 
 void
-RNA_DataBackboneEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_DataBackboneEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -149,8 +148,8 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	if ( !rsd1.is_RNA() ) return;
@@ -161,7 +160,7 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	if ( rsd2.has_variant_type( chemical::REPLONLY ) ) return;
 
 	//  rna_filtered_base_base_info.set_calculated( false );
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
@@ -171,16 +170,16 @@ RNA_DataBackboneEnergy::residue_pair_energy(
 	debug_assert( rna_data_backbone_burial.size() == pose.size() );
 
 	if ( rna_data_backbone_burial( rsd1.seqpos() ) ) {
-		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
+		emap[ core::scoring::rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
 	} else if ( rna_data_backbone_exposed( rsd1.seqpos() )  ) {
-		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
+		emap[ core::scoring::rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd1 /*buried sugar*/, rsd2 /*other*/ );
 	}
 
 
 	if ( rna_data_backbone_burial( rsd2.seqpos() ) ) {
-		emap[ rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
+		emap[ core::scoring::rna_data_backbone ]         += well_depth_burial_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
 	} else if ( rna_data_backbone_exposed( rsd2.seqpos() )  ) {
-		emap[ rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
+		emap[ core::scoring::rna_data_backbone ]         += well_depth_exposed_ * get_sugar_env_score( rsd2 /*buried sugar*/, rsd1 /*other*/ );
 	}
 }
 
@@ -226,8 +225,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -242,7 +241,7 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	if ( ! rsd1.is_RNA() ) return;
 	if ( m > rsd1.nheavyatoms() ) return;
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_burial( rna_data_info.backbone_burial() );
 	ObjexxFCL::FArray1D < bool > const & rna_data_backbone_exposed( rna_data_info.backbone_exposed() );
@@ -255,10 +254,10 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 	bool const pos1_fixed( domain_map( i ) != 0 );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
@@ -287,8 +286,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				Vector const force_vector_i = deriv * r / dist;
 				Vector const f1 = cross( force_vector_i, heavy_atom_j );
 				Vector const f2 = force_vector_i;
-				F1 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f1;
-				F2 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f2;
+				F1 +=  -1.0 * well_depth_burial_ * weights[ core::scoring::rna_data_backbone ] * f1;
+				F2 +=  -1.0 * well_depth_burial_ * weights[ core::scoring::rna_data_backbone ] * f2;
 			}
 		}
 
@@ -304,8 +303,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				Vector const force_vector_i = deriv * r / dist;
 				Vector const f1 = cross( force_vector_i, heavy_atom_j );
 				Vector const f2 = force_vector_i;
-				F1 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f1;
-				F2 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f2;
+				F1 +=  -1.0 * well_depth_exposed_ * weights[ core::scoring::rna_data_backbone ] * f1;
+				F2 +=  -1.0 * well_depth_exposed_ * weights[ core::scoring::rna_data_backbone ] * f2;
 			}
 		}
 
@@ -323,8 +322,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				Vector const force_vector_j = deriv * (  - r ) / dist;
 				Vector const f1 = -1.0 * cross( force_vector_j, heavy_atom_i );
 				Vector const f2 = -1.0 * force_vector_j;
-				F1 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f1;
-				F2 +=  -1.0 * well_depth_burial_ * weights[ rna_data_backbone ] * f2;
+				F1 +=  -1.0 * well_depth_burial_ * weights[ core::scoring::rna_data_backbone ] * f1;
+				F2 +=  -1.0 * well_depth_burial_ * weights[ core::scoring::rna_data_backbone ] * f2;
 			}
 		}
 
@@ -342,8 +341,8 @@ RNA_DataBackboneEnergy::eval_atom_derivative(
 				Vector const force_vector_j = deriv * (  - r ) / dist;
 				Vector const f1 = -1.0 * cross( force_vector_j, heavy_atom_i );
 				Vector const f2 = -1.0 * force_vector_j;
-				F1 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f1;
-				F2 +=  -1.0 * well_depth_exposed_ * weights[ rna_data_backbone ] * f2;
+				F1 +=  -1.0 * well_depth_exposed_ * weights[ core::scoring::rna_data_backbone ] * f1;
+				F2 +=  -1.0 * well_depth_exposed_ * weights[ core::scoring::rna_data_backbone ] * f2;
 			}
 		}
 	}
@@ -362,7 +361,5 @@ RNA_DataBackboneEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} //data
-} //rna
 } //scoring
 } //core

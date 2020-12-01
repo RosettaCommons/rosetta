@@ -13,8 +13,8 @@
 /// @author Rhiju Das, rhiju@stanford.edu
 
 
-#ifndef INCLUDED_core_scoring_methods_OtherPoseEnergy_HH
-#define INCLUDED_core_scoring_methods_OtherPoseEnergy_HH
+#ifndef INCLUDED_core_energy_methods_OtherPoseEnergy_HH
+#define INCLUDED_core_energy_methods_OtherPoseEnergy_HH
 
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
@@ -22,20 +22,20 @@
 #include <core/pose/Pose.fwd.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class OtherPoseEnergy : public WholeStructureEnergy {
+
+class OtherPoseEnergy : public core::scoring::methods::WholeStructureEnergy {
 
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 
 	OtherPoseEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -45,8 +45,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	core::Size version() const override;
@@ -62,7 +62,6 @@ private:
 };
 
 
-} //methods
 } //scoring
 } //core
 

@@ -70,7 +70,7 @@ public:
 		add_memb->apply( *pose_ );
 
 		core::Real const TOL(1e-2);
-		core::scoring::membrane::MPSpanInsertionEnergy mp_span;
+		core::energy_methods::MPSpanInsertionEnergy mp_span;
 
 		TS_ASSERT_DELTA( mp_span.calc_span_score( *pose_, 33, 58 ), 4.2018, TOL);
 		TS_ASSERT_DELTA( mp_span.calc_span_score( *pose_, 4, 27 ), 0.5128, TOL);
@@ -92,7 +92,7 @@ public:
 		add_memb->apply( *pose_ );
 
 		core::Real const TOL(1e-2);
-		core::scoring::membrane::MPSpanInsertionEnergy mp_span;
+		core::energy_methods::MPSpanInsertionEnergy mp_span;
 
 		TS_ASSERT_DELTA( mp_span.spline_by_z( 'A', 0   ), 0.0000, TOL);
 		TS_ASSERT_DELTA( mp_span.spline_by_z( 'A', 10  ), 0.0000, TOL);
@@ -126,7 +126,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPSpanInsertionEnergy mp_span;
+		core::energy_methods::MPSpanInsertionEnergy mp_span;
 		EnergyMap emap;
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( mp_span_ang, 1 );
@@ -156,7 +156,7 @@ public:
 		sfxn.set_weight( mp_span_ang, 1 );
 		sfxn( *pose_ );
 
-		core::scoring::membrane::MPSpanInsertionEnergy mp_span;
+		core::energy_methods::MPSpanInsertionEnergy mp_span;
 		core::Real res = mp_span.compute( *pose_ );
 		TS_ASSERT_DELTA( res, 8.0913, TOL );
 	}
@@ -180,7 +180,7 @@ public:
 
 		core::Real const TOL(1e0);
 
-		core::scoring::membrane::MPSpanInsertionEnergy mp_span;
+		core::energy_methods::MPSpanInsertionEnergy mp_span;
 		utility::vector1< core::conformation::membrane::Span > spans = mp_span.create_updated_span( *pose_ );
 		TS_ASSERT_DELTA( spans[ 1 ].start(), 8, TOL );
 		TS_ASSERT_DELTA( spans[ 2 ].start(), 37, TOL );

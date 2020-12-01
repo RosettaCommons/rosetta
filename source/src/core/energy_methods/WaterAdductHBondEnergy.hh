@@ -13,8 +13,8 @@
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_WaterAdductHBondEnergy_hh
-#define INCLUDED_core_scoring_methods_WaterAdductHBondEnergy_hh
+#ifndef INCLUDED_core_energy_methods_WaterAdductHBondEnergy_hh
+#define INCLUDED_core_energy_methods_WaterAdductHBondEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/WaterAdductHBondEnergy.fwd.hh>
@@ -34,13 +34,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class WaterAdductHBondEnergy : public ContextIndependentTwoBodyEnergy  {
+
+class WaterAdductHBondEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 	WaterAdductHBondEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -56,10 +56,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
@@ -73,8 +73,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -82,8 +82,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 
@@ -92,8 +92,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -101,14 +101,14 @@ public:
 	void
 	get_atom_h2o_hbond_derivative(
 		id::AtomID const & atom,
-		hbonds::HBondSet const & hbond_set,
-		EnergyMap const & weights,
+		core::scoring::hbonds::HBondSet const & hbond_set,
+		core::scoring::EnergyMap const & weights,
 		Vector & f1,
 		Vector & f2
 	) const;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -126,9 +126,8 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_WaterAdductHBondEnergy_HH
+#endif // INCLUDED_core_energy_methods_WaterAdductHBondEnergy_HH

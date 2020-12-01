@@ -12,17 +12,16 @@
 /// @author Frank DiMaio
 
 
-#ifndef INCLUDED_core_scoring_methods_CenHBEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_CenHBEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_CenHBEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_CenHBEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class CenHBEnergy;
 
-}
 }
 }
 

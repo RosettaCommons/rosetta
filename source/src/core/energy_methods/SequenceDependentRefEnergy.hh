@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_SequenceDependentRefEnergy_hh
-#define INCLUDED_core_scoring_methods_SequenceDependentRefEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SequenceDependentRefEnergy_hh
+#define INCLUDED_core_energy_methods_SequenceDependentRefEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/SequenceDependentRefEnergy.fwd.hh>
@@ -34,13 +34,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class SequenceDependentRefEnergy : public ContextIndependentOneBodyEnergy
+
+class SequenceDependentRefEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy
 {
 public:
-	typedef ContextIndependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy parent;
 
 public:
 
@@ -53,7 +53,7 @@ public:
 
 	~SequenceDependentRefEnergy() override;
 
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -78,8 +78,8 @@ public:
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief DunbrackEnergy is context independent; indicates that no
@@ -94,7 +94,6 @@ private:
 	core::Size version() const override;
 };
 
-} // methods
 } // scoring
 } // core
 

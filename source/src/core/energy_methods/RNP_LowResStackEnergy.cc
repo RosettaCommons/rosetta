@@ -65,20 +65,20 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys::score;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNP_LowResStackEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResStackEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNP_LowResStackEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNP_LowResStackEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rnp_stack_xy );
 	return sts;
@@ -88,13 +88,13 @@ RNP_LowResStackEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNP_LowResStackEnergy::RNP_LowResStackEnergy() :
 	parent( utility::pointer::make_shared< RNP_LowResStackEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_RNP_LowResStackData() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_RNP_LowResStackData() )
 {
 	//std::cout << "Constructed the RNP stack energy" << std::endl;
 }
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResStackEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNP_LowResStackEnergy >();
@@ -104,12 +104,12 @@ RNP_LowResStackEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 //void
-//RNP_LowResStackEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
+//RNP_LowResStackEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scfxn ) const
 //{
 //}
 //
 //void
-//RNP_LowResStackEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+//RNP_LowResStackEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 //{
 //}
 
@@ -119,8 +119,8 @@ RNP_LowResStackEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
@@ -156,7 +156,7 @@ RNP_LowResStackEnergy::residue_pair_energy(
 	if ( std::abs(dist_z) > 3.0 && std::abs(dist_z) < 6.5 ) {
 		potential_.evaluate_rnp_stack_xy_score( rsd1, rsd2, dist_x, dist_y, rnp_stack_xy_score );
 	}
-	emap[ rnp_stack_xy ] += rnp_stack_xy_score;
+	emap[ core::scoring::rnp_stack_xy ] += rnp_stack_xy_score;
 
 }
 
@@ -165,8 +165,8 @@ RNP_LowResStackEnergy::residue_pair_energy(
 //void
 //RNP_LowResStackEnergy::finalize_total_energy(
 // pose::Pose & pose,
-// ScoreFunction const &,
-// EnergyMap &
+// core::scoring::ScoreFunction const &,
+// core::scoring::EnergyMap &
 //) const {
 //
 //}
@@ -189,7 +189,7 @@ RNP_LowResStackEnergy::version() const
 //RNP_LowResStackEnergy::get_intrares_countpair(
 // conformation::Residue const &,
 // pose::Pose const &,
-// ScoreFunction const &
+// core::scoring::ScoreFunction const &
 //) const
 //{
 // utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
@@ -201,7 +201,7 @@ RNP_LowResStackEnergy::version() const
 // Size const res1,
 // Size const res2,
 // pose::Pose const & pose,
-// ScoreFunction const &
+// core::scoring::ScoreFunction const &
 //) const
 //{
 //}
@@ -216,6 +216,5 @@ RNP_LowResStackEnergy::version() const
 //}
 
 
-} //rna
 } //scoring
 } //core

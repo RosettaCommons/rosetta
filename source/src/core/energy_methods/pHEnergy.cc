@@ -37,23 +37,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 // AMW: oh no this is awful don't let this continue
 core::Real pHEnergy::pH_;     //Reference to static variable pH_
 
 /// @details This must return a fresh instance of the pHEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 pHEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< pHEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 pHEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( e_pH );
 	return sts;
@@ -75,7 +76,7 @@ pHEnergy::set_pH ( core::Real new_pH_ )
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 pHEnergy::clone() const
 {
 	return utility::pointer::make_shared< pHEnergy >();
@@ -92,7 +93,7 @@ void
 pHEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace core::chemical;
 	core::Real ipKa;
@@ -153,7 +154,7 @@ pHEnergy::residue_energy(
 		break;
 	}
 
-	emap[ e_pH ] += pH_score; //add pHEnergy to the EmapVector
+	emap[ core::scoring::e_pH ] += pH_score; //add pHEnergy to the EmapVector
 } // residue_energy
 
 
@@ -162,8 +163,8 @@ pHEnergy::eval_dof_derivative(
 	id::DOF_ID const & ,// dof_id,
 	id::TorsionID const & , //tor_id
 	pose::Pose const & , // pose
-	ScoreFunction const &, //sfxn,
-	EnergyMap const & // weights
+	core::scoring::ScoreFunction const &, //sfxn,
+	core::scoring::EnergyMap const & // weights
 ) const
 {
 	return 0.0;
@@ -180,7 +181,6 @@ pHEnergy::version() const
 }
 
 
-}
 }
 }
 

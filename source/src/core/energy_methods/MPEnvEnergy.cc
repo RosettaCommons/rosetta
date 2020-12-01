@@ -53,22 +53,22 @@ using namespace core::scoring::methods;
 static basic::Tracer TR( "core.membrane.MPEnvEnergy" );
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// Creator Methods ////////////////////
 
 /// @brief Return a Fresh Instance of the Energy Method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPEnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPEnvEnergy >();
 }
 
 /// @brief Return Appropriate Score Type Name
-ScoreTypes
+core::scoring::ScoreTypes
 MPEnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( MPEnv );
 	return sts;
@@ -77,12 +77,12 @@ MPEnvEnergyCreator::score_types_for_method() const {
 /// @brief Default Constructor
 MPEnvEnergy::MPEnvEnergy() :
 	parent( utility::pointer::make_shared< MPEnvEnergyCreator >() ),
-	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
+	mpdata_( core::scoring::ScoringManager::get_instance()->get_MembraneData() )
 	// penalties_( true )
 {}
 
 /// @brief Clone an Energy Method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPEnvEnergy::clone() const
 {
 	return utility::pointer::make_shared< MPEnvEnergy >();
@@ -92,7 +92,7 @@ MPEnvEnergy::clone() const
 
 /// @brief Setup Method for Scoring
 void
-MPEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MPEnvEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	mpdata_.compute_centroid_environment( pose );
@@ -100,7 +100,7 @@ MPEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 
 /// @brief Setup Energy Method for Derivatives
 void
-MPEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const
+MPEnvEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const
 {
 	setup_for_scoring( pose, sf );
 }
@@ -110,7 +110,7 @@ void
 MPEnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// Check Structure is a membrane protein
@@ -123,7 +123,7 @@ MPEnvEnergy::residue_energy(
 
 	// If residue is not a protein residue, set to 0 and return
 	if ( !rsd.is_protein() ) {
-		emap[ MPEnv ] = 0.0;
+		emap[ core::scoring::MPEnv ] = 0.0;
 		return;
 	}
 
@@ -131,7 +131,7 @@ MPEnvEnergy::residue_energy(
 	Real env_score( 0.0 );
 
 	// Initialize Info for Scoring
-	CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
+	core::scoring::CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
 	core::Real const z_position = pose.conformation().membrane_info()->residue_z_position( pose.conformation(), rsd.seqpos() );
 	core::Size const seqpos = rsd.seqpos();
 	core::chemical::AA const & aa = rsd.aa();
@@ -140,7 +140,7 @@ MPEnvEnergy::residue_energy(
 	env_score = compute_mpenv_score( cenlist, aa, z_position, seqpos );
 
 	// Set the new score in the energies map
-	emap[ MPEnv ] += env_score;
+	emap[ core::scoring::MPEnv ] += env_score;
 
 } // residue_energy
 
@@ -148,8 +148,8 @@ MPEnvEnergy::residue_energy(
 void
 MPEnvEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	mpdata_.finalize( pose );
@@ -165,7 +165,7 @@ MPEnvEnergy::version() const
 /// @brief Evaluate Environemnt Energy for Residue based on z_position, aa, and layer
 core::Real
 MPEnvEnergy::compute_mpenv_score(
-	CenListInfo const & cenlist,
+	core::scoring::CenListInfo const & cenlist,
 	core::chemical::AA const & aa,
 	core::Real const z_position,
 	core::Size const seqpos
@@ -288,7 +288,6 @@ MPEnvEnergy::compute_mpenv_score(
 	return menv_score;
 }
 
-} // membrane
 } // scoring
 } // core
 

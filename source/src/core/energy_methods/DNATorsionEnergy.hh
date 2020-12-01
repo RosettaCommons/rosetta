@@ -35,20 +35,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace dna {
+namespace energy_methods {
 
 
-class DNATorsionEnergy : public methods::ContextIndependentTwoBodyEnergy {
+class DNATorsionEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy {
 public:
-	typedef ContextIndependentTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy parent;
+
+	typedef core::scoring::EnergyMap EnergyMap;
+	typedef core::scoring::ScoreFunction ScoreFunction;
 public:
 
 
 	DNATorsionEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -56,11 +58,11 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose &pose, ScoreFunction const &scfxn ) const override;
+	setup_for_scoring( pose::Pose &pose, core::scoring::ScoreFunction const &scfxn ) const override;
 
 	// call the cst setup_for_derivatives wrapper
 	void
-	setup_for_derivatives( pose::Pose &pose, ScoreFunction const &scfxn ) const override;
+	setup_for_derivatives( pose::Pose &pose, core::scoring::ScoreFunction const &scfxn ) const override;
 
 
 	// virtual
@@ -72,8 +74,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -82,23 +84,23 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// called at the end of energy evaluation
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/// called at the end of energy evaluation
 	void
 	finalize_after_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const override;
 
 
@@ -112,8 +114,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -125,16 +127,16 @@ public:
 		id::DOF_ID const & id,
 		id::TorsionID const & tor,
 		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return true; }
 
 	bool
-	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
+	defines_residue_pair_energy( core::scoring::EnergyMap const & ) const { return true; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -149,19 +151,17 @@ public:
 
 private:
 
-	dna::DNATorsionPotential const & dna_torsion_potential_;
+	core::scoring::dna::DNATorsionPotential const & dna_torsion_potential_;
 
-	mutable constraints::ConstraintSetOP dna_torsion_constraints_;
-	mutable constraints::ConstraintSetOP dna_sugar_close_constraints_;
-	mutable constraints::ConstraintSetOP dna_base_distance_constraints_;
+	mutable core::scoring::constraints::ConstraintSetOP dna_torsion_constraints_;
+	mutable core::scoring::constraints::ConstraintSetOP dna_sugar_close_constraints_;
+	mutable core::scoring::constraints::ConstraintSetOP dna_base_distance_constraints_;
 
 	mutable bool constraints_ready_;
 	bool verbose_;
 
 };
 
-
-}
 }
 }
 

@@ -53,25 +53,25 @@ static basic::Tracer TR( "core.scoring.methods.MultipoleElecEnergy" );
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 inline
-MultipoleElecResidueInfo const &
+core::scoring::MultipoleElecResidueInfo const &
 retrieve_mp_residue_info( pose::Pose const & pose, Size const seqpos ) {
-	debug_assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< core::scoring::MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) )).size() );
-	return ( static_cast< MultipoleElecPoseInfo const & >
+	return ( static_cast< core::scoring::MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ).residue_info( seqpos ) );
 }
 
 inline
-MultipoleElecResidueInfo &
+core::scoring::MultipoleElecResidueInfo &
 retrieve_nonconst_mp_residue_info( pose::Pose & pose, Size const seqpos ) {
-	debug_assert( seqpos && seqpos <= ( static_cast< MultipoleElecPoseInfo const & >
+	debug_assert( seqpos && seqpos <= ( static_cast< core::scoring::MultipoleElecPoseInfo const & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) )).size() );
-	return ( static_cast< MultipoleElecPoseInfo & >
+	return ( static_cast< core::scoring::MultipoleElecPoseInfo & >
 		( pose.data().get( pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ).residue_info( seqpos ) );
 }
 
@@ -85,12 +85,12 @@ public:
 
 	void
 	initialize(
-		MultipoleElecResidueInfoCOP res1_data,
-		MultipoleElecResidueInfoCOP res2_data
+		core::scoring::MultipoleElecResidueInfoCOP res1_data,
+		core::scoring::MultipoleElecResidueInfoCOP res2_data
 	);
 
-	MultipoleElecResidueInfo const & res1_data() const { return *res1_data_; }
-	MultipoleElecResidueInfo const & res2_data() const { return *res2_data_; }
+	core::scoring::MultipoleElecResidueInfo const & res1_data() const { return *res1_data_; }
+	core::scoring::MultipoleElecResidueInfo const & res2_data() const { return *res2_data_; }
 
 	bool
 	initialized() const { return initialized_; }
@@ -98,8 +98,8 @@ public:
 
 private:
 
-	MultipoleElecResidueInfoCOP res1_data_;
-	MultipoleElecResidueInfoCOP res2_data_;
+	core::scoring::MultipoleElecResidueInfoCOP res1_data_;
+	core::scoring::MultipoleElecResidueInfoCOP res2_data_;
 
 	bool initialized_{ false };
 };
@@ -112,8 +112,8 @@ MultipoleElecResPairMinData::MultipoleElecResPairMinData()= default;
 
 void
 MultipoleElecResPairMinData::initialize(
-	MultipoleElecResidueInfoCOP res1_data,
-	MultipoleElecResidueInfoCOP res2_data
+	core::scoring::MultipoleElecResidueInfoCOP res1_data,
+	core::scoring::MultipoleElecResidueInfoCOP res2_data
 )
 {
 	initialized_ = true;
@@ -126,16 +126,16 @@ MultipoleElecResPairMinData::initialize(
 inline
 MultipoleElecResPairMinData &
 retrieve_nonconst_mp_pairdata(
-	ResPairMinimizationData & pairdata
+	core::scoring::ResPairMinimizationData & pairdata
 )
 {
 	MultipoleElecResPairMinDataOP mp_pairdata(nullptr);
-	if ( pairdata.get_data( mp_respair_data ) ) {
-		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) ));
-		mp_pairdata = utility::pointer::static_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( mp_respair_data ) );
+	if ( pairdata.get_data( core::scoring::mp_respair_data ) ) {
+		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( core::scoring::mp_respair_data ) ));
+		mp_pairdata = utility::pointer::static_pointer_cast< MultipoleElecResPairMinData > ( pairdata.get_data( core::scoring::mp_respair_data ) );
 	} else {
 		mp_pairdata = utility::pointer::make_shared< MultipoleElecResPairMinData >();
-		pairdata.set_data( mp_respair_data, mp_pairdata );
+		pairdata.set_data( core::scoring::mp_respair_data, mp_pairdata );
 	}
 	return *mp_pairdata;
 }
@@ -143,19 +143,20 @@ retrieve_nonconst_mp_pairdata(
 inline
 MultipoleElecResPairMinData const &
 retrieve_mp_pairdata(
-	ResPairMinimizationData const & pairdata
+	core::scoring::ResPairMinimizationData const & pairdata
 )
 {
-	debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData const > ( pairdata.get_data( mp_respair_data ) ) );
-	return ( static_cast< MultipoleElecResPairMinData const & > ( pairdata.get_data_ref( mp_respair_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResPairMinData const > ( pairdata.get_data( core::scoring::mp_respair_data ) ) );
+	return ( static_cast< MultipoleElecResPairMinData const & > ( pairdata.get_data_ref( core::scoring::mp_respair_data ) ) );
 }
 
 inline
-MultipoleElecResidueInfo &
+core::scoring::MultipoleElecResidueInfo &
 retrieve_nonconst_mp_resdata(
-	ResSingleMinimizationData & resdata
+	core::scoring::ResSingleMinimizationData & resdata
 )
 {
+	using namespace core::scoring;
 	MultipoleElecResidueInfoOP mp_resdata( nullptr );
 	if ( resdata.get_data( mp_res_data ) ) {
 		debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo > ( resdata.get_data( mp_res_data ) ) );
@@ -168,22 +169,22 @@ retrieve_nonconst_mp_resdata(
 }
 
 inline
-MultipoleElecResidueInfo const &
+core::scoring::MultipoleElecResidueInfo const &
 retrieve_mp_resdata(
-	ResSingleMinimizationData const & resdata
+	core::scoring::ResSingleMinimizationData const & resdata
 )
 {
-	return ( static_cast< MultipoleElecResidueInfo const & > ( resdata.get_data_ref( mp_res_data ) ) );
+	return ( static_cast< core::scoring::MultipoleElecResidueInfo const & > ( resdata.get_data_ref( core::scoring::mp_res_data ) ) );
 }
 
 inline
-MultipoleElecResidueInfoCOP
+core::scoring::MultipoleElecResidueInfoCOP
 retrieve_mp_resdata_ptr(
-	ResSingleMinimizationData const & resdata
+	core::scoring::ResSingleMinimizationData const & resdata
 )
 {
-	debug_assert( utility::pointer::dynamic_pointer_cast< MultipoleElecResidueInfo const > ( resdata.get_data( mp_res_data ) ) );
-	return ( utility::pointer::static_pointer_cast< MultipoleElecResidueInfo const > ( resdata.get_data( mp_res_data ) ) );
+	debug_assert( utility::pointer::dynamic_pointer_cast< core::scoring::MultipoleElecResidueInfo const > ( resdata.get_data( core::scoring::mp_res_data ) ) );
+	return ( utility::pointer::static_pointer_cast< core::scoring::MultipoleElecResidueInfo const > ( resdata.get_data( core::scoring::mp_res_data ) ) );
 }
 
 
@@ -191,15 +192,16 @@ retrieve_mp_resdata_ptr(
 
 /// @details This must return a fresh instance of the MultipoleElecEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MultipoleElecEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< MultipoleElecEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MultipoleElecEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( multipole_elec );
 	return sts;
@@ -209,15 +211,15 @@ MultipoleElecEnergyCreator::score_types_for_method() const {
 MultipoleElecEnergy::MultipoleElecEnergy( MultipoleElecEnergy const & /*src*/ ) = default;
 
 
-MultipoleElecEnergy::MultipoleElecEnergy( EnergyMethodOptions const & options ):
+MultipoleElecEnergy::MultipoleElecEnergy( core::scoring::methods::EnergyMethodOptions const & options ):
 	parent( utility::pointer::make_shared< MultipoleElecEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_MultipoleElecPotential( options ) ),
+	potential_( core::scoring::ScoringManager::get_instance()->get_MultipoleElecPotential( options ) ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MultipoleElecEnergy::clone() const
 {
 	return utility::pointer::make_shared< MultipoleElecEnergy >( *this );
@@ -282,28 +284,28 @@ MultipoleElecEnergy::update_residue_for_packing(
 
 ///
 void
-MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	potential_.setup_for_scoring( pose );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), multipole_elec );
+		core::scoring::LREnergyContainerOP new_dec = utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::multipole_elec );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -311,28 +313,28 @@ MultipoleElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &
 
 ///
 void
-MultipoleElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+MultipoleElecEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	potential_.setup_for_scoring( pose );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), multipole_elec );
+		core::scoring::LREnergyContainerOP new_dec = utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::multipole_elec );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -349,10 +351,11 @@ MultipoleElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
+	using namespace core::scoring;
 	//using core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO;
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
@@ -361,7 +364,7 @@ MultipoleElecEnergy::residue_pair_energy(
 
 	//TR << "Calculating residue pair energy" << std::endl;
 
-	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
+	emap[ core::scoring::multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
 }
 
 
@@ -373,12 +376,13 @@ void
 MultipoleElecEnergy::setup_for_minimizing_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose, // pose,
-	ScoreFunction const &, // scorefxn,
+	core::scoring::ScoreFunction const &, // scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
 	basic::datacache::BasicDataCache &,
-	ResSingleMinimizationData & resdata
+	core::scoring::ResSingleMinimizationData & resdata
 ) const
 {
+	using namespace core::scoring;
 	auto const & mp_info
 		( static_cast< MultipoleElecPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::MULTIPOLE_POSE_INFO ) ) );
 
@@ -401,11 +405,11 @@ MultipoleElecEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const &, // rsd1,
 	conformation::Residue const &, // rsd2,
 	pose::Pose const &,
-	ScoreFunction const &, //scorefxn,
+	core::scoring::ScoreFunction const &, //scorefxn,
 	kinematics::MinimizerMapBase const &, // min_map,
-	ResSingleMinimizationData const & res1data,
-	ResSingleMinimizationData const & res2data,
-	ResPairMinimizationData & pairdata
+	core::scoring::ResSingleMinimizationData const & res1data,
+	core::scoring::ResSingleMinimizationData const & res2data,
+	core::scoring::ResPairMinimizationData & pairdata
 ) const
 {
 	MultipoleElecResPairMinData & mp_pairdata( retrieve_nonconst_mp_pairdata( pairdata ) );
@@ -424,10 +428,11 @@ void
 MultipoleElecEnergy::setup_for_scoring_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	ResSingleMinimizationData & resdata
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::ResSingleMinimizationData & resdata
 ) const
 {
+	using namespace core::scoring;
 	MultipoleElecResidueInfo & info( retrieve_nonconst_mp_resdata( resdata ) );
 	// Assign and rotate moment information
 	// TR << "Calling assign_residue from setup_for_scoring_for_residue" << std::endl;
@@ -446,8 +451,8 @@ void
 MultipoleElecEnergy::setup_for_derivatives_for_residue(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	ResSingleMinimizationData & min_data,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::ResSingleMinimizationData & min_data,
 	basic::datacache::BasicDataCache &
 ) const
 {
@@ -466,12 +471,13 @@ void
 MultipoleElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & , // pairdata,
+	core::scoring::ResPairMinimizationData const & , // pairdata,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
+	using namespace core::scoring;
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	//TR << "Calculating residue pair energy ext" << std::endl;
@@ -479,7 +485,7 @@ MultipoleElecEnergy::residue_pair_energy_ext(
 	MultipoleElecResidueInfo const & mp1( retrieve_mp_residue_info( pose, rsd1.seqpos() ) );
 	MultipoleElecResidueInfo const & mp2( retrieve_mp_residue_info( pose, rsd2.seqpos() ) );
 
-	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
+	emap[ core::scoring::multipole_elec ] += potential_.get_res_res_elecE( rsd1, mp1, rsd2, mp2 );
 }
 
 bool
@@ -491,18 +497,19 @@ MultipoleElecEnergy::use_extended_intrares_energy_interface() const
 void
 MultipoleElecEnergy::eval_intrares_energy_ext(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & data_cache,
+	core::scoring::ResSingleMinimizationData const & data_cache,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & emap
 ) const
 {
+	using namespace core::scoring;
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	//TR << "Calculating intraresidue energy ext" << std::endl;
 
 	MultipoleElecResidueInfo const & mp_info( retrieve_mp_resdata( data_cache ) );
-	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd, mp_info, rsd, mp_info );
+	emap[ core::scoring::multipole_elec ] += potential_.get_res_res_elecE( rsd, mp_info, rsd, mp_info );
 }
 
 
@@ -519,10 +526,11 @@ void
 MultipoleElecEnergy::evaluate_rotamer_intrares_energies(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
+	core::scoring::ScoreFunction const & sfxn,
 	utility::vector1< core::PackerEnergy > & energies
 ) const
 {
+	using namespace core::scoring;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
@@ -546,10 +554,11 @@ void
 MultipoleElecEnergy::evaluate_rotamer_intrares_energy_maps(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
-	ScoreFunction const & , // sxfn,
-	utility::vector1< EnergyMap > & emaps
+	core::scoring::ScoreFunction const & , // sxfn,
+	utility::vector1< core::scoring::EnergyMap > & emaps
 ) const
 {
+	using namespace core::scoring;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set.resid() ).is_DNA() ) return;
@@ -573,13 +582,14 @@ MultipoleElecEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
 	using namespace conformation;
 	using namespace numeric;
+	using namespace core::scoring;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	if ( exclude_DNA_DNA_ && pose.residue( set1.resid() ).is_DNA() && pose.residue( set2.resid() ).is_DNA() ) return;
@@ -620,7 +630,7 @@ MultipoleElecEnergy::evaluate_rotamer_pair_energies(
 						*set2.rotamer( ll_rot_id ), mp_info2.residue_info( ll_rot_id ) ) );
 
 					energy_table( ll_rot_id, kk_rot_id ) +=
-						static_cast< core::PackerEnergy >( weights[ multipole_elec ] *  elecE );
+						static_cast< core::PackerEnergy >( weights[ core::scoring::multipole_elec ] *  elecE );
 				}
 			}
 		}
@@ -632,13 +642,14 @@ MultipoleElecEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
 
 	using conformation::Residue;
+	using namespace core::scoring;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	auto const & mp_set_info
@@ -668,7 +679,7 @@ MultipoleElecEnergy::evaluate_rotamer_background_energies(
 			Real const elecE(
 				potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), mp_set_info.residue_info( kk_rot_id ),
 				rsd, mp_rsd_info ) );
-			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ multipole_elec ] *  elecE );
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ core::scoring::multipole_elec ] *  elecE );
 		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
@@ -678,13 +689,14 @@ MultipoleElecEnergy::evaluate_rotamer_background_energy_maps(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & , // sfxn,
-	EnergyMap const & ,
-	utility::vector1< EnergyMap > & emaps
+	core::scoring::ScoreFunction const & , // sfxn,
+	core::scoring::EnergyMap const & ,
+	utility::vector1< core::scoring::EnergyMap > & emaps
 ) const
 {
 
 	using conformation::Residue;
+	using namespace core::scoring;
 	using core::conformation::RotamerSetCacheableDataType::MULTIPOLE_ELEC_ROTAMER_SET_INFO;
 
 	auto const & mp_set_info
@@ -726,13 +738,13 @@ MultipoleElecEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	potential_.eval_atom_derivative( atom_id, weights[ multipole_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
+	potential_.eval_atom_derivative( atom_id, weights[ core::scoring::multipole_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 }
 #endif
 
@@ -744,7 +756,7 @@ MultipoleElecEnergy::indicate_required_context_graphs( utility::vector1< bool > 
 
 /// @brief MultipoleElecEnergy does define intraresidue interactions
 bool
-MultipoleElecEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+MultipoleElecEnergy::defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const
 {
 	return true;
 }
@@ -753,10 +765,11 @@ void
 MultipoleElecEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
+	using namespace core::scoring;
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
 	auto const & mp_info
@@ -764,23 +777,24 @@ MultipoleElecEnergy::eval_intrares_energy(
 
 	//TR << "Calculating intraresidue energy" << std::endl;
 
-	emap[ multipole_elec ] += potential_.get_res_res_elecE( rsd, mp_info.residue_info( rsd.seqpos() ),
+	emap[ core::scoring::multipole_elec ] += potential_.get_res_res_elecE( rsd, mp_info.residue_info( rsd.seqpos() ),
 		rsd, mp_info.residue_info( rsd.seqpos() ) );
 }
 
 void
 MultipoleElecEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const & min_data,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
+	using namespace core::scoring;
 
 	MultipoleElecResidueInfo const & mp( retrieve_mp_resdata( min_data ) );
 
-	Real const factor( weights[ multipole_elec] );
+	Real const factor( weights[ core::scoring::multipole_elec] );
 
 	potential_.eval_residue_pair_derivatives( rsd, rsd, mp, mp, pose, factor,
 		atom_derivs, atom_derivs );
@@ -791,13 +805,13 @@ void
 MultipoleElecEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
-	ResSingleMinimizationData const & ,
-	ResSingleMinimizationData const & ,
-	ResPairMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const & ,
+	core::scoring::ResPairMinimizationData const & ,
 	pose::Pose const & , // provides context
-	EnergyMap const & ,
-	utility::vector1< DerivVectorPair > & ,
-	utility::vector1< DerivVectorPair > &
+	core::scoring::EnergyMap const & ,
+	utility::vector1< core::scoring::DerivVectorPair > & ,
+	utility::vector1< core::scoring::DerivVectorPair > &
 ) const
 {
 }
@@ -809,6 +823,5 @@ MultipoleElecEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

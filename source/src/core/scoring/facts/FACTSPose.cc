@@ -60,6 +60,7 @@ using namespace std;
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 /**************************************************************************************************/
 /*                                                                                                */
@@ -190,6 +191,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 	}
 }
 
+} // namespace facts
 } // namespace scoring
 } // namespace core
 
@@ -198,7 +200,7 @@ FACTSPoseInfo::update_enumeration_shell( pose::Pose const &pose,
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::FACTSPoseInfo::save( Archive & arc ) const {
+core::scoring::facts::FACTSPoseInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<FACTSResidueInfoOP>
 	arc( CEREAL_NVP( placeholder_residue_ ) ); // utility::vector1<ResidueOP>
@@ -210,7 +212,7 @@ core::scoring::FACTSPoseInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::FACTSPoseInfo::load( Archive & arc ) {
+core::scoring::facts::FACTSPoseInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( residue_info_ ); // utility::vector1<FACTSResidueInfoOP>
 	arc( placeholder_residue_ ); // utility::vector1<ResidueOP>
@@ -219,8 +221,8 @@ core::scoring::FACTSPoseInfo::load( Archive & arc ) {
 	arc( context_derivative_empty_ ); // _Bool
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSPoseInfo );
-CEREAL_REGISTER_TYPE( core::scoring::FACTSPoseInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::facts::FACTSPoseInfo );
+CEREAL_REGISTER_TYPE( core::scoring::facts::FACTSPoseInfo )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_facts_FACTSPose )
 #endif // SERIALIZATION

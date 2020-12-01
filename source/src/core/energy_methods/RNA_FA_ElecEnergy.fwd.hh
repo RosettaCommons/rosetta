@@ -16,12 +16,10 @@
 #define INCLUDED_core_scoring_elec_RNA_FA_ElecEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace elec {
+namespace energy_methods {
 
 class RNA_FA_ElecEnergy;
 
-}
 }
 }
 

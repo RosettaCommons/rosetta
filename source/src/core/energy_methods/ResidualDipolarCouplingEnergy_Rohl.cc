@@ -63,22 +63,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using namespace ObjexxFCL;
 
 /// @details This must return a fresh instance of the ResidualDipolarCouplingEnergy_Rohl class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergy_RohlCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ResidualDipolarCouplingEnergy_Rohl >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ResidualDipolarCouplingEnergy_RohlCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rdc_rohl );
 	return sts;
@@ -96,7 +97,7 @@ ResidualDipolarCouplingEnergy_Rohl::ResidualDipolarCouplingEnergy_Rohl() :
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergy_Rohl::clone() const
 {
 	return utility::pointer::make_shared< ResidualDipolarCouplingEnergy_Rohl >();
@@ -107,27 +108,27 @@ ResidualDipolarCouplingEnergy_Rohl::clone() const
 //////////////////////////////////////////////////////
 void ResidualDipolarCouplingEnergy_Rohl::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
 
 	Real dipolar_score = eval_dipolar( pose );
-	totals[ rdc_rohl ] = dipolar_score;
+	totals[ core::scoring::rdc_rohl ] = dipolar_score;
 
 }
 
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-ResidualDipolarCoupling_Rohl const &
+core::scoring::ResidualDipolarCoupling_Rohl const &
 ResidualDipolarCouplingEnergy_Rohl::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
-	ResidualDipolarCoupling_RohlOP rdc_info( retrieve_RDC_ROHL_from_pose( pose ) );
+	core::scoring::ResidualDipolarCoupling_RohlOP rdc_info( core::scoring::retrieve_RDC_ROHL_from_pose( pose ) );
 	if ( !rdc_info ) {
-		rdc_info = utility::pointer::make_shared< ResidualDipolarCoupling_Rohl >();
+		rdc_info = utility::pointer::make_shared< core::scoring::ResidualDipolarCoupling_Rohl >();
 		store_RDC_ROHL_in_pose( rdc_info, pose );
 	}
 	return *rdc_info;
@@ -142,7 +143,7 @@ Real ResidualDipolarCouplingEnergy_Rohl::eval_dipolar(
 ) const
 {
 
-	ResidualDipolarCoupling_Rohl const & rdc_data( rdc_from_pose( pose ) );
+	core::scoring::ResidualDipolarCoupling_Rohl const & rdc_data( rdc_from_pose( pose ) );
 	utility::vector1< core::scoring::RDC_Rohl > All_RDC_lines( rdc_data.get_RDC_data() );
 
 	Size const nrow( All_RDC_lines.size() ); //number of experimental couplins
@@ -704,6 +705,5 @@ ResidualDipolarCouplingEnergy_Rohl::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

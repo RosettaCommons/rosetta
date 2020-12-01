@@ -12,8 +12,8 @@
 /// @author Frank DiMaio
 
 
-#ifndef INCLUDED_core_scoring_methods_SmoothCenPairEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_SmoothCenPairEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_SmoothCenPairEnergyCreator_hh
+#define INCLUDED_core_energy_methods_SmoothCenPairEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -24,27 +24,26 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class SmoothCenPairEnergyCreator : public EnergyMethodCreator
+
+class SmoothCenPairEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new SmoothCenPairEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
 
-}
 }
 }
 

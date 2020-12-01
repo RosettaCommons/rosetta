@@ -38,21 +38,22 @@
 static basic::Tracer TR( "core.scoring.methods.MembraneEnvSmoothEnergy", basic::t_info );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MembraneEnvSmoothEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvSmoothEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MembraneEnvSmoothEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MembraneEnvSmoothEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( Menv_smooth );
 	return sts;
@@ -91,7 +92,7 @@ MembraneEnvSmoothEnergy::MembraneEnvSmoothEnergy() :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvSmoothEnergy::clone() const
 {
 	return utility::pointer::make_shared< MembraneEnvSmoothEnergy >( *this );
@@ -112,7 +113,7 @@ inline Real sqr ( Real x ) {
 void
 MembraneEnvSmoothEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -136,8 +137,8 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 
 		core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
 
-		const Energies & energies( pose.energies() );
-		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
+		const core::scoring::Energies & energies( pose.energies() );
+		const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 
 		Real countN = 0.0;
 		// iterate across neighbors within 12 angstroms
@@ -171,7 +172,7 @@ MembraneEnvSmoothEnergy::setup_for_derivatives(
 void
 MembraneEnvSmoothEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -186,13 +187,13 @@ void
 MembraneEnvSmoothEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// currently this is only for protein residues
 	if ( ! rsd.is_protein() ) return;
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 	Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
 	core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
@@ -224,7 +225,7 @@ MembraneEnvSmoothEnergy::residue_energy(
 
 	calc_energy( rsd, pose, countN, rsd.aa(), score, dscoredN );
 
-	emap[ Menv_smooth ] += score;
+	emap[ core::scoring::Menv_smooth ] += score;
 }
 
 
@@ -235,8 +236,8 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & ,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -254,7 +255,7 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 
 	core::conformation::Atom const & atom_i = rsd.atom( atom_id.atomno() );
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 
 	// its possible both of these are true
 	bool const input_atom_is_nbr( i_nbr_atom == Size (atom_id.atomno()) );
@@ -279,17 +280,17 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 				/// two birds, one stone
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ Menv_smooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
+					weights[ core::scoring::Menv_smooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
 					F1, F2 );
 			} else {
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ Menv_smooth ] * ( residue_dEdN_[ j ] ),
+					weights[ core::scoring::Menv_smooth ] * ( residue_dEdN_[ j ] ),
 					F1, F2 );
 
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_nbr_atom ),
-					weights[ Menv_smooth ] * ( residue_dEdN_[ i ] ),
+					weights[ core::scoring::Menv_smooth ] * ( residue_dEdN_[ i ] ),
 					F1, F2 );
 			}
 		} else if ( input_atom_is_nbr && rsd_j.is_protein() ) {
@@ -297,14 +298,14 @@ MembraneEnvSmoothEnergy::eval_atom_derivative(
 
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_rep_atom ),
-				weights[ Menv_smooth ] * ( residue_dEdN_[ j ] ),
+				weights[ core::scoring::Menv_smooth ] * ( residue_dEdN_[ j ] ),
 				F1, F2 );
 
 		} else {
 			Size const resj_nbr_atom = rsd_j.nbr_atom();
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_nbr_atom ),
-				weights[ Menv_smooth ] * ( residue_dEdN_[ i ] ),
+				weights[ core::scoring::Menv_smooth ] * ( residue_dEdN_[ i ] ),
 				F1, F2 );
 
 		}
@@ -371,7 +372,7 @@ MembraneEnvSmoothEnergy::atomic_interaction_cutoff() const
 void
 MembraneEnvSmoothEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 void
@@ -391,7 +392,7 @@ MembraneEnvSmoothEnergy::calc_energy(
 		low_bin = high_bin = 1; inter = 0;
 	}
 
-	Real const MembraneDepth (MembraneEmbed_from_pose( pose ).depth( rsd.seqpos() ) );
+	Real const MembraneDepth (core::scoring::MembraneEmbed_from_pose( pose ).depth( rsd.seqpos() ) );
 
 	Real thickness = 2.0;
 	int  slope = 14;
@@ -607,7 +608,6 @@ core::Size
 MembraneEnvSmoothEnergy::version() const
 {
 	return 1; // Initial versioning
-}
 }
 }
 }

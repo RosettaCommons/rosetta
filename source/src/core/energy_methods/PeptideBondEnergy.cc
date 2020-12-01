@@ -30,21 +30,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the PeptideBondEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PeptideBondEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< PeptideBondEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 PeptideBondEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( peptide_bond );
 	return sts;
@@ -58,8 +59,8 @@ PeptideBondEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /* pose */,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using conformation::Residue;
 
@@ -83,7 +84,7 @@ PeptideBondEnergy::residue_pair_energy(
 	total_dev += gfunc.func(
 		rsd1.xyz( bbC_ ).distance( rsd2.xyz( bbN_ ) )
 	);
-	emap[ peptide_bond ] += total_dev;
+	emap[ core::scoring::peptide_bond ] += total_dev;
 } // residue_pair_energy
 
 /// called during gradient-based minimization inside dfunc
@@ -97,8 +98,8 @@ PeptideBondEnergy::eval_atom_derivative(
 	id::AtomID const & /* id */,
 	pose::Pose const & /* pose */,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & /* weights */,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & /* weights */,
 	Vector & /* F1 */,
 	Vector & /* F2 */
 ) const
@@ -123,6 +124,5 @@ PeptideBondEnergy::version() const
 }
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

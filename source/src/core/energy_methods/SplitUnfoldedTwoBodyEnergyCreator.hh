@@ -11,8 +11,8 @@
 /// @brief  Energy creator for the split unfolded two body energy method
 /// @author Riley Simmons-Edler (rse231@nyu.edu)
 
-#ifndef INCLUDED_core_scoring_methods_SplitUnfoldedTwoBodyEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_SplitUnfoldedTwoBodyEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_SplitUnfoldedTwoBodyEnergyCreator_hh
+#define INCLUDED_core_energy_methods_SplitUnfoldedTwoBodyEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -24,20 +24,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class SplitUnfoldedTwoBodyEnergyCreator : public EnergyMethodCreator
+
+class SplitUnfoldedTwoBodyEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
-	methods::EnergyMethodOP create_energy_method(const methods::EnergyMethodOptions &) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method(const core::scoring::methods::EnergyMethodOptions &) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-}
 }
 }
 

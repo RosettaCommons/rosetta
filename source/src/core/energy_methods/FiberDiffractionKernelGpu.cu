@@ -27,8 +27,7 @@
 #include "cutil_math.h"
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
 static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionKernelGpu");
 
@@ -876,7 +875,6 @@ void  calculate_derivatives_gpu(
 	cudaFree( d_atom_type_number );
 }
 
-} // namespace fiber_diffraction
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 

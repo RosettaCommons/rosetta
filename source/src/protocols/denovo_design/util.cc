@@ -707,7 +707,7 @@ linear_chainbreak(
 	using core::pose::Pose;
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreFunction;
-	using core::scoring::methods::LinearChainbreakEnergy;
+	using core::energy_methods::LinearChainbreakEnergy;
 
 	if ( pose.fold_tree().num_cutpoint() == 0 ) {
 		return core::Real( 0.0 );

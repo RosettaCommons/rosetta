@@ -21,20 +21,21 @@
 #include <core/scoring/ScoreFunction.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the OtherPoseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OtherPoseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< OtherPoseEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 OtherPoseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( other_pose );
 	return sts;
@@ -48,7 +49,7 @@ OtherPoseEnergy::OtherPoseEnergy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OtherPoseEnergy::clone() const
 {
 	return utility::pointer::make_shared< OtherPoseEnergy >();
@@ -61,10 +62,11 @@ OtherPoseEnergy::clone() const
 void
 OtherPoseEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & totals
 ) const {
 
+	using namespace core::scoring;
 	using namespace pose;
 	using namespace pose::full_model_info;
 
@@ -75,18 +77,18 @@ OtherPoseEnergy::finalize_total_energy(
 	if ( other_pose_list.size() == 0 ) return; // no op.
 
 	// watch out for double-counting -- some score terms look at full model, including other poses, already.
-	ScoreFunctionOP other_pose_scorefxn = scorefxn.clone();
+	core::scoring::ScoreFunctionOP other_pose_scorefxn = scorefxn.clone();
 	other_pose_scorefxn->set_weight( intermol, 0.0 );
 	other_pose_scorefxn->set_weight( loop_close, 0.0 );
 	other_pose_scorefxn->set_weight( missing_res, 0.0 );
 	other_pose_scorefxn->set_weight( free_res, 0.0 );
 	other_pose_scorefxn->set_weight( rna_partition, 0.0 );
 
-	totals[ other_pose ] = 0.0;
+	totals[ core::scoring::other_pose ] = 0.0;
 
 	for ( PoseOP other_pose_op : other_pose_list ) {
 		Real other_pose_score = ( *other_pose_scorefxn )( *other_pose_op );
-		totals[ other_pose ] += other_pose_score;
+		totals[ core::scoring::other_pose ] += other_pose_score;
 	}
 } // finalize_total_energy
 
@@ -97,6 +99,5 @@ OtherPoseEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} //methods
 } //scoring
 } //core

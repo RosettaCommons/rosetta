@@ -40,12 +40,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace mhc_epitope_energy {
+namespace energy_methods {
 
 /// @brief A cache of epitope scores (considered and commited) at each position,
 /// to enable efficient updating of only those scores affected by a substitution during annealing.
-/// @details This is separated out into a class to parallel the MHCEpitopeEnergySetup helpers,
+/// @details This is separated out into a class to parallel the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup helpers,
 /// as each such instance will affect the score separately.
 class ScoreCache : public utility::VirtualBase {
 public:
@@ -100,7 +99,7 @@ public:
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
@@ -122,7 +121,7 @@ public:
 	void set_up_residuearrayannealableenergy_for_packing ( core::pose::Pose &pose, core::pack::rotamer_set::RotamerSets const &rotamersets, core::scoring::ScoreFunction const &sfxn) override;
 
 	/// @brief Disable this energy during minimization.
-	void setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;
+	void setup_for_minimizing( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;
 
 	/// @brief Re-enable this energy after minimization.
 	void finalize_after_minimizing( pose::Pose & pose ) const override;
@@ -135,24 +134,24 @@ private:
 
 	/// @brief Get a const-access pointer to a setup helper object.
 	///
-	inline MHCEpitopeEnergySetupCOP setup_helper_cop( core::Size const index ) const {
+	inline core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP setup_helper_cop( core::Size const index ) const {
 		runtime_assert_string_msg( index > 0 && index <= setup_helpers_.size(), "Error in core::scoring::mhc_epitope_energy::MHCEpitopeEnergy::setup_helper_cop(): Index of setup helper is out of range." );
-		return utility::pointer::dynamic_pointer_cast<MHCEpitopeEnergySetup const>(setup_helpers_[index]);
+		return utility::pointer::dynamic_pointer_cast< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup const >(setup_helpers_[index]);
 	}
 
 	/// @brief Get the number of setup helper objects:
 	///
 	inline core::Size setup_helper_count() const { return setup_helpers_.size(); }
 
-	/// @brief Given a pose, pull out the MHCEpitopeEnergySetup objects stored in SequenceConstraints in the pose and
+	/// @brief Given a pose, pull out the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects stored in SequenceConstraints in the pose and
 	/// append them to the setup_helpers_ vector, returning a new vector.  This also generates a vector of masks simultaneously.
-	/// @param [in] pose The pose from which the MHCEpitopeEnergySetupCOPs will be extracted.
-	/// @param [out] setup_helpers The output vector of MHCEpitopeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
+	/// @param [in] pose The pose from which the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOPs will be extracted.
+	/// @param [out] setup_helpers The output vector of core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
 	/// @param [out] masks The output vector of ResidueSubsets, which will be equal in size to the helpers vector.
 	/// @details The output vectors are first cleared by this operation.
 	void get_helpers_from_pose(
 		core::pose::Pose const &pose,
-		utility::vector1< MHCEpitopeEnergySetupCOP > &setup_helpers,
+		utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > &setup_helpers,
 		utility::vector1< core::select::residue_selector::ResidueSubset > &masks,
 		utility::vector1< core::Real > &cst_weights
 	) const;
@@ -166,7 +165,7 @@ private:
 	/// entire pose.  Should be used for debugging only.
 	core::Real difference_btw_cached_and_full_rescore(
 		utility::vector1< core::conformation::ResidueCOP > const & resvect,
-		utility::vector1< MHCEpitopeEnergySetupCOP > const &setup_helpers,
+		utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > const &setup_helpers,
 		utility::vector1< core::select::residue_selector::ResidueSubset > const &masks,
 		utility::vector1< core::Real > const &cst_weights
 	) const;
@@ -178,7 +177,7 @@ private:
 	/// or by calculate_energy within packing simulated annealing (set_helpers_/masks_for_packing_ initialized at start of packing)
 	core::Real full_rescore(
 		utility::vector1< core::conformation::ResidueCOP > const & resvect,
-		utility::vector1< MHCEpitopeEnergySetupCOP > const &setup_helpers,
+		utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > const &setup_helpers,
 		utility::vector1< core::select::residue_selector::ResidueSubset > const &masks,
 		utility::vector1< core::Real > const &cst_weights,
 		bool cache, bool native
@@ -203,22 +202,22 @@ private:
 
 	/// @brief The vector of helper objects that store all of the data for setting up this scoring function.
 	/// @details Initialized on scoreterm initialization.
-	utility::vector1<MHCEpitopeEnergySetupOP> setup_helpers_;
+	utility::vector1<core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupOP> setup_helpers_;
 
-	/// @brief A cache of the MHCEpitopeEnergySetup objects to be used for packing.
-	/// @details This is the list in setup_helpers_ plus all of the MHCEpitopeEnergySetup objects
+	/// @brief A cache of the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects to be used for packing.
+	/// @details This is the list in setup_helpers_ plus all of the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects
 	/// stored in MHCEpitopeConstraint objects in the pose.  Initialized by the ResidueArrayAnnealingEvaluator
 	/// in its initialize() function.
-	utility::vector1<MHCEpitopeEnergySetupCOP> setup_helpers_for_packing_;
+	utility::vector1<core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP> setup_helpers_for_packing_;
 
-	/// @brief A vector of masks corresponding to the MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
+	/// @brief A vector of masks corresponding to the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
 	/// @detalis These are generated from ResidueSelectors.
 	utility::vector1< core::select::residue_selector::ResidueSubset > setup_helper_masks_for_packing_;
 
-	/// @brief A vector of cst weights corresponding to the MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
+	/// @brief A vector of cst weights corresponding to the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
 	utility::vector1< core::Real > setup_helper_weights_for_packing_;
 
-	/// @brif A cache for each of the MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
+	/// @brif A cache for each of the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects in setup_helpers_for_packing_.
 	utility::vector1< ScoreCacheOP > score_caches_;
 
 	/// @brief The current commited total energy
@@ -240,7 +239,6 @@ private:
 	const char pad = '-';
 };
 
-} // mhc_epitope_energy
 } // scoring
 } // core
 

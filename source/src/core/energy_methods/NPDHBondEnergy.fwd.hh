@@ -19,8 +19,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace hbonds {
+namespace energy_methods {
 
 class HBondEnergy;
 
@@ -28,7 +27,6 @@ typedef utility::pointer::shared_ptr< HBondEnergy > HBondEnergyOP;
 typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCOP;
 typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCAP;
 
-} // hbonds
 } // scoring
 } // core
 

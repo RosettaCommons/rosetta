@@ -19,8 +19,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace mhc_epitope_energy {
+namespace energy_methods {
 
 class ScoreCache;
 
@@ -33,7 +32,6 @@ typedef utility::pointer::shared_ptr< MHCEpitopeEnergy > MHCEpitopeEnergyOP;
 typedef utility::pointer::shared_ptr< MHCEpitopeEnergy const > MHCEpitopeEnergyCOP;
 
 
-} // mhc_epitope_energy
 } // scoring
 } // core
 

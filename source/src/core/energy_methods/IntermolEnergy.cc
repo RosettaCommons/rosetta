@@ -44,21 +44,22 @@ static basic::Tracer TR( "core.scoring.methods.IntermolEnergy" );
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the IntermolEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 IntermolEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< IntermolEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 IntermolEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( intermol );
 	return sts;
@@ -73,7 +74,7 @@ IntermolEnergy::IntermolEnergy() :
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 IntermolEnergy::clone() const
 {
 	return utility::pointer::make_shared< IntermolEnergy >();
@@ -88,15 +89,15 @@ IntermolEnergy::clone() const
 void
 IntermolEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 
 	using namespace core::pose::full_model_info;
 	//make_sure_full_model_info_is_setup( pose );
 	if ( !full_model_info_defined( pose ) ) return;
 	Size const num_chains_frozen = get_num_chains_frozen( pose );
-	totals[ intermol ] = num_chains_frozen * ( penalty_at_1M_ - log_conc_ );
+	totals[ core::scoring::intermol ] = num_chains_frozen * ( penalty_at_1M_ - log_conc_ );
 } // finalize_total_energy
 
 
@@ -120,8 +121,8 @@ IntermolEnergy::eval_atom_derivative(
 	id::AtomID const &,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const
@@ -137,6 +138,5 @@ IntermolEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

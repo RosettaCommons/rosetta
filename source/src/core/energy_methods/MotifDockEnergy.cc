@@ -44,20 +44,21 @@ typedef numeric::xyzTransform<core::Real> Xform;
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+
+core::scoring::methods::EnergyMethodOP
 MotifDockEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MotifDockEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
 /// this EnergyMethodCreator creates in its create_energy_method() function
-ScoreTypes
+core::scoring::ScoreTypes
 MotifDockEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( motif_dock );
 	return sts;
@@ -70,7 +71,7 @@ MotifDockEnergy::MotifDockEnergy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MotifDockEnergy::clone() const {
 	return utility::pointer::make_shared< MotifDockEnergy >();
 }
@@ -85,8 +86,8 @@ MotifDockEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	Real score = 0;
@@ -97,9 +98,9 @@ MotifDockEnergy::residue_pair_energy(
 	Xform const xb1 = core::pose::motif::get_backbone_reference_frame(pose,ir);
 	Xform const xb2 = core::pose::motif::get_backbone_reference_frame(pose,jr);
 	if ( xb1.t.distance_squared(xb2.t) > 100.0 ) {
-		emap[ motif_dock ] = score;
+		emap[ core::scoring::motif_dock ] = score;
 	} else if ( chain1 == chain2 ) {
-		emap[ motif_dock ] = score;
+		emap[ core::scoring::motif_dock ] = score;
 	} else {
 		Xform const xbb = xb1.inverse() * xb2;
 		char const & ss1 = pose.secstruct(ir);
@@ -116,7 +117,7 @@ MotifDockEnergy::residue_pair_energy(
 		score += bb_motif;
 		//if( bb_motif == 0 ) score -= 0.5;
 
-		emap[ motif_dock ] = -score;
+		emap[ core::scoring::motif_dock ] = -score;
 	}
 	//TR << "residue pair: A: " << ir << " B: " << jr << " score " << score << std::endl;
 
@@ -127,8 +128,8 @@ void
 MotifDockEnergy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	return;
 }
@@ -137,7 +138,7 @@ Distance
 MotifDockEnergy::atomic_interaction_cutoff() const {return 8;}
 
 bool
-MotifDockEnergy::defines_intrares_energy( EnergyMap const & ) const { return false; }
+MotifDockEnergy::defines_intrares_energy( core::scoring::EnergyMap const & ) const { return false; }
 
 core::Size
 MotifDockEnergy::version() const
@@ -145,6 +146,5 @@ MotifDockEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

@@ -22,15 +22,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 class FaMPEnvEnergy;
 typedef utility::pointer::shared_ptr< FaMPEnvEnergy > FaMPEnvEnergyOP;
 typedef utility::pointer::shared_ptr< FaMPEnvEnergy const > FaMPEnvEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPEnvEnergy_fwd_hh
+#endif // INCLUDED_core_energy_methods_FaMPEnvEnergy_fwd_hh

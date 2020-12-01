@@ -68,8 +68,7 @@ using namespace core::scoring::methods;
 static basic::Tracer TR( "core.scoring.membrane.MPResidueLipophilicityEnergy" );
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 // Distance Constants
 
@@ -88,16 +87,17 @@ Real const twelveA_offset = 220.0;
 // Creator Methods //////////////////////////////////////////
 
 /// @brief Return a fresh instance of the energy method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPResidueLipophilicityEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPResidueLipophilicityEnergy >();
 }
 
 /// @brief Return relevant score types
-ScoreTypes
+core::scoring::ScoreTypes
 MPResidueLipophilicityEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( MPResidueLipophilicity );
 	return sts;
@@ -113,7 +113,7 @@ MPResidueLipophilicityEnergy::MPResidueLipophilicityEnergy() :
 }
 
 /// @brief Create a clone of this energy method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPResidueLipophilicityEnergy::clone() const
 {
 	return utility::pointer::make_shared< MPResidueLipophilicityEnergy >( *this );
@@ -125,7 +125,7 @@ MPResidueLipophilicityEnergy::clone() const
 void
 MPResidueLipophilicityEnergy::setup_for_derivatives(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 }
@@ -133,7 +133,7 @@ MPResidueLipophilicityEnergy::setup_for_derivatives(
 void
 MPResidueLipophilicityEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 
@@ -150,7 +150,7 @@ void
 MPResidueLipophilicityEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// currently this is only for protein residues
@@ -163,7 +163,7 @@ MPResidueLipophilicityEnergy::residue_energy(
 
 	calc_energy( rsd, pose, score );
 
-	emap[ MPResidueLipophilicity ] += score * burial_sig_6x12;
+	emap[ core::scoring::MPResidueLipophilicity ] += score * burial_sig_6x12;
 }
 
 /// @brief called by the ResidueLipophilicityFilter to report the measurements made by ResidueLipophilicity
@@ -283,7 +283,7 @@ MPResidueLipophilicityEnergy::centroid_neighbors(
 
 	core::Size atom_id = 0;
 
-	const Energies & energies( pose.energies() );
+	const core::scoring::Energies & energies( pose.energies() );
 	const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph()  );
 
 	Real distance = 0.0;
@@ -321,8 +321,8 @@ MPResidueLipophilicityEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & ,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const
@@ -346,9 +346,9 @@ MPResidueLipophilicityEnergy::atomic_interaction_cutoff() const
 void
 MPResidueLipophilicityEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	// context_graphs_required[ twelve_A_neighbor_graph ] = true;
-	//context_graphs_required[ ten_A_neighbor_graph ] = true;
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	// context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
+	//context_graphs_required[ core::scoring::ten_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 void
@@ -614,6 +614,5 @@ MPResidueLipophilicityEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // membrane
 } // scoring
 } // core

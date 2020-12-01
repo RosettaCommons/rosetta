@@ -462,10 +462,10 @@ ScoringManager::get_SASAPotential() const
 /// @brief Get an instance of the FACTSPotential scoring object, by const owning pointer.
 /// @details Threadsafe and lazily loaded.
 /// @author Rewritten by Vikram K. Mulligan.
-FACTSPotential const &
+facts::FACTSPotential const &
 ScoringManager::get_FACTSPotential() const
 {
-	std::function< FACTSPotentialOP () > creator( std::bind( &ScoringManager::create_facts_potential_instance ) );
+	std::function< facts::FACTSPotentialOP () > creator( std::bind( &ScoringManager::create_facts_potential_instance ) );
 	utility::thread::safely_create_load_once_object_by_OP( creator, facts_potential_, SAFELY_PASS_MUTEX(facts_mutex_), SAFELY_PASS_THREADSAFETY_BOOL(facts_bool_) ); //Creates this once in a threadsafe manner, iff it hasn't been created.  Otherwise, returns already-created object.
 	return *facts_potential_;
 }
@@ -1584,9 +1584,9 @@ ScoringManager::create_sasa_potential_instance() {
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 /// @note Not intended for use outside of ScoringManager.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
-FACTSPotentialOP
+facts::FACTSPotentialOP
 ScoringManager::create_facts_potential_instance() {
-	return utility::pointer::make_shared< FACTSPotential >();
+	return utility::pointer::make_shared< facts::FACTSPotential >();
 }
 
 /// @brief Create an instance of the GenericBondedPotential object, by owning pointer.
@@ -1597,7 +1597,7 @@ ScoringManager::create_generic_bonded_potential_instance() {
 	return utility::pointer::make_shared< GenericBondedPotential >();
 }
 
-/// @brief Create an instance of the FactsPotential object, by owning pointer.
+/// @brief Create an instance of the DNA_BasePotential object, by owning pointer.
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 /// @note Not intended for use outside of ScoringManager.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)

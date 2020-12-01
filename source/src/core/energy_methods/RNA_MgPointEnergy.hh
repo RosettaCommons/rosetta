@@ -33,13 +33,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace magnesium {
+namespace energy_methods {
 
 
-class RNA_MgPointEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_MgPointEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -47,7 +46,7 @@ public:
 	RNA_MgPointEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -55,10 +54,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
@@ -68,8 +67,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -77,8 +76,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 
@@ -87,14 +86,14 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -129,19 +128,18 @@ private:
 		conformation::Residue const & rsd1, // The RNA residue
 		conformation::Residue const & rsd2, // The Mg(2+)
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	core::Size version() const override;
 
-	MgKnowledgeBasedPotentialOP rna_mg_knowledge_based_potential_;
+	core::scoring::magnesium::MgKnowledgeBasedPotentialOP rna_mg_knowledge_based_potential_;
 
 	bool const verbose_;
 
 };
 
 
-} //magnesium
 } //scoring
 } //core
 

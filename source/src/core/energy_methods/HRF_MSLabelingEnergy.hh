@@ -12,8 +12,8 @@
 
 // define all those functions in cc file!!
 
-#ifndef INCLUDED_core_scoring_methods_MSLabelingEnergy_hh
-#define INCLUDED_core_scoring_methods_MSLabelingEnergy_hh
+#ifndef INCLUDED_core_energy_methods_MSLabelingEnergy_hh
+#define INCLUDED_core_energy_methods_MSLabelingEnergy_hh
 
 #include <core/energy_methods/HRF_MSLabelingEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
@@ -26,17 +26,17 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class HRF_MSLabelingEnergy : public ContextDependentOneBodyEnergy {
+
+class HRF_MSLabelingEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 public:
 
 	HRF_MSLabelingEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -47,19 +47,19 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	core::Size version() const override;
@@ -82,6 +82,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_MSLabelingEnergy_HH
+#endif // INCLUDED_core_energy_methods_MSLabelingEnergy_HH

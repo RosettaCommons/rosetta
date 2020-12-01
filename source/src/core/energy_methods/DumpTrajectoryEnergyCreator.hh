@@ -28,8 +28,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace util_methods {
+namespace energy_methods {
 
 class DumpTrajectoryEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
@@ -41,10 +40,9 @@ public:
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-} // util_methods
 } // scoring
 } // core
 

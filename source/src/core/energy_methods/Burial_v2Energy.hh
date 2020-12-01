@@ -11,8 +11,8 @@
 /// @brief  energy term use for score burial of a specific residue
 /// @author TJ Brunette
 
-#ifndef INCLUDED_core_scoring_methods_Burial_v2Energy_hh
-#define INCLUDED_core_scoring_methods_Burial_v2Energy_hh
+#ifndef INCLUDED_core_energy_methods_Burial_v2Energy_hh
+#define INCLUDED_core_energy_methods_Burial_v2Energy_hh
 
 #include <core/energy_methods/Burial_v2EnergyCreator.hh>
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -25,20 +25,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class Burial_v2Energy : public WholeStructureEnergy {
+
+class Burial_v2Energy : public core::scoring::methods::WholeStructureEnergy {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
-	Burial_v2Energy() : WholeStructureEnergy( utility::pointer::make_shared< Burial_v2EnergyCreator >() ) {
+	Burial_v2Energy() : core::scoring::methods::WholeStructureEnergy( utility::pointer::make_shared< Burial_v2EnergyCreator >() ) {
 		init_from_file();
 	}
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -47,8 +47,8 @@ public:
 
 	void finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
@@ -64,6 +64,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_Burial_v2Energy_HH
+#endif // INCLUDED_core_energy_methods_Burial_v2Energy_HH

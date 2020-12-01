@@ -19,8 +19,8 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class ArgCationPiEnergy;
@@ -28,9 +28,7 @@ class ArgCationPiEnergy;
 typedef utility::pointer::shared_ptr< ArgCationPiEnergy > ArgCationPiEnergyOP;
 typedef utility::pointer::shared_ptr< ArgCationPiEnergy const > ArgCationPiEnergyCOP;
 
-
-} // methods
-} // scoring
+} // energy_methods
 } // core
 
 #endif

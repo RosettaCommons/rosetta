@@ -12,8 +12,8 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergyCreator_HH
-#define INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergyCreator_HH
+#ifndef INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergyCreator_HH
+#define INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergyCreator_HH
 
 // Package headers
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
@@ -22,23 +22,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
-namespace carbohydrates {
+namespace energy_methods {
 
-/// @brief  EnergyMethodCreator allowing the ScoringManager to create a SugarBackboneEnergy method class
-class SugarBackboneEnergyCreator : public EnergyMethodCreator {
+
+/// @brief  EnergyMethodCreator allowing the core::scoring::ScoringManager to create a SugarBackboneEnergy method class
+class SugarBackboneEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
-	/// @brief  Return an up-casted owning pointer (EnergyMethodOP) to the energy method.
-	EnergyMethodOP create_energy_method( EnergyMethodOptions const & ) const override;
+	/// @brief  Return an up-casted owning pointer (core::scoring::methods::EnergyMethodOP) to the energy method.
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const override;
 
 	/// @brief  Return the set of ScoreTypes for which this EnergyMethod is responsible.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-}  // namespace carbohydrates
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core
 
-#endif  // INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergyCreator_HH
+#endif  // INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergyCreator_HH

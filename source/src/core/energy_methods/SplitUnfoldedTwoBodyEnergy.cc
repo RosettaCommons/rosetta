@@ -27,52 +27,52 @@
 #include <iostream>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type, std::string const & score_func_type ):
 	parent( utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergyCreator >() ),
 	label_type_( label_type ),
 	value_type_( value_type ),
 	score_func_type_( score_func_type ),
-	sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
+	sutbp_( core::scoring::ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
 	score_type_weights_( sutbp_.get_weights() )
 {
 }
 
-SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type,  std::string const & score_func_type, const EnergyMap & emap_in ):
+SplitUnfoldedTwoBodyEnergy::SplitUnfoldedTwoBodyEnergy( std::string const & label_type, std::string const & value_type,  std::string const & score_func_type, const core::scoring::EnergyMap & emap_in ):
 	parent( utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergyCreator >() ),
 	label_type_( label_type ),
 	value_type_( value_type ),
 	score_func_type_(score_func_type ),
-	sutbp_( ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
+	sutbp_( core::scoring::ScoringManager::get_instance()->get_SplitUnfoldedTwoBodyPotential( label_type, value_type, score_func_type ) ),
 	score_type_weights_( emap_in )
 {
 }
 
 SplitUnfoldedTwoBodyEnergy::~SplitUnfoldedTwoBodyEnergy() = default;
 
-EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
+core::scoring::methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergy::clone() const
 {
 	return utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergy >( label_type_, value_type_, score_func_type_, score_type_weights_ );
 }
 
-void SplitUnfoldedTwoBodyEnergy::residue_energy(conformation::Residue const & rsd,pose::Pose const &,EnergyMap & emap) const
+void SplitUnfoldedTwoBodyEnergy::residue_energy(conformation::Residue const & rsd,pose::Pose const &, core::scoring::EnergyMap & emap) const
 {
-	EnergyMap energies;
+	core::scoring::EnergyMap energies;
 
 	sutbp_.get_restype_emap(rsd.type(),energies);
 
 	//Now each component has its own score term, which are loaded into the appropriate terms in the emap. While weights from the database file containing the two body values are still loaded, they are no longer applied in favor of weights defined in the global weights file(.wts).
-	emap[ fa_atr_ref ]    += energies[ fa_atr_ref ];
-	emap[ fa_rep_ref ]    += energies[ fa_rep_ref ];
-	emap[ fa_sol_ref ]    += energies[ fa_sol_ref ];
-	emap[ fa_elec_ref ]   += energies[ fa_elec_ref ];
-	emap[ hbond_ref ]     += energies[ hbond_ref ];
-	emap[ dslf_fa13_ref ] += energies[ dslf_fa13_ref ];
+	emap[ core::scoring::fa_atr_ref ]    += energies[ core::scoring::fa_atr_ref ];
+	emap[ core::scoring::fa_rep_ref ]    += energies[ core::scoring::fa_rep_ref ];
+	emap[ core::scoring::fa_sol_ref ]    += energies[ core::scoring::fa_sol_ref ];
+	emap[ core::scoring::fa_elec_ref ]   += energies[ core::scoring::fa_elec_ref ];
+	emap[ core::scoring::hbond_ref ]     += energies[ core::scoring::hbond_ref ];
+	emap[ core::scoring::dslf_fa13_ref ] += energies[ core::scoring::dslf_fa13_ref ];
 
 	//Originally the two body split unfolded energy score components were combined into one term using this line:
-	emap[ split_unfolded_two_body ] += energies.dot( score_type_weights_ ); //this is obsolete, use *_ref score terms instead.
+	emap[ core::scoring::split_unfolded_two_body ] += energies.dot( score_type_weights_ ); //this is obsolete, use *_ref score terms instead.
 }
 
 void SplitUnfoldedTwoBodyEnergy::indicate_required_context_graphs(utility::vector1<bool> &) const
@@ -85,6 +85,5 @@ core::Size SplitUnfoldedTwoBodyEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

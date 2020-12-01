@@ -40,12 +40,12 @@
 static basic::Tracer TR("core.energy_methods.ArgCationPiEnergy");
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
 
-scoring::methods::EnergyMethodOP
+
+core::scoring::methods::EnergyMethodOP
 ArgCationPiEnergyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const & options
 ) const {
@@ -55,7 +55,7 @@ ArgCationPiEnergyCreator::create_energy_method(
 scoring::ScoreTypes
 ArgCationPiEnergyCreator::score_types_for_method() const {
 	scoring::ScoreTypes sts;
-	sts.push_back( arg_cation_pi );
+	sts.push_back( scoring::arg_cation_pi );
 	return sts;
 }
 
@@ -64,7 +64,7 @@ ArgCationPiEnergy::ArgCationPiEnergy( core::scoring::methods::EnergyMethodOption
 	his_can_be_pi_( options.arg_cation_pi_his_can_be_pi() )
 {}
 
-scoring::methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ArgCationPiEnergy::clone() const {
 	return utility::pointer::make_shared< ArgCationPiEnergy >( *this );
 }
@@ -207,8 +207,8 @@ ArgCationPiEnergy::residue_pair_energy(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( ! valid_res_pair( res1.type(), res2.type() ) ) return;
 
@@ -251,7 +251,7 @@ ArgCationPiEnergy::residue_pair_energy(
 
 	Real score = -1 * cylinder_score * plane_score * distance_score;
 
-	emap[ arg_cation_pi ] += score;
+	emap[ core::scoring::arg_cation_pi ] += score;
 }
 
 
@@ -269,13 +269,13 @@ void
 ArgCationPiEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & res1,
 	conformation::Residue const & res2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 
 	// For now we're only going to do the distance derivative
@@ -332,7 +332,7 @@ ArgCationPiEnergy::eval_residue_pair_derivatives(
 
 	dscore_ddistance /= ring_atoms.size();
 
-	Real scorefxn_weight = weights[arg_cation_pi];
+	Real scorefxn_weight = weights[scoring::arg_cation_pi];
 
 	if ( dscore_ddistance != 0 ) {
 
@@ -365,7 +365,7 @@ ArgCationPiEnergy::eval_residue_pair_derivatives(
 
 
 bool
-ArgCationPiEnergy::defines_intrares_energy( EnergyMap const & ) const {
+ArgCationPiEnergy::defines_intrares_energy( core::scoring::EnergyMap const & ) const {
 	return false;
 }
 
@@ -373,8 +373,8 @@ void
 ArgCationPiEnergy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 }
 
@@ -386,6 +386,5 @@ core::Size
 ArgCationPiEnergy::version() const { return 1; }
 
 
-} // methods
-} // scoring
+} // energy_methods
 } // core

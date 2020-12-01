@@ -61,7 +61,7 @@ using cppdb::statement;
 using cppdb::result;
 
 GeometricSolvationFeatures::GeometricSolvationFeatures( core::scoring::methods::EnergyMethodOptions const& options ) :
-	geo_sol_energy_( *core::scoring::geometric_solvation::create_ExactSHOEnergy_from_cmdline( options ) )
+	geo_sol_energy_( *core::energy_methods::create_ExactSHOEnergy_from_cmdline( options ) )
 {
 
 	//I would like to simply assert that this has been called, but that

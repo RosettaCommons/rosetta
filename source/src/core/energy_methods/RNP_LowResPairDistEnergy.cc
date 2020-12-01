@@ -65,20 +65,20 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys::score;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNP_LowResPairDistEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResPairDistEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNP_LowResPairDistEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNP_LowResPairDistEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rnp_pair_dist );
 	return sts;
@@ -88,13 +88,13 @@ RNP_LowResPairDistEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNP_LowResPairDistEnergy::RNP_LowResPairDistEnergy() :
 	parent( utility::pointer::make_shared< RNP_LowResPairDistEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_RNP_LowResPairDistPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_RNP_LowResPairDistPotential() )
 {
 	//std::cout << "Constructed the RNP pair dist energy" << std::endl;
 }
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResPairDistEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNP_LowResPairDistEnergy >();
@@ -104,13 +104,13 @@ RNP_LowResPairDistEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 void
-RNP_LowResPairDistEnergy::setup_for_scoring( pose::Pose & /*pose*/, ScoreFunction const & /*scfxn*/ ) const
+RNP_LowResPairDistEnergy::setup_for_scoring( pose::Pose & /*pose*/, core::scoring::ScoreFunction const & /*scfxn*/ ) const
 {
 	// don't need to do anything for now
 }
 
 //void
-//RNP_LowResPairDistEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+//RNP_LowResPairDistEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 //{
 //}
 
@@ -120,8 +120,8 @@ RNP_LowResPairDistEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /*pose*/, // need this back for rnp_pair
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
@@ -153,7 +153,7 @@ RNP_LowResPairDistEnergy::residue_pair_energy(
 	potential_.evaluate_rnp_pair_dist_score( rsd1, rsd2, rnp_pair_dist_score );
 
 
-	emap[ rnp_pair_dist ] += rnp_pair_dist_score;
+	emap[ core::scoring::rnp_pair_dist ] += rnp_pair_dist_score;
 
 }
 
@@ -173,6 +173,5 @@ RNP_LowResPairDistEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

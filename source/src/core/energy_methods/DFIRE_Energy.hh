@@ -11,8 +11,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_HH
-#define INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_HH
+#ifndef INCLUDED_core_energy_methods_dfire_DFIRE_Energy_HH
+#define INCLUDED_core_energy_methods_dfire_DFIRE_Energy_HH
 
 // Unit Headers
 #include <core/energy_methods/DFIRE_Energy.fwd.hh>
@@ -30,13 +30,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 namespace dfire {
 
-class DFIRE_Energy : public ContextIndependentLRTwoBodyEnergy {
+class DFIRE_Energy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
 
 public:
 
@@ -44,17 +44,17 @@ public:
 	DFIRE_Energy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
-	bool defines_intrares_energy( EnergyMap const &  ) const override { return false; }
+	bool defines_intrares_energy( core::scoring::EnergyMap const &  ) const override { return false; }
 
 	bool defines_residue_pair_energy(
 		pose::Pose const & pose,
@@ -62,14 +62,14 @@ public:
 		Size res2
 	) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override ;
 
 
@@ -77,8 +77,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	virtual
@@ -86,7 +86,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief DFIRE_Energy is context independent and thus indicates that no
@@ -106,7 +106,6 @@ private:
 
 
 } // dfire
-}
 }
 }
 

@@ -40,6 +40,7 @@
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 /**************************************************************************************************/
 /*                                                                                                */
@@ -263,6 +264,7 @@ private: //list of private variables and parameters for the FACTS method common 
 
 };
 
+} // facts
 } // scoring
 } // core
 

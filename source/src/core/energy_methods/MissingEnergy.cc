@@ -38,21 +38,22 @@ static basic::Tracer TR( "core.scoring.methods.MissingEnergy" );
 /////////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MissingEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MissingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MissingEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MissingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( missing_res );
 	return sts;
@@ -65,7 +66,7 @@ MissingEnergy::MissingEnergy() :
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MissingEnergy::clone() const
 {
 	return utility::pointer::make_shared< MissingEnergy >();
@@ -78,12 +79,12 @@ MissingEnergy::clone() const
 void
 MissingEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 
 	Size const num_missing_residue_connections = pose::full_model_info::get_number_missing_residues_and_connections( pose );
-	totals[ missing_res ] = num_missing_residue_connections;
+	totals[ core::scoring::missing_res ] = num_missing_residue_connections;
 
 } // finalize_total_energy
 
@@ -94,8 +95,8 @@ MissingEnergy::eval_atom_derivative(
 	id::AtomID const &,
 	pose::Pose const &,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const
@@ -110,6 +111,5 @@ MissingEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

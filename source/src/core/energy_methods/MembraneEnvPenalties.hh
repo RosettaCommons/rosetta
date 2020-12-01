@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_MembraneEnvPenalties_hh
-#define INCLUDED_core_scoring_methods_MembraneEnvPenalties_hh
+#ifndef INCLUDED_core_energy_methods_MembraneEnvPenalties_hh
+#define INCLUDED_core_energy_methods_MembraneEnvPenalties_hh
 
 
 // Package headers
@@ -32,13 +32,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MembraneEnvPenalties : public WholeStructureEnergy  {
+
+class MembraneEnvPenalties : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -46,7 +46,7 @@ public:
 	MembraneEnvPenalties();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -56,8 +56,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
@@ -67,12 +67,11 @@ public:
 
 private:
 	// const-ref to scoring database
-	MembranePotential const & potential_;
+	core::scoring::MembranePotential const & potential_;
 	core::Size version() const override;
 };
 
 
-} // methods
 } // scoring
 } // core
 

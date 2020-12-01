@@ -12,8 +12,8 @@
 /// @author Arvind Kannan
 
 
-#ifndef INCLUDED_core_scoring_methods_MissingEnergy_hh
-#define INCLUDED_core_scoring_methods_MissingEnergy_hh
+#ifndef INCLUDED_core_energy_methods_MissingEnergy_hh
+#define INCLUDED_core_energy_methods_MissingEnergy_hh
 
 
 // Package headers
@@ -33,13 +33,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MissingEnergy : public methods::WholeStructureEnergy  {
+
+class MissingEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -47,14 +47,14 @@ public:
 	MissingEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////
@@ -63,8 +63,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2 ) const override;
 
@@ -82,6 +82,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_MissingEnergy_HH
+#endif // INCLUDED_core_energy_methods_MissingEnergy_HH

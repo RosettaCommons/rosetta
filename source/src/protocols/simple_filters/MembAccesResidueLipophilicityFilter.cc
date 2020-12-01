@@ -123,7 +123,7 @@ MembAccesResidueLipophilicityFilter::compute( core::pose::Pose const & pose ) co
 	TR << "calculating dG of insertion in kcal/mol per resiude " << std::endl;
 	if ( ignore_burial_ ) TR << "IGNORING BURIAL" << std::endl;
 	utility::vector1< core::Real > sasas = core::scoring::sasa::rel_per_res_sc_sasa( pose  );
-	core::scoring::membrane::MPSpanInsertionEnergy mpsie = core::scoring::membrane::MPSpanInsertionEnergy();
+	core::energy_methods::MPSpanInsertionEnergy mpsie;
 	core::Real dG( 0.0 );
 	core::Real z( 0.0 );
 

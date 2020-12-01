@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_P_AA_pp_Energy_hh
-#define INCLUDED_core_scoring_methods_P_AA_pp_Energy_hh
+#ifndef INCLUDED_core_energy_methods_P_AA_pp_Energy_hh
+#define INCLUDED_core_energy_methods_P_AA_pp_Energy_hh
 
 // Unit headers
 #include <core/energy_methods/P_AA_pp_Energy.fwd.hh>
@@ -34,13 +34,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class P_AA_pp_Energy : public ContextIndependentOneBodyEnergy  {
+
+class P_AA_pp_Energy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 	P_AA_pp_Energy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -78,12 +78,12 @@ public:
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 
@@ -94,8 +94,8 @@ public:
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
@@ -105,12 +105,11 @@ public:
 
 	// data
 private:
-	P_AA const & p_aa_;
+	core::scoring::P_AA const & p_aa_;
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 

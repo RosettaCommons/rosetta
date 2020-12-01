@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_MembraneLipo_hh
-#define INCLUDED_core_scoring_methods_MembraneLipo_hh
+#ifndef INCLUDED_core_energy_methods_MembraneLipo_hh
+#define INCLUDED_core_energy_methods_MembraneLipo_hh
 
 
 // Package headers
@@ -31,13 +31,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MembraneLipo : public WholeStructureEnergy  {
+
+class MembraneLipo : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -45,7 +45,7 @@ public:
 	MembraneLipo();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -55,11 +55,11 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > & /*context_graphs_required*/
@@ -67,12 +67,11 @@ public:
 
 private:
 	// const-ref to scoring database
-	MembranePotential const & potential_;
+	core::scoring::MembranePotential const & potential_;
 	core::Size version() const override;
 };
 
 
-} // methods
 } // scoring
 } // core
 

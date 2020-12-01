@@ -21,8 +21,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 class SAXSEnergyCreatorFA : public SAXSEnergyCreator {
 public:
@@ -30,16 +29,15 @@ public:
 	SAXSEnergyCreatorFA() {}
 
 	/// @brief Instantiate a new SAXSEnergyFA
-	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 	virtual
 	core::Size version() const;
 };
 
-}
 }
 }
 

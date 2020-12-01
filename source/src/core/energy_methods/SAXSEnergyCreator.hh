@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/saxs/SAXSEnergyCreator.hh
+/// @file src/core/energy_methods/SAXSEnergyCreator.hh
 /// @brief  Declaration for the class that connects SAXSEnergyCreator with the ScoringManager
 /// @author Dominik Gront dgront@chem.uw.edu.pl
 
@@ -21,23 +21,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
-class SAXSEnergyCreator : public methods::EnergyMethodCreator {
+class SAXSEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	SAXSEnergyCreator() {}
 
 	/// @brief Instantiate a new SAXSEnergy
-	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-}
 }
 }
 

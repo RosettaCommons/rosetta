@@ -12,8 +12,8 @@
 /// @author Will Sheffler
 
 
-#ifndef INCLUDED_core_scoring_methods_SymmetricLigandEnergy_hh
-#define INCLUDED_core_scoring_methods_SymmetricLigandEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SymmetricLigandEnergy_hh
+#define INCLUDED_core_energy_methods_SymmetricLigandEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/SymmetricLigandEnergy.fwd.hh>
@@ -33,14 +33,14 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class SymmetricLigandEnergy : public ContextIndependentOneBodyEnergy {
+
+class SymmetricLigandEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy {
 public:
 
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 	/// @brief ctor
 	SymmetricLigandEnergy();
@@ -49,7 +49,7 @@ public:
 	~SymmetricLigandEnergy() override;
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -70,8 +70,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & emap,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -84,7 +84,6 @@ public:
 
 };
 
-} // methods
 } // scoring
 } // core
 

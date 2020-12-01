@@ -34,8 +34,7 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Membrane Termini Penalty Creator Class
 class FaMPEnvSmoothEnergyCreator : public core::scoring::methods::EnergyMethodCreator
@@ -55,7 +54,6 @@ public:
 
 };
 
-} // membrane
 } // scoring
 } // core
 

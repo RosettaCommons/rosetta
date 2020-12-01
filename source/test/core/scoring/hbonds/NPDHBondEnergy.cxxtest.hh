@@ -433,6 +433,7 @@ public:
 	void dont_test_npd_hbonds_w_excluded_bb_sc_interactions() {
 		using namespace core::pose;
 		using namespace core::scoring;
+		using namespace core::energy_methods;
 
 		Pose pose;
 		create_excludable_bb_sc_hbond( pose );

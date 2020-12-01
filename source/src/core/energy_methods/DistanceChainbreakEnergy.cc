@@ -38,21 +38,22 @@
 static basic::Tracer tr( "core.scoring.DistanceChainbreak", basic::t_info );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the DistanceChainbreakEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DistanceChainbreakEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DistanceChainbreakEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DistanceChainbreakEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( distance_chainbreak );
 	return sts;
@@ -67,8 +68,8 @@ DistanceChainbreakEnergy::DistanceChainbreakEnergy() :
 void
 DistanceChainbreakEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
 	using conformation::Residue;
@@ -93,8 +94,8 @@ DistanceChainbreakEnergy::finalize_total_energy(
 		//'N' of cutpoint + 1
 	}
 
-	debug_assert( std::abs( totals[ distance_chainbreak ] ) < 1e-3 );
-	totals[ distance_chainbreak ] = total_dev;
+	debug_assert( std::abs( totals[ core::scoring::distance_chainbreak ] ) < 1e-3 );
+	totals[ core::scoring::distance_chainbreak ] = total_dev;
 }
 
 
@@ -112,6 +113,5 @@ DistanceChainbreakEnergy::version() const
 }
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

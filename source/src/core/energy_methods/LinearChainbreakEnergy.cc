@@ -43,8 +43,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using core::Size;
 static basic::Tracer tr( "core.scoring.methods.LinearChainbreak", basic::t_info );
@@ -191,8 +191,8 @@ core::Real LinearChainbreakEnergy::do_score_ovp( core::conformation::Residue con
 /// called at the end of energy evaluation
 /// In this case (LinearChainbreakEnergy), all the calculation is done here
 void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals ) const
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals ) const
 {
 	using core::Size;
 	using conformation::Residue;
@@ -206,7 +206,7 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 	// Identify all cutpoint variants defined by the caller
 	vector1< int > cutpoints;
 	const FoldTree& tree = pose.fold_tree();
-	find_cutpoint_variants( pose, tree, cutpoints );
+	core::scoring::methods::find_cutpoint_variants( pose, tree, cutpoints );
 
 	//fpd  why is this energy turned on by default in score_jd2??????
 
@@ -232,7 +232,7 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 		int const cutpoint = cutpoints[ i ];
 		Residue const & lower_rsd = pose.residue( cutpoint );
 		if ( ! lower_rsd.has_variant_type( core::chemical::CUTPOINT_LOWER ) ) continue;
-		Size cutpoint_partner( get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
+		Size cutpoint_partner( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
 		if ( cutpoint_partner == 0 ) continue;
 
 		Residue const & upper_rsd = pose.residue( cutpoint_partner );
@@ -259,9 +259,9 @@ void LinearChainbreakEnergy::finalize_total_energy( pose::Pose & pose,
 		}
 	}
 
-	debug_assert( std::abs( totals[ linear_chainbreak ] ) < 1e-3 );
-	totals[ linear_chainbreak ] = total_dev / 3.0;  // average over 3 distances
-	totals[ overlap_chainbreak ] = total_ovp;
+	debug_assert( std::abs( totals[ core::scoring::linear_chainbreak ] ) < 1e-3 );
+	totals[ core::scoring::linear_chainbreak ] = total_dev / 3.0;  // average over 3 distances
+	totals[ core::scoring::overlap_chainbreak ] = total_ovp;
 }
 
 
@@ -274,8 +274,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -291,9 +291,9 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 
 	// CASE 1: left-hand side of chainbreak (CUTPOINT_LOWER)
 	Size const residue = id.rsd();
-	if ( is_lower_cutpoint( residue, pose ) ) {
+	if ( core::scoring::methods::is_lower_cutpoint( residue, pose ) ) {
 		Residue const & lower_rsd( pose.residue( residue ) );
-		Size cutpoint_partner( get_upper_cutpoint_partner_for_lower( pose, residue ) );
+		Size cutpoint_partner( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, residue ) );
 		// Long term maybe these should just skip the rest of the if.
 		if ( cutpoint_partner == 0 ) return;
 		Residue const & upper_rsd( pose.residue( cutpoint_partner ) );
@@ -318,15 +318,15 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 			Real const dist ( f2.length() );
 			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
-				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
+				F1 += weights[ core::scoring::linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ core::scoring::linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
 			}
 		}
 	}
 
 	// CASE 2: right-hand side of chainbreak (CUTPOINT_UPPER)
-	if ( is_upper_cutpoint( residue,pose ) ) {
-		Size cutpoint_partner( get_lower_cutpoint_partner_for_upper( pose, residue ) );
+	if ( core::scoring::methods::is_upper_cutpoint( residue,pose ) ) {
+		Size cutpoint_partner( core::scoring::methods::get_lower_cutpoint_partner_for_upper( pose, residue ) );
 		if ( cutpoint_partner == 0 ) return;
 		Residue const & lower_rsd( pose.residue( cutpoint_partner ) );
 		Residue const & upper_rsd( pose.residue( residue ) );
@@ -354,8 +354,8 @@ void LinearChainbreakEnergy::eval_atom_derivative(
 			Real const dist ( f2.length() );
 			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
-				F1 += weights[ linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-				F2 += weights[ linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
+				F1 += weights[ core::scoring::linear_chainbreak ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ core::scoring::linear_chainbreak ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
 			}
 		}
 	}
@@ -370,6 +370,5 @@ core::Size LinearChainbreakEnergy::version() const {
 	return 2;
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

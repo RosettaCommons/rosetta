@@ -34,20 +34,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_LJ_BaseEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_LJ_BaseEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
-	RNA_LJ_BaseEnergy( etable::Etable const & etable_in );
+	RNA_LJ_BaseEnergy( core::scoring::etable::Etable const & etable_in );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	RNA_LJ_BaseEnergy( RNA_LJ_BaseEnergy const & src );
@@ -55,7 +54,7 @@ public:
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const & scfxn
+		core::scoring::ScoreFunction const & scfxn
 	) const override;
 
 	/// called during gradient-based minimization inside dfunc
@@ -68,8 +67,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -80,19 +79,19 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	Distance
@@ -123,8 +122,8 @@ private:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &// totals
 	) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -132,7 +131,7 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
-	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
+	core::scoring::etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
 
 
@@ -151,8 +150,7 @@ private:
 
 };
 
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_RNA_LJ_BaseEnergy_HH
+#endif // INCLUDED_core_energy_methods_RNA_LJ_BaseEnergy_HH

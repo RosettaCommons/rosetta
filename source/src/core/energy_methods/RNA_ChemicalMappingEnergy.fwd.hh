@@ -17,16 +17,12 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
 class RNA_ChemicalMappingEnergy;
 typedef utility::pointer::shared_ptr< RNA_ChemicalMappingEnergy > RNA_ChemicalMappingEnergyOP;
 typedef utility::pointer::shared_ptr< RNA_ChemicalMappingEnergy const > RNA_ChemicalMappingEnergyCOP;
 
-} //data
-} //rna
 } //scoring
 } //core
 

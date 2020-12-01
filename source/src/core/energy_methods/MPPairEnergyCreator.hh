@@ -30,8 +30,7 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Creator Class for Membrane Residue Pair Energy Method
 class MPPairEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
@@ -39,19 +38,17 @@ class MPPairEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	/// @brief Instantiate a new MPPairEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the Set of Score Types claimed by EnergyMethod
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 };
 
-} // membrane
 } // scoring
 } // core
-
 
 #endif // INCLUDED_core_scoring_membrane_MPPairEnergyCreator_hh

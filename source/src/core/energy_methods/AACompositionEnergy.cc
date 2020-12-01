@@ -52,8 +52,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace aa_composition_energy {
+namespace energy_methods {
 
 static basic::Tracer TR("core.scoring.aa_composition_energy.AACompositionEnergy");
 
@@ -67,9 +66,10 @@ AACompositionEnergyCreator::create_energy_method( core::scoring::methods::Energy
 
 /// @brief Defines the score types that this energy method calculates.
 ///
-ScoreTypes
+core::scoring::ScoreTypes
 AACompositionEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( aa_composition );
 	return sts;
@@ -131,8 +131,8 @@ core::Size AACompositionEnergy::version() const
 void
 AACompositionEnergy::finalize_total_energy(
 	core::pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	if ( disabled_ ) return; //Do nothing when this energy is disabled.
 
@@ -154,7 +154,7 @@ AACompositionEnergy::finalize_total_energy(
 	get_helpers_from_pose( pose, setup_helpers, masks ); //Pulls AACompositionEnergySetupCOPs from pose; generates masks from ResidueSelectors simultaneously.
 	runtime_assert( masks.size() == setup_helpers.size() ); //Should be guaranteed to be true.
 
-	totals[ aa_composition ] += calculate_energy( resvector, setup_helpers, masks ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_composition to this value.
+	totals[ core::scoring::aa_composition ] += calculate_energy( resvector, setup_helpers, masks ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_composition to this value.
 
 	return;
 }
@@ -313,7 +313,7 @@ AACompositionEnergy::clean_up_residuearrayannealableenergy_after_packing(
 
 /// @brief Disable this energy during minimization.
 void
-AACompositionEnergy::setup_for_minimizing( pose::Pose & /*pose*/, ScoreFunction const & /*sfxn*/, kinematics::MinimizerMapBase const & /*minmap*/ ) const {
+AACompositionEnergy::setup_for_minimizing( pose::Pose & /*pose*/, core::scoring::ScoreFunction const & /*sfxn*/, kinematics::MinimizerMapBase const & /*minmap*/ ) const {
 	TR << "Disabling AACompositionEnergy during minimization." << std::endl;
 	disabled_ = true;
 }
@@ -366,7 +366,11 @@ AACompositionEnergy::get_helpers_from_pose(
 	core::Size const n_sequence_constraints( pose.constraint_set()->n_sequence_constraints() );
 	if ( n_sequence_constraints > 0 ) {
 		for ( core::Size i=1; i<=n_sequence_constraints; ++i ) {
-			AACompositionConstraintCOP cur_cst( utility::pointer::dynamic_pointer_cast<AACompositionConstraint const>( pose.constraint_set()->sequence_constraint(i) ) );
+			core::scoring::aa_composition_energy::AACompositionConstraintCOP cur_cst(
+				utility::pointer::dynamic_pointer_cast< core::scoring::aa_composition_energy::AACompositionConstraint const > (
+				pose.constraint_set()->sequence_constraint(i)
+				)
+			);
 			if ( !cur_cst ) continue; //Continue if this isn't an AACompositionConstraint.
 			setup_helpers.push_back( cur_cst->aa_composition_energy_setup() ); //Append the AACompositionEnergySetup object stored in the current sequence constraint to the list to be used.
 			core::select::residue_selector::ResidueSelectorCOP selector( cur_cst->selector() ); //Get the ResidueSelector in the current sequence constraint object, if there is one.  (May be NULL).
@@ -384,6 +388,5 @@ AACompositionEnergy::get_helpers_from_pose(
 }
 
 
-} // aa_composition_energy
 } // scoring
 } // core

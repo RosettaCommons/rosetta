@@ -53,21 +53,21 @@
 #include <core/pose/util.tmpl.hh>
 
 namespace core {
-namespace scoring {
-namespace packing {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the HolesEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HolesEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< HolesEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 HolesEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( holes );
 	sts.push_back( holes_decoy );
@@ -95,36 +95,36 @@ HolesEnergy::HolesEnergy() : parent( utility::pointer::make_shared< HolesEnergyC
 void
 HolesEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
-	PoseBalls pb(pose);
+	core::scoring::packing::PoseBalls pb(pose);
 
 	Real resl_score  = compute_holes_score(pose,pb, resl_params_,false).score;
 	Real decoy_score = compute_holes_score(pose,pb,decoy_params_,true ).score;
 	Real min_score   = compute_holes_score(pose,pb,  min_params_,true ).score;
 
-	totals[ holes_decoy ] = decoy_score;
-	totals[ holes_resl  ] = resl_score;
-	totals[ holes_min   ] = min_score;
+	totals[ core::scoring::holes_decoy ] = decoy_score;
+	totals[ core::scoring::holes_resl  ] = resl_score;
+	totals[ core::scoring::holes_min   ] = min_score;
 
 	decoy_score /= pb.nballs();
 	resl_score  /= pb.nballs();
 	Real composite_score = 1.0 - (1.0 / (1.0 + exp( -3.768941 * decoy_score - 0.5842765 ) ));
 	composite_score = resl_score + 3*composite_score;
 
-	totals[ holes ] = composite_score;
-	totals[ holes_decoy ] = decoy_score;
-	totals[ holes_resl ] = resl_score;
-	totals[ holes_min ] = min_score;
-	totals[ holes_min_mean ] = min_score / pb.nballs();
+	totals[ core::scoring::holes ] = composite_score;
+	totals[ core::scoring::holes_decoy ] = decoy_score;
+	totals[ core::scoring::holes_resl ] = resl_score;
+	totals[ core::scoring::holes_min ] = min_score;
+	totals[ core::scoring::holes_min_mean ] = min_score / pb.nballs();
 }
 
 void
 HolesEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 	using namespace basic::datacache;
 	using namespace id;
@@ -147,8 +147,8 @@ HolesEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -169,8 +169,8 @@ HolesEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
-	F1 += weights[ holes_min ] * f1;
-	F2 += weights[ holes_min ] * f2;
+	F1 += weights[ core::scoring::holes_min ] * f1;
+	F2 += weights[ core::scoring::holes_min ] * f2;
 }
 
 core::Size
@@ -180,6 +180,5 @@ HolesEnergy::version() const
 }
 
 
-} // packing
 } // scoring
 } // core

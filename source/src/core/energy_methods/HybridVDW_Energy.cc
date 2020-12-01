@@ -36,21 +36,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the HybridVDW_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HybridVDW_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< HybridVDW_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 HybridVDW_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( hybrid_vdw );
 	return sts;
@@ -62,12 +63,12 @@ Real const vdw_scale_factor( 0.8 );
 /// @details  C-TOR
 HybridVDW_Energy::HybridVDW_Energy() :
 	parent( utility::pointer::make_shared< HybridVDW_EnergyCreator >() ),
-	atom_vdw_( ScoringManager::get_instance()->get_AtomVDW( chemical::HYBRID_FA_STANDARD_CENTROID ) )
+	atom_vdw_( core::scoring::ScoringManager::get_instance()->get_AtomVDW( chemical::HYBRID_FA_STANDARD_CENTROID ) )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HybridVDW_Energy::clone() const
 {
 	return utility::pointer::make_shared< HybridVDW_Energy >( *this );
@@ -83,7 +84,7 @@ HybridVDW_Energy::HybridVDW_Energy( HybridVDW_Energy const & /*src*/ ) = default
 
 
 void
-HybridVDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+HybridVDW_Energy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// is this really necessary?
 	pose.update_residue_neighbors();
@@ -91,7 +92,7 @@ HybridVDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) 
 
 
 void
-HybridVDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+HybridVDW_Energy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// is this really necessary?
 	pose.update_residue_neighbors();
@@ -103,11 +104,11 @@ HybridVDW_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1, //_in,
 	conformation::Residue const & rsd2, //_in,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 
 	if ( ( rsd1.is_protein() && ! rsd2.is_protein() ) ||
@@ -137,7 +138,7 @@ HybridVDW_Energy::residue_pair_energy(
 	}
 	debug_assert( rsd1.type().mode() == chemical::HYBRID_FA_STANDARD_CENTROID_t );
 	debug_assert( rsd2.type().mode() == chemical::HYBRID_FA_STANDARD_CENTROID_t );
-	emap[ hybrid_vdw ] += score * vdw_scale_factor;
+	emap[ core::scoring::hybrid_vdw ] += score * vdw_scale_factor;
 
 }
 
@@ -147,13 +148,13 @@ HybridVDW_Energy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	// what is my charge?
 	Size const pos1( atom_id.rsd() );
@@ -168,10 +169,10 @@ HybridVDW_Energy::eval_atom_derivative(
 	Real const i_radius( atom_vdw_.approximate_vdw_radius( i_type ) );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( utility::graph::Graph::EdgeListConstIter
@@ -200,7 +201,7 @@ HybridVDW_Energy::eval_atom_derivative(
 
 			if ( dis2 < bump_dsq ) {
 				// E += vdw_scale_factor_ * weights[vdw] * ( ( dis2 - bump_dsq ) **2 ) / bump_dsq
-				Real const dE_dr_over_r = vdw_scale_factor * weights[ hybrid_vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
+				Real const dE_dr_over_r = vdw_scale_factor * weights[ core::scoring::hybrid_vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
 				Vector const f1( i_xyz.cross( j_xyz ) );
 				F1 += dE_dr_over_r * f1;
 				F2 += dE_dr_over_r * f2;
@@ -232,6 +233,5 @@ HybridVDW_Energy::version() const
 }
 
 
-}
 }
 }

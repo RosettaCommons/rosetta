@@ -40,20 +40,21 @@
 static basic::Tracer TR( "core.scoring.Burial_v2Energy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the Burial_v2Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 Burial_v2EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< Burial_v2Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 Burial_v2EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back(burial_v2);
 	return sts;
@@ -62,7 +63,7 @@ Burial_v2EnergyCreator::score_types_for_method() const {
 
 
 /// clone
-EnergyMethodOP Burial_v2Energy::clone() const {
+core::scoring::methods::EnergyMethodOP Burial_v2Energy::clone() const {
 	return utility::pointer::make_shared< Burial_v2Energy >();
 }
 
@@ -121,13 +122,13 @@ core::Real Burial_v2Energy::using_totalSasa(core::pose::Pose const & pose) const
 
 void Burial_v2Energy::finalize_total_energy(
 	core::pose::Pose & pose,
-	ScoreFunction const & ,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & totals
 ) const {
 	if ( pose.is_fullatom() ) {
-		totals[burial_v2] =using_totalSasa(pose)/10; //For HEM the sasa score was about 10x higher.
+		totals[ core::scoring::burial_v2 ] =using_totalSasa(pose)/10; //For HEM the sasa score was about 10x higher.
 	} else {
-		totals[burial_v2] =using_atom_distance(pose);
+		totals[ core::scoring::burial_v2 ] =using_atom_distance(pose);
 	}
 }
 
@@ -156,6 +157,5 @@ void Burial_v2Energy::init_from_file() {
 	//  std::cout << "residue_ids_[1]" << residue_ids_[ii] << std::endl;
 }
 
-} // methods
 } // scoring
 } // core

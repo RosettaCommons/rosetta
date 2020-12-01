@@ -35,8 +35,7 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
 /// @brief Membrane Termini Penalty Creator Class
@@ -45,19 +44,18 @@ class MPHelicalityEnergyCreator : public core::scoring::methods::EnergyMethodCre
 public:
 
 	/// @brief Instantiate a new MPHelicalityEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} // membrane
 } // scoring
 } // core
 

@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/rna/RNA_LJ_BaseEnergyCreator.hh
+/// @file src/core/energy_methods/RNA_LJ_BaseEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_LJ_BaseEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
@@ -23,26 +23,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
-class RNA_LJ_BaseEnergyCreator : public methods::EnergyMethodCreator
+class RNA_LJ_BaseEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new RNA_LJ_BaseEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //rna
 } //scoring
 } //core
 

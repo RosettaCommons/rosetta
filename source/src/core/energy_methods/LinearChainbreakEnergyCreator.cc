@@ -21,28 +21,27 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details Creates and initializes a new LinearChainbreakEnergy object with the
 /// specified options
-EnergyMethodOP
-LinearChainbreakEnergyCreator::create_energy_method(const EnergyMethodOptions& opt) const {
-	// EnergyMethodOptions is responsible for providing a reasonable default
+core::scoring::methods::EnergyMethodOP
+LinearChainbreakEnergyCreator::create_energy_method(const core::scoring::methods::EnergyMethodOptions& opt) const {
+	// core::scoring::methods::EnergyMethodOptions is responsible for providing a reasonable default
 	// in the event that the caller does not specify a sequence separation
 	// constraint. Currently, cst_max_seq_sep() defaults to +inf.
 	Size allowable_sequence_separation = opt.cst_max_seq_sep();
 	return utility::pointer::make_shared< LinearChainbreakEnergy >(allowable_sequence_separation);
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 LinearChainbreakEnergyCreator::score_types_for_method() const {
-	ScoreTypes types;
-	types.push_back(linear_chainbreak);
-	types.push_back(overlap_chainbreak);
+	core::scoring::ScoreTypes types;
+	types.push_back(core::scoring::linear_chainbreak);
+	types.push_back(core::scoring::overlap_chainbreak);
 	return types;
 }
 
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core

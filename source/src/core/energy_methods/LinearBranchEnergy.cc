@@ -40,8 +40,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using core::Size;
 static basic::Tracer tr( "core.scoring.methods.LinearBranch", basic::t_info );
@@ -79,8 +79,8 @@ void LinearBranchEnergy::initialize(Size allowable_sequence_sep) {
 /// called at the end of energy evaluation
 /// In this case (LinearBranchEnergy), all the calculation is done here
 void LinearBranchEnergy::finalize_total_energy( pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals ) const
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals ) const
 {
 	using core::Size;
 	using conformation::Residue; using utility::vector1;
@@ -90,7 +90,7 @@ void LinearBranchEnergy::finalize_total_energy( pose::Pose & pose,
 	// AMW: can't use this function for branches
 	// Identify all cutpoint variants defined by the caller
 
-	utility::vector1< ResidueAtomOverlaps > branch_connections;
+	utility::vector1< core::scoring::methods::ResidueAtomOverlaps > branch_connections;
 	find_relevant_connections( pose, branch_connections );
 
 	if ( branch_connections.size() == 0 ) return;
@@ -117,8 +117,8 @@ void LinearBranchEnergy::finalize_total_energy( pose::Pose & pose,
 		total_dev += score_dev;
 	}
 
-	debug_assert( std::abs( totals[ linear_branch_conn ] ) < 1e-3 );
-	totals[ linear_branch_conn ] = total_dev / 3.0;  // average over 3 distances
+	debug_assert( std::abs( totals[ core::scoring::linear_branch_conn ] ) < 1e-3 );
+	totals[ core::scoring::linear_branch_conn ] = total_dev / 3.0;  // average over 3 distances
 }
 
 
@@ -131,8 +131,8 @@ void LinearBranchEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -145,7 +145,7 @@ void LinearBranchEnergy::eval_atom_derivative(
 	// be looking at a residue with no cutpoint variants, a lower cutpoint
 	// variant, or an upper cutpoint variant. This method must address both
 	// possibilities.
-	ResidueAtomOverlaps branch_connection;
+	core::scoring::methods::ResidueAtomOverlaps branch_connection;
 	find_relevant_connections_onersd( pose, id.rsd(), branch_connection );
 
 	if ( branch_connection.res1 == 0 ) return;
@@ -174,8 +174,8 @@ void LinearBranchEnergy::eval_atom_derivative(
 			Real const dist ( f2.length() );
 			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
-				F1 += weights[ linear_branch_conn ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-				F2 += weights[ linear_branch_conn ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
+				F1 += weights[ core::scoring::linear_branch_conn ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ core::scoring::linear_branch_conn ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
 			}
 		}
 	}
@@ -203,8 +203,8 @@ void LinearBranchEnergy::eval_atom_derivative(
 			Real const dist ( f2.length() );
 			if ( dist >= 1.0e-8 ) { // avoid getting too close to singularity...
 				Real const invdist( 1.0 / dist );
-				F1 += weights[ linear_branch_conn ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
-				F2 += weights[ linear_branch_conn ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
+				F1 += weights[ core::scoring::linear_branch_conn ] * invdist * cross( xyz_moving, xyz_fixed ) / 3;
+				F2 += weights[ core::scoring::linear_branch_conn ] * invdist * ( xyz_moving - xyz_fixed ) / 3;
 			}
 		}
 	}
@@ -219,6 +219,5 @@ core::Size LinearBranchEnergy::version() const {
 	return 2;
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

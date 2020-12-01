@@ -34,12 +34,11 @@
 #include <string>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
-class FiberDiffractionEnergy : public methods::WholeStructureEnergy  {
+class FiberDiffractionEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -56,21 +55,21 @@ public:
 		scale_factor_(src.scale_factor_)
 	{}
 
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
-	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
+	void finalize_total_energy(pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const override;
 
-	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
+	void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -98,7 +97,6 @@ private:
 	core::Size version() const override;
 };
 
-}
 }
 }
 

@@ -101,7 +101,7 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		using namespace std;
 		using namespace core::pose::carbohydrates;
 		using namespace core::conformation::carbohydrates;
-		using namespace core::scoring::methods::carbohydrates;
+		using namespace core::energy_methods;
 		using core::id::AtomID;
 		using core::id::PartialAtomID;
 		using core::scoring::EnergyMap;

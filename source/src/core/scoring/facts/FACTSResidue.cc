@@ -81,6 +81,7 @@ using namespace std;
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 /**************************************************************************************************/
 /*                                                                                                */
@@ -608,6 +609,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 	}
 } // FACTSRotamerSetInfo
 
+} // namespace facts
 } // namespace scoring
 } // namespace core
 
@@ -618,7 +620,7 @@ void FACTSRotamerSetInfo::initialize( RotamerSet const & rotamer_set, FACTSRsdTy
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::FACTSRsdTypeInfo::save( Archive & arc ) const {
+core::scoring::facts::FACTSRsdTypeInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( natoms_ ) ); // Size
 	arc( CEREAL_NVP( not_using_ ) ); // utility::vector1<_Bool>
 	arc( CEREAL_NVP( q_ ) ); // utility::vector1<Real>
@@ -647,7 +649,7 @@ core::scoring::FACTSRsdTypeInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::FACTSRsdTypeInfo::load( Archive & arc ) {
+core::scoring::facts::FACTSRsdTypeInfo::load( Archive & arc ) {
 	arc( natoms_ ); // Size
 	arc( not_using_ ); // utility::vector1<_Bool>
 	arc( q_ ); // utility::vector1<Real>
@@ -673,14 +675,14 @@ core::scoring::FACTSRsdTypeInfo::load( Archive & arc ) {
 	arc( is_freedof_ ); // utility::vector1<_Bool>
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSRsdTypeInfo );
-CEREAL_REGISTER_TYPE( core::scoring::FACTSRsdTypeInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::facts::FACTSRsdTypeInfo );
+CEREAL_REGISTER_TYPE( core::scoring::facts::FACTSRsdTypeInfo )
 
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::FACTSResidueInfo::save( Archive & arc ) const {
+core::scoring::facts::FACTSResidueInfo::save( Archive & arc ) const {
 	arc( CEREAL_NVP( natoms_ ) ); // Size
 	arc( CEREAL_NVP( esolvE_ ) ); // utility::vector1<Real>
 	arc( CEREAL_NVP( sasa_ ) ); // utility::vector1<Real>
@@ -716,7 +718,7 @@ core::scoring::FACTSResidueInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::FACTSResidueInfo::load( Archive & arc ) {
+core::scoring::facts::FACTSResidueInfo::load( Archive & arc ) {
 	arc( natoms_ ); // Size
 	arc( esolvE_ ); // utility::vector1<Real>
 	arc( sasa_ ); // utility::vector1<Real>
@@ -746,22 +748,22 @@ core::scoring::FACTSResidueInfo::load( Archive & arc ) {
 	arc( solvF2d_ ); // utility::vector1<Vector>
 	arc( solvF2BR_ ); // utility::vector1<Vector>
 	arc( sasaF2_ ); // utility::vector1<Vector>
-	std::shared_ptr< core::scoring::FACTSRsdTypeInfo > local_restypeinfo;
+	std::shared_ptr< core::scoring::facts::FACTSRsdTypeInfo > local_restypeinfo;
 	arc( local_restypeinfo ); // FACTSRsdTypeInfoCOP
 	restypeinfo_ = local_restypeinfo; // copy the non-const pointer(s) into the const pointer(s)
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSResidueInfo );
-CEREAL_REGISTER_TYPE( core::scoring::FACTSResidueInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::facts::FACTSResidueInfo );
+CEREAL_REGISTER_TYPE( core::scoring::facts::FACTSResidueInfo )
 
 
 /// @brief Default constructor required by cereal to deserialize this class
-core::scoring::FACTSRotamerSetInfo::FACTSRotamerSetInfo() {}
+core::scoring::facts::FACTSRotamerSetInfo::FACTSRotamerSetInfo() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::FACTSRotamerSetInfo::save( Archive & arc ) const {
+core::scoring::facts::FACTSRotamerSetInfo::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( residue_info_ ) ); // utility::vector1<FACTSResidueInfoOP>
 }
@@ -769,13 +771,13 @@ core::scoring::FACTSRotamerSetInfo::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::FACTSRotamerSetInfo::load( Archive & arc ) {
+core::scoring::facts::FACTSRotamerSetInfo::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( residue_info_ ); // utility::vector1<FACTSResidueInfoOP>
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::FACTSRotamerSetInfo );
-CEREAL_REGISTER_TYPE( core::scoring::FACTSRotamerSetInfo )
+SAVE_AND_LOAD_SERIALIZABLE( core::scoring::facts::FACTSRotamerSetInfo );
+CEREAL_REGISTER_TYPE( core::scoring::facts::FACTSRotamerSetInfo )
 
 CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_facts_FACTSResidue )
 #endif // SERIALIZATION

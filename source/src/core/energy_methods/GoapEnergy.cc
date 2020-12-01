@@ -50,22 +50,23 @@
 #include <iostream>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.GoapEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GoapEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< GoapEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 GoapEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( goap );
 	sts.push_back( goap_dist );
@@ -157,7 +158,7 @@ GoapEnergy::GoapEnergy( GoapEnergy const & src ):
 	read_Goap_parameters();
 }
 
-GoapEnergy::GoapEnergy( EnergyMethodOptions const & ):
+GoapEnergy::GoapEnergy( core::scoring::methods::EnergyMethodOptions const & ):
 	parent( utility::pointer::make_shared< GoapEnergyCreator >() ),
 	continuous_ ( false )
 {
@@ -184,7 +185,7 @@ GoapEnergy::set_default(){
 }
 
 void
-GoapEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )  const
+GoapEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & )  const
 {
 	//std::cout << "Goap setup_for_scoring..." << std::endl;
 
@@ -472,8 +473,8 @@ void
 GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 	conformation::Residue const &rsd2,
 	pose::Pose const & , //pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	//std::cout << "Respair start: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
@@ -551,9 +552,9 @@ GoapEnergy::residue_pair_energy( conformation::Residue const &rsd1,
 	//std::cout << "res pair scoring b/w ";
 	//printf("%4d %4d %8.3f %8.3f\n", rsd1.seqpos(), rsd2.seqpos(), Edist_sum, Eang_sum);
 
-	emap[ scoring::goap       ] += Edist_sum+Eang_sum;
-	emap[ scoring::goap_dist  ] += Edist_sum;
-	emap[ scoring::goap_angle ] += Eang_sum;
+	emap[ core::scoring::goap       ] += Edist_sum+Eang_sum;
+	emap[ core::scoring::goap_dist  ] += Edist_sum;
+	emap[ core::scoring::goap_angle ] += Eang_sum;
 }
 
 Real
@@ -713,7 +714,7 @@ GoapEnergy::calculate_dipoles( pose::Pose const &pose,
 
 void
 GoapEnergy::setup_for_derivatives( pose::Pose & ,
-	ScoreFunction const & )  const
+	core::scoring::ScoreFunction const & )  const
 {}
 
 
@@ -721,13 +722,13 @@ void
 GoapEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & ,//rsd1,
 	conformation::Residue const & ,//rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & , //min_data,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & , //min_data,
 	pose::Pose const &,
-	EnergyMap const & ,//weights,
-	utility::vector1< DerivVectorPair > & ,//r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & //r2_atom_derivs
+	core::scoring::EnergyMap const & ,//weights,
+	utility::vector1< core::scoring::DerivVectorPair > & ,//r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & //r2_atom_derivs
 ) const
 {}
 
@@ -743,6 +744,5 @@ GoapEnergy::setup_for_packing(
 ) const
 {}
 
-} //namespace methods
-} //namespace scoring
+} //namespace energy_methods
 } //namespace core

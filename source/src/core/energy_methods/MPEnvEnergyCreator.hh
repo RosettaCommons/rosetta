@@ -30,8 +30,7 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Creator Class for Membrane CBeta Energy Method
 class MPEnvEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
@@ -39,18 +38,17 @@ class MPEnvEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	/// @brief Instantiate a new MPEnvEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return MPEnv Score Type Claimed by this energy method
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 };
 
 
-} // membrane
 } // scoring
 } // core
 

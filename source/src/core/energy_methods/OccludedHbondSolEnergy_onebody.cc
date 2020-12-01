@@ -58,21 +58,21 @@
 static basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy_onebody" );
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the OccludedHbondSolEnergy_onebody class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OccludedHbondSolEnergy_onebodyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return utility::pointer::make_shared< geometric_solvation::OccludedHbondSolEnergy_onebody >( options );
+	return utility::pointer::make_shared< OccludedHbondSolEnergy_onebody >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 OccludedHbondSolEnergy_onebodyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( occ_sol_fitted_onebody );
 	return sts;
@@ -86,11 +86,11 @@ core::Real const MIN_OCC_ENERGY = { 0.01 };
 
 
 OccludedHbondSolEnergy_onebody::OccludedHbondSolEnergy_onebody(
-	methods::EnergyMethodOptions const & options,
+	core::scoring::methods::EnergyMethodOptions const & options,
 	bool const verbose )
 :
 	parent( utility::pointer::make_shared< OccludedHbondSolEnergy_onebodyCreator >() ),
-	occ_hbond_sol_database_( ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
+	occ_hbond_sol_database_( core::scoring::ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
 	verbose_( verbose )
 {
 	if ( verbose_ ) tr <<"OccludedHbondSolEnergy_onebody constructor" << std::endl;
@@ -104,14 +104,14 @@ OccludedHbondSolEnergy_onebody::OccludedHbondSolEnergy_onebody( OccludedHbondSol
 	if ( verbose_ ) tr <<"OccludedHbondSolEnergy_onebody constructor" << std::endl;
 }
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OccludedHbondSolEnergy_onebody::clone() const
 {
 	return utility::pointer::make_shared< OccludedHbondSolEnergy_onebody >( *this );
 }
 
 void
-OccludedHbondSolEnergy_onebody::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+OccludedHbondSolEnergy_onebody::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -127,14 +127,14 @@ OccludedHbondSolEnergy_onebody::setup_for_packing(
 }
 
 void
-OccludedHbondSolEnergy_onebody::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
+OccludedHbondSolEnergy_onebody::setup_for_derivatives( pose::Pose & , core::scoring::ScoreFunction const & ) const
 {
 	tr.Fatal << "no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
 	utility_exit_with_message("OccludedHbondSolEnergy_onebody::setup_for_derivatives() not yet implemented.");
 }
 
 void
-OccludedHbondSolEnergy_onebody::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
+OccludedHbondSolEnergy_onebody::setup_for_minimizing( pose::Pose & , core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	tr.Fatal << "no derivatives yet for OccludedHbondSolEnergy_onebody (occ_sol_fitted_onebody)" << std::endl;
 	utility_exit_with_message("OccludedHbondSolEnergy_onebody::setup_for_minimizing() not yet implemented");
@@ -153,7 +153,7 @@ OccludedHbondSolEnergy_onebody::atomic_interaction_cutoff() const
 void OccludedHbondSolEnergy_onebody::residue_energy(
 	conformation::Residue const & polar_rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	auto polar_resnum = (core::Size) polar_rsd.seqpos();
 	core::Real residue_geosol(0.), energy(0.);
@@ -226,7 +226,7 @@ void OccludedHbondSolEnergy_onebody::residue_energy(
 		//  std::cout << "jk FITTED_ONEBODY Acceptor " << base_atom_name << "  " << pose.residue(polar_resnum).aa() << " " << polar_resnum << "  " << polar_group_energy << std::endl;
 	}
 
-	emap[ occ_sol_fitted_onebody ] += residue_geosol;
+	emap[ core::scoring::occ_sol_fitted_onebody ] += residue_geosol;
 }
 
 
@@ -356,17 +356,17 @@ OccludedHbondSolEnergy_onebody::get_atom_atom_occ_solvation(
 
 	// jumpout with no calculations if easy tests are violated, ie. no contribution to solvation energy
 	Real const dist_sq = ( occ_atom_xyz - polar_atom_xyz).length_squared();
-	if ( dist_sq > occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_max_sq_dist ) ) return;
+	if ( dist_sq > occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_max_sq_dist ) ) return;
 	Real const curr_cos_angle = get_cos_angle( base_atom_xyz, polar_atom_xyz, occ_atom_xyz );
-	if ( curr_cos_angle < occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_min_cos_angle ) ) return;
+	if ( curr_cos_angle < occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_min_cos_angle ) ) return;
 
 	// geometric filters are met, compute energy (no derivatives!)
 	// get the appropriate parameters
-	Real const amp = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_amp );
-	Real const dist_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_dist_mu );
-	Real const twice_dist_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_twice_dist_sigma_sq );
-	Real const cos_angle_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_cos_angle_mu );
-	Real const twice_cos_angle_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_twice_cos_angle_sigma_sq );
+	Real const amp = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_amp );
+	Real const dist_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_dist_mu );
+	Real const twice_dist_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_twice_dist_sigma_sq );
+	Real const cos_angle_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_cos_angle_mu );
+	Real const twice_cos_angle_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_twice_cos_angle_sigma_sq );
 
 	// Note: differences are in different order. Doesn't matter for scores, does for derivatives
 	// Briefly, we're in the regime where dist energy contribution gets small as we get big values,
@@ -422,7 +422,6 @@ OccludedHbondSolEnergy_onebody::version() const
 }
 
 
-} // geometric_solvation
 } // scoring
 } // core
 

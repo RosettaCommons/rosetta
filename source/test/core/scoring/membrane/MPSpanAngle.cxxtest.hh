@@ -62,7 +62,7 @@ public:
 		using namespace core::scoring;
 
 		core::Real const TOL(1e-2);
-		core::scoring::membrane::MPSpanAngleEnergy mp_span;
+		core::energy_methods::MPSpanAngleEnergy mp_span;
 
 		TS_ASSERT_DELTA( mp_span.calc_ang_score( 0 ), -0.5, TOL);
 
@@ -91,7 +91,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPSpanAngleEnergy mp_span;
+		core::energy_methods::MPSpanAngleEnergy mp_span;
 		EnergyMap emap;
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight( mp_span_ang, 1 );
@@ -121,7 +121,7 @@ public:
 		sfxn.set_weight( mp_span_ang, 1 );
 		sfxn( *pose_ );
 
-		core::scoring::membrane::MPSpanAngleEnergy mp_span;
+		core::energy_methods::MPSpanAngleEnergy mp_span;
 		utility::vector1< core::Real > res = mp_span.compute( *pose_, TR, true );
 		TS_ASSERT_DELTA( res[ 1 ], 0.8139, TOL );
 	}
@@ -145,7 +145,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPSpanAngleEnergy mp_span;
+		core::energy_methods::MPSpanAngleEnergy mp_span;
 		TS_ASSERT_DELTA( mp_span.find_helix_vector( *pose_, 33, 58 )[ 1 ][ 1 ], -6.6865, TOL );
 		TS_ASSERT_DELTA( mp_span.find_helix_vector( *pose_, 4, 27 )[ 1 ][ 1 ], -3.1370, TOL );
 		TS_ASSERT_DELTA( mp_span.find_helix_vector( *pose_, 127, 150 )[ 1 ][ 1 ], 18.2952, TOL );

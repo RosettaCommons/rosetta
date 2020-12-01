@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/rna/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh
+/// @file src/core/energy_methods/chemical_shift/RNA_ChemicalShiftEnergyCreator.hh
 /// @brief  Declaration for the class that connects RNA_ChemicalShiftEnergy with the ScoringManager
 /// @author Parin Sripakdeevong (sripakpa@stanford.edu)
 
@@ -18,28 +18,24 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace chemical_shift {
+namespace energy_methods {
 
-class RNA_ChemicalShiftEnergyCreator : public methods::EnergyMethodCreator
+class RNA_ChemicalShiftEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new RNA_ChemicalShiftEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //chemical_shift
-} //rna
 } //scoring
 } //core
 

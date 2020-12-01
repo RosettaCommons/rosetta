@@ -65,7 +65,7 @@ public:
 		//sfxn.set_weight( mp_helic_lipo, 1 );
 
 		core::Real const TOL(1e-2);
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		//core::pose::Pose pose = create_1afo_pose();
 
 		// test slope and offset 6
@@ -100,7 +100,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		EnergyMap emap;
 		mp_helic.residue_energy( pose_->residue( 5 ), *pose_, emap );
 		TS_ASSERT_DELTA( emap[ MPHelicality ], 0.2362, TOL);
@@ -137,7 +137,7 @@ public:
 		sfxn.set_weight( MPHelicality, 1 );
 		sfxn( *pose_ );
 
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		utility::vector1 < core::Size > t = mp_helic.centroid_neighbors( *pose_cen, pose_cen->residue( 5 ) );
 		TS_ASSERT_DELTA( mp_helic.centroid_neighbors( *pose_cen, pose_cen->residue( 5 ) )[ 1 ], 29, TOL );
 		TS_ASSERT_DELTA( mp_helic.centroid_neighbors( *pose_cen, pose_cen->residue( 10 ) )[ 1 ], 2, TOL );
@@ -163,7 +163,7 @@ public:
 
 		core::Real const TOL(1e-0);
 
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		TS_ASSERT_DELTA( mp_helic.neighboring_atoms( *pose_, pose_->residue( 5 ), 6, 12 )[ 1 ], 44, TOL );
 		TS_ASSERT_DELTA( mp_helic.neighboring_atoms( *pose_, pose_->residue( 10 ), 6, 12 )[ 1 ], 12, TOL );
 		TS_ASSERT_DELTA( mp_helic.neighboring_atoms( *pose_, pose_->residue( 15 ), 6, 12 )[ 1 ], 18, TOL );
@@ -188,7 +188,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		TS_ASSERT_DELTA( mp_helic.calc_residue_burial( *pose_, pose_->residue( 5 ) ), 0.0265, TOL );
 		TS_ASSERT_DELTA( mp_helic.calc_residue_burial( *pose_, pose_->residue( 10 ) ), 0.7685, TOL );
 		TS_ASSERT_DELTA( mp_helic.calc_residue_burial( *pose_, pose_->residue( 15 ) ), 0.5744, TOL );
@@ -225,7 +225,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPHelicalityEnergy mp_helic;
+		core::energy_methods::MPHelicalityEnergy mp_helic;
 		core::Real score = 0;
 		mp_helic.calc_energy( pose_->residue( 5  ), *pose_, score );
 		TS_ASSERT_DELTA( score, 8.8818, TOL );

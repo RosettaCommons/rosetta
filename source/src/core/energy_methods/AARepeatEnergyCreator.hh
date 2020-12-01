@@ -29,24 +29,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace aa_repeat_energy {
+namespace energy_methods {
 
-class AARepeatEnergyCreator : public methods::EnergyMethodCreator
+class AARepeatEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 
 	/// @brief Instantiate a new AARepeatEnergy.
 	///
-	methods::EnergyMethodOP create_energy_method( methods::EnergyMethodOptions const & ) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-} // aa_repeat_energy
-} // scoring
+} // energy_methods
 } // core
 
 #endif

@@ -35,21 +35,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer tr( "core.scoring.methods.Branch", basic::t_info );
 
 /// @details This must return a fresh instance of the BranchEnergy class, never an instance already in use.
-methods::EnergyMethodOP
-BranchEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
+core::scoring::methods::EnergyMethodOP
+BranchEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const
 {
 	return utility::pointer::make_shared< BranchEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 BranchEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( branch_conn );
 	return sts;
@@ -62,7 +63,7 @@ BranchEnergy::BranchEnergy() : parent( utility::pointer::make_shared< BranchEner
 // Called at the end of the energy evaluation.
 /// @details In this case (BranchEnergy), all the calculation is done here.
 void
-BranchEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
+BranchEnergy::finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const
 {
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
 		using namespace core::conformation::symmetry;
@@ -75,7 +76,7 @@ BranchEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, E
 	using namespace core::chemical;
 	DistanceSquared total_dev( 0.0 );
 	//utility::vector1< int > cutpoints;
-	utility::vector1< ResidueAtomOverlaps > branch_connections;
+	utility::vector1< core::scoring::methods::ResidueAtomOverlaps > branch_connections;
 	// This grabs all the PAIRS of residues that need scoring by this term.
 	find_relevant_connections( pose, branch_connections );
 
@@ -98,8 +99,8 @@ BranchEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, E
 
 		total_dev += current_dev;
 	}
-	debug_assert( std::abs( totals[ branch_conn ] ) < 1e-3 );
-	totals[ branch_conn ] = total_dev;
+	debug_assert( std::abs( totals[ core::scoring::branch_conn ] ) < 1e-3 );
+	totals[ core::scoring::branch_conn ] = total_dev;
 }
 
 
@@ -110,8 +111,8 @@ BranchEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -133,7 +134,7 @@ BranchEnergy::eval_atom_derivative(
 		if ( id.rsd() > max_res ) return;
 	}
 
-	ResidueAtomOverlaps branch_connection;
+	core::scoring::methods::ResidueAtomOverlaps branch_connection;
 	find_relevant_connections_onersd( pose, id.rsd(), branch_connection );
 
 	Vector const & xyz_moving( pose.xyz( id ) );  // position of the moving atom
@@ -204,8 +205,8 @@ BranchEnergy::eval_atom_derivative(
 	}
 
 	if ( match ) {
-		F1 += weights[ branch_conn ] * 2 * cross( xyz_moving, xyz_fixed );
-		F2 += weights[ branch_conn ] * 2 * ( xyz_moving - xyz_fixed );
+		F1 += weights[ core::scoring::branch_conn ] * 2 * cross( xyz_moving, xyz_fixed );
+		F2 += weights[ core::scoring::branch_conn ] * 2 * ( xyz_moving - xyz_fixed );
 	}
 }
 
@@ -224,6 +225,5 @@ BranchEnergy::version() const
 }
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

@@ -46,29 +46,30 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the Fa_MbsolvEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 Fa_MbsolvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< Fa_MbsolvEnergy >(
-		*( ScoringManager::get_instance()->etable( options ).lock() ),
-		*( ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() )
+		*( core::scoring::ScoringManager::get_instance()->etable( options ).lock() ),
+		*( core::scoring::ScoringManager::get_instance()->memb_etable( options.etable_type() ).lock() )
 	);
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 Fa_MbsolvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fa_mbsolv );
 	return sts;
 }
 
-Fa_MbsolvEnergy::Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in):
+Fa_MbsolvEnergy::Fa_MbsolvEnergy( core::scoring::etable::Etable const & etable_in, core::scoring::etable::MembEtable const & memb_etable_in):
 	parent( utility::pointer::make_shared< Fa_MbsolvEnergyCreator >() ),
 	etable_(etable_in),
 	//memb_etable_(memb_etable_in),
@@ -84,7 +85,7 @@ Fa_MbsolvEnergy::Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::Memb
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	get_bins_per_A2_( etable_in.get_bins_per_A2()),
 	verbose_( false ),
-	potential_( ScoringManager::get_instance()->get_Membrane_FAPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_Membrane_FAPotential() )
 {}
 
 Distance
@@ -94,7 +95,7 @@ Fa_MbsolvEnergy::atomic_interaction_cutoff() const
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 Fa_MbsolvEnergy::clone() const
 {
 	return utility::pointer::make_shared< Fa_MbsolvEnergy >( *this );
@@ -106,7 +107,7 @@ Fa_MbsolvEnergy::clone() const
 ///
 void
 Fa_MbsolvEnergy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const
 {
 	potential_.compute_fa_projection( pose );
@@ -118,8 +119,8 @@ Fa_MbsolvEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	Real fa_mbsolv_score( 0.0 );
@@ -159,7 +160,7 @@ Fa_MbsolvEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ fa_mbsolv ] += fa_mbsolv_score;
+	emap[ core::scoring::fa_mbsolv ] += fa_mbsolv_score;
 }
 
 
@@ -176,7 +177,7 @@ Fa_MbsolvEnergy::get_residue_pair_energy(
 	bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 	Real temp_score (0.0);
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn( nullptr );
 
 	if ( same_res ) {
@@ -206,8 +207,8 @@ Fa_MbsolvEnergy::get_residue_pair_energy(
 			bool debug(false);
 
 			temp_score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv,
-				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),i),
-				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),j),debug);
+				core::scoring::Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),i),
+				core::scoring::Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),j),debug);
 
 			if ( same_res ) temp_score *= 0.5;
 			fa_mbsolv_score += temp_score;
@@ -225,12 +226,12 @@ Fa_MbsolvEnergy::get_residue_pair_energy(
 void
 Fa_MbsolvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const & scfxn
+	core::scoring::ScoreFunction const & scfxn
 ) const
 {
 	potential_.compute_fa_projection( pose );
 	pose.update_residue_neighbors();
-	fa_mbsolv_weight_ = scfxn.weights()[ fa_mbsolv ];
+	fa_mbsolv_weight_ = scfxn.weights()[ core::scoring::fa_mbsolv ];
 }
 
 
@@ -310,7 +311,7 @@ Real
 Fa_MbsolvEnergy::eval_dE_dR_over_r(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
-	EnergyMap const & /*weights*/,
+	core::scoring::EnergyMap const & /*weights*/,
 	Vector & F1,
 	Vector & F2,
 	Real const & f1,
@@ -352,8 +353,8 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -369,10 +370,10 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 	bool const pos1_fixed( domain_map( i ) != 0 );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
@@ -386,7 +387,7 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		bool const same_res = ( rsd1.seqpos() == rsd2.seqpos() );
 
-		using namespace etable::count_pair;
+		using namespace core::scoring::etable::count_pair;
 		CountPairFunctionOP cpfxn( nullptr );
 
 		if ( same_res ) {
@@ -411,8 +412,8 @@ Fa_MbsolvEnergy::eval_atom_derivative(
 			Vector f1( 0.0 ), f2( 0.0 );
 			Real const dE_dR_over_r
 				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2,
-				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),m),
-				Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),n) ) );
+				core::scoring::Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd1.seqpos(),m),
+				core::scoring::Membrane_FAEmbed_from_pose( pose ).fa_proj(rsd2.seqpos(),n) ) );
 			if ( dE_dR_over_r == 0.0 ) continue;
 
 			if ( same_res ) {
@@ -438,8 +439,8 @@ void
 Fa_MbsolvEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 
@@ -480,7 +481,7 @@ Fa_MbsolvEnergy::eval_intrares_energy(
 		}
 	}
 
-	emap[ fa_mbsolv ] += fa_mbsolv_score;
+	emap[ core::scoring::fa_mbsolv ] += fa_mbsolv_score;
 
 }
 
@@ -488,8 +489,8 @@ Fa_MbsolvEnergy::eval_intrares_energy(
 void
 Fa_MbsolvEnergy::finalize_total_energy(
 	pose::Pose & /*pose*/,
-	ScoreFunction const &,
-	EnergyMap & /*emap*/
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & /*emap*/
 ) const
 {
 	if ( verbose_ ) std::cout << "DONE SCORING" << std::endl;
@@ -497,14 +498,14 @@ Fa_MbsolvEnergy::finalize_total_energy(
 
 
 /// @details Pose must already contain a cenlist object or this method will fail.
-Membrane_FAEmbed const &
+core::scoring::Membrane_FAEmbed const &
 Fa_MbsolvEnergy::Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED;
 	return *( utility::pointer::static_pointer_cast< core::scoring::Membrane_FAEmbed const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_FAEMBED ) ));
 }
 
-MembraneTopology const &
+core::scoring::MembraneTopology const &
 Fa_MbsolvEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
@@ -517,7 +518,6 @@ Fa_MbsolvEnergy::version() const
 }
 
 
-}
 }
 }
 

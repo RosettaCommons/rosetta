@@ -14,23 +14,22 @@
 ///
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
-#ifndef INCLUDED_core_scoring_methods_DEEREnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_DEEREnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_DEEREnergy_fwd_hh
+#define INCLUDED_core_energy_methods_DEEREnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class DEEREnergy;
 
 typedef utility::pointer::shared_ptr< DEEREnergy > DEEREnergyOP;
 typedef utility::pointer::shared_ptr< DEEREnergy const > DEEREnergyCOP;
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

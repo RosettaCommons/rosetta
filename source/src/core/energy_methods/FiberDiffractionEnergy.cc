@@ -65,19 +65,19 @@
 #endif
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
 // tracer
 static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergy");
 
-ScoreTypes FiberDiffractionEnergyCreator::score_types_for_method() const {
+core::scoring::ScoreTypes FiberDiffractionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fiberdiffraction );
 	return sts;
 }
 
-methods::EnergyMethodOP FiberDiffractionEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 	return utility::pointer::make_shared< FiberDiffractionEnergy >();
 }
 
@@ -89,11 +89,11 @@ FiberDiffractionEnergy::FiberDiffractionEnergy() :
 }
 
 /// clone
-methods::EnergyMethodOP FiberDiffractionEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergy::clone() const {
 	return utility::pointer::make_shared< FiberDiffractionEnergy >( *this );
 }
 
-void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 
 	if ( !pose.is_fullatom() ) return;
 
@@ -127,7 +127,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user() ) {
 		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
 	} else {
-		find_pitch( pose, p_ );
+		scoring::fiber_diffraction::find_pitch( pose, p_ );
 	}
 	c_ = p_*a_;
 
@@ -138,16 +138,16 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
 	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
 
-	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
+	scoring::fiber_diffraction::getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
 	TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+		scoring::fiber_diffraction::setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
 	auto form_factors(form_factors_.begin());
 
 	{
 		core::Real max_r_value;
-		find_max_r( pose, max_r_value );
+		scoring::fiber_diffraction::find_max_r( pose, max_r_value );
 		TR<<"Max r value "<<max_r_value<<std::endl;
 	}
 
@@ -161,7 +161,7 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
 	utility::vector1< Real > phi, z, r, bfactors;
-	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
+	scoring::fiber_diffraction::setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 	TR << "Model contains " << natoms << " atoms" << std::endl;
 
 	TR << "Calculating Chi2..." << std::endl;
@@ -314,11 +314,11 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 
 	if ( chi_iterations_ > 0 ) {
 		core::Real max_r_value;
-		find_max_r( pose, max_r_value );
+		scoring::fiber_diffraction::find_max_r( pose, max_r_value );
 
 		core::Real chi_free(0);
 
-		chi_free = calculate_chi2_free(pose, chi_iterations_,lmax,\
+		chi_free = scoring::fiber_diffraction::calculate_chi2_free(pose, chi_iterations_,lmax,\
 			layer_lines_I,layer_lines_R,natoms,c_,nvals,\
 			atom_type_number,phi,z,r,b_factor_, b_factor_solv_, b_factor_solv_K_);
 
@@ -331,13 +331,13 @@ void FiberDiffractionEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction
 	}
 }
 
-void FiberDiffractionEnergy::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
+void FiberDiffractionEnergy::finalize_total_energy(pose::Pose & /*pose*/, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const {
 	// all the work is done in setup for scoring
 	// just return results here
-	emap[ fiberdiffraction ] += chi2_;
+	emap[ core::scoring::fiberdiffraction ] += chi2_;
 }
 
-void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 
 	if ( !pose.is_fullatom() ) return;
 
@@ -365,7 +365,7 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ].user() ) {
 		p_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::p ]();
 	} else {
-		find_pitch( pose, p_ );
+		scoring::fiber_diffraction::find_pitch( pose, p_ );
 	}
 	c_ = p_*a_;
 
@@ -376,12 +376,12 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	core::Real b_factor_solv_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv ]();
 	core::Real b_factor_solv_K_ = basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::b_factor_solv_K ]();
 
-	getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
+	scoring::fiber_diffraction::getFiberDiffractionData(c_, res_cutoff_high_, res_cutoff_low_).getAllFiberData(layer_lines_I, layer_lines_R, nvals, lmax, Rmax);
 	TR << "Rmax : lmax " << "( " << Rmax << " : " << lmax << " )" << std::endl;
 
 
 	utility::vector0< utility::vector1< utility::vector1< core::Real > > > form_factors_(
-		setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
+		scoring::fiber_diffraction::setup_form_factors( pose, lmax, layer_lines_R, c_, b_factor_, b_factor_solv_, b_factor_solv_K_ ));
 	auto form_factors(form_factors_.begin());
 
 	TR << "Preparing fiber model data for deriv calculation..." << std::endl;
@@ -389,7 +389,7 @@ void FiberDiffractionEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunc
 	Size natoms(0);
 	utility::vector1< Size > atom_type_number;
 	utility::vector1< Real > phi, z, r,bfactors;
-	setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
+	scoring::fiber_diffraction::setup_cylindrical_coords( pose, natoms, atom_type_number, AtomID_to_atomnbr_, phi, z, r, bfactors);
 
 	bool rfactor_refinement_=false;
 	if ( basic::options::option[ basic::options::OptionKeys::score::fiber_diffraction::rfactor_refinement ].user() ) {
@@ -547,8 +547,8 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -569,8 +569,8 @@ void FiberDiffractionEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> f1( dchi2_d_cross_R[atomnbr] );
 	numeric::xyzVector<core::Real> f2( dchi2_d[atomnbr] );
 
-	F1 += weights[ fiberdiffraction ] * f1;
-	F2 += weights[ fiberdiffraction ] * f2;
+	F1 += weights[ core::scoring::fiberdiffraction ] * f1;
+	F2 += weights[ core::scoring::fiberdiffraction ] * f2;
 }
 
 core::Size
@@ -579,7 +579,6 @@ FiberDiffractionEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // fiber_diffraction
 } // scoring
 } // core
 

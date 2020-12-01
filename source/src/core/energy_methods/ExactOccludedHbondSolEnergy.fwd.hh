@@ -19,8 +19,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 
 class ExactOccludedHbondSolEnergy;
@@ -28,7 +27,6 @@ class ExactOccludedHbondSolEnergy;
 typedef  utility::pointer::shared_ptr< ExactOccludedHbondSolEnergy > ExactOccludedHbondSolEnergyOP;
 typedef  utility::pointer::shared_ptr< ExactOccludedHbondSolEnergy const> ExactOccludedHbondSolEnergyCOP;
 
-} // geometric_solvation
 } // scoring
 } // core
 

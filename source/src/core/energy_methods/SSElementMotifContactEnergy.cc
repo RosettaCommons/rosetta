@@ -46,8 +46,8 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using utility::vector1;
 using core::Size;
@@ -59,15 +59,16 @@ static basic::Tracer TR( "core.scoring.SSElementMotifContactEnergy" );
 
 using namespace core::scoring::motif;
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SSElementMotifContactEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SSElementMotifContactEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SSElementMotifContactEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( ss_contact_worst );
 	return sts;
@@ -174,8 +175,8 @@ Size SSElementMotifContactEnergy::get_SSelements_in_contact(Size element,vector1
 }
 
 
-//I have implemented this as a WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
-void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const{
+//I have implemented this as a core::scoring::methods::WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
+void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	vector1<std::pair<Size,Size> > ss_elements = get_ss_elements(pose);
@@ -212,9 +213,9 @@ void SSElementMotifContactEnergy::finalize_total_energy( pose::Pose & pose, Scor
 	score= tmpScore;
 	//}
 	if ( score==4 ) { //only give a boost if this is equal to 4.
-		totals[ss_contact_worst] = -1;
+		totals[ core::scoring::ss_contact_worst ] = -1;
 	} else {
-		totals[ss_contact_worst] = 1;
+		totals[ core::scoring::ss_contact_worst ] = 1;
 	}
 }
 
@@ -225,6 +226,5 @@ SSElementMotifContactEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}//motif
 }//scoring
 }//core

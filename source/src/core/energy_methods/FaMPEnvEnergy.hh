@@ -43,21 +43,20 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Fullatom Membrane Environment Energy
-class FaMPEnvEnergy : public methods::ContextDependentOneBodyEnergy {
+class FaMPEnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 
 public:
 
-	typedef ContextDependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy parent;
 
 	/// @brief Construct Energy Method from Etable
-	FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in );
+	FaMPEnvEnergy( core::scoring::etable::MembEtableCAP memb_etable_in );
 
 	/// @brief Clone Energy Method
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief Compute Per-Residue Energies
@@ -65,22 +64,22 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Fianlzie Total Per-Residue Energies
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Setup for Computing Derivatives
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const & scfxn
+		core::scoring::ScoreFunction const & scfxn
 	) const override;
 
 	/// @brief Evaluate Per-Atom Derivatives
@@ -89,8 +88,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & emap,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & emap,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -103,7 +102,7 @@ public:
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const override;
 
 private: // helper methods
@@ -153,7 +152,7 @@ private: // helper methods
 private:
 
 	// Store a copy of the etable in construction
-	etable::MembEtableCAP memb_etable_;
+	core::scoring::etable::MembEtableCAP memb_etable_;
 
 	// Make copies from the etable
 	ObjexxFCL::FArray1< Real > const & lk_dgrefce_;
@@ -170,8 +169,7 @@ private:
 
 };
 
-} // membrane
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPEnvEnergy_hh
+#endif // INCLUDED_core_energy_methods_FaMPEnvEnergy_hh

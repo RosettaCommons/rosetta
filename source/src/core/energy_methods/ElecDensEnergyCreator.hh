@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/electron_density/ElecDensEnergyCreator.hh
+/// @file src/core/energy_methods/ElecDensEnergyCreator.hh
 /// @brief  Declaration for the class that connects ElecDensEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
@@ -23,26 +23,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
-class ElecDensEnergyCreator : public methods::EnergyMethodCreator
+class ElecDensEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new ElecDensEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-}
 }
 }
 

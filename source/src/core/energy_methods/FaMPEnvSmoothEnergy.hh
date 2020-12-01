@@ -41,8 +41,7 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Fullatom Membrane Solvation Energy - Statistically Derived,
 /// and smoothed derivatives
@@ -98,7 +97,7 @@ public:
 	Distance
 	atomic_interaction_cutoff() const;
 
-	/// @brief Tells the scoring function to maintain the TwelveANeighborGraph
+	/// @brief Tells the scoring function to maintain the core::scoring::TwelveANeighborGraph
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 private:
@@ -150,7 +149,6 @@ private:
 
 };
 
-} // membrane
 } // scoring
 } // core
 

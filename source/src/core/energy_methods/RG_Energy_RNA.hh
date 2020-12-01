@@ -35,13 +35,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RG_Energy_RNA : public methods::WholeStructureEnergy  {
+class RG_Energy_RNA : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -50,7 +49,7 @@ public:
 	RG_Energy_RNA();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -58,16 +57,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////
@@ -76,8 +75,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2 ) const override;
 
@@ -95,8 +94,7 @@ private:
 };
 
 
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_RG_Energy_RNA_HH
+#endif // INCLUDED_core_energy_methods_RG_Energy_RNA_HH

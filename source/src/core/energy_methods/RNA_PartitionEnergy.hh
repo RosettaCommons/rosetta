@@ -35,14 +35,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_PartitionEnergy : public methods::WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy {
+class RNA_PartitionEnergy : public core::scoring::methods::WholeStructureEnergy, public core::scoring::annealing::ResidueArrayAnnealableEnergy {
 public:
-	typedef methods::WholeStructureEnergy  parent1;
-	typedef annealing::ResidueArrayAnnealableEnergy parent2;
+	typedef core::scoring::methods::WholeStructureEnergy  parent1;
+	typedef core::scoring::annealing::ResidueArrayAnnealableEnergy parent2;
 
 public:
 	/// @brief Default Constructor
@@ -52,7 +51,7 @@ public:
 	RNA_PartitionEnergy( RNA_PartitionEnergy const & src );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -62,8 +61,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
@@ -125,7 +124,6 @@ private:
 };
 
 
-} //rna
 } //scoring
 } //core
 

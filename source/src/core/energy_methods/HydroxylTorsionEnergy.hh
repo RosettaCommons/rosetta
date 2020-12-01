@@ -11,8 +11,8 @@
 /// @brief  Term for proton_chi on Ser/Thr/Tyr residues
 /// @author Hahnbeom Park (hahnbeom@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
-#define INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
+#ifndef INCLUDED_core_energy_methods_HydroxylTorsionEnergy_hh
+#define INCLUDED_core_energy_methods_HydroxylTorsionEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/HydroxylTorsionEnergy.fwd.hh>
@@ -31,12 +31,12 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class HydroxylTorsionEnergy : public ContextIndependentOneBodyEnergy  {
+
+class HydroxylTorsionEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
@@ -44,7 +44,7 @@ public:
 	HydroxylTorsionEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -58,16 +58,16 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*res_data_cache*/,
+		core::scoring::ResSingleMinimizationData const & /*res_data_cache*/,
 		pose::Pose const & /*pose*/,
-		EnergyMap const & /*weights*/,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & /*weights*/,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
@@ -77,13 +77,12 @@ public:
 	core::Size version() const override;
 
 private:
-	HydroxylTorsionPotential const & potential_;
+	core::scoring::HydroxylTorsionPotential const & potential_;
 
 };
 
-} // methods
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_HydroxylTorsionEnergy_hh
+#endif // INCLUDED_core_energy_methods_HydroxylTorsionEnergy_hh
 

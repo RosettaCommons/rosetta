@@ -51,20 +51,20 @@ using namespace core::scoring;
 using namespace core::scoring::methods;
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Return a Fresh Instance of the MPCbeta Energy Class
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPCbetaEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPCbetaEnergy >();
 }
 
 /// @brief Return Applicable Score Type for Method (MPCbeta)
-ScoreTypes
+core::scoring::ScoreTypes
 MPCbetaEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( MPCbeta );
 	return sts;
@@ -74,18 +74,18 @@ MPCbetaEnergyCreator::score_types_for_method() const {
 /// @brief Default Constructor
 MPCbetaEnergy::MPCbetaEnergy() :
 	parent( utility::pointer::make_shared< MPCbetaEnergyCreator >() ),
-	mpdata_( ScoringManager::get_instance()->get_MembraneData() )
+	mpdata_( core::scoring::ScoringManager::get_instance()->get_MembraneData() )
 {}
 
 /// @brief Clone Method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPCbetaEnergy::clone() const {
 	return utility::pointer::make_shared< MPCbetaEnergy >();
 }
 
 /// @brief Setup Centroid and Mmebrane Potential for Scoring
 void
-MPCbetaEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MPCbetaEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	mpdata_.compute_centroid_environment( pose );
@@ -96,7 +96,7 @@ void
 MPCbetaEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
 	// Check Structure is a membrane protein
@@ -109,12 +109,12 @@ MPCbetaEnergy::residue_energy(
 
 	// Skip Virtual Residues
 	if ( rsd.aa() == core::chemical::aa_vrt ) {
-		emap[ MPCbeta ] = membrane_cb_score;
+		emap[ core::scoring::MPCbeta ] = membrane_cb_score;
 		return;
 	}
 
 	// Initialize Info for Scoring
-	CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
+	core::scoring::CenListInfo const & cenlist = mpdata_.get_cenlist_from_pose( pose );
 	core::Size const seqpos = rsd.seqpos();
 
 	// Determine total number of tmhs from membrane pose
@@ -123,7 +123,7 @@ MPCbetaEnergy::residue_energy(
 	// Compute CBeta score at the position
 	membrane_cb_score = compute_mpcbeta_score( cenlist, seqpos, num_tmh );
 	membrane_cb_score = 2.667 * membrane_cb_score * 0.3;
-	emap[ MPCbeta ] += membrane_cb_score;
+	emap[ core::scoring::MPCbeta ] += membrane_cb_score;
 
 }
 
@@ -131,8 +131,8 @@ MPCbetaEnergy::residue_energy(
 void
 MPCbetaEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	mpdata_.finalize( pose );
@@ -145,7 +145,7 @@ MPCbetaEnergy::version() const { return 2; }
 /// @brief Evaluate CBeta Energy Term = Actual Evaluate
 core::Real
 MPCbetaEnergy::compute_mpcbeta_score(
-	CenListInfo const & cenlist,
+	core::scoring::CenListInfo const & cenlist,
 	core::Size const seqpos,
 	core::Size const num_tmh
 ) const
@@ -200,7 +200,6 @@ MPCbetaEnergy::compute_mpcbeta_score(
 }
 
 
-} // membrane
 } // scoring
 } // core
 

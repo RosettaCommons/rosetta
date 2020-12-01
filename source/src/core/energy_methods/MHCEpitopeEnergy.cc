@@ -56,8 +56,7 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
 
 namespace core {
-namespace scoring {
-namespace mhc_epitope_energy {
+namespace energy_methods {
 
 static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy");
 
@@ -97,9 +96,10 @@ MHCEpitopeEnergyCreator::create_energy_method( core::scoring::methods::EnergyMet
 
 /// @brief Defines the score types that this energy method calculates.
 ///
-ScoreTypes
+core::scoring::ScoreTypes
 MHCEpitopeEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( mhc_epitope );
 	return sts;
@@ -172,7 +172,7 @@ core::Size MHCEpitopeEnergy::version() const
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void MHCEpitopeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
+void MHCEpitopeEnergy::finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const
 {
 	if ( disabled_ ) return; //Do nothing when this energy is disabled.
 
@@ -210,15 +210,15 @@ void MHCEpitopeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunc
 		}
 	}
 
-	//Get the MHCEpitopeEnergySetup objects from the pose and append them to the setup_helpers_ list, making a new setup_helpers list:
-	utility::vector1< MHCEpitopeEnergySetupCOP > setup_helpers;
+	//Get the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects from the pose and append them to the setup_helpers_ list, making a new setup_helpers list:
+	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > setup_helpers;
 	utility::vector1< core::select::residue_selector::ResidueSubset > masks;
 	utility::vector1< core::Real > cst_weights;
-	get_helpers_from_pose( pose, setup_helpers, masks, cst_weights ); //Pulls MHCEpitopeEnergySetupCOPs from pose; generates masks from ResidueSelectors simultaneously.
+	get_helpers_from_pose( pose, setup_helpers, masks, cst_weights ); //Pulls core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOPs from pose; generates masks from ResidueSelectors simultaneously.
 	runtime_assert( masks.size() == setup_helpers.size() ); //Should be guaranteed to be true.
 	runtime_assert( cst_weights.size() == setup_helpers.size() ); //Should be guaranteed to be true.
 
-	totals[ mhc_epitope ] += full_rescore( reslist, setup_helpers, masks, cst_weights, false, true ); //Using the vector of residue owning pointers, calculate the energy (unweighted) and set the mhc_epitope to this value.
+	totals[ core::scoring::mhc_epitope ] += full_rescore( reslist, setup_helpers, masks, cst_weights, false, true ); //Using the vector of residue owning pointers, calculate the energy (unweighted) and set the mhc_epitope to this value.
 }
 
 /// @brief Calculate the total energy given a vector of const owning pointers to residues.
@@ -341,7 +341,7 @@ MHCEpitopeEnergy::set_up_residuearrayannealableenergy_for_packing (
 
 /// @brief Disable this energy during minimization.
 void
-MHCEpitopeEnergy::setup_for_minimizing( pose::Pose & /*pose*/, ScoreFunction const & /*sfxn*/, kinematics::MinimizerMapBase const & /*minmap*/ ) const {
+MHCEpitopeEnergy::setup_for_minimizing( pose::Pose & /*pose*/, core::scoring::ScoreFunction const & /*sfxn*/, kinematics::MinimizerMapBase const & /*minmap*/ ) const {
 	TR.Debug << "Disabling MHCEpitopeEnergy during minimization." << std::endl;
 	disabled_ = true;
 }
@@ -353,16 +353,16 @@ MHCEpitopeEnergy::finalize_after_minimizing( pose::Pose & /*pose*/ ) const {
 	disabled_ = false;
 }
 
-/// @brief Given a pose, pull out the MHCEpitopeEnergySetup objects stored in SequenceConstraints in the pose and
+/// @brief Given a pose, pull out the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects stored in SequenceConstraints in the pose and
 /// append them to the setup_helpers_ vector, returning a new vector.  This also generates a vector of masks simultaneously.
-/// @param [in] pose The pose from which the MHCEpitopeEnergySetupCOPs will be extracted.
-/// @param [out] setup_helpers The output vector of MHCEpitopeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
+/// @param [in] pose The pose from which the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOPs will be extracted.
+/// @param [out] setup_helpers The output vector of core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
 /// @param [out] masks The output vector of ResidueSubsets, which will be equal in size to the helpers vector.
 /// @details The output vectors are first cleared by this operation.
 void
 MHCEpitopeEnergy::get_helpers_from_pose(
 	core::pose::Pose const &pose,
-	utility::vector1< MHCEpitopeEnergySetupCOP > &setup_helpers,
+	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > &setup_helpers,
 	utility::vector1< core::select::residue_selector::ResidueSubset > &masks,
 	utility::vector1< core::Real > &cst_weights
 ) const {
@@ -380,13 +380,17 @@ MHCEpitopeEnergy::get_helpers_from_pose(
 	if ( n_sequence_constraints > 0 ) {
 		// Loop over each set of sequence constraints in the pose.
 		for ( core::Size i=1; i<=n_sequence_constraints; ++i ) {
-			MHCEpitopeConstraintCOP cur_cst( utility::pointer::dynamic_pointer_cast<MHCEpitopeConstraint const>( pose.constraint_set()->sequence_constraint(i) ) );
+			core::scoring::mhc_epitope_energy::MHCEpitopeConstraintCOP cur_cst(
+				utility::pointer::dynamic_pointer_cast<core::scoring::mhc_epitope_energy::MHCEpitopeConstraint const>(
+				pose.constraint_set()->sequence_constraint(i)
+				)
+			);
 			if ( !cur_cst ) continue; //Continue if this isn't an MHCEpitopeConstraint.
 			if ( cur_cst->mhc_epitope_energy_setup()->is_default() ) {
 				TR << "got a constraint with no specified predictor; ignoring" << std::endl;
 				continue;
 			}
-			setup_helpers.push_back( cur_cst->mhc_epitope_energy_setup() ); //Append the MHCEpitopeEnergySetup object stored in the current sequence constraint to the list to be used.
+			setup_helpers.push_back( cur_cst->mhc_epitope_energy_setup() ); //Append the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup object stored in the current sequence constraint to the list to be used.
 			core::select::residue_selector::ResidueSelectorCOP selector( cur_cst->selector() ); //Get the ResidueSelector in the current sequence constraint object, if there is one.  (May be NULL).
 			if ( selector ) { //If we have a ResidueSelector, generate a mask from the pose and store it in the masks list.
 				masks.push_back( selector->apply( pose ) );
@@ -470,7 +474,7 @@ void MHCEpitopeEnergy::setup_symmetry(core::pose::Pose const &pose) const
 
 core::Real MHCEpitopeEnergy::difference_btw_cached_and_full_rescore(
 	utility::vector1< core::conformation::ResidueCOP > const & resvect,
-	utility::vector1< MHCEpitopeEnergySetupCOP > const &setup_helpers,
+	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > const &setup_helpers,
 	utility::vector1< core::select::residue_selector::ResidueSubset > const &masks,
 	utility::vector1< core::Real > const &cst_weights
 ) const {
@@ -499,7 +503,7 @@ core::Real MHCEpitopeEnergy::difference_btw_cached_and_full_rescore(
 
 core::Real MHCEpitopeEnergy::full_rescore(
 	utility::vector1< core::conformation::ResidueCOP > const & reslist,
-	utility::vector1< MHCEpitopeEnergySetupCOP > const &setup_helpers,
+	utility::vector1< core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP > const &setup_helpers,
 	utility::vector1< core::select::residue_selector::ResidueSubset > const &masks,
 	utility::vector1< core::Real > const &cst_weights,
 	bool cache, bool native
@@ -517,7 +521,7 @@ core::Real MHCEpitopeEnergy::full_rescore(
 	// Loop over helpers
 	core::Size ihelpermax=setup_helpers.size();
 	for ( core::Size ihelper=1; ihelper<=ihelpermax; ++ihelper ) {
-		MHCEpitopeEnergySetupCOP helper( setup_helpers[ihelper] );
+		core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP helper( setup_helpers[ihelper] );
 		if ( helper->is_default() ) continue; // default contributes 0 to score, so just bypass
 
 		// Loop over peptide starting positions
@@ -651,7 +655,7 @@ core::Real MHCEpitopeEnergy::update_score(
 	// Loop over helpers
 	core::Size ihelpermax=setup_helpers_for_packing_.size();
 	for ( core::Size ihelper=1; ihelper<=ihelpermax; ++ihelper ) {
-		MHCEpitopeEnergySetupCOP helper( setup_helpers_for_packing_[ihelper] );
+		core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetupCOP helper( setup_helpers_for_packing_[ihelper] );
 		if ( helper->is_default() ) continue; // default contributes 0 to score, so just bypass
 		ScoreCacheOP cache(score_caches_[ihelper]);
 
@@ -776,6 +780,5 @@ core::Real MHCEpitopeEnergy::update_score(
 	return considered_total_;
 }
 
-} // mhc_epitope_energy
 } // scoring
 } // core

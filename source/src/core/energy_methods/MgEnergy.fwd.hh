@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file core/energy_methods/MgEnergy.fwd.hh
-/// @brief 
+/// @brief
 /// @details
 /// @author Rhiju Das, rhiju@stanford.edu
 
@@ -19,12 +19,11 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace magnesium {
-	class MgEnergy;
-	typedef utility::pointer::shared_ptr< MgEnergy > MgEnergyOP;
-	typedef utility::pointer::shared_ptr< MgEnergy const > MgEnergyCOP;
-} //magnesium
+namespace energy_methods {
+class MgEnergy;
+typedef utility::pointer::shared_ptr< MgEnergy > MgEnergyOP;
+typedef utility::pointer::shared_ptr< MgEnergy const > MgEnergyCOP;
+
 } //scoring
 } //core
 

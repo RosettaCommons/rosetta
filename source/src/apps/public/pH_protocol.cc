@@ -266,7 +266,7 @@ public:
 
 			core::scoring::ScoreFunctionOP score_fxn( core::scoring::get_score_function() );
 			//   scoring::ScoreFunctionOP score_fxn2( ScoreFunctionFactory::create_score_function( STANDARD_WTS ) );
-			core::scoring::methods::pHEnergy::set_pH ( curr_pH );
+			core::energy_methods::pHEnergy::set_pH ( curr_pH );
 
 			//   protocols::minimization_packing::RotamerTrialsMinMoverOP pack_mover( new protocols::minimization_packing::RotamerTrialsMinMover( score_fxn, *task ) );
 			protocols::minimization_packing::PackRotamersMoverOP pack_mover( new protocols::minimization_packing::PackRotamersMover( score_fxn, task ) );

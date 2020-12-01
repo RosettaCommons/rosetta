@@ -57,21 +57,21 @@ using namespace core::scoring;
 using namespace core::scoring::methods;
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the MPSpanAngleEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPSpanAngleEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPSpanAngleEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MPSpanAngleEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( mp_span_ang );
 	return sts;
@@ -83,9 +83,7 @@ MPSpanAngleEnergyCreator::score_types_for_method() const {
 //////////////////////////////////////////////////////
 MPSpanAngleEnergy::MPSpanAngleEnergy() :
 	parent( utility::pointer::make_shared< MPSpanAngleEnergyCreator >() )
-{
-	core::scoring::membrane::MPSpanInsertionEnergy mp_span_ins = core::scoring::membrane::MPSpanInsertionEnergy();
-}
+{}
 
 
 
@@ -95,17 +93,17 @@ MPSpanAngleEnergy::MPSpanAngleEnergy() :
 void
 MPSpanAngleEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
 	utility::vector1< core::Real > result = compute( const_cast< const pose::Pose &>( pose ), TR, false );
 	core::Real total = 0;
 	for ( auto const & sc : result ) total += sc;
-	totals[ mp_span_ang ] = total;
+	totals[ core::scoring::mp_span_ang ] = total;
 }
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPSpanAngleEnergy::clone() const
 {
 	return utility::pointer::make_shared< MPSpanAngleEnergy >( *this );
@@ -114,7 +112,7 @@ MPSpanAngleEnergy::clone() const
 void
 MPSpanAngleEnergy::setup_for_derivatives(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 }
@@ -123,7 +121,7 @@ MPSpanAngleEnergy::setup_for_derivatives(
 void
 MPSpanAngleEnergy::setup_for_scoring(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 }
@@ -134,8 +132,8 @@ MPSpanAngleEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const {
@@ -227,6 +225,5 @@ MPSpanAngleEnergy::version() const
 }
 
 
-} // membrane
 } // scoring
 } // core

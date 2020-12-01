@@ -23,26 +23,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace magnesium {
+namespace energy_methods {
 
-class MgEnergyCreator : public methods::EnergyMethodCreator
+class MgEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new MgEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //magnesium
 } //scoring
 } //core
 

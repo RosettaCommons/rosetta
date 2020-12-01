@@ -37,21 +37,22 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the EnvEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 EnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< EnvEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 EnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( env );
 	sts.push_back( cbeta );
@@ -62,12 +63,12 @@ EnvEnergyCreator::score_types_for_method() const {
 /// c-tor
 EnvEnergy::EnvEnergy() :
 	parent( utility::pointer::make_shared< EnvEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_EnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 EnvEnergy::clone() const
 {
 	return utility::pointer::make_shared< EnvEnergy >();
@@ -80,7 +81,7 @@ EnvEnergy::clone() const
 
 
 void
-EnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+EnvEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
@@ -95,7 +96,7 @@ void
 EnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -110,17 +111,17 @@ EnvEnergy::residue_energy(
 	env_score *= 2.019;
 	cb_score = 2.667 * ( cb_score6 + cb_score12 ) * 0.3;
 
-	core::Real rsd_wt = get_residue_weight_by_ss( pose.conformation().secstruct( rsd.seqpos() ) );
+	core::Real rsd_wt = core::scoring::methods::get_residue_weight_by_ss( pose.conformation().secstruct( rsd.seqpos() ) );
 
-	emap[ env   ] += env_score * rsd_wt;
-	emap[ cbeta ] += cb_score  * rsd_wt;
+	emap[ core::scoring::env   ] += env_score * rsd_wt;
+	emap[ core::scoring::cbeta ] += cb_score  * rsd_wt;
 } // residue_energy
 
 void
 EnvEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	potential_.finalize( pose );
@@ -131,6 +132,5 @@ EnvEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

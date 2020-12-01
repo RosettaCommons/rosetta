@@ -34,33 +34,32 @@
 static basic::Tracer tr( "core.energy_methods.DNAChiEnergy" );
 
 namespace core {
-namespace scoring {
-namespace dna {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNAChiEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DNAChiEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DNAChiEnergyCreator::score_types_for_method() const {
-	ScoreTypes sts;
-	sts.push_back( dna_chi );
+	core::scoring::ScoreTypes sts;
+	sts.push_back( core::scoring::dna_chi );
 	return sts;
 }
 
 /// ctor
 DNAChiEnergy::DNAChiEnergy() :
 	parent( utility::pointer::make_shared< DNAChiEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_DNABFormPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_DNABFormPotential() )
 {}
 
 DNAChiEnergy::~DNAChiEnergy() = default;
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNAChiEnergy::clone() const
 {
 	return utility::pointer::make_shared< DNAChiEnergy >();
@@ -75,7 +74,7 @@ void
 DNAChiEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( ! rsd.is_DNA() ) return;
@@ -86,7 +85,7 @@ DNAChiEnergy::residue_energy(
 	Real this_deriv( 0.0 );
 	potential_.eval_dna_bform_chi_torsion_score_residue( rsd, this_score, this_deriv );
 	//  tr << "Calculating dna chi score as:  " << this_score << std::endl;
-	emap[ dna_chi ] = this_score;
+	emap[ core::scoring::dna_chi ] = this_score;
 }
 
 
@@ -95,8 +94,8 @@ DNAChiEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	Real this_score( 0.0 );
@@ -108,7 +107,7 @@ DNAChiEnergy::eval_dof_derivative(
 		}
 		//  tr << "Calculating dna chi score as:  " << this_score << std::endl;
 	}
-	return ( weights[ dna_chi ] * this_deriv );
+	return ( weights[ core::scoring::dna_chi ] * this_deriv );
 }
 
 /// @brief DNAChiEnergy is context independent; indicates that no context graphs are required
@@ -125,7 +124,6 @@ DNAChiEnergy::version() const
 }
 
 
-} // dna
 } // scoring
 } // core
 

@@ -80,7 +80,7 @@ linear_chainbreak(
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreFunction;
 	using core::scoring::ScoreType;
-	using core::scoring::methods::LinearChainbreakEnergy;
+	using core::energy_methods::LinearChainbreakEnergy;
 
 	if ( pose.fold_tree().num_cutpoint() == 0 ) {
 		return 0;
@@ -203,7 +203,7 @@ overlap_chainbreak(
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreFunction;
 	using core::scoring::ScoreType;
-	using core::scoring::methods::LinearChainbreakEnergy;
+	using core::energy_methods::LinearChainbreakEnergy;
 
 	debug_assert( pos > 0 );
 	debug_assert( pos < pose.size() );
@@ -282,7 +282,7 @@ quadratic_chainbreak(
 	using core::scoring::EnergyMap;
 	using core::scoring::ScoreFunction;
 	using core::scoring::ScoreType;
-	using core::scoring::methods::ChainbreakEnergy;
+	using core::energy_methods::ChainbreakEnergy;
 
 	debug_assert( pos > 0 );
 	debug_assert( pos < pose.size() );

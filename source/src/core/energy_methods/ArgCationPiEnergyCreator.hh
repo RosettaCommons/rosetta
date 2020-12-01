@@ -24,14 +24,14 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class ArgCationPiEnergyCreator : public scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new ArgCationPiEnergy
-	scoring::methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
 		scoring::methods::EnergyMethodOptions const &
 	) const override;
@@ -43,7 +43,6 @@ public:
 
 };
 
-}
 }
 }
 

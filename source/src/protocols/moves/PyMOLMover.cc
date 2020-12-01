@@ -554,7 +554,7 @@ void PyMOLMover::send_membrane_planes( Pose const & pose ) {
 	}
 
 	// Compute Radius of Gyration
-	RG_Energy_Fast rg_method;
+	core::energy_methods::RG_Energy_Fast rg_method;
 	core::Real rg =  2*rg_method.calculate_rg_score( pose, relevant_residues );
 
 	// Get the normal vector and center position

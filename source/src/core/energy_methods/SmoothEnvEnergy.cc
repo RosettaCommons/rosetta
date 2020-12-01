@@ -37,21 +37,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the SmoothEnvEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SmoothEnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SmoothEnvEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SmoothEnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_env_smooth );
 	sts.push_back( cbeta_smooth );
@@ -62,12 +63,12 @@ SmoothEnvEnergyCreator::score_types_for_method() const {
 /// c-tor
 SmoothEnvEnergy::SmoothEnvEnergy() :
 	parent( utility::pointer::make_shared< SmoothEnvEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_SmoothEnvPairPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SmoothEnvEnergy::clone() const {
 	return utility::pointer::make_shared< SmoothEnvEnergy >();
 }
@@ -79,7 +80,7 @@ SmoothEnvEnergy::clone() const {
 
 
 void
-SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
@@ -87,7 +88,7 @@ SmoothEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 
 
 void
-SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+SmoothEnvEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// symmetry-specific code
 	// since it is a whole-structure energy, special treatment is needed to make sure this is computed correctly
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -109,7 +110,7 @@ void
 SmoothEnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
@@ -123,24 +124,24 @@ SmoothEnvEnergy::residue_energy(
 	env_score *= 2.019;
 	cb_score = 2.667 * ( cb_score6 + cb_score12 ) * 0.3;
 
-	emap[ cen_env_smooth ] += env_score;
-	emap[ cbeta_smooth ] += cb_score;
+	emap[ core::scoring::cen_env_smooth ] += env_score;
+	emap[ core::scoring::cbeta_smooth ] += cb_score;
 } // residue_energy
 
 
 void
 SmoothEnvEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
 
-	Real weight_env = weights[ cen_env_smooth ];
-	Real weight_cbeta = weights[ cbeta_smooth ];
+	Real weight_env = weights[ core::scoring::cen_env_smooth ];
+	Real weight_cbeta = weights[ core::scoring::cbeta_smooth ];
 
 	numeric::xyzVector<Real> d_env_score, d_cb_score6, d_cb_score12, d_cb_score;
 	potential_.evaluate_env_and_cbeta_deriv( pose, rsd, d_env_score, d_cb_score6, d_cb_score12);
@@ -167,8 +168,8 @@ SmoothEnvEnergy::eval_residue_derivatives(
 void
 SmoothEnvEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	potential_.finalize( pose );
 }
@@ -178,6 +179,5 @@ SmoothEnvEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-}
 }
 }

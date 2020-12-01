@@ -44,23 +44,23 @@
 //
 //
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 using namespace core::chemical;
 
 /// @details This must return a fresh instance of the RNA_LJ_BaseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_LJ_BaseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options ) );
+	core::scoring::etable::EtableCOP etable( core::scoring::ScoringManager::get_instance()->etable( options ) );
 	return utility::pointer::make_shared< RNA_LJ_BaseEnergy >( *etable );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_LJ_BaseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_fa_atr_base );
 	sts.push_back( rna_fa_rep_base );
@@ -68,7 +68,7 @@ RNA_LJ_BaseEnergyCreator::score_types_for_method() const {
 }
 
 
-RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( etable::Etable const & etable_in ) :
+RNA_LJ_BaseEnergy::RNA_LJ_BaseEnergy( core::scoring::etable::Etable const & etable_in ) :
 	parent( utility::pointer::make_shared< RNA_LJ_BaseEnergyCreator >() ),
 	etable_( etable_in ),
 	ljatr_( etable_in.ljatr() ),
@@ -91,7 +91,7 @@ RNA_LJ_BaseEnergy::atomic_interaction_cutoff() const
 }
 
 // clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_LJ_BaseEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_LJ_BaseEnergy >( *this );
@@ -111,8 +111,8 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	// Currently only works for RNA bases!!!
 	// Could easily make it more general by checking for atoms that are *aromatic*
@@ -123,7 +123,7 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 
 	Real fa_atr_score( 0.0 ), fa_rep_score( 0.0 );
 	// Basically just re-calculating lennard jones terms.
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -157,12 +157,12 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 		} // j
 	} // i
 
-	emap[ rna_fa_rep_base ] += fa_rep_score;
+	emap[ core::scoring::rna_fa_rep_base ] += fa_rep_score;
 
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
-	emap[ rna_fa_atr_base ] += fa_atr_score;
+	emap[ core::scoring::rna_fa_atr_base ] += fa_atr_score;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -171,7 +171,7 @@ RNA_LJ_BaseEnergy::residue_pair_energy(
 void
 RNA_LJ_BaseEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -232,8 +232,8 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -252,10 +252,10 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 	bool const pos1_fixed( domain_map( i ) != 0 );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
@@ -267,7 +267,7 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 
 		conformation::Residue const & rsd2( pose.residue( j ) );
 
-		using namespace etable::count_pair;
+		using namespace core::scoring::etable::count_pair;
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -294,8 +294,8 @@ RNA_LJ_BaseEnergy::eval_atom_derivative(
 			if ( rsd1.is_repulsive( m ) ) fa_atr_deriv = 0.0;
 			if ( rsd2.is_repulsive( n ) ) fa_atr_deriv = 0.0;
 
-			Vector const f2_fwd =   -1.0 * cp_weight * d_ij_norm * ( fa_atr_deriv * weights[ rna_fa_atr_base ] +
-				fa_rep_deriv * weights[ rna_fa_rep_base ] );
+			Vector const f2_fwd =   -1.0 * cp_weight * d_ij_norm * ( fa_atr_deriv * weights[ core::scoring::rna_fa_atr_base ] +
+				fa_rep_deriv * weights[ core::scoring::rna_fa_rep_base ] );
 			Vector const f1_fwd =   1.0 * cross( f2_fwd, heavy_atom_j );
 
 			F1 += f1_fwd;
@@ -331,7 +331,7 @@ RNA_LJ_BaseEnergy::eval_atom_energy(
 		conformation::Residue const & rsd2( pose.residue( j ) );
 		if ( !rsd2.is_RNA() ) continue;
 
-		using namespace etable::count_pair;
+		using namespace core::scoring::etable::count_pair;
 		CountPairFunctionOP cpfxn =
 			CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -378,8 +378,8 @@ RNA_LJ_BaseEnergy::indicate_required_context_graphs(
 void
 RNA_LJ_BaseEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	if ( verbose_ ) std::cout << "DONE SCORING" << std::endl;
@@ -390,7 +390,6 @@ RNA_LJ_BaseEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} //rna
 } //scoring
 } //core
 

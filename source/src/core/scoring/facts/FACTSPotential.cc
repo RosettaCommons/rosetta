@@ -59,6 +59,7 @@ using namespace std;
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 
 // fast math -- from https://code.google.com/p/fastapprox/downloads/detail?name=fastapprox-0.3.2.tar.gz
@@ -159,7 +160,7 @@ void FACTSPotential::setup_for_scoring(pose::Pose & pose, bool const & packing) 
 	FACTSPoseInfoOP facts_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::facts::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 		// commenting out below would always set whole residues as enumeration_shell
 		//facts_info->update_enumeration_shell( pose, true );
 	} else {
@@ -1173,7 +1174,7 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 	Vector cross_v;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::facts::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
 		facts_info = utility::pointer::make_shared< FACTSPoseInfo >();
 	}
@@ -1182,7 +1183,7 @@ void FACTSPotential::setup_for_derivatives( pose::Pose & pose ) const
 	if ( facts_info->is_changed( pose ) ) {
 		TR.Debug << "Pose changed since last scoring, call setup_for_scoring..." << std::endl;
 		setup_for_scoring( pose, false );
-		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::facts::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	}
 
 	// This is to make sure that context-dependent derivative arrays are initialized at least once
@@ -1520,7 +1521,7 @@ void FACTSPotential::setup_for_packing(
 	FACTSPoseInfoOP facts_info;
 
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) ) {
-		facts_info = utility::pointer::static_pointer_cast< core::scoring::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
+		facts_info = utility::pointer::static_pointer_cast< core::scoring::facts::FACTSPoseInfo > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::FACTS_POSE_INFO ) );
 	} else {
 		facts_info = utility::pointer::make_shared< FACTSPoseInfo >();
 		setup_for_scoring( pose, true );
@@ -1762,5 +1763,6 @@ void FACTSPotential::evaluate_polar_otf_energy(Residue const & rsd1,
 	}
 }
 
+} // namespace facts
 } // namespace scoring
 } // namespace core

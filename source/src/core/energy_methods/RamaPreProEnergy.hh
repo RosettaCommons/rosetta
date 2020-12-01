@@ -12,8 +12,8 @@
 /// @author Frank DiMaio
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- modified this to work with D-amino acids, BACKBONE_AA amino acids, and cyclic geometry.
 
-#ifndef INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
-#define INCLUDED_core_scoring_methods_RamaPreProEnergy_hh
+#ifndef INCLUDED_core_energy_methods_RamaPreProEnergy_hh
+#define INCLUDED_core_energy_methods_RamaPreProEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/RamaPreProEnergy.fwd.hh>
@@ -41,23 +41,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class RamaPreProEnergy : public ContextIndependentLRTwoBodyEnergy {
+
+class RamaPreProEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 	RamaPreProEnergy( );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	bool
 	defines_residue_pair_energy(
@@ -72,16 +72,16 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override { }
 
 	utility::vector1< id::PartialAtomID >
@@ -90,16 +90,16 @@ public:
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*min_data*/,
+		core::scoring::ResSingleMinimizationData const & /*min_data*/,
 		id::DOF_ID const & /*dof_id*/,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & /*sfxn*/,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & /*sfxn*/,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	bool
 	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
@@ -114,22 +114,21 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 	bool is_allowed_type( core::chemical::ResidueType const & rt ) const;
 
 private:
-	RamaPrePro const & potential_;
+	core::scoring::RamaPrePro const & potential_;
 
 	core::Size version() const override;
 
 };
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_methods_RamaPreProEnergy_HH
+#endif // INCLUDED_core_energy_methods_RamaPreProEnergy_HH

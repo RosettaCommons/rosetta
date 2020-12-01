@@ -19,15 +19,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace dna {
+namespace energy_methods {
 
 class DNATorsionEnergy;
 
 typedef utility::pointer::shared_ptr< DNATorsionEnergy > DNATorsionEnergyOP;
 typedef utility::pointer::shared_ptr< DNATorsionEnergy const > DNATorsionEnergyCOP;
 
-} // dna
 } // scoring
 } // core
 

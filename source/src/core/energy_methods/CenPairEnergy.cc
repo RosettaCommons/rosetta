@@ -39,20 +39,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+
+core::scoring::methods::EnergyMethodOP
 CenPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return utility::pointer::make_shared< methods::CenPairEnergy >();
+	return utility::pointer::make_shared< CenPairEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
 /// this EnergyMethodCreator creates in its create_energy_method() function
-ScoreTypes
+core::scoring::ScoreTypes
 CenPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( pair );
 	sts.push_back( cenpack );
@@ -63,12 +64,12 @@ CenPairEnergyCreator::score_types_for_method() const {
 /// c-tor
 CenPairEnergy::CenPairEnergy() :
 	parent( utility::pointer::make_shared< CenPairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_EnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_EnvPairPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenPairEnergy::clone() const
 {
 	return utility::pointer::make_shared< CenPairEnergy >();
@@ -81,7 +82,7 @@ CenPairEnergy::clone() const
 
 
 void
-CenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+CenPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	potential_.compute_centroid_environment( pose );
@@ -101,8 +102,8 @@ CenPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -129,17 +130,17 @@ CenPairEnergy::residue_pair_energy(
 
 	//Rosetta++ used the first residue's weight for both sides of the pair. I hate that. The above
 	//comment is an example of an alternative we should probably test in the distant future.
-	core::Real rsd_wt =  get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() )) ;
+	core::Real rsd_wt =  core::scoring::methods::get_residue_weight_by_ss( pose.conformation().secstruct( rsd1.seqpos() )) ;
 
-	emap[ pair ]    += pair_score    * rsd_wt;
-	emap[ cenpack ] += cenpack_score;
+	emap[ core::scoring::pair ]    += pair_score    * rsd_wt;
+	emap[ core::scoring::cenpack ] += cenpack_score;
 }
 
 void
 CenPairEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	potential_.finalize( pose );
@@ -158,6 +159,5 @@ CenPairEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

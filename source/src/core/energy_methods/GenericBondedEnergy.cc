@@ -45,22 +45,23 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.methods.GenericBondedEnergy" );
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GenericBondedEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< GenericBondedEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 GenericBondedEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( gen_bonded );
 	sts.push_back( gen_bonded_bond );
@@ -79,9 +80,9 @@ GenericBondedEnergy::GenericBondedEnergy( GenericBondedEnergy const & src ) :
 {
 }
 
-GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & eopt ):
+GenericBondedEnergy::GenericBondedEnergy( core::scoring::methods::EnergyMethodOptions const & eopt ):
 	parent( utility::pointer::make_shared< GenericBondedEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_GenericBondedPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_GenericBondedPotential() )
 {
 	score_full_ = eopt.genbonded_score_full();
 	score_hybrid_ = eopt.genbonded_score_hybrid();
@@ -90,7 +91,7 @@ GenericBondedEnergy::GenericBondedEnergy( EnergyMethodOptions const & eopt ):
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GenericBondedEnergy::clone() const
 {
 	return utility::pointer::make_shared< GenericBondedEnergy >( *this );
@@ -99,9 +100,10 @@ GenericBondedEnergy::clone() const
 void
 GenericBondedEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &sfxn
+	core::scoring::ScoreFunction const &sfxn
 ) const {
-	using namespace methods;
+	using namespace core::scoring;
+	using namespace core::scoring::methods;
 
 	// DIE if (score_full) & (weights contains any statistical torsion potential)
 	bool const has_rama_weight( std::abs(sfxn[core::scoring::rama_prepro]) > 1.0e-6 ||
@@ -116,15 +118,15 @@ GenericBondedEnergy::setup_for_scoring(
 	}
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
@@ -143,20 +145,20 @@ GenericBondedEnergy::setup_for_scoring(
 		s_types.push_back( gen_bonded_angle );
 		s_types.push_back( gen_bonded_torsion );
 		s_types.push_back( gen_bonded_improper );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::PolymerBondedEnergyContainer >( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
 	potential_.setup_for_scoring( pose, sfxn, score_full_, score_hybrid_  );
 }
 
-methods::LongRangeEnergyType
-GenericBondedEnergy::long_range_type() const { return methods::gen_bonded_lr; }
+core::scoring::methods::LongRangeEnergyType
+GenericBondedEnergy::long_range_type() const { return core::scoring::methods::gen_bonded_lr; }
 
 void
 GenericBondedEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &sfxn
+	core::scoring::ScoreFunction const &sfxn
 ) const {
 	potential_.setup_for_scoring( pose, sfxn, score_full_, score_hybrid_ );
 }
@@ -166,8 +168,8 @@ GenericBondedEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & ,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
@@ -178,13 +180,13 @@ void
 GenericBondedEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & /*min_data*/,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 
 	if ( !defines_score_for_residue_pair( rsd1, rsd2 ) ) return;
@@ -231,8 +233,8 @@ void
 GenericBondedEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	/* bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
@@ -258,10 +260,10 @@ GenericBondedEnergy::eval_intrares_energy(
 void
 GenericBondedEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*res_data_cache*/,
+	core::scoring::ResSingleMinimizationData const & /*res_data_cache*/,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const {
 
 	/*bool rsd_is_canonical_aa = chemical::is_canonical_L_aa_or_gly( rsd.aa() ) ||
@@ -286,7 +288,6 @@ GenericBondedEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core
 

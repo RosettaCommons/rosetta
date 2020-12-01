@@ -37,23 +37,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 
-class ContextDependentGeometricSolEnergy : public methods::ContextDependentTwoBodyEnergy  {
+class ContextDependentGeometricSolEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextDependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentTwoBodyEnergy  parent;
 public:
 
 
-	ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & options );
+	ContextDependentGeometricSolEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// @brief copy c-tor
 	ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & src );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// attempt to precalculate backbone/backbone energies in advance
@@ -65,7 +64,7 @@ public:
 
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 
 	bool
@@ -82,47 +81,47 @@ public:
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ires,
 		conformation::Residue const & jres,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	virtual
-	etable::count_pair::CountPairFunctionCOP
+	core::scoring::etable::count_pair::CountPairFunctionCOP
 	get_count_pair_function(
 		Size const res1,
 		Size const res2,
 		pose::Pose const & pose,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const;
 
 	virtual
-	etable::count_pair::CountPairFunctionCOP
+	core::scoring::etable::count_pair::CountPairFunctionCOP
 	get_count_pair_function(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2
 	) const;
 
 	virtual
-	etable::count_pair::CountPairFunctionCOP
+	core::scoring::etable::count_pair::CountPairFunctionCOP
 	get_intrares_countpair(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const;
 
 	bool
@@ -133,11 +132,11 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
+		core::scoring::ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData & pair_data
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData & pair_data
 	) const override;
 
 	bool
@@ -147,17 +146,17 @@ public:
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -173,20 +172,20 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & weights ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & ,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & ,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	Distance
@@ -208,9 +207,9 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 	// data
 	/////////////////////////////////////////////////////////////////////////////
-	methods::EnergyMethodOptions const & options_;
+	core::scoring::methods::EnergyMethodOptions const & options_;
 
-	GeometricSolEnergyEvaluatorOP evaluator_;
+	scoring::geometric_solvation::GeometricSolEnergyEvaluatorOP evaluator_;
 
 	mutable Real precalculated_bb_bb_energy_;
 
@@ -218,7 +217,6 @@ private:
 
 };
 
-} // hbonds
 } // scoring
 } // core
 

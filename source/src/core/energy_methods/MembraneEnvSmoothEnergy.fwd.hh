@@ -11,8 +11,8 @@
 /// @brief  Statistically derived smooth membrane environment potential class declaration
 /// @author Vladimir Yarov-Yarovoy
 
-#ifndef INCLUDED_core_scoring_methods_MembraneEnvSmoothEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_MembraneEnvSmoothEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_MembraneEnvSmoothEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_MembraneEnvSmoothEnergy_fwd_hh
 
 // Unit Headers
 
@@ -24,13 +24,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class MembraneEnvSmoothEnergy;
 
-}
 }
 }
 

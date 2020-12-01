@@ -58,22 +58,22 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// Creator methods ////////////////////
 
 /// @brief Create a Fresh Instance of the MP Pair Energy Method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPPairEnergy >();
 }
 
 /// @brief Return the relevant score type - MPPair
-ScoreTypes
+core::scoring::ScoreTypes
 MPPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( MPPair );
 	return sts;
@@ -82,12 +82,12 @@ MPPairEnergyCreator::score_types_for_method() const {
 /// @brief Default Constructor
 MPPairEnergy::MPPairEnergy() :
 	parent( utility::pointer::make_shared< MPPairEnergyCreator >() ),
-	mpdata_( ScoringManager::get_instance()->get_MembraneData() ),
+	mpdata_( core::scoring::ScoringManager::get_instance()->get_MembraneData() ),
 	no_interpolate_mpair_( true ) // temp
 {}
 
 /// @brief Clone Method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPPairEnergy::clone() const {
 	return utility::pointer::make_shared< MPPairEnergy >();
 }
@@ -96,7 +96,7 @@ MPPairEnergy::clone() const {
 
 /// @brief Setup by updating residue neighbors and computing cen env
 void
-MPPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+MPPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	pose.update_residue_neighbors();
 	mpdata_.compute_centroid_environment( pose );
 }
@@ -107,8 +107,8 @@ MPPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	// Check Structure is a membrane protein
@@ -178,14 +178,14 @@ MPPairEnergy::residue_pair_energy(
 	pair_score = compute_mpair_score( z_position1, z_position2, aa1, aa2, cendist );
 
 	// Set Score in the Energy Map
-	emap[ MPPair ] += pair_score;
+	emap[ core::scoring::MPPair ] += pair_score;
 }
 
 void
 MPPairEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	mpdata_.finalize( pose );
 }
@@ -289,7 +289,6 @@ MPPairEnergy::compute_mpair_score(
 	return mpair_score;
 }
 
-} // membrane
 } // scoring
 } // core
 

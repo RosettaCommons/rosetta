@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_EnvSmoothEnergy_hh
-#define INCLUDED_core_scoring_methods_EnvSmoothEnergy_hh
+#ifndef INCLUDED_core_energy_methods_EnvSmoothEnergy_hh
+#define INCLUDED_core_energy_methods_EnvSmoothEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/EnvSmoothEnergy.fwd.hh>
@@ -37,24 +37,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class EnvSmoothEnergy : public ContextDependentOneBodyEnergy  {
+
+class EnvSmoothEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public:
 
 	/// @brief default constructor
-	EnvSmoothEnergy( EnergyMethodOptions const & options );
+	EnvSmoothEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// @brief copy constructor
 	EnvSmoothEnergy( EnvSmoothEnergy const & src );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -64,18 +64,18 @@ public:
 	/// @brief computes dScore/dNumNeighbors for all residues for rapid use in later
 	/// atom derivate calculations
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief causes a neighbor graph update
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
 	/// @brief evaluates the one-body energy for a residue
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,// pose,
-		EnergyMap &// emap
+		core::scoring::EnergyMap &// emap
 	) const override;
 
 	/// @brief increments the F1 and F2 derivative vectors for an atom
@@ -84,8 +84,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -94,14 +94,14 @@ public:
 	Distance
 	atomic_interaction_cutoff() const;
 
-	/// @brief Tells the scoring function to maintain the TwelveANeighborGraph
+	/// @brief Tells the scoring function to maintain the core::scoring::TwelveANeighborGraph
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 private:
 
 	/// @brief read envdata from database
 	void
-	initialize( EnergyMethodOptions const & options );
+	initialize( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// @brief returns the atom name for the atom used to represent the sidechain for
 	/// a particular amino acid; this atom was used to derive the statistics this potential
@@ -153,7 +153,6 @@ private:
 };
 
 
-}
 }
 }
 

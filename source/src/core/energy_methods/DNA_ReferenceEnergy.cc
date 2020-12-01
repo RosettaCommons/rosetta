@@ -40,34 +40,35 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-using namespace dna; //////////////////// NOTE NOTE NOTE
+
+using namespace core::scoring::dna; //////////////////// NOTE NOTE NOTE
 static basic::Tracer TR("core.scoring.methods.DNA_ReferenceEnergy");
 
 
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_ReferenceEnergyCreator::create_energy_method(
-	EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< DNA_ReferenceEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DNA_ReferenceEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dna_ref );
 	return sts;
 }
 
-DNA_ReferenceEnergy::DNA_ReferenceEnergy( EnergyMethodOptions const & options ):
+DNA_ReferenceEnergy::DNA_ReferenceEnergy( core::scoring::methods::EnergyMethodOptions const & options ):
 	parent( utility::pointer::make_shared< DNA_ReferenceEnergyCreator >() )
 {
-	if ( !options.has_method_weights( dna_ref ) ) utility_exit_with_message( "dna_ref requires method weights!" );
+	if ( !options.has_method_weights( core::scoring::dna_ref ) ) utility_exit_with_message( "dna_ref requires method weights!" );
 	// order is aa,ac,ag,at,ca,cc,cg,ct,...
-	utility::vector1< Real > wts( options.method_weights( dna_ref ) );
+	utility::vector1< Real > wts( options.method_weights( core::scoring::dna_ref ) );
 	base_step_reference_energies_.resize(4);
 	runtime_assert( wts.size() == 16 );
 	for ( Size i=1; i<= 4; ++i ) {
@@ -89,7 +90,7 @@ DNA_ReferenceEnergy::DNA_ReferenceEnergy( DNA_ReferenceEnergy const & src ):
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_ReferenceEnergy::clone() const
 {
 	return utility::pointer::make_shared< DNA_ReferenceEnergy >( *this );
@@ -101,7 +102,7 @@ DNA_ReferenceEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 
-/// same as dna::retrieve_base_partner_from_pose
+/// same as core::scoring::dna::retrieve_base_partner_from_pose
 inline
 BasePartner const &
 retrieve_base_partner_from_pose_inline( pose::Pose const & pose )
@@ -120,8 +121,8 @@ DNA_ReferenceEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( !rsd1.is_DNA() || !rsd2.is_DNA() ) return;
@@ -129,10 +130,10 @@ DNA_ReferenceEnergy::residue_pair_energy(
 	Size const pos1( rsd1.seqpos() ), pos2( rsd2.seqpos() );
 	if ( pos2 == pos1 + 1 && !rsd1.is_upper_terminus() &&
 			count_pair_bs( pos1, pos2, retrieve_base_partner_from_pose_inline( pose ) ) ) {
-		emap[ dna_ref ] += base_step_energy( rsd1.aa(), rsd2.aa() );
+		emap[ core::scoring::dna_ref ] += base_step_energy( rsd1.aa(), rsd2.aa() );
 	} else if ( pos1 == pos2+1 && !rsd2.is_upper_terminus() &&
 			count_pair_bs( pos2, pos1, retrieve_base_partner_from_pose_inline( pose ) ) ) {
-		emap[ dna_ref ] += base_step_energy( rsd2.aa(), rsd1.aa() );
+		emap[ core::scoring::dna_ref ] += base_step_energy( rsd2.aa(), rsd1.aa() );
 	}
 }
 
@@ -151,6 +152,5 @@ DNA_ReferenceEnergy::indicate_required_context_graphs( utility::vector1< bool > 
 
 
 
-} // methods
 } // scoring
 } // core

@@ -56,22 +56,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR("core.scoring.methods.DNA_DihedralEnergy" );
 
 /// @details This must return a fresh instance of the LK_hack class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_DihedralEnergyCreator::create_energy_method(
-	EnergyMethodOptions const &// options
+	core::scoring::methods::EnergyMethodOptions const &// options
 ) const {
 	return utility::pointer::make_shared< DNA_DihedralEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DNA_DihedralEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dna_dihedral_bb );
 	sts.push_back( dna_dihedral_chi );
@@ -84,7 +85,7 @@ DNA_DihedralEnergyCreator::score_types_for_method() const {
 /// ctor
 DNA_DihedralEnergy::DNA_DihedralEnergy() :
 	parent( utility::pointer::make_shared< DNA_DihedralEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_DNA_DihedralPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_DNA_DihedralPotential() )
 {
 	configure_from_options_system();
 }
@@ -96,7 +97,7 @@ DNA_DihedralEnergy::DNA_DihedralEnergy( DNA_DihedralEnergy const & src ) :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_DihedralEnergy::clone() const
 {
 	return utility::pointer::make_shared< DNA_DihedralEnergy >( *this );
@@ -131,20 +132,21 @@ DNA_DihedralEnergy::defines_residue_pair_energy(
 void
 DNA_DihedralEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
-	using namespace methods;
+	using namespace core::scoring;
+	using namespace core::scoring::methods;
 
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
@@ -161,7 +163,7 @@ DNA_DihedralEnergy::setup_for_scoring(
 		s_types.push_back( dna_dihedral_bb );
 		s_types.push_back( dna_dihedral_chi );
 		s_types.push_back( dna_dihedral_sugar );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::PolymerBondedEnergyContainer >( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -171,8 +173,8 @@ void
 DNA_DihedralEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	core::pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( !rsd.is_DNA() ) return;
@@ -218,9 +220,9 @@ DNA_DihedralEnergy::eval_intrares_energy(
 		}
 	}
 
-	emap[ dna_dihedral_bb    ] += bb_score;
-	emap[ dna_dihedral_chi   ] += chi_score;
-	emap[ dna_dihedral_sugar ] += sugar_score;
+	emap[ core::scoring::dna_dihedral_bb    ] += bb_score;
+	emap[ core::scoring::dna_dihedral_chi   ] += chi_score;
+	emap[ core::scoring::dna_dihedral_sugar ] += sugar_score;
 
 	//std::pair< std::string, int > puckerOld;
 	//scoring::dna::get_sugar_pucker( rsd, puckerOld );
@@ -234,8 +236,8 @@ DNA_DihedralEnergy::residue_pair_energy(
 	conformation::Residue const & ,//rsd1,
 	conformation::Residue const & ,//rsd2,
 	pose::Pose const & ,//pose,
-	ScoreFunction const &,
-	EnergyMap & //emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & //emap
 ) const
 {
 	//
@@ -281,12 +283,12 @@ DNA_DihedralEnergy::atoms_with_dof_derivatives(
 Real
 DNA_DihedralEnergy::eval_intraresidue_dof_derivative(
 	conformation::Residue const &,// rsd,
-	ResSingleMinimizationData const &, // min_data,
+	core::scoring::ResSingleMinimizationData const &, // min_data,
 	id::DOF_ID const & , //dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	Real deriv(0.0), score, dscore_dtor;
@@ -300,7 +302,7 @@ DNA_DihedralEnergy::eval_intraresidue_dof_derivative(
 	if ( is_bb && tor != 4 ) {
 		if ( tor == 2 || tor == 3 ) {
 			potential_.eval_harmonic_backbone_torsion_score_and_deriv( tor, rsd, pose, score, dscore_dtor );
-			deriv = weights[ dna_dihedral_bb ] * dscore_dtor;
+			deriv = weights[ core::scoring::dna_dihedral_bb ] * dscore_dtor;
 		}
 		// other torsion derivatives in res-pair
 	} else {
@@ -313,7 +315,7 @@ DNA_DihedralEnergy::eval_intraresidue_dof_derivative(
 					Real chi_i_score, dscore_dchi_i;
 					potential_.eval_harmonic_sugar_pucker_dependent_chi_torsion_score_and_deriv(
 						rsd, pose, pucker-1, chi_i_score, dscore_dchi_i );
-					deriv += weights[ dna_dihedral_chi ] * puckerProbs[pucker] * dscore_dchi_i;
+					deriv += weights[ core::scoring::dna_dihedral_chi ] * puckerProbs[pucker] * dscore_dchi_i;
 				}
 			}
 		} else {
@@ -326,7 +328,7 @@ DNA_DihedralEnergy::eval_intraresidue_dof_derivative(
 					Real score, dscore_dtor;
 					potential_.eval_sugar_torsion_score_and_deriv(
 						sugar_torsions[ sugar_tor ], sugar_tor, rsd, pucker-1, score, dscore_dtor );
-					deriv += weights[ dna_dihedral_sugar ] * puckerProbs[pucker]* dscore_dtor;
+					deriv += weights[ core::scoring::dna_dihedral_sugar ] * puckerProbs[pucker]* dscore_dtor;
 				}
 			}
 		}
@@ -341,10 +343,10 @@ DNA_DihedralEnergy::eval_intraresidue_dof_derivative(
 void
 DNA_DihedralEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,// min_data,
+	core::scoring::ResSingleMinimizationData const &,// min_data,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > &atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > &atom_derivs
 ) const
 {
 	using namespace utility;
@@ -363,14 +365,14 @@ DNA_DihedralEnergy::eval_intrares_derivatives(
 		Real chi_i_score, dscore_dchi_i;
 		potential_.eval_harmonic_sugar_pucker_dependent_chi_torsion_score_and_deriv(
 			rsd, pose, pucker-1, chi_i_score, dscore_dchi_i );
-		Es[pucker] += weights[ dna_dihedral_chi ] * chi_i_score;
+		Es[pucker] += weights[ core::scoring::dna_dihedral_chi ] * chi_i_score;
 
 		// sugar
 		for ( Size tor=1; tor<= 4; ++tor ) {
 			Real score, dscore_dtor;
 			potential_.eval_sugar_torsion_score_and_deriv(
 				sugar_torsions[ tor ], tor, rsd, pucker-1, score, dscore_dtor );
-			Es[pucker] += weights[ dna_dihedral_sugar ] * score;
+			Es[pucker] += weights[ core::scoring::dna_dihedral_sugar ] * score;
 		}
 	}
 
@@ -417,7 +419,7 @@ DNA_DihedralEnergy::eval_intrares_derivatives(
 				Real score_i, dscore_i_dtor;
 				potential_.eval_sugar_torsion_score_and_deriv(
 					sugar_torsions[ tor ], tor, rsd, pucker-1, score_i, dscore_i_dtor );
-				dscore_dtor +=  weights[ dna_dihedral_sugar ] * puckerProbs[pucker]* dscore_i_dtor;
+				dscore_dtor +=  weights[ core::scoring::dna_dihedral_sugar ] * puckerProbs[pucker]* dscore_i_dtor;
 			}
 		}
 
@@ -458,13 +460,13 @@ void
 DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsdA,
 	conformation::Residue const & rsdB,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & rA_atom_derivs,
-	utility::vector1< DerivVectorPair > & rB_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & rA_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & rB_atom_derivs
 ) const
 {
 	// we compute bb tors 5 & 6 on rsd1, and bb tor 1 on rsd2 here
@@ -478,8 +480,8 @@ DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const &rsd1 = rsdA.seqpos() < rsdB.seqpos() ? rsdA : rsdB;
 	conformation::Residue const &rsd2 = rsdA.seqpos() < rsdB.seqpos() ? rsdB : rsdA;
 
-	utility::vector1< DerivVectorPair > &r1_atom_derivs = rsdA.seqpos() < rsdB.seqpos() ? rA_atom_derivs : rB_atom_derivs;
-	utility::vector1< DerivVectorPair > &r2_atom_derivs = rsdA.seqpos() < rsdB.seqpos() ? rB_atom_derivs : rA_atom_derivs;
+	utility::vector1< core::scoring::DerivVectorPair > &r1_atom_derivs = rsdA.seqpos() < rsdB.seqpos() ? rA_atom_derivs : rB_atom_derivs;
+	utility::vector1< core::scoring::DerivVectorPair > &r2_atom_derivs = rsdA.seqpos() < rsdB.seqpos() ? rB_atom_derivs : rA_atom_derivs;
 
 	// depsilon and dzeta parts of beta
 	potential_.eval_harmonic_backbone_torsion_score_and_deriv( 1, rsd2, pose, score, dscore_dtor1 );
@@ -490,7 +492,7 @@ DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	core::id::TorsionID tor5( rsd1.seqpos(), id::BB, 5 );
 	bool tor5_invalid = pose.conformation().get_torsion_angle_atom_ids( tor5, id1, id2, id3, id4 );
 	if ( !tor5_invalid ) {
-		deriv = weights[ dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor5+dscore_deps2+dscore_deps5+dscore_deps6 );
+		deriv = weights[ core::scoring::dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor5+dscore_deps2+dscore_deps5+dscore_deps6 );
 		numeric::deriv::dihedral_p1_cosine_deriv(rsd1.xyz(id1.atomno()), rsd1.xyz(id2.atomno()), rsd1.xyz(id3.atomno()), rsd2.xyz(id4.atomno()), phi, f1, f2);
 		r1_atom_derivs[ id1.atomno() ].f1() += deriv * f1;
 		r1_atom_derivs[ id1.atomno() ].f2() += deriv * f2;
@@ -514,7 +516,7 @@ DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	core::id::TorsionID tor6( rsd1.seqpos(), id::BB, 6 );
 	bool tor6_invalid = pose.conformation().get_torsion_angle_atom_ids( tor6, id1, id2, id3, id4 );
 	if ( !tor6_invalid ) {
-		deriv = weights[ dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor6+dscore_dzeta2+dscore_dzeta5+dscore_dzeta6  );
+		deriv = weights[ core::scoring::dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor6+dscore_dzeta2+dscore_dzeta5+dscore_dzeta6  );
 		numeric::deriv::dihedral_p1_cosine_deriv(rsd1.xyz(id1.atomno()), rsd1.xyz(id2.atomno()), rsd2.xyz(id3.atomno()), rsd2.xyz(id4.atomno()), phi, f1, f2);
 		r1_atom_derivs[ id1.atomno() ].f1() += deriv * f1;
 		r1_atom_derivs[ id1.atomno() ].f2() += deriv * f2;
@@ -539,7 +541,7 @@ DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	bool tor1_invalid = pose.conformation().get_torsion_angle_atom_ids( tor1, id1, id2, id3, id4 );
 	if ( !tor1_invalid ) {
 		// rads -> degs
-		deriv = weights[ dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor1 );
+		deriv = weights[ core::scoring::dna_dihedral_bb ] * numeric::conversions::degrees( dscore_dtor1 );
 		numeric::deriv::dihedral_p1_cosine_deriv(rsd1.xyz(id1.atomno()), rsd2.xyz(id2.atomno()), rsd2.xyz(id3.atomno()), rsd2.xyz(id4.atomno()), phi, f1, f2);
 		r1_atom_derivs[ id1.atomno() ].f1() += deriv * f1;
 		r1_atom_derivs[ id1.atomno() ].f2() += deriv * f2;
@@ -561,14 +563,13 @@ DNA_DihedralEnergy::eval_residue_pair_derivatives(
 	}
 }
 
-methods::LongRangeEnergyType
-DNA_DihedralEnergy::long_range_type() const { return methods::dna_dihedral_lr; }
+core::scoring::methods::LongRangeEnergyType
+DNA_DihedralEnergy::long_range_type() const { return core::scoring::methods::dna_dihedral_lr; }
 
 void
 DNA_DihedralEnergy::indicate_required_context_graphs(utility::vector1< bool > & ) const {}
 
 
-} // methods
 } // scoring
 } // core
 

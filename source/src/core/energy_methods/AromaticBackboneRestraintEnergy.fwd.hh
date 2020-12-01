@@ -12,22 +12,21 @@
 /// @author Andrew Watkins (amw579@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_AromaticBackboneRestraintEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_AromaticBackboneRestraintEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_AromaticBackboneRestraintEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_AromaticBackboneRestraintEnergy_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class AromaticBackboneRestraintEnergy;
 
 typedef utility::pointer::shared_ptr< AromaticBackboneRestraintEnergy > AromaticBackboneRestraintEnergyOP;
 typedef utility::pointer::shared_ptr< AromaticBackboneRestraintEnergy const > AromaticBackboneRestraintEnergyCOP;
 
-} // methods
 } // scoring
 } // core
 

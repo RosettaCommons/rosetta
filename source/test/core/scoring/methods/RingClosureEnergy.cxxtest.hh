@@ -51,6 +51,7 @@ using namespace core::kinematics;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+using namespace core::energy_methods;
 
 static basic::Tracer TR("core.scoring.methods.RingClosureEnergy.cxxtest");
 

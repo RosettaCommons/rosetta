@@ -38,21 +38,22 @@
 #include <core/scoring/EnergyMap.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the CenHBEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenHBEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< CenHBEnergy >( );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CenHBEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_hb );
 	return sts;
@@ -62,7 +63,7 @@ CenHBEnergyCreator::score_types_for_method() const {
 /// @details  C-TOR with method options object
 CenHBEnergy::CenHBEnergy( ):
 	parent( utility::pointer::make_shared< CenHBEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_CenHBPotential( ) ),
+	potential_( core::scoring::ScoringManager::get_instance()->get_CenHBPotential( ) ),
 	soft_( false )
 {
 	using namespace basic::options;
@@ -74,7 +75,7 @@ CenHBEnergy::CenHBEnergy( ):
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenHBEnergy::clone() const {
 	return utility::pointer::make_shared< CenHBEnergy >( *this );
 }
@@ -89,13 +90,13 @@ CenHBEnergy::CenHBEnergy( CenHBEnergy const & /*src*/ ) = default;
 
 
 void
-CenHBEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+CenHBEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	pose.update_residue_neighbors();
 }
 
 
 void
-CenHBEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+CenHBEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	pose.update_residue_neighbors();
 }
 
@@ -105,8 +106,8 @@ CenHBEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	Real score(0.0);
 
@@ -166,7 +167,7 @@ CenHBEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ cen_hb ] += score;
+	emap[ core::scoring::cen_hb ] += score;
 
 	//std::cout << " soft done! " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 }
@@ -176,13 +177,13 @@ void
 CenHBEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 	// is there a way to get these coords without string comparisons?
 	using numeric::constants::f::pi;
@@ -191,7 +192,7 @@ CenHBEnergy::eval_residue_pair_derivatives(
 	Vector bbH, bbO, bbC, bbN;
 	Real r, xd, xh;
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
-	Real weight = weights[ cen_hb ];
+	Real weight = weights[ core::scoring::cen_hb ];
 
 	if ( soft_ ) {
 		eval_residue_pair_derivatives_soft( rsd1, rsd2, weights,
@@ -322,14 +323,14 @@ void
 CenHBEnergy::eval_residue_pair_derivatives_soft(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 
 
 	Size seqsep = rsd1.polymeric_sequence_distance( rsd2 );
-	Real weight = weights[ cen_hb ];
+	Real weight = weights[ core::scoring::cen_hb ];
 
 	if ( (rsd1.aa() != core::chemical::aa_gly && rsd1.aa() != core::chemical::aa_pro ) &&
 			(rsd2.aa() != core::chemical::aa_gly && rsd2.aa() != core::chemical::aa_pro ) &&
@@ -389,6 +390,5 @@ CenHBEnergy::eval_residue_pair_derivatives_soft(
 
 
 
-}
 }
 }

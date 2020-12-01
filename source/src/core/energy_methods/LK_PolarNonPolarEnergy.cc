@@ -78,23 +78,24 @@ static basic::Tracer TR( "core.scoring.methods.LK_PolarNonPolarEnergy", basic::t
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the LK_PolarNonPolarEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LK_PolarNonPolarEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return utility::pointer::make_shared< LK_PolarNonPolarEnergy >( *(ScoringManager::get_instance()->etable( options ).lock()),
+	return utility::pointer::make_shared< LK_PolarNonPolarEnergy >( *(core::scoring::ScoringManager::get_instance()->etable( options ).lock()),
 		options.analytic_etable_evaluation() );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 LK_PolarNonPolarEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( lk_costheta );
 	sts.push_back( lk_polar );
@@ -105,16 +106,16 @@ LK_PolarNonPolarEnergyCreator::score_types_for_method() const {
 }
 
 
-LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
+LK_PolarNonPolarEnergy::LK_PolarNonPolarEnergy( core::scoring::etable::Etable const & etable_in, bool const analytic_etable_evaluation ):
 	parent( utility::pointer::make_shared< LK_PolarNonPolarEnergyCreator >() ),
 	safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	max_dis_( etable_in.max_dis() ),
 	verbose_( false )
 {
 	if ( analytic_etable_evaluation ) {
-		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable_in );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEvaluator >( etable_in );
 	} else {
-		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable_in );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::TableLookupEvaluator >( etable_in );
 	}
 }
 
@@ -126,25 +127,26 @@ void
 LK_PolarNonPolarEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const{
 
 	if ( rsd.is_RNA()==false ) return;
 
 	Real lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score;
-	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
-	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( core::scoring::lk_polar ) || scorefxn.has_nonzero_weight( core::scoring::lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( core::scoring::lk_nonpolar );
 
 	get_residue_energy_RNA_intra( rsd, pose, lk_polar_intra_RNA_score, lk_nonpolar_intra_RNA_score, lk_costheta_intra_RNA_score, compute_polar, compute_nonpolar );
-	emap[ lk_polar_intra_RNA ]    += lk_polar_intra_RNA_score;
-	emap[ lk_nonpolar_intra_RNA ] += lk_nonpolar_intra_RNA_score;
+	emap[ core::scoring::lk_polar_intra_RNA ]    += lk_polar_intra_RNA_score;
+	emap[ core::scoring::lk_nonpolar_intra_RNA ] += lk_nonpolar_intra_RNA_score;
 
 }
 
 bool
-LK_PolarNonPolarEnergy::defines_intrares_energy( EnergyMap const & weights ) const
+LK_PolarNonPolarEnergy::defines_intrares_energy( core::scoring::EnergyMap const & weights ) const
 {
+	using namespace core::scoring;
 	bool method_1 = ( weights[lk_polar_intra_RNA] > 0.0 || weights[lk_nonpolar_intra_RNA] > 0.0 ) ? true : false;
 
 	return method_1;
@@ -158,7 +160,7 @@ LK_PolarNonPolarEnergy::atomic_interaction_cutoff() const
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LK_PolarNonPolarEnergy::clone() const
 {
 	return utility::pointer::make_shared< LK_PolarNonPolarEnergy >( *this );
@@ -173,28 +175,28 @@ LK_PolarNonPolarEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	//TR << "residue_pair_energy() was called..." << std::endl;
 	//if ( pose.energies().use_nblist() ) return;
 	Real lk_polar_score, lk_nonpolar_score, lk_costheta_score;
 
-	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
-	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( core::scoring::lk_polar ) || scorefxn.has_nonzero_weight( core::scoring::lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( core::scoring::lk_nonpolar );
 
 	get_residue_pair_energy_one_way( rsd1, rsd2, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score,
 		compute_polar, compute_nonpolar );
-	emap[ lk_polar ]    += lk_polar_score;
-	emap[ lk_nonpolar ] += lk_nonpolar_score;
-	emap[ lk_costheta ] += lk_costheta_score;
+	emap[ core::scoring::lk_polar ]    += lk_polar_score;
+	emap[ core::scoring::lk_nonpolar ] += lk_nonpolar_score;
+	emap[ core::scoring::lk_costheta ] += lk_costheta_score;
 
 	get_residue_pair_energy_one_way( rsd2, rsd1, pose, lk_polar_score, lk_nonpolar_score, lk_costheta_score,
 		compute_polar, compute_nonpolar );
-	emap[ lk_polar ]    += lk_polar_score;
-	emap[ lk_nonpolar ] += lk_nonpolar_score;
-	emap[ lk_costheta ] += lk_costheta_score;
+	emap[ core::scoring::lk_polar ]    += lk_polar_score;
+	emap[ core::scoring::lk_nonpolar ] += lk_nonpolar_score;
+	emap[ core::scoring::lk_costheta ] += lk_costheta_score;
 
 }
 
@@ -254,7 +256,7 @@ LK_PolarNonPolarEnergy::get_residue_energy_RNA_intra(
 ) const
 {
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	lk_polar_intra_RNA_score =  0.0;
 	lk_nonpolar_intra_RNA_score =  0.0;
@@ -338,7 +340,7 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 	bool const compute_nonpolar
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	using basic::options::option;
 	using basic::options::OptionKeys::score::lk_polar_without_proline_N;
 
@@ -417,7 +419,7 @@ LK_PolarNonPolarEnergy::get_residue_pair_energy_one_way(
 void
 LK_PolarNonPolarEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	//TR << "setup_for_derivatives() was called..." << std::endl;
@@ -426,7 +428,7 @@ LK_PolarNonPolarEnergy::setup_for_derivatives(
 
 ///////
 void
-LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn) const
+LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scfxn) const
 {
 	// We need the H-bond set -- well, at least the backbone/backbone h-bonds
 	// when computing geometric solvation scores.
@@ -438,7 +440,7 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
 	pose.update_residue_neighbors();
 
 	if ( pose.energies().use_nblist() ) {
-		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
+		core::scoring::NeighborList const & nblist( pose.energies().nblist( core::scoring::EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 }
@@ -447,7 +449,7 @@ LK_PolarNonPolarEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction cons
 void
 LK_PolarNonPolarEnergy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const & sfxn,
+	core::scoring::ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
 ) const
 {
@@ -463,20 +465,20 @@ LK_PolarNonPolarEnergy::setup_for_minimizing(
 	if ( !pose.energies().use_nblist() ) return;
 
 	// stash our nblist inside the pose's energies object
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 
 	// setup the atom-atom nblist
-	NeighborListOP nblist;
+	core::scoring::NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = max_dis_ + 2 * tolerated_motion;
-	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
+	nblist = utility::pointer::make_shared< core::scoring::NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX);
 	if ( pose.energies().use_nblist_auto_update() ) {
 		//TR << "Using neighborlist auto-update..." << std::endl;
 		nblist->set_auto_update( tolerated_motion );
 	}
 	// this partially becomes the EtableEnergy classes's responsibility
 	nblist->setup( pose, sfxn, *this);
-	energies.set_nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST, nblist );
+	energies.set_nblist( core::scoring::EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST, nblist );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -494,15 +496,15 @@ LK_PolarNonPolarEnergy::defines_score_for_residue_pair(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 LK_PolarNonPolarEnergy::get_count_pair_function(
 	Size const res1,
 	Size const res2,
 	pose::Pose const & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	if ( res1 == res2 ) {
 		return utility::pointer::make_shared< CountPairNone >();
 	}
@@ -513,13 +515,13 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 LK_PolarNonPolarEnergy::get_count_pair_function(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	if ( ! defines_score_for_residue_pair(rsd1, rsd2, true) ) return utility::pointer::make_shared< CountPairNone >();
 
@@ -530,14 +532,14 @@ LK_PolarNonPolarEnergy::get_count_pair_function(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 LK_PolarNonPolarEnergy::get_intrares_countpair(
 	conformation::Residue const & rsd1,
 	pose::Pose const &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	return CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4);
 }
 
@@ -554,22 +556,22 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData & pair_data
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData & pair_data
 ) const
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	//TR << "setup_for_minimizing_for_residue_pair() was called..." << std::endl;
 
-	etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
+	core::scoring::etable::count_pair::CountPairFunctionCOP count_pair = get_count_pair_function( rsd1, rsd2 );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( lk_PolarNonPolar_pair_nblist ) ));
-	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
+	core::scoring::ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( core::scoring::lk_PolarNonPolar_pair_nblist ) ));
+	if ( ! nblist ) nblist = utility::pointer::make_shared< core::scoring::ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
@@ -577,7 +579,7 @@ LK_PolarNonPolarEnergy::setup_for_minimizing_for_residue_pair(
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
-	pair_data.set_data( lk_PolarNonPolar_pair_nblist, nblist );
+	pair_data.set_data( core::scoring::lk_PolarNonPolar_pair_nblist, nblist );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -585,26 +587,26 @@ void
 LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	//TR << "residue_pair_energy_ext() was called..." << std::endl;
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
 	Real lk_polar_score( 0.0 );
 	Real lk_nonpolar_score( 0.0 );
 	Real lk_costheta_score ( 0.0 );
-	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
-	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( core::scoring::lk_polar ) || scorefxn.has_nonzero_weight( core::scoring::lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( core::scoring::lk_nonpolar );
 
-	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	auto const & nblist( static_cast< core::scoring::ResiduePairNeighborList const & > ( min_data.get_data_ref( core::scoring::lk_PolarNonPolar_pair_nblist ) ) );
+	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	Size m;
 	Size n;
@@ -666,9 +668,9 @@ LK_PolarNonPolarEnergy::residue_pair_energy_ext(
 			lk_nonpolar_score += temp_score;
 		}
 	}
-	emap[ lk_polar ]    += lk_polar_score;
-	emap[ lk_nonpolar ] += lk_nonpolar_score;
-	emap[ lk_costheta ] += lk_costheta_score;
+	emap[ core::scoring::lk_polar ]    += lk_polar_score;
+	emap[ core::scoring::lk_nonpolar ] += lk_nonpolar_score;
+	emap[ core::scoring::lk_costheta ] += lk_costheta_score;
 }
 
 ////////////////////////////////////////////////
@@ -714,12 +716,12 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & /*domain_map*/,
-	EnergyMap const & weights,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	bool do_eval_intra_RNA= (weights[lk_polar_intra_RNA]>0.0 || weights[lk_nonpolar_intra_RNA]>0.0) ? true : false;
+	bool do_eval_intra_RNA= (weights[core::scoring::lk_polar_intra_RNA]>0.0 || weights[core::scoring::lk_nonpolar_intra_RNA]>0.0) ? true : false;
 
 	if ( do_eval_intra_RNA==false ) return; //early return.
 
@@ -751,7 +753,7 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 	Real deriv( 0.0 );
 	Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_intrares_count_pair_function( rsd1, CP_CROSSOVER_4); //intra_res version!
 
@@ -791,8 +793,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 
 		if ( atom1_is_polar ) {
 
-			F1 += weights[ lk_polar_intra_RNA ] * f1_fwd;
-			F2 += weights[ lk_polar_intra_RNA ] * f2_fwd;
+			F1 += weights[ core::scoring::lk_polar_intra_RNA ] * f1_fwd;
+			F2 += weights[ core::scoring::lk_polar_intra_RNA ] * f2_fwd;
 
 			dotprod_fwd = dot( res1_base_vector_norm, d_ij_norm );
 
@@ -803,8 +805,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 
 			lk_score1 *= dotprod_fwd; //to check later (verbose)
 		} else {
-			F1 += weights[ lk_nonpolar_intra_RNA  ] * f1_fwd;
-			F2 += weights[ lk_nonpolar_intra_RNA  ] * f2_fwd;
+			F1 += weights[ core::scoring::lk_nonpolar_intra_RNA  ] * f1_fwd;
+			F2 += weights[ core::scoring::lk_nonpolar_intra_RNA  ] * f2_fwd;
 		}
 
 		/////////////////////////////////
@@ -819,8 +821,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 
 		if ( atom2_is_polar ) {
 
-			F1 -= weights[ lk_polar_intra_RNA ] * f1_bkd;
-			F2 -= weights[ lk_polar_intra_RNA ] * f2_bkd;
+			F1 -= weights[ core::scoring::lk_polar_intra_RNA ] * f1_bkd;
+			F2 -= weights[ core::scoring::lk_polar_intra_RNA ] * f2_bkd;
 
 			dotprod_bkd = dot( res2_base_vector_norm, d_ji_norm );
 
@@ -831,8 +833,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative_intra_RNA(
 
 			lk_score2 *= dotprod_bkd; //to check later (verbose)
 		} else {
-			F1 -= weights[ lk_nonpolar_intra_RNA ] * f1_bkd;
-			F2 -= weights[ lk_nonpolar_intra_RNA  ] * f2_bkd;
+			F1 -= weights[ core::scoring::lk_nonpolar_intra_RNA ] * f1_bkd;
+			F2 -= weights[ core::scoring::lk_nonpolar_intra_RNA  ] * f2_bkd;
 		}
 
 		if ( verbose_  &&  (std::abs( lk_score1 ) > 0.1 || std::abs( lk_score2 ) > 0.1 ) ) {
@@ -860,8 +862,8 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & scorefxn,// sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & scorefxn,// sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -882,16 +884,16 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 	bool const is_polar_m = ( rsd1.atom_type(m).is_acceptor() || rsd1.atom_type(m).is_donor());
 
 	// Size const nres = pose.size();
-	NeighborList const & nblist
-		( pose.energies().nblist( EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
+	core::scoring::NeighborList const & nblist
+		( pose.energies().nblist( core::scoring::EnergiesCacheableDataType::LK_POLARNONPOLAR_NBLIST ) );
 	//TR << "checkpoint..." << std::endl;
-	AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
+	core::scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors(i,m) );
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn;
 
-	bool const compute_polar    =  scorefxn.has_nonzero_weight( lk_polar ) || scorefxn.has_nonzero_weight( lk_costheta );
-	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( lk_nonpolar );
+	bool const compute_polar    =  scorefxn.has_nonzero_weight( core::scoring::lk_polar ) || scorefxn.has_nonzero_weight( core::scoring::lk_costheta );
+	bool const compute_nonpolar =  scorefxn.has_nonzero_weight( core::scoring::lk_nonpolar );
 
 	Real cp_weight;
 	Size path_dist;
@@ -929,18 +931,18 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 		f1 = cross( f2, heavy_atom_n );
 		if ( compute_polar && is_polar_m ) {
 			Real const d = d_ij.length();
-			F1 += weights[ lk_polar ] * f1;
-			F2 += weights[ lk_polar ] * f2;
+			F1 += weights[ core::scoring::lk_polar ] * f1;
+			F2 += weights[ core::scoring::lk_polar ] * f2;
 			Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
 			dotprod = dot( res1_base_vector_norm, d_ij_norm );
 			f2 *= dotprod;
 			f2 -= lk_score * (1/d) * (res1_base_vector_norm  - dotprod * d_ij_norm );
 			f1 = cross( f2, heavy_atom_n );
-			F1 += weights[ lk_costheta ] * f1;
-			F2 += weights[ lk_costheta ] * f2;
+			F1 += weights[ core::scoring::lk_costheta ] * f1;
+			F2 += weights[ core::scoring::lk_costheta ] * f2;
 		} else if ( !is_polar_m && compute_nonpolar ) {
-			F1 += weights[ lk_nonpolar ] * f1;
-			F2 += weights[ lk_nonpolar ] * f2;
+			F1 += weights[ core::scoring::lk_nonpolar ] * f1;
+			F2 += weights[ core::scoring::lk_nonpolar ] * f2;
 		}
 
 		lk_score = cp_weight * eval_lk( rsd2.atom( n ), rsd1.atom( m ), deriv, true);
@@ -949,18 +951,18 @@ LK_PolarNonPolarEnergy::eval_atom_derivative(
 
 		if ( compute_polar && is_polar_n ) {
 			Real const d = d_ij.length();
-			F1 -= weights[ lk_polar ] * f1;
-			F2 -= weights[ lk_polar ] * f2;
+			F1 -= weights[ core::scoring::lk_polar ] * f1;
+			F2 -= weights[ core::scoring::lk_polar ] * f2;
 			Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
 			dotprod = dot( res2_base_vector_norm, -d_ij_norm );
 			f2 *= dotprod;
 			f2 -= lk_score * ( 1/d ) *  (res2_base_vector_norm  + dotprod * d_ij_norm );
 			f1 = cross( f2, heavy_atom_m );
-			F1 -= weights[ lk_costheta ] * f1;
-			F2 -= weights[ lk_costheta ] * f2;
+			F1 -= weights[ core::scoring::lk_costheta ] * f1;
+			F2 -= weights[ core::scoring::lk_costheta ] * f2;
 		} else if ( !is_polar_n && compute_nonpolar ) {
-			F1 -= weights[ lk_nonpolar ] * f1;
-			F2 -= weights[ lk_nonpolar ] * f2;
+			F1 -= weights[ core::scoring::lk_nonpolar ] * f1;
+			F2 -= weights[ core::scoring::lk_nonpolar ] * f2;
 		}
 	}
 }
@@ -984,13 +986,13 @@ void
 LK_PolarNonPolarEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
@@ -1003,15 +1005,15 @@ LK_PolarNonPolarEnergy::eval_residue_pair_derivatives(
 
 	TR << "lk_nonpolar eval_residue_pair_derivatives() appears off -- set your minimizer to use_nblist and *also* nblist_auto_update to use eval_atom_derivative instead." << std::endl;
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionOP cpfxn =
 		CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
-	bool const compute_polar    =  weights[ lk_polar ] > 0.0 || weights[ lk_costheta ] > 0.0;
-	bool const compute_nonpolar =  weights[ lk_nonpolar ] > 0.0;
+	bool const compute_polar    =  weights[ core::scoring::lk_polar ] > 0.0 || weights[ core::scoring::lk_costheta ] > 0.0;
+	bool const compute_nonpolar =  weights[ core::scoring::lk_nonpolar ] > 0.0;
 
-	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( lk_PolarNonPolar_pair_nblist ) ) );
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	auto const & nblist( static_cast< core::scoring::ResiduePairNeighborList const & > ( min_data.get_data_ref( core::scoring::lk_PolarNonPolar_pair_nblist ) ) );
+	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	Size m;
 	Size n;
@@ -1048,24 +1050,24 @@ LK_PolarNonPolarEnergy::eval_residue_pair_derivatives(
 		f1 = cross( f2, heavy_atom_n );
 		if ( compute_polar && is_polar_m ) {
 			Real const d = d_ij.length();
-			r1_atom_derivs[ m ].f1() += weights[ lk_polar ] * f1;
-			r1_atom_derivs[ m ].f2() += weights[ lk_polar ] * f2;
-			r2_atom_derivs[ n ].f1() -= weights[ lk_polar ] * f1;
-			r2_atom_derivs[ n ].f2() -= weights[ lk_polar ] * f2;
+			r1_atom_derivs[ m ].f1() += weights[ core::scoring::lk_polar ] * f1;
+			r1_atom_derivs[ m ].f2() += weights[ core::scoring::lk_polar ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ core::scoring::lk_polar ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ core::scoring::lk_polar ] * f2;
 			Vector const res1_base_vector_norm = get_base_vector( rsd1, m, pose );
 			dotprod = dot( res1_base_vector_norm, d_ij_norm );
 			f2 *= dotprod;
 			f2 -= lk_score * (1/d) * (res1_base_vector_norm  - dotprod * d_ij_norm );
 			f1 = cross( f2, heavy_atom_n );
-			r1_atom_derivs[ m ].f1() += weights[ lk_costheta ] * f1;
-			r1_atom_derivs[ m ].f2() += weights[ lk_costheta ] * f2;
-			r2_atom_derivs[ n ].f1() -= weights[ lk_costheta ] * f1;
-			r2_atom_derivs[ n ].f2() -= weights[ lk_costheta ] * f2;
+			r1_atom_derivs[ m ].f1() += weights[ core::scoring::lk_costheta ] * f1;
+			r1_atom_derivs[ m ].f2() += weights[ core::scoring::lk_costheta ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ core::scoring::lk_costheta ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ core::scoring::lk_costheta ] * f2;
 		} else if ( !is_polar_m && compute_nonpolar ) {
-			r1_atom_derivs[ m ].f1() += weights[ lk_nonpolar ] * f1;
-			r2_atom_derivs[ m ].f2() += weights[ lk_nonpolar ] * f2;
-			r2_atom_derivs[ n ].f1() -= weights[ lk_nonpolar ] * f1;
-			r2_atom_derivs[ n ].f2() -= weights[ lk_nonpolar ] * f2;
+			r1_atom_derivs[ m ].f1() += weights[ core::scoring::lk_nonpolar ] * f1;
+			r2_atom_derivs[ m ].f2() += weights[ core::scoring::lk_nonpolar ] * f2;
+			r2_atom_derivs[ n ].f1() -= weights[ core::scoring::lk_nonpolar ] * f1;
+			r2_atom_derivs[ n ].f2() -= weights[ core::scoring::lk_nonpolar ] * f2;
 		}
 
 
@@ -1074,24 +1076,24 @@ LK_PolarNonPolarEnergy::eval_residue_pair_derivatives(
 		f1 = cross( f2, heavy_atom_m );
 		if ( compute_polar && is_polar_n ) {
 			Real const d = d_ij.length();
-			r1_atom_derivs[ m ].f1() -= weights[ lk_polar ] * f1;
-			r1_atom_derivs[ m ].f2() -= weights[ lk_polar ] * f2;
-			r2_atom_derivs[ n ].f1() += weights[ lk_polar ] * f1;
-			r2_atom_derivs[ n ].f2() += weights[ lk_polar ] * f2;
+			r1_atom_derivs[ m ].f1() -= weights[ core::scoring::lk_polar ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ core::scoring::lk_polar ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ core::scoring::lk_polar ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ core::scoring::lk_polar ] * f2;
 			Vector const res2_base_vector_norm = get_base_vector( rsd2, n, pose );
 			dotprod = dot( res2_base_vector_norm, -d_ij_norm );
 			f2 *= dotprod;
 			f2 -= lk_score * ( 1/d ) *  (res2_base_vector_norm  + dotprod * d_ij_norm );
 			f1 = cross( f2, heavy_atom_m );
-			r1_atom_derivs[ m ].f1() -= weights[ lk_costheta ] * f1;
-			r1_atom_derivs[ m ].f2() -= weights[ lk_costheta ] * f2;
-			r2_atom_derivs[ n ].f1() += weights[ lk_costheta ] * f1;
-			r2_atom_derivs[ n ].f2() += weights[ lk_costheta ] * f2;
+			r1_atom_derivs[ m ].f1() -= weights[ core::scoring::lk_costheta ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ core::scoring::lk_costheta ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ core::scoring::lk_costheta ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ core::scoring::lk_costheta ] * f2;
 		} else if ( !is_polar_n && compute_nonpolar ) {
-			r1_atom_derivs[ m ].f1() -= weights[ lk_nonpolar ] * f1;
-			r1_atom_derivs[ m ].f2() -= weights[ lk_nonpolar ] * f2;
-			r2_atom_derivs[ n ].f1() += weights[ lk_nonpolar ] * f1;
-			r2_atom_derivs[ n ].f2() += weights[ lk_nonpolar ] * f2;
+			r1_atom_derivs[ m ].f1() -= weights[ core::scoring::lk_nonpolar ] * f1;
+			r1_atom_derivs[ m ].f2() -= weights[ core::scoring::lk_nonpolar ] * f2;
+			r2_atom_derivs[ n ].f1() += weights[ core::scoring::lk_nonpolar ] * f1;
+			r2_atom_derivs[ n ].f2() += weights[ core::scoring::lk_nonpolar ] * f2;
 		}
 	}
 
@@ -1108,8 +1110,8 @@ LK_PolarNonPolarEnergy::indicate_required_context_graphs(
 void
 LK_PolarNonPolarEnergy::finalize_total_energy(
 	pose::Pose & /*pose*/,
-	ScoreFunction const & /*scorefxn*/,
-	EnergyMap & /*totals*/
+	core::scoring::ScoreFunction const & /*scorefxn*/,
+	core::scoring::EnergyMap & /*totals*/
 ) const
 {
 	//TR << "finalize_total_energy() was called..." << std::endl;
@@ -1124,7 +1126,6 @@ LK_PolarNonPolarEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }
 

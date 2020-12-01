@@ -185,7 +185,7 @@ MPSpanAngleFilter::report_sm( core::pose::Pose const & pose ) const {
 
 utility::vector1 < core::Real >
 MPSpanAngleFilter::compute( core::pose::Pose const & pose ) const {
-	core::scoring::membrane::MPSpanAngleEnergy mp_span_angle = core::scoring::membrane::MPSpanAngleEnergy();
+	core::energy_methods::MPSpanAngleEnergy mp_span_angle = core::energy_methods::MPSpanAngleEnergy();
 	utility::vector1< core::Real > total_mp_span_angle;
 
 	if ( output_ == "TR" ) {

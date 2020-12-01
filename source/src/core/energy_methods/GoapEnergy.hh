@@ -12,8 +12,8 @@
 ///         by Zhou H & Skolnick J, Biophys J 2011, 101(8):2043-52.
 /// @author Hahnbeom Park
 
-#ifndef INCLUDED_core_scoring_methods_GoapEnergy_HH
-#define INCLUDED_core_scoring_methods_GoapEnergy_HH
+#ifndef INCLUDED_core_energy_methods_GoapEnergy_HH
+#define INCLUDED_core_energy_methods_GoapEnergy_HH
 
 // Unit Headers
 #include <core/energy_methods/GoapEnergy.fwd.hh>
@@ -38,8 +38,8 @@
 #include <iosfwd>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 ////////////////////////////////////////////////////////
@@ -90,18 +90,18 @@ private:
 }; // GoapRsdType
 
 ////////////////////////////////////////////////////////
-class GoapEnergy : public ContextIndependentTwoBodyEnergy
+class GoapEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy
 {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
-	GoapEnergy( EnergyMethodOptions const & options );
+	GoapEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 	GoapEnergy( GoapEnergy const & src );
 
 	~GoapEnergy() override;
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override { return utility::pointer::make_shared< GoapEnergy >(*this); }
 
 	void
@@ -112,23 +112,23 @@ public:
 	) const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_derivatives( pose::Pose & ,
-		ScoreFunction const & ) const override;
+		core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const &, //pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
@@ -142,21 +142,21 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const & ,//rsd,
 		pose::Pose const & ,//pose,
-		ScoreFunction const & ,//sfxn,
-		EnergyMap & //emap
+		core::scoring::ScoreFunction const & ,//sfxn,
+		core::scoring::EnergyMap & //emap
 	) const override {} // Just do nothing - no intrares
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ,//rsd1,
 		conformation::Residue const & ,//rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & ,//min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & ,//min_data,
 		pose::Pose const &,
-		EnergyMap const & ,//weights,
-		utility::vector1< DerivVectorPair > & ,//r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & //r2_atom_derivs
+		core::scoring::EnergyMap const & ,//weights,
+		utility::vector1< core::scoring::DerivVectorPair > & ,//r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & //r2_atom_derivs
 	) const override;
 
 	Size version() const override { return 1; }
@@ -282,8 +282,7 @@ private:
 
 }; // class GoapScore
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

@@ -45,8 +45,7 @@
 #include <numeric/interpolation/spline/CubicSpline.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
 /// @brief Fullatom Membrane Solvation Energy - Statistically Derived,
@@ -55,7 +54,7 @@ class MPResidueLipophilicityEnergy : public core::scoring::methods::ContextDepen
 
 public:
 
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public:
 	// Constructors ////////////////////
@@ -72,18 +71,18 @@ public:
 	/// @brief Computes dScore/dNumNeighbors for all residues for rapid use in later
 	/// atom derivate calculations
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Causes a neighbor graph update
 	void
-	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Evaluates the one-body energy for a residue
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap &
+		core::scoring::EnergyMap &
 	) const override;
 
 	utility::vector1< core::Size >
@@ -98,8 +97,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &,
 		Vector &,
 		Vector &
 	) const override;
@@ -118,7 +117,7 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override;
 
-	/// @brief Tells the scoring function to maintain the TwelveANeighborGraph
+	/// @brief Tells the scoring function to maintain the core::scoring::TwelveANeighborGraph
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	/// @brief convert the neighbor counts for a residue and its aa type into
@@ -194,7 +193,6 @@ private:
 
 };
 
-} // membrane
 } // scoring
 } // core
 

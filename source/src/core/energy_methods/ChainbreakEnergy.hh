@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 /// @author Andrew Leaver-Fay
 
-#ifndef INCLUDED_core_scoring_methods_ChainbreakEnergy_hh
-#define INCLUDED_core_scoring_methods_ChainbreakEnergy_hh
+#ifndef INCLUDED_core_energy_methods_ChainbreakEnergy_hh
+#define INCLUDED_core_energy_methods_ChainbreakEnergy_hh
 
 // Unit header
 #include <core/energy_methods/ChainbreakEnergy.fwd.hh>
@@ -31,25 +31,25 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief ChainbreakEnergy class iterates across all residues in finalize() and determines a penalty between residues
 /// i and i+1 across a cutpoint by how much their virtual atoms do not align.
-class ChainbreakEnergy : public WholeStructureEnergy  {
+class ChainbreakEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 public:
 	ChainbreakEnergy();
 
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override {
 		return utility::pointer::make_shared< ChainbreakEnergy >();
 	}
 
 	/// @brief Called at the end of the energy evaluation.
-	void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 
 	/// @brief Called during gradient-based minimization inside dfunc.
@@ -57,8 +57,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -68,7 +68,6 @@ public:
 	core::Size version() const override;
 };
 
-} // methods
 } // scoring
 } // core
 

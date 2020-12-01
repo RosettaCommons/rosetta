@@ -29,21 +29,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the P_AA_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< P_AA_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 P_AA_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( p_aa );
 	return sts;
@@ -51,16 +52,16 @@ P_AA_EnergyCreator::score_types_for_method() const {
 
 
 /// @remarks
-/// get_P_AA calls a method in ScoringManager which create a new object of type P_AA.  The constructor for that created object
+/// get_P_AA calls a method in core::scoring::ScoringManager which create a new object of type P_AA.  The constructor for that created object
 /// reads in the three database files: p_aa, p_aa_pp, and p_aa_n.  That object is returned and then stored as a private member
 /// variable here.
 P_AA_Energy::P_AA_Energy() :
 	parent( utility::pointer::make_shared< P_AA_EnergyCreator >() ),
-	p_aa_( ScoringManager::get_instance()->get_P_AA() )
+	p_aa_( core::scoring::ScoringManager::get_instance()->get_P_AA() )
 {}
 
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_Energy::clone() const {
 	return utility::pointer::make_shared< P_AA_Energy >();
 }
@@ -74,10 +75,10 @@ void
 P_AA_Energy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
-	emap[ p_aa ] += p_aa_.P_AA_energy( rsd );
+	emap[ core::scoring::p_aa ] += p_aa_.P_AA_energy( rsd );
 }
 
 
@@ -87,8 +88,8 @@ P_AA_Energy::eval_dof_derivative(
 	id::DOF_ID const & ,// dof_id,
 	id::TorsionID const & , //tor_id
 	pose::Pose const & , // pose
-	ScoreFunction const &, //sfxn,
-	EnergyMap const & // weights
+	core::scoring::ScoreFunction const &, //sfxn,
+	core::scoring::EnergyMap const & // weights
 ) const
 {
 	return 0.0;
@@ -104,7 +105,6 @@ P_AA_Energy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

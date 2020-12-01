@@ -13,8 +13,8 @@
 /// and the mirror-image equivalents (DASP-L*, DASP-DSER, DASP-DTHR, DASP-DGLN), plus D/LASP-GLY.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
-#ifndef INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_hh
-#define INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_hh
+#ifndef INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_hh
+#define INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/AspartimidePenaltyEnergy.fwd.hh>
@@ -42,12 +42,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class AspartimidePenaltyEnergy : public ContextIndependentLRTwoBodyEnergy {
+
+class AspartimidePenaltyEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 
@@ -66,11 +66,11 @@ public:
 
 	/// @brief Copy this energy object and return an owning pointer to the copy.
 	///
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// @brief Method called before scoring a pose.
 	///
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const &sfxn ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const &sfxn ) const override;
 
 	/// @brief Are the two residues (rsd1, rsd2) two residues that should be scored by this scorefunction?
 	/// @details Returns true only if rsd2 is connected to the C-terminus of rsd1 by its N-terminal connection, or
@@ -82,15 +82,15 @@ public:
 		Size rsd2
 	) const override;
 
-	/// @brief Score the residues (rsd1, rsd2) and put the energy in the EnergyMap.
+	/// @brief Score the residues (rsd1, rsd2) and put the energy in the core::scoring::EnergyMap.
 	///
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Does nothing, since there is no one-body energy associated with this term.
@@ -99,8 +99,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override { }
 
 	/// @brief Does nothing, since this term is spatially invariant (i.e. has no DoF derivatives, because
@@ -108,18 +108,18 @@ public:
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & /*rsd*/,
-		ResSingleMinimizationData const & /*min_data*/,
+		core::scoring::ResSingleMinimizationData const & /*min_data*/,
 		id::DOF_ID const & /*dof_id*/,
 		id::TorsionID const & /*tor_id*/,
 		pose::Pose const & /*pose*/,
-		ScoreFunction const & /*sfxn*/,
-		EnergyMap const & /*weights*/
+		core::scoring::ScoreFunction const & /*sfxn*/,
+		core::scoring::EnergyMap const & /*weights*/
 	) const override;
 
 	/// @brief Returns false -- there's no one-body energy defined here.
 	///
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	/// @brief Returns false -- there are no derivatives defined here.
 	/// @details This score term's value depends only on residue identities, not on geometric DoFs.
@@ -135,7 +135,7 @@ public:
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 private: // Private functions:
@@ -159,9 +159,8 @@ private: // Private variables:
 };
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_HH
+#endif // INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_HH

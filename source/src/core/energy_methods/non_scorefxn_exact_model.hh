@@ -29,8 +29,7 @@
 #include <map>
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 void add_to_individual_sol_energies( pose::Pose & input_pose,
 	core::Size const polar_resnum,
@@ -55,7 +54,6 @@ core::Real compute_exact_geosol( pose::Pose & input_pose,
 );
 
 
-} // geometric_solvation
 } // scoring
 } // core
 

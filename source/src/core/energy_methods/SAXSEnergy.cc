@@ -57,30 +57,36 @@
 //#include <core/import_pose/import_pose.hh>
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 static basic::Tracer trSAXSEnergy( "core.scoring.saxs.SAXSEnergy" );
 
 std::string SAXSEnergy::fa_cfg_file_("ff-rosetta-fa.cfg");
 std::string SAXSEnergy::cen_cfg_file_("ff-rosetta-cen.cfg");
 
-ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
+core::scoring::ScoreTypes SAXSEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( saxs_score );
 	return sts;
 }
 
-methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
-	methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
+core::scoring::methods::EnergyMethodOP SAXSEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
+	core::scoring::methods::EnergyMethodCreatorOP creator( new SAXSEnergyCreatorCEN );
 	return utility::pointer::make_shared< SAXSEnergy >(SAXSEnergy::cen_cfg_file_,
 		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),
-		saxs_cen_score, creator );
+		core::scoring::saxs_cen_score, creator );
 }
 
 /// c-tor
-SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetCAP rsd_set_ap,
-	ScoreType the_variant, methods::EnergyMethodCreatorOP creator) : WholeStructureEnergy( creator ) {
+SAXSEnergy::SAXSEnergy(
+	std::string & config_file,
+	core::chemical::ResidueTypeSetCAP rsd_set_ap,
+	core::scoring::ScoreType the_variant,
+	core::scoring::methods::EnergyMethodCreatorOP creator
+) :
+	core::scoring::methods::WholeStructureEnergy( creator )
+{
 
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -117,8 +123,8 @@ SAXSEnergy::SAXSEnergy(std::string & config_file,core::chemical::ResidueTypeSetC
 SAXSEnergy::SAXSEnergy(const std::string & config_file,
 	const utility::vector1<Real> & source_q,
 	const utility::vector1<Real> & reference_spectrum,
-	ScoreType score_variant,
-	methods::EnergyMethodCreatorOP the_creator) :
+	core::scoring::ScoreType score_variant,
+	core::scoring::methods::EnergyMethodCreatorOP the_creator) :
 	WholeStructureEnergy( the_creator ) {
 
 	saxs_score_variant_ = score_variant;
@@ -162,7 +168,7 @@ void SAXSEnergy::init_ff(const std::string & config_file) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	ff_manager_ = FormFactorManager::get_manager();
+	ff_manager_ = core::scoring::saxs::FormFactorManager::get_manager();
 	if ( basic::options::option[score::saxs::custom_ff].user() ) {
 		trSAXSEnergy << "Loading custom FF from "<<basic::options::option[score::saxs::custom_ff]()<<std::endl;
 		ff_manager_->load_ff( basic::options::option[score::saxs::custom_ff]() );
@@ -186,8 +192,8 @@ Real SAXSEnergy::total_energy(const pose::Pose & pose) const {
 
 void SAXSEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 
 	// PROF_START( basic::SAXS );
@@ -265,7 +271,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 
 	// ---------- Tabulate form factors
 	ff_manager_->tabulate(q_);
-	std::set<FormFactorOP> ff_set;
+	std::set<core::scoring::saxs::FormFactorOP> ff_set;
 	// ---------- Find the unique set of atom types
 	for ( Size i = 1; i <= pose.size(); ++i ) {
 		core::conformation::Residue resi = pose.residue(i);
@@ -279,7 +285,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 				trSAXSEnergy.Trace << " rejected unknown"<<std::endl;
 				continue;
 			}
-			FormFactorOP fi =  ff_manager_->get_ff(resi.atom_type(m).name());
+			core::scoring::saxs::FormFactorOP fi =  ff_manager_->get_ff(resi.atom_type(m).name());
 			ff_set.insert( fi );
 		}
 	}
@@ -290,7 +296,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 	{//scope guards to keep i from leaking elsewhere
 		Size i = 1;
 		for ( auto const & it : ff_set ) {
-			ff_map_.insert( std::pair<FormFactorOP,Size>(it,i) );
+			ff_map_.insert( std::pair<core::scoring::saxs::FormFactorOP,Size>(it,i) );
 			ff_ops_.push_back( it );
 			i++;
 		}
@@ -298,10 +304,10 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 
 	// ---------- Create a matrix of distance histograms
 	for ( Size j=1; j <= ff_ops_.size(); ++j ) {
-		utility::vector1<DistanceHistogramOP> row;
+		utility::vector1<core::scoring::saxs::DistanceHistogramOP> row;
 		dhist_.push_back( row );
 		for ( Size k=1; k <= ff_ops_.size(); ++k ) {
-			dhist_[j].push_back( utility::pointer::make_shared< DistanceHistogram >() );
+			dhist_[j].push_back( utility::pointer::make_shared< core::scoring::saxs::DistanceHistogram >() );
 		}
 	}
 
@@ -317,7 +323,7 @@ void SAXSEnergy::rehash_form_factors(const core::pose::Pose & pose) const {
 			}
 			r_ids_.push_back( j );
 			a_ids_.push_back( m );
-			FormFactorOP fi =  ff_manager_->get_ff(resi.atom_type(m).name());
+			core::scoring::saxs::FormFactorOP fi =  ff_manager_->get_ff(resi.atom_type(m).name());
 			atom_ff_types_.push_back( ff_map_[fi] );
 		}
 	}
@@ -355,7 +361,7 @@ void SAXSEnergy::compute_distance_histogram(const core::pose::Pose & pose) const
 }
 
 void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vector1<Real> & result) const {
-	SinXOverX *sin_x_by_x_ = SinXOverX::get_instance();
+	core::scoring::saxs::SinXOverX *sin_x_by_x_ = core::scoring::saxs::SinXOverX::get_instance();
 
 	if ( ff_ops_.size() == 0 ) rehash_form_factors(pose);
 
@@ -369,7 +375,7 @@ void SAXSEnergy::compute_intensities(const core::pose::Pose & pose,utility::vect
 			Real fi = ff_ops_[i]->get(i_s);
 			for ( Size j = 1; j <= i; ++j ) {
 				Real fij = ff_ops_[j]->get(i_s) * fi;
-				DistanceHistogramOP dh = dhist_[i][j];
+				core::scoring::saxs::DistanceHistogramOP dh = dhist_[i][j];
 				for ( Size i_r=1; i_r<=  dh->last_nonempty_bin(); ++i_r ) {  // ---------- Go through histogram bins
 					Size dn = dh->get( i_r );
 					if ( dn > 0 ) {
@@ -482,7 +488,6 @@ SAXSEnergy::version() const
 }
 
 
-} // saxs
 } // scoring
 } // core
 

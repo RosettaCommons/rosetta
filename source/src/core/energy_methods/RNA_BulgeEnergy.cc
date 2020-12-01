@@ -33,22 +33,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 using namespace core::chemical;
 
 /// @details This must return a fresh instance of the RNA_BulgeEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_BulgeEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_BulgeEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_BulgeEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_bulge );
 	return sts;
@@ -91,7 +91,7 @@ void
 RNA_BulgeEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( !is_RNA_bulge( rsd ) ) return;
@@ -103,7 +103,7 @@ RNA_BulgeEnergy::residue_energy(
 		}
 	}
 
-	emap[ rna_bulge ] += bulge_bonus_;
+	emap[ core::scoring::rna_bulge ] += bulge_bonus_;
 }
 
 
@@ -112,8 +112,8 @@ RNA_BulgeEnergy::residue_energy(
 void
 RNA_BulgeEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace core::pose::full_model_info;
 
@@ -129,10 +129,10 @@ RNA_BulgeEnergy::finalize_total_energy(
 	if ( rna_bulge_bonus_once_per_loop_ ) {
 		// refactor -- have entropic bonus for each loop, but don't increase the
 		//  bonus with the number of residues in the loop.
-		totals[ rna_bulge ] += bulge_bonus_ * loop_suites.size();
+		totals[ core::scoring::rna_bulge ] += bulge_bonus_ * loop_suites.size();
 	} else {
 		// initial setting -- each missing residue gets a bonus.
-		totals[ rna_bulge ] += bulge_bonus_ * nmissing;
+		totals[ core::scoring::rna_bulge ] += bulge_bonus_ * nmissing;
 	}
 }
 
@@ -150,7 +150,6 @@ RNA_BulgeEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core
 

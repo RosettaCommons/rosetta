@@ -37,20 +37,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace packing {
+namespace energy_methods {
 
 
-class HolesEnergy : public methods::WholeStructureEnergy  {
+class HolesEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	HolesEnergy();
 
 	//clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override {
 		return utility::pointer::make_shared< HolesEnergy >();
 	}
@@ -63,14 +62,14 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
 	setup_for_derivatives(
 		pose::Pose &,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	)
 	const override;
 
@@ -79,8 +78,8 @@ public:
 		id::AtomID const &,
 		pose::Pose const &,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &,
 		Vector &,// F1,
 		Vector & // F2
 	) const override;
@@ -92,12 +91,11 @@ public:
 
 private:
 
-	HolesParams min_params_, decoy_params_, resl_params_;
+	core::scoring::packing::HolesParams min_params_, decoy_params_, resl_params_;
 	core::Size version() const override;
 
 };
 
-} //packing
 } //scoring
 } //core
 

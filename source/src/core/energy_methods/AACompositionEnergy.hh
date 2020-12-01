@@ -41,8 +41,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace aa_composition_energy {
+namespace energy_methods {
 
 /// @brief AACompositionEnergy, an energy function to penalize stretches of the same residue,
 /// derived from base class for EnergyMethods, which are meaningful only on entire structures.
@@ -52,6 +51,11 @@ class AACompositionEnergy : public core::scoring::methods::WholeStructureEnergy,
 public:
 	typedef core::scoring::methods::WholeStructureEnergy parent1;
 	typedef core::scoring::annealing::ResidueArrayAnnealableEnergy parent2;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMap EnergyMap;
+	typedef core::scoring::aa_composition_energy::AACompositionEnergySetup AACompositionEnergySetup;
+	typedef core::scoring::aa_composition_energy::AACompositionEnergySetupOP AACompositionEnergySetupOP;
+	typedef core::scoring::aa_composition_energy::AACompositionEnergySetupCOP AACompositionEnergySetupCOP;
 
 public:
 
@@ -81,7 +85,7 @@ public:
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
@@ -113,7 +117,7 @@ public:
 	void clean_up_residuearrayannealableenergy_after_packing( core::pose::Pose &pose ) override;
 
 	/// @brief Disable this energy during minimization.
-	void setup_for_minimizing( pose::Pose & pose, ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;
+	void setup_for_minimizing( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, kinematics::MinimizerMapBase const & minmap ) const override;
 
 	/// @brief Re-enable this energy after minimization.
 	void finalize_after_minimizing( pose::Pose & pose ) const override;
@@ -183,7 +187,6 @@ private:
 
 };
 
-} // aa_composition_energy
 } // scoring
 } // core
 

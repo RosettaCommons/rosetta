@@ -38,23 +38,24 @@
 //#define TETHER_WT 10.0
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 GaussianOverlapEnergy::~GaussianOverlapEnergy() = default;
 
 
 /// @details This must return a fresh instance of the GaussianOverlapEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GaussianOverlapEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< GaussianOverlapEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 GaussianOverlapEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( gauss );
 	return sts;
@@ -68,7 +69,7 @@ GaussianOverlapEnergy::GaussianOverlapEnergy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GaussianOverlapEnergy::clone() const
 {
 	return utility::pointer::make_shared< GaussianOverlapEnergy >();
@@ -91,8 +92,8 @@ GaussianOverlapEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core;
@@ -129,7 +130,7 @@ GaussianOverlapEnergy::residue_pair_energy(
 			} else {
 				score = ((sqrt(numeric::NumericTraits<Real>::pi())*r1*r2)/(sqrt(r1*r1+r2*r2)))*(exp(-d2/(r1*r1+r2*r2)));
 			}
-			emap[ gauss ] += score; //This was incorrectly placed in the "else" block above.  --VKM, 26 Nov. 2017.
+			emap[ core::scoring::gauss ] += score; //This was incorrectly placed in the "else" block above.  --VKM, 26 Nov. 2017.
 		}
 	}
 }
@@ -139,8 +140,8 @@ GaussianOverlapEnergy::eval_atom_derivative(
 	id::AtomID const & /*id*/,
 	pose::Pose const & /*pose*/,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector & /*F1*/,
 	Vector & /*F2*/
 ) const
@@ -152,8 +153,8 @@ void
 GaussianOverlapEnergy::eval_intrares_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap & /*emap*/
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap & /*emap*/
 ) const {
 	// noop?
 }
@@ -173,7 +174,7 @@ GaussianOverlapEnergy::interaction_cutoff() const
 	return DIST_TH;
 }
 
-/// @brief GaussianOverlapEnergy requires that Energies class maintains a TenANeighborGraph
+/// @brief GaussianOverlapEnergy requires that Energies class maintains a core::scoring::TenANeighborGraph
 void
 GaussianOverlapEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const
 {
@@ -185,6 +186,5 @@ GaussianOverlapEnergy::version() const
 }
 
 
-}
 }
 }

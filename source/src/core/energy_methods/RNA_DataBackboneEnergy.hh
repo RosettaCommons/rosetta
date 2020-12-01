@@ -32,16 +32,14 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
 
 typedef numeric::xyzVector< core::Real > Vector;
 
-class RNA_DataBackboneEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_DataBackboneEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 
@@ -49,7 +47,7 @@ public:
 
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,10 +55,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_packing( pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
@@ -70,16 +68,16 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	void
@@ -87,21 +85,21 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	// virtual
 	// void
 	// finalize_total_energy(
 	//  pose::Pose & pose,
-	//  ScoreFunction const &,
-	//  EnergyMap &// totals
+	//  core::scoring::ScoreFunction const &,
+	//  core::scoring::EnergyMap &// totals
 	// ) const;
 
 	Distance
@@ -133,14 +131,12 @@ private:
 	Real const well_depth_exposed_;
 	utility::vector1< Size > atom_numbers_sugar_;
 	utility::vector1< Size > atom_numbers_sugar_coarse_;
-	func::FuncOP burial_function_;
+	core::scoring::func::FuncOP burial_function_;
 	core::Size version() const override;
 
 };
 
 
-} //data
-} //rna
 } //scoring
 } //core
 

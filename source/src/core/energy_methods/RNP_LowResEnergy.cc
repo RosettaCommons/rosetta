@@ -65,20 +65,20 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys::score;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNP_LowResEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNP_LowResEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNP_LowResEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rnp_base_pair );
 	sts.push_back( rnp_stack );
@@ -92,13 +92,13 @@ RNP_LowResEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNP_LowResEnergy::RNP_LowResEnergy() :
 	parent( utility::pointer::make_shared< RNP_LowResEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_RNP_LowResPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_RNP_LowResPotential() )
 {
 	//std::cout << "Constructed the RNP energy" << std::endl;
 }
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNP_LowResEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNP_LowResEnergy >();
@@ -108,7 +108,7 @@ RNP_LowResEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 void
-RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*scfxn*/ ) const
+RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & /*scfxn*/ ) const
 {
 	//////////////////////////////////////////////////////////////////
 	// Need to make all of this smarter, faster, etc.
@@ -117,7 +117,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 	//////////////////////////////////////////////////////////////////
 
 	//std::cout << "Setting up for scoring!" << std::endl;
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	utility::vector1< bool > & is_interface_residues = rna_scoring_info.nonconst_is_interface();
 	utility::vector1< bool > & is_buried_residues = rna_scoring_info.nonconst_is_buried();
@@ -223,7 +223,7 @@ RNP_LowResEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & /*
 }
 
 //void
-//RNP_LowResEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+//RNP_LowResEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 //{
 //}
 
@@ -233,8 +233,8 @@ RNP_LowResEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /*pose*/, // need this back for rnp_pair
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
@@ -299,14 +299,14 @@ RNP_LowResEnergy::residue_pair_energy(
 			potential_.evaluate_rnp_base_pair_score( rsd1, rsd2, dist_x, dist_y, rnp_base_pair_score ); // just for now, obviously stupid
 		}
 	}
-	emap[ rnp_base_pair ] += rnp_base_pair_score;
+	emap[ core::scoring::rnp_base_pair ] += rnp_base_pair_score;
 
 	// // Get the stack score
 	// Real rnp_stack_xy_score( 0.0 );
 	// if ( std::abs(dist_z) > 3.0 && std::abs(dist_z) < 6.5 ) {
 	//  potential_.evaluate_rnp_stack_xy_score( rsd1, rsd2, dist_x, dist_y, rnp_stack_xy_score );
 	// }
-	// emap[ rnp_stack_xy ] += rnp_stack_xy_score;
+	// emap[ core::scoring::rnp_stack_xy ] += rnp_stack_xy_score;
 
 	// stack score (not xy)
 	bool calculate_rnp_stack = false;
@@ -326,7 +326,7 @@ RNP_LowResEnergy::residue_pair_energy(
 
 	if ( calculate_rnp_stack ) {
 		if ( std::abs( dist_z ) > 3.0 && std::abs( dist_z ) < 6.5 && (dist_x*dist_x + dist_y*dist_y) < 16.0 ) {
-			emap[ rnp_stack ] += -1.0;
+			emap[ core::scoring::rnp_stack ] += -1.0;
 		}
 	}
 
@@ -353,12 +353,12 @@ RNP_LowResEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ rnp_aa_to_rna_backbone ] += backbone_score;
+	emap[ core::scoring::rnp_aa_to_rna_backbone ] += backbone_score;
 
 	// // Get the pair score
 	// Real rnp_pair_score( 0.0 );
 	//
-	// rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	// core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	// utility::vector1< bool > const & is_interface = rna_scoring_info.is_interface();
 	// utility::vector1< bool > const & is_buried = rna_scoring_info.is_buried();
 	//
@@ -373,7 +373,7 @@ RNP_LowResEnergy::residue_pair_energy(
 	//   rsd2_is_interface, rsd2_is_buried, dist_rna_protein.length(), rnp_pair_score );
 	// //std::cout << "Done evaluating rnp pair score" << std::endl;
 	//
-	// emap[ rnp_pair ] += rnp_pair_score;
+	// emap[ core::scoring::rnp_pair ] += rnp_pair_score;
 	//
 	// // TR << rsd1.name3()  << rsd1.seqpos() << "---" << rsd2.name3() << rsd2.seqpos() << ": " << (score1+score2) << std::endl;
 }
@@ -383,8 +383,8 @@ RNP_LowResEnergy::residue_pair_energy(
 //void
 //RNP_LowResEnergy::finalize_total_energy(
 // pose::Pose & pose,
-// ScoreFunction const &,
-// EnergyMap &
+// core::scoring::ScoreFunction const &,
+// core::scoring::EnergyMap &
 //) const {
 //
 //}
@@ -408,7 +408,7 @@ RNP_LowResEnergy::version() const
 //RNP_LowResEnergy::get_intrares_countpair(
 // conformation::Residue const &,
 // pose::Pose const &,
-// ScoreFunction const &
+// core::scoring::ScoreFunction const &
 //) const
 //{
 // utility_exit_with_message( "FA_ElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
@@ -420,7 +420,7 @@ RNP_LowResEnergy::version() const
 // Size const res1,
 // Size const res2,
 // pose::Pose const & pose,
-// ScoreFunction const &
+// core::scoring::ScoreFunction const &
 //) const
 //{
 //}
@@ -435,6 +435,5 @@ RNP_LowResEnergy::version() const
 //}
 
 
-} //rna
 } //scoring
 } //core

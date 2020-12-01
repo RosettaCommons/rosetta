@@ -24,21 +24,22 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MembraneEnvPenalties class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvPenaltiesCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MembraneEnvPenalties >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MembraneEnvPenaltiesCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( Menv_non_helix );
 	sts.push_back( Menv_termini );
@@ -49,12 +50,12 @@ MembraneEnvPenaltiesCreator::score_types_for_method() const {
 /// c-tor
 MembraneEnvPenalties::MembraneEnvPenalties() :
 	parent( utility::pointer::make_shared< MembraneEnvPenaltiesCreator >() ),
-	potential_( ScoringManager::get_instance()->get_MembranePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvPenalties::clone() const
 {
 	return utility::pointer::make_shared< MembraneEnvPenalties >();
@@ -74,8 +75,8 @@ MembraneEnvPenalties::clone() const
 void
 MembraneEnvPenalties::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	if ( potential_.Menv_penalties() ) { //bw quick hack before putting them as individual scoring terms....
@@ -85,9 +86,9 @@ MembraneEnvPenalties::finalize_total_energy(
 		potential_.tm_projection_penalty(pose,tm_projection);
 		potential_.non_helix_in_membrane_penalty(pose, non_helix_pen);
 		potential_.termini_penalty(pose,termini_pen);
-		emap[ Menv_non_helix ]=non_helix_pen;
-		emap[ Menv_termini ]=termini_pen;
-		emap[ Menv_tm_proj ]=tm_projection;
+		emap[ core::scoring::Menv_non_helix ]=non_helix_pen;
+		emap[ core::scoring::Menv_termini ]=termini_pen;
+		emap[ core::scoring::Menv_tm_proj ]=tm_projection;
 
 		//  std::cout << "Menv_penalties (tm_projection+hbond_pen+termini_pen+10) " << tm_projection << " " << hbond_pen << " " << termini_pen << std::endl;
 	}
@@ -100,6 +101,5 @@ MembraneEnvPenalties::version() const
 	return 1; // Initial versioning
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

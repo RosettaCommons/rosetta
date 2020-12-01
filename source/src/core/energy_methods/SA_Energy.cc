@@ -24,21 +24,22 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the SA_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SA_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SA_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SA_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( sa );
 	return sts;
@@ -51,7 +52,7 @@ SA_Energy::SA_Energy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SA_Energy::clone() const
 {
 	return utility::pointer::make_shared< SA_Energy >();
@@ -64,12 +65,12 @@ SA_Energy::clone() const
 void
 SA_Energy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
 
-	totals[ sa ] = calc_total_sasa( pose, 1.4 ); //default water probe
+	totals[ core::scoring::sa ] = core::scoring::calc_total_sasa( pose, 1.4 ); //default water probe
 
 } // finalize_total_energy
 core::Size
@@ -78,6 +79,5 @@ SA_Energy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

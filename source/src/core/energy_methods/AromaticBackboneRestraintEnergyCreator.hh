@@ -11,8 +11,8 @@
 /// @brief  Declaration for the class that connects AromaticBackboneRestraintEnergy with the ScoringManager
 /// @author Andy Watkins (amw579@stanford.edu)
 
-#ifndef INCLUDED_core_scoring_methods_AromaticBackboneRestraintEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_AromaticBackboneRestraintEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_AromaticBackboneRestraintEnergyCreator_hh
+#define INCLUDED_core_energy_methods_AromaticBackboneRestraintEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -23,27 +23,26 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class AromaticBackboneRestraintEnergyCreator : public EnergyMethodCreator
+
+class AromaticBackboneRestraintEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new AromaticBackboneRestraintEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //methods
 } //scoring
 } //core
 
-#endif //INCLUDED_core_scoring_methods_AromaticBackboneRestraintEnergyCreator_hh
+#endif //INCLUDED_core_energy_methods_AromaticBackboneRestraintEnergyCreator_hh

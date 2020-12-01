@@ -32,23 +32,24 @@
 #define DIST_TH 6.0
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 SuckerEnergy::~SuckerEnergy() = default;
 
 
 /// @details This must return a fresh instance of the SuckerEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SuckerEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SuckerEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SuckerEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( suck );
 	return sts;
@@ -111,7 +112,7 @@ SuckerEnergy::SuckerEnergy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SuckerEnergy::clone() const
 {
 	return utility::pointer::make_shared< SuckerEnergy >();
@@ -134,8 +135,8 @@ SuckerEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core;
@@ -164,7 +165,7 @@ SuckerEnergy::residue_pair_energy(
 		interp_->interpolate( d, f, df );
 		// std::cerr << rsd.seqpos() << " " << i << " " << d << " " << f << " " << df << " SUCKER" << std::endl;
 		// std::cerr << "SCOREATOMS " << rsd.seqpos() << " " << i << " " << sck.seqpos() << " " << 1 << " " << d << std::endl;
-		emap[ suck ] += f;
+		emap[ core::scoring::suck ] += f;
 	}
 }
 
@@ -175,8 +176,8 @@ SuckerEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -212,8 +213,8 @@ SuckerEnergy::eval_atom_derivative(
 				Real deriv, dummy;
 				interp_->interpolate( dist, dummy, deriv );
 				// std::cerr << "sck_atm " << deriv << std::endl;
-				F1 += ( deriv / dist ) * weights[ suck ] * f1;
-				F2 += ( deriv / dist ) * weights[ suck ] * f2;
+				F1 += ( deriv / dist ) * weights[ core::scoring::suck ] * f1;
+				F2 += ( deriv / dist ) * weights[ core::scoring::suck ] * f2;
 			}
 		}
 	} else { // loop over suck residues and suck
@@ -242,8 +243,8 @@ SuckerEnergy::eval_atom_derivative(
 			Real deriv, dummy;
 			interp_->interpolate( dist, dummy, deriv );
 			// std::cerr << "reg_atm " << deriv << std::endl;
-			F1 += ( deriv / dist ) * weights[ suck ] * f1;
-			F2 += ( deriv / dist ) * weights[ suck ] * f2;
+			F1 += ( deriv / dist ) * weights[ core::scoring::suck ] * f1;
+			F2 += ( deriv / dist ) * weights[ core::scoring::suck ] * f2;
 		}
 	}
 }
@@ -252,8 +253,8 @@ void
 SuckerEnergy::eval_intrares_energy(
 	conformation::Residue const & /*rsd*/,
 	pose::Pose const & /*pose*/,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap & /*emap*/
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap & /*emap*/
 ) const
 {}
 
@@ -272,7 +273,7 @@ SuckerEnergy::interaction_cutoff() const
 	return DIST_TH;
 }
 
-/// @brief SuckerEnergy requires that Energies class maintains a TenANeighborGraph
+/// @brief SuckerEnergy requires that Energies class maintains a core::scoring::TenANeighborGraph
 void
 SuckerEnergy::indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const
 {
@@ -284,6 +285,5 @@ SuckerEnergy::version() const
 }
 
 
-}
 }
 }

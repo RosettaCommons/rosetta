@@ -11,8 +11,8 @@
 /// @brief  LK-type Membrane Solvation
 /// @author Patrick Barth
 
-#ifndef INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_hh
-#define INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_hh
+#ifndef INCLUDED_core_energy_methods_Fa_MbsolvEnergy_hh
+#define INCLUDED_core_energy_methods_Fa_MbsolvEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/Fa_MbsolvEnergy.fwd.hh>
@@ -34,26 +34,26 @@
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class Fa_MbsolvEnergy : public ContextDependentTwoBodyEnergy {
+
+class Fa_MbsolvEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy {
 public:
 	typedef ContextDependentTwoBodyEnergy  parent;
 public:
 
-	Fa_MbsolvEnergy( etable::Etable const & etable_in, etable::MembEtable const & memb_etable_in );
+	Fa_MbsolvEnergy( core::scoring::etable::Etable const & etable_in, core::scoring::etable::MembEtable const & memb_etable_in );
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const & scfxn
+		core::scoring::ScoreFunction const & scfxn
 	) const override;
 
 	/// called during gradient-based minimization inside dfunc
@@ -66,8 +66,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -78,19 +78,19 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	Distance
@@ -99,19 +99,19 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
-	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
-	Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const;
+	core::scoring::MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
+	core::scoring::Membrane_FAEmbed const & Membrane_FAEmbed_from_pose( pose::Pose const & pose ) const;
 
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & emap // totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap // totals
 	) const override;
 
 
@@ -139,7 +139,7 @@ private:
 	eval_dE_dR_over_r(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
-		EnergyMap const & weights,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2,
 		Real const & f1,
@@ -154,7 +154,7 @@ private:
 	/////////////////////////////////////////////////////////////////////////////
 
 private:
-	etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
+	core::scoring::etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
 	//etable::MembEtable const & memb_etable_;
 
@@ -177,7 +177,7 @@ private:
 
 	bool const verbose_;
 
-	Membrane_FAPotential const & potential_;
+	core::scoring::Membrane_FAPotential const & potential_;
 
 	/// Used soley when calculating derivatives
 	/// Could/should be moved into the Pose's cachable data.
@@ -187,6 +187,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_HH
+#endif // INCLUDED_core_energy_methods_Fa_MbsolvEnergy_HH

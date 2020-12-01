@@ -144,8 +144,8 @@ bool operator==(atm_name_single const& a,atm_name_single const& b) {
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 static basic::Tracer TR( "core.scoring.CartesianBondedEnergy" );
@@ -161,15 +161,16 @@ static const Real K_TORSION_IMPROPER=80.0;
 
 //////////////////////
 /// EnergyMethod Creator
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CartesianBondedEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< CartesianBondedEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CartesianBondedEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cart_bonded );
 	sts.push_back( cart_bonded_angle );
@@ -222,42 +223,42 @@ ResidueCartBondedParameters::ResidueCartBondedParameters() :
 
 ResidueCartBondedParameters::~ResidueCartBondedParameters() = default;
 
-void ResidueCartBondedParameters::add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_length_parameter(  Size2 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	length_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_angle_parameter(   Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	angle_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_torsion_parameter( Size4 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	torsion_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_improper_parameter( Size4 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_improper_parameter( Size4 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	improper_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_bbdep_length_parameter(  Size2 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_bbdep_length_parameter(  Size2 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	bbdep_length_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_bbdep_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_bbdep_angle_parameter(   Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	bbdep_angle_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_lower_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_lower_connect_angle_params( Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	lower_connect_angle_params_.push_back( std::make_pair( atom_inds, params ));
 }
 
-void ResidueCartBondedParameters::add_upper_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP params )
+void ResidueCartBondedParameters::add_upper_connect_angle_params( Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP params )
 {
 	upper_connect_angle_params_.push_back( std::make_pair( atom_inds, params ));
 }
@@ -270,14 +271,14 @@ void ResidueCartBondedParameters::bb_H_index( Size index )  { bb_H_index_  = ind
 void ResidueCartBondedParameters::pro_CD_index( Size index )  { pro_CD_index_  = index; }
 
 void ResidueCartBondedParameters::ca_cprev_n_h_interres_improper_params(
-	CartBondedParametersCOP params
+	core::scoring::methods::CartBondedParametersCOP params
 )
 {
 	ca_cprev_n_h_interres_improper_params_ = params;
 }
 
 void ResidueCartBondedParameters::oprev_cprev_n_h_interres_improper_params(
-	CartBondedParametersCOP params
+	core::scoring::methods::CartBondedParametersCOP params
 )
 {
 	oprev_cprev_n_h_interres_improper_params_ = params;
@@ -285,21 +286,21 @@ void ResidueCartBondedParameters::oprev_cprev_n_h_interres_improper_params(
 
 
 void ResidueCartBondedParameters::ca_nnext_c_o_interres_improper_params(
-	CartBondedParametersCOP params
+	core::scoring::methods::CartBondedParametersCOP params
 )
 {
 	ca_nnext_c_o_interres_improper_params_ = params;
 }
 
 void ResidueCartBondedParameters::pro_cd_cprev_n_ca_interres_improper_params(
-	CartBondedParametersCOP params
+	core::scoring::methods::CartBondedParametersCOP params
 )
 {
 	pro_cd_cprev_n_ca_interres_improper_params_ = params;
 }
 
 void ResidueCartBondedParameters::cprev_n_bond_length_params(
-	CartBondedParametersCOP params
+	core::scoring::methods::CartBondedParametersCOP params
 )
 {
 	cprev_n_bond_length_params_ = params;
@@ -427,10 +428,10 @@ IdealParametersDatabase::read_length_database(
 
 		linestream >> restag >> atom1 >> atom2 >> mu_d >> K_d;
 		tuple = boost::make_tuple( restag, atom1, atom2 );
-		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d) );
+		core::scoring::methods::CartBondedParametersOP params_i( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu_d, K_d) );
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 		tuple = boost::make_tuple( restag, atom2, atom1 );
-		params_i = utility::pointer::make_shared< BBIndepCartBondedParameters >(mu_d, K_d);
+		params_i = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu_d, K_d);
 		bondlengths_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
 	TR << "Read " << bondlengths_indep_.size() << " bb-independent lengths." << std::endl;
@@ -439,9 +440,9 @@ IdealParametersDatabase::read_length_database(
 		TR << "Symmetrizing glycine bond lengths table." << std::endl;
 		atm_name_pair const tuple1( boost::make_tuple( "GLY", "CA", "1HA" ) );
 		atm_name_pair const tuple2( boost::make_tuple( "GLY", "CA", "2HA" ) );
-		CartBondedParametersOP param1, param2;
-		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it = bondlengths_indep_.find( tuple1 );
-		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it2 = bondlengths_indep_.find( tuple2 );
+		core::scoring::methods::CartBondedParametersOP param1, param2;
+		boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::iterator it = bondlengths_indep_.find( tuple1 );
+		boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::iterator it2 = bondlengths_indep_.find( tuple2 );
 		debug_assert ( it != bondlengths_indep_.end() );
 		debug_assert ( it2 != bondlengths_indep_.end() );
 		param1 = it->second;
@@ -449,14 +450,14 @@ IdealParametersDatabase::read_length_database(
 		core::Real const avgmu( (param1->mu(0.0, 0.0) + param2->mu(0.0, 0.0)) / 2.0 );
 		core::Real const avgK( (param1->K(0.0, 0.0) + param2->K(0.0, 0.0)) / 2.0 );
 		bondlengths_indep_.erase(it); bondlengths_indep_.erase(it2);
-		bondlengths_indep_.insert( std::make_pair(tuple1, utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK) ) );
-		bondlengths_indep_.insert( std::make_pair(tuple2, utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK) ) );
+		bondlengths_indep_.insert( std::make_pair(tuple1, utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(avgmu, avgK) ) );
+		bondlengths_indep_.insert( std::make_pair(tuple2, utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(avgmu, avgK) ) );
 #ifndef NDEBUG
 		{ // Sanity checks -- debug mode only.
-			boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it3 = bondlengths_indep_.find( tuple1 );
-			boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator it4 = bondlengths_indep_.find( tuple2 );
-			CartBondedParametersOP param3( it3->second );
-			CartBondedParametersOP param4( it4->second );
+			boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::iterator it3 = bondlengths_indep_.find( tuple1 );
+			boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::iterator it4 = bondlengths_indep_.find( tuple2 );
+			core::scoring::methods::CartBondedParametersOP param3( it3->second );
+			core::scoring::methods::CartBondedParametersOP param4( it4->second );
 			debug_assert( param3->mu(0, 0) == param4->mu(0, 0) );
 			debug_assert( param3->K(0, 0) == param4->K(0, 0) );
 		}
@@ -484,7 +485,7 @@ IdealParametersDatabase::read_angle_database(
 
 		linestream >> restag >> atom1 >> atom2 >> atom3 >> mu_d >> K_d;
 		tuple = boost::make_tuple( restag, atom1, atom2, atom3 );
-		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d) );
+		core::scoring::methods::CartBondedParametersOP params_i( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu_d, K_d) );
 		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
 		tuple = boost::make_tuple( restag, atom3, atom2, atom1 );
 		bondangles_indep_.insert( std::make_pair( tuple, params_i) );
@@ -497,8 +498,8 @@ IdealParametersDatabase::read_angle_database(
 		atm_name_triple const tuple2( boost::make_tuple( "GLY", "N", "CA", "2HA" ) );
 		core::Real const avgmu( (bondangles_indep_[ tuple1 ]->mu(0.0, 0.0) + bondangles_indep_[ tuple2 ]->mu(0.0, 0.0)) / 2.0 );
 		core::Real const avgK( (bondangles_indep_[ tuple1 ]->K(0.0, 0.0) + bondangles_indep_[ tuple2 ]->K(0.0, 0.0)) / 2.0 );
-		bondangles_indep_[ tuple1 ] = utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK);
-		bondangles_indep_[ tuple2 ] = utility::pointer::make_shared< BBIndepCartBondedParameters >(avgmu, avgK);
+		bondangles_indep_[ tuple1 ] = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(avgmu, avgK);
+		bondangles_indep_[ tuple2 ] = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(avgmu, avgK);
 		//Debug-mode sanity checks:
 		debug_assert( bondangles_indep_[tuple1]->mu(0,0) == bondangles_indep_[tuple2]->mu(0,0) );
 		debug_assert( bondangles_indep_[tuple1]->K(0,0) == bondangles_indep_[tuple2]->K(0,0) );
@@ -526,7 +527,7 @@ IdealParametersDatabase::read_torsion_database(
 
 		linestream >> name3 >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
 		tuple = boost::make_tuple( name3, atom1, atom2, atom3, atom4 );
-		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
+		core::scoring::methods::CartBondedParametersOP params_i( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu_d, K_d, period) );
 		torsions_indep_.insert( std::make_pair( tuple, params_i) );
 	}
 	TR << "Read " << torsions_indep_.size() << " bb-independent torsions." << std::endl;
@@ -548,7 +549,7 @@ IdealParametersDatabase::add_impropers_from_stream(std::istream & instream) {
 
 		linestream >> restag >> atom1 >> atom2 >> atom3 >> atom4 >> mu_d >> K_d >> period;
 		tuple = boost::make_tuple( restag, atom1, atom2, atom3, atom4 );
-		CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu_d, K_d, period) );
+		core::scoring::methods::CartBondedParametersOP params_i( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu_d, K_d, period) );
 		impropers_indep_.insert( std::make_pair( tuple, params_i ) );
 	}
 }
@@ -589,8 +590,8 @@ IdealParametersDatabase::read_improper_database(
 void
 IdealParametersDatabase::read_bbdep_table(
 	std::string const &filename,
-	boost::unordered_map< atm_name_single, CartBondedParametersOP > &bondlengths,
-	boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
+	boost::unordered_map< atm_name_single, core::scoring::methods::CartBondedParametersOP > &bondlengths,
+	boost::unordered_map< atm_name_pair, core::scoring::methods::CartBondedParametersOP > &bondangles,
 	std::string const &resbase,
 	bool const symmetrize_table
 ) {
@@ -618,65 +619,65 @@ IdealParametersDatabase::read_bbdep_table(
 
 	// the bond angles
 	// their bb-indep angles
-	CartBondedParametersOP temp;
+	core::scoring::methods::CartBondedParametersOP temp;
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"C", "N")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","C", "N")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CN_indep_avg=temp->mu(0,0),CN_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"N", "CA")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","N", "CA")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real NCA_indep_avg=temp->mu(0,0),NCA_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"CA", "CB")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","CA", "CB")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CACB_indep_avg=temp->mu(0,0),CACB_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"CA", "C")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","CA", "C")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CAC_indep_avg=temp->mu(0,0),CAC_indep_K=temp->K(0,0);
 
 	temp = bondlengths_indep_[boost::make_tuple(resbase,"C", "O")];
 	if ( !temp ) temp = bondlengths_indep_[boost::make_tuple("*","C", "O")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CO_indep_avg=temp->mu(0,0),CO_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"C", "N", "CA")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","C", "N", "CA")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CNCA_indep_avg=temp->mu(0,0),CNCA_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"N", "CA", "CB")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","N", "CA", "CB")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real NCACB_indep_avg=temp->mu(0,0),NCACB_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"N", "CA", "C")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","N", "CA", "C")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real NCAC_indep_avg=temp->mu(0,0),NCAC_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CB", "CA", "C")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CB", "CA", "C")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CBCAC_indep_avg=temp->mu(0,0),CBCAC_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CA", "C", "O")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CA", "C", "O")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CACO_indep_avg=temp->mu(0,0),CACO_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"CA", "C", "N")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","CA", "C", "N")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real CACN_indep_avg=temp->mu(0,0),CACN_indep_K=temp->K(0,0);
 
 	temp = bondangles_indep_[boost::make_tuple(resbase,"O", "C", "N")];
 	if ( !temp ) temp = bondangles_indep_[boost::make_tuple("*","O", "C", "N")];
-	if ( !temp ) temp = utility::pointer::make_shared< BBIndepCartBondedParameters >(0,0);
+	if ( !temp ) temp = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(0,0);
 	core::Real OCN_indep_avg=temp->mu(0,0),OCN_indep_K=temp->K(0,0);
 
 	// all the relevant tables
@@ -806,18 +807,18 @@ IdealParametersDatabase::read_bbdep_table(
 	}
 
 	// make the database entries
-	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CNavg_tbl, CNdev_tbl ,"C-N");
-	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCAavg_tbl, NCAdev_tbl,"CA-N");
-	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACBavg_tbl, CACBdev_tbl,"CB-CA");
-	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACavg_tbl, CACdev_tbl,"C-CA");
-	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = utility::pointer::make_shared< BBDepCartBondedParameters >(COavg_tbl, COdev_tbl,"C-O");
-	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA");
-	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB");
-	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(NCACavg_tbl, NCACdev_tbl, "N-CA-C");
-	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C");
-	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACOavg_tbl, CACOdev_tbl, "CA-C-O");
-	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(CACNavg_tbl, CACNdev_tbl, "CA-C-N");
-	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = utility::pointer::make_shared< BBDepCartBondedParameters >(OCNavg_tbl, OCNdev_tbl, "O-C-N");
+	bondlengths[boost::make_tuple("N","C")] = bondlengths[boost::make_tuple("C","N")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CNavg_tbl, CNdev_tbl ,"C-N");
+	bondlengths[boost::make_tuple("CA","N")] = bondlengths[boost::make_tuple("N","CA")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(NCAavg_tbl, NCAdev_tbl,"CA-N");
+	bondlengths[boost::make_tuple("CB","CA")] = bondlengths[boost::make_tuple("CA","CB")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CACBavg_tbl, CACBdev_tbl,"CB-CA");
+	bondlengths[boost::make_tuple("C","CA")] = bondlengths[boost::make_tuple("CA","C")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CACavg_tbl, CACdev_tbl,"C-CA");
+	bondlengths[boost::make_tuple("O","C")] = bondlengths[boost::make_tuple("C","O")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(COavg_tbl, COdev_tbl,"C-O");
+	bondangles[boost::make_tuple("CA","N","C")] = bondangles[boost::make_tuple("C","N","CA")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CNCAavg_tbl, CNCAdev_tbl, "C-N-CA");
+	bondangles[boost::make_tuple("CB","CA","N")] = bondangles[boost::make_tuple("N","CA","CB")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(NCACBavg_tbl, NCACBdev_tbl, "N-CA-CB");
+	bondangles[boost::make_tuple("C","CA","N")] = bondangles[boost::make_tuple("N","CA","C")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(NCACavg_tbl, NCACdev_tbl, "N-CA-C");
+	bondangles[boost::make_tuple("C","CA","CB")] = bondangles[boost::make_tuple("CB","CA","C")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CBCACavg_tbl, CBCACdev_tbl, "CB-CA-C");
+	bondangles[boost::make_tuple("O","C","CA")] = bondangles[boost::make_tuple("CA","C","O")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CACOavg_tbl, CACOdev_tbl, "CA-C-O");
+	bondangles[boost::make_tuple("N","C","CA")] = bondangles[boost::make_tuple("CA","C","N")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(CACNavg_tbl, CACNdev_tbl, "CA-C-N");
+	bondangles[boost::make_tuple("N","C","O")] = bondangles[boost::make_tuple("O","C","N")] = utility::pointer::make_shared< core::scoring::methods::BBDepCartBondedParameters >(OCNavg_tbl, OCNdev_tbl, "O-C-N");
 }
 
 /// @brief Symmetrize the glycine backbone-dependent table.
@@ -974,7 +975,7 @@ IdealParametersDatabase::lookup_bondlength_buildideal(
 }
 
 
-CartBondedParametersCOP
+core::scoring::methods::CartBondedParametersCOP
 IdealParametersDatabase::lookup_improper(
 	core::chemical::ResidueType const & restype,
 	std::string const & atm1_name,
@@ -992,7 +993,7 @@ IdealParametersDatabase::lookup_improper(
 	// lookup in bb-indep table
 	// this can probably be made way faster
 	atm_name_quad tuple1( restag, atm1_name,atm2_name,atm3_name,atm4_name );
-	boost::unordered_map<atm_name_quad,CartBondedParametersOP>::const_iterator b_it = impropers_indep_.find( tuple1 );
+	boost::unordered_map<atm_name_quad, core::scoring::methods::CartBondedParametersOP>::const_iterator b_it = impropers_indep_.find( tuple1 );
 	if ( b_it != impropers_indep_.end() ) {
 		return b_it->second;
 	}
@@ -1056,7 +1057,7 @@ IdealParametersDatabase::generate_impropers_map_res(
 					atm_name_quad tuple(boost::make_tuple( restag, atom1, atom2, atom3, atom4 ) );
 					core::Real mu(0), K( k_torsion_ );
 					core::Size period(2);
-					CartBondedParametersOP params_i( new BBIndepCartBondedParameters(mu, K, period) );
+					core::scoring::methods::CartBondedParametersOP params_i( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >(mu, K, period) );
 					TR << "Adding undefined torsion " << restag << ": " << atom1 << "," << atom2 << "," << atom3 << "," << atom4
 						<< " to DB with mu0 = " << mu << ", K = " << K << ", period = " << period << std::endl;
 					resmap.insert( std::make_pair( tuple, params_i) );
@@ -1071,7 +1072,7 @@ IdealParametersDatabase::generate_impropers_map_res(
 
 /// Angle Database
 ///   build from ideal if not found
-CartBondedParametersCOP
+core::scoring::methods::CartBondedParametersCOP
 IdealParametersDatabase::lookup_angle(
 	core::chemical::ResidueType const & restype,
 	bool pre_proline,
@@ -1089,7 +1090,7 @@ IdealParametersDatabase::lookup_angle(
 
 	// 1 lookup in bb-dep table
 	// figure out what table to look in
-	boost::unordered_map< atm_name_pair, CartBondedParametersOP > const * angle_table;
+	boost::unordered_map< atm_name_pair, core::scoring::methods::CartBondedParametersOP > const * angle_table;
 	if ( restype.aa() == core::chemical::aa_gly ) {
 		angle_table = &bondangles_bbdep_gly_;
 	} else if ( restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr ) { //L- or D-proline
@@ -1102,7 +1103,7 @@ IdealParametersDatabase::lookup_angle(
 		angle_table = &bondangles_bbdep_def_;
 	}
 	atm_name_pair alt_tuple( atm1_name,atm2_name,atm3_name );
-	boost::unordered_map<atm_name_pair,CartBondedParametersOP>::const_iterator a_it = angle_table->find( alt_tuple );
+	boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::const_iterator a_it = angle_table->find( alt_tuple );
 	if ( a_it != angle_table-> end() ) {
 		return a_it->second;
 	}
@@ -1112,7 +1113,7 @@ IdealParametersDatabase::lookup_angle(
 #if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( data_map_mutex_ );
 #endif
-		boost::unordered_map<atm_name_triple,CartBondedParametersOP>::const_iterator b_it = bondangles_indep_.find( tuple );
+		boost::unordered_map<atm_name_triple, core::scoring::methods::CartBondedParametersOP>::const_iterator b_it = bondangles_indep_.find( tuple );
 		if ( b_it != bondangles_indep_.end() ) {
 			return b_it->second;
 		}
@@ -1132,7 +1133,7 @@ IdealParametersDatabase::lookup_angle(
 		utility::thread::WriteLockGuard lock( data_map_mutex_ );
 #endif
 		if ( bondangles_indep_.count( tuple ) == 0 ) {
-			bondangles_indep_[ tuple ] = utility::pointer::make_shared< BBIndepCartBondedParameters >( theta0, Ktheta );
+			bondangles_indep_[ tuple ] = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >( theta0, Ktheta );
 			TR << "Adding undefined angle "
 				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << tuple.get<3>() << " to DB with"
 				<< " theta0 = " << theta0 << " , Ktheta = " << Ktheta << std::endl;
@@ -1143,7 +1144,7 @@ IdealParametersDatabase::lookup_angle(
 
 /// BondLength Database
 ///   build from ideal if not found
-CartBondedParametersCOP
+core::scoring::methods::CartBondedParametersCOP
 IdealParametersDatabase::lookup_length(
 	chemical::ResidueType const & restype,
 	bool pre_proline,
@@ -1158,7 +1159,7 @@ IdealParametersDatabase::lookup_length(
 
 	// 1 lookup in bb-dep table
 	// figure out what table to look in
-	boost::unordered_map< atm_name_single, CartBondedParametersOP > *length_table;
+	boost::unordered_map< atm_name_single, core::scoring::methods::CartBondedParametersOP > *length_table;
 	if ( restype.aa() == core::chemical::aa_gly ) {
 		length_table = &bondlengths_bbdep_gly_;
 	} else if ( restype.aa() == core::chemical::aa_pro || restype.aa() == core::chemical::aa_dpr ) { //D- or L-proline
@@ -1172,7 +1173,7 @@ IdealParametersDatabase::lookup_length(
 	}
 
 	atm_name_single alt_tuple( atm1_name,atm2_name );
-	boost::unordered_map<atm_name_single,CartBondedParametersOP>::iterator a_it = length_table->find( alt_tuple );
+	boost::unordered_map<atm_name_single, core::scoring::methods::CartBondedParametersOP>::iterator a_it = length_table->find( alt_tuple );
 	if ( a_it != length_table->end() ) {
 		return a_it->second;
 	}
@@ -1182,7 +1183,7 @@ IdealParametersDatabase::lookup_length(
 #if defined MULTI_THREADED
 		utility::thread::ReadLockGuard lock( data_map_mutex_ );
 #endif
-		boost::unordered_map<atm_name_pair,CartBondedParametersOP>::iterator b_it = bondlengths_indep_.find( tuple );
+		boost::unordered_map<atm_name_pair, core::scoring::methods::CartBondedParametersOP>::iterator b_it = bondlengths_indep_.find( tuple );
 		if ( b_it != bondlengths_indep_.end() ) {
 			return b_it->second;
 		}
@@ -1201,7 +1202,7 @@ IdealParametersDatabase::lookup_length(
 		utility::thread::WriteLockGuard lock( data_map_mutex_ );
 #endif
 		if ( bondlengths_indep_.count( tuple ) == 0 ) {
-			bondlengths_indep_[ tuple ] = utility::pointer::make_shared< BBIndepCartBondedParameters >( d0, Kd );
+			bondlengths_indep_[ tuple ] = utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >( d0, Kd );
 			TR << "Adding undefined length "
 				<< restag << ": " << tuple.get<1>() << "," << tuple.get<2>() << "," << " to DB with"
 				<< " d0 = " << d0 << " , Kd = " << Kd << std::endl;
@@ -1501,7 +1502,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 		if ( rsdname != tuple.get<0>() ) continue;
 
-		CartBondedParametersCOP tor_params = b_it.second;
+		core::scoring::methods::CartBondedParametersCOP tor_params = b_it.second;
 
 		// Because of mmCIF files (and parameters taken from wild CIFs like the Chemical
 		// Components Database) we need to account for whitespace issues here.
@@ -1533,7 +1534,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			if ( !rsd_type.has( tuple.get<1>() ) || !rsd_type.has( tuple.get<2>() ) ||
 					!rsd_type.has( tuple.get<3>() ) || !rsd_type.has( tuple.get<4>() ) ) continue;
 
-			CartBondedParametersCOP tor_params = b_it.second;
+			core::scoring::methods::CartBondedParametersCOP tor_params = b_it.second;
 
 			ResidueCartBondedParameters::Size4 ids;
 			ids[1] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<1>() ) );
@@ -1546,7 +1547,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		}
 	}
 
-	typedef boost::unordered_multimap< atm_name_quad, CartBondedParametersOP >::const_iterator tors_iterator;
+	typedef boost::unordered_multimap< atm_name_quad, core::scoring::methods::CartBondedParametersOP >::const_iterator tors_iterator;
 	for ( tors_iterator it = torsions_indep_.begin(); it != torsions_indep_.end();
 			it = torsions_indep_.equal_range(it->first).second ) {
 
@@ -1562,7 +1563,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		tors_iterator it2;
 
 		for ( it2 = range.first; it2 != range.second; ++it2 ) {
-			CartBondedParametersCOP tor_params = it2->second;
+			core::scoring::methods::CartBondedParametersCOP tor_params = it2->second;
 
 			ResidueCartBondedParameters::Size4 ids;
 			ids[1] = rsd_type.atom_index( ObjexxFCL::stripped_whitespace( tuple.get<1>() ) );
@@ -1586,7 +1587,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		std::string atm1name=rsd_type.atom_name(rt1); boost::trim(atm1name);
 		std::string atm2name=rsd_type.atom_name(rt2); boost::trim(atm2name);
 		std::string atm3name=rsd_type.atom_name(rt3); boost::trim(atm3name);
-		CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+		core::scoring::methods::CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
 			atm1name,atm2name,atm3name, rt1,rt2,rt3 );
 
 		if ( ang_params->is_null() ) continue;
@@ -1607,7 +1608,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			// lookup Kd and d0
 			std::string atm1name = rsd_type.atom_name(atm_i); boost::trim(atm1name);
 			std::string atm2name = rsd_type.atom_name(atm_j); boost::trim(atm2name);
-			CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
+			core::scoring::methods::CartBondedParametersCOP len_params = lookup_length(rsd_type, prepro,
 				atm1name,atm2name, atm_i, atm_j );
 
 			if ( len_params->is_null() ) continue;
@@ -1627,7 +1628,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 		ids[1] = ii; ids[2] = ii_shadowee;
 
 		// weak constraint; distance of 0, spring constant of 10
-		CartBondedParametersOP params_ii( new BBIndepCartBondedParameters( 0, 10 ) );
+		core::scoring::methods::CartBondedParametersOP params_ii( utility::pointer::make_shared< core::scoring::methods::BBIndepCartBondedParameters >( 0, 10 ) );
 		restype_params->add_length_parameter( ids, params_ii );
 	}
 
@@ -1662,7 +1663,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			ids[1] = (core::Size)std::max(rt1,0);
 			ids[2] = (core::Size)std::max(rt2,0);
 
-			CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
+			core::scoring::methods::CartBondedParametersCOP len_params = lookup_length( rsd_type, is_nterm ? false : prepro, atm1, atm2, rt1, rt2 );
 			restype_params->add_bbdep_length_parameter( ids, len_params );
 		}
 
@@ -1690,7 +1691,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 			ResidueCartBondedParameters::Size3 ids;
 			ids[1] = (core::Size)std::max(rt1,0); ids[2] = (core::Size)std::max(rt2,0); ids[3] = (core::Size)std::max(rt3,0);
 
-			CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
+			core::scoring::methods::CartBondedParametersCOP ang_params = lookup_angle(rsd_type, prepro, atm1,atm2,atm3, rt1,rt2,rt3 );
 			restype_params->add_bbdep_angle_parameter( ids, ang_params );
 		}
 	}
@@ -1708,7 +1709,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 				if ( rsd_type.is_RNA() ) atm3name="P";
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+				core::scoring::methods::CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
 					atm1name, atm2name, atm3name, upconn_ats[ii].key2(), upconn_ats[ii].key1(),
 					-1 * ( (int) rsd_type.upper_connect_id() ));
 				ResidueCartBondedParameters::Size3 inds;
@@ -1733,7 +1734,7 @@ IdealParametersDatabase::create_parameters_for_restype(
 				if ( rsd_type.is_RNA() ) atm3name="O3'";
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
+				core::scoring::methods::CartBondedParametersCOP ang_params = lookup_angle( rsd_type, prepro,
 					atm1name, atm2name, atm3name, loconn_ats[ii].key2(), loconn_ats[ii].key1(),
 					-1 * ( (int) rsd_type.lower_connect_id() ));
 				ResidueCartBondedParameters::Size3 inds;
@@ -1767,31 +1768,31 @@ IdealParametersDatabase::create_parameters_for_restype(
 
 	/// oprev_cprev_n_h improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "O", "C", "N", "H" );
+		core::scoring::methods::CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "O", "C", "N", "H" );
 		restype_params->oprev_cprev_n_h_interres_improper_params( tor_params );
 	}
 
 	/// ca_cprev_n_h improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->bb_H_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "C", "N", "H" );
+		core::scoring::methods::CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "C", "N", "H" );
 		restype_params->ca_cprev_n_h_interres_improper_params( tor_params );
 	}
 
 	// ca_nnext_c_o improper torsion
 	if ( restype_params->bb_C_index() != 0 && restype_params->bb_O_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "N", "C", "O" );
+		core::scoring::methods::CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CA", "N", "C", "O" );
 		restype_params->ca_nnext_c_o_interres_improper_params( tor_params );
 	}
 
 	// ca_nnext_c_o improper torsion
 	if ( restype_params->bb_N_index() != 0 && restype_params->pro_CD_index() != 0 && restype_params->bb_CA_index() != 0 ) {
-		CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CD", "C", "N", "CA" );
+		core::scoring::methods::CartBondedParametersCOP tor_params = lookup_improper( rsd_type, "CD", "C", "N", "CA" );
 		restype_params->pro_cd_cprev_n_ca_interres_improper_params( tor_params );
 	}
 
 	// caprev_n bond length
 	if ( restype_params->bb_N_index() != 0 && rsd_type.lower_connect_id() != 0 ) {
-		CartBondedParametersCOP len_params = lookup_length( rsd_type, prepro, "N", "C", restype_params->bb_N_index(), -1 * ((int) rsd_type.lower_connect_id() ) );
+		core::scoring::methods::CartBondedParametersCOP len_params = lookup_length( rsd_type, prepro, "N", "C", restype_params->bb_N_index(), -1 * ((int) rsd_type.lower_connect_id() ) );
 		debug_assert( len_params );
 		restype_params->cprev_n_bond_length_params( len_params );
 	}
@@ -1814,7 +1815,7 @@ IdealParametersDatabase::restype_destruction_observer( core::chemical::RestypeDe
 
 //////////////////////
 /// EnergyMethod
-CartesianBondedEnergy::CartesianBondedEnergy( methods::EnergyMethodOptions const & options ) :
+CartesianBondedEnergy::CartesianBondedEnergy( core::scoring::methods::EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< CartesianBondedEnergyCreator >() ),
 	pro_nv_("NV")
 {
@@ -1835,7 +1836,7 @@ CartesianBondedEnergy::CartesianBondedEnergy( CartesianBondedEnergy const & ) = 
 
 CartesianBondedEnergy::~CartesianBondedEnergy() = default;
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CartesianBondedEnergy::clone() const {
 	return utility::pointer::make_shared< CartesianBondedEnergy >( *this );
 }
@@ -1843,7 +1844,7 @@ CartesianBondedEnergy::clone() const {
 void
 CartesianBondedEnergy::setup_for_derivatives(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 	//idealize_proline_nvs(pose);
 }
@@ -1851,20 +1852,20 @@ CartesianBondedEnergy::setup_for_derivatives(
 void
 CartesianBondedEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
@@ -1877,15 +1878,15 @@ CartesianBondedEnergy::setup_for_scoring(
 		}
 
 		TR << "Creating new peptide-bonded energy container (" << nres << ")" << std::endl;
-		utility::vector1< ScoreType > s_types;
-		s_types.push_back( cart_bonded );
-		s_types.push_back( cart_bonded_angle );
-		s_types.push_back( cart_bonded_length );
-		s_types.push_back( cart_bonded_torsion );
-		s_types.push_back( cart_bonded_ring );
-		s_types.push_back( cart_bonded_proper );
-		s_types.push_back( cart_bonded_improper );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		utility::vector1< core::scoring::ScoreType > s_types;
+		s_types.push_back( core::scoring::cart_bonded );
+		s_types.push_back( core::scoring::cart_bonded_angle );
+		s_types.push_back( core::scoring::cart_bonded_length );
+		s_types.push_back( core::scoring::cart_bonded_torsion );
+		s_types.push_back( core::scoring::cart_bonded_ring );
+		s_types.push_back( core::scoring::cart_bonded_proper );
+		s_types.push_back( core::scoring::cart_bonded_improper );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::PolymerBondedEnergyContainer >( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -1926,8 +1927,8 @@ CartesianBondedEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & sf,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & sf,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	bool res1first = rsd2.seqpos() > rsd1.seqpos();
@@ -1951,13 +1952,13 @@ void
 CartesianBondedEnergy::eval_intrares_energy(
 	conformation::Residue const &rsd,
 	pose::Pose const &pose,
-	ScoreFunction const &,
-	EnergyMap &emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &emap
 ) const
 {
 	using namespace numeric;
 
-	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
+	//(fpd) NOTE: this must agree with logic in core::scoring::PolymerBondedEnergyContainer::other_res_index
 	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
 	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
 	if ( dont_score_this ) {
@@ -1989,14 +1990,14 @@ CartesianBondedEnergy::eval_intrares_energy(
 void
 CartesianBondedEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*res_data_cache*/,
+	core::scoring::ResSingleMinimizationData const & /*res_data_cache*/,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const {
 	using namespace numeric;
 
-	//(fpd) NOTE: this must agree with logic in PolymerBondedEnergyContainer::other_res_index
+	//(fpd) NOTE: this must agree with logic in core::scoring::PolymerBondedEnergyContainer::other_res_index
 	//    that is, this function must be evaluated for all residues that do not take part in a two-body energy
 	bool dont_score_this = ( rsd.type().is_polymer() && rsd.has_upper_connect() );
 	if ( dont_score_this ) {
@@ -2030,13 +2031,13 @@ void
 CartesianBondedEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & min1,
-	ResSingleMinimizationData const & min2,
-	ResPairMinimizationData const & min12,
+	core::scoring::ResSingleMinimizationData const & min1,
+	core::scoring::ResSingleMinimizationData const & min2,
+	core::scoring::ResPairMinimizationData const & min12,
 	pose::Pose const & pose,
-	EnergyMap const & wts,
-	utility::vector1< DerivVectorPair > & r1_derivs,
-	utility::vector1< DerivVectorPair > & r2_derivs
+	core::scoring::EnergyMap const & wts,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_derivs
 ) const {
 	bool res1first = rsd2.seqpos() > rsd1.seqpos();
 
@@ -2058,13 +2059,13 @@ void
 CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & /*min_data*/,
 	pose::Pose const & /*pose*/,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	using namespace numeric;
@@ -2095,7 +2096,7 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 		eval_singleres_derivatives( rsd1, res1params, phi1, psi1, weights, r1_atom_derivs );
 	}
 
-	// If residue1 and 2 are the same (signal used by the PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
+	// If residue1 and 2 are the same (signal used by the core::scoring::PolymerBondedEnergyContainer for residues that aren't polymer-bonded), stop here to avoid double-counting.
 	if ( rsd1.seqpos() == rsd2.seqpos() ) return;
 
 	if ( rsd1.aa() == core::chemical::aa_vrt ) return;
@@ -2131,14 +2132,15 @@ CartesianBondedEnergy::eval_residue_pair_derivatives_sorted(
 Real
 CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const & /*min_data*/,
 	id::DOF_ID const & /*dof_id*/,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap const & weights
 ) const {
 	using namespace numeric;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	// save some time if we're only doing bb-indep
@@ -2169,7 +2171,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps = resparams.bbdep_length_parameters();
 	for ( Size ii = 1; ii <= lps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
-		CartBondedParameters const & len_params( *lps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & len_params( *lps[ ii ].second );
 
 		Real const K = len_params.K(phi,psi);
 		Real const mu = len_params.mu(phi,psi);
@@ -2212,14 +2214,14 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		}
 
 		// derivatives w.r.t. phi/psi
-		deriv += (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
+		deriv += (weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
 	}
 
 	/// Backbone-dependent bond angles
 	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps = resparams.bbdep_angle_parameters();
 	for ( Size ii = 1; ii <= aps.size(); ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-		CartBondedParameters const & ang_params( *aps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 
 		Real const K = ang_params.K(phi,psi);
 		Real const mu = ang_params.mu(phi,psi);
@@ -2271,7 +2273,7 @@ CartesianBondedEnergy::eval_intraresidue_dof_derivative(
 		}
 
 		// derivatives w.r.t. phi/psi
-		deriv += (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
+		deriv += (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * (dscore_dmu*dmu_dtor + dscore_dK*dK_dtor);
 	}
 
 	return 180/pi * deriv;
@@ -2289,16 +2291,16 @@ void
 CartesianBondedEnergy::indicate_required_context_graphs(utility::vector1< bool > & ) const {}
 
 
-methods::LongRangeEnergyType
-CartesianBondedEnergy::long_range_type() const { return methods::cart_bonded_lr; }
+core::scoring::methods::LongRangeEnergyType
+CartesianBondedEnergy::long_range_type() const { return core::scoring::methods::cart_bonded_lr; }
 
 void
 CartesianBondedEnergy::residue_pair_energy_sorted(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	using namespace numeric;
@@ -2351,7 +2353,7 @@ CartesianBondedEnergy::eval_singleres_energy(
 	Real phi, //Must be inverted for D-amino acids
 	Real psi, //Must be inverted for D-amino acids
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using numeric::constants::d::pi;
@@ -2378,10 +2380,11 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 	conformation::Residue const & rsd,
 	//ResidueCartBondedParameters const & resparams,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	Size const n_rings( rsd.type().n_rings() );
@@ -2431,8 +2434,8 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 			}
 
 			// accumulate the energy
-			emap[ cart_bonded_ring ] += energy_angle;
-			emap[ cart_bonded ] += energy_angle; // potential double counting*/
+			emap[ core::scoring::cart_bonded_ring ] += energy_angle;
+			emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 
 			// 2 constrain torsion
 			Real phi0 = rc.nu_angles[ii]*pi/180.0;
@@ -2451,8 +2454,8 @@ CartesianBondedEnergy::eval_singleres_ring_energies(
 					Kphi << ") " << 180/pi * angle << " " << 180/pi * phi0 << "    sc="  << energy_torsion << std::endl;
 			}
 
-			emap[ cart_bonded_ring ] += energy_torsion;
-			emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+			emap[ core::scoring::cart_bonded_ring ] += energy_torsion;
+			emap[ core::scoring::cart_bonded ] += energy_torsion; // potential double counting*/
 
 		}
 	}
@@ -2466,10 +2469,11 @@ CartesianBondedEnergy::eval_singleres_improper_energies(
 	Real const phi,
 	Real const psi,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
@@ -2479,7 +2483,7 @@ CartesianBondedEnergy::eval_singleres_improper_energies(
 
 	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
-		CartBondedParameters const & imp_params( *itps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & imp_params( *itps[ ii ].second );
 		Real Kphi = imp_params.K(phi,psi);
 		Real phi0 = d_multiplier * imp_params.mu(phi,psi);
 		Real phi_step=2 * pi / imp_params.period();
@@ -2502,9 +2506,9 @@ CartesianBondedEnergy::eval_singleres_improper_energies(
 				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_improper << std::endl;
 		}
 
-		emap[ cart_bonded_improper ] += energy_improper;
-		emap[ cart_bonded_torsion ] += energy_improper;
-		emap[ cart_bonded ] += energy_improper; // potential double counting*/
+		emap[ core::scoring::cart_bonded_improper ] += energy_improper;
+		emap[ core::scoring::cart_bonded_torsion ] += energy_improper;
+		emap[ core::scoring::cart_bonded ] += energy_improper; // potential double counting*/
 	}
 }
 
@@ -2514,10 +2518,11 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
@@ -2526,7 +2531,7 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 
 	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
-		CartBondedParameters const & tor_params( *tps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & tor_params( *tps[ ii ].second );
 
 
 		Real Kphi = tor_params.K(0,0);
@@ -2548,9 +2553,9 @@ CartesianBondedEnergy::eval_singleres_torsion_energies(
 				Kphi << ") " << angle << " " << phi0 << "    sc="  << energy_torsion << std::endl;
 		}
 
-		emap[ cart_bonded_proper ] += energy_torsion;
-		emap[ cart_bonded_torsion ] += energy_torsion;
-		emap[ cart_bonded ] += energy_torsion; // potential double counting*/
+		emap[ core::scoring::cart_bonded_proper ] += energy_torsion;
+		emap[ core::scoring::cart_bonded_torsion ] += energy_torsion;
+		emap[ core::scoring::cart_bonded ] += energy_torsion; // potential double counting*/
 	}
 }
 
@@ -2562,16 +2567,17 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 	Real const phi,
 	Real const psi,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 
 	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( resparams.angle_parameters() );
 
 	for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-		CartBondedParameters const & ang_params( *aps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 
 		// ring angle?  Let cart_bonded_ring handle it
 		Size const n_rings( rsd.type().n_rings() );
@@ -2606,8 +2612,8 @@ CartesianBondedEnergy::eval_singleres_angle_energies(
 		}
 
 		// accumulate the energy
-		emap[ cart_bonded_angle ] += energy_angle;
-		emap[ cart_bonded ] += energy_angle; // potential double counting*/
+		emap[ core::scoring::cart_bonded_angle ] += energy_angle;
+		emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 	}
 }
 
@@ -2619,16 +2625,17 @@ CartesianBondedEnergy::eval_singleres_length_energies(
 	Real const phi,
 	Real const psi,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 
 	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps( resparams.length_parameters() );
 
 	for ( Size ii = 1, iiend = lps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
-		CartBondedParameters const & len_params( *lps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & len_params( *lps[ ii ].second );
 		Real const Kd = len_params.K(phi,psi);
 		Real const d0 = len_params.mu(phi,psi);
 		Real const d = rsd.xyz(atids[1]).distance( rsd.xyz( atids[2] ));
@@ -2646,8 +2653,8 @@ CartesianBondedEnergy::eval_singleres_length_energies(
 		}
 
 		// accumulate the energy
-		emap[ cart_bonded ] += energy_length;
-		emap[ cart_bonded_length ] += energy_length;
+		emap[ core::scoring::cart_bonded ] += energy_length;
+		emap[ core::scoring::cart_bonded_length ] += energy_length;
 	}
 }
 
@@ -2664,7 +2671,7 @@ CartesianBondedEnergy::eval_residue_pair_energies(
 	Real phi2,
 	Real psi2,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	eval_interresidue_improper_energy( rsd1, rsd2, rsd1params, rsd2params, pose, emap );
@@ -2684,10 +2691,12 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 	Real phi1,
 	Real psi1,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
@@ -2696,7 +2705,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 			Real Ktheta = ang_params.K(phi1,psi1);
 			Real theta0 = ang_params.mu(phi1,psi1);
 			Real angle = numeric::angle_radians(
@@ -2717,8 +2726,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 			}
 
 			// accumulate the energy
-			emap[ cart_bonded_angle ] += energy_angle;
-			emap[ cart_bonded ] += energy_angle; // potential double counting*/
+			emap[ core::scoring::cart_bonded_angle ] += energy_angle;
+			emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 		}
 
 	} else {
@@ -2761,7 +2770,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
 				// lookup Ktheta and theta0
-				CartBondedParametersCOP ang_params =
+				core::scoring::methods::CartBondedParametersCOP ang_params =
 					db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
 					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 
@@ -2783,8 +2792,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd1(
 				}
 
 				// accumulate the energy
-				emap[ cart_bonded_angle ] += energy_angle;
-				emap[ cart_bonded ] += energy_angle; // potential double counting*/
+				emap[ core::scoring::cart_bonded_angle ] += energy_angle;
+				emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 			}
 		}
 	}
@@ -2799,10 +2808,12 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 	Real phi2,
 	Real psi2,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
@@ -2811,7 +2822,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 			Real Ktheta = ang_params.K(phi2,psi2);
 			Real theta0 = ang_params.mu(phi2,psi2);
 			Real angle = numeric::angle_radians(
@@ -2833,8 +2844,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 			}
 
 			// accumulate the energy
-			emap[ cart_bonded_angle ] += energy_angle;
-			emap[ cart_bonded ] += energy_angle; // potential double counting*/
+			emap[ core::scoring::cart_bonded_angle ] += energy_angle;
+			emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 		}
 
 	} else {
@@ -2874,7 +2885,7 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params =
+				core::scoring::methods::CartBondedParametersCOP ang_params =
 					db_->lookup_angle(rsd2.type(), false,
 					atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 
@@ -2902,8 +2913,8 @@ CartesianBondedEnergy::eval_interresidue_angle_energies_two_from_rsd2(
 				}
 
 				// accumulate the energy
-				emap[ cart_bonded_angle ] += energy_angle;
-				emap[ cart_bonded ] += energy_angle; // potential double counting*/
+				emap[ core::scoring::cart_bonded_angle ] += energy_angle;
+				emap[ core::scoring::cart_bonded ] += energy_angle; // potential double counting*/
 
 			}
 		}
@@ -2919,10 +2930,12 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 	Real phi2,
 	Real psi2,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos();
@@ -2933,7 +2946,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 		Real length = rsd1.xyz( rsd1params.bb_C_index() ).distance( rsd2.xyz( rsd2params.bb_N_index() ) );
 
 		// lookup Kd and d0
-		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
+		core::scoring::methods::CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
 
 		if ( len_params->is_null() ) return;
 		Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -2952,8 +2965,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 		}
 
 		// accumulate the energy
-		emap[ cart_bonded ] += energy_length;
-		emap[ cart_bonded_length ] += energy_length;
+		emap[ core::scoring::cart_bonded ] += energy_length;
+		emap[ core::scoring::cart_bonded_length ] += energy_length;
 
 	} else {
 		// At the time of the writing of this comment, the CartesianBondEnergy is used only
@@ -2989,7 +3002,7 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 
-			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
+			core::scoring::methods::CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -3008,8 +3021,8 @@ CartesianBondedEnergy::eval_interresidue_bond_energy(
 			}
 
 			// accumulate the energy
-			emap[ cart_bonded ] += energy_length;
-			emap[ cart_bonded_length ] += energy_length;
+			emap[ core::scoring::cart_bonded ] += energy_length;
+			emap[ core::scoring::cart_bonded_length ] += energy_length;
 		}
 	}
 
@@ -3022,10 +3035,11 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	ResidueCartBondedParameters const & rsd1params,
 	ResidueCartBondedParameters const & rsd2params,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	if ( !rsd1.is_protein() || !rsd2.is_protein() || !rsd1.is_polymer_bonded( rsd2 ) ) return;
@@ -3041,7 +3055,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 
 	// backbone CA-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3069,9 +3083,9 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_improper;
-			emap[ cart_bonded_torsion ] += energy_improper;
-			emap[ cart_bonded_improper ] += energy_improper;
+			emap[ core::scoring::cart_bonded ] += energy_improper;
+			emap[ core::scoring::cart_bonded_torsion ] += energy_improper;
+			emap[ core::scoring::cart_bonded_improper ] += energy_improper;
 		}
 
 	}
@@ -3079,7 +3093,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 	// backbone Oprev-Cprev-N-H
 	if ( (rsd2.aa() != aa_pro && rsd2.aa() != aa_dpr /*Not D- or L-proline*/) && rsd2params.bb_H_index() != 0
 			&& rsd1params.bb_O_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3107,9 +3121,9 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_improper;
-			emap[ cart_bonded_torsion ] += energy_improper;
-			emap[ cart_bonded_improper ] += energy_improper;
+			emap[ core::scoring::cart_bonded ] += energy_improper;
+			emap[ core::scoring::cart_bonded_torsion ] += energy_improper;
+			emap[ core::scoring::cart_bonded_improper ] += energy_improper;
 		}
 
 	}
@@ -3117,7 +3131,7 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 
 	// backbone CA-Nnext-C-O
 	{
-		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3145,15 +3159,15 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_improper;
-			emap[ cart_bonded_torsion ] += energy_improper;
-			emap[ cart_bonded_improper ] += energy_improper;
+			emap[ core::scoring::cart_bonded ] += energy_improper;
+			emap[ core::scoring::cart_bonded_torsion ] += energy_improper;
+			emap[ core::scoring::cart_bonded_improper ] += energy_improper;
 		}
 	}
 
 	// proline N planarity
 	if ( rsd2.aa() == core::chemical::aa_pro || rsd2.aa() == core::chemical::aa_dpr ) { //D- or L-proline
-		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -3181,9 +3195,9 @@ CartesianBondedEnergy::eval_interresidue_improper_energy(
 					Kphi << ") " << angle << " " << phi0 << "    sc=" << energy_improper << std::endl;
 			}
 
-			emap[ cart_bonded ] += energy_improper;
-			emap[ cart_bonded_torsion ] += energy_improper;
-			emap[ cart_bonded_improper ] += energy_improper;
+			emap[ core::scoring::cart_bonded ] += energy_improper;
+			emap[ core::scoring::cart_bonded_torsion ] += energy_improper;
+			emap[ core::scoring::cart_bonded_improper ] += energy_improper;
 		}
 	}
 }
@@ -3195,8 +3209,10 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
+	using namespace core::scoring;
+
 	// ensure this is called with linked CHOs
 	if ( !rsd1.is_bonded( rsd2 ) ) return;
 	if ( !rsd1.is_carbohydrate() || !rsd2.is_carbohydrate() ) return;
@@ -3232,8 +3248,8 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 			Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
 	}
 
-	emap[ cart_bonded_ring ] += energy_torsion;
-	emap[ cart_bonded ] += energy_torsion;
+	emap[ core::scoring::cart_bonded_ring ] += energy_torsion;
+	emap[ core::scoring::cart_bonded ] += energy_torsion;
 
 	// also constrain the "other" bonded atom (to atom3)
 	core::Size atom4b = carbo_info->anomeric_sidechain_index();
@@ -3255,8 +3271,8 @@ CartesianBondedEnergy::eval_interresidue_ring_energy(
 			Ktheta << ") " << 180/3.14 * angle << " " << 180/3.14 * phi0 << "    sc="  << energy_torsion << std::endl;
 	}
 
-	emap[ cart_bonded_ring ] += energy_torsion;
-	emap[ cart_bonded ] += energy_torsion;
+	emap[ core::scoring::cart_bonded_ring ] += energy_torsion;
+	emap[ core::scoring::cart_bonded ] += energy_torsion;
 }
 
 
@@ -3266,8 +3282,8 @@ CartesianBondedEnergy::eval_singleres_derivatives(
 	ResidueCartBondedParameters const & resparams,
 	Real phi,
 	Real psi,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const {
 	using numeric::constants::d::pi;
 	using namespace numeric;
@@ -3288,11 +3304,12 @@ void
 CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	conformation::Residue const & rsd,
 	//ResidueCartBondedParameters const & resparams,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	Size const n_rings( rsd.type().n_rings() );
@@ -3305,7 +3322,7 @@ CartesianBondedEnergy::eval_singleres_ring_derivatives(
 	core::Real Ktheta = db_->k_torsion();  // for now use default torsion (TO DO: add spring constants to DB!)
 	core::Real Kphi = db_->k_angle();  // for now use default torsion (TO DO: add spring constants to DB!)
 
-	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_ring ] + weights[ core::scoring::cart_bonded ];
 
 	for ( core::uint jj( 1 ); jj <= n_rings; ++jj ) {
 		// get the conformer of the ring
@@ -3397,19 +3414,20 @@ CartesianBondedEnergy::eval_singleres_angle_derivatives(
 	ResidueCartBondedParameters const & resparams,
 	Real const phi,
 	Real const psi,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 
 	utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( resparams.angle_parameters() );
-	Real const weight = weights[ cart_bonded_angle ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ];
 
 	for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] );
-		CartBondedParameters const & ang_params( *aps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 		if ( ang_params.is_null() ) continue;
 
 		// ring angle?  Let cart_bonded_ring handle it
@@ -3458,19 +3476,20 @@ CartesianBondedEnergy::eval_singleres_length_derivatives(
 	ResidueCartBondedParameters const & resparams,
 	Real const phi,
 	Real const psi,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 
 	utility::vector1< ResidueCartBondedParameters::length_parameter > const & lps( resparams.length_parameters() );
-	Real const weight = weights[ cart_bonded_length ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ];
 
 	for ( Size ii = 1, iiend = lps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size2 const & atids( lps[ ii ].first );
 		Size const rt1( atids[1] ), rt2( atids[2] );
-		CartBondedParameters const & len_params( *lps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & len_params( *lps[ ii ].second );
 		if ( len_params.is_null() ) continue;
 
 		Real const Kd = len_params.K(phi,psi);
@@ -3502,23 +3521,24 @@ CartesianBondedEnergy::eval_singleres_improper_derivatives(
 	ResidueCartBondedParameters const & resparams,
 	Real const phi,
 	Real const psi,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & tps( resparams.improper_parameters() );
 
-	Real const weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_improper ] + weights[ core::scoring::cart_bonded_torsion ] + weights[ core::scoring::cart_bonded ];
 
 	for ( Size ii = 1, iiend = tps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( tps[ ii ].first );
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
-		CartBondedParameters const & imp_params( *tps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & imp_params( *tps[ ii ].second );
 
 		Real Kphi = imp_params.K(phi,psi);
 		Real phi0 = d_multiplier * imp_params.mu(phi,psi);
@@ -3562,22 +3582,23 @@ void
 CartesianBondedEnergy::eval_singleres_torsion_derivatives(
 	conformation::Residue const & rsd,
 	ResidueCartBondedParameters const & resparams,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 ) const {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	const core::Real d_multiplier = core::chemical::is_canonical_D_aa(rsd.aa()) ? -1.0 : 1.0 ; //Multiplier for D-amino acid derivatives
 
 	utility::vector1< ResidueCartBondedParameters::torsion_parameter > const & itps(
 		resparams.torsion_parameters() );
-	Real const weight = weights[ cart_bonded_proper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_proper ] + weights[ core::scoring::cart_bonded_torsion ] + weights[ core::scoring::cart_bonded ];
 
 	for ( Size ii = 1, iiend = itps.size(); ii <= iiend; ++ii ) {
 		ResidueCartBondedParameters::Size4 const & atids( itps[ ii ].first );
 		Size const rt1( atids[1] ), rt2( atids[2] ), rt3( atids[3] ), rt4( atids[4] );
-		CartBondedParameters const & tor_params( *itps[ ii ].second );
+		core::scoring::methods::CartBondedParameters const & tor_params( *itps[ ii ].second );
 
 		// ring tors?  Let cart_bonded_ring handle it
 		Size const n_rings( rsd.type().n_rings() );
@@ -3636,12 +3657,14 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 	ResidueCartBondedParameters const & rsd2params,
 	Real phi1,
 	Real psi1,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
@@ -3656,7 +3679,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd1params.upper_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 			Real Ktheta = ang_params.K(phi1,psi1);
 			Real theta0 = ang_params.mu(phi1,psi1);
 
@@ -3668,9 +3691,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 			numeric::deriv::angle_p1_deriv(
 				rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
 			if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
+				dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 			} else {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+				dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * (theta - theta0);
 			}
 			r1_atom_derivs[ res1_lower_atomno ].f1() += dE_dtheta * f1;
 			r1_atom_derivs[ res1_lower_atomno ].f2() += dE_dtheta * f2;
@@ -3721,7 +3744,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 				std::string atm3name=rsd2.atom_name(resconn_atomno2); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params =
+				core::scoring::methods::CartBondedParametersCOP ang_params =
 					db_->lookup_angle(rsd1.type(), (rsd2.aa() == chemical::aa_pro || rsd2.aa() == chemical::aa_dpr /*D- or L-proline*/),
 					atm1name, atm2name, atm3name, res1_lower_atomno, resconn_atomno1, -resconn_id1);
 
@@ -3733,9 +3756,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd1(
 				numeric::deriv::angle_p1_deriv(
 					rsd1.xyz( res1_lower_atomno ), rsd1.xyz( resconn_atomno1 ), rsd2.xyz( resconn_atomno2 ), theta, f1, f2 );
 				if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
+					dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 				} else {
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+					dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * (theta - theta0);
 				}
 				r1_atom_derivs[ res1_lower_atomno ].f1() += dE_dtheta * f1;
 				r1_atom_derivs[ res1_lower_atomno ].f2() += dE_dtheta * f2;
@@ -3762,12 +3785,14 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 	ResidueCartBondedParameters const & rsd2params,
 	Real phi2,
 	Real psi2,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
@@ -3782,7 +3807,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 		utility::vector1< ResidueCartBondedParameters::angle_parameter > const & aps( rsd2params.lower_connect_angle_params() );
 		for ( Size ii = 1, iiend = aps.size(); ii <= iiend; ++ii ) {
 			ResidueCartBondedParameters::Size3 const & atids( aps[ ii ].first );
-			CartBondedParameters const & ang_params( *aps[ ii ].second );
+			core::scoring::methods::CartBondedParameters const & ang_params( *aps[ ii ].second );
 			Real Ktheta = ang_params.K(phi2,psi2);
 			Real theta0 = ang_params.mu(phi2,psi2);
 
@@ -3794,9 +3819,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 			numeric::deriv::angle_p1_deriv(
 				rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
 			if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
+				dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 			} else {
-				dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+				dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * (theta - theta0);
 			}
 			r2_atom_derivs[ res2_lower_atomno ].f1() += dE_dtheta * f1;
 			r2_atom_derivs[ res2_lower_atomno ].f2() += dE_dtheta * f2;
@@ -3844,7 +3869,7 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 				std::string atm2name=rsd2.atom_name(resconn_atomno2); boost::trim(atm2name);
 				std::string atm3name=rsd1.atom_name(resconn_atomno1); boost::trim(atm3name);
 
-				CartBondedParametersCOP ang_params =
+				core::scoring::methods::CartBondedParametersCOP ang_params =
 					db_->lookup_angle(rsd2.type(), false, atm1name, atm2name, atm3name, res2_lower_atomno, resconn_atomno2, -resconn_id2);
 
 				if ( ang_params->is_null() ) continue;
@@ -3855,9 +3880,9 @@ CartesianBondedEnergy::eval_interresidue_angle_derivs_two_from_rsd2(
 				numeric::deriv::angle_p1_deriv(
 					rsd2.xyz( res2_lower_atomno ), rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), theta, f1, f2 );
 				if ( linear_bonded_potential_ && std::fabs(theta - theta0)>1 ) {
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
+					dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * ((theta - theta0)>0? 0.5 : -0.5);
 				} else {
-					dE_dtheta = (weights[ cart_bonded_angle ] + weights[ cart_bonded ]) * Ktheta * (theta - theta0);
+					dE_dtheta = (weights[ core::scoring::cart_bonded_angle ] + weights[ core::scoring::cart_bonded ]) * Ktheta * (theta - theta0);
 				}
 				r2_atom_derivs[ res2_lower_atomno ].f1() += dE_dtheta * f1;
 				r2_atom_derivs[ res2_lower_atomno ].f2() += dE_dtheta * f2;
@@ -3884,19 +3909,21 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 	ResidueCartBondedParameters const & rsd2params,
 	Real phi2,
 	Real psi2,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	using namespace core::chemical;
+	using namespace core::scoring;
+
 	bool rsd1_is_protein = (rsd1.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd1.aa()));
 	bool rsd2_is_protein = (rsd2.aa() <= num_canonical_aas || core::chemical::is_canonical_D_aa(rsd2.aa()));
 	bool rsd12_peptide_bonded = !rsd1.is_upper_terminus() && rsd1.has_upper_connect() && rsd1.residue_connection_partner( rsd1.upper_connect().index() ) == rsd2.seqpos() && !rsd2.is_lower_terminus() && rsd2.has_lower_connect() && rsd2.residue_connection_partner( rsd2.lower_connect().index() ) == rsd1.seqpos();
 	if ( rsd1_is_protein && rsd2_is_protein && rsd12_peptide_bonded ) {
 
 		// lookup Kd and d0
-		CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
+		core::scoring::methods::CartBondedParametersCOP len_params = rsd2params.cprev_n_bond_length_params();
 
 		if ( len_params->is_null() ) return;
 		Real const Kd = len_params->K(phi2,psi2);
@@ -3910,9 +3937,9 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 		numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( r2at ), rsd1.xyz( r1at ), d, f1, f2 );
 		if ( linear_bonded_potential_ && std::fabs(d - d0)>1 ) {
-			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
+			dE_dd = (weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
 		} else {
-			dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
+			dE_dd = (weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ]) * Kd * (d - d0);
 		}
 		r2_atom_derivs[ r2at ].f1() += dE_dd * f1;
 		r2_atom_derivs[ r2at ].f2() += dE_dd * f2;
@@ -3945,7 +3972,7 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 			std::string atm1name=rsd2.atom_name(resconn_atomno2); boost::trim(atm1name);
 			std::string atm2name=rsd1.atom_name(resconn_atomno1); boost::trim(atm2name);
 
-			CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
+			core::scoring::methods::CartBondedParametersCOP len_params = db_->lookup_length(rsd2.type(), false, atm1name, atm2name, resconn_atomno2, -resconn_id2);
 
 			if ( len_params->is_null() ) continue;
 			Real Kd=len_params->K(phi2,psi2), d0=len_params->mu(phi2,psi2);
@@ -3955,9 +3982,9 @@ CartesianBondedEnergy::eval_interresidue_bond_length_derivs(
 
 			numeric::deriv::distance_f1_f2_deriv( rsd2.xyz( resconn_atomno2 ), rsd1.xyz( resconn_atomno1 ), d, f1, f2 );
 			if ( linear_bonded_potential_ && std::fabs(d - d0)>1 ) {
-				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
+				dE_dd = (weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ]) * Kd * ((d - d0)>0? 0.5 : -0.5);
 			} else {
-				dE_dd = (weights[ cart_bonded_length ] + weights[ cart_bonded ]) * Kd * (d - d0);
+				dE_dd = (weights[ core::scoring::cart_bonded_length ] + weights[ core::scoring::cart_bonded ]) * Kd * (d - d0);
 			}
 
 			r2_atom_derivs[ resconn_atomno2 ].f1() += dE_dd * f1;
@@ -3977,11 +4004,12 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	conformation::Residue const & res2,
 	ResidueCartBondedParameters const & rsd1params,
 	ResidueCartBondedParameters const & rsd2params,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 	using namespace core::chemical;
+	using namespace core::scoring;
 	using numeric::constants::d::pi;
 
 	// backbone C-N-CA-H
@@ -3995,11 +4023,11 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 	//const core::Real d_multiplier1 = core::chemical::is_canonical_D_aa(res1.aa()) ? -1.0 : 1.0 ;
 	const core::Real d_multiplier2 = core::chemical::is_canonical_D_aa(res2.aa()) ? -1.0 : 1.0 ;
 
-	Real weight = weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ];
+	Real weight = weights[ core::scoring::cart_bonded_improper ] + weights[ core::scoring::cart_bonded_torsion ] + weights[ core::scoring::cart_bonded ];
 
 	// backbone Oprev-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.oprev_cprev_n_h_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -4048,7 +4076,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 
 	// backbone CA-Cprev-N-H
 	if ( (res2.aa() != aa_pro && res2.aa() != aa_dpr /*NOT D- or L-proline*/) && rsd2params.bb_H_index() != 0 ) {
-		CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.ca_cprev_n_h_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			Real const Kphi = tor_params->K(0,0);
 			Real const phi0 = d_multiplier2 * tor_params->mu(0,0);
@@ -4096,7 +4124,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 
 	// backbone CA-Nnext-C-O
 	{
-		CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd1params.ca_nnext_c_o_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {  // however, if it is in the db but with 0 weight, that is OK
 			core::Size const atm1 = rsd1params.bb_CA_index();
 			core::Size const atm2 = rsd2params.bb_N_index();
@@ -4115,10 +4143,10 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 			Real del_phi = basic::subtract_radian_angles(phi, phi0);
 			del_phi = basic::periodic_range( del_phi, phi_step );
 			if ( linear_bonded_potential_ && std::fabs(del_phi)>1 ) {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ])
+				dE_dphi = (weights[ core::scoring::cart_bonded_improper ] + weights[ core::scoring::cart_bonded_torsion ] + weights[ core::scoring::cart_bonded ])
 					* Kphi * (del_phi>0? 0.5 : -0.5);
 			} else {
-				dE_dphi = (weights[ cart_bonded_improper ] + weights[ cart_bonded_torsion ] + weights[ cart_bonded ])
+				dE_dphi = (weights[ core::scoring::cart_bonded_improper ] + weights[ core::scoring::cart_bonded_torsion ] + weights[ core::scoring::cart_bonded ])
 					* Kphi * del_phi;
 			}
 			r1_atom_derivs[ atm1 ].f1() += dE_dphi * f1;
@@ -4146,7 +4174,7 @@ CartesianBondedEnergy::eval_interresidue_improper_derivatives(
 
 	// proline N planarity
 	if ( res2.aa() == core::chemical::aa_pro || res2.aa() == core::chemical::aa_dpr /*D- or L-proline*/ ) {
-		CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
+		core::scoring::methods::CartBondedParametersCOP tor_params = rsd2params.pro_cd_cprev_n_ca_interres_improper_params();
 		if ( tor_params != nullptr && !tor_params->is_null() ) {
 			core::Size const atm1 = rsd2params.pro_CD_index();
 			core::Size const atm2 = rsd1params.bb_C_index();
@@ -4199,17 +4227,19 @@ void
 CartesianBondedEnergy::eval_interresidue_ring_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
+	using namespace core::scoring;
+
 	// ensure this is called with linked CHOs
 	if ( !rsd1.is_bonded( rsd2 ) ) return;
 	if ( !rsd1.is_carbohydrate() || !rsd2.is_carbohydrate() ) return;
 	if ( rsd2.type().n_rings() != 1 ) return;
 
 	core::Real Ktheta = db_->k_torsion_improper();  // use default torsion weight
-	Real const weight = weights[ cart_bonded_ring ] + weights[ cart_bonded ];
+	Real const weight = weights[ core::scoring::cart_bonded_ring ] + weights[ core::scoring::cart_bonded ];
 
 	// lookup target chirality
 	chemical::carbohydrates::CarbohydrateInfoCOP carbo_info( rsd2.carbohydrate_info() );
@@ -4343,6 +4373,5 @@ CartesianBondedEnergy::get_db(Real k_len, Real k_ang, Real k_tors, Real k_tors_p
 	return databases[ key ];
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

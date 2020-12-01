@@ -39,17 +39,18 @@
 //using namespace std;
 
 namespace core {
-namespace scoring {
-namespace methods {
-methods::EnergyMethodOP
+namespace energy_methods {
+
+core::scoring::methods::EnergyMethodOP
 DNA_EnvPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & //options
+	core::scoring::methods::EnergyMethodOptions const & //options
 ) const {
 	return utility::pointer::make_shared< DNA_EnvPairEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DNA_EnvPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dna_env );
 	sts.push_back( dna_pair );
@@ -65,13 +66,13 @@ DNA_EnvPairEnergy::version() const { return 1; }
 /// @details  C-TOR
 DNA_EnvPairEnergy::DNA_EnvPairEnergy(): // constructor
 	parent( utility::pointer::make_shared< DNA_EnvPairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_DNA_EnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_DNA_EnvPairPotential() )
 {
 }
 
 
 /// @details  Clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_EnvPairEnergy::clone() const
 {
 	return utility::pointer::make_shared< DNA_EnvPairEnergy >();
@@ -82,8 +83,8 @@ DNA_EnvPairEnergy::clone() const
 void
 DNA_EnvPairEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &, //scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &, //scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	//PROF_START( basic::DNA_ENV_PAIR_ENERGY );
@@ -122,13 +123,12 @@ DNA_EnvPairEnergy::finalize_total_energy(
 		env_score += potential_.residue_env_score( aa, nbr_count );
 	}
 
-	emap[ dna_env  ] = env_score;
-	emap[ dna_pair ] = pair_score;
+	emap[ core::scoring::dna_env  ] = env_score;
+	emap[ core::scoring::dna_pair ] = pair_score;
 
 	//PROF_STOP( basic::DNA_ENV_PAIR_ENERGY );
 }
 
 
-} // ns methods
 } // ns scoring
 } // ns core

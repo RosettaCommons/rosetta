@@ -61,7 +61,7 @@ bool COFilter::apply( core::pose::Pose const & pose ) const{
 
 	//Real co_score = 0.0;
 
-	core::scoring::methods::ContactOrderEnergy co_energy;
+	core::energy_methods::ContactOrderEnergy co_energy;
 	//core::scoring::EnergyMap emap;
 	//core::scoring::ScoreFunction sfxn;
 

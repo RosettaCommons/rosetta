@@ -38,21 +38,22 @@
 static basic::Tracer tr( "core.scoring.methods.ContactOrderEnergy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the ContactOrderEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ContactOrderEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ContactOrderEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ContactOrderEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( co );
 	return sts;
@@ -65,7 +66,7 @@ ContactOrderEnergy::ContactOrderEnergy() :
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ContactOrderEnergy::clone() const
 {
 	return utility::pointer::make_shared< ContactOrderEnergy >();
@@ -76,12 +77,10 @@ ContactOrderEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 void ContactOrderEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
-
-	totals[ co ] = calculate_contact_order( pose );
-
+	totals[ core::scoring::co ] = calculate_contact_order( pose );
 }
 
 core::Real
@@ -136,6 +135,5 @@ ContactOrderEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

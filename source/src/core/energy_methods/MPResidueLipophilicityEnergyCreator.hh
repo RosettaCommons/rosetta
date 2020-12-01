@@ -36,8 +36,7 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
 /// @brief Membrane Termini Penalty Creator Class
@@ -46,19 +45,18 @@ class MPResidueLipophilicityEnergyCreator : public core::scoring::methods::Energ
 public:
 
 	/// @brief Instantiate a new MPResidueLipophilicityEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} // membrane
 } // scoring
 } // core
 

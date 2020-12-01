@@ -12,8 +12,8 @@
 /// @author TJ Brunette
 
 
-#ifndef INCLUDED_core_scoring_methods_RG_LocalEnergy_hh
-#define INCLUDED_core_scoring_methods_RG_LocalEnergy_hh
+#ifndef INCLUDED_core_energy_methods_RG_LocalEnergy_hh
+#define INCLUDED_core_energy_methods_RG_LocalEnergy_hh
 
 
 // Package headers
@@ -36,8 +36,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class RG_Local_MinData:  public RG_MinData {
@@ -55,7 +55,7 @@ public:
 	RG_LocalEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -65,8 +65,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 
@@ -79,15 +79,15 @@ public:
 		utility::vector1< bool > const & relevant_residues) const;
 
 	// derivatives
-	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
+	void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
 	void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -108,6 +108,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_RG_Energy_Fast_HH
+#endif // INCLUDED_core_energy_methods_RG_Energy_Fast_HH

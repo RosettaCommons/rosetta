@@ -136,7 +136,7 @@ public:
 
 private:
 	// the ideal parameter database
-	core::scoring::methods::IdealParametersDatabaseOP db_;
+	core::energy_methods::IdealParametersDatabaseOP db_;
 
 	// options
 	bool linear_bonded_potential_;

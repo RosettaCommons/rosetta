@@ -12,8 +12,8 @@
 /// @author Bjorn Wallner
 
 
-#ifndef INCLUDED_core_scoring_methods_PoissonBoltzmannEnergy_HH
-#define INCLUDED_core_scoring_methods_PoissonBoltzmannEnergy_HH
+#ifndef INCLUDED_core_energy_methods_PoissonBoltzmannEnergy_HH
+#define INCLUDED_core_energy_methods_PoissonBoltzmannEnergy_HH
 
 // Unit Headers
 #include <core/energy_methods/PoissonBoltzmannEnergy.fwd.hh>
@@ -35,8 +35,8 @@
 #include <map>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class PBLifetimeCache : public basic::datacache::CacheableData{
 public:
@@ -66,11 +66,10 @@ private:
 };
 
 
-class PoissonBoltzmannEnergy : public ContextIndependentLRTwoBodyEnergy {
+class PoissonBoltzmannEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
-	typedef core::scoring::methods::PBLifetimeCache PBLifetimeCache;
-	typedef core::scoring::methods::PBLifetimeCacheOP PBLifetimeCacheOP;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
+
 public:
 
 
@@ -78,17 +77,17 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
-	bool defines_intrares_energy( EnergyMap const &  ) const override { return true; }
+	bool defines_intrares_energy( core::scoring::EnergyMap const &  ) const override { return true; }
 
 	bool defines_residue_pair_energy(
 		pose::Pose const & pose,
@@ -96,7 +95,7 @@ public:
 		Size res2
 	) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	Real
 	revamp_weight_by_burial(
@@ -113,8 +112,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override ;
 
 
@@ -122,8 +121,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// virtual
@@ -131,7 +130,7 @@ public:
 	/// residue_energy(
 	///  conformation::Residue const & rsd,
 	///  pose::Pose const & pose,
-	///  EnergyMap & emap
+	///  core::scoring::EnergyMap & emap
 	/// ) const;
 
 
@@ -139,8 +138,8 @@ public:
 	//void
 	//finalize_total_energy(
 	// pose::Pose & pose,
-	// ScoreFunction const &,
-	// EnergyMap &
+	// core::scoring::ScoreFunction const &,
+	// core::scoring::EnergyMap &
 	//) const;
 
 	/// @brief PB Energy is context independent and thus indicates that no context graphs need to
@@ -172,7 +171,7 @@ private:
 	// const-ref to scoring database
 	core::Size fixed_residue_;
 	core::Real pose_deviation_tolerance_;
-	mutable scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
+	mutable core::scoring::PoissonBoltzmannPotentialOP poisson_boltzmann_potential_;
 
 	// Cached objects for speed
 	mutable std::map<std::string, pose::PoseCAP> cached_pose_by_state_;
@@ -184,7 +183,6 @@ private:
 };
 
 
-}
 }
 }
 

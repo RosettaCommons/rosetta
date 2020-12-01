@@ -78,7 +78,7 @@ static basic::Tracer TR( "core.scoring.magnesium.MgEnergy" );
 //
 //   mg_sol  [penalty for blocking fluid water]
 //   mg_ref  [cost of instantiating mg(2+); put into ref?]
-//   hoh_ref [cost of instantiating water]
+//   core::scoring::hoh_ref [cost of instantiating water]
 //
 //              -- rhiju, 2015
 //
@@ -94,26 +94,26 @@ static basic::Tracer TR( "core.scoring.magnesium.MgEnergy" );
 
 
 namespace core {
-namespace scoring {
-namespace magnesium {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the MgEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MgEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MgEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MgEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( mg );
 	sts.push_back( mg_lig );
 	sts.push_back( mg_sol );
 	sts.push_back( mg_ref );
-	sts.push_back( hoh_ref );
+	sts.push_back( core::scoring::hoh_ref );
 	return sts;
 }
 
@@ -121,7 +121,7 @@ MgEnergyCreator::score_types_for_method() const {
 MgEnergy::MgEnergy() :
 	parent( utility::pointer::make_shared< MgEnergyCreator >() ),
 	// following are for mg_lig term.
-	mg_lig_knowledge_based_potential_( utility::pointer::make_shared< MgKnowledgeBasedPotential >() ),
+	mg_lig_knowledge_based_potential_( utility::pointer::make_shared< core::scoring::magnesium::MgKnowledgeBasedPotential >() ),
 	mg_lig_interaction_cutoff_( 4.0 ),
 	v_angle_width_( mg_lig_knowledge_based_potential_->v_angle_width() ),
 	v_angle_width2_( v_angle_width_ * v_angle_width_ ),
@@ -141,19 +141,19 @@ MgEnergy::MgEnergy() :
 	// fading solvation
 	mg_sol_interaction_cutoff_( 6.0 ),
 	mg_sol_fade_zone_( 0.1 ), // turn off mg_sol smoothly between 5.9 and 6.0.
-	mg_sol_fade_func_( utility::pointer::make_shared< func::FadeFunc >( -10.0, mg_sol_interaction_cutoff_, mg_sol_fade_zone_, 1.0 ) )
+	mg_sol_fade_func_( utility::pointer::make_shared< core::scoring::func::FadeFunc >( -10.0, mg_sol_interaction_cutoff_, mg_sol_fade_zone_, 1.0 ) )
 {}
 
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MgEnergy::clone() const
 {
 	return utility::pointer::make_shared< MgEnergy >();
 }
 
 void
-MgEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MgEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -166,8 +166,8 @@ MgEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( rsd2.name3() == " MG" ) {
@@ -183,11 +183,11 @@ MgEnergy::residue_pair_energy_one_way(
 	conformation::Residue const & rsd1, // The ligand residue
 	conformation::Residue const & rsd2, // The Mg(2+)
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
-	EnergyMap weights; // empty, would be used for derivs.
-	utility::vector1< DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
+	core::scoring::EnergyMap weights; // empty, would be used for derivs.
+	utility::vector1< core::scoring::DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
 
 	// Loop over potential ligand positions.
 	// using same eval_mg_interaction() function as residue_pair_ext to avoid copying code.
@@ -203,14 +203,14 @@ void
 MgEnergy::residue_pair_energy_ext(
 	conformation::Residue const & ires,
 	conformation::Residue const & jres,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
-	EnergyMap weights; // empty, would be used for derivs.
-	utility::vector1< DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
+	core::scoring::EnergyMap weights; // empty, would be used for derivs.
+	utility::vector1< core::scoring::DerivVectorPair > r1_atom_derivs, r2_atom_derivs; // empty, would be used for derivs.
 	eval_residue_pair( ires, jres, min_data, pose, emap, weights, r1_atom_derivs, r2_atom_derivs );
 }
 
@@ -219,12 +219,12 @@ void
 MgEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
-	if ( rsd.name3() == " MG" ) emap[ mg_ref  ] += mg_ref_score_;
+	if ( rsd.name3() == " MG" ) emap[ core::scoring::mg_ref  ] += mg_ref_score_;
 	if ( rsd.aa() == core::chemical::aa_h2o ) {
-		if ( !rsd.has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) emap[ hoh_ref ] += hoh_ref_score_;
+		if ( !rsd.has_variant_type( core::chemical::VIRTUAL_RESIDUE_VARIANT ) ) emap[ core::scoring::hoh_ref ] += hoh_ref_score_;
 	}
 }
 
@@ -233,15 +233,15 @@ void
 MgEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & ires,
 	conformation::Residue const & jres,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs) const
 {
-	EnergyMap emap; // dummy -- will not be used.
+	core::scoring::EnergyMap emap; // dummy -- will not be used.
 	eval_residue_pair( ires, jres, min_data, pose, emap, weights, r1_atom_derivs, r2_atom_derivs );
 }
 
@@ -250,15 +250,15 @@ void
 MgEnergy::eval_residue_pair(
 	conformation::Residue const & ires,
 	conformation::Residue const & jres,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
-	EnergyMap & emap, // fill score values in here.
-	EnergyMap const & weights, // for derivs.
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs) const
+	core::scoring::EnergyMap & emap, // fill score values in here.
+	core::scoring::EnergyMap const & weights, // for derivs.
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs) const
 {
-	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( mg_pair_nblist ) ) );
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	auto const & nblist( static_cast< core::scoring::ResiduePairNeighborList const & > ( min_data.get_data_ref( core::scoring::mg_pair_nblist ) ) );
+	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 	for ( Size k = 1, kend = neighbs.size(); k <= kend; ++k ) {
 		Size const ii = neighbs[ k ].atomno1();
 		Size const jj = neighbs[ k ].atomno2();
@@ -278,10 +278,10 @@ MgEnergy::eval_mg_interaction(
 	Size const atomno1                 /* other atomno */,
 	conformation::Residue const & rsd2 /* mg residue */,
 	pose::Pose const &, // provides context
-	EnergyMap & emap,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+	core::scoring::EnergyMap & emap,
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs /* other residue */,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs /* mg residue */
 ) const {
 	using namespace numeric::deriv;
 
@@ -313,11 +313,11 @@ MgEnergy::eval_mg_interaction(
 	Real const mg_sol_value = std::exp(-x1) * mg_lk_coeff * inv_dis2;
 	Real const fade_factor  = mg_sol_fade_func_->func( d );
 	Real const mg_sol_score = mg_sol_value * fade_factor;
-	emap[ mg     ] += mg_sol_score;
-	emap[ mg_sol ] += mg_sol_score;
+	emap[ core::scoring::mg     ] += mg_sol_score;
+	emap[ core::scoring::mg_sol ] += mg_sol_score;
 
 	if ( r1_atom_derivs.size() > 0 ) { // compute derivatives
-		Real const weight = weights[ mg ] + weights[ mg_sol ];
+		Real const weight = weights[ core::scoring::mg ] + weights[ core::scoring::mg_sol ];
 		Real dist_deriv =  ( -2.0 * dis_rad1 * lk_inv_lambda2 - 2.0 * inv_dis ) * mg_sol_value;
 		Real fade_deriv = mg_sol_fade_func_->dfunc( d );
 		Real const dE_ddist = ( dist_deriv * fade_factor + mg_sol_value * fade_deriv ) * weight;
@@ -341,7 +341,7 @@ MgEnergy::eval_mg_interaction(
 	////////////////////
 	GaussianParameter const & mg_potential_gaussian_parameter = mg_lig_knowledge_based_potential_->get_mg_potential_gaussian_parameter( rsd1, i );
 	runtime_assert( mg_potential_gaussian_parameter.center > 0.0 ); // should be defined for all acceptors.
-	Real dist_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
+	Real dist_score = core::scoring::magnesium::get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
 
 	//////////////////////////////////////////////////////////////////
 	// Term 2: form factor for angle Mg -- Acceptor -- Acceptor-Base
@@ -353,20 +353,20 @@ MgEnergy::eval_mg_interaction(
 	Vector base_xyz( 0.0 );
 	bool const is_water( rsd1.name3() == "HOH" );
 	if ( is_water ) { // treat both H's as base atoms, symmetrically
-		cos_theta_OH1     = get_cos_theta( rsd1, i, j_xyz, OH1 );
-		cos_theta_OH2 = get_cos_theta( rsd1, i, j_xyz, OH2 );
-		acc_angle_form_factor_OH1 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
-		acc_angle_form_factor_OH2 = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
+		cos_theta_OH1     = core::scoring::magnesium::get_cos_theta( rsd1, i, j_xyz, OH1 );
+		cos_theta_OH2 = core::scoring::magnesium::get_cos_theta( rsd1, i, j_xyz, OH2 );
+		acc_angle_form_factor_OH1 = core::scoring::magnesium::get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
+		acc_angle_form_factor_OH2 = core::scoring::magnesium::get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
 		acc_angle_form_factor = 0.5 * ( acc_angle_form_factor_OH1 + acc_angle_form_factor_OH2);
 	} else {
-		cos_theta = get_cos_theta( rsd1, i, j_xyz, i_base, base_xyz );
-		acc_angle_form_factor = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
+		cos_theta = core::scoring::magnesium::get_cos_theta( rsd1, i, j_xyz, i_base, base_xyz );
+		acc_angle_form_factor = core::scoring::magnesium::get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
 	}
 
 	//////////////////////////////////////////////////////////////////
 	// Term 3: form factor for angle Acceptor -- Mg -- V
 	//////////////////////////////////////////////////////////////////
-	Real const cos_v_angle = get_cos_angle_to_closest_orbital_axis( rsd2, i_xyz );
+	Real const cos_v_angle = core::scoring::magnesium::get_cos_angle_to_closest_orbital_axis( rsd2, i_xyz );
 	Real const v_angle_form_factor = exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) ); // funny functional form ~ (v_angle/2 width)^2
 	Real const v_angle_form_factor_faded = v_angle_baseline + ( 1.0 - v_angle_baseline ) * v_angle_form_factor; // unity if perfect angle, v_angle_baseline if not.
 
@@ -377,20 +377,20 @@ MgEnergy::eval_mg_interaction(
 	//  TR << "MG_LIG_SCORE: from " <<  rsd2.seqpos()  << " to "
 	//    << rsd1.seqpos()  << " " << rsd1.name3() << " " << rsd1.atom_name( atomno1 ) << " ==> " << mg_lig_score << "   (dist) " << dist_score << "   (acc_angle) " << acc_angle_form_factor << "  (v_angle) " << v_angle_form_factor_faded << std::endl;
 
-	emap[ mg ]     += mg_lig_score;
-	emap[ mg_lig ] += mg_lig_score;
+	emap[ core::scoring::mg ]     += mg_lig_score;
+	emap[ core::scoring::mg_lig ] += mg_lig_score;
 
 	/////////////////
 	// Derivatives
 	/////////////////
 	if ( r1_atom_derivs.size() <= 0 ) return;
 
-	Real const weight = weights[ mg ] + weights[ mg_lig ];
+	Real const weight = weights[ core::scoring::mg ] + weights[ core::scoring::mg_lig ];
 
 	////////////////////
 	// Term 1: distance
 	////////////////////
-	Real dist_deriv = get_gaussian_deriv( mg_potential_gaussian_parameter, d );
+	Real dist_deriv = core::scoring::magnesium::get_gaussian_deriv( mg_potential_gaussian_parameter, d );
 	Real const dE_ddist = dist_deriv * acc_angle_form_factor * v_angle_form_factor_faded * weight;
 	Vector f2 =   -1.0 * ( j_xyz - i_xyz ).normalized();
 	Vector f1 =    1.0 * cross( f2, j_xyz );
@@ -410,7 +410,7 @@ MgEnergy::eval_mg_interaction(
 	if ( is_water ) {
 		///////////////////////////////////////////
 		Vector const OH1_xyz( rsd1.xyz( OH1 ) );
-		Real acc_angle_form_factor_OH1_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
+		Real acc_angle_form_factor_OH1_deriv = core::scoring::magnesium::get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH1 );
 		angle_p1_deriv(  j_xyz, i_xyz, OH1_xyz, theta, f1, f2);
 		Real const dE_dcosAtheta_sin_theta_OH1 = 0.5 * dist_score * acc_angle_form_factor_OH1_deriv * v_angle_form_factor_faded * weight * sin( theta );
 
@@ -430,7 +430,7 @@ MgEnergy::eval_mg_interaction(
 
 		///////////////////////////////////////////
 		Vector const OH2_xyz( rsd1.xyz( OH2 ) );
-		Real acc_angle_form_factor_OH2_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
+		Real acc_angle_form_factor_OH2_deriv = core::scoring::magnesium::get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta_OH2 );
 		angle_p1_deriv(  j_xyz, i_xyz, OH2_xyz, theta, f1, f2);
 		Real const dE_dcosAtheta_sin_theta_OH2 = 0.5 * dist_score * acc_angle_form_factor_OH2_deriv * v_angle_form_factor_faded * weight * sin( theta );
 
@@ -449,7 +449,7 @@ MgEnergy::eval_mg_interaction(
 		r1_atom_derivs[ OH2 ].f2() += dE_dcosAtheta_sin_theta_OH2 * f2;
 
 	} else {
-		Real acc_angle_form_factor_deriv = get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta );
+		Real acc_angle_form_factor_deriv = core::scoring::magnesium::get_gaussian_deriv( mg_potential_costheta_gaussian_parameter, cos_theta );
 		angle_p1_deriv(  j_xyz, i_xyz, base_xyz, theta, f1, f2);
 		Real const dE_dcosAtheta_sin_theta = dist_score * acc_angle_form_factor_deriv * v_angle_form_factor_faded * weight * sin( theta );
 
@@ -464,12 +464,12 @@ MgEnergy::eval_mg_interaction(
 
 		// acceptor base atom
 		angle_p1_deriv(  base_xyz, i_xyz, j_xyz, theta, f1, f2);
-		DerivVectorPair abase_deriv;
+		core::scoring::DerivVectorPair abase_deriv;
 		abase_deriv.f1() = dE_dcosAtheta_sin_theta * f1;
 		abase_deriv.f2() = dE_dcosAtheta_sin_theta * f2;
 
 		runtime_assert( rsd1.heavyatom_is_an_acceptor( i ) );
-		static hbonds::HBondOptions const hbond_options;
+		static core::scoring::hbonds::HBondOptions const hbond_options;
 		chemical::Hybridization acc_hybrid( rsd1.atom_type( i ).hybridization() );
 		assign_abase_derivs( hbond_options, rsd1, i, acc_hybrid, abase_deriv, 1.0, r1_atom_derivs );
 	}
@@ -480,7 +480,7 @@ MgEnergy::eval_mg_interaction(
 	Real const v_angle_form_factor_deriv = ( 1.0 / ( 2.0 * v_angle_width2_ ) ) * exp( - ( 1.0 - cos_v_angle ) / (2.0 * v_angle_width2_ ) );
 	Real const v_angle_form_factor_faded_deriv = ( 1.0 - v_angle_baseline ) * v_angle_form_factor_deriv;
 
-	Size const v = get_closest_orbital_axis( rsd2, i_xyz ) + 1; // offset is due to Mg(2+), then V1, V2, ...
+	Size const v = core::scoring::magnesium::get_closest_orbital_axis( rsd2, i_xyz ) + 1; // offset is due to Mg(2+), then V1, V2, ...
 	Vector const & v_xyz( rsd2.xyz( v ) );
 	angle_p1_deriv( v_xyz, j_xyz, i_xyz, theta, f1, f2);
 	// there's a -1.0 here because the angle in numeric::deriv::angle_p1_deriv is A-->M-->V, not A<--M-->V.
@@ -505,33 +505,33 @@ void
 MgEnergy::setup_for_minimizing_for_residue(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
 	basic::datacache::BasicDataCache &,
-	ResSingleMinimizationData &
+	core::scoring::ResSingleMinimizationData &
 ) const
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
-// copied from GeometricSolEnergyEvaluator, which was itself copied from god knows where.
+// copied from scoring::geometric_solvation::GeometricSolEnergyEvaluator, which was itself copied from god knows where.
 void
 MgEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData & pair_data
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData & pair_data
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	CountPairFunctionCOP count_pair( utility::pointer::make_shared< CountPairAll >() );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( mg_pair_nblist ) ));
-	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
+	core::scoring::ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( core::scoring::mg_pair_nblist ) ));
+	if ( ! nblist ) nblist = utility::pointer::make_shared< core::scoring::ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
@@ -539,7 +539,7 @@ MgEnergy::setup_for_minimizing_for_residue_pair(
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
-	pair_data.set_data( mg_pair_nblist, nblist );
+	pair_data.set_data( core::scoring::mg_pair_nblist, nblist );
 }
 
 /////////////
@@ -569,7 +569,5 @@ MgEnergy::version() const
 	return 1; // Initial versioning
 }
 
-
-} //magnesium
 } //scoring
 } //core

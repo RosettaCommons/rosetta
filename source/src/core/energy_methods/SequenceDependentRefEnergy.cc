@@ -37,21 +37,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the SequenceDependentRefEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SequenceDependentRefEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SequenceDependentRefEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SequenceDependentRefEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( seqdep_ref );
 	return sts;
@@ -129,7 +130,7 @@ void SequenceDependentRefEnergy::read_energy_weight_table() {
 }
 
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SequenceDependentRefEnergy::clone() const
 {
 	return utility::pointer::make_shared< SequenceDependentRefEnergy >( aa_seq_weights_ );
@@ -140,7 +141,7 @@ void
 SequenceDependentRefEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace chemical;
@@ -152,7 +153,7 @@ SequenceDependentRefEnergy::residue_energy(
 	if ( seqpos > aa_seq_weights_.size() ) return;
 
 	Real const ene = (aa_seq_weights_[seqpos])[ aa ];
-	emap[ seqdep_ref ] += ene;
+	emap[ core::scoring::seqdep_ref ] += ene;
 }
 
 
@@ -161,8 +162,8 @@ SequenceDependentRefEnergy::eval_dof_derivative(
 	id::DOF_ID const &,
 	id::TorsionID const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap const &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &
 ) const
 {
 	return 0.0;
@@ -178,7 +179,6 @@ SequenceDependentRefEnergy::version() const
 {
 	return 1; // Initial versioning
 }
-} // methods
 } // scoring
 } // core
 

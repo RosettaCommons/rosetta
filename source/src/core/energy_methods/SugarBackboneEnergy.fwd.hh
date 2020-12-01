@@ -12,17 +12,16 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
+#define INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
 
 // Utility header
 #include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {
-namespace scoring {
-namespace methods {
-namespace carbohydrates {
+namespace energy_methods {
+
 
 /// @brief  An energy method class for scoring a carbohydrate backbone based on its glycosidic (phi, psi, and omega)
 /// angles.
@@ -31,9 +30,7 @@ class SugarBackboneEnergy;
 typedef utility::pointer::shared_ptr< SugarBackboneEnergy > SugarBackboneEnergyOP;
 typedef utility::pointer::shared_ptr< SugarBackboneEnergy const> SugarBackboneEnergyCOP;
 
-}  // namespace carbohydrates
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core
 
-#endif // INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_FWD_HH

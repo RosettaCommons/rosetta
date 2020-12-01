@@ -21,15 +21,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace util_methods {
+namespace energy_methods {
 
 class DumpTrajectoryEnergy;
 
 typedef utility::pointer::shared_ptr< DumpTrajectoryEnergy > DumpTrajectoryEnergyOP;
 
 
-} // util_methods
 } // scoring
 } // core
 

@@ -38,21 +38,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the RG_Energy_Fast class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_LocalEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RG_LocalEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RG_LocalEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rg_local );
 	return sts;
@@ -87,7 +88,7 @@ RG_LocalEnergy::RG_LocalEnergy():
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_LocalEnergy::clone() const
 {
 	return utility::pointer::make_shared< RG_LocalEnergy >();
@@ -99,14 +100,14 @@ RG_LocalEnergy::clone() const
 
 void RG_LocalEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
 
 	PROF_START( basic::RG_LOCAL );
 
-	totals[ rg_local ] = calculate_rg_score( pose );
+	totals[ core::scoring::rg_local ] = calculate_rg_score( pose );
 
 	PROF_STOP( basic::RG_LOCAL );
 } // finalize_total_energy
@@ -142,7 +143,7 @@ RG_LocalEnergy::calculate_rg_score(
 }
 
 void
-RG_LocalEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+RG_LocalEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	RG_Local_MinData &mindata = nonconst_mindata_from_pose( pose );
 
 	// calculate center of mass
@@ -178,8 +179,8 @@ RG_LocalEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -201,21 +202,21 @@ RG_LocalEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 	Vector const f1( atom_x.cross( atom_y ) );
 
-	F1 += weights[ rg ] * f1;
-	F2 += weights[ rg ] * f2;
+	F1 += weights[ core::scoring::rg ] * f1;
+	F2 += weights[ core::scoring::rg ] * f2;
 }
 
 
 RG_Local_MinData const &
 RG_LocalEnergy::mindata_from_pose( pose::Pose const & pose) const {
 	using namespace core::pose::datacache;
-	return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_Local_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_LOCAL_MINDATA ) ));
+	return *( utility::pointer::static_pointer_cast< RG_Local_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_LOCAL_MINDATA ) ));
 
 }
 
 RG_Local_MinData & RG_LocalEnergy::nonconst_mindata_from_pose( pose::Pose & pose) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA ) ) {
-		return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_Local_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA ) ));
+		return *( utility::pointer::static_pointer_cast< RG_Local_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_LOCAL_MINDATA ) ));
 	}
 	// else
 	RG_Local_MinDataOP rgmindata( new RG_Local_MinData );
@@ -224,6 +225,5 @@ RG_Local_MinData & RG_LocalEnergy::nonconst_mindata_from_pose( pose::Pose & pose
 }
 
 
-} // methods
 } // scoring
 } // core

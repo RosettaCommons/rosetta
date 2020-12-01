@@ -12,8 +12,8 @@
 /// @author Ron Jacak (ronj@email.unc.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_UnfoldedStateEnergy_hh
-#define INCLUDED_core_scoring_methods_UnfoldedStateEnergy_hh
+#ifndef INCLUDED_core_energy_methods_UnfoldedStateEnergy_hh
+#define INCLUDED_core_energy_methods_UnfoldedStateEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/UnfoldedStateEnergy.fwd.hh>
@@ -34,23 +34,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class UnfoldedStateEnergy : public ContextIndependentOneBodyEnergy {
+
+class UnfoldedStateEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy {
 
 public:
-	typedef ContextIndependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy parent;
 
 	UnfoldedStateEnergy( std::string const & type );
-	UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in );
+	UnfoldedStateEnergy( std::string const & type, const core::scoring::EnergyMap & emap_in );
 	~UnfoldedStateEnergy() override;
 
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	void
-	residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
+	residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, core::scoring::EnergyMap & emap ) const override;
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
@@ -60,15 +60,14 @@ public:
 private:
 
 	std::string type_;
-	UnfoldedStatePotential const & unf_state_potential_;
-	EnergyMap score_type_weights_;
+	core::scoring::UnfoldedStatePotential const & unf_state_potential_;
+	core::scoring::EnergyMap score_type_weights_;
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_UnfoldedStateEnergy_HH
+#endif // INCLUDED_core_energy_methods_UnfoldedStateEnergy_HH

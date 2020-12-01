@@ -33,35 +33,36 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the P_AA_ss_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_ss_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< P_AA_ss_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 P_AA_ss_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( p_aa_ss );
 	return sts;
 }
 
 /// @remarks
-/// get_P_AA_ss calls a method in ScoringManager which create a new object of type P_AA_ss.  The constructor for that created object
+/// get_P_AA_ss calls a method in core::scoring::ScoringManager which create a new object of type P_AA_ss.  The constructor for that created object
 /// reads in the three database files: P_AA_ss, P_AA_ss_pp, and P_AA_ss_n.  That object is returned and then stored as a private member
 /// variable here.
 void
-P_AA_ss_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+P_AA_ss_Energy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// if we're not minimizing, compute secstruct parse
 	if ( !pose.energies().use_nblist() ) {
-		dssp::Dssp dssp( pose );
+		core::scoring::dssp::Dssp dssp( pose );
 		dssp.insert_ss_into_pose( pose );
 	}
 }
@@ -69,7 +70,7 @@ P_AA_ss_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) co
 void
 P_AA_ss_Energy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const & ,
+	core::scoring::ScoreFunction const & ,
 	kinematics::MinimizerMapBase const &
 ) const
 {
@@ -80,11 +81,11 @@ P_AA_ss_Energy::setup_for_minimizing(
 
 P_AA_ss_Energy::P_AA_ss_Energy() :
 	parent( utility::pointer::make_shared< P_AA_ss_EnergyCreator >() ),
-	P_AA_ss_( ScoringManager::get_instance()->get_P_AA_ss() )
+	P_AA_ss_( core::scoring::ScoringManager::get_instance()->get_P_AA_ss() )
 {}
 
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_ss_Energy::clone() const {
 	return utility::pointer::make_shared< P_AA_ss_Energy >();
 }
@@ -98,10 +99,10 @@ void
 P_AA_ss_Energy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
-	emap[ p_aa_ss ] += P_AA_ss_.P_AA_ss_energy( rsd.aa(), pose.secstruct(rsd.seqpos())  );
+	emap[ core::scoring::p_aa_ss ] += P_AA_ss_.P_AA_ss_energy( rsd.aa(), pose.secstruct(rsd.seqpos())  );
 }
 
 
@@ -111,8 +112,8 @@ P_AA_ss_Energy::eval_dof_derivative(
 	id::DOF_ID const & ,// dof_id,
 	id::TorsionID const & , //tor_id
 	pose::Pose const & , // pose
-	ScoreFunction const &, //sfxn,
-	EnergyMap const & // weights
+	core::scoring::ScoreFunction const &, //sfxn,
+	core::scoring::EnergyMap const & // weights
 ) const
 {
 	return 0.0;
@@ -129,7 +130,6 @@ P_AA_ss_Energy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

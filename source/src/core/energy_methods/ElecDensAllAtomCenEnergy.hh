@@ -30,13 +30,12 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
 
-class ElecDensAllAtomCenEnergy : public methods::ContextDependentLRTwoBodyEnergy {
+class ElecDensAllAtomCenEnergy : public core::scoring::methods::ContextDependentLRTwoBodyEnergy {
 public:
-	typedef methods::ContextDependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextDependentLRTwoBodyEnergy parent;
 
 public:
 
@@ -45,13 +44,13 @@ public:
 
 
 	/// clone
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 
@@ -61,18 +60,18 @@ public:
 		Size res2
 	) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
-	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
+	void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
-	bool defines_intrares_energy( EnergyMap const &  ) const override { return true; }
+	bool defines_intrares_energy( core::scoring::EnergyMap const &  ) const override { return true; }
 
 	/// @brief Evaluate the intra-residue constraint energy for a given residue
 	void eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override ;
 
 
@@ -80,17 +79,17 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
-	using methods::ContextDependentLRTwoBodyEnergy::finalize_total_energy;
+	using core::scoring::methods::ContextDependentLRTwoBodyEnergy::finalize_total_energy;
 
 	/// called at the end of energy evaluation
 	virtual void finalize_total_energy(
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const;
 
 
@@ -99,8 +98,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -121,7 +120,6 @@ private:
 };
 
 
-}
 }
 }
 

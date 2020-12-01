@@ -22,15 +22,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace netcharge_energy {
+namespace energy_methods {
 
 class NetChargeEnergy;
 
 typedef utility::pointer::shared_ptr< NetChargeEnergy > NetChargeEnergyOP;
 
 
-} // netcharge_energy
 } // scoring
 } // core
 

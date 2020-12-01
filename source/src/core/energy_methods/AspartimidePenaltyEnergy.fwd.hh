@@ -11,15 +11,15 @@
 /// @brief  Forward declarations for the AspartimidePenaltyEnergy.
 /// @author Vikram K. Mulligan (vmullig@uw.edu).
 
-#ifndef INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class AspartimidePenaltyEnergy;
 typedef  utility::pointer::weak_ptr< AspartimidePenaltyEnergy > AspartimidePenaltyEnergyAP;
@@ -27,8 +27,7 @@ typedef  utility::pointer::weak_ptr< AspartimidePenaltyEnergy const > Aspartimid
 typedef  utility::pointer::shared_ptr< AspartimidePenaltyEnergy > AspartimidePenaltyEnergyOP;
 typedef  utility::pointer::shared_ptr< AspartimidePenaltyEnergy const > AspartimidePenaltyEnergyCOP;
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
-#endif // INCLUDED_core_scoring_methods_AspartimidePenaltyEnergy_HH
+#endif // INCLUDED_core_energy_methods_AspartimidePenaltyEnergy_HH

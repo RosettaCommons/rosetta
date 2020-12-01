@@ -11,22 +11,21 @@
 /// @brief  ABEGO energy method class forward declaration
 /// @author imv@uw.edu
 
-#ifndef INCLUDED_core_scoring_methods_Abego_fwd_hh
-#define INCLUDED_core_scoring_methods_Abego_fwd_hh
+#ifndef INCLUDED_core_energy_methods_Abego_fwd_hh
+#define INCLUDED_core_energy_methods_Abego_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class Abego;
 
 typedef utility::pointer::shared_ptr< Abego > AbegoOP;
 typedef utility::pointer::shared_ptr< Abego const > AbegoCOP;
 
-} // methods
 } // scoring
 } // core
 

@@ -49,8 +49,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace util_methods {
+namespace energy_methods {
 
 /// @brief DumpTrajectoryEnergy, a util_method that allows one to dump
 /// rosetta trajectories through the use of the dump_trajectory ScoreType.
@@ -99,7 +98,7 @@ public:
 	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const & sfxn, core::scoring::EnergyMap & total_energy ) const override;
 
 	/// @brief This is where the state_ moves to MINIMIZING.
-	void setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
+	void setup_for_minimizing( pose::Pose & , core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
 
 	/// @brief Reset the state to IDLE
 	void finalize_after_minimizing( core::pose::Pose & pose ) const override;
@@ -107,7 +106,7 @@ public:
 	/// @brief This is where the minimizer frames are dumped.
 	/// @details Assumption: All minimizers must evaluate derivatives repeatedly while minimizing.
 	/// Although these won't be equally spaced, dumping them is the best we can do without modifying the minimizers.
-	void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
+	void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn ) const override;
 
 
 	/********************************************************************
@@ -195,7 +194,6 @@ private:
 
 };
 
-} // util_methods
 } // scoring
 } // core
 

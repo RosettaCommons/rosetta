@@ -12,8 +12,8 @@
 /// @author TJ Brunette
 
 
-#ifndef INCLUDED_core_scoring_methods_CenPairMotifEnergy_hh
-#define INCLUDED_core_scoring_methods_CenPairMotifEnergy_hh
+#ifndef INCLUDED_core_energy_methods_CenPairMotifEnergy_hh
+#define INCLUDED_core_energy_methods_CenPairMotifEnergy_hh
 
 
 // Package headers
@@ -34,23 +34,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class CenPairMotifEnergy : public WholeStructureEnergy  {
+
+class CenPairMotifEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 public:
 	CenPairMotifEnergy();
 
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override {
 		return utility::pointer::make_shared< CenPairMotifEnergy >();
 	}
 
 	/// @brief Called at the end of the energy evaluation.
-	void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
@@ -63,7 +63,6 @@ private:
 	utility::vector1<Size> aalist_;
 };
 
-} // motif
 } // scoring
 } // core
 

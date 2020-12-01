@@ -41,21 +41,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the RamachandranEnergy2B class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamachandranEnergy2BCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RamachandranEnergy2B >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RamachandranEnergy2BCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rama2b );
 	return sts;
@@ -65,11 +66,11 @@ RamachandranEnergy2BCreator::score_types_for_method() const {
 /// ctor
 RamachandranEnergy2B::RamachandranEnergy2B() :
 	parent( utility::pointer::make_shared< RamachandranEnergy2BCreator >() ),
-	potential_( ScoringManager::get_instance()->get_Ramachandran2B() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_Ramachandran2B() )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamachandranEnergy2B::clone() const
 {
 	return utility::pointer::make_shared< RamachandranEnergy2B >();
@@ -84,8 +85,8 @@ RamachandranEnergy2B::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &, // unnneeded
-	ScoreFunction const &, // unneeded
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &, // unneeded
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace basic::options;
@@ -104,16 +105,16 @@ RamachandranEnergy2B::residue_pair_energy(
 	//// also need to treat cutpoints correctly.
 
 	if ( ! lower_residue.is_lower_terminus() ) {
-		emap[ rama2b ] += potential_.RamaE_Upper( lower_residue, upper_residue.aa() );
+		emap[ core::scoring::rama2b ] += potential_.RamaE_Upper( lower_residue, upper_residue.aa() );
 	}
 
 	if ( ! upper_residue.is_upper_terminus() ) {
-		emap[ rama2b ] += potential_.RamaE_Lower( upper_residue, lower_residue.aa() );
+		emap[ core::scoring::rama2b ] += potential_.RamaE_Lower( upper_residue, lower_residue.aa() );
 	}
 }
 
 bool
-RamachandranEnergy2B::defines_intrares_energy( EnergyMap const & /*weights*/ ) const {
+RamachandranEnergy2B::defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const {
 	return true;
 }
 
@@ -128,8 +129,8 @@ void
 RamachandranEnergy2B::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &, // unused,
-	ScoreFunction const &, // unused,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &, // unused,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace basic::options;
@@ -139,11 +140,11 @@ RamachandranEnergy2B::eval_intrares_energy(
 
 	if ( rsd.is_terminus() ) {
 		/// -- no op --  Rama does not have a defined score for termini
-		/// emap[ rama ] += potential_.Rama_E( rsd ); // add in neighbor-independent rama scores for termini
+		/// emap[ core::scoring::rama ] += potential_.Rama_E( rsd ); // add in neighbor-independent rama scores for termini
 	}  else if ( option[ score::ramaneighbors ] ) {
-		emap[ rama2b ] -= potential_.RamaE( rsd ); // subtract double-counted neighbor-independent rama scores for mid residues
+		emap[ core::scoring::rama2b ] -= potential_.RamaE( rsd ); // subtract double-counted neighbor-independent rama scores for mid residues
 	} else {
-		emap[ rama2b ] += potential_.RamaE( rsd ); // add the neighbor-independent rama score, since there's no double counting.
+		emap[ core::scoring::rama2b ] += potential_.RamaE( rsd ); // add the neighbor-independent rama score, since there's no double counting.
 	}
 }
 
@@ -153,8 +154,8 @@ RamachandranEnergy2B::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	using namespace basic::options;
@@ -183,7 +184,7 @@ RamachandranEnergy2B::eval_dof_derivative(
 	}
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	return numeric::conversions::degrees( weights[ rama ] * deriv );
+	return numeric::conversions::degrees( weights[ core::scoring::rama ] * deriv );
 }
 
 /// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
@@ -201,7 +202,6 @@ RamachandranEnergy2B::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

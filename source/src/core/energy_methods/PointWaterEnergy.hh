@@ -12,8 +12,8 @@
 /// @author Frank DiMaio
 
 
-#ifndef INCLUDED_core_scoring_methods_PointWaterEnergy_hh
-#define INCLUDED_core_scoring_methods_PointWaterEnergy_hh
+#ifndef INCLUDED_core_energy_methods_PointWaterEnergy_hh
+#define INCLUDED_core_energy_methods_PointWaterEnergy_hh
 
 #include <core/energy_methods/PointWaterEnergy.fwd.hh>
 #include <core/scoring/PointWaterPotential.hh>
@@ -34,38 +34,38 @@
 #include <cmath>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 ///
-class PointWaterEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class PointWaterEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 	///
-	PointWaterEnergy( methods::EnergyMethodOptions const &opt );
+	PointWaterEnergy( core::scoring::methods::EnergyMethodOptions const &opt );
 
 	///
 	PointWaterEnergy( PointWaterEnergy const & src );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// stashes nblist if use_nblist is true
 	void
 	setup_for_minimizing(
 		pose::Pose & pose,
-		ScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & min_map
 	) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -76,8 +76,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -91,25 +91,25 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const &,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return true; }
 
 	bool
 	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return false; }
@@ -125,15 +125,15 @@ public:
 	/// Private methods
 private:
 
-	PointWaterPotential const & potential_;
+	core::scoring::PointWaterPotential const & potential_;
 	core::Real pwater_ref_wt_, pwater_water_bonus_, pwater_water_bonus_width_;
 
 	core::Size version() const override;
 
 };
 
-} // namespace elec
-} // namespace scoring
+
+} // namespace energy_methods
 } // namespace core
 
 #endif

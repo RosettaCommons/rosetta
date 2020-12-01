@@ -11,8 +11,8 @@
 /// @brief  Ramachandran energy method class declaration
 /// @author Guoli Wang
 
-#ifndef INCLUDED_core_scoring_methods_RamachandranEnergy2B_hh
-#define INCLUDED_core_scoring_methods_RamachandranEnergy2B_hh
+#ifndef INCLUDED_core_energy_methods_RamachandranEnergy2B_hh
+#define INCLUDED_core_energy_methods_RamachandranEnergy2B_hh
 
 // Unit headers
 #include <core/energy_methods/RamachandranEnergy2B.fwd.hh>
@@ -27,20 +27,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class RamachandranEnergy2B : public ContextIndependentTwoBodyEnergy  {
+
+class RamachandranEnergy2B : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 	/// ctor
 	RamachandranEnergy2B();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -52,19 +52,19 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &, // unused,
-		ScoreFunction const &, // unused,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &, // unused,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -78,8 +78,8 @@ public:
 		id::DOF_ID const &,// dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const &,// sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const &,// sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
@@ -88,12 +88,11 @@ public:
 
 	// data
 private:
-	Ramachandran2B const & potential_;
+	core::scoring::Ramachandran2B const & potential_;
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 

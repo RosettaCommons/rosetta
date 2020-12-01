@@ -12,8 +12,8 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu), Baker laboratory
 
 
-#ifndef INCLUDED_core_scoring_methods_RingClosureEnergy_hh
-#define INCLUDED_core_scoring_methods_RingClosureEnergy_hh
+#ifndef INCLUDED_core_energy_methods_RingClosureEnergy_hh
+#define INCLUDED_core_energy_methods_RingClosureEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/RingClosureEnergy.fwd.hh>
@@ -28,13 +28,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class RingClosureEnergy : public ContextIndependentOneBodyEnergy  {
+
+class RingClosureEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 public:
 
 	/// @brief Constructor.
@@ -47,7 +47,7 @@ public:
 
 	/// @brief Clone -- creates a copy and returns an owning pointer to the copy.
 	///
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -71,10 +71,10 @@ public:
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	/// @brief RingClosure Energy is context independent and thus indicates that no context graphs need to
@@ -93,7 +93,6 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 

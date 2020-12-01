@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergy.cc
+/// @file src/core/energy_methods/ElecDensAtomwiseEnergy.cc
 /// @brief  elec_dens_atomwise scoring method implementation
 /// @author Fang-Chieh Chou
 
@@ -42,43 +42,43 @@
 #include <utility/pointer/memory.hh>
 
 namespace core {
-namespace scoring {
-namespace electron_density_atomwise {
+namespace energy_methods {
 
 using namespace core;
 static basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
 
 /// @details This must return a fresh instance of the ElecDensAtomwiseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ElecDensAtomwiseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ElecDensAtomwiseEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ElecDensAtomwiseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( elec_dens_atomwise );
 	return sts;
 }
 
-methods::LongRangeEnergyType
+core::scoring::methods::LongRangeEnergyType
 ElecDensAtomwiseEnergy::long_range_type() const {
-	return methods::elec_dens_atomwise_energy;
+	return core::scoring::methods::elec_dens_atomwise_energy;
 }
 
 ElecDensAtomwiseEnergy::ElecDensAtomwiseEnergy() :
 	parent( utility::pointer::make_shared< ElecDensAtomwiseEnergyCreator >() ) {
 	//Load map
-	get_density_map();
+	core::scoring::electron_density_atomwise::get_density_map();
 }
 
 ElecDensAtomwiseEnergy::~ElecDensAtomwiseEnergy() = default;
 
 /// clone
-methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 	return utility::pointer::make_shared< ElecDensAtomwiseEnergy >( *this );
 }
 
@@ -86,12 +86,12 @@ methods::EnergyMethodOP ElecDensAtomwiseEnergy::clone() const {
 void
 ElecDensAtomwiseEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 
 	// Do we have a map?
-	if ( !get_density_map().isMapLoaded() ) {
+	if ( !core::scoring::electron_density_atomwise::get_density_map().isMapLoaded() ) {
 		utility_exit_with_message( "Density scoring function called but no map loaded." );
 	}
 
@@ -108,15 +108,15 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 	}
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer >( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer >( lrc ) );
 
 		// make sure size or root did not change
 		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
@@ -126,22 +126,22 @@ ElecDensAtomwiseEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer (
-			virt_res_idx, pose.size(),  elec_dens_atomwise ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::OneToAllEnergyContainer >(
+			virt_res_idx, pose.size(),  core::scoring::elec_dens_atomwise ) );
 		energies.set_long_range_container ( lr_type, new_dec );
-		get_density_map().is_score_precomputed( false );
+		core::scoring::electron_density_atomwise::get_density_map().is_score_precomputed( false );
 	} else {
 		//TR << "Checking to see if the density map is up to date with normalization and unweighted score" << std::endl;
 		//TR << "Comparing pose.annotated_sequence() (" << pose.annotated_sequence() << ") vs.";
 		//TR << " cached (" << pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() << ")." << std::endl;
 		// calebgeniesse: need to figure out a smarter way to decide when to recompute score
 		//                for now, just always recompute
-		get_density_map().is_score_precomputed( pose.annotated_sequence() == pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() );
+		core::scoring::electron_density_atomwise::get_density_map().is_score_precomputed( pose.annotated_sequence() == pose.data().get< PoseSequence >( pose::datacache::CacheableDataType::POSE_SEQUENCE ).pose_sequence() );
 	}
 	//Pre-calculate the normalization factor and the correlation per
 	//atom
-	get_density_map().compute_normalization( pose );
-	get_density_map().precompute_unweighted_score();
+	core::scoring::electron_density_atomwise::get_density_map().compute_normalization( pose );
+	core::scoring::electron_density_atomwise::get_density_map().precompute_unweighted_score();
 
 	// if in fact the sequence DID change, now we should set the new seuqence
 	pose.data().set( pose::datacache::CacheableDataType::POSE_SEQUENCE, utility::pointer::make_shared< PoseSequence >( pose.annotated_sequence() ) );
@@ -163,8 +163,8 @@ ElecDensAtomwiseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( rsd1.aa() != core::chemical::aa_vrt ) {
 		if ( rsd2.aa() != core::chemical::aa_vrt ) return;
@@ -173,7 +173,7 @@ ElecDensAtomwiseEnergy::residue_pair_energy(
 	}
 
 	conformation::Residue const &rsd( rsd1.aa() == core::chemical::aa_vrt ? rsd2 : rsd1 );
-	emap[elec_dens_atomwise] = get_density_map().residue_score( rsd );
+	emap[ core::scoring::elec_dens_atomwise] = core::scoring::electron_density_atomwise::get_density_map().residue_score( rsd );
 }
 
 void
@@ -181,8 +181,8 @@ ElecDensAtomwiseEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -195,12 +195,12 @@ ElecDensAtomwiseEnergy::eval_atom_derivative(
 	// if (hydrogen) return
 	if ( !pose.residue( rsd_id ).atom_type( atm_id ).is_heavyatom() ) return;
 
-	numeric::xyzVector<core::Real> grad = get_density_map().atom_gradient( pose, rsd_id, atm_id );
+	numeric::xyzVector<core::Real> grad = core::scoring::electron_density_atomwise::get_density_map().atom_gradient( pose, rsd_id, atm_id );
 	Vector atom_xyz = pose.xyz( id );
 	Vector f2 = grad;
 	Vector f1( atom_xyz.cross( atom_xyz - f2 ) );
-	F1 += weights[ elec_dens_atomwise ] * f1;
-	F2 += weights[ elec_dens_atomwise ] * f2;
+	F1 += weights[ core::scoring::elec_dens_atomwise ] * f1;
+	F2 += weights[ core::scoring::elec_dens_atomwise ] * f2;
 }
 
 core::Size
@@ -208,7 +208,6 @@ ElecDensAtomwiseEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-} // electron_density_atomwise
 } // scoring
 } // core
 

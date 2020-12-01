@@ -13,22 +13,21 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_FWD_HH
-#define INCLUDED_core_scoring_methods_dfire_DFIRE_Energy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_dfire_DFIRE_Energy_FWD_HH
+#define INCLUDED_core_energy_methods_dfire_DFIRE_Energy_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class PoissonBoltzmannEnergy;
 
 typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy > PoissonBoltzmannEnergyOP;
 typedef utility::pointer::shared_ptr< PoissonBoltzmannEnergy const > PoissonBoltzmannEnergyCOP;
 
-} // methods
 } // scoring
 } // core
 

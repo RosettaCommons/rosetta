@@ -12,16 +12,16 @@
 /// @author Nick Marze (nickmarze@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_carbohydrates_MotifDockEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_carbohydrates_MotifDockEnergy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_carbohydrates_MotifDockEnergy_FWD_HH
+#define INCLUDED_core_energy_methods_carbohydrates_MotifDockEnergy_FWD_HH
 
 // Utility header
 #include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief  Adaptation of Motif score for Docking
 class MotifDockEnergy;
@@ -29,8 +29,7 @@ class MotifDockEnergy;
 typedef utility::pointer::shared_ptr< MotifDockEnergy > MotifDockEnergyOP;
 typedef utility::pointer::shared_ptr< MotifDockEnergy const> MotifDockEnergyCOP;
 
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core
 
-#endif // INCLUDED_core_scoring_methods_carbohydrates_MotifDockEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_carbohydrates_MotifDockEnergy_FWD_HH

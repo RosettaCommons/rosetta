@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_DirectReadoutEnergy_hh
-#define INCLUDED_core_scoring_methods_DirectReadoutEnergy_hh
+#ifndef INCLUDED_core_energy_methods_DirectReadoutEnergy_hh
+#define INCLUDED_core_energy_methods_DirectReadoutEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/DirectReadoutEnergy.fwd.hh>
@@ -34,16 +34,16 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief  Implementation of Kono and Sarai's knowledge-based protein-DNA interaction energy
 /// @details  Could be a CI2B, but interaction threshold is large, so in the short term defining as
 /// WholeStructure energy.
 
-class DirectReadoutEnergy : public WholeStructureEnergy  {
+class DirectReadoutEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 public:
 
 
@@ -51,7 +51,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const;
 
 	using parent::finalize_total_energy;
@@ -77,8 +77,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -92,13 +92,12 @@ public:
 
 private:
 
-	dna::DirectReadoutPotential const & potential_;
+	core::scoring::dna::DirectReadoutPotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

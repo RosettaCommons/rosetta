@@ -11,8 +11,8 @@
 /// @brief  Declaration for the class that connects BranchEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
-#ifndef INCLUDED_core_scoring_methods_BranchEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_BranchEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_BranchEnergyCreator_hh
+#define INCLUDED_core_energy_methods_BranchEnergyCreator_hh
 
 // Unit header
 #include <core/scoring/methods/EnergyMethodCreator.hh>
@@ -26,21 +26,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class BranchEnergyCreator : public EnergyMethodCreator
+
+class BranchEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new BranchEnergy.
-	methods::EnergyMethodOP create_energy_method( methods::EnergyMethodOptions const & ) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-} // methods
 } // scoring
 } // core
 

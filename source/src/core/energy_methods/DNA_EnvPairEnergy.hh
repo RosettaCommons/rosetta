@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_DNA_EnvPairEnergy_HH
-#define INCLUDED_core_scoring_methods_DNA_EnvPairEnergy_HH
+#ifndef INCLUDED_core_energy_methods_DNA_EnvPairEnergy_HH
+#define INCLUDED_core_energy_methods_DNA_EnvPairEnergy_HH
 
 // Unit Headers
 #include <core/energy_methods/DNA_EnvPairEnergy.fwd.hh>
@@ -29,15 +29,15 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief  Implementation of env and pair terms for protein-DNA interactions
 /// @details  Could be a CI2B, but centroid atom is not currently the nbr atom for dna so intxn threshold tricky
 
-class DNA_EnvPairEnergy : public WholeStructureEnergy {
+class DNA_EnvPairEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -46,7 +46,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -77,12 +77,11 @@ public:
 
 private:
 
-	dna::DNA_EnvPairPotential const & potential_;
+	core::scoring::dna::DNA_EnvPairPotential const & potential_;
 
 };
 
 
-}
 }
 }
 

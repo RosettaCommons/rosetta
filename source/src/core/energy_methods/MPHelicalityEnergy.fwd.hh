@@ -25,14 +25,12 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 class MPHelicalityEnergy;
 typedef utility::pointer::shared_ptr< MPHelicalityEnergy > MPHelicalityEnergyOP;
 typedef utility::pointer::shared_ptr< MPHelicalityEnergy const > MPHelicalityEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 

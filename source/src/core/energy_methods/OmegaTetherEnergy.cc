@@ -40,21 +40,22 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the OmegaTetherEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OmegaTetherEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< OmegaTetherEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 OmegaTetherEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( omega );
 	return sts;
@@ -64,11 +65,11 @@ OmegaTetherEnergyCreator::score_types_for_method() const {
 /// ctor
 OmegaTetherEnergy::OmegaTetherEnergy() :
 	parent( utility::pointer::make_shared< OmegaTetherEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_OmegaTether() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_OmegaTether() )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OmegaTetherEnergy::clone() const
 {
 	return utility::pointer::make_shared< OmegaTetherEnergy >();
@@ -83,7 +84,7 @@ void
 OmegaTetherEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -92,12 +93,12 @@ OmegaTetherEnergy::residue_energy(
 	if ( rsd.is_protein() || rsd.is_peptoid() || rsd.type().is_aramid() ) {
 		Real omega_score, dscore_domega, dscore_dphi, dscore_dpsi;
 		potential_.eval_omega_score_residue( rsd, omega_score, dscore_domega, dscore_dphi, dscore_dpsi );
-		emap[ omega ] += omega_score;
+		emap[ core::scoring::omega ] += omega_score;
 
 		if ( rsd.type().is_oligourea() ) {
 			Real omega_score2, dscore_domega2, dscore_dphi2, dscore_dpsi2;
 			potential_.eval_omega_score_residue( core::chemical::aa_unk, rsd.mainchain_torsion( core::id::omega_torsion_oligourea ), 0, 0, omega_score2, dscore_domega2, dscore_dphi2, dscore_dpsi2, true );
-			emap[omega] += omega_score2;
+			emap[ core::scoring::omega] += omega_score2;
 		}
 	}
 }
@@ -117,12 +118,12 @@ OmegaTetherEnergy::defines_dof_derivatives( pose::Pose const & ) const
 Real
 OmegaTetherEnergy::eval_residue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	id::DOF_ID const &,
 	id::TorsionID const & tor_id,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -153,7 +154,7 @@ OmegaTetherEnergy::eval_residue_dof_derivative(
 		Real omega_score, dummy1, dummy2;
 		potential_.eval_omega_score_residue( core::chemical::aa_unk, rsd.mainchain_torsion(tor_id.torsion()), 0, 0, omega_score, deriv, dummy1, dummy2, true );
 	}
-	return numeric::conversions::degrees( weights[ omega ] * deriv );
+	return numeric::conversions::degrees( weights[ core::scoring::omega ] * deriv );
 }
 
 /// @brief OmegaTether Energy is context independent and thus indicates that no context graphs need to
@@ -171,7 +172,6 @@ OmegaTetherEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

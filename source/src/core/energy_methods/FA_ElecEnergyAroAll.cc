@@ -67,29 +67,28 @@
 //     D = 80, D0 = 4, S = 0.4 (rohs)
 
 namespace core {
-namespace scoring {
-namespace elec {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the FA_ElecEnergyAroAll class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FA_ElecEnergyAroAllCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< FA_ElecEnergyAroAll >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 FA_ElecEnergyAroAllCreator::score_types_for_method() const {
-	ScoreTypes sts;
-	sts.push_back( fa_elec_aro_all );
+	core::scoring::ScoreTypes sts;
+	sts.push_back( core::scoring::fa_elec_aro_all );
 	return sts;
 }
 
 ////////////////////////////////////////////////////////////////////////////
 FA_ElecEnergyAroAll::FA_ElecEnergyAroAll(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ):
 	parent( options )
 {
@@ -105,7 +104,7 @@ FA_ElecEnergyAroAll::FA_ElecEnergyAroAll( FA_ElecEnergyAroAll const & src ):
 }
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FA_ElecEnergyAroAll::clone() const
 {
 	return utility::pointer::make_shared< FA_ElecEnergyAroAll >( *this );
@@ -113,14 +112,14 @@ FA_ElecEnergyAroAll::clone() const
 
 
 void
-FA_ElecEnergyAroAll::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+FA_ElecEnergyAroAll::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 
 void
-FA_ElecEnergyAroAll::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+FA_ElecEnergyAroAll::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -172,8 +171,8 @@ FA_ElecEnergyAroAll::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// Aromatic means: PHE, TRP, TYR (not HIS, currently).
@@ -208,10 +207,10 @@ Real
 FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	Real total_score( 0.0 );
 
@@ -241,7 +240,7 @@ FA_ElecEnergyAroAll::residue_pair_energy_aro_aro(
 					coulomb().eval_atom_atom_fa_elecE( i_xyz, i_charge, rsd2.xyz(j), j_charge);
 
 				total_score += score;
-				emap[ fa_elec_aro_all ] += score;
+				emap[ core::scoring::fa_elec_aro_all ] += score;
 				//debug output
 				//std::cout << "elecenergy: " << rsd1.seqpos() << "  " << rsd1.atom_name(i) << "  " << rsd2.seqpos() << " " << rsd2.atom_name(j) << " is: " << score << std::endl;
 			}
@@ -255,8 +254,8 @@ FA_ElecEnergyAroAll::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
@@ -271,8 +270,8 @@ FA_ElecEnergyAroAll::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & residue,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
@@ -287,13 +286,13 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	// what is my charge?
 	Size const pos1( atom_id.rsd() );
@@ -309,10 +308,10 @@ FA_ElecEnergyAroAll::eval_atom_derivative(
 	if ( i_charge == 0.0 ) return;
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	//  kinematics::DomainMap const & domain_map( energies.domain_map() );
 	//  bool const pos1_fixed( !energies.res_moved( pos1 ) );
@@ -348,13 +347,13 @@ FA_ElecEnergyAroAll::eval_atom_derivative_aro_aro(
 	conformation::Residue const & rsd1,
 	Size const & i,
 	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
 
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	CountPairFunctionOP cpfxn = CountPairFactory::create_count_pair_function( rsd1, rsd2, CP_CROSSOVER_4 );
 
@@ -386,8 +385,8 @@ FA_ElecEnergyAroAll::eval_atom_derivative_aro_aro(
 
 			Vector const f1( i_xyz.cross( j_xyz ) );
 
-			F1 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f1;
-			F2 += weights[ fa_elec_aro_all ] * dE_dr_over_r * f2;
+			F1 += weights[ core::scoring::fa_elec_aro_all ] * dE_dr_over_r * f1;
+			F2 += weights[ core::scoring::fa_elec_aro_all ] * dE_dr_over_r * f2;
 		}
 	}
 }
@@ -404,7 +403,5 @@ FA_ElecEnergyAroAll::version() const
 	return 1; // Initial versioning
 }
 
-
-}
 }
 }

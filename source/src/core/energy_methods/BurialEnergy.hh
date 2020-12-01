@@ -11,8 +11,8 @@
 /// @brief  energy term use for scoring predicted burial
 /// @author James Thompson
 
-#ifndef INCLUDED_core_scoring_methods_BurialEnergy_hh
-#define INCLUDED_core_scoring_methods_BurialEnergy_hh
+#ifndef INCLUDED_core_energy_methods_BurialEnergy_hh
+#define INCLUDED_core_energy_methods_BurialEnergy_hh
 
 #include <core/energy_methods/BurialEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
@@ -26,19 +26,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class BurialEnergy : public ContextDependentOneBodyEnergy {
+
+class BurialEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 public:
 
-	BurialEnergy() : ContextDependentOneBodyEnergy( utility::pointer::make_shared< BurialEnergyCreator >() ) {
+	BurialEnergy() : core::scoring::methods::ContextDependentOneBodyEnergy( utility::pointer::make_shared< BurialEnergyCreator >() ) {
 		init_from_file();
 	}
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -49,19 +49,19 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	core::Size version() const override;
@@ -78,6 +78,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_BurialEnergy_HH
+#endif // INCLUDED_core_energy_methods_BurialEnergy_HH

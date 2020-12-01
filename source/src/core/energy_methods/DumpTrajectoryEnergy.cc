@@ -39,8 +39,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace util_methods {
+namespace energy_methods {
 
 static basic::Tracer TR("core.scoring.util_methods.DumpTrajectoryEnergy");
 
@@ -54,9 +53,10 @@ DumpTrajectoryEnergyCreator::create_energy_method( core::scoring::methods::Energ
 
 /// @brief Defines the score types that this energy method calculates.
 ///
-ScoreTypes
+core::scoring::ScoreTypes
 DumpTrajectoryEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dump_trajectory );
 	return sts;
@@ -141,8 +141,8 @@ DumpTrajectoryEnergy::setup_for_scoring(
 void
 DumpTrajectoryEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap &//total_energy
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap &//total_energy
 ) const {
 	if ( state_ == SCORING ) { //i.e. we're not in another sort of trajectory
 		dump_pose(pose);
@@ -152,7 +152,7 @@ DumpTrajectoryEnergy::finalize_total_energy(
 /// @brief This is where the state_ moves to MINIMIZING.
 ///
 void
-DumpTrajectoryEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const &) const {
+DumpTrajectoryEnergy::setup_for_minimizing( pose::Pose & , core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const &) const {
 	start_new_activity( MINIMIZING );
 
 }
@@ -173,7 +173,7 @@ DumpTrajectoryEnergy::finalize_after_minimizing(
 /// @details Assumption: All minimizers must evaluate derivatives repeatedly while minimizing.
 /// Although these won't be equally spaced, dumping them is the best we can do without modifying the minimizers.
 void
-DumpTrajectoryEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+DumpTrajectoryEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	dump_pose( pose );
 }
 
@@ -330,7 +330,7 @@ DumpTrajectoryEnergy::dump_pose(
 		std::stringstream model_tag;
 		model_tag << std::setfill('0') << std::setw( 6 ) << dumped_frames_;
 
-		core::io::StructFileRepOptionsOP options( new core::io::StructFileRepOptions() );
+		core::io::StructFileRepOptionsOP options( utility::pointer::make_shared< core::io::StructFileRepOptions >() );
 		options->set_output_pose_energies_table( false );         // this causes problems during the minimizer
 
 		io::pdb::add_to_multimodel_pdb( pose, dump_filename_, model_tag.str(), options );
@@ -340,6 +340,5 @@ DumpTrajectoryEnergy::dump_pose(
 }
 
 
-} // util_methods
 } // scoring
 } // core

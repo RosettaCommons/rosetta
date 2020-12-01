@@ -81,7 +81,7 @@ public:
 
 
 private:
-	core::scoring::geometric_solvation::ExactOccludedHbondSolEnergy geo_sol_energy_;
+	core::energy_methods::ExactOccludedHbondSolEnergy geo_sol_energy_;
 
 };
 

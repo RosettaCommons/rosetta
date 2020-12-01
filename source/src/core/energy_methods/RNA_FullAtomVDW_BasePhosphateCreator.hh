@@ -18,26 +18,24 @@
 #include <core/energy_methods/RNA_FullAtomVDW_BasePhosphateCreator.fwd.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_FullAtomVDW_BasePhosphateCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new RNA_FullAtomVDW_BasePhosphate
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-} //rna
 } //scoring
 } //core
 

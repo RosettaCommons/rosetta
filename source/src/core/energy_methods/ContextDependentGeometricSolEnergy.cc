@@ -54,32 +54,32 @@
 static basic::Tracer tr( "core.scoring.geometric_solvation.GeometricSolEnergy" );
 
 //////////////////////////////////////////////////////////////////
-// All the good stuff is now in GeometricSolEnergyEvaluator, which is
+// All the good stuff is now in scoring::geometric_solvation::GeometricSolEnergyEvaluator, which is
 // shared with (faster) ContextIndependentGeometricSolEnergy.
 //
-// See notes in GeometricSolEnergyEvaluator for what this does.
+// See notes in scoring::geometric_solvation::GeometricSolEnergyEvaluator for what this does.
 //
 // If you make changes in here, please make sure to also update
 //  ContextIndependentGeometricSolEnergy, ideally but putting a shared
-//  function in GeometricSolEnergyEvaluator to prevent code copying.
+//  function in scoring::geometric_solvation::GeometricSolEnergyEvaluator to prevent code copying.
 //
 //////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the GeometricSolEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ContextDependentGeometricSolEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< ContextDependentGeometricSolEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( geom_sol );
 	sts.push_back( geom_sol_intra_RNA );
@@ -88,11 +88,11 @@ ContextDependentGeometricSolEnergyCreator::score_types_for_method() const {
 
 
 /// @brief copy c-tor
-ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods::EnergyMethodOptions const & opts
+ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( core::scoring::methods::EnergyMethodOptions const & opts
 ) :
 	parent( utility::pointer::make_shared< ContextDependentGeometricSolEnergyCreator >() ),
 	options_( opts ),
-	evaluator_( utility::pointer::make_shared< GeometricSolEnergyEvaluator >( opts ) ),
+	evaluator_( utility::pointer::make_shared< scoring::geometric_solvation::GeometricSolEnergyEvaluator >( opts ) ),
 	precalculated_bb_bb_energy_(0.0f),
 	using_extended_method_( false )
 {
@@ -102,7 +102,7 @@ ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( methods:
 ContextDependentGeometricSolEnergy::ContextDependentGeometricSolEnergy( ContextDependentGeometricSolEnergy const & /*src*/ ) = default;
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ContextDependentGeometricSolEnergy::clone() const
 {
 	return utility::pointer::make_shared< ContextDependentGeometricSolEnergy >( *this );
@@ -117,9 +117,9 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 {
 	// Need an HBOND_SET if we don't already have one from regular HBONDS
 	// Note: The logic here is kinda hacky.
-	using EnergiesCacheableDataType::HBOND_SET;
+	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 	if ( ! pose.energies().data().has( HBOND_SET ) ) {
-		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
+		core::scoring::hbonds::HBondSetOP hbond_set( utility::pointer::make_shared< core::scoring::hbonds::HBondSet >( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
 	}
@@ -129,22 +129,22 @@ ContextDependentGeometricSolEnergy::setup_for_packing(
 		[]( bool const b ){ return b; } );
 	precalculated_bb_bb_energy_ = 0.0f;
 
-	//if nothing can be designed no reason to precalculate backbone/backbone geom_solv
+	//if nothing can be designed no reason to precalculate backbone/backbone core::scoring::geom_solv
 	if ( !might_be_designing ) return;
 	precalculated_bb_bb_energy_ = evaluator_->precalculate_bb_bb_energy_for_design( pose );
 }
 
 
 void
-ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+ContextDependentGeometricSolEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 
 	// Need an HBOND_SET if we don't already have one from regular HBONDS
 	// Note: The logic here is kinda hacky.
-	using EnergiesCacheableDataType::HBOND_SET;
+	using core::scoring::EnergiesCacheableDataType::HBOND_SET;
 	if ( ! pose.energies().data().has( HBOND_SET ) ) {
-		hbonds::HBondSetOP hbond_set( new hbonds::HBondSet( options_.hbond_options() ) );
+		core::scoring::hbonds::HBondSetOP hbond_set( utility::pointer::make_shared< core::scoring::hbonds::HBondSet >( options_.hbond_options() ) );
 		hbond_set->setup_for_residue_pair_energies( pose );
 		pose.energies().data().set( HBOND_SET, hbond_set );
 	}
@@ -162,19 +162,19 @@ ContextDependentGeometricSolEnergy::defines_score_for_residue_pair(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_count_pair_function(
 	Size const res1,
 	Size const res2,
 	pose::Pose const & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	return evaluator_->get_count_pair_function( res1, res2, pose );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_count_pair_function(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
@@ -184,11 +184,11 @@ ContextDependentGeometricSolEnergy::get_count_pair_function(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 ContextDependentGeometricSolEnergy::get_intrares_countpair(
 	conformation::Residue const & res,
 	pose::Pose const &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	return evaluator_->get_intrares_countpair( res );
@@ -213,15 +213,15 @@ ContextDependentGeometricSolEnergy::requires_a_setup_for_derivatives_for_residue
 void
 ContextDependentGeometricSolEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
 	if ( !defines_intrares_energy( weights ) ) return;
-	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol_intra_RNA ], atom_derivs, true /*just_RNA*/);
-	if ( options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ geom_sol ], atom_derivs, false /*just_RNA*/ );
+	evaluator_->eval_intrares_derivatives( rsd, pose, weights[ core::scoring::geom_sol_intra_RNA ], atom_derivs, true /*just_RNA*/);
+	if ( options_.put_intra_into_total() ) evaluator_->eval_intrares_derivatives( rsd, pose, weights[ core::scoring::geom_sol ], atom_derivs, false /*just_RNA*/ );
 }
 
 ////////////////////////////////////////////////////
@@ -229,16 +229,16 @@ void
 ContextDependentGeometricSolEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & ires,
 	conformation::Residue const & jres,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
-	evaluator_->eval_residue_pair_derivatives( ires, jres, min_data, pose, weights[ geom_sol ], r1_atom_derivs, r2_atom_derivs );
+	evaluator_->eval_residue_pair_derivatives( ires, jres, min_data, pose, weights[ core::scoring::geom_sol ], r1_atom_derivs, r2_atom_derivs );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -246,14 +246,14 @@ void
 ContextDependentGeometricSolEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using_extended_method_ = true;
-	emap[ geom_sol ] += evaluator_->residue_pair_energy_ext( rsd1, rsd2, min_data, pose );
+	emap[ core::scoring::geom_sol ] += evaluator_->residue_pair_energy_ext( rsd1, rsd2, min_data, pose );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -262,11 +262,11 @@ ContextDependentGeometricSolEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData & pair_data
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData & pair_data
 ) const
 {
 	evaluator_->setup_for_minimizing_for_residue_pair( rsd1, rsd2, pair_data );
@@ -281,8 +281,8 @@ ContextDependentGeometricSolEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap ) const
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap ) const
 {
 	using_extended_method_ = false;
 
@@ -291,7 +291,7 @@ ContextDependentGeometricSolEnergy::residue_pair_energy(
 	//  energy cannot change (Joseph Yesselman 9/11/13)
 	// note from rhiju -- this looks dangerous
 	if ( precalculated_bb_bb_energy_ > 0.0f ) {
-		emap[ geom_sol ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
+		emap[ core::scoring::geom_sol ] += evaluator_->geometric_sol_one_way_sc(rsd1, rsd2, pose) +
 			evaluator_->geometric_sol_one_way_sc(rsd2, rsd1, pose);
 	} else {
 		evaluator_->residue_pair_energy( rsd1, rsd2, pose, scorefxn, emap );
@@ -309,11 +309,11 @@ ContextDependentGeometricSolEnergy::minimize_in_whole_structure_context( pose::P
 void
 ContextDependentGeometricSolEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & totals ) const
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals ) const
 {
 	if ( !using_extended_method_ ) {
-		totals[ geom_sol ] += precalculated_bb_bb_energy_;
+		totals[ core::scoring::geom_sol ] += precalculated_bb_bb_energy_;
 	}
 }
 
@@ -326,7 +326,7 @@ ContextDependentGeometricSolEnergy::atomic_interaction_cutoff() const
 
 ///////////////////////////////////////////////////////////////////////////////////////
 bool
-ContextDependentGeometricSolEnergy::defines_intrares_energy( EnergyMap const &  ) const
+ContextDependentGeometricSolEnergy::defines_intrares_energy( core::scoring::EnergyMap const &  ) const
 {
 	return true;
 }
@@ -336,13 +336,13 @@ void
 ContextDependentGeometricSolEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap ) const
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap ) const
 {
-	EnergyMap emap_local;
+	core::scoring::EnergyMap emap_local;
 	evaluator_->eval_intrares_energy( rsd, pose, scorefxn, emap );
-	emap[ geom_sol_intra_RNA ] += emap_local[ geom_sol_intra_RNA ];
-	emap[ geom_sol ]           += emap_local[ geom_sol ];
+	emap[ core::scoring::geom_sol_intra_RNA ] += emap_local[ core::scoring::geom_sol_intra_RNA ];
+	emap[ core::scoring::geom_sol ]           += emap_local[ core::scoring::geom_sol ];
 }
 
 
@@ -353,7 +353,7 @@ ContextDependentGeometricSolEnergy::indicate_required_context_graphs(
 	utility::vector1< bool > & context_graphs_required
 ) const
 {
-	context_graphs_required[ ten_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::ten_A_neighbor_graph ] = true;
 }
 
 core::Size
@@ -363,7 +363,6 @@ ContextDependentGeometricSolEnergy::version() const
 }
 
 
-} // hbonds
 } // scoring
 } // core
 

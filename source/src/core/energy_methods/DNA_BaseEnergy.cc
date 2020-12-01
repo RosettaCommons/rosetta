@@ -37,21 +37,22 @@
 // ObjexxFCL headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the DNA_BaseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_BaseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DNA_BaseEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DNA_BaseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dna_bp );
 	sts.push_back( dna_bs );
@@ -59,7 +60,7 @@ DNA_BaseEnergyCreator::score_types_for_method() const {
 }
 
 
-using namespace dna; //////////////////// NOTE NOTE NOTE
+using namespace core::scoring::dna; //////////////////// NOTE NOTE NOTE
 
 /// the atom through which the knowledge based potential applies a force
 
@@ -67,12 +68,12 @@ std::string const dna_deriv_atom( " C5 " );
 
 DNA_BaseEnergy::DNA_BaseEnergy() :
 	parent( utility::pointer::make_shared< DNA_BaseEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_DNA_BasePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_DNA_BasePotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DNA_BaseEnergy::clone() const
 {
 	return utility::pointer::make_shared< DNA_BaseEnergy >();
@@ -81,7 +82,7 @@ DNA_BaseEnergy::clone() const
 /// are these really necessary??????????? move to scheme that doesnt depend on nbr calcn
 ///
 void
-DNA_BaseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+DNA_BaseEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	set_base_partner( pose );
 	pose.update_residue_neighbors();
@@ -89,7 +90,7 @@ DNA_BaseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & 
 
 
 void
-DNA_BaseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+DNA_BaseEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	set_base_partner( pose );
 	pose.update_residue_neighbors();
@@ -120,7 +121,7 @@ count_pair_bs(
 }
 
 
-/// same as dna::retrieve_base_partner_from_pose
+/// same as core::scoring::dna::retrieve_base_partner_from_pose
 inline
 BasePartner const &
 retrieve_base_partner_from_pose_inline( pose::Pose const & pose )
@@ -137,8 +138,8 @@ DNA_BaseEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( !rsd1.is_DNA() || !rsd2.is_DNA() ) return;
@@ -167,8 +168,8 @@ DNA_BaseEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ dna_bs ] += bs_score;
-	emap[ dna_bp ] += bp_score;
+	emap[ core::scoring::dna_bs ] += bs_score;
+	emap[ core::scoring::dna_bp ] += bp_score;
 	//std::cout << "DNA_BaseEnergy " << rsd1.seqpos() << " " << rsd2.seqpos() << " " << bs_score << " " << bp_score << std::endl;
 }
 
@@ -178,8 +179,8 @@ DNA_BaseEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -194,13 +195,13 @@ DNA_BaseEnergy::eval_atom_derivative(
 
 	///////////////////
 	// base step derivs
-	if ( weights[ dna_bs ] != 0.0 ) {
+	if ( weights[ core::scoring::dna_bs ] != 0.0 ) {
 		// to next residue:
 		if ( pos1 < pose.size() ) {
 			Size const pos2( pos1+1 );
 			conformation::Residue const & rsd2( pose.residue( pos2 ) );
 			if ( rsd2.is_DNA() && count_pair_bs( pos1, pos2, base_partner ) ) {
-				potential_.eval_base_step_derivative( rsd1, rsd2, F1, F2,        weights[ dna_bs ] );
+				potential_.eval_base_step_derivative( rsd1, rsd2, F1, F2,        weights[ core::scoring::dna_bs ] );
 			}
 		}
 
@@ -209,19 +210,19 @@ DNA_BaseEnergy::eval_atom_derivative(
 			Size const pos2( pos1-1 );
 			conformation::Residue const & rsd2( pose.residue( pos2 ) );
 			if ( rsd2.is_DNA() && count_pair_bs( pos2, pos1, base_partner ) ) {
-				potential_.eval_base_step_derivative( rsd2, rsd1, F1, F2, -1.0 * weights[ dna_bs ] );
+				potential_.eval_base_step_derivative( rsd2, rsd1, F1, F2, -1.0 * weights[ core::scoring::dna_bs ] );
 			}
 		}
 	}
 
 	///////////////////
 	// base pair derivs
-	if ( weights[ dna_bp ] != 0.0 && base_partner[ pos1 ] ) {
+	if ( weights[ core::scoring::dna_bp ] != 0.0 && base_partner[ pos1 ] ) {
 		Size const pos2( base_partner[ pos1 ] );
 		if ( pos1 < pos2 ) {
-			potential_.eval_base_pair_derivative( rsd1, pose.residue( pos2 ), F1, F2,        weights[ dna_bp ] );
+			potential_.eval_base_pair_derivative( rsd1, pose.residue( pos2 ), F1, F2,        weights[ core::scoring::dna_bp ] );
 		} else {
-			potential_.eval_base_pair_derivative( pose.residue( pos2 ), rsd1, F1, F2, -1.0 * weights[ dna_bp ] );
+			potential_.eval_base_pair_derivative( pose.residue( pos2 ), rsd1, F1, F2, -1.0 * weights[ core::scoring::dna_bp ] );
 		}
 	}
 }
@@ -246,6 +247,5 @@ DNA_BaseEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

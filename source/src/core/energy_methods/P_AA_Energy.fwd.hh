@@ -12,22 +12,21 @@
 /// @author Ron Jacak
 
 
-#ifndef INCLUDED_core_scoring_methods_P_AA_Energy_fwd_hh
-#define INCLUDED_core_scoring_methods_P_AA_Energy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_P_AA_Energy_fwd_hh
+#define INCLUDED_core_energy_methods_P_AA_Energy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class P_AA_Energy;
 
 typedef utility::pointer::shared_ptr< P_AA_Energy > P_AA_EnergyOP;
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_P_AA_Energy_FWD_HH
+#endif // INCLUDED_core_energy_methods_P_AA_Energy_FWD_HH

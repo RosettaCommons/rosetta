@@ -53,21 +53,21 @@ using core::Real;
 using Matrix = numeric::xyzMatrix<Real>;
 
 namespace core {
-namespace scoring {
-namespace hackaro {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the HackAroEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HackAroEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< HackAroEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 HackAroEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( hack_aro );
 	return sts;
@@ -79,7 +79,7 @@ HackAroEnergy::HackAroEnergy() :
 {}
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HackAroEnergy::clone() const
 {
 	return utility::pointer::make_shared< HackAroEnergy >();
@@ -87,14 +87,14 @@ HackAroEnergy::clone() const
 
 
 void
-HackAroEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+HackAroEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 
 void
-HackAroEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+HackAroEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -110,8 +110,8 @@ HackAroEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// Aromatic means: PHE, TRP, TYR (not HIS, currently).
@@ -206,7 +206,7 @@ HackAroEnergy::get_aro_axis_score_DIST(
 	static Real const upper_bound_(  7.0 );
 	static Real const bound_zone_ (  2.0 ); // bonus is flat below 5.0 Angstroms.
 	static Real const well_depth_ (  1.0 ); // angular dependence goes negative.
-	static core::scoring::func::FuncOP dist_func_( new core::scoring::func::FadeFunc( lower_bound_, upper_bound_, bound_zone_, well_depth_) );
+	static core::scoring::func::FuncOP dist_func_( utility::pointer::make_shared< core::scoring::func::FadeFunc >( lower_bound_, upper_bound_, bound_zone_, well_depth_) );
 
 	Real const value = dist_func_->func( dist );
 	deriv = dist_func_->dfunc( dist );
@@ -219,7 +219,7 @@ void
 HackAroEnergy::residue_pair_energy_aro_aro(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	debug_assert( rsd1.is_aromatic() );
@@ -240,7 +240,7 @@ HackAroEnergy::residue_pair_energy_aro_aro(
 
 	Real const total_score = angle_score * dist_score;
 
-	emap[ hack_aro ] += total_score;
+	emap[ core::scoring::hack_aro ] += total_score;
 }
 
 /////////////////////////////////////////////////////////////
@@ -257,8 +257,8 @@ HackAroEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -278,10 +278,10 @@ HackAroEnergy::eval_atom_derivative(
 	bool const pos1_fixed( pos1_map != 0 );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( utility::graph::Graph::EdgeListConstIter
@@ -305,7 +305,7 @@ void
 HackAroEnergy::eval_atom_derivative_aro_aro(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -339,8 +339,8 @@ HackAroEnergy::eval_atom_derivative_aro_aro(
 
 	Vector const f1 = cross( f2, centroid2 ) + dist_score * angle_deriv * cross( z_i, z_j );
 
-	F1 -= weights[ hack_aro ] * f1;
-	F2 -= weights[ hack_aro ] * f2;
+	F1 -= weights[ core::scoring::hack_aro ] * f1;
+	F2 -= weights[ core::scoring::hack_aro ] * f2;
 }
 
 
@@ -361,6 +361,5 @@ HackAroEnergy::version() const
 }
 
 
-}
 }
 }

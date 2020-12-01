@@ -12,8 +12,8 @@
 /// @author Rhiju Das (rhiju@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_FreeDOF_Energy_hh
-#define INCLUDED_core_scoring_methods_FreeDOF_Energy_hh
+#ifndef INCLUDED_core_energy_methods_FreeDOF_Energy_hh
+#define INCLUDED_core_energy_methods_FreeDOF_Energy_hh
 
 // Unit headers
 #include <core/energy_methods/FreeDOF_Energy.fwd.hh>
@@ -33,8 +33,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class FreeDOF_Energy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
@@ -44,7 +44,7 @@ public:
 public:
 
 	/// @brief ctor
-	FreeDOF_Energy( EnergyMethodOptions const & energy_method_options );
+	FreeDOF_Energy( core::scoring::methods::EnergyMethodOptions const & energy_method_options );
 
 	/// @brief dtor
 	~FreeDOF_Energy() override;
@@ -55,7 +55,7 @@ public:
 
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// methods for ContextIndependentOneBodyEnergies
@@ -66,7 +66,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -79,8 +79,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals ) const override;
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals ) const override;
 
 private:
 
@@ -88,28 +88,27 @@ private:
 	void
 	accumulate_stack_energy(
 		pose::Pose & pose,
-		ScoreFunction const & scorefxn,
+		core::scoring::ScoreFunction const & scorefxn,
 		utility::vector1< Real > & stack_energy ) const;
 
 	void
-	do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const;
+	do_fa_stack_scorefunction_checks( core::scoring::ScoreFunction const & scorefxn ) const;
 
 	void
 	get_hbond_energy(
 		pose::Pose & pose,
-		ScoreFunction const & scorefxn,
+		core::scoring::ScoreFunction const & scorefxn,
 		utility::vector1< Real > & base_hbond_energy,
 		utility::vector1< Real > & sugar_hbond_energy ) const;
 
 private:
 
-	EnergyMethodOptions const & energy_method_options_;
-	FreeDOF_Options const & options_;
+	core::scoring::methods::EnergyMethodOptions const & energy_method_options_;
+	core::scoring::methods::FreeDOF_Options const & options_;
 	utility::vector1< Real > const & free_res_weights_;
 
 };
 
-} // methods
 } // scoring
 } // core
 

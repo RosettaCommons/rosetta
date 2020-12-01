@@ -38,14 +38,13 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Membrane Environemnt CBeta Energy Term
 class MPCbetaEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public: // constructors
 
@@ -59,20 +58,20 @@ public: // constructors
 public: // scoring methods
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	void
@@ -86,7 +85,7 @@ public: // energy function methods
 	/// @brief Energy Function for CBeta Term
 	core::Real
 	compute_mpcbeta_score(
-		CenListInfo const & cenlist,
+		core::scoring::CenListInfo const & cenlist,
 		core::Size const seqpos,
 		core::Size const num_tmh
 	) const;
@@ -95,11 +94,10 @@ public: // energy function methods
 private: //data
 
 	// MP Potential Base Instance
-	MembraneData const & mpdata_;
+	core::scoring::membrane::MembraneData const & mpdata_;
 
 };
 
-} // membrane
 } // scoring
 } // core
 

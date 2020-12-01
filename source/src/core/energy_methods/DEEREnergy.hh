@@ -74,7 +74,7 @@ public: // Methods
 	);
 
 	/// @brief Copy function
-	scoring::methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief  Destructor

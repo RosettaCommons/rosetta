@@ -36,21 +36,21 @@
 static basic::Tracer TR( "core.scoring.loop_graph.LoopCloseEnergy" );
 
 namespace core {
-namespace scoring {
-namespace loop_graph {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the LoopCloseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LoopCloseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< LoopCloseEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 LoopCloseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( loop_close );
 	return sts;
@@ -58,7 +58,7 @@ LoopCloseEnergyCreator::score_types_for_method() const {
 
 
 /// c-tor
-LoopCloseEnergy::LoopCloseEnergy( methods::EnergyMethodOptions const & options ) :
+LoopCloseEnergy::LoopCloseEnergy( core::scoring::methods::EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< LoopCloseEnergyCreator >() ),
 	options_( options )
 {}
@@ -70,7 +70,7 @@ LoopCloseEnergy::LoopCloseEnergy( LoopCloseEnergy const & src ):
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LoopCloseEnergy::clone() const
 {
 	return utility::pointer::make_shared< LoopCloseEnergy >( *this );
@@ -80,7 +80,7 @@ LoopCloseEnergy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 void
-LoopCloseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+LoopCloseEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	update_loop_atoms_and_lengths( pose );
@@ -88,7 +88,7 @@ LoopCloseEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 
 /////////////////////////////////////////////////////////////////////////////
 void
-LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+LoopCloseEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 	update_loop_atoms_and_lengths( pose );
@@ -107,15 +107,15 @@ LoopCloseEnergy::update_loop_atoms_and_lengths( pose::Pose & pose ) const {
 void
 LoopCloseEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	if ( !core::pose::full_model_info::full_model_info_defined( pose ) ) return;
 
 	using namespace core::scoring::loop_graph;
 	using namespace core::scoring::constraints;
 
-	totals[ loop_close          ] = loop_graph_->total_energy();
+	totals[ core::scoring::loop_close ] = loop_graph_->total_energy();
 
 	debug_assert( totals.is_finite() );
 
@@ -127,8 +127,8 @@ LoopCloseEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -146,14 +146,14 @@ LoopCloseEnergy::eval_atom_derivative(
 
 		if ( atom_id == loop_score_evaluator->current_pose_takeoff_atom() ) {
 			loop_score_evaluator->get_f1_f2( f1, f2, true /* takeoff */ );
-			F1 += weights[ loop_close ] * f1;
-			F2 += weights[ loop_close ] * f2;
+			F1 += weights[ core::scoring::loop_close ] * f1;
+			F2 += weights[ core::scoring::loop_close ] * f2;
 		}
 
 		if ( atom_id == loop_score_evaluator->current_pose_landing_atom() ) {
 			loop_score_evaluator->get_f1_f2( f1, f2, false /* takeoff */ );
-			F1 += weights[ loop_close ] * f1;
-			F2 += weights[ loop_close ] * f2;
+			F1 += weights[ core::scoring::loop_close ] * f1;
+			F2 += weights[ core::scoring::loop_close ] * f2;
 		}
 
 	}
@@ -166,6 +166,5 @@ LoopCloseEnergy::version() const
 }
 
 
-} // loop_graph
 } // scoring
 } // core

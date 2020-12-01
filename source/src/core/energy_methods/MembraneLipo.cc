@@ -35,21 +35,22 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MembraneLipo class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneLipoCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MembraneLipo >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MembraneLipoCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( Mlipo );
 	return sts;
@@ -59,12 +60,12 @@ MembraneLipoCreator::score_types_for_method() const {
 /// c-tor
 MembraneLipo::MembraneLipo() :
 	parent( utility::pointer::make_shared< MembraneLipoCreator >() ),
-	potential_( ScoringManager::get_instance()->get_MembranePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneLipo::clone() const
 {
 	return utility::pointer::make_shared< MembraneLipo >();
@@ -82,7 +83,7 @@ MembraneLipo::clone() const
 
 
 void
-MembraneLipo::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MembraneLipo::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
@@ -93,19 +94,19 @@ MembraneLipo::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) cons
 void
 MembraneLipo::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	Real lipo(0);
 
-	MembraneTopology const & topology( *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
+	core::scoring::MembraneTopology const & topology( *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) )));
 	if ( topology.LipoDefined() ) {
 		Real cen10Buried(0);
 		Real cen10Exposed(0);
 		Real cen10Buried_norm(0);
 		Real cen10Exposed_norm(0);
-		CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
+		core::scoring::CenListInfo const & cenlist( *( utility::pointer::static_pointer_cast< core::scoring::CenListInfo const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::CEN_LIST_INFO ) )));
 		for ( Size i=1; i<=pose.size(); ++i ) {
 			Size rsdSeq(i);
 			if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -147,7 +148,7 @@ MembraneLipo::finalize_total_energy(
 		}
 		lipo=(E_mean-B_mean)*topology.tmh_inserted();
 	}
-	emap[ Mlipo ]=lipo;
+	emap[ core::scoring::Mlipo ]=lipo;
 	potential_.finalize( pose );
 }
 
@@ -157,6 +158,5 @@ MembraneLipo::version() const
 	return 1; // Initial versioning
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

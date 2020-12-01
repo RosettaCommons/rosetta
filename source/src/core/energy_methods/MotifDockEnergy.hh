@@ -12,8 +12,8 @@
 /// @author Nick Marze (nickmarze@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_MotifDockEnergy_hh
-#define INCLUDED_core_scoring_methods_MotifDockEnergy_hh
+#ifndef INCLUDED_core_energy_methods_MotifDockEnergy_hh
+#define INCLUDED_core_energy_methods_MotifDockEnergy_hh
 
 // Unit Headers
 
@@ -37,13 +37,13 @@ typedef numeric::xyzTransform<core::Real> Xform;
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MotifDockEnergy : public ContextIndependentTwoBodyEnergy  {
+
+class MotifDockEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 
@@ -51,7 +51,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -62,20 +62,20 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & weights ) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
@@ -86,7 +86,6 @@ public:
 };
 
 
-}
 }
 }
 

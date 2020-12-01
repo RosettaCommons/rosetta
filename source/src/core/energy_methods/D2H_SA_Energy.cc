@@ -44,22 +44,23 @@
 //#include <math.h>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.methods.D2H_SA_Energy.cc" );
 
 /// @details This must return a fresh instance of the D2H_SA_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 D2H_SA_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< D2H_SA_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 D2H_SA_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( d2h_sa );
 	return sts;
@@ -138,7 +139,7 @@ D2H_SA_Energy::D2H_SA_Energy() :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 D2H_SA_Energy::clone() const
 {
 	return utility::pointer::make_shared< D2H_SA_Energy >();
@@ -151,13 +152,13 @@ D2H_SA_Energy::clone() const
 void
 D2H_SA_Energy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
 
 	if ( !HDX_data_defined_ ) {
-		totals [ d2h_sa ] = 0;
+		totals [ core::scoring::d2h_sa ] = 0;
 		return;
 	}
 	bool fullatom=pose.is_fullatom();
@@ -216,7 +217,7 @@ D2H_SA_Energy::finalize_total_energy(
 
 	if ( fullatom ) {
 		//TR.Debug << "fullatom" << std::endl;
-		calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius );
+		core::scoring::calc_per_atom_sasa( pose, atom_sasa, rsd_sasa, probe_radius );
 	} else {
 		//TR.Debug << "centroid" << std::endl;
 		utility::vector1< Size > cen8(nres,0);
@@ -278,7 +279,7 @@ D2H_SA_Energy::finalize_total_energy(
 	Real corr=numeric::statistics::corrcoef_with_provided_mean_and_std_dev(data_,mean_,sd_,rsd_sasa_grouped,m,sd);
 
 	Real z = -50 * log((1+corr)/(1-corr)); //Fisher transform, slightly better behavior for significant correlations times -100.
-	totals [ d2h_sa ] = reweight_*z;
+	totals [ core::scoring::d2h_sa ] = reweight_*z;
 } // finalize_total_energy
 
 
@@ -288,6 +289,5 @@ D2H_SA_Energy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

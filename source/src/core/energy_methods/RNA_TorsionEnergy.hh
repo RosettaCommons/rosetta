@@ -31,21 +31,20 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_TorsionEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_TorsionEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 
-	RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
-		RNA_TorsionPotentialOP rna_torsion_potential = nullptr );
+	RNA_TorsionEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options,
+		core::scoring::rna::RNA_TorsionPotentialOP rna_torsion_potential = nullptr );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,8 +56,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -67,8 +66,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// called during gradient-based minimization inside dfunc
@@ -81,17 +80,17 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return true; }
 
 	bool
-	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
+	defines_residue_pair_energy( core::scoring::EnergyMap const & ) const { return true; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -104,15 +103,14 @@ public:
 
 private:
 
-	RNA_EnergyMethodOptions const & options_;
-	RNA_TorsionPotentialOP rna_torsion_potential_;
+	core::scoring::rna::RNA_EnergyMethodOptions const & options_;
+	core::scoring::rna::RNA_TorsionPotentialOP rna_torsion_potential_;
 
 	core::Size version() const override;
 
 };
 
 
-} //rna
 } //scoring
 } //core
 

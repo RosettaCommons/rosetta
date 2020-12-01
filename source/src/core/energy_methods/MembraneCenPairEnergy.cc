@@ -39,21 +39,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MembraneCenPairEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneCenPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MembraneCenPairEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MembraneCenPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( Mpair );
 	return sts;
@@ -63,12 +64,12 @@ MembraneCenPairEnergyCreator::score_types_for_method() const {
 /// c-tor
 MembraneCenPairEnergy::MembraneCenPairEnergy() :
 	parent( utility::pointer::make_shared< MembraneCenPairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_MembranePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneCenPairEnergy::clone() const
 {
 	return utility::pointer::make_shared< MembraneCenPairEnergy >();
@@ -81,7 +82,7 @@ MembraneCenPairEnergy::clone() const
 
 
 void
-MembraneCenPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MembraneCenPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
@@ -102,8 +103,8 @@ MembraneCenPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	Real pair_score( 0.0 ); //, cenpack_score( 0.0 );
@@ -142,24 +143,26 @@ MembraneCenPairEnergy::residue_pair_energy(
 		/// accumulate total energies
 		potential_.evaluate_pair( pose, rsd1, rsd2, cendist, pair_score);
 	}
-	emap[ Mpair ]    += pair_score ; // * rsd_wt;
+	emap[ core::scoring::Mpair ]    += pair_score ; // * rsd_wt;
 }
 
 void
 MembraneCenPairEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	potential_.finalize( pose );
 }
-MembraneTopology const &
+
+core::scoring::MembraneTopology const &
 MembraneCenPairEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
 	//using core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY;
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
+
 ///// @brief MembraneCenPairEnergy distance cutoff
 Distance
 MembraneCenPairEnergy::atomic_interaction_cutoff() const
@@ -173,6 +176,5 @@ MembraneCenPairEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

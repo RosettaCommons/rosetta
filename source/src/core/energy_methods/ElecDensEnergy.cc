@@ -56,21 +56,21 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the ElecDensEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ElecDensEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ElecDensEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ElecDensEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( elec_dens_window );
 	return sts;
@@ -84,7 +84,7 @@ static basic::Tracer TR( "core.scoring.electron_density.ElecDensEnergy" );
 inline core::Real SQ( core::Real N ) { return N*N; }
 
 
-methods::LongRangeEnergyType
+core::scoring::methods::LongRangeEnergyType
 ElecDensEnergy::long_range_type() const { return elec_dens_energy; }
 
 /// c-tor
@@ -92,7 +92,7 @@ ElecDensEnergy::ElecDensEnergy() : parent( utility::pointer::make_shared< ElecDe
 
 
 /// clone
-EnergyMethodOP ElecDensEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP ElecDensEnergy::clone() const {
 	return utility::pointer::make_shared< ElecDensEnergy >( *this );
 }
 
@@ -109,7 +109,7 @@ bool ElecDensEnergy::defines_residue_pair_energy(
 
 
 void
-ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const & /* sf */) const {
+ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , core::scoring::ScoreFunction const & /* sf */) const {
 	core::scoring::electron_density::getDensityMap().clear_dCCdx_res_cache( pose );
 
 	// grab symminfo (if defined) from the pose
@@ -147,9 +147,9 @@ ElecDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 void
 ElecDensEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 
 	// Do we have a map?
 	if ( ! core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
@@ -170,14 +170,14 @@ ElecDensEnergy::setup_for_scoring(
 	}
 
 	// create LR energy container if needed
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
 		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
@@ -186,7 +186,7 @@ ElecDensEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_window ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::OneToAllEnergyContainer >( virt_res_idx, pose.size(),  core::scoring::elec_dens_window ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -208,8 +208,8 @@ void
 ElecDensEnergy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	return;
 }
@@ -218,8 +218,8 @@ ElecDensEnergy::eval_intrares_energy(
 void
 ElecDensEnergy::finalize_total_energy(
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	return;
 }
@@ -230,8 +230,8 @@ ElecDensEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace numeric::statistics;
 
@@ -268,7 +268,7 @@ ElecDensEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ elec_dens_window ] += edensScore;
+	emap[ core::scoring::elec_dens_window ] += edensScore;
 	return;
 }
 
@@ -278,8 +278,8 @@ ElecDensEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -393,8 +393,8 @@ ElecDensEnergy::eval_atom_derivative(
 								numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 								Vector const f1( atom_x.cross( atom_y ) );
 
-								F1 -= weights[ elec_dens_window ] * f1;
-								F2 -= weights[ elec_dens_window ] * f2;
+								F1 -= weights[ core::scoring::elec_dens_window ] * f1;
+								F2 -= weights[ core::scoring::elec_dens_window ] * f2;
 							}
 						}
 					}
@@ -433,8 +433,8 @@ ElecDensEnergy::eval_atom_derivative(
 							numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 							Vector const f1( atom_x.cross( atom_y ) );
 
-							F1 += weights[ elec_dens_window ] * f1;
-							F2 += weights[ elec_dens_window ] * f2;
+							F1 += weights[ core::scoring::elec_dens_window ] * f1;
+							F2 += weights[ core::scoring::elec_dens_window ] * f2;
 						}
 					}
 				}
@@ -468,8 +468,8 @@ ElecDensEnergy::eval_atom_derivative(
 					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 					Vector const f1( atom_x.cross( atom_y ) );
 
-					F1 += weights[ elec_dens_window ] * f1;
-					F2 += weights[ elec_dens_window ] * f2;
+					F1 += weights[ core::scoring::elec_dens_window ] * f1;
+					F2 += weights[ core::scoring::elec_dens_window ] * f2;
 				}
 			} else {
 				Real CC = core::scoring::electron_density::getDensityMap().getCachedScore( resid );
@@ -489,8 +489,8 @@ ElecDensEnergy::eval_atom_derivative(
 				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 				Vector const f1( atom_x.cross( atom_y ) );
 
-				F1 += weights[ elec_dens_window ] * f1;
-				F2 += weights[ elec_dens_window ] * f2;
+				F1 += weights[ core::scoring::elec_dens_window ] * f1;
+				F2 += weights[ core::scoring::elec_dens_window ] * f2;
 			}
 		}
 	} else {
@@ -516,8 +516,8 @@ ElecDensEnergy::eval_atom_derivative(
 		numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 		Vector const f1( atom_x.cross( atom_y ) );
 
-		F1 += weights[ elec_dens_window ] * f1;
-		F2 += weights[ elec_dens_window ] * f2;
+		F1 += weights[ core::scoring::elec_dens_window ] * f1;
+		F2 += weights[ core::scoring::elec_dens_window ] * f2;
 	}
 }
 
@@ -528,6 +528,5 @@ ElecDensEnergy::version() const
 }
 
 
-}
 }
 }

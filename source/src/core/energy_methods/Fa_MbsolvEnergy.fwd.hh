@@ -13,17 +13,16 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_Fa_MbsolvEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_Fa_MbsolvEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class Fa_MbsolvEnergy;
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_Fa_MbsolvEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_Fa_MbsolvEnergy_FWD_HH

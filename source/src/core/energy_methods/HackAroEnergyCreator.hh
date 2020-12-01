@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/elec/HackAroEnergyCreator.hh
+/// @file src/core/energy_methods/HackAroEnergyCreator.hh
 /// @brief  Declaration for the class that connects HackAroEnergy with the ScoringManager
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
@@ -23,26 +23,24 @@
 
 
 namespace core {
-namespace scoring {
-namespace hackaro {
+namespace energy_methods {
 
-class HackAroEnergyCreator : public methods::EnergyMethodCreator
+class HackAroEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new HackAroEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-}
 }
 }
 

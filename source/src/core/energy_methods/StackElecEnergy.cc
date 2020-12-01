@@ -80,21 +80,21 @@ using namespace core::chemical;
 static basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the StackElecEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 StackElecEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< StackElecEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 StackElecEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( stack_elec );
 	sts.push_back( stack_elec_base_base );
@@ -103,7 +103,7 @@ StackElecEnergyCreator::score_types_for_method() const {
 }
 
 /// c-tor
-StackElecEnergy::StackElecEnergy( methods::EnergyMethodOptions const & options ) :
+StackElecEnergy::StackElecEnergy( core::scoring::methods::EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< StackElecEnergyCreator >() ),
 	coulomb_( options ),
 	base_base_only_( false ), //true will be faster computation but appears less accurate (and less physically consistent)
@@ -130,7 +130,7 @@ StackElecEnergy::StackElecEnergy( StackElecEnergy const & src ):
 
 
 //clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 StackElecEnergy::clone() const
 {
 	return utility::pointer::make_shared< StackElecEnergy >( *this );
@@ -158,35 +158,35 @@ StackElecEnergy::setup_for_packing(
 
 	pose.update_residue_neighbors();
 
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.update( pose );
 }
 
 
 void
-StackElecEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const
+StackElecEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scfxn ) const
 {
 	pose.update_residue_neighbors();
 
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.update( pose );
 
 	if ( pose.energies().use_nblist() ) {
-		NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
+		core::scoring::NeighborList const & nblist( pose.energies().nblist( core::scoring::EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 		nblist.prepare_for_scoring( pose, scfxn, *this );
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void
-StackElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+StackElecEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.update( pose );
 }
 
@@ -194,7 +194,7 @@ StackElecEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const &
 void
 StackElecEnergy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const & sfxn,
+	core::scoring::ScoreFunction const & sfxn,
 	kinematics::MinimizerMapBase const & min_map
 ) const {
 	using namespace basic::options;
@@ -203,19 +203,19 @@ StackElecEnergy::setup_for_minimizing(
 	if ( !pose.energies().use_nblist() ) return;
 
 	// stash our nblist inside the pose's energies object
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 
 	// setup the atom-atom nblist
-	NeighborListOP nblist;
+	core::scoring::NeighborListOP nblist;
 	Real const tolerated_motion = pose.energies().use_nblist_auto_update() ? option[ run::nblist_autoupdate_narrow ] : 1.5;
 	Real const XX = coulomb().max_dis() + 2 * tolerated_motion;
-	nblist = utility::pointer::make_shared< NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
+	nblist = utility::pointer::make_shared< core::scoring::NeighborList >( min_map.domain_map(), XX*XX, XX*XX, XX*XX );
 	if ( pose.energies().use_nblist_auto_update() ) {
 		nblist->set_auto_update( tolerated_motion );
 	}
 	// this partially becomes the EtableEnergy classes's responsibility
 	nblist->setup( pose, sfxn, *this );
-	energies.set_nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST, nblist );
+	energies.set_nblist( core::scoring::EnergiesCacheableDataType::STACK_ELEC_NBLIST, nblist );
 }
 
 ////////
@@ -243,14 +243,14 @@ StackElecEnergy::defines_score_for_residue_pair(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 StackElecEnergy::get_count_pair_function(
 	Size const res1,
 	Size const res2,
 	pose::Pose const & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 	if ( res1 == res2 ) {
 		return utility::pointer::make_shared< CountPairNone >();
 	}
@@ -261,12 +261,12 @@ StackElecEnergy::get_count_pair_function(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 StackElecEnergy::get_count_pair_function(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2
 ) const {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	if ( ! defines_score_for_residue_pair( rsd1, rsd2, true ) ) return utility::pointer::make_shared< CountPairNone >();
 
@@ -277,11 +277,11 @@ StackElecEnergy::get_count_pair_function(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-etable::count_pair::CountPairFunctionCOP
+core::scoring::etable::count_pair::CountPairFunctionCOP
 StackElecEnergy::get_intrares_countpair(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 	utility_exit_with_message( "StackElecEnergy does not define intra - residue pair energies; do not call get_intrares_countpair()" );
 	return nullptr;
@@ -300,22 +300,22 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData & pair_data
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData & pair_data
 ) const {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	if ( pose.energies().use_nblist_auto_update() ) return;
 
-	etable::count_pair::CountPairFunctionCOP count_pair =
+	core::scoring::etable::count_pair::CountPairFunctionCOP count_pair =
 		get_count_pair_function( rsd1, rsd2 );
 
 	// update the existing nblist if it's already present in the min_data object
-	ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( elec_pair_nblist ) ) );
-	if ( ! nblist ) nblist = utility::pointer::make_shared< ResiduePairNeighborList >();
+	core::scoring::ResiduePairNeighborListOP nblist( utility::pointer::static_pointer_cast< core::scoring::ResiduePairNeighborList > ( pair_data.get_data( core::scoring::elec_pair_nblist ) ) );
+	if ( ! nblist ) nblist = utility::pointer::make_shared< core::scoring::ResiduePairNeighborList >();
 
 	/// STOLEN CODE!
 	Real const tolerated_narrow_nblist_motion = 0.75; //option[ run::nblist_autoupdate_narrow ];
@@ -323,7 +323,7 @@ StackElecEnergy::setup_for_minimizing_for_residue_pair(
 
 	nblist->initialize_from_residues( XX2, XX2, XX2, rsd1, rsd2, count_pair );
 
-	pair_data.set_data( elec_pair_nblist, nblist );
+	pair_data.set_data( core::scoring::elec_pair_nblist, nblist );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -331,10 +331,10 @@ void
 StackElecEnergy::residue_pair_energy_ext(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using_extended_method_ = true;
 
@@ -346,14 +346,14 @@ StackElecEnergy::residue_pair_energy_ext(
 
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
 
-	//debug_assert( dynamic_cast< ResiduePairNeighborList const * > (min_data.get_data( elec_pair_nblist )() ));
-	auto const & nblist( static_cast< ResiduePairNeighborList const & > ( min_data.get_data_ref( elec_pair_nblist ) ) );
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	//debug_assert( dynamic_cast< core::scoring::ResiduePairNeighborList const * > (min_data.get_data( core::scoring::elec_pair_nblist )() ));
+	auto const & nblist( static_cast< core::scoring::ResiduePairNeighborList const & > ( min_data.get_data_ref( core::scoring::elec_pair_nblist ) ) );
+	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
 	if ( neighbs.size() <= 0 ) return;
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
@@ -403,9 +403,9 @@ StackElecEnergy::residue_pair_energy_ext(
 		}
 	}
 
-	emap[ stack_elec ]           += score;
-	emap[ stack_elec_base_base ] += score_base_base;
-	emap[ stack_elec_base_bb ]   += score_base_bb;
+	emap[ core::scoring::stack_elec ]           += score;
+	emap[ core::scoring::stack_elec_base_base ] += score_base_base;
+	emap[ core::scoring::stack_elec_base_bb ]   += score_base_bb;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -414,8 +414,8 @@ StackElecEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using_extended_method_ = false;
 	if ( pose.energies().use_nblist() ) return;
@@ -428,9 +428,9 @@ StackElecEnergy::residue_pair_energy(
 	Real const score = residue_pair_energy_one_way( rsd1, rsd2, pose, score_base_base1, score_base_bb1 ) +
 		residue_pair_energy_one_way( rsd2, rsd1, pose, score_base_base2, score_base_bb2 ) ;
 
-	emap[ stack_elec ]           += score;
-	emap[ stack_elec_base_base ] += score_base_base1 + score_base_base2;
-	emap[ stack_elec_base_bb ]   += score_base_bb1   + score_base_bb2;
+	emap[ core::scoring::stack_elec ]           += score;
+	emap[ core::scoring::stack_elec_base_base ] += score_base_base1 + score_base_base2;
+	emap[ core::scoring::stack_elec_base_bb ]   += score_base_bb1   + score_base_bb2;
 }
 
 
@@ -452,8 +452,8 @@ StackElecEnergy::residue_pair_energy_one_way(
 	if ( rsd1.has_variant_type( REPLONLY ) ) return 0.0;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return 0.0;
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 	Size const i( rsd1.seqpos() );
 
@@ -533,8 +533,8 @@ StackElecEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -553,8 +553,8 @@ StackElecEnergy::eval_atom_derivative(
 	bool res1_is_base = is_rna_base( rsd1, m );
 	if ( base_base_only_ && !res1_is_base ) return;
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	Vector const atom_i( rsd1.xyz( m ) );
@@ -562,8 +562,8 @@ StackElecEnergy::eval_atom_derivative(
 	Matrix const M_i ( stub_i.M );
 
 	//debug_assert( pose.energies().use_nblist() );
-	NeighborList const & nblist( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
-	AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
+	core::scoring::NeighborList const & nblist( pose.energies().nblist( core::scoring::EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
+	core::scoring::AtomNeighbors const & nbrs( nblist.atom_neighbors( i, m ) );
 
 	for ( auto const & nbr : nbrs ) {
 		Size const j( nbr.rsd() );
@@ -585,10 +585,10 @@ StackElecEnergy::eval_atom_derivative(
 
 		if ( res1_is_base ) {
 			Vector const & deriv_vector_i = get_stack_elec_deriv( atom_i, atom_j, i_charge, j_charge, M_i );
-			Vector force_vector_i = weights[ stack_elec ] * deriv_vector_i;
+			Vector force_vector_i = weights[ core::scoring::stack_elec ] * deriv_vector_i;
 
-			if ( weights[ stack_elec_base_base ] != 0.0 &&  res2_is_base ) force_vector_i += weights[ stack_elec_base_base ] * deriv_vector_i;
-			if ( weights[ stack_elec_base_bb   ] != 0.0 && !res2_is_base ) force_vector_i += weights[ stack_elec_base_bb   ] * deriv_vector_i;
+			if ( weights[ core::scoring::stack_elec_base_base ] != 0.0 &&  res2_is_base ) force_vector_i += weights[ core::scoring::stack_elec_base_base ] * deriv_vector_i;
+			if ( weights[ core::scoring::stack_elec_base_bb   ] != 0.0 && !res2_is_base ) force_vector_i += weights[ core::scoring::stack_elec_base_bb   ] * deriv_vector_i;
 
 			//Force/torque with which occluding atom j acts on "dipole" i.
 			F1 += -1.0 * cross( force_vector_i, atom_j );
@@ -598,10 +598,10 @@ StackElecEnergy::eval_atom_derivative(
 
 		if ( res2_is_base ) {
 			Vector const & deriv_vector_j = get_stack_elec_deriv( atom_j, atom_i, j_charge, i_charge, M_j );
-			Vector force_vector_j = weights[ stack_elec ] * deriv_vector_j;
+			Vector force_vector_j = weights[ core::scoring::stack_elec ] * deriv_vector_j;
 
-			if ( weights[ stack_elec_base_base ] != 0.0  &&  res1_is_base )  force_vector_j += weights[ stack_elec_base_base ] * deriv_vector_j;
-			if ( weights[ stack_elec_base_bb   ] != 0.0  && !res1_is_base )  force_vector_j += weights[ stack_elec_base_bb   ] * deriv_vector_j;
+			if ( weights[ core::scoring::stack_elec_base_base ] != 0.0  &&  res1_is_base )  force_vector_j += weights[ core::scoring::stack_elec_base_base ] * deriv_vector_j;
+			if ( weights[ core::scoring::stack_elec_base_bb   ] != 0.0  && !res1_is_base )  force_vector_j += weights[ core::scoring::stack_elec_base_bb   ] * deriv_vector_j;
 
 			F1 += cross( force_vector_j, atom_i );
 			F2 += force_vector_j;
@@ -616,13 +616,13 @@ void
 StackElecEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	if ( pose.energies().use_nblist_auto_update() ) return;
@@ -636,12 +636,12 @@ StackElecEnergy::eval_residue_pair_derivatives(
 	if ( !rsd1.is_RNA() || !rsd2.is_RNA() ) return;
 
 	auto const & nblist =
-		static_cast< ResiduePairNeighborList const & > (min_data.get_data_ref( elec_pair_nblist ) );
+		static_cast< core::scoring::ResiduePairNeighborList const & > (min_data.get_data_ref( core::scoring::elec_pair_nblist ) );
 
-	utility::vector1< SmallAtNb > const & neighbs( nblist.atom_neighbors() );
+	utility::vector1< core::scoring::SmallAtNb > const & neighbs( nblist.atom_neighbors() );
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 	Size const i( rsd1.seqpos() );
 	Size const j( rsd2.seqpos() );
@@ -675,10 +675,10 @@ StackElecEnergy::eval_residue_pair_derivatives(
 
 		if ( res1_is_base ) {
 			Vector const & deriv_vector_i = get_stack_elec_deriv( atom_m, atom_n, m_charge, n_charge, M_i );
-			Vector force_vector_i = weights[ stack_elec ] * deriv_vector_i;
+			Vector force_vector_i = weights[ core::scoring::stack_elec ] * deriv_vector_i;
 
-			if ( weights[ stack_elec_base_base ] != 0.0 &&  res2_is_base ) force_vector_i += weights[ stack_elec_base_base ] * deriv_vector_i;
-			if ( weights[ stack_elec_base_bb   ] != 0.0 && !res2_is_base ) force_vector_i += weights[ stack_elec_base_bb   ] * deriv_vector_i;
+			if ( weights[ core::scoring::stack_elec_base_base ] != 0.0 &&  res2_is_base ) force_vector_i += weights[ core::scoring::stack_elec_base_base ] * deriv_vector_i;
+			if ( weights[ core::scoring::stack_elec_base_bb   ] != 0.0 && !res2_is_base ) force_vector_i += weights[ core::scoring::stack_elec_base_bb   ] * deriv_vector_i;
 
 			//Force/torque with which occluding atom j acts on "dipole" i.
 			Vector const F1 = -1.0 * cross( force_vector_i, atom_n );
@@ -693,10 +693,10 @@ StackElecEnergy::eval_residue_pair_derivatives(
 		}
 		if ( res2_is_base ) {
 			Vector const & deriv_vector_j = get_stack_elec_deriv( atom_n, atom_m, n_charge, m_charge, M_j );
-			Vector force_vector_j = weights[ stack_elec ] * deriv_vector_j;
+			Vector force_vector_j = weights[ core::scoring::stack_elec ] * deriv_vector_j;
 
-			if ( weights[ stack_elec_base_base ] != 0.0  &&  res1_is_base )  force_vector_j += weights[ stack_elec_base_base ] * deriv_vector_j;
-			if ( weights[ stack_elec_base_bb   ] != 0.0  && !res1_is_base )  force_vector_j += weights[ stack_elec_base_bb   ] * deriv_vector_j;
+			if ( weights[ core::scoring::stack_elec_base_base ] != 0.0  &&  res1_is_base )  force_vector_j += weights[ core::scoring::stack_elec_base_base ] * deriv_vector_j;
+			if ( weights[ core::scoring::stack_elec_base_bb   ] != 0.0  && !res1_is_base )  force_vector_j += weights[ core::scoring::stack_elec_base_bb   ] * deriv_vector_j;
 
 			Vector const F1 = cross( force_vector_j, atom_m );
 			Vector const F2 = force_vector_j;
@@ -796,11 +796,11 @@ StackElecEnergy::get_stack_elec_deriv( Vector const & r_i,
 void
 StackElecEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.calculated() = false;
 
 	if ( ! pose.energies().use_nblist() || ! pose.energies().use_nblist_auto_update() ) return;
@@ -808,8 +808,8 @@ StackElecEnergy::finalize_total_energy(
 	utility::vector1< kinematics::Stub > const & base_stubs( rna_centroid_info.base_stubs() );
 
 	// add in contributions from the nblist atom-pairs
-	NeighborList const & nblist
-		( pose.energies().nblist( EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
+	core::scoring::NeighborList const & nblist
+		( pose.energies().nblist( core::scoring::EnergiesCacheableDataType::STACK_ELEC_NBLIST ) );
 
 	nblist.check_domain_map( pose.energies().domain_map() );
 	utility::vector1< conformation::Residue const * > resvect;
@@ -832,7 +832,7 @@ StackElecEnergy::finalize_total_energy(
 			Vector const atom_m( ires.xyz( ii ) );
 			kinematics::Stub stub_i = base_stubs[i];
 			Matrix const M_i ( stub_i.M );
-			AtomNeighbors const & nbrs( nblist.upper_atom_neighbors( i, ii ) );
+			core::scoring::AtomNeighbors const & nbrs( nblist.upper_atom_neighbors( i, ii ) );
 			for ( auto const & nbr : nbrs ) {
 				Size const  j( nbr.rsd() );
 				if ( i == j ) continue;
@@ -877,9 +877,9 @@ StackElecEnergy::finalize_total_energy(
 	}
 	//std::cout << score;
 	//std::cout << "\n";
-	totals[ stack_elec ]           += score;
-	totals[ stack_elec_base_base ] += score_base_base;
-	totals[ stack_elec_base_bb ]   += score_base_bb;
+	totals[ core::scoring::stack_elec ]           += score;
+	totals[ core::scoring::stack_elec_base_base ] += score_base_base;
+	totals[ core::scoring::stack_elec_base_bb ]   += score_base_bb;
 }
 
 /// @brief StackElecEnergy distance cutoff
@@ -896,6 +896,5 @@ StackElecEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

@@ -12,8 +12,8 @@
 /// @author TJ Brunette
 
 
-#ifndef INCLUDED_core_scoring_methods_SSElementMotifContactEnergy_hh
-#define INCLUDED_core_scoring_methods_SSElementMotifContactEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SSElementMotifContactEnergy_hh
+#define INCLUDED_core_energy_methods_SSElementMotifContactEnergy_hh
 
 
 // Package headers
@@ -33,17 +33,17 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class SSElementMotifContactEnergy : public WholeStructureEnergy  {
+
+class SSElementMotifContactEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 public:
 	SSElementMotifContactEnergy();
 
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override {
 		return utility::pointer::make_shared< SSElementMotifContactEnergy >();
 	}
@@ -57,7 +57,7 @@ public:
 
 
 	/// @brief Called at the end of the energy evaluation.
-	void finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
@@ -69,7 +69,6 @@ private:
 	core::scoring::motif::MotifHashManager *mman_;
 };
 
-} // motif
 } // scoring
 } // core
 

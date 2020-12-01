@@ -11,8 +11,8 @@
 /// @brief  dna scoring
 /// @author Phil Bradley
 
-#ifndef INCLUDED_core_scoring_methods_DNA_DihedralEnergyCreator_hh
-#define INCLUDED_core_scoring_methods_DNA_DihedralEnergyCreator_hh
+#ifndef INCLUDED_core_energy_methods_DNA_DihedralEnergyCreator_hh
+#define INCLUDED_core_energy_methods_DNA_DihedralEnergyCreator_hh
 
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 
@@ -20,26 +20,25 @@
 #include <core/scoring/methods/EnergyMethod.fwd.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class DNA_DihedralEnergyCreator : public EnergyMethodCreator
+
+class DNA_DihedralEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
 public:
 	/// @brief Instantiate a new DNA_DihedralEnergy
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	create_energy_method(
-		methods::EnergyMethodOptions const &
+		core::scoring::methods::EnergyMethodOptions const &
 	) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes
+	core::scoring::ScoreTypes
 	score_types_for_method() const override;
 
 };
 
-}
 }
 }
 

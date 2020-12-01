@@ -11,8 +11,8 @@
 /// @brief  energy term use for scoring predicted CovalentLabelingFA
 /// @author Melanie Aprahamian
 
-#ifndef INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_hh
-#define INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_hh
+#ifndef INCLUDED_core_energy_methods_CovalentLabelingFAEnergy_hh
+#define INCLUDED_core_energy_methods_CovalentLabelingFAEnergy_hh
 
 #include <core/energy_methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
@@ -25,22 +25,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class CovalentLabelingFAEnergy : public ContextDependentOneBodyEnergy {
+
+class CovalentLabelingFAEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 public:
 
-	typedef methods::ContextDependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy parent;
 
 public:
 
-	CovalentLabelingFAEnergy( methods::EnergyMethodOptions const & options );
+	CovalentLabelingFAEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 	CovalentLabelingFAEnergy( CovalentLabelingFAEnergy const & src );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -51,19 +51,19 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	core::Size version() const override;
@@ -81,6 +81,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_CovalentLabelingFAEnergy_HH
+#endif // INCLUDED_core_energy_methods_CovalentLabelingFAEnergy_HH

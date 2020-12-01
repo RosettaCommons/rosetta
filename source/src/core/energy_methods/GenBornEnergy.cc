@@ -57,21 +57,22 @@ source files: rosetta++/gb_elec*
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the GenBornEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GenBornEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< GenBornEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 GenBornEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( gb_elec );
 	return sts;
@@ -81,15 +82,15 @@ GenBornEnergyCreator::score_types_for_method() const {
 GenBornEnergy::GenBornEnergy( GenBornEnergy const & /*src*/ ) = default;
 
 
-GenBornEnergy::GenBornEnergy( EnergyMethodOptions const & options ):
+GenBornEnergy::GenBornEnergy( core::scoring::methods::EnergyMethodOptions const & options ):
 	parent( utility::pointer::make_shared< GenBornEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_GenBornPotential() ),
+	potential_( core::scoring::ScoringManager::get_instance()->get_GenBornPotential() ),
 	exclude_DNA_DNA_( options.exclude_DNA_DNA() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 GenBornEnergy::clone() const
 {
 	return utility::pointer::make_shared< GenBornEnergy >( *this );
@@ -150,36 +151,36 @@ GenBornEnergy::update_residue_for_packing(
 
 
 void
-GenBornEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+GenBornEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	potential_.get_all_born_radii( pose );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.size(), gb_elec ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
 
 
 void
-GenBornEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+GenBornEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	potential_.get_all_born_radii( pose );
 }
@@ -194,16 +195,16 @@ GenBornEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( exclude_DNA_DNA_ && rsd1.is_DNA() && rsd2.is_DNA() ) return;
 
 	auto const & gb_info
-		( static_cast< GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) ); // SHOULD BE FAST!
+		( static_cast< core::scoring::GenBornPoseInfo const & >( pose.data().get( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ) ) ); // SHOULD BE FAST!
 
-	emap[ gb_elec ] += potential_.get_res_res_elecE( rsd1, gb_info.residue_info( rsd1.seqpos() ),
+	emap[ core::scoring::gb_elec ] += potential_.get_res_res_elecE( rsd1, gb_info.residue_info( rsd1.seqpos() ),
 		rsd2, gb_info.residue_info( rsd2.seqpos() ) );
 }
 
@@ -211,7 +212,7 @@ void
 GenBornEnergy::evaluate_rotamer_intrares_energies(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
-	ScoreFunction const & sfxn,
+	core::scoring::ScoreFunction const & sfxn,
 	utility::vector1< core::PackerEnergy > & energies
 ) const
 {
@@ -223,7 +224,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energies(
 
 
 	auto const & gb_info
-		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 
@@ -231,7 +232,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energies(
 			( potential_.get_res_res_elecE( *set.rotamer( ii ), gb_info.residue_info( ii ),
 			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
 
-		energies[ ii ] += static_cast< core::PackerEnergy > ( sfxn[ gb_elec ] * elecE );
+		energies[ ii ] += static_cast< core::PackerEnergy > ( sfxn[ core::scoring::gb_elec ] * elecE );
 	}
 }
 
@@ -239,8 +240,8 @@ void
 GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 	conformation::RotamerSetBase const & set,
 	pose::Pose const & pose,
-	ScoreFunction const & ,
-	utility::vector1< EnergyMap > & emaps
+	core::scoring::ScoreFunction const & ,
+	utility::vector1< core::scoring::EnergyMap > & emaps
 ) const
 {
 	using namespace conformation;
@@ -252,7 +253,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 	// std::cout << "GenBorn rotamer_intrares_energies: " << set.resid() << std::endl;
 
 	auto const & gb_info
-		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1, ii_end = set.num_rotamers(); ii <= ii_end; ++ii ) {
 
@@ -260,7 +261,7 @@ GenBornEnergy::evaluate_rotamer_intrares_energy_maps(
 			( potential_.get_res_res_elecE( *set.rotamer( ii ), gb_info.residue_info( ii ),
 			*set.rotamer( ii ), gb_info.residue_info( ii ) ) );
 
-		(emaps[ ii ])[ gb_elec ] += elecE ;
+		(emaps[ ii ])[ core::scoring::gb_elec ] += elecE ;
 	}
 }
 
@@ -269,8 +270,8 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 	conformation::RotamerSetBase const & set1,
 	conformation::RotamerSetBase const & set2,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 ) const
 {
@@ -283,10 +284,10 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 	PROF_START( basic::GEN_BORN_ROTAMER_PAIR_ENERGIES );
 
 	auto const & gb_info1
-		( set1.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set1.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	auto const & gb_info2
-		( set2.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set2.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 
 	for ( Size ii = 1; ii <= set1.get_n_residue_types(); ++ii ) {
@@ -316,7 +317,7 @@ GenBornEnergy::evaluate_rotamer_pair_energies(
 						potential_.get_res_res_elecE( *set1.rotamer( kk_rot_id ), gb_info1.residue_info( kk_rot_id ),
 						*set2.rotamer( ll_rot_id ), gb_info2.residue_info( ll_rot_id ) ) );
 
-					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ gb_elec ] *  elecE );
+					energy_table( ll_rot_id, kk_rot_id ) += static_cast< core::PackerEnergy >( weights[ core::scoring::gb_elec ] *  elecE );
 				}
 			}
 		}
@@ -329,8 +330,8 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	utility::vector1< core::PackerEnergy > & energy_vector
 ) const
 {
@@ -340,12 +341,12 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
 	//using core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO;
 
-	GenBornResidueInfo const & gb_rsd_info
-		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
+	core::scoring::GenBornResidueInfo const & gb_rsd_info
+		( pose.data().get< core::scoring::GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
 	//GenBornResidueInfo const & gb_rsd_info( retrieve_gen_born_pose_info( pose ).residue_info( rsd.seqpos ) );
 
 	auto const & gb_set_info
-		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 	//GenBornRotamersInfo const & gb_set_info( retrieve_gen_born_rotamers_info( set ) );
 
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
@@ -368,7 +369,7 @@ GenBornEnergy::evaluate_rotamer_background_energies(
 			Real const elecE(
 				potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
 				rsd, gb_rsd_info ) );
-			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ gb_elec ] *  elecE );
+			energy_vector[ kk_rot_id ] += static_cast< core::PackerEnergy > (weights[ core::scoring::gb_elec ] *  elecE );
 		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 	PROF_STOP( basic::GEN_BORN_ROTAMER_BACKGROUND_ENERGIES );
@@ -379,9 +380,9 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 	conformation::RotamerSetBase const & set,
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & ,
-	utility::vector1< EnergyMap > & emaps
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & ,
+	utility::vector1< core::scoring::EnergyMap > & emaps
 ) const
 {
 	// std::cout << "GenBornEnergy: rotamer background: " << set.resid() << ' ' << rsd.seqpos() << std::endl;
@@ -389,10 +390,10 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 	using conformation::Residue;
 	using core::conformation::RotamerSetCacheableDataType::GEN_BORN_ROTAMER_SET_INFO;
 
-	GenBornResidueInfo const & gb_rsd_info
-		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
+	core::scoring::GenBornResidueInfo const & gb_rsd_info
+		( pose.data().get< core::scoring::GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
 	auto const & gb_set_info
-		( set.data().get< GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
+		( set.data().get< core::scoring::GenBornRotamerSetInfo >( GEN_BORN_ROTAMER_SET_INFO ) );
 
 	for ( Size ii = 1; ii <= set.get_n_residue_types(); ++ii ) {
 		Size const ii_offset = set.get_residue_type_begin( ii );
@@ -414,7 +415,7 @@ GenBornEnergy::evaluate_rotamer_background_energy_maps(
 			Real const elecE
 				( potential_.get_res_res_elecE( *set.rotamer( kk_rot_id ), gb_set_info.residue_info( kk_rot_id ),
 				rsd, gb_rsd_info ) );
-			(emaps[ kk_rot_id ])[ gb_elec ] += elecE;
+			(emaps[ kk_rot_id ])[ core::scoring::gb_elec ] += elecE;
 		} // kk - rotamers for residue types
 	} // ii - residue types for rotamer set
 }
@@ -426,13 +427,13 @@ GenBornEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	potential_.eval_atom_derivative( atom_id, weights[ gb_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
+	potential_.eval_atom_derivative( atom_id, weights[ core::scoring::gb_elec ], pose, domain_map, exclude_DNA_DNA_, F1, F2 );
 }
 
 /// @brief GenBornEnergy requires no context graphs
@@ -443,7 +444,7 @@ GenBornEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) co
 
 /// @brief GenBornEnergy does define intraresidue interactions
 bool
-GenBornEnergy::defines_intrares_energy( EnergyMap const & /*weights*/ ) const
+GenBornEnergy::defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const
 {
 	return true;
 }
@@ -452,16 +453,16 @@ void
 GenBornEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( exclude_DNA_DNA_ && rsd.is_DNA() ) return;
 
-	GenBornResidueInfo const & gb
-		( pose.data().get< GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
+	core::scoring::GenBornResidueInfo const & gb
+		( pose.data().get< core::scoring::GenBornPoseInfo >( core::pose::datacache::CacheableDataType::GEN_BORN_POSE_INFO ).residue_info(rsd.seqpos()));
 
-	emap[ gb_elec ] += potential_.get_res_res_elecE( rsd, gb, rsd, gb );
+	emap[ core::scoring::gb_elec ] += potential_.get_res_res_elecE( rsd, gb, rsd, gb );
 }
 core::Size
 GenBornEnergy::version() const
@@ -469,6 +470,5 @@ GenBornEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

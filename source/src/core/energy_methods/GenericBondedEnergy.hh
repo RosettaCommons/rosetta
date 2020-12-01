@@ -12,8 +12,8 @@
 /// @author Hahnbeom Park and Frank DiMaio
 
 
-#ifndef INCLUDED_core_scoring_methods_GenericBondedEnergy_hh
-#define INCLUDED_core_scoring_methods_GenericBondedEnergy_hh
+#ifndef INCLUDED_core_energy_methods_GenericBondedEnergy_hh
+#define INCLUDED_core_energy_methods_GenericBondedEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/GenericBondedEnergy.fwd.hh>
@@ -35,12 +35,12 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class GenericBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
+
+class GenericBondedEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 
@@ -49,7 +49,7 @@ public:
 	GenericBondedEnergy( core::scoring::methods::EnergyMethodOptions const & eopt );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,10 +57,10 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn ) const override;
 
 	bool
 	minimize_in_whole_structure_context( pose::Pose const & ) const override { return false; }
@@ -70,41 +70,41 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return true; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const &sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & /*res_data_cache*/,
+		core::scoring::ResSingleMinimizationData const & /*res_data_cache*/,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	bool
@@ -116,7 +116,7 @@ public:
 		conformation::Residue const & rsd2,
 		bool res_moving_wrt_eachother = false ) const override;
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 	/// @brief P_AA_pp_Energy is context independent; indicates that no
@@ -133,12 +133,11 @@ public:
 	bool score_hybrid() const { return score_hybrid_; }
 
 private:
-	GenericBondedPotential const &potential_;
+	core::scoring::GenericBondedPotential const &potential_;
 	bool score_full_;
 	bool score_hybrid_;
 };
 
-} // methods
 } // scoring
 } // core
 

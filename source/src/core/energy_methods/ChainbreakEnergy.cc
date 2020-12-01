@@ -36,21 +36,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
 
 /// @details This must return a fresh instance of the ChainbreakEnergy class, never an instance already in use.
-methods::EnergyMethodOP
-ChainbreakEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
+core::scoring::methods::EnergyMethodOP
+ChainbreakEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const
 {
 	return utility::pointer::make_shared< ChainbreakEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ChainbreakEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( chainbreak );
 	return sts;
@@ -64,7 +65,7 @@ ChainbreakEnergy::ChainbreakEnergy() : parent( utility::pointer::make_shared< Ch
 // Called at the end of the energy evaluation.
 /// @details In this case (ChainbreakEnergy), all the calculation is done here.
 void
-ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
+ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const
 {
 	Size max_res = pose.size();
 	if ( core::pose::symmetry::is_symmetric( pose ) ) {
@@ -79,14 +80,14 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 	using namespace core::chemical;
 	DistanceSquared total_dev( 0.0 );
 	utility::vector1< int > cutpoints;
-	find_cutpoint_variants( pose, pose.fold_tree(), cutpoints );
+	core::scoring::methods::find_cutpoint_variants( pose, pose.fold_tree(), cutpoints );
 	for ( Size n = 1; n <= cutpoints.size(); ++n ) {
 		Size const cutpoint( cutpoints[ n ] );
 		if ( cutpoint > max_res ) continue;
 		Residue const & lower_rsd( pose.residue( cutpoint ) );
 		if ( ! lower_rsd.has_variant_type( CUTPOINT_LOWER ) ) continue;
 
-		core::Size const upper_rsd_index( get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
+		core::Size const upper_rsd_index( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, cutpoint ) );
 		if ( !upper_rsd_index ) continue;
 
 		Residue const & upper_rsd( pose.residue( upper_rsd_index ) );
@@ -118,8 +119,8 @@ ChainbreakEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const 
 
 		total_dev += current_dev;
 	}
-	debug_assert( std::abs( totals[ chainbreak ] ) < 1e-3 );
-	totals[ chainbreak ] = total_dev;
+	debug_assert( std::abs( totals[ core::scoring::chainbreak ] ) < 1e-3 );
+	totals[ core::scoring::chainbreak ] = total_dev;
 }
 
 
@@ -130,8 +131,8 @@ ChainbreakEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -160,7 +161,7 @@ ChainbreakEnergy::eval_atom_derivative(
 	if ( pose.residue( id.rsd() ).has_variant_type( CUTPOINT_LOWER ) ) {
 		// Get the two residues across the cutpoint.
 		Residue const & lower_rsd( pose.residue( id.rsd() ) );
-		core::Size const upper_index( get_upper_cutpoint_partner_for_lower( pose, id.rsd() ) );
+		core::Size const upper_index( core::scoring::methods::get_upper_cutpoint_partner_for_lower( pose, id.rsd() ) );
 		if ( upper_index ) {
 			Residue const & upper_rsd( pose.residue( upper_index ) );
 
@@ -194,7 +195,7 @@ ChainbreakEnergy::eval_atom_derivative(
 	// ~Labonte)
 	if ( ! match && pose.residue( id.rsd() ).has_variant_type( CUTPOINT_UPPER ) ) {
 		// Get the two residues across the cutpoint.
-		core::Size const lower_index( get_lower_cutpoint_partner_for_upper( pose, id.rsd() ) );
+		core::Size const lower_index( core::scoring::methods::get_lower_cutpoint_partner_for_upper( pose, id.rsd() ) );
 		if ( lower_index ) {
 			Residue const & lower_rsd( pose.residue( lower_index ) );
 			Residue const & upper_rsd( pose.residue( id.rsd() ) );
@@ -222,8 +223,8 @@ ChainbreakEnergy::eval_atom_derivative(
 	}
 
 	if ( match ) {
-		F1 += weights[ chainbreak ] * 2 * cross( xyz_moving, xyz_fixed );
-		F2 += weights[ chainbreak ] * 2 * ( xyz_moving - xyz_fixed );
+		F1 += weights[ core::scoring::chainbreak ] * 2 * cross( xyz_moving, xyz_fixed );
+		F2 += weights[ core::scoring::chainbreak ] * 2 * ( xyz_moving - xyz_fixed );
 	}
 }
 
@@ -242,6 +243,5 @@ ChainbreakEnergy::version() const
 }
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

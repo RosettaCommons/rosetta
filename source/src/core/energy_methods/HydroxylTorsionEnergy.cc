@@ -28,22 +28,23 @@
 #include <basic/Tracer.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.HydroxylTorsionEnergy" );
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HydroxylTorsionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< HydroxylTorsionEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 HydroxylTorsionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( hxl_tors );
 	return sts;
@@ -52,13 +53,13 @@ HydroxylTorsionEnergyCreator::score_types_for_method() const {
 /// ctor
 HydroxylTorsionEnergy::HydroxylTorsionEnergy() :
 	parent( utility::pointer::make_shared< HydroxylTorsionEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_HydroxylTorsionPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_HydroxylTorsionPotential() )
 {
 	// hard-coded for now
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 HydroxylTorsionEnergy::clone() const
 {
 	return utility::pointer::make_shared< HydroxylTorsionEnergy >();
@@ -68,21 +69,21 @@ void
 HydroxylTorsionEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	Real score = potential_.eval_residue_energy( rsd );
-	emap[ hxl_tors ] += score;
+	emap[ core::scoring::hxl_tors ] += score;
 }
 
 // using atom derivs instead of dof derivates;
 void
 HydroxylTorsionEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /*res_data_cache*/,
+	core::scoring::ResSingleMinimizationData const & /*res_data_cache*/,
 	pose::Pose const & /*pose*/,
-	EnergyMap const & /*weights*/,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & /*weights*/,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
 	potential_.eval_residue_derivative( rsd, atom_derivs );
@@ -98,7 +99,6 @@ HydroxylTorsionEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core
 

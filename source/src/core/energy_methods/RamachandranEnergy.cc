@@ -41,21 +41,22 @@
 #include <iomanip>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the RamachandranEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamachandranEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RamachandranEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RamachandranEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rama );
 	return sts;
@@ -65,11 +66,11 @@ RamachandranEnergyCreator::score_types_for_method() const {
 /// ctor
 RamachandranEnergy::RamachandranEnergy() :
 	parent( utility::pointer::make_shared< RamachandranEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_Ramachandran() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_Ramachandran() )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamachandranEnergy::clone() const
 {
 	return utility::pointer::make_shared< RamachandranEnergy >();
@@ -84,7 +85,7 @@ void
 RamachandranEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -105,7 +106,7 @@ RamachandranEnergy::residue_energy(
 		//std::cout << "Phi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[1] << std::endl;
 		//std::cout << "Psi " << std::fixed << std::setprecision( 16 ) << rsd.mainchain_torsions()[2] << std::endl;
 		//std::cout << "Residue energy for " << rsd.name() << " is " << std::fixed << std::setprecision( 16 ) << rama_score << std::endl;
-		emap[ rama ] += rama_score;
+		emap[ core::scoring::rama ] += rama_score;
 	}
 }
 
@@ -167,12 +168,12 @@ RamachandranEnergy::atoms_with_dof_derivatives( conformation::Residue const & re
 Real
 RamachandranEnergy::eval_residue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &, // min_data,
+	core::scoring::ResSingleMinimizationData const &, // min_data,
 	id::DOF_ID const &, //dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose, // pose,
-	ScoreFunction const &, // sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &, // sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -203,7 +204,7 @@ RamachandranEnergy::eval_residue_dof_derivative(
 
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	return numeric::conversions::degrees( weights[ rama ] * deriv );
+	return numeric::conversions::degrees( weights[ core::scoring::rama ] * deriv );
 
 }
 
@@ -213,8 +214,8 @@ RamachandranEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -245,7 +246,7 @@ RamachandranEnergy::eval_dof_derivative(
 
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	return numeric::conversions::degrees( weights[ rama ] * deriv );
+	return numeric::conversions::degrees( weights[ core::scoring::rama ] * deriv );
 }
 
 /// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
@@ -263,7 +264,6 @@ RamachandranEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

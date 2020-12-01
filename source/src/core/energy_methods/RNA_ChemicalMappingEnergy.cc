@@ -47,17 +47,16 @@
 static basic::Tracer TR( "core.scoring.rna.data.RNA_ChemicalMappingEnergy" );
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_ChemicalMappingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const { return utility::pointer::make_shared< RNA_ChemicalMappingEnergy >(); }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_chem_map );
 	sts.push_back( rna_chem_map_lores );
@@ -65,15 +64,15 @@ RNA_ChemicalMappingEnergyCreator::score_types_for_method() const {
 }
 RNA_ChemicalMappingEnergy::RNA_ChemicalMappingEnergy():
 	parent( utility::pointer::make_shared< RNA_ChemicalMappingEnergyCreator >() ),
-	DMS_potential_( ScoringManager::get_instance()->get_RNA_DMS_Potential() ),
-	DMS_low_resolution_potential_( ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential() )
+	DMS_potential_( core::scoring::ScoringManager::get_instance()->get_RNA_DMS_Potential() ),
+	DMS_low_resolution_potential_( core::scoring::ScoringManager::get_instance()->get_RNA_DMS_LowResolutionPotential() )
 {
 }
 
 RNA_ChemicalMappingEnergy::~RNA_ChemicalMappingEnergy() = default;
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_ChemicalMappingEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
@@ -83,13 +82,13 @@ RNA_ChemicalMappingEnergy::clone() const
 void
 RNA_ChemicalMappingEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & totals
 ) const
 {
-	bool const rna_base_pair_computed = scorefxn.has_nonzero_weight( rna_base_pair ); // assumes this was *earlier* in finalize_total_energy loop.
-	if ( scorefxn.has_nonzero_weight( rna_chem_map ) )       totals[ rna_chem_map ]       += calculate_energy( pose, false /*use_low_res*/, rna_base_pair_computed );
-	if ( scorefxn.has_nonzero_weight( rna_chem_map_lores ) ) totals[ rna_chem_map_lores ] += calculate_energy( pose, true  /*use_low_res*/, rna_base_pair_computed );
+	bool const rna_base_pair_computed = scorefxn.has_nonzero_weight( core::scoring::rna_base_pair ); // assumes this was *earlier* in finalize_total_energy loop.
+	if ( scorefxn.has_nonzero_weight( core::scoring::rna_chem_map ) )       totals[ core::scoring::rna_chem_map ]       += calculate_energy( pose, false /*use_low_res*/, rna_base_pair_computed );
+	if ( scorefxn.has_nonzero_weight( core::scoring::rna_chem_map_lores ) ) totals[ core::scoring::rna_chem_map_lores ] += calculate_energy( pose, true  /*use_low_res*/, rna_base_pair_computed );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -101,7 +100,7 @@ RNA_ChemicalMappingEnergy::calculate_energy( pose::Pose & pose,
 	Real score( 0.0 );
 
 	pose::full_model_info::make_sure_full_model_info_is_setup( pose );
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	pose::rna::RNA_DataInfo const & rna_data_info( rna_scoring_info.rna_data_info() );
 	pose::rna::RNA_Reactivities const & rna_reactivities = rna_data_info.rna_reactivities();
 
@@ -136,7 +135,5 @@ RNA_ChemicalMappingEnergy::atomic_interaction_cutoff() const
 	return 0.0;
 }
 
-} //data
-} //rna
 } //scoring
 } //core

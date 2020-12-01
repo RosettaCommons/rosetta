@@ -57,9 +57,9 @@ public:
 		using namespace basic::options::OptionKeys;
 
 		if ( basic::options::option[ in::file::residue_type_set ]() == "fa_standard" ) {
-			saxs_ = utility::pointer::make_shared< core::scoring::saxs::SAXSEnergyFA >();
+			saxs_ = utility::pointer::make_shared< core::energy_methods::SAXSEnergyFA >();
 		} else {
-			saxs_ = utility::pointer::make_shared< core::scoring::saxs::SAXSEnergyCEN >();
+			saxs_ = utility::pointer::make_shared< core::energy_methods::SAXSEnergyCEN >();
 		}
 		mdl_cnt_ = 1;
 	}
@@ -84,7 +84,7 @@ public:
 
 private:
 	Size mdl_cnt_;
-	using SAXSEnergyOP = utility::pointer::shared_ptr<core::scoring::saxs::SAXSEnergy>;
+	using SAXSEnergyOP = utility::pointer::shared_ptr<core::energy_methods::SAXSEnergy>;
 	SAXSEnergyOP saxs_;
 };
 

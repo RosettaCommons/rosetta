@@ -41,21 +41,21 @@
 static basic::Tracer tr( "core.scoring.rna.RNA_VDW_Energy" );
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RNA_VDW_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_VDW_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_VDW_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_VDW_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_vdw );
 	sts.push_back( rnp_vdw );
@@ -65,13 +65,13 @@ RNA_VDW_EnergyCreator::score_types_for_method() const {
 
 RNA_VDW_Energy::RNA_VDW_Energy() :
 	parent( utility::pointer::make_shared< RNA_VDW_EnergyCreator >() ),
-	rna_atom_vdw_( ScoringManager::get_instance()->get_RNA_AtomVDW() ), // need to make the table choice configurable
+	rna_atom_vdw_( core::scoring::ScoringManager::get_instance()->get_RNA_AtomVDW() ), // need to make the table choice configurable
 	vdw_scale_factor_( 0.8 ) // hack from rosetta++
 {}
 
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_VDW_Energy::clone() const
 {
 	return utility::pointer::make_shared< RNA_VDW_Energy >();
@@ -83,7 +83,7 @@ RNA_VDW_Energy::clone() const
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_VDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_VDW_Energy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	setup_atom_numbers_for_vdw_calculation( pose );
@@ -92,7 +92,7 @@ RNA_VDW_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) co
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_VDW_Energy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_VDW_Energy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	setup_atom_numbers_for_vdw_calculation( pose );
@@ -114,12 +114,12 @@ RNA_VDW_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	//std::cout << "Checking out VDW: " << rsd1.seqpos() << " " << rsd2.seqpos() << std::endl;
 
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
 	Size const pos1 = rsd1.seqpos();
@@ -154,7 +154,7 @@ RNA_VDW_Energy::residue_pair_energy(
 			score = evaluate_rnp_vdw_score( rsd2 /* rna residue */, rsd1 /* protein residue */, rna_scoring_info, !use_actual_centroid );
 		}
 
-		emap[ rnp_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
+		emap[ core::scoring::rnp_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
 
 		///////////////////////////////
 
@@ -203,14 +203,14 @@ RNA_VDW_Energy::residue_pair_energy(
 		}
 	}
 
-	emap[ rna_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
+	emap[ core::scoring::rna_vdw ] += score * vdw_scale_factor_; // vdw prefactor!
 }
 /////////////////////////////////
 Real
 RNA_VDW_Energy::evaluate_rnp_vdw_score(
 	conformation::Residue const & rna_rsd,
 	conformation::Residue const & protein_rsd,
-	rna::RNA_ScoringInfo const & rna_scoring_info,
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info,
 	bool const & centroid_mode )
 const {
 
@@ -239,14 +239,14 @@ const {
 			if ( protein_rsd.atom_is_hydrogen( n ) ) continue;
 			Real clash, bump_dsq, j;
 			if ( !centroid_mode && !protein_rsd.atom_is_backbone( n ) ) {
-				j = protein_atom_name_to_num( " CEN", protein_rsd.name3());
+				j = core::scoring::rna::protein_atom_name_to_num( " CEN", protein_rsd.name3());
 				// double check that we're getting the correct values here
 
 				bump_dsq = rna_atom_vdw_.bump_parameter_rnp( m, j, rna_rsd.type() );
 				// maybe at some point later we want to use the actual centroid/COM
 				clash = bump_dsq - i_xyz.distance_squared( protein_rsd.actcoord() ); // instead of protein_rsd.xyz(n);
 			} else {
-				j = protein_atom_name_to_num( protein_rsd.atom_name( n ), protein_rsd.name3());
+				j = core::scoring::rna::protein_atom_name_to_num( protein_rsd.atom_name( n ), protein_rsd.name3());
 				//Size const j = protein_rsd.atom_type_index( n );
 				// Need some check that this is really one of the atoms that we have data for!
 
@@ -302,8 +302,8 @@ RNA_VDW_Energy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -312,7 +312,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 	Size const i   ( atom_id.atomno() );
 	conformation::Residue const & rsd1( pose.residue( pos1 ) );
 
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
 	if ( !rsd1.is_RNA() && !is_magnesium[ pos1 ]  ) return;
@@ -331,10 +331,10 @@ RNA_VDW_Energy::eval_atom_derivative(
 	if ( m == 0 )  return;
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	// loop over *all* nbrs of rsd1 (not just upper or lower)
 	for ( utility::graph::Graph::EdgeListConstIter
@@ -364,7 +364,7 @@ RNA_VDW_Energy::eval_atom_derivative(
 			Real const bump_dsq( rna_atom_vdw_.bump_parameter( m, n, rsd1.type(), rsd2.type() ) );
 
 			if ( dis2 < bump_dsq ) {
-				Real const dE_dr_over_r = vdw_scale_factor_ * weights[ rna_vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
+				Real const dE_dr_over_r = vdw_scale_factor_ * weights[ core::scoring::rna_vdw ] * 4.0 * ( dis2 - bump_dsq ) / bump_dsq;
 				Vector const f1( i_xyz.cross( j_xyz ) );
 				F1 += dE_dr_over_r * f1;
 				F2 += dE_dr_over_r * f2;
@@ -403,7 +403,7 @@ RNA_VDW_Energy::setup_atom_numbers_for_vdw_calculation( pose::Pose & pose ) cons
 	//Better to do a quick setup every time to pinpoint atoms that require
 	//  monitoring for VDW clashes.
 
-	rna::RNA_ScoringInfo & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
 
 	if ( rna_scoring_info.vdw_calculation_annotated_sequence() == pose.annotated_sequence() ) return; // should be up to date
 	rna_scoring_info.set_vdw_calculation_annotated_sequence( pose.annotated_sequence() );
@@ -443,6 +443,5 @@ RNA_VDW_Energy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

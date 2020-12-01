@@ -54,23 +54,23 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the ElecDensCenEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ElecDensAllAtomCenEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ElecDensAllAtomCenEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ElecDensAllAtomCenEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
-	sts.push_back( elec_dens_whole_structure_allatom );
+	sts.push_back( core::scoring::elec_dens_whole_structure_allatom );
 	return sts;
 }
 
@@ -79,8 +79,8 @@ static basic::Tracer TR( "core.scoring.methods.ElecDensEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 
-methods::LongRangeEnergyType
-ElecDensAllAtomCenEnergy::long_range_type() const { return methods::elec_dens_allatom_cen_energy; }
+core::scoring::methods::LongRangeEnergyType
+ElecDensAllAtomCenEnergy::long_range_type() const { return core::scoring::methods::elec_dens_allatom_cen_energy; }
 
 /// c-tor
 ElecDensAllAtomCenEnergy::ElecDensAllAtomCenEnergy() :
@@ -89,7 +89,7 @@ ElecDensAllAtomCenEnergy::ElecDensAllAtomCenEnergy() :
 
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ElecDensAllAtomCenEnergy::clone() const {
 	return utility::pointer::make_shared< ElecDensAllAtomCenEnergy >( *this );
 }
@@ -111,7 +111,7 @@ ElecDensAllAtomCenEnergy::defines_residue_pair_energy(
 
 
 void
-ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & /* sf */) const {
+ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & /* sf */) const {
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
 		symminfo = dynamic_cast<const core::conformation::symmetry::SymmetricConformation & >( pose.conformation()).Symmetry_Info();
@@ -124,9 +124,9 @@ ElecDensAllAtomCenEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunctio
 void
 ElecDensAllAtomCenEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 
 	// Do we have a map?
 	if ( ! core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
@@ -146,15 +146,15 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 	}
 
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		// make sure size or root did not change
 		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;
@@ -163,7 +163,7 @@ ElecDensAllAtomCenEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new LRE container (" << pose.size() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_whole_structure_allatom ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::OneToAllEnergyContainer >( virt_res_idx, pose.size(),  core::scoring::elec_dens_whole_structure_allatom ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -198,8 +198,8 @@ void
 ElecDensAllAtomCenEnergy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	// TO DO: if the pose is improperly set (e.g. no VIRT atom + jump at root) do scoring here
 	return;
@@ -209,8 +209,8 @@ ElecDensAllAtomCenEnergy::eval_intrares_energy(
 void
 ElecDensAllAtomCenEnergy::finalize_total_energy(
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	return;
 }
@@ -221,8 +221,8 @@ ElecDensAllAtomCenEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & , //pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace numeric::statistics;
 
@@ -237,7 +237,7 @@ ElecDensAllAtomCenEnergy::residue_pair_energy(
 	Real p_null = 0.5 * errfc( z_CC/sqrt(2.0) );
 	Real edensScore = log ( p_null );
 
-	emap[ elec_dens_whole_structure_allatom ] += edensScore;
+	emap[ core::scoring::elec_dens_whole_structure_allatom ] += edensScore;
 
 	return;
 }
@@ -248,8 +248,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -363,8 +363,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 								// std::cerr << "at res " << resid << " SUB contribution of "
 								//      << target_res << "." << m << " (source=" << source_res << "." << m << ") "
 								//      << " f1=" << f1 << " f2=" << f2 << std::endl;
-								F1 -= weights[ elec_dens_whole_structure_allatom ] * f1;
-								F2 -= weights[ elec_dens_whole_structure_allatom ] * f2;
+								F1 -= weights[ core::scoring::elec_dens_whole_structure_allatom ] * f1;
+								F2 -= weights[ core::scoring::elec_dens_whole_structure_allatom ] * f2;
 							}
 						}
 					}
@@ -406,8 +406,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 							// std::cerr << "at res " << resid << " ADD contribution of "
 							//      << target_res << "." << m << " (source=" << source_res << "." << m << ") "
 							//      << " f1=" << f1 << " f2=" << f2 << std::endl;
-							F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
-							F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
+							F1 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f1;
+							F2 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f2;
 						}
 					}
 				}
@@ -436,8 +436,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 					numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 					Vector const f1( atom_x.cross( atom_y ) );
 
-					F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
-					F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
+					F1 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f1;
+					F2 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f2;
 				}
 			} else {
 				Real CC = structure_score;
@@ -458,8 +458,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 				numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 				Vector const f1( atom_x.cross( atom_y ) );
 
-				F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
-				F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
+				F1 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f1;
+				F2 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f2;
 			}
 		}
 	} else {
@@ -485,8 +485,8 @@ ElecDensAllAtomCenEnergy::eval_atom_derivative(
 		numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;   // a "fake" atom in the direcion of the gradient
 		Vector const f1( atom_x.cross( atom_y ) );
 
-		F1 += weights[ elec_dens_whole_structure_allatom ] * f1;
-		F2 += weights[ elec_dens_whole_structure_allatom ] * f2;
+		F1 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f1;
+		F2 += weights[ core::scoring::elec_dens_whole_structure_allatom ] * f2;
 	}
 
 	//static int counter=1;
@@ -500,6 +500,5 @@ ElecDensAllAtomCenEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

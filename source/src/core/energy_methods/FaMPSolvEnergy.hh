@@ -43,11 +43,10 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Energy Method: Membrane Fullaotm Solvation Energy (LK)
-class FaMPSolvEnergy : public methods::ContextDependentTwoBodyEnergy {
+class FaMPSolvEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy {
 
 public:
 
@@ -57,20 +56,20 @@ public:
 
 	/// @brief Construct MP Solv energy from standard and membrane etable
 	FaMPSolvEnergy(
-		etable::EtableCAP etable_in,
-		etable::MembEtableCAP memb_etable_in
+		core::scoring::etable::EtableCAP etable_in,
+		core::scoring::etable::MembEtableCAP memb_etable_in
 	);
 
 
 	/// @brief Clone Energy Method
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief Setup Energy Method for Derivatives
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
-		ScoreFunction const & scfxn
+		core::scoring::ScoreFunction const & scfxn
 	) const override;
 
 	/// @brief Evaluate Derivatives
@@ -81,8 +80,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -94,21 +93,21 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Define Use of Intraresidue Energies
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	/// @brief Evaluate Intra-Residue Energies
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Specify Interaction Cutoff for computing pair energies
@@ -122,7 +121,7 @@ public:
 	/// @brief Setup Energy Method for Scoring
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 
@@ -130,8 +129,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & emap // totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap // totals
 	) const override;
 
 private: // helper methods
@@ -162,7 +161,7 @@ private: // helper methods
 	eval_dE_dR_over_r(
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
-		EnergyMap const & weights,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2,
 		Real const & f1,
@@ -191,8 +190,8 @@ private: // helper methods
 private: // data
 
 	// Store Etables at construction
-	etable::EtableCAP etable_;
-	etable::MembEtableCAP memb_etable_;
+	core::scoring::etable::EtableCAP etable_;
+	core::scoring::etable::MembEtableCAP memb_etable_;
 
 	// Store Standard Energies from Etable
 	ObjexxFCL::FArray3D< Real > const & solv1_;
@@ -221,8 +220,7 @@ private: // data
 
 };
 
-} // membrane
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPSolvEnergy_hh
+#endif // INCLUDED_core_energy_methods_FaMPSolvEnergy_hh

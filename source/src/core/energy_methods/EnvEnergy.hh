@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_EnvEnergy_hh
-#define INCLUDED_core_scoring_methods_EnvEnergy_hh
+#ifndef INCLUDED_core_energy_methods_EnvEnergy_hh
+#define INCLUDED_core_energy_methods_EnvEnergy_hh
 
 // Unit Headers
 
@@ -32,13 +32,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class EnvEnergy : public ContextDependentOneBodyEnergy  {
+
+class EnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 public:
 
 
@@ -46,7 +46,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,21 +54,21 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &// totals
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
@@ -81,13 +81,12 @@ public:
 private:
 
 	// const-ref to scoring database
-	EnvPairPotential const & potential_;
+	core::scoring::EnvPairPotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

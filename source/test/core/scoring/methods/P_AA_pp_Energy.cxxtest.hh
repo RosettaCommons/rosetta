@@ -40,6 +40,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+using namespace core::energy_methods;
 
 class P_AA_pp_EnergyTests : public CxxTest::TestSuite {
 

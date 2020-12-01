@@ -42,22 +42,23 @@
 #include <cstdio>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.methods.AromaticBackboneRestraintEnergy" );
 
 /// @details This must return a fresh instance of the AromaticBackboneRestraintEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 AromaticBackboneRestraintEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< AromaticBackboneRestraintEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 AromaticBackboneRestraintEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( aromatic_restraint );
 	return sts;
@@ -80,7 +81,7 @@ AromaticBackboneRestraintEnergy::AromaticBackboneRestraintEnergy( AromaticBackbo
 
 /// @brief Clone -- creates a copy and returns an owning pointer to the copy.
 ///
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 AromaticBackboneRestraintEnergy::clone() const
 {
 	return utility::pointer::make_shared< AromaticBackboneRestraintEnergy >();
@@ -94,49 +95,49 @@ void
 AromaticBackboneRestraintEnergy::residue_energy(
 	conformation::Residue const &rsd,
 	pose::Pose const & ,//pose,
-	EnergyMap &emap
+	core::scoring::EnergyMap &emap
 ) const
 {
 	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
 
 	if ( rsd.is_ortho_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 0.0 );
 	} else if ( rsd.is_pre_methylene_ortho_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
 	} else if ( rsd.is_post_methylene_ortho_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 0.0 );
 	} else if ( rsd.is_pre_methylene_post_methylene_ortho_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
 
 	} else if ( rsd.is_meta_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
 	} else if ( rsd.is_pre_methylene_meta_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 180.0 );
 	} else if ( rsd.is_post_methylene_meta_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
 	} else if ( rsd.is_pre_methylene_post_methylene_meta_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 180.0 );
 
 	} else if ( rsd.is_para_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
 	} else if ( rsd.is_pre_methylene_para_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 0.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 5 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 5 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 5 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 5 ] - 180.0 );
 	} else if ( rsd.is_post_methylene_para_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 2 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 2 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
 	} else if ( rsd.is_pre_methylene_post_methylene_para_aramid() ) {
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 0.0 );
-		emap[ aromatic_restraint ] += ( rsd.mainchain_torsions()[ 5 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 5 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 3 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 3 ] - 180.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 4 ] - 0.0 ) * ( rsd.mainchain_torsions()[ 4 ] - 0.0 );
+		emap[ core::scoring::aromatic_restraint ] += ( rsd.mainchain_torsions()[ 5 ] - 180.0 ) * ( rsd.mainchain_torsions()[ 5 ] - 180.0 );
 
 	} else if ( rsd.is_aramid() ) {
 		TR.Error << "Case not accounted for: " << rsd.name() << std::endl;
@@ -153,7 +154,7 @@ eval(
 	Size const rt3,
 	Size const rt4,
 	conformation::Residue const & rsd,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) {
 	Real phi = 0, dE_dphi;
 
@@ -192,15 +193,15 @@ eval(
 void
 AromaticBackboneRestraintEnergy::eval_residue_derivatives(
 	conformation::Residue const &rsd,
-	ResSingleMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const & /*min_data*/,
 	pose::Pose const & /*pose*/,
-	EnergyMap const &weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const &weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const {
 
 	if ( rsd.is_virtual_residue() ) return; //Skip virtual residues.
 
-	auto weight = weights[ aromatic_restraint ];
+	auto weight = weights[ core::scoring::aromatic_restraint ];
 
 	Real phi0 = 0;
 	Size rt1, rt2, rt3, rt4;
@@ -399,7 +400,6 @@ AromaticBackboneRestraintEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

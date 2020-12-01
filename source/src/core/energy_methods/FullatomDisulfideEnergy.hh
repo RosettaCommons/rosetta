@@ -29,20 +29,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace disulfides {
+namespace energy_methods {
 
-class FullatomDisulfideEnergy : public methods::ContextIndependentLRTwoBodyEnergy {
+class FullatomDisulfideEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
 
 public:
 
-	FullatomDisulfideEnergy( FullatomDisulfidePotential const & potential );
+	FullatomDisulfideEnergy( core::scoring::disulfides::FullatomDisulfidePotential const & potential );
 	~FullatomDisulfideEnergy() override;
 
 	// EnergyMethod Methods:
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief check that the fullatom disulfid energy container is the right size, and the
@@ -53,7 +52,7 @@ public:
 	) const;
 
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Make sure that the FullatomDisulfideEnergyContainer is ready for packing.
 	void
@@ -84,10 +83,10 @@ public:
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Initialize the atom-index information for a particular residue pair and store those
@@ -97,11 +96,11 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		kinematics::MinimizerMapBase const & minmap,
-		ResSingleMinimizationData const & res1_data_cache,
-		ResSingleMinimizationData const & res2_data_cache,
-		ResPairMinimizationData & data_cache
+		core::scoring::ResSingleMinimizationData const & res1_data_cache,
+		core::scoring::ResSingleMinimizationData const & res2_data_cache,
+		core::scoring::ResPairMinimizationData & data_cache
 	) const override;
 
 	/// @brief Retrieve the atom-index information for this residue pair from the minpair_data object
@@ -110,13 +109,13 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 
@@ -126,8 +125,8 @@ public:
 		id::AtomID const &,
 		pose::Pose const &,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &,
 		Vector &,// F1,
 		Vector & // F2
 	) const;
@@ -139,8 +138,8 @@ public:
 		id::DOF_ID const &,
 		id::TorsionID const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap const &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &
 	) const;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
@@ -151,23 +150,23 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & weights ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	// LongRangeTwoBodyEnergy methods
-	methods::LongRangeEnergyType long_range_type() const override;
+	core::scoring::methods::LongRangeEnergyType long_range_type() const override;
 
 	bool
 	defines_residue_pair_energy(
@@ -177,14 +176,13 @@ public:
 	) const override;
 
 private:
-	FullatomDisulfidePotential const & potential_;
+	core::scoring::disulfides::FullatomDisulfidePotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-} // namespace disulfides
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

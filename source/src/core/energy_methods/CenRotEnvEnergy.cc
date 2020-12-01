@@ -30,21 +30,22 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the CenRotEnvEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenRotEnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< CenRotEnvEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CenRotEnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_rot_env );
 	sts.push_back( cen_rot_cbeta );
@@ -55,11 +56,11 @@ CenRotEnvEnergyCreator::score_types_for_method() const {
 /// c-tor
 CenRotEnvEnergy::CenRotEnvEnergy() :
 	parent( utility::pointer::make_shared< CenRotEnvEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_CenRotEnvPairPotential() ) {}
+	potential_( core::scoring::ScoringManager::get_instance()->get_CenRotEnvPairPotential() ) {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenRotEnvEnergy::clone() const {
 	return utility::pointer::make_shared< CenRotEnvEnergy >();
 }
@@ -67,7 +68,7 @@ CenRotEnvEnergy::clone() const {
 
 /// setup
 void
-CenRotEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+CenRotEnvEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
@@ -75,7 +76,7 @@ CenRotEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) c
 }
 
 void
-CenRotEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+CenRotEnvEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
 	potential_.compute_centroid_environment( pose );
@@ -87,7 +88,7 @@ void
 CenRotEnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
@@ -99,24 +100,24 @@ CenRotEnvEnergy::residue_energy(
 	Real cbeta12_score( 0.0 );
 	potential_.evaluate_cen_rot_env_and_cbeta_score( pose, rsd, env_score, cbeta6_score, cbeta12_score );
 
-	emap[ cen_rot_env ] += env_score;
-	emap[ cen_rot_cbeta ] += cbeta6_score + cbeta12_score;
+	emap[ core::scoring::cen_rot_env ] += env_score;
+	emap[ core::scoring::cen_rot_cbeta ] += cbeta6_score + cbeta12_score;
 } // residue_energy
 
 
 void
 CenRotEnvEnergy::eval_residue_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const {
 	if ( rsd.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd.aa() > core::chemical::num_canonical_aas ) return;
 
-	Real weight_env = weights[ cen_rot_env ];
-	Real weight_cbeta = weights[ cen_rot_cbeta ];
+	Real weight_env = weights[ core::scoring::cen_rot_env  ];
+	Real weight_cbeta = weights[ core::scoring::cen_rot_cbeta ];
 
 	numeric::xyzVector<Real> f2_cen_env, f2_cen_cb6, f2_cen_cb12;
 	numeric::xyzVector<Real> f2_cb_env, f2_cb_cb6, f2_cb_cb12;
@@ -151,8 +152,8 @@ CenRotEnvEnergy::eval_residue_derivatives(
 void
 CenRotEnvEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	potential_.finalize( pose );
 }
@@ -162,6 +163,5 @@ CenRotEnvEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-}
 }
 }

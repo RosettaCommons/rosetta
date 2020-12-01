@@ -32,8 +32,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 
 class SAXSEnergyCEN : public SAXSEnergy  {
@@ -41,12 +40,11 @@ public:
 
 	/// c-tor
 	SAXSEnergyCEN() : SAXSEnergy( cen_cfg_file_,
-		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID),saxs_cen_score,utility::pointer::make_shared< SAXSEnergyCreatorCEN >()) {}
+		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::CENTROID), core::scoring::saxs_cen_score, utility::pointer::make_shared< SAXSEnergyCreatorCEN >()) {}
 
 };
 
 
-}
 }
 }
 

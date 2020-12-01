@@ -22,16 +22,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace aa_repeat_energy {
+namespace energy_methods {
 
 class AARepeatEnergy;
 
 typedef utility::pointer::shared_ptr< AARepeatEnergy > AARepeatEnergyOP;
 
-
-} // aa_repeat_energy
-} // scoring
+} // energy_methods
 } // core
 
 

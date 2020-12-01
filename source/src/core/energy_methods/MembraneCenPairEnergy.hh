@@ -12,8 +12,8 @@
 /// @author Bjorn Wallner
 
 
-#ifndef INCLUDED_core_scoring_methods_MembraneCenPairEnergy_hh
-#define INCLUDED_core_scoring_methods_MembraneCenPairEnergy_hh
+#ifndef INCLUDED_core_energy_methods_MembraneCenPairEnergy_hh
+#define INCLUDED_core_energy_methods_MembraneCenPairEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/MembraneCenPairEnergy.fwd.hh>
@@ -34,11 +34,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MembraneCenPairEnergy : public ContextDependentTwoBodyEnergy  {
+
+class MembraneCenPairEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy  {
 public:
 	typedef ContextDependentTwoBodyEnergy  parent;
 
@@ -49,7 +49,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,35 +57,35 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const &, // pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &// totals
 	) const override;
 
 	// /// This method *should* admit to defining intraresidue energies
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return false; }
 	//
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	Distance
@@ -93,7 +93,7 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
-	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
+	core::scoring::MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
 
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -104,13 +104,12 @@ public:
 private:
 
 	// const-ref to scoring database
-	MembranePotential const & potential_;
+	core::scoring::MembranePotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

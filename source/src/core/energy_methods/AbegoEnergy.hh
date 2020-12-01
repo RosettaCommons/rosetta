@@ -11,8 +11,8 @@
 /// @brief  ABEGO energy method class declaration
 /// @author imv@uw.edu
 
-#ifndef INCLUDED_core_scoring_methods_Abego_hh
-#define INCLUDED_core_scoring_methods_Abego_hh
+#ifndef INCLUDED_core_energy_methods_Abego_hh
+#define INCLUDED_core_energy_methods_Abego_hh
 
 // Unit headers
 #include <core/energy_methods/AbegoEnergy.fwd.hh>
@@ -29,32 +29,32 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class Abego : public WholeStructureEnergy {
+
+class Abego : public core::scoring::methods::WholeStructureEnergy {
 public:
 
 	/// ctor
 	Abego();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	// @brief Abego Energy is context independent and thus indicates that no context graphs need to
 	// be maintained by class Energies
 	void indicate_required_context_graphs( utility::vector1< bool > & /*context_graphs_required*/ ) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
-	void finalize_total_energy( pose::Pose &, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( pose::Pose &, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 	// data
 private:
 	core::Size version() const override;
-	P_AA_ABEGO3 const & paa_abego3_;
+	core::scoring::P_AA_ABEGO3 const & paa_abego3_;
 	mutable core::sequence::ABEGOManager abegoManager_;
 
 	// @brief Sum of only the positive (unfavorable) ABEGO energies in the pose.
@@ -66,7 +66,6 @@ private:
 	mutable core::Size energy_sum_count_;
 };
 
-} // methods
 } // scoring
 } // core
 

@@ -69,20 +69,20 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNA_StubCoordinateEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_StubCoordinateEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_StubCoordinateEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_StubCoordinateEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_stub_coord_hack );
 	return sts;
@@ -120,7 +120,7 @@ RNA_StubCoordinateEnergy::RNA_StubCoordinateEnergy() :
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_StubCoordinateEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_StubCoordinateEnergy >();
@@ -129,27 +129,27 @@ RNA_StubCoordinateEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // copied from SASAEnergy.cc
 void
-RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_StubCoordinateEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	using namespace core::scoring::methods;
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec = utility::pointer::make_shared< DenseEnergyContainer >( pose.size(), rna_stub_coord_hack );
+		core::scoring::LREnergyContainerOP new_dec = utility::pointer::make_shared< core::scoring::DenseEnergyContainer >( pose.size(), core::scoring::rna_stub_coord_hack );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -186,8 +186,8 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace core::kinematics;
@@ -212,11 +212,10 @@ RNA_StubCoordinateEnergy::residue_pair_energy(
 	//   using, e.g., a von-Mises function -- compute Jump( stub1, stub2 ) and then check out, e.g. axis-angle of rotation.
 	Vector const & landing_xyz = stub2.center();
 	Vector const landing_xyz_in_takeoff_frame = stub1.global2local( landing_xyz );
-	emap[ rna_stub_coord_hack ] += func_->func( landing_xyz_in_takeoff_frame.distance( target_xyz_in_takeoff_frame_ ) );
+	emap[ core::scoring::rna_stub_coord_hack ] += func_->func( landing_xyz_in_takeoff_frame.distance( target_xyz_in_takeoff_frame_ ) );
 
 }
 
 
-} //rna
 } //scoring
 } //core

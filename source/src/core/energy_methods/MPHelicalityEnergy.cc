@@ -67,8 +67,7 @@ using namespace core::scoring::methods;
 static basic::Tracer TR( "core.scoring.membrane.MPHelicalityEnergy" );
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 // sigmoid constants
 Real const slope_6 = 0.15; //0.5; //0.05;//0.197; //0.05231;
@@ -85,16 +84,17 @@ Real const twelveA_offset = 220.0;
 // Creator Methods //////////////////////////////////////////
 
 /// @brief Return a fresh instance of the energy method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPHelicalityEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MPHelicalityEnergy >();
 }
 
 /// @brief Return relevant score types
-ScoreTypes
+core::scoring::ScoreTypes
 MPHelicalityEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( MPHelicality );
 	return sts;
@@ -108,7 +108,7 @@ MPHelicalityEnergy::MPHelicalityEnergy() :
 }
 
 /// @brief Create a clone of this energy method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MPHelicalityEnergy::clone() const
 {
 	return utility::pointer::make_shared< MPHelicalityEnergy >( *this );
@@ -120,7 +120,7 @@ MPHelicalityEnergy::clone() const
 void
 MPHelicalityEnergy::setup_for_derivatives(
 	pose::Pose &,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 }
@@ -128,7 +128,7 @@ MPHelicalityEnergy::setup_for_derivatives(
 void
 MPHelicalityEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 
@@ -145,7 +145,7 @@ void
 MPHelicalityEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// currently this is only for protein residues
@@ -170,7 +170,7 @@ MPHelicalityEnergy::residue_energy(
 
 	calc_energy( rsd, pose, score );
 
-	emap[ MPHelicality ] += score * burial_sig_6x12;
+	emap[ core::scoring::MPHelicality ] += score * burial_sig_6x12;
 }
 
 
@@ -227,7 +227,7 @@ MPHelicalityEnergy::centroid_neighbors(
 	core::Size atom_id = 0;
 
 	//int twelveA_neighbors = pose.energies().tenA_neighbor_graph().get_node( rsd.seqpos() )->num_neighbors_counting_self();
-	//const TwelveANeighborGraph & graph ( pose.energies.twelveA_neighbor_graph() );
+	//const core::scoring::TwelveANeighborGraph & graph ( pose.energies.twelveA_neighbor_graph() );
 	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph()  );
 	utility::graph::Node const * node = graph.get_node( rsd.seqpos()  );
 	//core::graph::Node const * node = pose.energies().twelveA_neighbor_graph().get_node( rsd.seqpos() );
@@ -265,8 +265,8 @@ MPHelicalityEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & ,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector &,
 	Vector &
 ) const
@@ -290,9 +290,9 @@ MPHelicalityEnergy::atomic_interaction_cutoff() const
 void
 MPHelicalityEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	// context_graphs_required[ twelve_A_neighbor_graph ] = true;
-	//context_graphs_required[ ten_A_neighbor_graph ] = true;
-	context_graphs_required[ twelve_A_neighbor_graph  ] = true;
+	// context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
+	//context_graphs_required[ core::scoring::ten_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph  ] = true;
 }
 
 void
@@ -398,6 +398,5 @@ MPHelicalityEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // membrane
 } // scoring
 } // core

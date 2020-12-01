@@ -30,25 +30,26 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the ReferenceEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ReferenceEnergyNoncanonicalCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	if ( options.has_method_weights( ref_nc ) ) {
-		return utility::pointer::make_shared< ReferenceEnergyNoncanonical >( options.method_weights( ref_nc ) );
+	if ( options.has_method_weights( core::scoring::ref_nc ) ) {
+		return utility::pointer::make_shared< ReferenceEnergyNoncanonical >( options.method_weights( core::scoring::ref_nc ) );
 	} else {
 		return utility::pointer::make_shared< ReferenceEnergyNoncanonical >();
 	}
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ReferenceEnergyNoncanonicalCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( ref_nc );
 	return sts;
@@ -71,7 +72,7 @@ ReferenceEnergyNoncanonical::ReferenceEnergyNoncanonical( utility::vector1< Real
 
 ReferenceEnergyNoncanonical::~ReferenceEnergyNoncanonical() = default;
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ReferenceEnergyNoncanonical::clone() const
 {
 	return utility::pointer::make_shared< ReferenceEnergyNoncanonical >( weights_ );
@@ -82,7 +83,7 @@ void
 ReferenceEnergyNoncanonical::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -107,48 +108,48 @@ ReferenceEnergyNoncanonical::residue_energy(
 		if ( property_it == numeric_properties.end() ) {
 			return;
 		} else {
-			emap[ ref_nc ] += property_it->second;
+			emap[ core::scoring::ref_nc ] += property_it->second;
 		}
 		return; // skip below
 	}
 
 	if ( ( ! weights_.empty() ) && index_find <= weights_.size() ) {
-		emap[ ref_nc ] += weights_[ index_find ];
+		emap[ core::scoring::ref_nc ] += weights_[ index_find ];
 		return;
 	}
 
 	//AMW TODO: this assigns ref style reference energies to beta AAs.
 	switch ( index_find ) {
-	case 1 :  emap[ ref_nc ] +=   0.16; break;
-	case 2 :  emap[ ref_nc ] +=   1.70; break;
-	case 3 :  emap[ ref_nc ] +=  -0.67; break;
-	case 4 :  emap[ ref_nc ] +=  -0.81; break;
-	case 5 :  emap[ ref_nc ] +=   0.63; break;
-	case 6 :  emap[ ref_nc ] +=  -0.17; break;
-	case 7 :  emap[ ref_nc ] +=   0.56; break;
-	case 8 :  emap[ ref_nc ] +=   0.24; break;
-	case 9 :  emap[ ref_nc ] +=  -0.65; break;
-	case 10 : emap[ ref_nc ] +=  -0.10; break;
-	case 11 : emap[ ref_nc ] +=  -0.34; break;
-	case 12 : emap[ ref_nc ] +=  -0.89; break;
-	case 13 : emap[ ref_nc ] +=   0.02; break;
-	case 14 : emap[ ref_nc ] +=  -0.97; break;
-	case 15 : emap[ ref_nc ] +=  -0.98; break;
-	case 16 : emap[ ref_nc ] +=  -0.37; break;
-	case 17 : emap[ ref_nc ] +=  -0.27; break;
-	case 18 : emap[ ref_nc ] +=   0.29; break;
-	case 19 : emap[ ref_nc ] +=   0.91; break;
-	case 20 : emap[ ref_nc ] +=   0.51; break;
+	case 1 :  emap[ core::scoring::ref_nc ] +=   0.16; break;
+	case 2 :  emap[ core::scoring::ref_nc ] +=   1.70; break;
+	case 3 :  emap[ core::scoring::ref_nc ] +=  -0.67; break;
+	case 4 :  emap[ core::scoring::ref_nc ] +=  -0.81; break;
+	case 5 :  emap[ core::scoring::ref_nc ] +=   0.63; break;
+	case 6 :  emap[ core::scoring::ref_nc ] +=  -0.17; break;
+	case 7 :  emap[ core::scoring::ref_nc ] +=   0.56; break;
+	case 8 :  emap[ core::scoring::ref_nc ] +=   0.24; break;
+	case 9 :  emap[ core::scoring::ref_nc ] +=  -0.65; break;
+	case 10 : emap[ core::scoring::ref_nc ] +=  -0.10; break;
+	case 11 : emap[ core::scoring::ref_nc ] +=  -0.34; break;
+	case 12 : emap[ core::scoring::ref_nc ] +=  -0.89; break;
+	case 13 : emap[ core::scoring::ref_nc ] +=   0.02; break;
+	case 14 : emap[ core::scoring::ref_nc ] +=  -0.97; break;
+	case 15 : emap[ core::scoring::ref_nc ] +=  -0.98; break;
+	case 16 : emap[ core::scoring::ref_nc ] +=  -0.37; break;
+	case 17 : emap[ core::scoring::ref_nc ] +=  -0.27; break;
+	case 18 : emap[ core::scoring::ref_nc ] +=   0.29; break;
+	case 19 : emap[ core::scoring::ref_nc ] +=   0.91; break;
+	case 20 : emap[ core::scoring::ref_nc ] +=   0.51; break;
 		// "OMA", "OMC", "OMG", "OMU", "PSU", "H2U", "PUR", "1MA"
 		// GACU 4.14  3.58  2.82  3.76
-	case 21 : emap[ ref_nc ] +=   3.58; break;
-	case 22 : emap[ ref_nc ] +=   2.82; break;
-	case 23 : emap[ ref_nc ] +=   4.14; break;
-	case 24 : emap[ ref_nc ] +=   3.76; break;
-	case 25 : emap[ ref_nc ] +=   3.76; break;
-	case 26 : emap[ ref_nc ] +=   3.76; break;
-	case 27 : emap[ ref_nc ] +=   3.58; break;
-	case 28 : emap[ ref_nc ] +=   3.58; break;
+	case 21 : emap[ core::scoring::ref_nc ] +=   3.58; break;
+	case 22 : emap[ core::scoring::ref_nc ] +=   2.82; break;
+	case 23 : emap[ core::scoring::ref_nc ] +=   4.14; break;
+	case 24 : emap[ core::scoring::ref_nc ] +=   3.76; break;
+	case 25 : emap[ core::scoring::ref_nc ] +=   3.76; break;
+	case 26 : emap[ core::scoring::ref_nc ] +=   3.76; break;
+	case 27 : emap[ core::scoring::ref_nc ] +=   3.58; break;
+	case 28 : emap[ core::scoring::ref_nc ] +=   3.58; break;
 	default :
 		return;
 	}
@@ -160,8 +161,8 @@ ReferenceEnergyNoncanonical::eval_dof_derivative(
 	id::DOF_ID const &,
 	id::TorsionID const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap const &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &
 ) const
 {
 	return 0.0;
@@ -193,7 +194,6 @@ ReferenceEnergyNoncanonical::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

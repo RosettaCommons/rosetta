@@ -315,7 +315,7 @@ private:
 	core::scoring::lkball::LK_BallEnergyOP LKBe_;
 	core::scoring::etable::coulomb::CoulombOP coulomb_;
 	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
-	core::scoring::methods::CartesianBondedEnergyOP cartbonded_;
+	core::energy_methods::CartesianBondedEnergyOP cartbonded_;
 
 	// alternate modes
 	bool exact_, debug_, force_exact_min_;

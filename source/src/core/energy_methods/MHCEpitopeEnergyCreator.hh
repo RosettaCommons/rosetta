@@ -27,8 +27,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace mhc_epitope_energy {
+namespace energy_methods {
 
 class MHCEpitopeEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
@@ -40,10 +39,9 @@ public:
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-} // mhc_epitope_energy
 } // scoring
 } // core
 

@@ -36,21 +36,22 @@
 using namespace std;
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the DirectReadoutEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DirectReadoutEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DirectReadoutEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DirectReadoutEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dna_dr );
 	return sts;
@@ -60,12 +61,12 @@ DirectReadoutEnergyCreator::score_types_for_method() const {
 /// @details  C-TOR
 DirectReadoutEnergy::DirectReadoutEnergy() :
 	parent( utility::pointer::make_shared< DirectReadoutEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_DirectReadoutPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_DirectReadoutPotential() )
 {}
 
 
 /// @details  Clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DirectReadoutEnergy::clone() const
 {
 	return utility::pointer::make_shared< DirectReadoutEnergy >();
@@ -76,8 +77,8 @@ DirectReadoutEnergy::clone() const
 void
 DirectReadoutEnergy::finalize_total_energy(
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	Size const nres( pose.size() );
@@ -103,8 +104,8 @@ DirectReadoutEnergy::my_residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 
@@ -116,7 +117,7 @@ DirectReadoutEnergy::my_residue_pair_energy(
 		score = potential_.rsd_rsd_energy( rsd2, rsd1 );
 	}
 
-	emap[ dna_dr ] += score; // change
+	emap[ core::scoring::dna_dr ] += score; // change
 
 }
 core::Size
@@ -126,6 +127,5 @@ DirectReadoutEnergy::version() const
 }
 
 
-} // ns methods
 } // ns scoring
 } // ns core

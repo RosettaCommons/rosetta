@@ -35,20 +35,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 
-class MPSpanInsertionEnergy : public methods::WholeStructureEnergy  {
+class MPSpanInsertionEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	MPSpanInsertionEnergy();
 
 	//clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 
@@ -59,14 +58,14 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
 	setup_for_derivatives(
 		pose::Pose &,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	)
 	const override;
 
@@ -75,8 +74,8 @@ public:
 		id::AtomID const &,
 		pose::Pose const &,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &,
 		Vector &,// F1,
 		Vector & // F2
 	) const override;
@@ -128,7 +127,6 @@ private:
 
 };
 
-} //membrane
 } //scoring
 } //core
 

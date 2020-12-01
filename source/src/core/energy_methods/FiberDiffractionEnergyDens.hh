@@ -40,12 +40,11 @@
 #include <complex>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
-class FiberDiffractionEnergyDens : public methods::WholeStructureEnergy  {
+class FiberDiffractionEnergyDens : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -60,21 +59,21 @@ public:
 		rho_cylindrical_( src.rho_cylindrical_ )
 	{}
 
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
-	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
+	void finalize_total_energy(pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals) const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const override;
 
-	/*virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	/*virtual void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const;
 
 	virtual void
 	eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -122,19 +121,12 @@ gnl_R_qfht(
 );
 
 
-void
-find_max_r(
-	pose::Pose const & pose,
-	core::Real & maxR
-);
-
 utility::pointer::shared_ptr< numeric::interpolation::spline::Interpolator >
 fit_layer_lines_with_splines(
 	ObjexxFCL::FArray1D < float > xvals,
 	ObjexxFCL::FArray1D < float > yvals
 );
 
-}
 }
 }
 

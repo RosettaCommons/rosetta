@@ -42,25 +42,25 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace aa_repeat_energy {
+namespace energy_methods {
 
 using namespace core::scoring::methods;
 static basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
 
 /// @brief This must return a fresh instance of the AARepeatEnergy class, never an instance already in use.
 ///
-methods::EnergyMethodOP
-AARepeatEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & ) const
+core::scoring::methods::EnergyMethodOP
+AARepeatEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const
 {
 	return utility::pointer::make_shared< AARepeatEnergy >();
 }
 
 /// @brief Defines the score types that this energy method calculates.
 ///
-ScoreTypes
+core::scoring::ScoreTypes
 AARepeatEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( aa_repeat );
 	return sts;
@@ -92,7 +92,7 @@ AARepeatEnergy::~AARepeatEnergy() = default;
 
 /// @brief Clone: create a copy of this object, and return an owning pointer
 /// to the copy.
-EnergyMethodOP AARepeatEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP AARepeatEnergy::clone() const {
 	return utility::pointer::make_shared< AARepeatEnergy >(*this);
 }
 
@@ -113,7 +113,7 @@ core::Size AARepeatEnergy::version() const
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
+void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const
 {
 	//Number of residues:
 	core::Size const nres( pose.size() );
@@ -129,7 +129,7 @@ void AARepeatEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFuncti
 
 	utility::vector1< core::Size > const zero_rotamers( resvector.size(), 0 );
 
-	totals[ aa_repeat ] += calculate_energy( resvector, zero_rotamers ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
+	totals[ core::scoring::aa_repeat ] += calculate_energy( resvector, zero_rotamers ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the aa_repeat_energy to this value.
 
 	return;
 }
@@ -263,6 +263,5 @@ bool AARepeatEnergy::parse_line( std::string const &line, utility::vector1< core
 	return good_parse;
 }
 
-} // aa_repeat
-} // scoring
+} // energy_methods
 } // core

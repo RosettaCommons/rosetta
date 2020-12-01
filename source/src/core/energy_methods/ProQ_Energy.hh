@@ -12,8 +12,8 @@
 /// @author Björn Wallner
 
 
-#ifndef INCLUDED_core_scoring_methods_ProQ_Energy_hh
-#define INCLUDED_core_scoring_methods_ProQ_Energy_hh
+#ifndef INCLUDED_core_energy_methods_ProQ_Energy_hh
+#define INCLUDED_core_energy_methods_ProQ_Energy_hh
 
 
 // Package headers
@@ -36,13 +36,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class ProQ_Energy : public WholeStructureEnergy  {
+
+class ProQ_Energy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 public:
 
 
@@ -51,20 +51,20 @@ public:
 	ProQ_Energy( ProQ_Energy const & src);
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & totals
 	) const override;
 	core::Size version() const override;
 
@@ -79,8 +79,8 @@ public:
 
 
 private:
-	ProQPotential const & potential_;
-	MembraneTopology topology_;
+	core::scoring::ProQPotential const & potential_;
+	core::scoring::MembraneTopology topology_;
 
 	ObjexxFCL::FArray2D< Real > prob_profile_;
 	ObjexxFCL::FArray2D< Real > scaled_logodds_profile_;
@@ -111,13 +111,13 @@ private:
 	void atom_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,Size index,int windowsize=21) const;
 	void res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,Size index,int windowsize=21) const;
 	void surf_feature(pose::Pose & pose, utility::vector1< Real> & rsd_sasa_rel,ObjexxFCL::FArray2D< Real > & vec,Size index,int windowsize=21) const;
-	void gss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,Size index) const;
+	void gss_sc_feature(pose::Pose & pose, core::scoring::dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,Size index) const;
 	void grsa_sc_feature(pose::Pose & pose, utility::vector1< Real> & rsd_sasa_rel,ObjexxFCL::FArray2D< Real > & vec,Size index) const;
 
 	//these are called for each residue
-	void stride_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index, int windowsize=11) const;
-	void ss_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize=1) const;
-	void ss_sc_feature(pose::Pose & pose, dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize=21) const;
+	void stride_feature(pose::Pose & pose, core::scoring::dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index, int windowsize=11) const;
+	void ss_feature(pose::Pose & pose, core::scoring::dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize=1) const;
+	void ss_sc_feature(pose::Pose & pose, core::scoring::dssp::Dssp & ss,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index,int windowsize=21) const;
 	void topology_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const;
 	void zpred_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const;
 	void z_feature(pose::Pose & pose, ObjexxFCL::FArray1D< Real > & Z,ObjexxFCL::FArray2D< Real > & vec,int const pos,Size index) const;
@@ -142,6 +142,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_ProQ_Energy_HH
+#endif // INCLUDED_core_energy_methods_ProQ_Energy_HH

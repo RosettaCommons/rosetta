@@ -29,15 +29,13 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace data {
+namespace energy_methods {
 
 
-class RNA_ChemicalMappingEnergy : public methods::WholeStructureEnergy {
+class RNA_ChemicalMappingEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
 
-	typedef methods::WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 
 	RNA_ChemicalMappingEnergy();
@@ -46,7 +44,7 @@ public:
 
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -61,8 +59,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &// totals
 	) const override;
 
 	Distance
@@ -74,14 +72,12 @@ public:
 
 private:
 
-	RNA_DMS_Potential & DMS_potential_;
-	RNA_DMS_LowResolutionPotential & DMS_low_resolution_potential_;
+	core::scoring::rna::data::RNA_DMS_Potential & DMS_potential_;
+	core::scoring::rna::data::RNA_DMS_LowResolutionPotential & DMS_low_resolution_potential_;
 
 };
 
 
-} //data
-} //rna
 } //scoring
 } //core
 

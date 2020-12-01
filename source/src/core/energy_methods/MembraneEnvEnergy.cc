@@ -36,21 +36,22 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the MembraneEnvEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< MembraneEnvEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 MembraneEnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( Menv );
 	return sts;
@@ -60,12 +61,12 @@ MembraneEnvEnergyCreator::score_types_for_method() const {
 /// c-tor
 MembraneEnvEnergy::MembraneEnvEnergy() :
 	parent( utility::pointer::make_shared< MembraneEnvEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_MembranePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_MembranePotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 MembraneEnvEnergy::clone() const
 {
 	return utility::pointer::make_shared< MembraneEnvEnergy >();
@@ -78,7 +79,7 @@ MembraneEnvEnergy::clone() const
 
 
 void
-MembraneEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+MembraneEnvEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
@@ -88,7 +89,7 @@ MembraneEnvEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )
 }
 
 void
-MembraneEnvEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const
+MembraneEnvEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const
 {
 	setup_for_scoring(pose,sf);
 }
@@ -101,7 +102,7 @@ void
 MembraneEnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	Real env_score( 0.0 );
@@ -112,29 +113,30 @@ MembraneEnvEnergy::residue_energy(
 		potential_.evaluate_env( pose, rsd, env_score);
 	}
 
-	emap[ Menv ] += env_score;
+	emap[ core::scoring::Menv ] += env_score;
 } // residue_energy
 
 void
 MembraneEnvEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 	potential_.finalize( pose );
 }
-MembraneTopology const &
+
+core::scoring::MembraneTopology const &
 MembraneEnvEnergy::MembraneTopology_from_pose( pose::Pose const & pose ) const
 {
 	return *( utility::pointer::static_pointer_cast< core::scoring::MembraneTopology const > ( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::MEMBRANE_TOPOLOGY ) ));
 }
+
 core::Size
 MembraneEnvEnergy::version() const
 {
 	return 1; // Initial versioning
 }
 
-}
 }
 }

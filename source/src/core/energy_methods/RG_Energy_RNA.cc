@@ -40,21 +40,21 @@ using namespace core::chemical;
 using namespace core::chemical::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RG_Energy_RNA class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_Energy_RNACreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RG_Energy_RNA >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RG_Energy_RNACreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_rg );
 	return sts;
@@ -67,7 +67,7 @@ RG_Energy_RNA::RG_Energy_RNA() :
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_Energy_RNA::clone() const
 {
 	return utility::pointer::make_shared< RG_Energy_RNA >();
@@ -80,10 +80,10 @@ RG_Energy_RNA::clone() const
 
 
 void
-RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	//Doesn't recalculate stuff if already updated:
 	rna_centroid_info.update( pose );
 
@@ -124,7 +124,7 @@ RG_Energy_RNA::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) con
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RG_Energy_RNA::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & scorefxn ) const
+RG_Energy_RNA::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const
 {
 	//score the pose.... that should generate the center_of_mass position, and the Rg.
 	setup_for_scoring( pose, scorefxn );
@@ -135,14 +135,14 @@ RG_Energy_RNA::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & s
 void
 RG_Energy_RNA::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
-	totals[ rna_rg ] = rg_;
+	totals[ core::scoring::rna_rg ] = rg_;
 
-	rna::RNA_ScoringInfo  & rna_scoring_info( rna::nonconst_rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  & rna_scoring_info( core::scoring::rna::nonconst_rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	rna_centroid_info.set_calculated( false );
 }
 
@@ -155,8 +155,8 @@ RG_Energy_RNA::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -169,8 +169,8 @@ RG_Energy_RNA::eval_atom_derivative(
 	if ( !rsd.has_variant_type( REPLONLY ) ) return;
 	if ( !rsd.is_RNA() ) return;
 
-	rna::RNA_ScoringInfo  const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
-	rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
+	core::scoring::rna::RNA_ScoringInfo  const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_CentroidInfo const & rna_centroid_info( rna_scoring_info.rna_centroid_info() );
 	utility::vector1< Vector > const & base_centroids( rna_centroid_info.base_centroids() );
 
 	Size const nres( pose.size() );
@@ -189,8 +189,8 @@ RG_Energy_RNA::eval_atom_derivative(
 	Vector f2 = ( v - center_of_mass_ )/ ( ( nres - 1 ) * rg_ );
 	Vector f1 = cross( f2, v );
 
-	F1 += weights[ rna_rg ] * f1;
-	F2 += weights[ rna_rg ] * f2;
+	F1 += weights[ core::scoring::rna_rg ] * f1;
+	F2 += weights[ core::scoring::rna_rg ] * f2;
 } // eval atom derivative
 
 core::Size
@@ -200,6 +200,5 @@ RG_Energy_RNA::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

@@ -39,6 +39,7 @@
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class FACTSPoseInfo : public basic::datacache::CacheableData {
@@ -105,6 +106,7 @@ public:
 
 };
 
+} // facts
 } // scoring
 } // core
 #ifdef    SERIALIZATION

@@ -57,7 +57,7 @@ public:
 
 	core::Real recent_score() { return score_value_; }
 private:
-	core::scoring::saxs::SAXSEnergyFA score;
+	core::energy_methods::SAXSEnergyFA score;
 	mutable core::Real score_value_;
 	core::Real cutoff_;
 };

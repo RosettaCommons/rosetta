@@ -54,7 +54,8 @@ public:
 	* @brief Calculates scoring terms for the disulfide bond specified
 	*/
 	void
-	score_disulfide(core::conformation::Residue const & res1,
+	score_disulfide(
+		core::conformation::Residue const & res1,
 		core::conformation::Residue const & res2,
 		core::Energy & cbcb_distance_score,
 		core::Energy & centroid_distance_score,
@@ -121,11 +122,11 @@ private:
 		core::Real & backbone_dihedral);
 
 private: //Scoring functions
-	static Cb_Distance_FuncCOP cb_distance_func_;
-	static Cen_Distance_FuncCOP cen_distance_func_;
-	static CaCbCb_Angle_FuncCOP cacbcb_angle_func_;
-	static NCaCaC_Dihedral_FuncCOP ncacac_dihedral_func_;
-	static CaCbCbCa_Dihedral_FuncCOP cacbcbca_dihedral_func_;
+	static core::scoring::disulfides::Cb_Distance_FuncCOP cb_distance_func_;
+	static core::scoring::disulfides::Cen_Distance_FuncCOP cen_distance_func_;
+	static core::scoring::disulfides::CaCbCb_Angle_FuncCOP cacbcb_angle_func_;
+	static core::scoring::disulfides::NCaCaC_Dihedral_FuncCOP ncacac_dihedral_func_;
+	static core::scoring::disulfides::CaCbCbCa_Dihedral_FuncCOP cacbcbca_dihedral_func_;
 
 	/// @brief the Cysteines with cb dist scores less than this threshold are
 	/// very likely (99%) to be disulfide bonded.
@@ -141,12 +142,12 @@ private: //Scoring functions
 *
 * Uses a sum of three gaussians.
 */
-class Cb_Distance_Func : public func::Func
+class Cb_Distance_Func : public core::scoring::func::Func
 {
 public:
 	Cb_Distance_Func();
 	~Cb_Distance_Func() override;
-	func::FuncOP clone() const override { return utility::pointer::make_shared< Cb_Distance_Func >( *this ); }
+	core::scoring::func::FuncOP clone() const override { return utility::pointer::make_shared< core::scoring::disulfides::Cb_Distance_Func >( *this ); }
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 	core::Real func( core::Real const ) const override;
@@ -171,12 +172,12 @@ public:
 /**
 * Score based on the distance between the two residues' centroids
 */
-class Cen_Distance_Func : public func::Func
+class Cen_Distance_Func : public core::scoring::func::Func
 {
 public:
 	Cen_Distance_Func();
 	~Cen_Distance_Func() override;
-	func::FuncOP clone() const override { return utility::pointer::make_shared< Cen_Distance_Func >( *this ); }
+	core::scoring::func::FuncOP clone() const override { return utility::pointer::make_shared< core::scoring::disulfides::Cen_Distance_Func >( *this ); }
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 	core::Real func( core::Real const ) const override;
@@ -194,12 +195,12 @@ public:
 /**
 * Score based on the angle Ca Cb Cb
 */
-class CaCbCb_Angle_Func : public func::Func
+class CaCbCb_Angle_Func : public core::scoring::func::Func
 {
 public:
 	CaCbCb_Angle_Func();
 	~CaCbCb_Angle_Func() override;
-	func::FuncOP clone() const  override{ return utility::pointer::make_shared< CaCbCb_Angle_Func >( *this ); }
+	core::scoring::func::FuncOP clone() const  override{ return utility::pointer::make_shared< core::scoring::disulfides::CaCbCb_Angle_Func >( *this ); }
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 	core::Real func( core::Real const ) const override;
@@ -217,12 +218,12 @@ public:
 /**
 * Score based on the dihedral formed by the two Ca and Cb
 */
-class NCaCaC_Dihedral_Func : public func::Func
+class NCaCaC_Dihedral_Func : public core::scoring::func::Func
 {
 public:
 	NCaCaC_Dihedral_Func();
 	~NCaCaC_Dihedral_Func() override;
-	func::FuncOP clone() const override { return utility::pointer::make_shared< NCaCaC_Dihedral_Func >( *this ); }
+	core::scoring::func::FuncOP clone() const override { return utility::pointer::make_shared< core::scoring::disulfides::NCaCaC_Dihedral_Func >( *this ); }
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 	core::Real func( core::Real const ) const override;
@@ -240,12 +241,12 @@ public:
 /**
 * Score based on the dihedral formed by N Ca Ca C
 */
-class CaCbCbCa_Dihedral_Func : public func::Func
+class CaCbCbCa_Dihedral_Func : public core::scoring::func::Func
 {
 public:
 	CaCbCbCa_Dihedral_Func();
 	~CaCbCbCa_Dihedral_Func() override;
-	func::FuncOP clone() const override { return utility::pointer::make_shared< CaCbCbCa_Dihedral_Func >( *this ); }
+	core::scoring::func::FuncOP clone() const override { return utility::pointer::make_shared< core::scoring::disulfides::CaCbCbCa_Dihedral_Func >( *this ); }
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 	core::Real func( core::Real const ) const override;

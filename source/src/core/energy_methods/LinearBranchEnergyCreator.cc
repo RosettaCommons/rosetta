@@ -21,23 +21,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details Creates and initializes a new LinearBranchEnergy object with the
 /// specified options
-EnergyMethodOP
-LinearBranchEnergyCreator::create_energy_method(const EnergyMethodOptions& /*opt*/) const {
+core::scoring::methods::EnergyMethodOP
+LinearBranchEnergyCreator::create_energy_method(const core::scoring::methods::EnergyMethodOptions& /*opt*/) const {
 	return utility::pointer::make_shared< LinearBranchEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 LinearBranchEnergyCreator::score_types_for_method() const {
-	ScoreTypes types;
-	types.push_back(linear_branch_conn);
+	core::scoring::ScoreTypes types;
+	types.push_back(core::scoring::linear_branch_conn);
 	return types;
 }
 
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core

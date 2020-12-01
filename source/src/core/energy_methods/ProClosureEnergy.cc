@@ -45,21 +45,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the ProClosureEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ProClosureEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ProClosureEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ProClosureEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( pro_close );
 	return sts;
@@ -96,7 +97,7 @@ ProClosureEnergy::ProClosureEnergy() :
 ProClosureEnergy::~ProClosureEnergy() = default;
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ProClosureEnergy::clone() const
 {
 	return utility::pointer::make_shared< ProClosureEnergy >();
@@ -128,8 +129,8 @@ ProClosureEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using namespace conformation;
@@ -147,7 +148,7 @@ ProClosureEnergy::residue_pair_energy(
 		Residue const & lower_res( res1_is_upper ? rsd2 : rsd1 );
 
 		Real chi4 = measure_chi4( lower_res, upper_res );
-		emap[ pro_close ] += chi4E( chi4 );
+		emap[ core::scoring::pro_close ] += chi4E( chi4 );
 	}
 }
 
@@ -155,13 +156,13 @@ void
 ProClosureEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	using namespace conformation;
@@ -175,8 +176,8 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 	debug_assert( (upper_res.aa() == chemical::aa_pro) || (upper_res.aa() == chemical::aa_dpr) || (upper_res.aa() == chemical::ou3_pro) );
 	const core::Real d_multiplier = (upper_res.type().is_d_aa() ? -1.0 : 1.0); //A multiplier for the derivative to invert it if this is a D-amino acid.
 
-	utility::vector1< DerivVectorPair > & upper_res_atom_derivs( res1_is_upper ? r1_atom_derivs : r2_atom_derivs );
-	utility::vector1< DerivVectorPair > & lower_res_atom_derivs( res1_is_upper ? r2_atom_derivs : r1_atom_derivs );
+	utility::vector1< core::scoring::DerivVectorPair > & upper_res_atom_derivs( res1_is_upper ? r1_atom_derivs : r2_atom_derivs );
+	utility::vector1< core::scoring::DerivVectorPair > & lower_res_atom_derivs( res1_is_upper ? r2_atom_derivs : r1_atom_derivs );
 
 	/// Atoms on the upper res
 	/// 1. N, CD
@@ -195,7 +196,7 @@ ProClosureEnergy::eval_residue_pair_derivatives(
 		lower_res.xyz( C_lo_id ), lower_res.xyz( O_lo_id  ),
 		chi4, f1, f2 );
 	chi4*=d_multiplier; //Flip for D-amino acids.
-	Real deriv( weights[ pro_close ] * d_multiplier * dchi4E_dchi4( chi4 ) );
+	Real deriv( weights[ core::scoring::pro_close ] * d_multiplier * dchi4E_dchi4( chi4 ) );
 
 	f1 *= deriv; f2 *= deriv;
 	upper_res_atom_derivs[ N_up_id ].f1() += f1;
@@ -244,8 +245,8 @@ ProClosureEnergy::bump_energy_full(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const
 {
 }
@@ -262,15 +263,15 @@ ProClosureEnergy::bump_energy_backbone(
 	conformation::Residue const & ,
 	conformation::Residue const & ,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap &
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap &
 ) const
 {
 }
 
 
 bool
-ProClosureEnergy::defines_intrares_energy( EnergyMap const & ) const
+ProClosureEnergy::defines_intrares_energy( core::scoring::EnergyMap const & ) const
 {
 	return true;
 }
@@ -280,8 +281,8 @@ void
 ProClosureEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( skip_ring_closure() ) return;
@@ -294,13 +295,13 @@ ProClosureEnergy::eval_intrares_energy(
 		Distance const dist2_n_nv = rsd.xyz( bbN_ ).distance_squared( rsd.xyz( scNV_ ) );
 
 		//Note that n_nv_dist_sd_ is the SQUARE of the standard deviation
-		emap[ pro_close ] += dist2_n_nv / ( n_nv_dist_sd_ );
+		emap[ core::scoring::pro_close ] += dist2_n_nv / ( n_nv_dist_sd_ );
 
 
 		// N-terminal proline -- could check varient types but that might be an ever changing list
 		if ( rsd.has( scCAV_ ) && rsd.has( bbCA_ ) ) {
 			Distance const dist2_ca_cav = rsd.xyz( bbCA_ ).distance_squared( rsd.xyz( scCAV_ ) );
-			emap[ pro_close ] += dist2_ca_cav / ( ca_cav_dist_sd_ );
+			emap[ core::scoring::pro_close ] += dist2_ca_cav / ( ca_cav_dist_sd_ );
 		}
 
 	}
@@ -318,10 +319,10 @@ ProClosureEnergy::defines_intrares_energy_for_residue(
 void
 ProClosureEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
 	if ( skip_ring_closure() ) return;
@@ -343,7 +344,7 @@ ProClosureEnergy::eval_intrares_derivatives(
 	{
 		Distance dist_n_nv( 0.0 );
 		numeric::deriv::distance_f1_f2_deriv( nv_pos, n_pos, dist_n_nv, f1, f2 );
-		Real deriv( weights[ pro_close ] * 2 * dist_n_nv / ( n_nv_dist_sd_ ));
+		Real deriv( weights[ core::scoring::pro_close ] * 2 * dist_n_nv / ( n_nv_dist_sd_ ));
 		f1 *= deriv; f2 *= deriv;
 
 		atom_derivs[ NV_ind ].f1() += f1;
@@ -364,7 +365,7 @@ ProClosureEnergy::eval_intrares_derivatives(
 
 		Distance dist_ca_cav( 0.0 );
 		numeric::deriv::distance_f1_f2_deriv( cav_pos, ca_pos, dist_ca_cav, f1, f2 );
-		Real deriv( weights[ pro_close ] * 2 * dist_ca_cav / ( ca_cav_dist_sd_ ));
+		Real deriv( weights[ core::scoring::pro_close ] * 2 * dist_ca_cav / ( ca_cav_dist_sd_ ));
 		f1 *= deriv; f2 *= deriv;
 
 		atom_derivs[ CAV_ind ].f1() += f1;
@@ -460,6 +461,5 @@ ProClosureEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

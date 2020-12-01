@@ -34,8 +34,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 class RNA_SugarCloseEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
@@ -63,7 +62,7 @@ public:
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -71,12 +70,12 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -85,8 +84,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -100,7 +99,7 @@ public:
 	setup_sugar_ring_closure_constraints( pose::Pose & pose ) const;
 
 	void
-	add_sugar_ring_closure_constraints( conformation::Residue const & rsd, constraints::ConstraintSet & cst_set ) const;
+	add_sugar_ring_closure_constraints( conformation::Residue const & rsd, core::scoring::constraints::ConstraintSet & cst_set ) const;
 
 	// data
 private:
@@ -110,15 +109,15 @@ private:
 	Real const scale_rna_torsion_sd_;
 	Distance const o4prime_c1prime_bond_length_;
 	Distance const o4prime_c1prime_sd_;
-	func::HarmonicFuncOP o4prime_c1prime_dist_harm_func_;
+	core::scoring::func::HarmonicFuncOP o4prime_c1prime_dist_harm_func_;
 
 	Real const angle_sd_;
 	Real const o4prime_c1prime_c2prime_bond_angle_;
-	func::HarmonicFuncOP o4prime_c1prime_c2prime_angle_harm_func_;
+	core::scoring::func::HarmonicFuncOP o4prime_c1prime_c2prime_angle_harm_func_;
 	Real const o4prime_c1prime_first_base_bond_angle_;
-	func::HarmonicFuncOP o4prime_c1prime_first_base_angle_harm_func_;
+	core::scoring::func::HarmonicFuncOP o4prime_c1prime_first_base_angle_harm_func_;
 	Real const c4prime_o4prime_c1prime_bond_angle_;
-	func::HarmonicFuncOP c4prime_o4prime_c1prime_angle_harm_func_;
+	core::scoring::func::HarmonicFuncOP c4prime_o4prime_c1prime_angle_harm_func_;
 
 	//phenix-based constraint
 	bool const use_phenix_sugar_close_;
@@ -135,14 +134,13 @@ private:
 	core::scoring::func::FuncOP fade_delta_north_, fade_delta_south_;
 
 	chemical::rna::RNA_FittedTorsionInfoOP rna_fitted_torsion_info_; // currently just used for delta cutoff
-	mutable constraints::ConstraintSetOP rna_sugar_close_constraints_;
+	mutable core::scoring::constraints::ConstraintSetOP rna_sugar_close_constraints_;
 
 	core::Size version() const override;
 
 
 };
 
-} //rna
 } //scoring
 } //core
 

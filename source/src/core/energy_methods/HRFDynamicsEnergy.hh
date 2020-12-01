@@ -11,8 +11,8 @@
 /// @brief  energy term use for scoring predicted HRFDynamicsEnergy
 /// @author Sarah Biehn
 
-#ifndef INCLUDED_core_scoring_methods_HRFDynamicsEnergy_hh
-#define INCLUDED_core_scoring_methods_HRFDynamicsEnergy_hh
+#ifndef INCLUDED_core_energy_methods_HRFDynamicsEnergy_hh
+#define INCLUDED_core_energy_methods_HRFDynamicsEnergy_hh
 
 #include <core/energy_methods/HRFDynamicsEnergyCreator.hh>
 #include <core/scoring/methods/ContextDependentOneBodyEnergy.hh>
@@ -25,18 +25,18 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class HRFDynamicsEnergy : public ContextDependentOneBodyEnergy {
+
+class HRFDynamicsEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
 public:
 
-	typedef methods::ContextDependentOneBodyEnergy parent;
-	HRFDynamicsEnergy( methods::EnergyMethodOptions const & options );
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy parent;
+	HRFDynamicsEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -47,19 +47,19 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	setup_for_scoring(
-		pose::Pose & pose, ScoreFunction const &
+		pose::Pose & pose, core::scoring::ScoreFunction const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	core::Size version() const override;
@@ -77,6 +77,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_HRFDynamicsEnergy_HH
+#endif // INCLUDED_core_energy_methods_HRFDynamicsEnergy_HH

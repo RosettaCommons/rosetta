@@ -12,8 +12,8 @@
 /// @author Yuan Liu
 
 
-#ifndef INCLUDED_core_scoring_methods_CenRotEnvEnergy_hh
-#define INCLUDED_core_scoring_methods_CenRotEnvEnergy_hh
+#ifndef INCLUDED_core_energy_methods_CenRotEnvEnergy_hh
+#define INCLUDED_core_energy_methods_CenRotEnvEnergy_hh
 
 // Unit Headers
 
@@ -32,13 +32,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class CenRotEnvEnergy : public ContextDependentOneBodyEnergy  {
+
+class CenRotEnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 public:
 
 
@@ -46,7 +46,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,32 +54,32 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_residue_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &// totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &// totals
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
@@ -92,14 +92,13 @@ public:
 private:
 
 	// const-ref to scoring database
-	CenRotEnvPairPotential const & potential_;
+	core::scoring::CenRotEnvPairPotential const & potential_;
 
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

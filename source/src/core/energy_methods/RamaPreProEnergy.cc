@@ -71,23 +71,24 @@
 #include <core/pose/PDBInfo.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 static basic::Tracer TR( "core.scoring.RamaPreProEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamaPreProEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & /*options*/
+	core::scoring::methods::EnergyMethodOptions const & /*options*/
 ) const {
 	return utility::pointer::make_shared< RamaPreProEnergy >( );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RamaPreProEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rama_prepro );
 	return sts;
@@ -96,10 +97,10 @@ RamaPreProEnergyCreator::score_types_for_method() const {
 
 RamaPreProEnergy::RamaPreProEnergy( ) :
 	parent( utility::pointer::make_shared< RamaPreProEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_RamaPrePro() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_RamaPrePro() )
 {}
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RamaPreProEnergy::clone() const {
 	return utility::pointer::make_shared< RamaPreProEnergy >( *this );
 }
@@ -108,7 +109,7 @@ RamaPreProEnergy::clone() const {
 void
 RamaPreProEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 	create_long_range_energy_container( pose, core::scoring::rama_prepro, long_range_type() );
 }
@@ -120,22 +121,22 @@ RamaPreProEnergy::defines_residue_pair_energy(
 	Size rsd2
 ) const {
 	bool res1_is_lo(false), res2_is_lo(false);
-	determine_lo_and_hi_residues( pose, rsd1, rsd2, res1_is_lo, res2_is_lo );
+	core::scoring::methods::determine_lo_and_hi_residues( pose, rsd1, rsd2, res1_is_lo, res2_is_lo );
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::defines_residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
 
 	return (res1_is_lo || res2_is_lo);
 }
 
-methods::LongRangeEnergyType
-RamaPreProEnergy::long_range_type() const { return methods::ramaprepro_lr; }
+core::scoring::methods::LongRangeEnergyType
+RamaPreProEnergy::long_range_type() const { return core::scoring::methods::ramaprepro_lr; }
 
 void
 RamaPreProEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace numeric;
 
@@ -144,7 +145,7 @@ RamaPreProEnergy::residue_pair_energy(
 
 	bool res1_is_lo(false), res2_is_lo(false);
 
-	determine_lo_and_hi_residues( pose, rsd1.seqpos(), rsd2.seqpos(), res1_is_lo, res2_is_lo );
+	core::scoring::methods::determine_lo_and_hi_residues( pose, rsd1.seqpos(), rsd2.seqpos(), res1_is_lo, res2_is_lo );
 
 	if ( !(res1_is_lo || res2_is_lo) ) return;
 	runtime_assert_string_msg( !(res1_is_lo && res2_is_lo ), "Error in core::scoring::methods::RamaPreProEnergy::residue_pair_energy(): The RamaPrePro term is incompatible with cyclic dipeptides (as is most of the rest of Rosetta)." );
@@ -159,7 +160,7 @@ RamaPreProEnergy::residue_pair_energy(
 	//utility::vector1 < core::Real > gradient; //Dummy argument for below.
 	Real const rama_score = potential_.eval_rpp_rama_score( pose.conformation(), res_lo.type_ptr(), res_hi.type_ptr(), mainchain_torsions );
 
-	emap[ rama_prepro ] += rama_score;
+	emap[ core::scoring::rama_prepro ] += rama_score;
 }
 
 utility::vector1< id::PartialAtomID >
@@ -178,12 +179,12 @@ RamaPreProEnergy::atoms_with_dof_derivatives( conformation::Residue const & res,
 Real
 RamaPreProEnergy::eval_intraresidue_dof_derivative(
 	conformation::Residue const & res_lo,
-	ResSingleMinimizationData const & /*min_data*/,
+	core::scoring::ResSingleMinimizationData const & /*min_data*/,
 	id::DOF_ID const & /*dof_id*/,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	using namespace numeric;
@@ -212,7 +213,7 @@ RamaPreProEnergy::eval_intraresidue_dof_derivative(
 
 	// note that the atomtree PHI dofs are in radians
 	// use degrees since dE/dangle has angle in denominator
-	return weights[ rama_prepro ] * numeric::conversions::degrees( deriv );
+	return weights[ core::scoring::rama_prepro ] * numeric::conversions::degrees( deriv );
 }
 
 core::Size
@@ -224,6 +225,5 @@ bool RamaPreProEnergy::is_allowed_type( core::chemical::ResidueType const & rt )
 	return ( rt.is_protein() || rt.is_aramid() || rt.is_peptoid() );
 }
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

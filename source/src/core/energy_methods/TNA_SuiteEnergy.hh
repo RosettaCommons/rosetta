@@ -30,20 +30,19 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
-class TNA_SuiteEnergy : public methods::ContextIndependentLRTwoBodyEnergy  {
+class TNA_SuiteEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
 
-	TNA_SuiteEnergy( RNA_EnergyMethodOptions const & options );
+	TNA_SuiteEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options );
 
 	// clone
-	methods::EnergyMethodOP clone() const override { return utility::pointer::make_shared< TNA_SuiteEnergy >( options_ ); }
+	core::scoring::methods::EnergyMethodOP clone() const override { return utility::pointer::make_shared< TNA_SuiteEnergy >( options_ ); }
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	// scoring
 	void
@@ -51,33 +50,33 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	bool
 	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return false; }
@@ -99,8 +98,8 @@ public:
 	void
 	indicate_required_context_graphs( utility::vector1< bool > & ) const override {};
 
-	methods::LongRangeEnergyType
-	long_range_type() const override { return methods::tna_suite_lr; }
+	core::scoring::methods::LongRangeEnergyType
+	long_range_type() const override { return core::scoring::methods::tna_suite_lr; }
 
 private:
 	Size version() const override { return 420; }
@@ -119,19 +118,18 @@ private:
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
 		Real const & weights,
-		utility::vector1<DerivVectorPair> & r1_atom_derivs,
-		utility::vector1<DerivVectorPair> & r2_atom_derivs,
-		TNA_SuitePotentialCOP rna_suite_potential ) const;
+		utility::vector1< core::scoring::DerivVectorPair> & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair> & r2_atom_derivs,
+		core::scoring::rna::TNA_SuitePotentialCOP rna_suite_potential ) const;
 
 private:
 
-	RNA_EnergyMethodOptions const & options_;
-	TNA_SuitePotentialOP tna_suite_potential_;
+	core::scoring::rna::RNA_EnergyMethodOptions const & options_;
+	core::scoring::rna::TNA_SuitePotentialOP tna_suite_potential_;
 
 };
 
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_TNA_SuiteEnergy_HH
+#endif // INCLUDED_core_energy_methods_TNA_SuiteEnergy_HH

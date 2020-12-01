@@ -20,6 +20,7 @@
 
 namespace core {
 namespace scoring {
+namespace facts {
 
 class FACTSRsdTypeMap;
 
@@ -47,6 +48,7 @@ class FACTSPotential;
 //Creating an alias for a pointer of type FACTSResidueInfo
 typedef utility::pointer::shared_ptr< FACTSPotential > FACTSPotentialOP;
 
+} // facts
 } // scoring
 } // core
 

@@ -35,41 +35,40 @@
 //#include <core/scoring/EnergyMap.hh>
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 
-class OccludedHbondSolEnergy_onebody : public methods::ContextDependentOneBodyEnergy  {
+class OccludedHbondSolEnergy_onebody : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
-	typedef methods::ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public:
 
-	OccludedHbondSolEnergy_onebody( methods::EnergyMethodOptions const & options, bool const verbose = false );
+	OccludedHbondSolEnergy_onebody( core::scoring::methods::EnergyMethodOptions const & options, bool const verbose = false );
 
 	OccludedHbondSolEnergy_onebody( OccludedHbondSolEnergy_onebody const & src );
 
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
+	void setup_for_derivatives( pose::Pose &pose, core::scoring::ScoreFunction const &  ) const override;
 
-	void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
+	void setup_for_minimizing(pose::Pose & pose, core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
 
 	void residue_energy(
 		conformation::Residue const & polar_rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override {};
 
 	// note intrares_energy *is* included, but just as part of residue_energy and not as a separate function
-	virtual bool defines_intrares_energy( EnergyMap const & ) const { return false; };
+	virtual bool defines_intrares_energy( core::scoring::EnergyMap const & ) const { return false; };
 
 	virtual Distance atomic_interaction_cutoff() const;
 
@@ -109,14 +108,13 @@ private:
 private:
 
 	// const-ref to scoring database
-	DatabaseOccSolEne const & occ_hbond_sol_database_;
+	scoring::geometric_solvation::DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
 	core::Size version() const override;
 
 };
 
-} // geometric_solvation
 } // scoring
 } // core
 

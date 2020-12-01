@@ -12,8 +12,8 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_YHHPlanarityEnergy_hh
-#define INCLUDED_core_scoring_methods_YHHPlanarityEnergy_hh
+#ifndef INCLUDED_core_energy_methods_YHHPlanarityEnergy_hh
+#define INCLUDED_core_energy_methods_YHHPlanarityEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/YHHPlanarityEnergy.fwd.hh>
@@ -31,13 +31,13 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class YHHPlanarityEnergy : public ContextIndependentOneBodyEnergy  {
+
+class YHHPlanarityEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
@@ -45,7 +45,7 @@ public:
 	YHHPlanarityEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -77,12 +77,12 @@ public:
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 
@@ -97,7 +97,6 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 

@@ -40,40 +40,39 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 
-class SAXSEnergy : public methods::WholeStructureEnergy  {
+class SAXSEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
 
 	static std::string fa_cfg_file_;
 	static std::string cen_cfg_file_;
 
-	SAXSEnergy(std::string &,core::chemical::ResidueTypeSetCAP, ScoreType, methods::EnergyMethodCreatorOP);
+	SAXSEnergy(std::string &,core::chemical::ResidueTypeSetCAP, core::scoring::ScoreType, core::scoring::methods::EnergyMethodCreatorOP);
 
 	SAXSEnergy(const std::string &,const utility::vector1<Real> &,const utility::vector1<Real> &,
-		ScoreType, methods::EnergyMethodCreatorOP);
+		core::scoring::ScoreType, core::scoring::methods::EnergyMethodCreatorOP);
 
 	~SAXSEnergy() override {}
 
-	methods::EnergyMethodOP clone() const override {
+	core::scoring::methods::EnergyMethodOP clone() const override {
 
-		if ( saxs_score_variant_ == saxs_fa_score ) {
+		if ( saxs_score_variant_ == core::scoring::saxs_fa_score ) {
 			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorFA >() );
 		} else {
 			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorCEN >() );
 		}
 	}
 
-	void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const override;
+	void finalize_total_energy(pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals) const override;
 
 	void indicate_required_context_graphs(utility::vector1< bool > & /*context_graphs_required*/
 	) const override {}
 
-	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const {
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 
-		if ( saxs_score_variant_ == saxs_fa_score ) {
+		if ( saxs_score_variant_ == core::scoring::saxs_fa_score ) {
 			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorFA >() );
 		} else {
 			return utility::pointer::make_shared< SAXSEnergy >(the_config_file_,q_, reference_intensities_,saxs_score_variant_, utility::pointer::make_shared< SAXSEnergyCreatorCEN >() );
@@ -91,7 +90,7 @@ public:
 
 protected:
 
-	ScoreType saxs_score_variant_;
+	core::scoring::ScoreType saxs_score_variant_;
 	std::string the_config_file_;
 
 
@@ -126,9 +125,9 @@ protected:
 private:
 
 	mutable utility::vector1<Size> atom_ff_types_;  // its size is nAtoms
-	mutable utility::vector1<FormFactorOP> ff_ops_;  // its size is nUniqFFs
-	mutable std::map<FormFactorOP,Size> ff_map_;  // its size is nUniqFFs
-	mutable utility::vector1< utility::vector1< DistanceHistogramOP > > dhist_; // its size is nUniqFFs x nUniqFFs
+	mutable utility::vector1<core::scoring::saxs::FormFactorOP> ff_ops_;  // its size is nUniqFFs
+	mutable std::map<core::scoring::saxs::FormFactorOP,Size> ff_map_;  // its size is nUniqFFs
+	mutable utility::vector1< utility::vector1< core::scoring::saxs::DistanceHistogramOP > > dhist_; // its size is nUniqFFs x nUniqFFs
 	mutable utility::vector1<Size> r_ids_;   // its size is nAtoms
 	mutable utility::vector1<Size> a_ids_;   // its size is nAtoms
 
@@ -138,7 +137,7 @@ private:
 	utility::vector1<Real> q_;
 	mutable utility::vector1<Real> pose_intensities_;
 	mutable utility::vector1<Real> reference_intensities_;
-	FormFactorManager* ff_manager_;
+	core::scoring::saxs::FormFactorManager* ff_manager_;
 
 	Real compute_chi(utility::vector1<Real> const &, utility::vector1<Real> const &) const;
 	Real compute_chi_with_fit(utility::vector1<Real> const &, utility::vector1<Real> const &) const;
@@ -149,7 +148,6 @@ private:
 };
 
 
-}
 }
 }
 

@@ -107,8 +107,8 @@ public:
 		methods::EnergyMethodOptions options_mhc_nmer_rank;
 		options_mhc_nmer.set_mhc_epitope_setup_files(mhc_nmer_file);
 		options_mhc_nmer_rank.set_mhc_epitope_setup_files(mhc_nmer_rank_file);
-		mhc_epitope_energy::MHCEpitopeEnergyOP mhc_energy_nmer( utility::pointer::make_shared<mhc_epitope_energy::MHCEpitopeEnergy>(options_mhc_nmer) );
-		mhc_epitope_energy::MHCEpitopeEnergyOP mhc_energy_nmer_rank( utility::pointer::make_shared<mhc_epitope_energy::MHCEpitopeEnergy>(options_mhc_nmer_rank) );
+		energy_methods::MHCEpitopeEnergyOP mhc_energy_nmer( utility::pointer::make_shared<energy_methods::MHCEpitopeEnergy>(options_mhc_nmer) );
+		energy_methods::MHCEpitopeEnergyOP mhc_energy_nmer_rank( utility::pointer::make_shared<energy_methods::MHCEpitopeEnergy>(options_mhc_nmer_rank) );
 
 		// Also setup appropriate scorefunctions
 		ScoreFunction scorefxn_mhc_nmer;

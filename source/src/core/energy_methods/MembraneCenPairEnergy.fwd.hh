@@ -12,8 +12,8 @@
 /// @author Phil BradleyFWD_HH
 
 
-#ifndef INCLUDED_core_scoring_methods_MembraneCenPairEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_MembraneCenPairEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_MembraneCenPairEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_MembraneCenPairEnergy_fwd_hh
 
 // Unit Headers
 
@@ -25,12 +25,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class MembraneCenPairEnergy;
 
 }
 }
-}
-#endif // INCLUDED_core_scoring_methods_MembraneCenPairEnergyFWD_HH
+#endif // INCLUDED_core_energy_methods_MembraneCenPairEnergyFWD_HH

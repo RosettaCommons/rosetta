@@ -74,19 +74,19 @@
 #endif
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
 // tracer
 static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyDens");
 
-ScoreTypes FiberDiffractionEnergyDensCreator::score_types_for_method() const {
+core::scoring::ScoreTypes FiberDiffractionEnergyDensCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( fiberdiffractiondens );
 	return sts;
 }
 
-methods::EnergyMethodOP FiberDiffractionEnergyDensCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergyDensCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 	return utility::pointer::make_shared< FiberDiffractionEnergyDens >();
 }
 
@@ -98,11 +98,13 @@ FiberDiffractionEnergyDens::FiberDiffractionEnergyDens() :
 }
 
 /// clone
-methods::EnergyMethodOP FiberDiffractionEnergyDens::clone() const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergyDens::clone() const {
 	return utility::pointer::make_shared< FiberDiffractionEnergyDens >( *this );
 }
 
-void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
+
+	using namespace scoring::fiber_diffraction;
 
 	if ( !core::pose::symmetry::is_symmetric(pose) ) {
 		utility_exit_with_message("Structure needs to be symmetric! Aborting...");
@@ -275,10 +277,10 @@ void FiberDiffractionEnergyDens::setup_for_scoring( pose::Pose & pose, ScoreFunc
 	}
 }
 
-void FiberDiffractionEnergyDens::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
+void FiberDiffractionEnergyDens::finalize_total_energy(pose::Pose & /*pose*/, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const {
 	// all the work is done in setup for scoring
 	// just return results here
-	emap[ fiberdiffractiondens ] += chi2_;
+	emap[ core::scoring::fiberdiffractiondens ] += chi2_;
 }
 
 
@@ -291,7 +293,7 @@ FiberDiffractionEnergyDens::calculate_rho_fast2(
 	Real const c
 ) const
 {
-
+	using namespace scoring::fiber_diffraction;
 	// Are we symmetric?
 	const core::conformation::symmetry::SymmetryInfo *symminfo=nullptr;
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -482,6 +484,7 @@ void gnl_R_qfht(
 	double & qfht_K2,
 	ObjexxFCL::FArray3D< std::complex<float> > & Gnl
 ) {
+	using namespace scoring::fiber_diffraction;
 	Size max_n_val(0);
 	for ( Size i=0; i<= lmax; ++i ) {
 		if ( nvals[i].size() > max_n_val ) max_n_val = nvals[i].size();
@@ -542,7 +545,6 @@ fit_layer_lines_with_splines(
 	return spline_interpolator;
 }
 
-} // fiber_diffraction
 } // scoring
 } // core
 

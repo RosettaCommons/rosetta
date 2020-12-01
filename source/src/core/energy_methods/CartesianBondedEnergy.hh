@@ -12,8 +12,8 @@
 /// @author Frank DiMaio
 /// @author Andrew Leaver-Fay optimized the code a bit
 
-#ifndef INCLUDED_core_scoring_methods_CartesianBondedEnergy_hh
-#define INCLUDED_core_scoring_methods_CartesianBondedEnergy_hh
+#ifndef INCLUDED_core_energy_methods_CartesianBondedEnergy_hh
+#define INCLUDED_core_energy_methods_CartesianBondedEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/CartesianBondedEnergy.fwd.hh>
@@ -76,32 +76,32 @@ bool operator==(atm_name_single const& a,atm_name_single const& b);
 }
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-typedef utility::vector1< std::pair< atm_name_quad, CartBondedParametersCOP > > torsionparam_vector;
+
+typedef utility::vector1< std::pair< atm_name_quad, core::scoring::methods::CartBondedParametersCOP > > torsionparam_vector;
 
 class ResidueCartBondedParameters : public utility::VirtualBase {
 public:
 	typedef utility::fixedsizearray1< Size, 2 > Size2;
 	typedef utility::fixedsizearray1< Size, 3 > Size3;
 	typedef utility::fixedsizearray1< Size, 4 > Size4;
-	typedef std::pair< Size2, CartBondedParametersCOP > length_parameter;
-	typedef std::pair< Size3, CartBondedParametersCOP > angle_parameter;
-	typedef std::pair< Size4, CartBondedParametersCOP > torsion_parameter;
+	typedef std::pair< Size2, core::scoring::methods::CartBondedParametersCOP > length_parameter;
+	typedef std::pair< Size3, core::scoring::methods::CartBondedParametersCOP > angle_parameter;
+	typedef std::pair< Size4, core::scoring::methods::CartBondedParametersCOP > torsion_parameter;
 
 public:
 	ResidueCartBondedParameters();
 	~ResidueCartBondedParameters() override;
 
-	void add_length_parameter(  Size2 atom_inds, CartBondedParametersCOP );
-	void add_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP );
-	void add_torsion_parameter( Size4 atom_inds, CartBondedParametersCOP );
-	void add_improper_parameter( Size4 atom_inds, CartBondedParametersCOP );
-	void add_bbdep_length_parameter(  Size2 atom_inds, CartBondedParametersCOP );
-	void add_bbdep_angle_parameter(   Size3 atom_inds, CartBondedParametersCOP );
-	void add_lower_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP );
-	void add_upper_connect_angle_params( Size3 atom_inds, CartBondedParametersCOP );
+	void add_length_parameter(  Size2 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_angle_parameter(   Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_torsion_parameter( Size4 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_improper_parameter( Size4 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_bbdep_length_parameter(  Size2 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_bbdep_angle_parameter(   Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_lower_connect_angle_params( Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP );
+	void add_upper_connect_angle_params( Size3 atom_inds, core::scoring::methods::CartBondedParametersCOP );
 
 	void bb_N_index( Size index );
 	void bb_CA_index( Size index );
@@ -110,11 +110,11 @@ public:
 	void bb_H_index( Size index );
 	void pro_CD_index( Size index );
 
-	void ca_cprev_n_h_interres_improper_params( CartBondedParametersCOP );
-	void oprev_cprev_n_h_interres_improper_params( CartBondedParametersCOP );
-	void ca_nnext_c_o_interres_improper_params( CartBondedParametersCOP );
-	void pro_cd_cprev_n_ca_interres_improper_params( CartBondedParametersCOP );
-	void cprev_n_bond_length_params( CartBondedParametersCOP );
+	void ca_cprev_n_h_interres_improper_params( core::scoring::methods::CartBondedParametersCOP );
+	void oprev_cprev_n_h_interres_improper_params( core::scoring::methods::CartBondedParametersCOP );
+	void ca_nnext_c_o_interres_improper_params( core::scoring::methods::CartBondedParametersCOP );
+	void pro_cd_cprev_n_ca_interres_improper_params( core::scoring::methods::CartBondedParametersCOP );
+	void cprev_n_bond_length_params( core::scoring::methods::CartBondedParametersCOP );
 
 	utility::vector1< length_parameter > const &
 	length_parameters() const {
@@ -168,27 +168,27 @@ public:
 	Size bb_H_index()  const { return bb_H_index_;  }
 	Size pro_CD_index( )  const { return pro_CD_index_;  }
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	ca_cprev_n_h_interres_improper_params() const {
 		return ca_cprev_n_h_interres_improper_params_;
 	}
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	oprev_cprev_n_h_interres_improper_params() const {
 		return oprev_cprev_n_h_interres_improper_params_;
 	}
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	ca_nnext_c_o_interres_improper_params() const {
 		return ca_nnext_c_o_interres_improper_params_;
 	}
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	pro_cd_cprev_n_ca_interres_improper_params() const {
 		return pro_cd_cprev_n_ca_interres_improper_params_;
 	}
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	cprev_n_bond_length_params() const {
 		return cprev_n_bond_length_params_;
 	}
@@ -220,11 +220,11 @@ private:
 	Size bb_H_index_;
 	Size pro_CD_index_;
 
-	CartBondedParametersCOP ca_cprev_n_h_interres_improper_params_;
-	CartBondedParametersCOP oprev_cprev_n_h_interres_improper_params_;
-	CartBondedParametersCOP ca_nnext_c_o_interres_improper_params_;
-	CartBondedParametersCOP pro_cd_cprev_n_ca_interres_improper_params_;
-	CartBondedParametersCOP cprev_n_bond_length_params_;
+	core::scoring::methods::CartBondedParametersCOP ca_cprev_n_h_interres_improper_params_;
+	core::scoring::methods::CartBondedParametersCOP oprev_cprev_n_h_interres_improper_params_;
+	core::scoring::methods::CartBondedParametersCOP ca_nnext_c_o_interres_improper_params_;
+	core::scoring::methods::CartBondedParametersCOP pro_cd_cprev_n_ca_interres_improper_params_;
+	core::scoring::methods::CartBondedParametersCOP cprev_n_bond_length_params_;
 
 };
 
@@ -234,7 +234,7 @@ private:
 class IdealParametersDatabase  : public utility::VirtualBase {
 public:
 	// The per-residue maping for the torsions
-	typedef boost::unordered_map< atm_name_quad, CartBondedParametersOP > TorsionsIndepSubmap;
+	typedef boost::unordered_map< atm_name_quad, core::scoring::methods::CartBondedParametersOP > TorsionsIndepSubmap;
 
 	IdealParametersDatabase(Real k_len, Real k_ang, Real k_tors, Real k_tors_prot, Real k_tors_improper);
 
@@ -245,7 +245,7 @@ public:
 
 	~IdealParametersDatabase() override;
 
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	lookup_improper(
 		core::chemical::ResidueType const & rsd_type,
 		std::string const & atm1_name,
@@ -261,7 +261,7 @@ public:
 	);
 
 	// needs both names (for keying off databases) and indices (for building those not found from ideal)
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	lookup_angle(
 		core::chemical::ResidueType const & rsd_type,
 		bool pre_proline,
@@ -274,7 +274,7 @@ public:
 	);
 
 	// needs both names (for keying off databases) and indices (for building those not found from ideal)
-	CartBondedParametersCOP
+	core::scoring::methods::CartBondedParametersCOP
 	lookup_length(
 		core::chemical::ResidueType const & rsd_type,
 		bool pre_proline,
@@ -352,8 +352,8 @@ private:
 	void
 	read_bbdep_table(
 		std::string const &filename,
-		boost::unordered_map< atm_name_single, CartBondedParametersOP > &bondlengths,
-		boost::unordered_map< atm_name_pair, CartBondedParametersOP > &bondangles,
+		boost::unordered_map< atm_name_single, core::scoring::methods::CartBondedParametersOP > &bondlengths,
+		boost::unordered_map< atm_name_pair, core::scoring::methods::CartBondedParametersOP > &bondangles,
 		std::string const &res,
 		bool const symmetrize_table
 	);
@@ -397,15 +397,15 @@ private:
 #endif
 
 	// backbone-independent parameters (keyed on atom names)
-	boost::unordered_map< atm_name_pair, CartBondedParametersOP > bondlengths_indep_;
-	boost::unordered_map< atm_name_triple, CartBondedParametersOP > bondangles_indep_;
-	boost::unordered_multimap< atm_name_quad, CartBondedParametersOP > torsions_indep_;
-	boost::unordered_map< atm_name_quad,  CartBondedParametersOP > impropers_indep_;
+	boost::unordered_map< atm_name_pair, core::scoring::methods::CartBondedParametersOP > bondlengths_indep_;
+	boost::unordered_map< atm_name_triple, core::scoring::methods::CartBondedParametersOP > bondangles_indep_;
+	boost::unordered_multimap< atm_name_quad, core::scoring::methods::CartBondedParametersOP > torsions_indep_;
+	boost::unordered_map< atm_name_quad,  core::scoring::methods::CartBondedParametersOP > impropers_indep_;
 
 	// backbone-dependent parameter sets
-	boost::unordered_map< atm_name_pair, CartBondedParametersOP >
+	boost::unordered_map< atm_name_pair, core::scoring::methods::CartBondedParametersOP >
 		bondangles_bbdep_def_, bondangles_bbdep_pro_, bondangles_bbdep_valile_, bondangles_bbdep_prepro_, bondangles_bbdep_gly_;
-	boost::unordered_map< atm_name_single, CartBondedParametersOP >
+	boost::unordered_map< atm_name_single, core::scoring::methods::CartBondedParametersOP >
 		bondlengths_bbdep_def_, bondlengths_bbdep_pro_, bondlengths_bbdep_valile_, bondlengths_bbdep_prepro_, bondlengths_bbdep_gly_;
 
 	// per residue-type data
@@ -419,28 +419,28 @@ private:
 ///////////////////
 ///
 /// the energy method
-class CartesianBondedEnergy : public ContextIndependentLRTwoBodyEnergy {
+class CartesianBondedEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 	CartesianBondedEnergy() = delete; // Need options to initialize this structure
 
-	CartesianBondedEnergy( methods::EnergyMethodOptions const & options );
+	CartesianBondedEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	CartesianBondedEnergy( CartesianBondedEnergy const & src );
 
 	~CartesianBondedEnergy() override;
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sfxn ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sfxn ) const override;
 
 	/// @brief Idealize the virtual NV atom of every proline in the pose. This
 	///prevents innacurate pro-close scores when switching between cartesian
@@ -463,67 +463,67 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & res_data_cache,
+		core::scoring::ResSingleMinimizationData const & res_data_cache,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	void
 	eval_residue_pair_derivatives_sorted(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	// dof (bbdep) derivatives
 	Real
 	eval_intraresidue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return true; }
 
 	bool
 	defines_intrares_dof_derivatives( pose::Pose const & ) const override { return true; }
@@ -538,7 +538,7 @@ public:
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 private:
@@ -553,8 +553,8 @@ private:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sf,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sf,
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// Methods for intra-residue energies
@@ -569,7 +569,7 @@ private:
 		Real phi,
 		Real psi,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief helper function to handle intrares torsions
@@ -578,7 +578,7 @@ private:
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -588,7 +588,7 @@ private:
 		conformation::Residue const & rsd,
 		//ResidueCartBondedParameters const & resparams,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief helper function to handle intrares bond improper torsions
@@ -599,7 +599,7 @@ private:
 		Real const phi,
 		Real const psi,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief helper function to handle intrares bond angles
@@ -610,7 +610,7 @@ private:
 		Real const phi,
 		Real const psi,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief helper function to handle intrares bond lengths
@@ -621,7 +621,7 @@ private:
 		Real const phi,
 		Real const psi,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// Methods for inter-residue energies
@@ -638,7 +638,7 @@ private:
 		Real phi2,
 		Real psi2,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/// @brief Evaluate all inter
@@ -651,7 +651,7 @@ private:
 		Real phi1,
 		Real psi1,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	void
@@ -663,7 +663,7 @@ private:
 		Real phi2,
 		Real psi2,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	void
@@ -675,7 +675,7 @@ private:
 		Real phi2,
 		Real psi2,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -686,7 +686,7 @@ private:
 		ResidueCartBondedParameters const & rsd1params,
 		ResidueCartBondedParameters const & rsd2params,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	void
@@ -694,7 +694,7 @@ private:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	/////////////////////////////////
@@ -710,8 +710,8 @@ private:
 		ResidueCartBondedParameters const & resparams,
 		Real phi,
 		Real psi,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 	/// @brief evaluate intra-residue ring derivatives
@@ -719,8 +719,8 @@ private:
 	eval_singleres_ring_derivatives(
 		conformation::Residue const & rsd,
 		//ResidueCartBondedParameters const & resparams,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 
@@ -731,8 +731,8 @@ private:
 		ResidueCartBondedParameters const & resparams,
 		Real const phi,
 		Real const psi,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 	/// @brief evaluate intra-residue angle derivatives
@@ -742,8 +742,8 @@ private:
 		ResidueCartBondedParameters const & resparams,
 		Real const phi,
 		Real const psi,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 	/// @brief evaluate intra-residue bond-length derivatives
@@ -753,8 +753,8 @@ private:
 		ResidueCartBondedParameters const & resparams,
 		Real const phi,
 		Real const psi,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 
@@ -763,8 +763,8 @@ private:
 	eval_singleres_torsion_derivatives(
 		conformation::Residue const & rsd,
 		ResidueCartBondedParameters const & resparams,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r_atom_derivs
 	) const;
 
 	// residue-pair derivatives
@@ -779,9 +779,9 @@ private:
 		ResidueCartBondedParameters const & rsd2params,
 		Real phi1,
 		Real psi1,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	/// @brief evaluate inter-residue angle derivatives where
@@ -794,9 +794,9 @@ private:
 		ResidueCartBondedParameters const & rsd2params,
 		Real phi2,
 		Real psi2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	/// @brief evaluate inter-residue bond-length derivatives
@@ -808,9 +808,9 @@ private:
 		ResidueCartBondedParameters const & rsd2params,
 		Real phi2,
 		Real psi2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	/// @brief evaluate inter-residue improper torsion derivatives
@@ -820,18 +820,18 @@ private:
 		conformation::Residue const & rsd2,
 		ResidueCartBondedParameters const & res1params,
 		ResidueCartBondedParameters const & res2params,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	void
 	eval_interresidue_ring_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 	////////////////////////////////////////////////////////////////////
@@ -870,9 +870,8 @@ private:
 
 };
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 
-#endif // INCLUDED_core_scoring_methods_CartesianBondedEnergy_HH
+#endif // INCLUDED_core_energy_methods_CartesianBondedEnergy_HH

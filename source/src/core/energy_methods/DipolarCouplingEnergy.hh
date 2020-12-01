@@ -12,8 +12,8 @@
 /// @author Lei Shi
 
 
-#ifndef INCLUDED_core_scoring_methods_DipolarCouplingEnergy_hh
-#define INCLUDED_core_scoring_methods_DipolarCouplingEnergy_hh
+#ifndef INCLUDED_core_energy_methods_DipolarCouplingEnergy_hh
+#define INCLUDED_core_energy_methods_DipolarCouplingEnergy_hh
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -35,27 +35,27 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class DipolarCouplingEnergy : public WholeStructureEnergy  {
+
+class DipolarCouplingEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	DipolarCouplingEnergy();
 
 	//clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Called at the beginning of atom tree minimization, this method
 	/// allows the derived class the opportunity to initialize pertinent data
@@ -66,15 +66,15 @@ public:
 	void
 	setup_for_minimizing(
 		pose::Pose & ,
-		ScoreFunction const & ,
+		core::scoring::ScoreFunction const & ,
 		kinematics::MinimizerMapBase const &
 	) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
@@ -87,15 +87,15 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
 
 private:
 
-	DipolarCoupling& dc_from_pose(
+	core::scoring::DipolarCoupling& dc_from_pose(
 		pose::Pose & pose
 	) const;
 
@@ -112,7 +112,6 @@ private:
 	core::Size version() const override;
 };
 
-} //methods
 } //scoring
 } //core
 

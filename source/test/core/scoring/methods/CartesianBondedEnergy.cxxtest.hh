@@ -46,6 +46,7 @@ using namespace core::kinematics;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
+using namespace core::energy_methods;
 
 static basic::Tracer TR("core.scoring.methods.CartesianBondedEnergy.cxxtest");
 
@@ -251,7 +252,7 @@ public:
 			TR << restype->name() << std::endl;
 			{
 				bool prepro(true);
-				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
+				core::energy_methods::ResidueCartBondedParameters const & rcbp(
 					ipd.parameters_for_restype(*(restype), prepro));
 				rcbp.bb_N_index();
 				rcbp.bb_CA_index();
@@ -261,7 +262,7 @@ public:
 
 			{
 				bool prepro(false);
-				core::scoring::methods::ResidueCartBondedParameters const & rcbp(
+				core::energy_methods::ResidueCartBondedParameters const & rcbp(
 					ipd.parameters_for_restype(*(restype), prepro));
 				rcbp.bb_N_index();
 				rcbp.bb_CA_index();
@@ -287,6 +288,7 @@ public:
 	void test_torsion_generation() {
 		using namespace core::scoring::methods;
 		using namespace core::chemical;
+		using namespace core::energy_methods;
 
 		ResidueTypeSetCOP restypeset( ChemicalManager::get_instance()->residue_type_set( FA_STANDARD ) );
 		ResidueType const & restype( restypeset->name_map("HEM") );

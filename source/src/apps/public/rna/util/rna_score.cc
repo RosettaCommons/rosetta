@@ -326,7 +326,7 @@ private:
 	core::pose::full_model_info::FullModelInfoOP my_model_;
 	core::chemical::ResidueTypeSetCOP rsd_set_;
 	utility::vector1< pose::PoseOP > other_poses_;
-	core::scoring::rna::data::RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy_ = nullptr;
+	core::energy_methods::RNA_ChemicalMappingEnergyOP rna_chemical_mapping_energy_ = nullptr;
 	core::io::rna::RNA_DataReaderOP rna_data_reader_ = nullptr;
 };
 
@@ -497,7 +497,7 @@ void RNA_ScoreMover::apply( core::pose::Pose & pose ) {
 
 	// for data_file, don't actually re-score, just compute rna_chem_map score for now.
 	if ( rna_data_reader_->has_reactivities() ) {
-		if ( !rna_chemical_mapping_energy_ ) rna_chemical_mapping_energy_ = utility::pointer::make_shared< RNA_ChemicalMappingEnergy >();
+		if ( !rna_chemical_mapping_energy_ ) rna_chemical_mapping_energy_ = utility::pointer::make_shared< core::energy_methods::RNA_ChemicalMappingEnergy >();
 		rna_data_reader_->fill_rna_data_info( pose );
 		pose.update_residue_neighbors();
 		//s.add_energy(  "rna_chem_map",       rna_chemical_mapping_energy_->calculate_energy( pose, false /*use_low_res*/ ) );

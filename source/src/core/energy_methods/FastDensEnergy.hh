@@ -28,25 +28,24 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
 
-class FastDensEnergy : public methods::ContextIndependentLRTwoBodyEnergy  {
+class FastDensEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 
 public:
 
 	/// constructor
-	FastDensEnergy( methods::EnergyMethodOptions const & opts );
+	FastDensEnergy( core::scoring::methods::EnergyMethodOptions const & opts );
 
 
 	/// clone
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// lr container name
-	methods::LongRangeEnergyType long_range_type() const override;
+	core::scoring::methods::LongRangeEnergyType long_range_type() const override;
 
 
 	bool
@@ -57,19 +56,19 @@ public:
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const &  ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const &  ) const override { return false; }
 
 	/// scoring
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
@@ -81,27 +80,27 @@ public:
 
 	/// derivatives
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const override;
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	///
 	void
 	finalize_total_energy(
 		pose::Pose & ,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 	///  use the new minimizer interface
@@ -123,7 +122,6 @@ private:
 };
 
 
-}
 }
 }
 

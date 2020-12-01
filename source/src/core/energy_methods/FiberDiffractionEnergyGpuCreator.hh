@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/fiber_diffraction/FiberDiffractionEnergyCreator.hh
+/// @file src/core/energy_methods/FiberDiffractionEnergyCreator.hh
 /// @brief  Energy Creator for FiberDiffractionEnergy
 /// @author Ingemar Andre
 
@@ -18,17 +18,16 @@
 #include <core/types.hh>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
 #ifdef USECUDA
-class FiberDiffractionEnergyGpuCreator : public methods::EnergyMethodCreator {
+class FiberDiffractionEnergyGpuCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	FiberDiffractionEnergyGpuCreator() {}
 
 	/// @brief Instantiate a new FiberDiffractionEnergy
-	virtual methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const;
+	virtual core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
@@ -36,7 +35,6 @@ public:
 };
 #endif
 
-}
 }
 }
 

@@ -111,7 +111,7 @@ ResidueLipophilicityFilter::report_sm( core::pose::Pose const & pose ) const {
 
 core::Real
 ResidueLipophilicityFilter::compute( core::pose::Pose const & pose ) const {
-	core::scoring::membrane::MPResidueLipophilicityEnergy mp_mp_res_lipo = core::scoring::membrane::MPResidueLipophilicityEnergy();
+	core::energy_methods::MPResidueLipophilicityEnergy mp_mp_res_lipo;
 	core::Real total_mp_res_lipo = 0.0;
 
 	if ( output_ == "TR" ) {

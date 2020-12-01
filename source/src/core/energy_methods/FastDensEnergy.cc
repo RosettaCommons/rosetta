@@ -54,23 +54,23 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace electron_density {
+namespace energy_methods {
 
 static basic::Tracer TR( "core.scoring.electron_density.FastDensEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FastDensEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & opts
+	core::scoring::methods::EnergyMethodOptions const & opts
 ) const {
 	return utility::pointer::make_shared< FastDensEnergy >(opts);
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 FastDensEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( elec_dens_fast );
 	return sts;
@@ -84,11 +84,11 @@ using namespace core::scoring::methods;
 inline core::Real SQ( core::Real N ) { return N*N; }
 
 
-methods::LongRangeEnergyType
+core::scoring::methods::LongRangeEnergyType
 FastDensEnergy::long_range_type() const { return elec_dens_fast_energy; }
 
 /// c-tor
-FastDensEnergy::FastDensEnergy( methods::EnergyMethodOptions const & opts)
+FastDensEnergy::FastDensEnergy( core::scoring::methods::EnergyMethodOptions const & opts)
 : parent( utility::pointer::make_shared< FastDensEnergyCreator >() ) {
 	scoreSymmComplex_ = basic::options::option[ basic::options::OptionKeys::edensity::score_symm_complex ]();
 
@@ -100,7 +100,7 @@ FastDensEnergy::FastDensEnergy( methods::EnergyMethodOptions const & opts)
 
 
 /// clone
-EnergyMethodOP FastDensEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP FastDensEnergy::clone() const {
 	return utility::pointer::make_shared< FastDensEnergy >( *this );
 }
 
@@ -126,7 +126,7 @@ FastDensEnergy::pose_is_setup_for_density_scoring( pose::Pose const & pose) cons
 
 
 void
-FastDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const & /* sf */) const {
+FastDensEnergy::setup_for_derivatives( pose::Pose & pose , core::scoring::ScoreFunction const & /* sf */) const {
 	// grab symminfo (if defined) from the pose
 	core::conformation::symmetry::SymmetryInfoCOP symminfo(nullptr);
 	if ( core::pose::symmetry::is_symmetric(pose) ) {
@@ -139,9 +139,9 @@ FastDensEnergy::setup_for_derivatives( pose::Pose & pose , ScoreFunction const &
 void
 FastDensEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 
 	if ( ! core::scoring::electron_density::getDensityMap().isMapLoaded() ) {
 		utility_exit_with_message("Density scoring function called but no map loaded.");
@@ -156,7 +156,7 @@ FastDensEnergy::setup_for_scoring(
 	int virt_res_idx = root_edge.start();
 
 	// b factor adjustment
-	if ( !pose_has_nonzero_Bs( pose ) ) {
+	if ( !core::scoring::electron_density::pose_has_nonzero_Bs( pose ) ) {
 		Real effB = core::scoring::electron_density::getDensityMap().getEffectiveBfactor();
 
 		if ( pose.pdb_info() != nullptr ) {
@@ -170,15 +170,15 @@ FastDensEnergy::setup_for_scoring(
 	}
 
 	// create LR energy container (if needed)
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::OneToAllEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::OneToAllEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() || dec->fixed() != virt_res_idx ) {
 			create_new_lre_container = true;  // size or root change; recompute
 		}
@@ -186,7 +186,7 @@ FastDensEnergy::setup_for_scoring(
 
 	if ( create_new_lre_container ) {
 		TR.Debug << "Creating new one-to-all energy container (" << pose.size() << ")" << std::endl;
-		LREnergyContainerOP new_dec( new OneToAllEnergyContainer( virt_res_idx, pose.size(),  elec_dens_fast ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::OneToAllEnergyContainer >( virt_res_idx, pose.size(),  core::scoring::elec_dens_fast ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 
@@ -206,8 +206,8 @@ FastDensEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace numeric::statistics;
 
@@ -247,7 +247,7 @@ FastDensEnergy::residue_pair_energy(
 		}
 	}
 
-	emap[ elec_dens_fast ] += edensScore;
+	emap[ core::scoring::elec_dens_fast ] += edensScore;
 	return;
 }
 
@@ -256,13 +256,13 @@ void
 FastDensEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 	using namespace numeric::statistics;
 
@@ -271,10 +271,10 @@ FastDensEnergy::eval_residue_pair_derivatives(
 	if ( !pose_is_setup_for_density_scoring( pose ) ) return; // already warned in setup
 
 	conformation::Residue const & res = (rsd2.aa() == core::chemical::aa_vrt) ? rsd1 : rsd2;
-	utility::vector1< DerivVectorPair > &r_atom_derivs = (rsd2.aa() == core::chemical::aa_vrt) ? r1_atom_derivs : r2_atom_derivs;
+	utility::vector1< core::scoring::DerivVectorPair > &r_atom_derivs = (rsd2.aa() == core::chemical::aa_vrt) ? r1_atom_derivs : r2_atom_derivs;
 
 	// apply sc scaling here
-	core::Real weight = weights[ elec_dens_fast ];
+	core::Real weight = weights[ core::scoring::elec_dens_fast ];
 	core::Real sc_scale = 1.0;
 	if ( res.aa() <= core::chemical::num_canonical_aas ) sc_scale = sc_scale_byres_[(int)res.aa()];
 
@@ -507,6 +507,5 @@ FastDensEnergy::version() const
 }
 
 
-}
 }
 }

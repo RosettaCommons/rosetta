@@ -56,7 +56,7 @@ RDC_Evaluator::RDC_Evaluator( std::string const & tag ) :
 // init_rdcs();
 //}
 
-static core::scoring::methods::ResidualDipolarCouplingEnergy energy_evaluator;
+static core::energy_methods::ResidualDipolarCouplingEnergy energy_evaluator;
 /// @brief evaluate pose
 core::Real
 RDC_Evaluator::apply( core::pose::Pose& pose ) const {

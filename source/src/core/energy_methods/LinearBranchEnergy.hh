@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay
 /// @author Christopher Miles (cmiles@uw.edu)
 
-#ifndef INCLUDED_core_scoring_methods_LinearBranchEnergy_hh
-#define INCLUDED_core_scoring_methods_LinearBranchEnergy_hh
+#ifndef INCLUDED_core_energy_methods_LinearBranchEnergy_hh
+#define INCLUDED_core_energy_methods_LinearBranchEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/LinearBranchEnergy.fwd.hh>
@@ -37,8 +37,8 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @brief LinearBranchEnergy class iterates across all residues in finalize()
 /// and determines the penalty between branch-connected residues by how much their
@@ -51,9 +51,9 @@ namespace methods {
 ///  For ideal poses, this score should be very close to 0.  Real PDBs, however have bond length and angle
 ///   deviations that will cause this score to be fairly high.
 ///
-class LinearBranchEnergy : public WholeStructureEnergy {
+class LinearBranchEnergy : public core::scoring::methods::WholeStructureEnergy {
 public:
-	typedef WholeStructureEnergy parent;
+	typedef core::scoring::methods::WholeStructureEnergy parent;
 
 	// @brief Creates a new LinearBranchEnergy with the default allowable sequence
 	// separation (+inf)
@@ -70,15 +70,15 @@ public:
 	~LinearBranchEnergy() override;
 
 	/// clone
-	EnergyMethodOP clone() const override {
+	core::scoring::methods::EnergyMethodOP clone() const override {
 		return utility::pointer::make_shared< LinearBranchEnergy >(*this);
 	}
 
 	/// called at the end of energy evaluation
 	void finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals) const override;
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals) const override;
 
 	/// called during gradient-based minimization inside dfunc
 	/**
@@ -88,8 +88,8 @@ public:
 	void eval_atom_derivative(id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2) const override;
 
@@ -106,7 +106,6 @@ private:
 	core::Size version() const override;
 };
 
-} // methods
 } // scoring
 } // core
 #endif

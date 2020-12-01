@@ -37,44 +37,43 @@
 //#include <core/scoring/EnergyMap.hh>
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 extern Vector dummy_deriv_vector_;
 
-class OccludedHbondSolEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class OccludedHbondSolEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
-	OccludedHbondSolEnergy( methods::EnergyMethodOptions const & options, bool const verbose = false );
+	OccludedHbondSolEnergy( core::scoring::methods::EnergyMethodOptions const & options, bool const verbose = false );
 
 	OccludedHbondSolEnergy( OccludedHbondSolEnergy const & src );
 
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & ,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief Inform inquiring algorithms that this energy method will opt-in to the
@@ -93,22 +92,22 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	/*void
@@ -116,8 +115,8 @@ public:
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -125,7 +124,7 @@ public:
 	// Note: This could change - see notes in the .cc re double-counting. If it does,
 	// eval_atom_derivative has to change too.
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override { return true; };
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return true; };
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -146,9 +145,9 @@ private:
 	eval_residue_pair_derivatives_one_way(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const;
 
 
@@ -197,14 +196,13 @@ private:
 	utility::vector1<core::Real> amp_scaling_factors_;
 
 	// const-ref to scoring database
-	DatabaseOccSolEne const & occ_hbond_sol_database_;
+	scoring::geometric_solvation::DatabaseOccSolEne const & occ_hbond_sol_database_;
 
 	bool const verbose_;
 	core::Size version() const override;
 
 };
 
-} // geometric_solvation
 } // scoring
 } // core
 

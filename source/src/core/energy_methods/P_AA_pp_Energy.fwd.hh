@@ -12,20 +12,19 @@
 /// @author Andrew Leaver-Fay
 
 
-#ifndef INCLUDED_core_scoring_methods_P_AA_pp_Energy_fwd_hh
-#define INCLUDED_core_scoring_methods_P_AA_pp_Energy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_P_AA_pp_Energy_fwd_hh
+#define INCLUDED_core_energy_methods_P_AA_pp_Energy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class P_AA_pp_Energy;
 
 typedef utility::pointer::shared_ptr< P_AA_pp_Energy > P_AA_pp_EnergyOP;
 
-} // methods
 } // scoring
 } // core
 

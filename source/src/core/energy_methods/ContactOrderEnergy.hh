@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_ContactOrderEnergy_hh
-#define INCLUDED_core_scoring_methods_ContactOrderEnergy_hh
+#ifndef INCLUDED_core_energy_methods_ContactOrderEnergy_hh
+#define INCLUDED_core_energy_methods_ContactOrderEnergy_hh
 
 
 // Package headers
@@ -31,19 +31,19 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class ContactOrderEnergy : public WholeStructureEnergy  {
+
+class ContactOrderEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 public:
 
 	ContactOrderEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	core::Real
@@ -72,8 +72,7 @@ private:
 }; // ContactOrderEnergy
 
 
-} // methods
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_ContactOrderEnergy_HH
+#endif // INCLUDED_core_energy_methods_ContactOrderEnergy_HH

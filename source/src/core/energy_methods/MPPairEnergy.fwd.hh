@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file		core/scoring/membrane/MPPairEnergy.fwd.hh
+/// @file  core/scoring/membrane/MPPairEnergy.fwd.hh
 ///
-///	@brief		Membrane Residue Pair Energy Term
-///	@details	Two Body Term - score residue-residue interactions in the membrane. Derived from Membrane
-///				base potential and uses mpframework data
-///				Last Modified: 3/28/14
+/// @brief  Membrane Residue Pair Energy Term
+/// @details Two Body Term - score residue-residue interactions in the membrane. Derived from Membrane
+///    base potential and uses mpframework data
+///    Last Modified: 3/28/14
 ///
-///	@author		Rebecca Alford (rfalford12@gmail.com)
+/// @author  Rebecca Alford (rfalford12@gmail.com)
 
 #ifndef INCLUDED_core_scoring_membrane_MPPairEnergy_fwd_hh
 #define INCLUDED_core_scoring_membrane_MPPairEnergy_fwd_hh
@@ -23,14 +23,12 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 /// @brief Membrane Residue Pair Energy Term
 class MPPairEnergy;
 typedef utility::pointer::shared_ptr< MPPairEnergy > MPPairEnergyOP;
 typedef utility::pointer::shared_ptr< MPPairEnergy const > MPPairEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 

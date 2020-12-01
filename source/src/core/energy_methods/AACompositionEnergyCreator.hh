@@ -29,8 +29,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace aa_composition_energy {
+namespace energy_methods {
 
 class AACompositionEnergyCreator : public core::scoring::methods::EnergyMethodCreator
 {
@@ -42,10 +41,9 @@ public:
 
 	/// @brief Return the set of score types claimed by the EnergyMethod that
 	/// this EnergyMethodCreator creates in its create_energy_method() function.
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-} // aa_composition_energy
 } // scoring
 } // core
 

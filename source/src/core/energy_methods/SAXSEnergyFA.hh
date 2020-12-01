@@ -85,8 +85,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 
 class SAXSEnergyFA : public SAXSEnergy  {
@@ -94,12 +93,11 @@ public:
 
 	/// c-tor
 	SAXSEnergyFA() : SAXSEnergy( fa_cfg_file_,
-		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD),saxs_fa_score,utility::pointer::make_shared< SAXSEnergyCreatorFA >()) {}
+		chemical::ChemicalManager::get_instance()->residue_type_set(core::chemical::FA_STANDARD), core::scoring::saxs_fa_score, utility::pointer::make_shared< SAXSEnergyCreatorFA >()) {}
 
 };
 
 
-}
 }
 }
 

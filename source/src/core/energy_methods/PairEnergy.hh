@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_PairEnergy_hh
-#define INCLUDED_core_scoring_methods_PairEnergy_hh
+#ifndef INCLUDED_core_energy_methods_PairEnergy_hh
+#define INCLUDED_core_energy_methods_PairEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/PairEnergy.fwd.hh>
@@ -35,11 +35,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class PairEnergy : public ContextDependentTwoBodyEnergy  {
+
+class PairEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy  {
 public:
 	typedef ContextDependentTwoBodyEnergy  parent;
 
@@ -50,7 +50,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 
@@ -59,11 +59,11 @@ public:
 
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	prepare_rotamers_for_packing(
@@ -86,8 +86,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -106,13 +106,13 @@ public:
 	Size const atom_index,
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & minsingle_data1,
-	ResSingleMinimizationData const & minsingle_data2,
-	ResPairMinimizationData const & minpair_data,
+	core::scoring::ResSingleMinimizationData const & minsingle_data1,
+	core::scoring::ResSingleMinimizationData const & minsingle_data2,
+	core::scoring::ResPairMinimizationData const & minpair_data,
 	pose::Pose const & pose, // provides context
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -121,13 +121,13 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	/// @brief Batch computation of rotamer pair energies.  Need not be overriden in
@@ -140,8 +140,8 @@ public:
 		conformation::RotamerSetBase const & set1,
 		conformation::RotamerSetBase const & set2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const override;
 
@@ -157,8 +157,8 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const override;
 
@@ -173,9 +173,9 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		utility::vector1< EnergyMap > & emaps
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::EnergyMap > & emaps
 	) const override;
 
 
@@ -185,8 +185,8 @@ public:
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -202,14 +202,14 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -219,13 +219,12 @@ public:
 private:
 
 	// const-ref to scoring database
-	PairEPotential const & potential_;
+	core::scoring::PairEPotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

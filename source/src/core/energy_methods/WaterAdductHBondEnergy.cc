@@ -32,21 +32,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the WaterAdductHBondEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterAdductHBondEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< WaterAdductHBondEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 WaterAdductHBondEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( h2o_hbond );
 	return sts;
@@ -55,12 +56,12 @@ WaterAdductHBondEnergyCreator::score_types_for_method() const {
 
 WaterAdductHBondEnergy::WaterAdductHBondEnergy() :
 	parent( utility::pointer::make_shared< WaterAdductHBondEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_WaterAdductHBondPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_WaterAdductHBondPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterAdductHBondEnergy::clone() const
 {
 	return utility::pointer::make_shared< WaterAdductHBondEnergy >();
@@ -68,18 +69,18 @@ WaterAdductHBondEnergy::clone() const
 
 
 void
-WaterAdductHBondEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+WaterAdductHBondEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
-	using EnergiesCacheableDataType::H2O_HBOND_SET;
+	using core::scoring::EnergiesCacheableDataType::H2O_HBOND_SET;
 	pose.update_residue_neighbors();
-	hbonds::HBondSetOP h2o_hbond_set( new hbonds::HBondSet( pose.size() ) );
+	core::scoring::hbonds::HBondSetOP h2o_hbond_set( utility::pointer::make_shared< core::scoring::hbonds::HBondSet >( pose.size() ) );
 	potential_.fill_h2o_hbond_set( pose, *h2o_hbond_set );
 	pose.energies().data().set( H2O_HBOND_SET, h2o_hbond_set );
 }
 
 
 void
-WaterAdductHBondEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+WaterAdductHBondEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -100,11 +101,11 @@ WaterAdductHBondEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,  //pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
-	emap[ h2o_hbond ] += potential_.water_adduct_hbond_score( rsd1, rsd2 );
+	emap[ core::scoring::h2o_hbond ] += potential_.water_adduct_hbond_score( rsd1, rsd2 );
 }
 
 
@@ -113,16 +114,16 @@ WaterAdductHBondEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
 {
-	using EnergiesCacheableDataType::H2O_HBOND_SET;
+	using core::scoring::EnergiesCacheableDataType::H2O_HBOND_SET;
 	/// f1 and f2 are zeroed
 	auto const & hbond_set
-		( static_cast< hbonds::HBondSet const & >
+		( static_cast< core::scoring::hbonds::HBondSet const & >
 		( pose.energies().data().get( H2O_HBOND_SET ) ) );
 	Vector f1,f2;
 	get_atom_h2o_hbond_derivative( atom_id, hbond_set, weights, f1, f2 );
@@ -137,8 +138,8 @@ WaterAdductHBondEnergy::eval_atom_derivative(
 void
 WaterAdductHBondEnergy::get_atom_h2o_hbond_derivative(
 	id::AtomID const & atom,
-	hbonds::HBondSet const & hbond_set,
-	EnergyMap const & weights,
+	core::scoring::hbonds::HBondSet const & hbond_set,
+	core::scoring::EnergyMap const & weights,
 	Vector & f1,
 	Vector & f2
 ) const
@@ -146,11 +147,11 @@ WaterAdductHBondEnergy::get_atom_h2o_hbond_derivative(
 	f1 = Vector(0.0);
 	f2 = Vector(0.0);
 
-	utility::vector1< hbonds::HBondCOP > const & hbonds
+	utility::vector1< core::scoring::hbonds::HBondCOP > const & hbonds
 		( hbond_set.atom_hbonds( atom ) );
 
 	for ( Size i=1; i<= hbonds.size(); ++i ) {
-		hbonds::HBond const & hbond( *hbonds[ i ] );
+		core::scoring::hbonds::HBond const & hbond( *hbonds[ i ] );
 		Real sign_factor( 0.0 );
 
 		// This part is different from the straight hbond version
@@ -164,11 +165,11 @@ WaterAdductHBondEnergy::get_atom_h2o_hbond_derivative(
 		//  std::cout << "Processing h2o hbond with energy" << hbond.energy() << std::endl;
 
 		// get the appropriate type of hbond weight
-		Real const weight ( sign_factor * hbond.weight() * weights[ h2o_hbond ] );
+		Real const weight ( sign_factor * hbond.weight() * weights[ core::scoring::h2o_hbond ] );
 		//  std::cout << "Applying weight " << weight << std::endl;
 		//  std::cout << "sign_factor " << sign_factor << std::endl;
 		//  std::cout << "hbond stored weight " << hbond.weight() << std::endl;
-		//  std::cout << "stupid type weight " << weights[ h2o_hbond ]  << std::endl;
+		//  std::cout << "stupid type weight " << weights[ core::scoring::h2o_hbond ]  << std::endl;
 		f1 += weight * hbond.derivs().h_deriv.f1();
 		f2 += weight * hbond.derivs().h_deriv.f2();
 		//  std::cout << "F1 is " <<
@@ -205,6 +206,5 @@ WaterAdductHBondEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

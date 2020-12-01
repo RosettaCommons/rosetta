@@ -57,6 +57,7 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::mhc_epitope_energy;
+using namespace core::energy_methods;
 
 class MHCEpitopeEnergyTests_Scoring : public CxxTest::TestSuite {
 

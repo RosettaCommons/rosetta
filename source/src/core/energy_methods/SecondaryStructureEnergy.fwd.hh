@@ -12,16 +12,15 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_SecondaryStructureEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_SecondaryStructureEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_SecondaryStructureEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_SecondaryStructureEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class SecondaryStructureEnergy;
 
-}
 }
 }
 

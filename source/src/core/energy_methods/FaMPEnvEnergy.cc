@@ -53,29 +53,29 @@
 static basic::Tracer TR( "core.scoring.membrane.FaMPEnvEnergy" );
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 using namespace core::scoring::methods;
 
 /// @brief Return a fresh instance of the energy method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPEnvEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return utility::pointer::make_shared< FaMPEnvEnergy >( ( ScoringManager::get_instance()->memb_etable( options.etable_type() ) ) );
+	return utility::pointer::make_shared< FaMPEnvEnergy >( ( core::scoring::ScoringManager::get_instance()->memb_etable( options.etable_type() ) ) );
 }
 
 /// @brief Return Score Types Required for Method
-ScoreTypes
+core::scoring::ScoreTypes
 FaMPEnvEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( FaMPEnv );
 	return sts;
 }
 
 /// @brief Construct Energy Method from Etable
-FaMPEnvEnergy::FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in ) :
+FaMPEnvEnergy::FaMPEnvEnergy( core::scoring::etable::MembEtableCAP memb_etable_in ) :
 	parent( utility::pointer::make_shared< FaMPEnvEnergyCreator >() ),
 	memb_etable_(std::move( memb_etable_in )),
 	lk_dgrefce_( memb_etable_.lock()->lk_dgrefce() ), // FIXME: check lock() success
@@ -83,7 +83,7 @@ FaMPEnvEnergy::FaMPEnvEnergy( etable::MembEtableCAP memb_etable_in ) :
 {}
 
 /// @brief Clone Energy Method
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPEnvEnergy::clone() const {
 	return utility::pointer::make_shared< FaMPEnvEnergy >( *this );
 }
@@ -93,11 +93,11 @@ void
 FaMPEnvEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
 	for ( Size i = 1, i_end = rsd.nheavyatoms(); i <= i_end; ++i ) {
-		emap[ FaMPEnv ] += eval_fa_mbenv( rsd.atom(i), fa_proj_[ rsd.seqpos() ][ i ] );
+		emap[ core::scoring::FaMPEnv ] += eval_fa_mbenv( rsd.atom(i), fa_proj_[ rsd.seqpos() ][ i ] );
 	}
 }
 
@@ -105,18 +105,18 @@ FaMPEnvEnergy::residue_energy(
 void
 FaMPEnvEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 
-	emap[ FaMPEnv ] += 0.0;
+	emap[ core::scoring::FaMPEnv ] += 0.0;
 }
 
 /// @brief Setup for Computing Derivatives
 void
 FaMPEnvEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const & scfxn
+	core::scoring::ScoreFunction const & scfxn
 ) const {
 
 	using namespace core::scoring::membrane;
@@ -125,7 +125,7 @@ FaMPEnvEnergy::setup_for_derivatives(
 	init( pose );
 
 	// Set membrane env weight from map
-	fa_mbenv_weight_ = scfxn.weights()[ FaMPEnv ];
+	fa_mbenv_weight_ = scfxn.weights()[ core::scoring::FaMPEnv ];
 }
 
 /// @brief Evaluate Per-Atom Derivatives
@@ -134,8 +134,8 @@ FaMPEnvEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const &,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -187,7 +187,7 @@ FaMPEnvEnergy::indicate_required_context_graphs( utility::vector1< bool > & ) co
 void
 FaMPEnvEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 
 	// Setup Projection and Derivatives
@@ -335,8 +335,7 @@ FaMPEnvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 }
 
 
-} // membrane
 } // scoring
 } // core
 
-#endif // INCLUDED_core_scoring_methods_FaMPEnvEnergy_cc
+#endif // INCLUDED_core_energy_methods_FaMPEnvEnergy_cc

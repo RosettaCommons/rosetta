@@ -23,17 +23,14 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Membrane Potential Environment Energy Term
 class MPEnvEnergy;
 typedef utility::pointer::shared_ptr< MPEnvEnergy > MPEnvEnergyOP;
 typedef utility::pointer::shared_ptr< MPEnvEnergy const > MPEnvEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
-
 
 #endif // INCLUDED_core_scoring_membrane_MPEnvEnergy_fwd_hh

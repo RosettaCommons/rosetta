@@ -54,22 +54,23 @@
 static basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the ResidualDipolarCouplingEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ResidualDipolarCouplingEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ResidualDipolarCouplingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rdc );
 	return sts;
@@ -87,7 +88,7 @@ ResidualDipolarCouplingEnergy::ResidualDipolarCouplingEnergy() :
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ResidualDipolarCouplingEnergy::clone() const
 {
 
@@ -97,7 +98,7 @@ ResidualDipolarCouplingEnergy::clone() const
 
 void ResidualDipolarCouplingEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	//ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
@@ -106,19 +107,20 @@ void ResidualDipolarCouplingEnergy::setup_for_scoring(
 
 void ResidualDipolarCouplingEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
-	totals[ rdc ] = dip_score_;
+	totals[ core::scoring::rdc ] = dip_score_;
 }
 
 void ResidualDipolarCouplingEnergy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &
 ) const
 {
+	using namespace core::scoring;
 	ResidualDipolarCoupling const& rdc_data( * retrieve_RDC_from_pose( pose ) );
 	ResidualDipolarCoupling::RDC_lines const& All_RDC_lines( rdc_data.get_RDC_data() );
 	ResidualDipolarCoupling::RDC_lines::const_iterator it;
@@ -141,11 +143,12 @@ void ResidualDipolarCouplingEnergy::setup_for_minimizing(
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-ResidualDipolarCoupling &
+core::scoring::ResidualDipolarCoupling &
 ResidualDipolarCouplingEnergy::rdc_from_pose(
 	pose::Pose & pose
 ) const
 {
+	using namespace core::scoring;
 	ResidualDipolarCouplingOP rdc_info( retrieve_RDC_from_pose( pose ) );
 	if ( !rdc_info ) {
 		rdc_info = utility::pointer::make_shared< ResidualDipolarCoupling >();
@@ -162,13 +165,13 @@ Real ResidualDipolarCouplingEnergy::eval_dipolar(
 	pose::Pose& pose
 ) const
 {
-	ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
+	core::scoring::ResidualDipolarCoupling& rdc_data( rdc_from_pose( pose ) );
 	return eval_dipolar( pose, rdc_data );
 }
 
 Real ResidualDipolarCouplingEnergy::eval_dipolar(
 	pose::Pose const& pose,
-	ResidualDipolarCoupling& rdc_data
+	core::scoring::ResidualDipolarCoupling& rdc_data
 ) const
 {
 	Real score;
@@ -253,11 +256,13 @@ ResidualDipolarCouplingEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & score_weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & score_weights,
 	Vector & F1,
 	Vector & F2
 ) const {
+
+	using namespace core::scoring;
 
 	if ( !atom2rdc_map_.has( aid ) ) return; //damn this "has" isn't correct at all
 	utility::vector1< Size > const rdc_nrs( atom2rdc_map_[ aid ] );
@@ -288,8 +293,8 @@ ResidualDipolarCouplingEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
-	F1 += score_weights[ rdc ] * f1;
-	F2 += score_weights[ rdc ] * f2;
+	F1 += score_weights[ core::scoring::rdc ] * f1;
+	F2 += score_weights[ core::scoring::rdc ] * f2;
 }
 
 core::Size
@@ -298,6 +303,5 @@ ResidualDipolarCouplingEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

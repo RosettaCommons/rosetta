@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_DNA_ReferenceEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_DNA_ReferenceEnergy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_DNA_ReferenceEnergy_FWD_HH
+#define INCLUDED_core_energy_methods_DNA_ReferenceEnergy_FWD_HH
 
 // Unit Headers
 
@@ -25,12 +25,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 ///
 class DNA_ReferenceEnergy;
-}
 }
 }
 

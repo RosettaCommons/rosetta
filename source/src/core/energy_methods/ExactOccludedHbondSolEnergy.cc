@@ -87,23 +87,23 @@
 static basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the ExactOccludedHbondSolEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ExactOccludedHbondSolEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 
 	return create_ExactSHOEnergy_from_cmdline(options);
 }
 
 
-ScoreTypes
+core::scoring::ScoreTypes
 ExactOccludedHbondSolEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( occ_sol_exact );
 	return sts;
@@ -146,10 +146,9 @@ GridInfo::GridInfo() {
 
 // private constructor
 WaterWeightGridSet::WaterWeightGridSet() :
-	hbondoptions_( utility::pointer::make_shared< HBondOptions >() ),
+	hbondoptions_( utility::pointer::make_shared< core::scoring::hbonds::HBondOptions >() ),
 	hb_database_(HBondDatabase::get_database())
 {
-	using namespace hbonds;
 
 	// override command line settings
 	hbondoptions_->use_sp2_chi_penalty(false);
@@ -157,17 +156,17 @@ WaterWeightGridSet::WaterWeightGridSet() :
 
 	// We need water grids for each donor and acceptor type
 	// We could read them in, but let's just compute them from scratch instead
-	// We'll store them as a map keyed on hbonds::HBEvalType, with each value a 3D vector of the weights
+	// We'll store them as a map keyed on core::scoring::hbonds::HBEvalType, with each value a 3D vector of the weights
 
 	TR << "computing and storing water weight grids for acceptor types." << std::endl;
 	for ( Size i = 1; i <= hbacc_MAX; i++ ) {
-		HBEvalTuple const hbe( hbdon_H2O, HBAccChemType(i), seq_sep_other );
+		core::scoring::hbonds::HBEvalTuple const hbe( hbdon_H2O, HBAccChemType(i), seq_sep_other );
 		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), true /*water is donor*/);
 	}
 
 	TR << "computing and storing water weight grids for donor types." << std::endl;
 	for ( Size i = 1; i <= hbdon_MAX; i++ ) {
-		HBEvalTuple const hbe( HBDonChemType(i), hbacc_H2O, seq_sep_other );
+		core::scoring::hbonds::HBEvalTuple const hbe( HBDonChemType(i), hbacc_H2O, seq_sep_other );
 		sum_all_water_weights_[hbe.eval_type()] = fill_water_grid( all_water_weights_[hbe.eval_type()], hbe, *GridInfo::get_instance(), false /*water is acceptor*/);
 	}
 }
@@ -176,7 +175,7 @@ WaterWeightGridSet::WaterWeightGridSet() :
 // Fill in the water grid
 core::Real WaterWeightGridSet::fill_water_grid(
 	WaterWeightGridSet::Grid & water_weights,
-	hbonds::HBEvalTuple const & hbond_eval_type,
+	core::scoring::hbonds::HBEvalTuple const & hbond_eval_type,
 	GridInfo const & grid_info, bool const water_is_donor)
 {
 
@@ -245,7 +244,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 				if ( xD < MIN_xD ) continue;
 				if ( xD > MAX_xD ) continue;
 				if ( AHdis < MIN_R ) continue;
-				if ( AHdis > MAX_R ) continue;
+				if ( AHdis > core::scoring::hbonds::MAX_R ) continue;
 
 				// Get the Hbond energy
 				core::Real curr_water_hbond;
@@ -271,7 +270,7 @@ core::Real WaterWeightGridSet::fill_water_grid(
 
 
 WaterWeightGridSet::Grid const &
-WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
+WaterWeightGridSet::get_water_weight_grid( core::scoring::hbonds::HBEvalType const & hbond_eval_type ) const {
 
 	// Check that we have weights for this Hbond type
 	auto curr_water_weights_iter = all_water_weights_.find( hbond_eval_type );
@@ -285,7 +284,7 @@ WaterWeightGridSet::get_water_weight_grid( hbonds::HBEvalType const & hbond_eval
 
 
 core::Real
-WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const {
+WaterWeightGridSet::get_sum_water_weight_grid( core::scoring::hbonds::HBEvalType const & hbond_eval_type ) const {
 
 	// Check that we have weights for this Hbond type
 	auto curr_sum_water_weights_iter = sum_all_water_weights_.find( hbond_eval_type );
@@ -310,7 +309,7 @@ WaterWeightGridSet::get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_
 ///  value for x = j (j=0,...,M-1, where M is the number of values assumed by the x-coordinate).
 ///
 void WaterWeightGridSet::print_water_weight_grid_xz_plane(
-	hbonds::HBEvalType const & hbond_eval_type,
+	core::scoring::hbonds::HBEvalType const & hbond_eval_type,
 	int const y) const {
 
 	Grid const & grid = get_water_weight_grid(hbond_eval_type);
@@ -343,7 +342,7 @@ void ExactOccludedHbondSolEnergy::allocate_grid_of_occluded_sites() {
 
 
 ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
-	etable::Etable const & etable_in,
+	core::scoring::etable::Etable const & etable_in,
 	bool const analytic_etable_evaluation,
 	bool const exact_occ_skip_Hbonders,
 	bool const exact_occ_pairwise,
@@ -360,9 +359,9 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	exact_occ_split_between_res_( exact_occ_split_between_res ),
 	exact_occ_self_res_occ_( exact_occ_self_res_occ ),
 	occ_radius_scaling_( occ_radius_scaling ),
-	hbondoptions_( utility::pointer::make_shared< HBondOptions >() ),
-	hb_database_( HBondDatabase::get_database() ),
-	hbond_set_( utility::pointer::make_shared< hbonds::HBondSet >( *hbondoptions_ ) ),
+	hbondoptions_( utility::pointer::make_shared< core::scoring::hbonds::HBondOptions >() ),
+	hb_database_( core::scoring::hbonds::HBondDatabase::get_database() ),
+	hbond_set_( utility::pointer::make_shared< core::scoring::hbonds::HBondSet >( *hbondoptions_ ) ),
 	lk_safe_max_dis2_( etable_in.get_safe_max_dis2() ),
 	verbose_( verbose )
 {
@@ -384,9 +383,9 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy(
 	allocate_grid_of_occluded_sites();
 
 	if ( analytic_etable_evaluation ) {
-		etable_evaluator_ = utility::pointer::make_shared< etable::AnalyticEtableEvaluator >( etable_in );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::AnalyticEtableEvaluator >( etable_in );
 	} else {
-		etable_evaluator_ = utility::pointer::make_shared< etable::TableLookupEvaluator >( etable_in );
+		etable_evaluator_ = utility::pointer::make_shared< core::scoring::etable::TableLookupEvaluator >( etable_in );
 	}
 }
 
@@ -402,7 +401,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 	hbondoptions_(src.hbondoptions_),
 	hb_database_(src.hb_database_),
 	atom_type_set_ptr_( src.atom_type_set_ptr_ ),
-	hbond_set_(utility::pointer::make_shared< hbonds::HBondSet >(*src.hbond_set_)),
+	hbond_set_(utility::pointer::make_shared< core::scoring::hbonds::HBondSet >(*src.hbond_set_)),
 	lk_safe_max_dis2_( src.lk_safe_max_dis2_ ),
 	verbose_( src.verbose_ )
 {
@@ -410,7 +409,7 @@ ExactOccludedHbondSolEnergy::ExactOccludedHbondSolEnergy( ExactOccludedHbondSolE
 }
 
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ExactOccludedHbondSolEnergy::clone() const
 {
 	return utility::pointer::make_shared< ExactOccludedHbondSolEnergy >( *this );
@@ -426,7 +425,7 @@ ExactOccludedHbondSolEnergy::init_hbond_data( pose::Pose const& pose) const
 
 
 void
-ExactOccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const &) const
+ExactOccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const &) const
 {
 	pose.update_residue_neighbors();
 	init_hbond_data(pose);
@@ -445,7 +444,7 @@ ExactOccludedHbondSolEnergy::setup_for_packing(
 
 
 void
-ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction const & ) const
+ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , core::scoring::ScoreFunction const & ) const
 {
 	TR.Fatal << "cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
 	utility_exit_with_message("ExactOccludedHbondSolEnergy::setup_for_derivatives() not yet implemented.");
@@ -453,7 +452,7 @@ ExactOccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & , ScoreFunction
 
 
 void
-ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
+ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const & ) const
 {
 	TR.Fatal << "cannot compute derivatives for ExactOccludedHbondSolEnergy (occ_sol_exact)" << std::endl;
 	utility_exit_with_message("ExactOccludedHbondSolEnergy::setup_for_minimizing() not yet implemented.");
@@ -463,7 +462,7 @@ ExactOccludedHbondSolEnergy::setup_for_minimizing( pose::Pose & , ScoreFunction 
 void ExactOccludedHbondSolEnergy::residue_energy(
 	conformation::Residue const & polar_rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
 	if ( polar_rsd.has_variant_type( chemical::REPLONLY ) ) return;
@@ -493,7 +492,7 @@ void ExactOccludedHbondSolEnergy::residue_energy(
 		utility_exit_with_message( "PAIRWISE OUTPUT FORMAT IS NOT YET SUPPORTED" );
 	}
 
-	emap[ occ_sol_exact ] += residue_geosol;
+	emap[ core::scoring::occ_sol_exact ] += residue_geosol;
 }
 
 
@@ -571,7 +570,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_donor_atom_energy(
 	if ( polar_rsd.is_virtual( base_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( base_atom ) ) return 0.0;
 
-	HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
+	core::scoring::hbonds::HBEvalTuple const curr_hbond_eval_type( get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other );
 
 	core::Real const fully_buried_ene = compute_fully_buried_ene();
 	core::Real const grid_constant = compute_grid_constant(curr_hbond_eval_type, fully_buried_ene);
@@ -675,7 +674,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_sho_acceptor_atom_energy(
 	if ( polar_rsd.is_repulsive( polar_atom ) ) return 0.0;
 
 	chemical::AtomTypeSetCOP atom_type_set_ptr( atom_type_set_ptr_ );
-	hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+	core::scoring::hbonds::HBEvalTuple const curr_hbond_eval_type( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 
 	core::Real const fully_buried_ene = compute_fully_buried_ene();
 	core::Real const grid_constant = compute_grid_constant(curr_hbond_eval_type, fully_buried_ene);
@@ -740,12 +739,12 @@ Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 	if ( polar_rsd.is_virtual( base_atom ) ) return 0.0;
 	if ( polar_rsd.is_repulsive( base_atom ) ) return 0.0;
 
-	HBEvalTuple curr_hbond_eval_type;
+	core::scoring::hbonds::HBEvalTuple curr_hbond_eval_type;
 	bool const atom_is_donor = polar_rsd.atom_type( base_atom ).is_donor();
 	if ( atom_is_donor ) {
-		curr_hbond_eval_type = HBEvalTuple(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
+		curr_hbond_eval_type = core::scoring::hbonds::HBEvalTuple(get_hb_don_chem_type( base_atom, polar_rsd ), hbacc_H2O, seq_sep_other);
 	} else if ( polar_rsd.atom_type( polar_atom).is_acceptor() ) {
-		curr_hbond_eval_type = HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
+		curr_hbond_eval_type = core::scoring::hbonds::HBEvalTuple( hbdon_H2O, get_hb_acc_chem_type( polar_atom, polar_rsd ), seq_sep_other);
 	} else {
 		TR.Fatal << "Expected atom " << polar_rsd.atom_name( base_atom ) << " (" << base_atom << ") of residue " << polar_rsd.seqpos() << " to be either donor or acceptor. " << std::endl;
 		utility_exit_with_message("Atom is neither a donor nor an acceptor.");
@@ -991,7 +990,7 @@ core::Real ExactOccludedHbondSolEnergy::compute_polar_group_sol_energy(
 
 /// @brief computes the grid constant for a given polar group (i.e., the denominator in the solvation energy equation)
 ///
-/// @param[in] hbond_eval_type HBEvalTuple describing the hydrogen bond of the polar group to water
+/// @param[in] hbond_eval_type core::scoring::hbonds::HBEvalTuple describing the hydrogen bond of the polar group to water
 /// @param[in] fully_buried_ene energy of the polar group when fully buried
 ///
 core::Real ExactOccludedHbondSolEnergy::compute_grid_constant(
@@ -1067,8 +1066,8 @@ core::Real ExactOccludedHbondSolEnergy::get_atom_lk_energy(
 	if ( occ_res.has_variant_type( chemical::REPLONLY ) ) return 0.0;
 	if ( occ_res.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return 0.0;
 
-	etable::count_pair::CountPairFunctionOP cpfxn =
-		etable::count_pair::CountPairFactory::create_count_pair_function(res, occ_res, etable::count_pair::CP_CROSSOVER_4);
+	core::scoring::etable::count_pair::CountPairFunctionOP cpfxn =
+		core::scoring::etable::count_pair::CountPairFactory::create_count_pair_function(res, occ_res, core::scoring::etable::count_pair::CP_CROSSOVER_4);
 
 	core::conformation::Atom const& atom = res.atom(atom_idx);
 	core::Vector atom_xyz = res.xyz(atom_idx);
@@ -1111,15 +1110,15 @@ ExactOccludedHbondSolEnergy::version() const
 /// @brief creates an ExactOccludedHbondSolEnergy object according to command-line options
 ///
 /// @param[in] options options not from the command line
-ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline(methods::EnergyMethodOptions const & options) {
+ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline( core::scoring::methods::EnergyMethodOptions const & options) {
 
-	etable::EtableOptions etable_options = options.etable_options();
+	core::scoring::etable::EtableOptions etable_options = options.etable_options();
 	etable_options.no_lk_polar_desolvation = false;
 	etable_options.proline_N_is_lk_nonpolar = false;
 
 	ExactOccludedHbondSolEnergyOP sho_op(
 		new ExactOccludedHbondSolEnergy(
-		*(ScoringManager::get_instance()->etable( etable_options ).lock()),
+		*( core::scoring::ScoringManager::get_instance()->etable( etable_options ).lock()),
 		options.analytic_etable_evaluation(),
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_skip_Hbonders ],
 		basic::options::option[ basic::options::OptionKeys::score::exact_occ_pairwise ],
@@ -1134,6 +1133,5 @@ ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline(methods::Energy
 }
 
 
-} // geometric_solvation
 } // scoring
 } // core

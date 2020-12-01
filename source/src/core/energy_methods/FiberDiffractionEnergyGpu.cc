@@ -59,20 +59,20 @@
 //#include <sys/time.h>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
 // tracer
 static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyGpu");
 
-ScoreTypes FiberDiffractionEnergyGpuCreator::score_types_for_method() const {
+core::scoring::ScoreTypes FiberDiffractionEnergyGpuCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	//Registering fiberdiffractiongpu weight
 	sts.push_back( fiberdiffractiongpu );
 	return sts;
 }
 
-methods::EnergyMethodOP FiberDiffractionEnergyGpuCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergyGpuCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 	return utility::pointer::make_shared< FiberDiffractionEnergyGpu >();
 }
 
@@ -84,11 +84,11 @@ FiberDiffractionEnergyGpu::FiberDiffractionEnergyGpu() :
 }
 
 /// clone
-methods::EnergyMethodOP FiberDiffractionEnergyGpu::clone() const {
+core::scoring::methods::EnergyMethodOP FiberDiffractionEnergyGpu::clone() const {
 	return utility::pointer::make_shared< FiberDiffractionEnergyGpu >( *this );
 }
 
-void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 
 	if (!pose.is_fullatom()) return;
 
@@ -258,11 +258,11 @@ void FiberDiffractionEnergyGpu::setup_for_scoring( pose::Pose & pose, ScoreFunct
 	}
 }
 
-void FiberDiffractionEnergyGpu::finalize_total_energy(pose::Pose & /*pose*/, ScoreFunction const &, EnergyMap & emap) const {
-	emap[ fiberdiffractiongpu ] += chi2_;
+void FiberDiffractionEnergyGpu::finalize_total_energy(pose::Pose & /*pose*/, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & emap) const {
+	emap[ core::scoring::fiberdiffractiongpu ] += chi2_;
 }
 
-void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+void FiberDiffractionEnergyGpu::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 
 	if (!pose.is_fullatom()) return;
 
@@ -347,8 +347,8 @@ void FiberDiffractionEnergyGpu::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -370,8 +370,8 @@ void FiberDiffractionEnergyGpu::eval_atom_derivative(
 	numeric::xyzVector<core::Real> f1( dchi2_d_cross_R[atomnbr] );
 	numeric::xyzVector<core::Real> f2( dchi2_d[atomnbr] );
 
-	F1 += weights[ fiberdiffractiongpu ] * f1;
-	F2 += weights[ fiberdiffractiongpu ] * f2;
+	F1 += weights[ core::scoring::fiberdiffractiongpu ] * f1;
+	F2 += weights[ core::scoring::fiberdiffractiongpu ] * f2;
 }
 
 core::Size
@@ -380,7 +380,6 @@ FiberDiffractionEnergyGpu::version() const
 	return 1; // Initial versioning
 }
 
-} // fiber_diffraction
 } // scoring
 } // core
 #endif //end USECUDA

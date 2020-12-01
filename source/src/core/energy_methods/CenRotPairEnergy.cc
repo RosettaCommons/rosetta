@@ -35,20 +35,21 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-methods::EnergyMethodOP
+
+core::scoring::methods::EnergyMethodOP
 CenRotPairEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
-	return utility::pointer::make_shared< methods::CenRotPairEnergy >();
+	return utility::pointer::make_shared< CenRotPairEnergy >();
 }
 
 /// @brief Return the set of score types claimed by the EnergyMethod
 /// this EnergyMethodCreator creates in its create_energy_method() function
-ScoreTypes
+core::scoring::ScoreTypes
 CenRotPairEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_rot_pair );
 	sts.push_back( cen_rot_pair_ang );
@@ -59,12 +60,12 @@ CenRotPairEnergyCreator::score_types_for_method() const {
 /// c-tor
 CenRotPairEnergy::CenRotPairEnergy() :
 	parent( utility::pointer::make_shared< CenRotPairEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_CenRotEnvPairPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_CenRotEnvPairPotential() )
 {}
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenRotPairEnergy::clone() const {
 	return utility::pointer::make_shared< CenRotPairEnergy >();
 }
@@ -74,7 +75,7 @@ CenRotPairEnergy::clone() const {
 // score
 /////////////////////////////////////////////////////////////////////////////
 void
-CenRotPairEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+CenRotPairEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	// compute interpolated number of neighbors at various distance cutoffs
 	pose.update_residue_neighbors();
@@ -85,8 +86,8 @@ CenRotPairEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
@@ -110,27 +111,27 @@ CenRotPairEnergy::residue_pair_energy(
 	potential_.evaluate_cen_rot_pair_orientation_score( rsd1, rsd2, cendist,
 		pair_ang1_score, pair_ang2_score, pair_dih_score );
 
-	emap[ cen_rot_pair ] += pair_score;
-	emap[ cen_rot_pair_ang ] += pair_ang1_score + pair_ang2_score;
-	emap[ cen_rot_pair_dih ] += pair_dih_score;
+	emap[ core::scoring::cen_rot_pair ] += pair_score;
+	emap[ core::scoring::cen_rot_pair_ang ] += pair_ang1_score + pair_ang2_score;
+	emap[ core::scoring::cen_rot_pair_dih ] += pair_dih_score;
 }
 
 void
 CenRotPairEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const {
 	if ( rsd1.has_variant_type( core::chemical::REPLONLY ) || rsd2.has_variant_type( core::chemical::REPLONLY ) ) return;
 	if ( rsd1.aa() > core::chemical::num_canonical_aas || rsd2.aa() > core::chemical::num_canonical_aas ) return;
 
-	Real weight = weights[ cen_rot_pair ];
+	Real weight = weights[ core::scoring::cen_rot_pair ];
 
 	/// assumes centroids are being used, and it is next to nbr atom
 	Vector const atom_x = rsd1.atom(rsd1.nbr_atom()+1).xyz();
@@ -159,7 +160,7 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 
 	using namespace numeric::deriv;
 
-	weight = weights[ cen_rot_pair_ang ];
+	weight = weights[ core::scoring::cen_rot_pair_ang ];
 	Real dummy_dih(0.0); //no dihedral yet
 	Real dE_dr(0.0);
 
@@ -212,8 +213,8 @@ CenRotPairEnergy::eval_residue_pair_derivatives(
 void
 CenRotPairEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 }
 
@@ -229,6 +230,5 @@ CenRotPairEnergy::version() const {
 	return 1; // Initial versioning
 }
 
-}
 }
 }

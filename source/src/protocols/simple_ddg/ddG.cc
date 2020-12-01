@@ -605,12 +605,12 @@ ddG::calculate( pose::Pose const & pose_original )
 	// Save the original state if pb
 	//----------------------------------
 	// The state is marked in pose's data-cache.
-	PBLifetimeCacheOP cached_data = nullptr;
+	core::energy_methods::PBLifetimeCacheOP cached_data = nullptr;
 	core::scoring::methods::EnergyMethodOptions emoptions = scorefxn_->energy_method_options();
 
 	// First see if this method is called as part of PB-electrostatic computation.
 	if ( pb_enabled_ ) {
-		cached_data = static_cast< PBLifetimeCacheOP > (pose.data().get_ptr< PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
+		cached_data = static_cast< core::energy_methods::PBLifetimeCacheOP > (pose.data().get_ptr< core::energy_methods::PBLifetimeCache > ( pose::datacache::CacheableDataType::PB_LIFETIME_CACHE ));
 		runtime_assert( cached_data != nullptr );
 		original_state = cached_data->get_energy_state();
 	}

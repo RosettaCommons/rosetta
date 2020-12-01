@@ -22,15 +22,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace aa_composition_energy {
+namespace energy_methods {
 
 class AACompositionEnergy;
 
 typedef utility::pointer::shared_ptr< AACompositionEnergy > AACompositionEnergyOP;
 
 
-} // aa_composition_energy
 } // scoring
 } // core
 

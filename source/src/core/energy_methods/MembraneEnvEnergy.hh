@@ -12,8 +12,8 @@
 /// @author Bjorn Wallner
 
 
-#ifndef INCLUDED_core_scoring_methods_MembraneEnvEnergy_hh
-#define INCLUDED_core_scoring_methods_MembraneEnvEnergy_hh
+#ifndef INCLUDED_core_energy_methods_MembraneEnvEnergy_hh
+#define INCLUDED_core_energy_methods_MembraneEnvEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/MembraneEnvEnergy.fwd.hh>
@@ -37,13 +37,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class MembraneEnvEnergy : public ContextDependentOneBodyEnergy  {
+
+class MembraneEnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 public:
-	typedef ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 public:
 
@@ -52,7 +52,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -60,29 +60,29 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
-	MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
+	core::scoring::MembraneTopology const & MembraneTopology_from_pose( pose::Pose const & pose ) const;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// data
@@ -91,13 +91,12 @@ public:
 private:
 
 	// const-ref to scoring database
-	MembranePotential const & potential_;
+	core::scoring::MembranePotential const & potential_;
 	core::Size version() const override;
 
 };
 
 
-}
 }
 }
 

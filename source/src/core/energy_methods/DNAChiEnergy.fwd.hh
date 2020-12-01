@@ -17,13 +17,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace dna {
+namespace energy_methods {
 
 class DNAChiEnergy;
 
-} // dna
-} // scoring
+} // energy_methods
 } // core
 
 

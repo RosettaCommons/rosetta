@@ -19,15 +19,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_SugarCloseEnergy;
 
 typedef utility::pointer::shared_ptr< RNA_SugarCloseEnergy > RNA_SugarCloseEnergyOP;
 typedef utility::pointer::shared_ptr< RNA_SugarCloseEnergy const > RNA_SugarCloseEnergyCOP;
 
-} //rna
 } //scoring
 } //core
 

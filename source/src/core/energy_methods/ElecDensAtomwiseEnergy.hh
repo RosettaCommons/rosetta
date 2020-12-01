@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/electron_density_atomwise/ElecDensAtomwiseEnergy.hh
+/// @file src/core/energy_methods/ElecDensAtomwiseEnergy.hh
 /// @brief  Declaration for elec_dens_atomwise scoring method
 /// @author Fang-Chieh Chou
 
@@ -29,8 +29,7 @@
 #include <basic/datacache/CacheableData.hh>
 
 namespace core {
-namespace scoring {
-namespace electron_density_atomwise {
+namespace energy_methods {
 
 class PoseSequence;
 typedef std::shared_ptr< PoseSequence > PoseSequenceOP;
@@ -64,9 +63,9 @@ private:
 	std::string pose_sequence_ = "";
 };
 
-class ElecDensAtomwiseEnergy : public methods::ContextIndependentLRTwoBodyEnergy {
+class ElecDensAtomwiseEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
 
 public:
 
@@ -76,7 +75,7 @@ public:
 
 	~ElecDensAtomwiseEnergy() override;
 
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 
@@ -84,7 +83,7 @@ public:
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	methods::LongRangeEnergyType
+	core::scoring::methods::LongRangeEnergyType
 	long_range_type() const override;
 
 
@@ -97,7 +96,7 @@ public:
 
 
 	bool
-	defines_intrares_energy( EnergyMap const & ) const override {
+	defines_intrares_energy( core::scoring::EnergyMap const & ) const override {
 		return true;
 	}
 
@@ -107,8 +106,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -116,8 +115,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {
 		return;
 	}
@@ -128,8 +127,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -138,7 +137,7 @@ public:
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
-		ScoreFunction const &
+		core::scoring::ScoreFunction const &
 	) const override;
 
 	using parent::finalize_total_energy;
@@ -148,8 +147,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const {
 		return;
 	}
@@ -159,7 +158,6 @@ private:
 	core::Size version() const override;
 };
 
-} // electron_density_atomwise
 } // scoring
 } // core
 

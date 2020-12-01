@@ -25,18 +25,18 @@
 #include <iostream>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(const methods::EnergyMethodOptions & options) const
+
+core::scoring::methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(const core::scoring::methods::EnergyMethodOptions & options) const
 {
-	if ( options.has_method_weights( split_unfolded_two_body ) ) {
-		utility::vector1<Real> const & v = options.method_weights( split_unfolded_two_body );
+	if ( options.has_method_weights( core::scoring::split_unfolded_two_body ) ) {
+		utility::vector1<Real> const & v = options.method_weights( core::scoring::split_unfolded_two_body );
 		debug_assert( v.size() == scoring::n_score_types );
-		EnergyMap e;
+		core::scoring::EnergyMap e;
 		for ( Size ii = 1; ii < scoring::n_score_types; ++ii ) {
-			e[(ScoreType)ii]=v[ii];
+			e[( core::scoring::ScoreType)ii]=v[ii];
 		}
 		//using the same type option as unfolded state energy since those two need to match when using the split unfolded energy(since unfolded state holds the one body component).
 		return utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergy >( options.split_unfolded_label_type(), options.split_unfolded_value_type(), options.unfolded_energies_type(), e );
@@ -44,8 +44,9 @@ methods::EnergyMethodOP SplitUnfoldedTwoBodyEnergyCreator::create_energy_method(
 	return utility::pointer::make_shared< SplitUnfoldedTwoBodyEnergy >( options.split_unfolded_label_type(), options.split_unfolded_value_type(), options.unfolded_energies_type() );
 }
 
-ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const
+core::scoring::ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( split_unfolded_two_body );
 	sts.push_back( fa_atr_ref );
@@ -58,6 +59,5 @@ ScoreTypes SplitUnfoldedTwoBodyEnergyCreator::score_types_for_method() const
 }
 
 
-}
 }
 }

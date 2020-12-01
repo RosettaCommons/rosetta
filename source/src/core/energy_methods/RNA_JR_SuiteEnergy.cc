@@ -52,18 +52,18 @@ using namespace core::pose::rna;
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_JR_SuiteEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const { return utility::pointer::make_shared< RNA_JR_SuiteEnergy >(); }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_JR_SuiteEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.emplace_back( rna_jr_suite );
 	return sts;
@@ -75,7 +75,7 @@ RNA_JR_SuiteEnergy::RNA_JR_SuiteEnergy() :
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_JR_SuiteEnergy::clone() const { return utility::pointer::make_shared< RNA_JR_SuiteEnergy >(); }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -84,8 +84,8 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	using namespace core::id;
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
@@ -111,10 +111,9 @@ RNA_JR_SuiteEnergy::residue_pair_energy(
 	}
 	RNA_SuiteAssignment assignment( suitename_.assign( torsions ) );
 	Real const dist( assignment.dist );
-	if ( dist > 1 ) emap[ rna_jr_suite ] += dist - 1;
+	if ( dist > 1 ) emap[ core::scoring::rna_jr_suite ] += dist - 1;
 }
 
-} //rna
 } //scoring
 } //core
 

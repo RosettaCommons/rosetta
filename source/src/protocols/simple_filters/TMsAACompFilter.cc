@@ -113,7 +113,7 @@ TMsAACompFilter::compute( core::pose::Pose const & pose ) const {
 		{'Y', 0.03}, {'W', 0.03}, {'N', 0.03}, {'H', 0.02}, {'C', 0.02}, {'Q', 0.01}, {'E', 0.01},
 		{'R', 0.01}, {'K', 0.01}, {'D', 0.01}};
 
-	core::scoring::membrane::MPSpanInsertionEnergy mp_span_ins = core::scoring::membrane::MPSpanInsertionEnergy();
+	core::energy_methods::MPSpanInsertionEnergy mp_span_ins;
 	utility::vector1< core::conformation::membrane::Span > spans = mp_span_ins.create_updated_span( pose );
 	core::Real dist = 0;
 	core::Real num = 0;

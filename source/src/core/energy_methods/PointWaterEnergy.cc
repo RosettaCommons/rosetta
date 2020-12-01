@@ -59,21 +59,22 @@
 static basic::Tracer TR("core.scoring.methods.PointWaterEnergy");
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the PointWaterEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PointWaterEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &opts
+	core::scoring::methods::EnergyMethodOptions const &opts
 ) const {
 	return utility::pointer::make_shared< PointWaterEnergy >( opts );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 PointWaterEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( pointwater );
 	return sts;
@@ -81,9 +82,9 @@ PointWaterEnergyCreator::score_types_for_method() const {
 
 
 ////////////////////////////////////////////////////////////////////////////
-PointWaterEnergy::PointWaterEnergy( methods::EnergyMethodOptions const &opts ):
+PointWaterEnergy::PointWaterEnergy( core::scoring::methods::EnergyMethodOptions const &opts ):
 	parent( utility::pointer::make_shared< PointWaterEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_PointWaterPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_PointWaterPotential() )
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
@@ -101,7 +102,7 @@ PointWaterEnergy::PointWaterEnergy( PointWaterEnergy const & src ):
 { }
 
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PointWaterEnergy::clone() const
 {
 	return utility::pointer::make_shared< PointWaterEnergy >( *this );
@@ -110,7 +111,7 @@ PointWaterEnergy::clone() const
 void
 PointWaterEnergy::setup_for_minimizing(
 	pose::Pose & /*pose*/,
-	ScoreFunction const & /*sfxn*/,
+	core::scoring::ScoreFunction const & /*sfxn*/,
 	kinematics::MinimizerMapBase const & /*min_map*/
 ) const
 { }
@@ -118,12 +119,12 @@ PointWaterEnergy::setup_for_minimizing(
 
 ///
 void
-PointWaterEnergy::setup_for_derivatives( pose::Pose & /*pose*/, ScoreFunction const & /*sfxn*/ ) const
+PointWaterEnergy::setup_for_derivatives( pose::Pose & /*pose*/, core::scoring::ScoreFunction const & /*sfxn*/ ) const
 { }
 
 ///
 void
-PointWaterEnergy::setup_for_scoring( pose::Pose & /*pose*/, ScoreFunction const & /*sfxn*/ ) const
+PointWaterEnergy::setup_for_scoring( pose::Pose & /*pose*/, core::scoring::ScoreFunction const & /*sfxn*/ ) const
 { }
 
 
@@ -136,8 +137,8 @@ PointWaterEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
 	bool water_water =
@@ -161,18 +162,18 @@ PointWaterEnergy::residue_pair_energy(
 		score = pwater_water_bonus_*(-exp( -(distance-2.7)*(distance-2.7)*pwater_water_bonus_width_ ));
 	}
 
-	emap[ pointwater ] += score;
+	emap[ core::scoring::pointwater ] += score;
 }
 
 void
 PointWaterEnergy::eval_intrares_energy(
 	conformation::Residue const &rsd1,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &emap
 ) const {
 	if ( rsd1.name() == "PWAT" || rsd1.name() == "BB_PWAT" || rsd1.name() == "PWAT1" ) {
-		emap[ pointwater ] += pwater_ref_wt_;
+		emap[ core::scoring::pointwater ] += pwater_ref_wt_;
 	}
 }
 
@@ -201,13 +202,13 @@ void
 PointWaterEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const & ,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const & ,
 	pose::Pose const & , // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	bool water_prot =
@@ -219,11 +220,11 @@ PointWaterEnergy::eval_residue_pair_derivatives(
 	if ( water_prot ) {
 		core::conformation::Residue const &r_protein = (rsd1.aa() == core::chemical::aa_h2o) ? rsd2 : rsd1;
 		core::conformation::Residue const &r_water   = (rsd1.aa() == core::chemical::aa_h2o) ? rsd1 : rsd2;
-		utility::vector1< DerivVectorPair > &deriv_protein = (rsd1.aa() == core::chemical::aa_h2o) ? r2_atom_derivs : r1_atom_derivs;
-		utility::vector1< DerivVectorPair > &deriv_water   = (rsd1.aa() == core::chemical::aa_h2o) ? r1_atom_derivs : r2_atom_derivs;
+		utility::vector1< core::scoring::DerivVectorPair > &deriv_protein = (rsd1.aa() == core::chemical::aa_h2o) ? r2_atom_derivs : r1_atom_derivs;
+		utility::vector1< core::scoring::DerivVectorPair > &deriv_water   = (rsd1.aa() == core::chemical::aa_h2o) ? r1_atom_derivs : r2_atom_derivs;
 
 		if ( r_water.name() == "PWAT" || r_water.name() == "BB_PWAT" || r_water.name() == "PWAT1" ) {
-			potential_.eval_pointwater_derivs( r_protein.aa(), r_protein, r_water.atom(1).xyz(), deriv_protein, deriv_water, weights[ pointwater ] );
+			potential_.eval_pointwater_derivs( r_protein.aa(), r_protein, r_water.atom(1).xyz(), deriv_protein, deriv_water, weights[ core::scoring::pointwater ] );
 		}
 	} else if ( water_water && ((rsd1.name() == "PWAT" && rsd2.name() == "PWAT") || (rsd1.name() == "BB_PWAT" && rsd2.name() == "BB_PWAT") ||
 			(rsd1.name() == "PWAT1" && rsd2.name() == "PWAT1")) ) {
@@ -231,7 +232,7 @@ PointWaterEnergy::eval_residue_pair_derivatives(
 		core::Vector wat1 = rsd1.atom(1).xyz();
 		core::Vector wat2 = rsd2.atom(1).xyz();
 		core::Real distance = (wat1-wat2).length();
-		core::Real dEdd = weights[ pointwater ]*2*pwater_water_bonus_width_*pwater_water_bonus_*exp( -(distance-2.7)*(distance-2.7)*pwater_water_bonus_width_ )*(distance-2.7);
+		core::Real dEdd = weights[ core::scoring::pointwater ]*2*pwater_water_bonus_width_*pwater_water_bonus_*exp( -(distance-2.7)*(distance-2.7)*pwater_water_bonus_width_ )*(distance-2.7);
 
 		Vector f1(0.0), f2(0.0);
 		numeric::deriv::distance_f1_f2_deriv( wat1, wat2, distance, f1, f2 );
@@ -252,6 +253,5 @@ PointWaterEnergy::version() const
 }
 
 
-} // namespace methods
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core

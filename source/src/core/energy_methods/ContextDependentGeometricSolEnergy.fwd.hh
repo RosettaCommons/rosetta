@@ -17,12 +17,10 @@
 #define INCLUDED_core_scoring_geometric_solvation_GeometricSolEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace hbonds {
+namespace energy_methods {
 
 class GeometricSolEnergy;
 
-} // hbonds
 } // scoring
 } // core
 

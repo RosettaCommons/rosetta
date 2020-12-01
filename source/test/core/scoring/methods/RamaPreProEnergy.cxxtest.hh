@@ -77,7 +77,7 @@ public:
 
 	void test_atoms_w_dof_deriv() {
 		Pose pose = create_trpcage_ideal_pose();
-		RamaPreProEnergy rppe;
+		core::energy_methods::RamaPreProEnergy rppe;
 
 		auto atoms = rppe.atoms_with_dof_derivatives( pose.residue(10), pose );
 		TS_ASSERT_EQUALS( atoms.size(), 5 );

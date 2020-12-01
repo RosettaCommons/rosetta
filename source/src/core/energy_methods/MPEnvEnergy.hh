@@ -47,8 +47,7 @@
 #include <cstdlib>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Mmebrane Environemnt Energy Term
 class MPEnvEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy {
@@ -68,18 +67,18 @@ public: // methods
 
 	/// @brief Setup Menv for Scoring by updating neighbor count and compute cen env
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Setup for Derivatives - Calls Setup for Scoring
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	/// @brief Compute Membrane Environemnt - Residue Energy
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -87,8 +86,8 @@ public: // methods
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	/// @brief No Required Context Graphs in MP Terms
@@ -99,7 +98,7 @@ public: // energy method functions
 	/// @brief Full Evaluate Membrane Env Method (given z_position and const menv score)
 	core::Real
 	compute_mpenv_score(
-		CenListInfo const & cenlist,
+		core::scoring::CenListInfo const & cenlist,
 		core::chemical::AA const & aa,
 		core::Real const z_position,
 		core::Size const seqpos
@@ -107,14 +106,13 @@ public: // energy method functions
 private:
 
 	// MP Env and Cen Rotamer Statistics
-	MembraneData const & mpdata_;
+	core::scoring::membrane::MembraneData const & mpdata_;
 
 	// Versioning
 	core::Size version() const override;
 
 }; // MPEnvEnergy
 
-} // membrane
 } // scoring
 } // core
 

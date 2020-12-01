@@ -12,8 +12,8 @@
 /// @author Srivatsan Raman
 
 
-#ifndef INCLUDED_core_scoring_methods_ResidualDipolarCouplingEnergy_Rohl_hh
-#define INCLUDED_core_scoring_methods_ResidualDipolarCouplingEnergy_Rohl_hh
+#ifndef INCLUDED_core_energy_methods_ResidualDipolarCouplingEnergy_Rohl_hh
+#define INCLUDED_core_energy_methods_ResidualDipolarCouplingEnergy_Rohl_hh
 
 // Package headers
 #include <core/scoring/methods/WholeStructureEnergy.hh>
@@ -38,20 +38,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class ResidualDipolarCouplingEnergy_Rohl : public WholeStructureEnergy  {
+
+class ResidualDipolarCouplingEnergy_Rohl : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	ResidualDipolarCouplingEnergy_Rohl();
 
 	//clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -61,8 +61,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	void
@@ -72,7 +72,7 @@ public:
 
 private:
 
-	ResidualDipolarCoupling_Rohl const & rdc_from_pose(
+	core::scoring::ResidualDipolarCoupling_Rohl const & rdc_from_pose(
 		pose::Pose & pose
 	) const;
 
@@ -142,7 +142,6 @@ private:
 
 };
 
-} //methods
 } //scoring
 } //core
 

@@ -186,7 +186,7 @@ public:
 
 	void test_get_atoms_w_dof_derivatives() {
 		core::scoring::RamaPrePro rpp;
-		core::scoring::methods::RamaPreProEnergy rpp_e;
+		core::energy_methods::RamaPreProEnergy rpp_e;
 		core::pose::Pose pose( pdb1ubq5to13_pose() );
 
 		{

@@ -43,39 +43,40 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the LK_hack class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LK_hackCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	etable::EtableCOP etable( ScoringManager::get_instance()->etable( options ) );
+	core::scoring::etable::EtableCOP etable( core::scoring::ScoringManager::get_instance()->etable( options ) );
 	return utility::pointer::make_shared< LK_hack >( *etable );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 LK_hackCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( lk_hack );
 	return sts;
 }
 
 
-using namespace constraints;
+using namespace core::scoring::constraints;
 
-class LK_SigmoidalFunc : public func::Func {
+class LK_SigmoidalFunc : public core::scoring::func::Func {
 public:
 	LK_SigmoidalFunc();
 
-	func::FuncOP
+	core::scoring::func::FuncOP
 	clone() const override;
 
-	bool operator == ( func::Func const & rhs ) const override;
-	bool same_type_as_me( func::Func const & other ) const override;
+	bool operator == ( core::scoring::func::Func const & rhs ) const override;
+	bool same_type_as_me( core::scoring::func::Func const & other ) const override;
 
 	Real func( Real const x ) const override;
 	Real dfunc( Real const x ) const override;
@@ -104,11 +105,11 @@ LK_SigmoidalFunc::LK_SigmoidalFunc() = default;
 core::scoring::func::FuncOP LK_SigmoidalFunc::clone() const { return utility::pointer::make_shared< LK_SigmoidalFunc >(); }
 
 bool
-LK_SigmoidalFunc::operator == ( func::Func const & rhs ) const {
+LK_SigmoidalFunc::operator == ( core::scoring::func::Func const & rhs ) const {
 	return same_type_as_me( rhs ) && rhs.same_type_as_me( *this );
 }
 
-bool LK_SigmoidalFunc::same_type_as_me( func::Func const & other ) const
+bool LK_SigmoidalFunc::same_type_as_me( core::scoring::func::Func const & other ) const
 {
 	return dynamic_cast< LK_SigmoidalFunc const * > (&other);
 }
@@ -148,7 +149,7 @@ LK_SigmoidalFunc::dfunc( Real const x ) const
 	}
 }
 
-LK_hack::LK_hack( etable::Etable const & etable_in ) :
+LK_hack::LK_hack( core::scoring::etable::Etable const & etable_in ) :
 	parent( utility::pointer::make_shared< LK_hackCreator >() ),
 	etable_(etable_in),
 	solv1_(etable_in.solv1()),
@@ -165,7 +166,7 @@ LK_hack::atomic_interaction_cutoff() const
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 LK_hack::clone() const
 {
 	return utility::pointer::make_shared< LK_hack >( *this );
@@ -193,11 +194,11 @@ LK_hack::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	Real score(0.0);
 
@@ -356,7 +357,7 @@ LK_hack::residue_pair_energy(
 		}
 	}
 
-	emap[ lk_hack ]+=score;
+	emap[ core::scoring::lk_hack ]+=score;
 
 }
 
@@ -367,12 +368,12 @@ LK_hack::residue_pair_energy(
 void
 LK_hack::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const & sfxn
+	core::scoring::ScoreFunction const & sfxn
 ) const
 {
 	pose.update_residue_neighbors();
 
-	lk_hack_weight_ = sfxn.weights()[ lk_hack ];
+	lk_hack_weight_ = sfxn.weights()[ core::scoring::lk_hack ];
 	allocate_appropriate_memory( pose );
 	calculate_orientation_vectors_and_pseudo_base_atoms( pose );
 	calculate_derivatives_for_atoms_and_pseudo_base_atoms( pose );
@@ -459,15 +460,15 @@ LK_hack::calculate_orientation_vectors_and_pseudo_base_atoms( pose::Pose const &
 void
 LK_hack::calculate_derivatives_for_atoms_and_pseudo_base_atoms( pose::Pose const & pose ) const
 {
-	using namespace constraints;
+	using namespace core::scoring::constraints;
 
 	Size const total_residue( pose.size() );
 
 	// cached energies object
-	Energies const & energies( pose.energies() );
+	core::scoring::Energies const & energies( pose.energies() );
 
 	// the neighbor/energy links
-	EnergyGraph const & energy_graph( energies.energy_graph() );
+	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
 	for ( Size ii = 1; ii <= total_residue; ++ii ) {
 		for ( utility::graph::Graph::EdgeListConstIter
@@ -488,7 +489,7 @@ LK_hack::calculate_derivatives_for_residue_pair
 	Size upper_res_id
 ) const
 {
-	using namespace etable::count_pair;
+	using namespace core::scoring::etable::count_pair;
 
 	core::scoring::func::FuncOP lkfunc( new LK_SigmoidalFunc );
 	AngleConstraint lk_angle_cst( lkfunc ); //Using the stupid and dangerous version of the AngleConstraint ctor
@@ -778,8 +779,8 @@ LK_hack::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & ,//weights,
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & ,//weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -801,6 +802,5 @@ LK_hack::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

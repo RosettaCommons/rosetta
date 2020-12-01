@@ -29,25 +29,26 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the ReferenceEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ReferenceEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	if ( options.has_method_weights( ref ) ) {
-		return utility::pointer::make_shared< ReferenceEnergy >( options.method_weights( ref ), options.ordered_wat_penalty() );
+	if ( options.has_method_weights( core::scoring::ref ) ) {
+		return utility::pointer::make_shared< ReferenceEnergy >( options.method_weights( core::scoring::ref ), options.ordered_wat_penalty() );
 	} else {
 		return utility::pointer::make_shared< ReferenceEnergy >( options.ordered_wat_penalty() );
 	}
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ReferenceEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( ref );
 	return sts;
@@ -66,7 +67,7 @@ ReferenceEnergy::ReferenceEnergy( utility::vector1< Real > const & aa_weights_in
 
 ReferenceEnergy::~ReferenceEnergy() = default;
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ReferenceEnergy::clone() const
 {
 	return utility::pointer::make_shared< ReferenceEnergy >( aa_weights_, ordered_wat_penalty_ );
@@ -78,7 +79,7 @@ void
 ReferenceEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -91,7 +92,7 @@ ReferenceEnergy::residue_energy(
 	// water
 	if ( rsd.aa() == core::chemical::aa_h2o ) {
 		if ( rsd.name() == "HOH" ) {
-			emap[ ref ] += ordered_wat_penalty_;
+			emap[ core::scoring::ref ] += ordered_wat_penalty_;
 		}
 	}
 
@@ -102,23 +103,23 @@ ReferenceEnergy::residue_energy(
 		if ( Size(aa2) > aa_weights_.size() ) return;
 
 		if ( rsd.type().base_analogue() == na_rad ) {
-			emap[ ref ] += aa_weights_[ na_rad ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rad ];
 		} else if ( rsd.type().base_analogue() == na_rcy ) {
-			emap[ ref ] += aa_weights_[ na_rcy ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rcy ];
 		} else if ( rsd.type().base_analogue() == na_rgu ) {
-			emap[ ref ] += aa_weights_[ na_rgu ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rgu ];
 		} else if ( rsd.type().base_analogue() == na_ura ) {
-			emap[ ref ] += aa_weights_[ na_ura ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_ura ];
 		} else if ( aa2 == na_lra ) { // Catch L-RNA
-			emap[ ref ] += aa_weights_[ na_rad ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rad ];
 		} else if ( aa2 == na_lrc ) {
-			emap[ ref ] += aa_weights_[ na_rcy ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rcy ];
 		} else if ( aa2 == na_lrg ) {
-			emap[ ref ] += aa_weights_[ na_rgu ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_rgu ];
 		} else if ( aa2 == na_lur ) {
-			emap[ ref ] += aa_weights_[ na_ura ];
+			emap[ core::scoring::ref ] += aa_weights_[ na_ura ];
 		} else {
-			emap[ ref ] += aa_weights_[ aa2 ];
+			emap[ core::scoring::ref ] += aa_weights_[ aa2 ];
 		}
 		//   if ( rsd.is_DNA() ) {
 		//    std::cout << "using dna refE " << aa_weights_[aa] << std::endl;
@@ -128,7 +129,7 @@ ReferenceEnergy::residue_energy(
 
 	// reference weights for RNA...
 	if ( rsd.is_RNA() && ( aa_weights_.size() > num_canonical_aas ) ) {
-		emap[ ref ] += aa_weights_[ rsd.aa() ];
+		emap[ core::scoring::ref ] += aa_weights_[ rsd.aa() ];
 		return;
 	}
 
@@ -136,35 +137,35 @@ ReferenceEnergy::residue_energy(
 	if ( rsd.type().aa() > num_canonical_aas ) return;
 
 	switch ( rsd.type().aa() ) {
-	case aa_ala : emap[ ref ] +=  0.16; break;
-	case aa_cys : emap[ ref ] +=  1.70; break;
+	case aa_ala : emap[ core::scoring::ref ] +=  0.16; break;
+	case aa_cys : emap[ core::scoring::ref ] +=  1.70; break;
 	case aa_asp :
-		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
+		emap[ core::scoring::ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.262 : -0.67;
 		break;
 	case aa_glu :
-		emap[ ref ] += -0.81; // (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
+		emap[ core::scoring::ref ] += -0.81; // (rsd.type().has_variant_type( chemical::PROTONATED )) ? -0.81 : -0.81;
 		break;
-	case aa_phe : emap[ ref ] +=  0.63; break;
-	case aa_gly : emap[ ref ] +=  -0.17; break;
+	case aa_phe : emap[ core::scoring::ref ] +=  0.63; break;
+	case aa_gly : emap[ core::scoring::ref ] +=  -0.17; break;
 	case aa_his :
-		emap[ ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
+		emap[ core::scoring::ref ] += (rsd.type().has_variant_type( chemical::PROTONATED )) ? 0.288 : 0.56;
 		break;
-	case aa_ile : emap[ ref ] +=  0.24; break;
+	case aa_ile : emap[ core::scoring::ref ] +=  0.24; break;
 	case aa_lys :
-		emap[ ref ] += -0.65; //(rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
+		emap[ core::scoring::ref ] += -0.65; //(rsd.type().has_variant_type( chemical::DEPROTONATED )) ? -0.65 : -0.65;
 		break;
-	case aa_leu : emap[ ref ] +=  -0.10; break;
-	case aa_met : emap[ ref ] +=  -0.34; break;
-	case aa_asn : emap[ ref ] +=  -0.89; break;
-	case aa_pro : emap[ ref ] +=  0.02; break;
-	case aa_gln : emap[ ref ] +=  -0.97; break;
-	case aa_arg : emap[ ref ] +=  -0.98; break;
-	case aa_ser : emap[ ref ] +=  -0.37; break;
-	case aa_thr : emap[ ref ] +=  -0.27; break;
-	case aa_val : emap[ ref ] +=  0.29; break;
-	case aa_trp : emap[ ref ] +=  0.91; break;
+	case aa_leu : emap[ core::scoring::ref ] +=  -0.10; break;
+	case aa_met : emap[ core::scoring::ref ] +=  -0.34; break;
+	case aa_asn : emap[ core::scoring::ref ] +=  -0.89; break;
+	case aa_pro : emap[ core::scoring::ref ] +=  0.02; break;
+	case aa_gln : emap[ core::scoring::ref ] +=  -0.97; break;
+	case aa_arg : emap[ core::scoring::ref ] +=  -0.98; break;
+	case aa_ser : emap[ core::scoring::ref ] +=  -0.37; break;
+	case aa_thr : emap[ core::scoring::ref ] +=  -0.27; break;
+	case aa_val : emap[ core::scoring::ref ] +=  0.29; break;
+	case aa_trp : emap[ core::scoring::ref ] +=  0.91; break;
 	case aa_tyr :
-		emap[ ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
+		emap[ core::scoring::ref ] += (rsd.type().has_variant_type( chemical::DEPROTONATED )) ? 0.238 : 0.51;
 		break;
 	default :
 		utility_exit_with_message("Data consistency error in ReferenceEnergy");
@@ -224,8 +225,8 @@ ReferenceEnergy::eval_dof_derivative(
 	id::DOF_ID const &,
 	id::TorsionID const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap const &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const &
 ) const
 {
 	return 0.0;
@@ -243,7 +244,6 @@ ReferenceEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

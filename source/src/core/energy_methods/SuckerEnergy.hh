@@ -12,8 +12,8 @@
 /// @author Will Sheffler
 
 
-#ifndef INCLUDED_core_scoring_methods_SuckerEnergy_hh
-#define INCLUDED_core_scoring_methods_SuckerEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SuckerEnergy_hh
+#define INCLUDED_core_energy_methods_SuckerEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/SuckerEnergy.fwd.hh>
@@ -35,13 +35,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class SuckerEnergy : public ContextIndependentTwoBodyEnergy  {
+
+class SuckerEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 
@@ -50,7 +50,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 
@@ -63,8 +63,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -73,8 +73,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -91,7 +91,7 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override {
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override {
 		return true;
 	}
 
@@ -99,8 +99,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -116,7 +116,6 @@ private:
 };
 
 
-}
 }
 }
 

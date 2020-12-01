@@ -36,20 +36,21 @@
 #include <numeric/NumericTraits.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 /// @details This must return a fresh instance of the CovalentLabelingEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CovalentLabelingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< CovalentLabelingEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CovalentLabelingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back(covalent_labeling);
 	return sts;
@@ -57,14 +58,14 @@ CovalentLabelingEnergyCreator::score_types_for_method() const {
 
 void
 CovalentLabelingEnergy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 	pose.update_residue_neighbors();
 
 }
 
 // constructor
-CovalentLabelingEnergy::CovalentLabelingEnergy( methods::EnergyMethodOptions const & options ) :
+CovalentLabelingEnergy::CovalentLabelingEnergy( core::scoring::methods::EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< CovalentLabelingEnergyCreator >() ),
 	covalent_labeling_input_file_( options.covalent_labeling_input() )
 {
@@ -79,7 +80,7 @@ CovalentLabelingEnergy::CovalentLabelingEnergy( CovalentLabelingEnergy const & s
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CovalentLabelingEnergy::clone() const {
 	return utility::pointer::make_shared< CovalentLabelingEnergy >( *this );
 }
@@ -92,7 +93,7 @@ void
 CovalentLabelingEnergy::residue_energy(
 	core::conformation::Residue const & residue,
 	core::pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 
 	core::Size const number_residues (pose.total_residue());
@@ -113,7 +114,7 @@ CovalentLabelingEnergy::residue_energy(
 					neighbor_count += 1.0/(1.0 + std::exp(1.0*(distance-9.0)))*1.0/(1.0 + std::exp(numeric::NumericTraits< float >::pi()*2.0*(angle-numeric::NumericTraits< float >::pi())));
 				}
 			}
-			emap[covalent_labeling] += -1.0/(1.0 + std::exp(10.0*(std::abs(neighbor_count - nc_from_file)-2.0)));
+			emap[ core::scoring::covalent_labeling] += -1.0/(1.0 + std::exp(10.0*(std::abs(neighbor_count - nc_from_file)-2.0)));
 		}
 	}
 }
@@ -121,7 +122,7 @@ CovalentLabelingEnergy::residue_energy(
 void
 CovalentLabelingEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = false;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = false;
 }
 
 
@@ -156,6 +157,5 @@ void CovalentLabelingEnergy::init_from_file() {
 
 }
 
-} // methods
 } // scoring
 } // core

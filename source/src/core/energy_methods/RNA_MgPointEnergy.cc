@@ -64,20 +64,20 @@ static basic::Tracer tr( "core.scoring.rna.RNA_MgPointEnergy" );
 //////////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace magnesium {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNA_MgPointEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_MgPointEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_MgPointEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_MgPointEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_mg_point );
 	sts.push_back( rna_mg_point_indirect );
@@ -87,13 +87,13 @@ RNA_MgPointEnergyCreator::score_types_for_method() const {
 
 RNA_MgPointEnergy::RNA_MgPointEnergy() :
 	parent( utility::pointer::make_shared< RNA_MgPointEnergyCreator >() ),
-	rna_mg_knowledge_based_potential_( utility::pointer::make_shared< MgKnowledgeBasedPotential >() ),
+	rna_mg_knowledge_based_potential_( utility::pointer::make_shared< core::scoring::magnesium::MgKnowledgeBasedPotential >() ),
 	verbose_( basic::options::option[ basic::options::OptionKeys::rescore::verbose ]() )
 {}
 
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_MgPointEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_MgPointEnergy >();
@@ -105,7 +105,7 @@ RNA_MgPointEnergy::clone() const
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_MgPointEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+RNA_MgPointEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	rna_mg_knowledge_based_potential_->setup_info_for_mg_calculation( pose );
@@ -114,7 +114,7 @@ RNA_MgPointEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & )
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_MgPointEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_MgPointEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 	rna_mg_knowledge_based_potential_->setup_info_for_mg_calculation( pose );
@@ -136,11 +136,11 @@ RNA_MgPointEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const
 {
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
 	if ( rsd1.is_RNA() && is_magnesium[ rsd2.seqpos() ] ) {
@@ -160,10 +160,10 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 	conformation::Residue const & rsd1, // The RNA residue
 	conformation::Residue const & rsd2, // The Mg(2+)
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const{
 
-	rna::RNA_ScoringInfo const & rna_scoring_info( rna::rna_scoring_info_from_pose( pose ) );
+	core::scoring::rna::RNA_ScoringInfo const & rna_scoring_info( core::scoring::rna::rna_scoring_info_from_pose( pose ) );
 	utility::vector1< bool > const & is_magnesium = rna_scoring_info.is_magnesium();
 
 	runtime_assert( rsd1.is_RNA() );
@@ -211,12 +211,12 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 
 		if ( d < direct_interaction_cutoff_  && mg_potential_gaussian_parameter.center > 0.0 ) {
 
-			Real binding_score = get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
+			Real binding_score = core::scoring::magnesium::get_gaussian_potential_score( mg_potential_gaussian_parameter, i_xyz, j_xyz );
 
 			if ( get_angle_form_factor ) {
-				cos_theta = get_cos_theta( rsd1, i, j_xyz );
+				cos_theta = core::scoring::magnesium::get_cos_theta( rsd1, i, j_xyz );
 				GaussianParameter const & mg_potential_costheta_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_gaussian_parameter( rsd1, i );
-				Real const angle_potential = get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
+				Real const angle_potential = core::scoring::magnesium::get_gaussian_score( mg_potential_costheta_gaussian_parameter, cos_theta );
 				binding_score *= angle_potential;
 			}
 
@@ -234,14 +234,14 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 
 		if ( d >= indirect_interaction_cutoff_ || mg_potential_indirect_gaussian_parameter.center <= 0.0 ) continue;
 
-		Real binding_score_indirect = get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
+		Real binding_score_indirect = core::scoring::magnesium::get_gaussian_potential_score( mg_potential_indirect_gaussian_parameter, i_xyz, j_xyz );
 
 		if ( get_angle_form_factor ) {
 
-			if ( cos_theta < -1.0 ) cos_theta = get_cos_theta( rsd1, i, j_xyz );
+			if ( cos_theta < -1.0 ) cos_theta = core::scoring::magnesium::get_cos_theta( rsd1, i, j_xyz );
 
 			GaussianParameter const & mg_potential_costheta_indirect_gaussian_parameter = rna_mg_knowledge_based_potential_->get_mg_potential_costheta_indirect_gaussian_parameter( rsd1, i );
-			Real const angle_potential_indirect = get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
+			Real const angle_potential_indirect = core::scoring::magnesium::get_gaussian_score( mg_potential_costheta_indirect_gaussian_parameter, cos_theta );
 			binding_score_indirect *= angle_potential_indirect;
 
 		}
@@ -258,8 +258,8 @@ RNA_MgPointEnergy::residue_pair_energy_one_way(
 		score += std::min( phosphate_scores[1], phosphate_scores[2] );
 	}
 
-	emap[ rna_mg_point ] += score;
-	emap[ rna_mg_point_indirect ] += score_indirect;
+	emap[ core::scoring::rna_mg_point ] += score;
+	emap[ core::scoring::rna_mg_point_indirect ] += score_indirect;
 }
 
 /////////////////////////////////
@@ -268,8 +268,8 @@ RNA_MgPointEnergy::eval_atom_derivative(
 	id::AtomID const & /*atom_id*/,
 	pose::Pose const & /*pose*/,
 	kinematics::DomainMap const & /*domain_map*/,
-	ScoreFunction const &,
-	EnergyMap const & /*weights*/,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & /*weights*/,
 	Vector & /*F1*/,
 	Vector & /*F2*/
 ) const
@@ -298,6 +298,5 @@ RNA_MgPointEnergy::version() const
 }
 
 
-} //magnesium
 } //scoring
 } //core

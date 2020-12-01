@@ -19,16 +19,14 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace disulfides {
+namespace energy_methods {
 
 class CentroidDisulfideEnergy;
 
 typedef utility::pointer::shared_ptr< CentroidDisulfideEnergy > CentroidDisulfideEnergyOP;
 typedef utility::pointer::shared_ptr< CentroidDisulfideEnergy const > CentroidDisulfideEnergyCOP;
 
-} // namespace disulfides
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

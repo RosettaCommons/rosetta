@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_HybridVDW_Energy_hh
-#define INCLUDED_core_scoring_methods_HybridVDW_Energy_hh
+#ifndef INCLUDED_core_energy_methods_HybridVDW_Energy_hh
+#define INCLUDED_core_energy_methods_HybridVDW_Energy_hh
 
 // Unit Headers
 #include <core/energy_methods/HybridVDW_Energy.fwd.hh>
@@ -33,13 +33,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class HybridVDW_Energy : public ContextIndependentTwoBodyEnergy  {
+
+class HybridVDW_Energy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 public:
 
 	/// @brief  C-tor
@@ -47,7 +47,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief COPY C-TOR
@@ -59,18 +59,18 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -78,8 +78,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {}
 
 
@@ -88,8 +88,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const & scorefxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & scorefxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -99,14 +99,14 @@ public:
 	//  eval_atom_derivative(
 	//   id::AtomID const & atom_id,
 	//   pose::Pose const & pose,
-	//   ScoreFunction const &,
-	//   EnergyMap const & weights,
+	//   core::scoring::ScoreFunction const &,
+	//   core::scoring::EnergyMap const & weights,
 	//   Vector & F1,
 	//   Vector & F2
 	//  ) const;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -120,7 +120,7 @@ public:
 private:
 
 	// const-ref to scoring database
-	AtomVDW const & atom_vdw_;
+	core::scoring::AtomVDW const & atom_vdw_;
 
 	//std::string const atom_type_set_name_;
 
@@ -129,7 +129,6 @@ private:
 };
 
 
-}
 }
 }
 

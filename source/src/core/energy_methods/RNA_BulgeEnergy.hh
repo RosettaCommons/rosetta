@@ -30,8 +30,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 class RNA_BulgeEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
@@ -58,15 +57,15 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
 	void
 	finalize_total_energy(
 		pose::Pose &,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/// @brief RNA_BulgeEnergy is context independent; indicates that no
@@ -88,7 +87,6 @@ private:
 
 };
 
-} //rna
 } //scoring
 } //core
 

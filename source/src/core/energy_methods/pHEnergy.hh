@@ -15,8 +15,8 @@
 /// @author Krishna
 
 
-#ifndef INCLUDED_core_scoring_methods_pHEnergy_hh
-#define INCLUDED_core_scoring_methods_pHEnergy_hh
+#ifndef INCLUDED_core_energy_methods_pHEnergy_hh
+#define INCLUDED_core_energy_methods_pHEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/pHEnergy.fwd.hh>
@@ -34,21 +34,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class pHEnergy : public ContextIndependentOneBodyEnergy {
+
+class pHEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy {
 
 public:
-	typedef ContextIndependentOneBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy parent;
 
 public:
 	///
 	pHEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -67,7 +67,7 @@ public:
 	Real
 	eval_dof_derivative(
 		id::DOF_ID const & dof_id, id::TorsionID const & tor_id, pose::Pose const & pose,
-		ScoreFunction const & sfxn, EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn, core::scoring::EnergyMap const & weights
 	) const;
 
 
@@ -85,7 +85,6 @@ private:
 };
 
 
-}
 }
 }
 

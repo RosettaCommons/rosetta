@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_SecondaryStructureEnergy_hh
-#define INCLUDED_core_scoring_methods_SecondaryStructureEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SecondaryStructureEnergy_hh
+#define INCLUDED_core_energy_methods_SecondaryStructureEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/SecondaryStructureEnergy.fwd.hh>
@@ -32,13 +32,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class SecondaryStructureEnergy : public WholeStructureEnergy  {
+
+class SecondaryStructureEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -50,7 +50,7 @@ public:
 
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -58,14 +58,14 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const override;
 
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 
@@ -86,12 +86,11 @@ public:
 private:
 
 	/// const-ref to scoring database
-	SecondaryStructurePotential const & potential_;
+	core::scoring::SecondaryStructurePotential const & potential_;
 	core::Size version() const override;
 };
 
 
-}
 }
 }
 

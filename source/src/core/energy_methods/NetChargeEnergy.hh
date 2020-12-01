@@ -42,8 +42,7 @@
 
 
 namespace core {
-namespace scoring {
-namespace netcharge_energy {
+namespace energy_methods {
 
 /// @brief NetChargeEnergy, an energy function to penalize stretches of the same residue,
 /// derived from base class for EnergyMethods, which are meaningful only on entire structures.
@@ -82,7 +81,7 @@ public:
 
 	/// @brief Actually calculate the total energy
 	/// @details Called by the scoring machinery.
-	void finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const override;
+	void finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const override;
 
 	/// @brief Calculate the total energy given a vector of const owning pointers to residues.
 	/// @details Called directly by the ResidueArrayAnnealingEvaluator during packer runs.
@@ -92,12 +91,12 @@ public:
 		core::Size const substitution_position = 0
 	) const override;
 
-	/// @brief Calculate the total energy given a vector of const owning pointers to residues, vectors of NetChargeEnergySetup objects, and vectors of masks.
+	/// @brief Calculate the total energy given a vector of const owning pointers to residues, vectors of core::scoring::netcharge_energy::NetChargeEnergySetup objects, and vectors of masks.
 	/// @details Called by finalize_total_energy() and during packer runs.  Requires
 	/// that set_up_residuearrayannealablenergy_for_packing() be called first.
 	virtual core::Real calculate_energy(
 		utility::vector1< core::conformation::ResidueCOP > const &resvect,
-		utility::vector1< NetChargeEnergySetupCOP > const &setup_helpers,
+		utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupCOP > const &setup_helpers,
 		utility::vector1< core::select::residue_selector::ResidueSubset > const &masks
 	) const;
 
@@ -122,24 +121,24 @@ private:
 
 	/// @brief Get a const-access pointer to a setup helper object.
 	///
-	inline NetChargeEnergySetupCOP setup_helper_cop( core::Size const index ) const {
+	inline core::scoring::netcharge_energy::NetChargeEnergySetupCOP setup_helper_cop( core::Size const index ) const {
 		runtime_assert_string_msg( index > 0 && index <= setup_helpers_.size(), "Error in core::scoring::netcharge_energy::NetChargeEnergy::setup_helper_cop(): Index of setup helper is out of range." );
-		return utility::pointer::dynamic_pointer_cast<NetChargeEnergySetup const>(setup_helpers_[index]);
+		return utility::pointer::dynamic_pointer_cast<core::scoring::netcharge_energy::NetChargeEnergySetup const>(setup_helpers_[index]);
 	}
 
 	/// @brief Get the number of setup helper objects:
 	///
 	inline core::Size setup_helper_count() const { return setup_helpers_.size(); }
 
-	/// @brief Given a pose, pull out the NetChargeEnergySetup objects stored in SequenceConstraints in the pose and
+	/// @brief Given a pose, pull out the core::scoring::netcharge_energy::NetChargeEnergySetup objects stored in SequenceConstraints in the pose and
 	/// append them to the setup_helpers_ vector, returning a new vector.  This also generates a vector of masks simultaneously.
-	/// @param [in] pose The pose from which the NetChargeEnergySetupCOPs will be extracted.
-	/// @param [out] setup_helpers The output vector of NetChargeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
+	/// @param [in] pose The pose from which the core::scoring::netcharge_energy::NetChargeEnergySetupCOPs will be extracted.
+	/// @param [out] setup_helpers The output vector of core::scoring::netcharge_energy::NetChargeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
 	/// @param [out] masks The output vector of ResidueSubsets, which will be equal in size to the helpers vector.
 	/// @details The output vectors are first cleared by this operation.
 	void get_helpers_from_pose(
 		core::pose::Pose const &pose,
-		utility::vector1< NetChargeEnergySetupCOP > &setup_helpers,
+		utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupCOP > &setup_helpers,
 		utility::vector1< core::select::residue_selector::ResidueSubset > &masks
 	) const;
 
@@ -149,25 +148,24 @@ private:
 
 	/// @brief The vector of helper objects that store all of the data for setting up this scoring function.
 	/// @details Initialized on scoreterm initialization.
-	utility::vector1<NetChargeEnergySetupOP> setup_helpers_;
+	utility::vector1<core::scoring::netcharge_energy::NetChargeEnergySetupOP> setup_helpers_;
 
 	/***********************
 	Cached data for packing:
 	************************/
 
-	/// @brief A cache of the NetChargeEnergySetup objects to be used for packing.
-	/// @details This is the list in setup_helpers_ plus all of the NetChargeEnergySetup objects
-	/// stored in NetChargeConstraint objects in the pose.  Initialized by the ResidueArrayAnnealingEvaluator
+	/// @brief A cache of the core::scoring::netcharge_energy::NetChargeEnergySetup objects to be used for packing.
+	/// @details This is the list in setup_helpers_ plus all of the core::scoring::netcharge_energy::NetChargeEnergySetup objects
+	/// stored in core::scoring::netcharge_energy::NetChargeConstraint objects in the pose.  Initialized by the ResidueArrayAnnealingEvaluator
 	/// in its initialize() function.
-	utility::vector1<NetChargeEnergySetupCOP> setup_helpers_for_packing_;
+	utility::vector1<core::scoring::netcharge_energy::NetChargeEnergySetupCOP> setup_helpers_for_packing_;
 
-	/// @brief A vector of masks corresponding to the NetChargeEnergySetup objects in setup_helpers_for_packing_.
+	/// @brief A vector of masks corresponding to the core::scoring::netcharge_energy::NetChargeEnergySetup objects in setup_helpers_for_packing_.
 	/// @detalis These are generated from ResidueSelectors.
 	utility::vector1< core::select::residue_selector::ResidueSubset > setup_helper_masks_for_packing_;
 
 };
 
-} // netcharge_energy
 } // scoring
 } // core
 

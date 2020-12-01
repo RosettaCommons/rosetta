@@ -12,8 +12,8 @@
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_SASAEnergy_hh
-#define INCLUDED_core_scoring_methods_SASAEnergy_hh
+#ifndef INCLUDED_core_energy_methods_SASAEnergy_hh
+#define INCLUDED_core_energy_methods_SASAEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/SASAEnergy.fwd.hh>
@@ -39,25 +39,25 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 ///
-class SASAEnergy : public ContextIndependentLRTwoBodyEnergy  {
+class SASAEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy  {
 public:
-	typedef ContextIndependentLRTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy  parent;
 public:
 
-	/// for use by ScoringManager
-	SASAEnergy( EnergyMethodOptions const & options );
+	/// for use by core::scoring::ScoringManager
+	SASAEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	///
 	SASAEnergy( SASAEnergy const & src );
 
 
-	LongRangeEnergyType long_range_type() const override
+	core::scoring::methods::LongRangeEnergyType long_range_type() const override
 	{
-		return sasa_lr;
+		return core::scoring::methods::sasa_lr;
 	}
 
 	bool
@@ -68,7 +68,7 @@ public:
 	) const override;
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	///
@@ -81,11 +81,11 @@ public:
 
 	///
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	///
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	bool
 	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( pose::Pose const & ) const override;
@@ -94,8 +94,8 @@ public:
 	setup_for_scoring_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const &,// pose,
-		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & resdata
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::ResSingleMinimizationData & resdata
 	) const override;
 
 	bool
@@ -105,8 +105,8 @@ public:
 	setup_for_derivatives_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		ResSingleMinimizationData & min_data,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::ResSingleMinimizationData & min_data,
 		basic::datacache::BasicDataCache &
 	) const override;
 
@@ -114,10 +114,10 @@ public:
 	setup_for_minimizing_for_residue(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & scorefxn,
+		core::scoring::ScoreFunction const & scorefxn,
 		kinematics::MinimizerMapBase const & min_map,
 		basic::datacache::BasicDataCache &,
-		ResSingleMinimizationData & resdata
+		core::scoring::ResSingleMinimizationData & resdata
 	) const override;
 
 	void
@@ -125,11 +125,11 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const &,
-		ScoreFunction const & scorefxn,
+		core::scoring::ScoreFunction const & scorefxn,
 		kinematics::MinimizerMapBase const & min_map,
-		ResSingleMinimizationData const & res1data,
-		ResSingleMinimizationData const & res2data,
-		ResPairMinimizationData & pairdata
+		core::scoring::ResSingleMinimizationData const & res1data,
+		core::scoring::ResSingleMinimizationData const & res2data,
+		core::scoring::ResPairMinimizationData & pairdata
 	) const override;
 
 
@@ -143,10 +143,10 @@ public:
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & pairdata,
+		core::scoring::ResPairMinimizationData const & pairdata,
 		pose::Pose const &,// pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -155,32 +155,32 @@ public:
 	void
 	eval_intrares_energy_ext(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & data_cache,
+		core::scoring::ResSingleMinimizationData const & data_cache,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	void
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	void
@@ -203,15 +203,15 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
 	evaluate_rotamer_intrares_energies(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
 	) const override;
 
@@ -219,8 +219,8 @@ public:
 	evaluate_rotamer_intrares_energy_maps(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		utility::vector1< EnergyMap > & emaps
+		core::scoring::ScoreFunction const & sfxn,
+		utility::vector1< core::scoring::EnergyMap > & emaps
 	) const override;
 
 	/// @brief Batch computation of rotamer pair energies.  Need not be overriden in
@@ -233,8 +233,8 @@ public:
 		conformation::RotamerSetBase const & set1,
 		conformation::RotamerSetBase const & set2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const override;
 
@@ -250,8 +250,8 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const override;
 
@@ -266,9 +266,9 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		utility::vector1< EnergyMap > & emaps
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::EnergyMap > & emaps
 	) const override;
 
 	//  virtual
@@ -278,14 +278,14 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// this is our own special function
@@ -302,7 +302,7 @@ public:
 private:
 
 	// const-ref to scoring database
-	SASAPotential const & potential_;
+	core::scoring::SASAPotential const & potential_;
 
 	///
 	bool const exclude_DNA_DNA_;
@@ -311,7 +311,6 @@ private:
 };
 
 
-}
 }
 }
 

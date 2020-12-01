@@ -36,12 +36,11 @@
 #include <string>
 
 namespace core {
-namespace scoring {
-namespace fiber_diffraction {
+namespace energy_methods {
 
-class FiberDiffractionEnergyGpu : public methods::WholeStructureEnergy  {
+class FiberDiffractionEnergyGpu : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -57,21 +56,21 @@ public:
 		dchi2_d_cross_R = src.dchi2_d_cross_R;
 	}
 
-	virtual methods::EnergyMethodOP clone() const;
+	virtual core::scoring::methods::EnergyMethodOP clone() const;
 
-	virtual void finalize_total_energy(pose::Pose & pose,ScoreFunction const &,EnergyMap & totals) const;
+	virtual void finalize_total_energy(pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals) const;
 
-	virtual void setup_for_scoring( pose::Pose & pose, ScoreFunction const & scorefxn ) const;
+	virtual void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scorefxn ) const;
 
-	virtual void setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const;
+	virtual void setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & sf) const;
 
 	virtual void
 	eval_atom_derivative(
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const;
@@ -99,7 +98,6 @@ private:
 	core::Size version() const;
 };
 
-}
 }
 }
 

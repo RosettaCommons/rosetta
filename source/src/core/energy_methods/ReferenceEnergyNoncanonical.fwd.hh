@@ -12,21 +12,20 @@
 /// @author Fang-Chieh Chou (fcchou@stanford.edu)
 
 
-#ifndef INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonical_fwd_hh
-#define INCLUDED_core_scoring_methods_ReferenceEnergyNoncanonical_fwd_hh
+#ifndef INCLUDED_core_energy_methods_ReferenceEnergyNoncanonical_fwd_hh
+#define INCLUDED_core_energy_methods_ReferenceEnergyNoncanonical_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class ReferenceEnergyNoncanonical;
 
 typedef utility::pointer::shared_ptr< ReferenceEnergyNoncanonical > ReferenceEnergyNoncanonicalOP;
 typedef utility::pointer::shared_ptr< ReferenceEnergyNoncanonical const > ReferenceEnergyNoncanonicalCOP;
 
-} // methods
 } // scoring
 } // core
 

@@ -24,14 +24,12 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 class FaMPEnvSmoothEnergy;
 typedef utility::pointer::shared_ptr< FaMPEnvSmoothEnergy > FaMPEnvSmoothEnergyOP;
 typedef utility::pointer::shared_ptr< FaMPEnvSmoothEnergy const > FaMPEnvSmoothEnergyCOP;
 
-} // membrane
 } // scoring
 } // core
 

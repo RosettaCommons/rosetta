@@ -27,21 +27,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the PackStatEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PackStatEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< PackStatEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 PackStatEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( pack_stat );
 	return sts;
@@ -54,7 +55,7 @@ PackStatEnergy::PackStatEnergy() :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 PackStatEnergy::clone() const
 {
 	return utility::pointer::make_shared< PackStatEnergy >();
@@ -66,18 +67,18 @@ PackStatEnergy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 /// @brief Calculate the radius of gyration and place the answer into
-/// totals[ rg ].
+/// totals[ core::scoring::rg ].
 void
 PackStatEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace core::scoring::packstat;
 
 	core::Real packing_score = compute_packing_score(pose);
 	// std::cerr << "ps " << packing_score << " " << std::endl;
-	totals[ pack_stat ] = - packing_score * pose.size();
+	totals[ core::scoring::pack_stat ] = - packing_score * pose.size();
 }
 
 core::Size
@@ -86,6 +87,5 @@ PackStatEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}
 }
 }

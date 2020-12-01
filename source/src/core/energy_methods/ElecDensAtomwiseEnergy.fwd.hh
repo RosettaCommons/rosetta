@@ -18,15 +18,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace electron_density_atomwise {
+namespace energy_methods {
 
 class ElecDensAtomwiseEnergy;
 
 typedef utility::pointer::shared_ptr< ElecDensAtomwiseEnergy > ElecDensAtomwiseEnergyOP;
 typedef utility::pointer::shared_ptr< ElecDensAtomwiseEnergy const > ElecDensAtomwiseEnergyCOP;
 
-} // electron_density_atomwise
 } // scoring
 } // core
 

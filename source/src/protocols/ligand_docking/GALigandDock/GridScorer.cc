@@ -176,12 +176,11 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 
 	// set up scorefunction-derived parameters
 	LKBe_ = utility::pointer::make_shared< core::scoring::lkball::LK_BallEnergy >(e_opts);
-	coulomb_ = core::scoring::etable::coulomb::CoulombOP ( new core::scoring::etable::coulomb::Coulomb(e_opts) );
+	coulomb_ = utility::pointer::make_shared< core::scoring::etable::coulomb::Coulomb >(e_opts);
 	coulomb_->initialize();
 	core::scoring::hbonds::HBondOptions const & hbopt = e_opts.hbond_options();
 	hb_database_ = core::scoring::hbonds::HBondDatabase::get_database( hbopt.params_database_tag() );
-	cartbonded_ = core::scoring::methods::CartesianBondedEnergyOP (
-		new core::scoring::methods::CartesianBondedEnergy(e_opts) );
+	cartbonded_ = utility::pointer::make_shared< core::energy_methods::CartesianBondedEnergy >(e_opts);
 
 	core::Real soft_rep_weight( 0.001 ), soft_intrarep_weight( 0.01 ), soft_gen_bonded_weight( 0.1 ); //run9 params
 

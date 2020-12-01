@@ -18,17 +18,17 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
 
-ScoreTypes SAXSEnergyCreatorCEN::score_types_for_method() const {
+core::scoring::ScoreTypes SAXSEnergyCreatorCEN::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( saxs_cen_score );
 	return sts;
 }
 
-methods::EnergyMethodOP SAXSEnergyCreatorCEN::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP SAXSEnergyCreatorCEN::create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const {
 	return utility::pointer::make_shared< SAXSEnergyCEN >();
 }
 core::Size
@@ -37,6 +37,5 @@ SAXSEnergyCreatorCEN::version() const
 	return 1; // Initial versioning
 }
 
-} // saxs
 } // scoring
 } // core

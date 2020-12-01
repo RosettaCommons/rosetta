@@ -60,30 +60,30 @@ static basic::Tracer TR( "core.scoring.rna.TNA_SuiteEnergy", basic::t_info );
 ///////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 using namespace core::chemical;
 
 /// @details This must return a fresh instance,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 TNA_SuiteEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const { return utility::pointer::make_shared< TNA_SuiteEnergy >( options.rna_options() ); }
 
-ScoreTypes
+core::scoring::ScoreTypes
 TNA_SuiteEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( tna_suite );
 	return sts;
 }
 
 /// ctor
-TNA_SuiteEnergy::TNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
+TNA_SuiteEnergy::TNA_SuiteEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< TNA_SuiteEnergyCreator >() ),
 	options_( options ),
-	tna_suite_potential_( utility::pointer::make_shared< TNA_SuitePotential >() )
+	tna_suite_potential_( utility::pointer::make_shared< core::scoring::rna::TNA_SuitePotential >() )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -92,28 +92,28 @@ TNA_SuiteEnergy::TNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
 void
 TNA_SuiteEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring::methods;
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		utility::vector1< ScoreType > s_types;
-		s_types.push_back( tna_suite );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		utility::vector1< core::scoring::ScoreType > s_types;
+		s_types.push_back( core::scoring::tna_suite );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::PolymerBondedEnergyContainer >( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 		runtime_assert( pose.energies().long_range_container( lr_type ) );
 	}
@@ -124,15 +124,15 @@ TNA_SuiteEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const {
 
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
-	if ( scorefxn.has_nonzero_weight( tna_suite ) && tna_suite_potential_->eval_score( rsd1, rsd2, pose ) ) {
-		emap[ tna_suite ]       += tna_suite_potential_->get_score();
+	if ( scorefxn.has_nonzero_weight( core::scoring::tna_suite ) && tna_suite_potential_->eval_score( rsd1, rsd2, pose ) ) {
+		emap[ core::scoring::tna_suite ]       += tna_suite_potential_->get_score();
 	}
 }
 
@@ -140,18 +140,18 @@ void
 TNA_SuiteEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1<DerivVectorPair> & r1_atom_derivs,
-	utility::vector1<DerivVectorPair> & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair> & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair> & r2_atom_derivs
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
-	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[tna_suite], r1_atom_derivs, r2_atom_derivs, tna_suite_potential_ );
+	eval_residue_pair_derivatives( rsd1, rsd2, pose, weights[core::scoring::tna_suite], r1_atom_derivs, r2_atom_derivs, tna_suite_potential_ );
 }
 
 void
@@ -160,9 +160,9 @@ TNA_SuiteEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	Real const & weight,
-	utility::vector1<DerivVectorPair> & r1_atom_derivs,
-	utility::vector1<DerivVectorPair> & r2_atom_derivs,
-	TNA_SuitePotentialCOP tna_suite_potential
+	utility::vector1< core::scoring::DerivVectorPair> & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair> & r2_atom_derivs,
+	core::scoring::rna::TNA_SuitePotentialCOP tna_suite_potential
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
@@ -183,9 +183,9 @@ TNA_SuiteEnergy::eval_residue_pair_derivatives(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );
 	conformation::Residue const & rsd_hi(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd2 : rsd1 );
-	utility::vector1< DerivVectorPair > & r_lo_derivs(
+	utility::vector1< core::scoring::DerivVectorPair > & r_lo_derivs(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? r1_atom_derivs : r2_atom_derivs );
-	utility::vector1< DerivVectorPair > & r_hi_derivs(
+	utility::vector1< core::scoring::DerivVectorPair > & r_hi_derivs(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? r2_atom_derivs : r1_atom_derivs );
 	Size const rsdnum_lo( rsd_lo.seqpos() ), rsdnum_hi( rsd_hi.seqpos() );
 
@@ -263,7 +263,6 @@ TNA_SuiteEnergy::get_f1_f2(
 	return true;
 }
 
-} //rna
 } //scoring
 } //core
 

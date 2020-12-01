@@ -19,15 +19,13 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_TorsionEnergy;
 
 typedef utility::pointer::shared_ptr< RNA_TorsionEnergy > RNA_TorsionEnergyOP;
 typedef utility::pointer::shared_ptr< RNA_TorsionEnergy const > RNA_TorsionEnergyCOP;
 
-} //rna
 } //scoring
 } //core
 

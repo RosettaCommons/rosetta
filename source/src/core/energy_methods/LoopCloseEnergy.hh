@@ -34,24 +34,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace loop_graph {
+namespace energy_methods {
 
 
-class LoopCloseEnergy : public methods::WholeStructureEnergy  {
+class LoopCloseEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	/// @brief Defines a loop closure energy based on FullModelInfo and pose geometry.
-	LoopCloseEnergy( methods::EnergyMethodOptions const & options );
+	LoopCloseEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// copy ctor
 	LoopCloseEnergy( LoopCloseEnergy const & src );
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -59,16 +58,16 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////
@@ -77,8 +76,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2 ) const override;
 
@@ -100,7 +99,7 @@ private:
 
 	core::Size version() const override;
 
-	methods::EnergyMethodOptions const & options_;
+	core::scoring::methods::EnergyMethodOptions const & options_;
 
 	mutable core::scoring::loop_graph::LoopGraphOP loop_graph_;
 
@@ -109,6 +108,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_LoopCloseEnergy_HH
+#endif // INCLUDED_core_energy_methods_LoopCloseEnergy_HH

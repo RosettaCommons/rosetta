@@ -29,15 +29,14 @@
 #include <tuple>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_StubCoordinateEnergy : public methods::ContextIndependentLRTwoBodyEnergy {
+class RNA_StubCoordinateEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
-	typedef methods::EnergyMethodOP EnergyMethodOP;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::EnergyMethodOP EnergyMethodOP;
 	typedef numeric::xyzVector< Real > Vector;
 	typedef numeric::xyzMatrix< Real > Matrix;
 
@@ -46,33 +45,33 @@ public:
 	RNA_StubCoordinateEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	///
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return false; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap & ) const override {};
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & ) const override {};
 
 	/// @brief Interface from the LongRangeTwoBodyEnergy base class; returns "true" if there's any non-zero
 	/// or potentially non-zero interaction between a pair of residues in a pose.
@@ -85,7 +84,7 @@ public:
 
 	/// @brief Identification for this LR2B energy that links it with the
 	/// long-range energy container that it stores in the Energies object
-	methods::LongRangeEnergyType long_range_type() const override { return methods::rna_stub_coord_lr; }
+	core::scoring::methods::LongRangeEnergyType long_range_type() const override { return core::scoring::methods::rna_stub_coord_lr; }
 
 	core::Size version() const override{ return 1; }
 
@@ -100,7 +99,6 @@ private:
 };
 
 
-} //rna
 } //scoring
 } //core
 

@@ -28,12 +28,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace disulfides {
+namespace energy_methods {
 
-class CentroidDisulfideEnergy : public methods::ContextIndependentLRTwoBodyEnergy {
+class CentroidDisulfideEnergy : public core::scoring::methods::ContextIndependentLRTwoBodyEnergy {
 public:
-	typedef methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentLRTwoBodyEnergy parent;
+	typedef core::scoring::disulfides::CentroidDisulfidePotential CentroidDisulfidePotential;
 
 public:
 
@@ -41,11 +41,11 @@ public:
 	~CentroidDisulfideEnergy() override;
 
 	// EnergyMethod Methods:
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override;
 
@@ -55,23 +55,23 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & weights ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	// LongRangeTwoBodyEnergy methods
-	methods::LongRangeEnergyType long_range_type() const override;
+	core::scoring::methods::LongRangeEnergyType long_range_type() const override;
 
 	bool
 	defines_residue_pair_energy(
@@ -85,9 +85,7 @@ private:
 	core::Size version() const override;
 };
 
-
-} // namespace disulfides
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif //INCLUDED_core_scoring_disulfides_CentroidDisulfideEnergy_HH

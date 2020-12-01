@@ -12,8 +12,8 @@
 /// @author Phil Bradley
 
 
-#ifndef INCLUDED_core_scoring_methods_RamachandranEnergy_hh
-#define INCLUDED_core_scoring_methods_RamachandranEnergy_hh
+#ifndef INCLUDED_core_energy_methods_RamachandranEnergy_hh
+#define INCLUDED_core_energy_methods_RamachandranEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/RamachandranEnergy.fwd.hh>
@@ -29,20 +29,20 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class RamachandranEnergy : public ContextIndependentOneBodyEnergy  {
+
+class RamachandranEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 public:
 
 	/// ctor
 	RamachandranEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -72,12 +72,12 @@ public:
 	Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 	/// @brief NOTE: non-virtual function interface.
@@ -86,8 +86,8 @@ public:
 		id::DOF_ID const &,// dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const &,// sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const &,// sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief Ramachandran Energy is context independent and thus indicates that no context graphs need to
@@ -96,12 +96,11 @@ public:
 
 	// data
 private:
-	Ramachandran const & potential_;
+	core::scoring::Ramachandran const & potential_;
 	core::Size version() const override;
 
 };
 
-} // methods
 } // scoring
 } // core
 

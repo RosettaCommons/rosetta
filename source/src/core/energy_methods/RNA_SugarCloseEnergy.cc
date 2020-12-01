@@ -47,20 +47,20 @@
 using namespace core::chemical::rna;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 /// @details This must return a fresh instance of the RNA_SugarCloseEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_SugarCloseEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_SugarCloseEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_SugarCloseEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_sugar_close );
 	return sts;
@@ -74,17 +74,17 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 	scale_rna_torsion_sd_( 1.0 / std::sqrt( scale_rna_torsion_tether_ ) ),
 	o4prime_c1prime_bond_length_( 1.414 ),
 	o4prime_c1prime_sd_( 0.01 ),
-	o4prime_c1prime_dist_harm_func_( utility::pointer::make_shared< func::HarmonicFunc >( o4prime_c1prime_bond_length_, scale_rna_torsion_sd_ * o4prime_c1prime_sd_ ) ),
+	o4prime_c1prime_dist_harm_func_( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_bond_length_, scale_rna_torsion_sd_ * o4prime_c1prime_sd_ ) ),
 	angle_sd_( numeric::conversions::radians( 1.0 ) ),
 	o4prime_c1prime_c2prime_bond_angle_( numeric::conversions::radians( 106.39 ) ),
 	o4prime_c1prime_c2prime_angle_harm_func_(
-	utility::pointer::make_shared< func::HarmonicFunc >( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
+	utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_c2prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
 	o4prime_c1prime_first_base_bond_angle_( numeric::conversions::radians( 108.2 ) ),
 	o4prime_c1prime_first_base_angle_harm_func_(
-	utility::pointer::make_shared< func::HarmonicFunc >( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ),
+	utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_first_base_bond_angle_, angle_sd_ ) ),
 	c4prime_o4prime_c1prime_bond_angle_( numeric::conversions::radians( 110.4 ) ),
 	c4prime_o4prime_c1prime_angle_harm_func_(
-	utility::pointer::make_shared< func::HarmonicFunc >( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
+	utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( c4prime_o4prime_c1prime_bond_angle_, scale_rna_torsion_sd_ * angle_sd_ ) ),
 	//phenix_based_sugar_close params
 	use_phenix_sugar_close_( basic::options::option[ basic::options::OptionKeys::rna::corrected_geo ]() ),
 	o4prime_c1prime_bond_north_( 1.412 ),
@@ -104,7 +104,7 @@ RNA_SugarCloseEnergy::RNA_SugarCloseEnergy() :
 RNA_SugarCloseEnergy::~RNA_SugarCloseEnergy() = default;
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_SugarCloseEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_SugarCloseEnergy >();
@@ -112,7 +112,7 @@ RNA_SugarCloseEnergy::clone() const
 
 ///////////////////////////////////////////////////////////////////////////////
 void
-RNA_SugarCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+RNA_SugarCloseEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	setup_sugar_ring_closure_constraints( pose );
 }
@@ -122,9 +122,9 @@ RNA_SugarCloseEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction co
 void
 RNA_SugarCloseEnergy::residue_energy(
 	conformation::Residue const & rsd,
-	EnergyMap & emap  ) const {
+	core::scoring::EnergyMap & emap  ) const {
 
-	constraints::ConstraintSet residue_rna_sugar_close_constraints;
+	core::scoring::constraints::ConstraintSet residue_rna_sugar_close_constraints;
 	add_sugar_ring_closure_constraints( rsd, residue_rna_sugar_close_constraints );
 	residue_rna_sugar_close_constraints.eval_intrares_energy( rsd, emap );
 
@@ -135,7 +135,7 @@ void
 RNA_SugarCloseEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const {
 	residue_energy( rsd, emap );
 }
@@ -146,8 +146,8 @@ RNA_SugarCloseEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -161,7 +161,7 @@ RNA_SugarCloseEnergy::eval_atom_derivative(
 /////////////////////////////////////////////////////////////////////////////////////////
 void
 RNA_SugarCloseEnergy::setup_sugar_ring_closure_constraints( pose::Pose & pose ) const{
-	rna_sugar_close_constraints_ = utility::pointer::make_shared< constraints::ConstraintSet >();
+	rna_sugar_close_constraints_ = utility::pointer::make_shared< core::scoring::constraints::ConstraintSet >();
 
 	for ( auto const & rsd : pose ) {
 		add_sugar_ring_closure_constraints( rsd, *rna_sugar_close_constraints_ );
@@ -170,9 +170,10 @@ RNA_SugarCloseEnergy::setup_sugar_ring_closure_constraints( pose::Pose & pose ) 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 void
-RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue const & rsd, constraints::ConstraintSet & cst_set ) const {
+RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue const & rsd, core::scoring::constraints::ConstraintSet & cst_set ) const {
 
 	using namespace core::scoring::constraints;
+	using namespace core::scoring;
 
 	if ( !rsd.is_RNA() && !rsd.is_TNA() ) return;
 
@@ -192,27 +193,27 @@ RNA_SugarCloseEnergy::add_sugar_ring_closure_constraints( conformation::Residue 
 	id::AtomID const c4prime_id( c4prime_index, i );
 	id::AtomID const first_base_atom_id( first_base_atom_index( rsd.type() ),  i );
 
-	constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
+	core::scoring::constraints::ConstraintOP dist_cst, angle1, angle2, angle3;
 	if ( use_phenix_sugar_close_ ) {
 		Real const delta = numeric::principal_angle_degrees( rsd.mainchain_torsion( DELTA ) );
 		Real const delta_cutoff = rna_fitted_torsion_info_->delta_cutoff();
 		if ( delta < delta_cutoff ) { //NORTH
-			func::FuncOP f_dist_cst( new func::HarmonicFunc( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );
+			core::scoring::func::FuncOP f_dist_cst( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_bond_north_, scale_rna_torsion_sd_ * bond_sd_ ) );
 			dist_cst = utility::pointer::make_shared< AtomPairConstraint >( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close );
-			func::FuncOP f_angle1( new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ) );
+			core::scoring::func::FuncOP f_angle1( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_c2prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ) );
 			angle1 = utility::pointer::make_shared< AngleConstraint >( o4prime_id, c1prime_id, c2prime_id, f_angle1, rna_sugar_close );
-			func::FuncOP f_angle2( new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ) );
+			core::scoring::func::FuncOP f_angle2( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( c4prime_o4prime_c1prime_angle_north_, scale_rna_torsion_sd_ * angle_sd1_ ) );
 			angle2 = utility::pointer::make_shared< AngleConstraint >( c4prime_id, o4prime_id, c1prime_id, f_angle2, rna_sugar_close );
-			func::FuncOP f_angle3( new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ ) );
+			core::scoring::func::FuncOP f_angle3( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_n1_9_angle_north_, scale_rna_torsion_sd_ * angle_sd2_ ) );
 			angle3 = utility::pointer::make_shared< AngleConstraint >( o4prime_id, c1prime_id, first_base_atom_id, f_angle3, rna_sugar_close );
 		} else { //SOUTH
-			func::FuncOP f_dist_cst( new func::HarmonicFunc( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ ) );
+			core::scoring::func::FuncOP f_dist_cst( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_bond_south_, scale_rna_torsion_sd_ * bond_sd_ ) );
 			dist_cst = utility::pointer::make_shared< AtomPairConstraint >( o4prime_id, c1prime_id, f_dist_cst, rna_sugar_close );
-			func::FuncOP f_angle1( new func::HarmonicFunc( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ) );
+			core::scoring::func::FuncOP f_angle1( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_c2prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ) );
 			angle1 = utility::pointer::make_shared< AngleConstraint >( o4prime_id, c1prime_id, c2prime_id, f_angle1, rna_sugar_close );
-			func::FuncOP f_angle2( new func::HarmonicFunc( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ) );
+			core::scoring::func::FuncOP f_angle2( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( c4prime_o4prime_c1prime_angle_south_, scale_rna_torsion_sd_ * angle_sd1_ ) );
 			angle2 = utility::pointer::make_shared< AngleConstraint >( c4prime_id, o4prime_id, c1prime_id, f_angle2, rna_sugar_close );
-			func::FuncOP f_angle3( new func::HarmonicFunc( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ ) );
+			core::scoring::func::FuncOP f_angle3( utility::pointer::make_shared< core::scoring::func::HarmonicFunc >( o4prime_c1prime_n1_9_angle_south_, scale_rna_torsion_sd_ * angle_sd2_ ) );
 			angle3 = utility::pointer::make_shared< AngleConstraint >( o4prime_id, c1prime_id, first_base_atom_id, f_angle3, rna_sugar_close );
 		}
 	} else {
@@ -238,6 +239,5 @@ RNA_SugarCloseEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

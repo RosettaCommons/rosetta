@@ -37,21 +37,27 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
-class FACTSEnergy : public ContextDependentTwoBodyEnergy  {
 
-public:
-	typedef ContextDependentTwoBodyEnergy  parent;
+class FACTSEnergy : public core::scoring::methods::ContextDependentTwoBodyEnergy  {
 
 public:
-	FACTSEnergy( EnergyMethodOptions const & options );
+	typedef core::scoring::methods::ContextDependentTwoBodyEnergy parent;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMap EnergyMap;
+	typedef core::scoring::facts::FACTSPotential FACTSPotential;
+	typedef core::scoring::methods::EnergyMethod EnergyMethod;
+	typedef core::scoring::methods::EnergyMethodOP EnergyMethodOP;
+	typedef core::scoring::methods::EnergyMethodOptions EnergyMethodOptions;
+
+public:
+	FACTSEnergy( core::scoring::methods::EnergyMethodOptions const & options );
 
 	FACTSEnergy( FACTSEnergy const & src );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override {
 		return utility::pointer::make_shared< FACTSEnergy >(*this);
 	}
@@ -64,10 +70,10 @@ public:
 	) const override;
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	prepare_rotamers_for_packing(
@@ -89,8 +95,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -98,7 +104,7 @@ public:
 	evaluate_rotamer_intrares_energies(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
+		core::scoring::ScoreFunction const & sfxn,
 		utility::vector1< core::PackerEnergy > & energies
 	) const override;
 
@@ -107,8 +113,8 @@ public:
 	evaluate_rotamer_intrares_energy_maps(
 		conformation::RotamerSetBase const & set,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		utility::vector1< EnergyMap > & emaps
+		core::scoring::ScoreFunction const & sfxn,
+		utility::vector1< core::scoring::EnergyMap > & emaps
 	) const override;
 
 
@@ -122,8 +128,8 @@ public:
 		conformation::RotamerSetBase const & set1,
 		conformation::RotamerSetBase const & set2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		ObjexxFCL::FArray2D< core::PackerEnergy > & energy_table
 	) const override;
 
@@ -139,8 +145,8 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
 		utility::vector1< core::PackerEnergy > & energy_vector
 	) const override;
 
@@ -157,9 +163,9 @@ public:
 		conformation::RotamerSetBase const & set,
 		conformation::Residue const & residue,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights,
-		utility::vector1< EnergyMap > & emaps
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::EnergyMap > & emaps
 	) const override;
 
 
@@ -168,8 +174,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -180,14 +186,14 @@ public:
 	void indicate_required_context_graphs( utility::vector1< bool > & ) const override {}
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return true; }
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// this is our own special function
@@ -209,7 +215,6 @@ private:
 };
 
 
-}
 }
 }
 

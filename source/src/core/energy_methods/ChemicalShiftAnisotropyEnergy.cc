@@ -58,22 +58,23 @@
 static basic::Tracer tr( "core.scoring.ChemicalShiftAnisotropy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the ChemicalShiftAnisotropyEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ChemicalShiftAnisotropyEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ChemicalShiftAnisotropyEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ChemicalShiftAnisotropyEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( csa );
 	return sts;
@@ -90,7 +91,7 @@ ChemicalShiftAnisotropyEnergy::ChemicalShiftAnisotropyEnergy() :
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ChemicalShiftAnisotropyEnergy::clone() const
 {
 	return utility::pointer::make_shared< ChemicalShiftAnisotropyEnergy >();
@@ -98,7 +99,7 @@ ChemicalShiftAnisotropyEnergy::clone() const
 
 void ChemicalShiftAnisotropyEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	csa_score_ = eval_csa( pose );
@@ -106,19 +107,20 @@ void ChemicalShiftAnisotropyEnergy::setup_for_scoring(
 
 void ChemicalShiftAnisotropyEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
-	totals[ csa ] = csa_score_;
+	totals[ core::scoring::csa ] = csa_score_;
 }
 
 void ChemicalShiftAnisotropyEnergy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &
 ) const
 {
+	using namespace core::scoring;
 	ChemicalShiftAnisotropy const& csa_data( * retrieve_CSA_from_pose( pose ) );
 	ChemicalShiftAnisotropy::CSA_lines const& All_CSA_lines( csa_data.get_CSA_data() );
 	ChemicalShiftAnisotropy::CSA_lines::const_iterator it;
@@ -147,11 +149,12 @@ void ChemicalShiftAnisotropyEnergy::setup_for_minimizing(
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-ChemicalShiftAnisotropy &
+core::scoring::ChemicalShiftAnisotropy &
 ChemicalShiftAnisotropyEnergy::csa_from_pose(
 	pose::Pose & pose
 ) const
 {
+	using namespace core::scoring;
 	ChemicalShiftAnisotropyOP csa_info( retrieve_CSA_from_pose( pose ) );
 	if ( !csa_info ) {
 		csa_info = utility::pointer::make_shared< ChemicalShiftAnisotropy >();
@@ -169,7 +172,7 @@ Real ChemicalShiftAnisotropyEnergy::eval_csa(
 ) const
 {
 
-	ChemicalShiftAnisotropy& csa_data( csa_from_pose( pose ) );
+	core::scoring::ChemicalShiftAnisotropy& csa_data( csa_from_pose( pose ) );
 	Real score = csa_data.compute_csascore( pose );
 	return score;
 }
@@ -179,11 +182,12 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & score_weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & score_weights,
 	Vector & F1,
 	Vector & F2
 ) const {
+	using namespace core::scoring;
 
 	if ( !atom2csa_map_.has( aid ) ) return; //damn this "has" isn't correct at all
 	utility::vector1< Size > const csa_nrs( atom2csa_map_[ aid ] );
@@ -225,15 +229,15 @@ ChemicalShiftAnisotropyEnergy::eval_atom_derivative(
 
 	//tr.Trace << "fij[0]: " << fij[0]<< " fij[1]: " << fij[1]<< " fij[2]: " << fij[2]<< std::endl;
 	//tr.Trace << "torsion gradient: " << aid << std::endl;
-	//tr.Trace << "score_weights[ csa ]: " << score_weights[ csa ] << std::endl;
+	//tr.Trace << "score_weights[ core::scoring::csa ]: " << score_weights[ core::scoring::csa ] << std::endl;
 	//thanks to Will Sheffler:
 	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( fij );
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
-	F1 += score_weights[ csa ] * f1;
-	F2 += score_weights[ csa ] * f2;
+	F1 += score_weights[ core::scoring::csa ] * f1;
+	F2 += score_weights[ core::scoring::csa ] * f2;
 
 }
 
@@ -243,6 +247,5 @@ ChemicalShiftAnisotropyEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

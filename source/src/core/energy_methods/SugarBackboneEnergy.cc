@@ -51,23 +51,22 @@ static basic::Tracer TR( "core.scoring.methods.carbohydrates.SugarBackboneEnergy
 
 
 namespace core {
-namespace scoring {
-namespace methods {
-namespace carbohydrates {
+namespace energy_methods {
+
 using namespace core::conformation::carbohydrates;
 
 // Public methods /////////////////////////////////////////////////////////////
 // Standard methods ///////////////////////////////////////////////////////////
 // Default constructor
 SugarBackboneEnergy::SugarBackboneEnergy() :
-	ContextIndependentOneBodyEnergy( utility::pointer::make_shared< SugarBackboneEnergyCreator >() ),
-	E_cef_( ScoringManager::get_instance()->get_CHIEnergyFunction() ),
-	E_opf_( ScoringManager::get_instance()->get_OmegaPreferencesFunction() )
+	core::scoring::methods::ContextIndependentOneBodyEnergy( utility::pointer::make_shared< SugarBackboneEnergyCreator >() ),
+	E_cef_( core::scoring::ScoringManager::get_instance()->get_CHIEnergyFunction() ),
+	E_opf_( core::scoring::ScoringManager::get_instance()->get_OmegaPreferencesFunction() )
 {}
 
 
 // General EnergyMethod Methods ///////////////////////////////////////////////
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SugarBackboneEnergy::clone() const
 {
 	return utility::pointer::make_shared< SugarBackboneEnergy >();
@@ -82,11 +81,10 @@ void
 SugarBackboneEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap ) const
+	core::scoring::EnergyMap & emap ) const
 {
 	using namespace numeric;
 	using namespace chemical::carbohydrates;
-	using namespace scoring::carbohydrates;
 	using namespace pose::carbohydrates;
 
 	// This is a carbohydrate-only scoring method.
@@ -134,7 +132,7 @@ SugarBackboneEnergy::residue_energy(
 	}
 
 	// Score is 0 if linkage type is LINKAGE_NA.
-	score += E_cef_( get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, seqpos ), phi );
+	score += E_cef_( core::scoring::carbohydrates::get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, seqpos ), phi );
 
 
 	// Calculate psi component. ///////////////////////////////////////////////
@@ -153,7 +151,7 @@ SugarBackboneEnergy::residue_energy(
 	}
 
 	// Score is 0 if linkage type is LINKAGE_NA.
-	score += E_cef_( get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, seqpos ), psi );
+	score += E_cef_( core::scoring::carbohydrates::get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, seqpos ), psi );
 
 
 	// Calculate omega component. /////////////////////////////////////////////
@@ -167,10 +165,10 @@ SugarBackboneEnergy::residue_energy(
 	}
 
 	// Score is 0 if linkage type is PREFERENCE_NA.
-	score += E_opf_( get_omega_preference_for_residue_in_pose( pose, seqpos ), omega );
+	score += E_opf_( core::scoring::carbohydrates::get_omega_preference_for_residue_in_pose( pose, seqpos ), omega );
 
 
-	emap[ sugar_bb ] += score;
+	emap[ core::scoring::sugar_bb ] += score;
 }
 
 utility::vector1< id::PartialAtomID >
@@ -251,12 +249,12 @@ SugarBackboneEnergy::atoms_with_dof_derivatives(
 core::Real
 SugarBackboneEnergy::eval_residue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const & /* min_data */,
+	core::scoring::ResSingleMinimizationData const & /* min_data */,
 	id::DOF_ID const & /* dof_id */,
 	id::TorsionID const & torsion_id,
 	pose::Pose const & pose,
-	ScoreFunction const & /* sf */,
-	EnergyMap const & weights ) const
+	core::scoring::ScoreFunction const & /* sf */,
+	core::scoring::EnergyMap const & weights ) const
 {
 	using namespace std;
 	using namespace numeric;
@@ -264,7 +262,6 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 	using namespace id;
 	using namespace chemical::carbohydrates;
 	using namespace pose::carbohydrates;
-	using namespace scoring::carbohydrates;
 
 	TR.Debug << "Evaluating torsion: " << torsion_id << endl;
 
@@ -309,7 +306,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Finally, we can evaluate.
 		deriv = E_cef_.evaluate_derivative(
-			get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, next_rsd ), phi );
+			core::scoring::carbohydrates::get_CHI_energy_function_linkage_type_for_phi_for_residue_in_pose( pose, next_rsd ), phi );
 
 		if ( info->is_L_sugar() ) {
 			deriv = -deriv;
@@ -352,7 +349,7 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 
 		// Finally, evaluate.
 		deriv = E_cef_.evaluate_derivative(
-			get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, next_rsd ), psi );
+			core::scoring::carbohydrates::get_CHI_energy_function_linkage_type_for_psi_for_residue_in_pose( pose, next_rsd ), psi );
 
 		// ...and deal with L-sugars again.
 		if ( ! is_exocyclic_bond ) {
@@ -391,34 +388,33 @@ SugarBackboneEnergy::eval_residue_dof_derivative(
 		// If the connecting residue defining phi is virtual, omega scoring is undefined.
 		if ( pose.residue(next_rsd).is_virtual_residue() ) return deriv;
 
-		deriv = E_opf_.evaluate_derivative( get_omega_preference_for_residue_in_pose( pose, next_rsd ), omega );
+		deriv = E_opf_.evaluate_derivative( core::scoring::carbohydrates::get_omega_preference_for_residue_in_pose( pose, next_rsd ), omega );
 
 		if ( info->is_L_sugar() ) {
 			deriv = -deriv;
 		}
 	}
-	return weights[ sugar_bb ] * deriv * 180/pi;  // Convert back into radians.
+	return weights[ core::scoring::sugar_bb ] * deriv * 180/pi;  // Convert back into radians.
 }
 
 
 // Creator methods ////////////////////////////////////////////////////////////
-// Return an up-casted owning pointer (EnergyMethodOP) to the energy method.
-EnergyMethodOP
-SugarBackboneEnergyCreator::create_energy_method( EnergyMethodOptions const & ) const
+// Return an up-casted owning pointer (core::scoring::methods::EnergyMethodOP) to the energy method.
+core::scoring::methods::EnergyMethodOP
+SugarBackboneEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & ) const
 {
 	return utility::pointer::make_shared< SugarBackboneEnergy >();
 }
 
 // Return the set of ScoreTypes for which this EnergyMethod is responsible.
-ScoreTypes
+core::scoring::ScoreTypes
 SugarBackboneEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes types;
 	types.push_back( sugar_bb );
 	return types;
 }
 
-}  // namespace carbohydrates
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core

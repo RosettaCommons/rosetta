@@ -69,7 +69,7 @@ public:
 		//sfxn.set_weight( mp_res_lipo, 1 );
 
 		core::Real const TOL(1e-2);
-		core::scoring::membrane::MPResidueLipophilicityEnergy mp_res;
+		core::energy_methods::MPResidueLipophilicityEnergy mp_res;
 		//core::pose::Pose pose = create_1afo_pose();
 
 		// test slope and offset 6
@@ -104,7 +104,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPResidueLipophilicityEnergy res_lipo;
+		core::energy_methods::MPResidueLipophilicityEnergy res_lipo;
 		EnergyMap emap;
 		res_lipo.residue_energy( pose_->residue( 5 ), *pose_, emap );
 		TS_ASSERT_DELTA( emap[ MPResidueLipophilicity ], 0.0682, TOL);
@@ -141,7 +141,7 @@ public:
 		sfxn.set_weight( MPResidueLipophilicity, 1 );
 		sfxn( *pose_ );
 
-		core::scoring::membrane::MPResidueLipophilicityEnergy res_lipo;
+		core::energy_methods::MPResidueLipophilicityEnergy res_lipo;
 		utility::vector1 < core::Size > t = res_lipo.centroid_neighbors( *pose_cen, pose_cen->residue( 5 ) );
 		TS_ASSERT_DELTA( res_lipo.centroid_neighbors( *pose_cen, pose_cen->residue( 5 ) )[ 1 ], 29, TOL );
 		TS_ASSERT_DELTA( res_lipo.centroid_neighbors( *pose_cen, pose_cen->residue( 10 ) )[ 1 ], 2, TOL );
@@ -167,7 +167,7 @@ public:
 
 		core::Real const TOL(1e-0);
 
-		core::scoring::membrane::MPResidueLipophilicityEnergy res_lipo;
+		core::energy_methods::MPResidueLipophilicityEnergy res_lipo;
 		TS_ASSERT_DELTA( res_lipo.neighboring_atoms( *pose_, pose_->residue( 5 ), 6, 12 )[ 1 ], 44, TOL );
 		TS_ASSERT_DELTA( res_lipo.neighboring_atoms( *pose_, pose_->residue( 10 ), 6, 12 )[ 1 ], 12, TOL );
 		TS_ASSERT_DELTA( res_lipo.neighboring_atoms( *pose_, pose_->residue( 15 ), 6, 12 )[ 1 ], 18, TOL );
@@ -192,7 +192,7 @@ public:
 
 		core::Real const TOL(1e-3);
 
-		core::scoring::membrane::MPResidueLipophilicityEnergy res_lipo;
+		core::energy_methods::MPResidueLipophilicityEnergy res_lipo;
 		TS_ASSERT_DELTA( res_lipo.calc_residue_burial( *pose_, pose_->residue( 5 ) ), 0.0265, TOL );
 		TS_ASSERT_DELTA( res_lipo.calc_residue_burial( *pose_, pose_->residue( 10 ) ), 0.7685, TOL );
 		TS_ASSERT_DELTA( res_lipo.calc_residue_burial( *pose_, pose_->residue( 15 ) ), 0.5744, TOL );

@@ -24,13 +24,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class FACTSEnergy;
 
-}
 }
 }
 

@@ -38,21 +38,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_pp_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< P_AA_pp_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 P_AA_pp_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( p_aa_pp );
 	return sts;
@@ -62,11 +63,11 @@ P_AA_pp_EnergyCreator::score_types_for_method() const {
 /// ctor
 P_AA_pp_Energy::P_AA_pp_Energy() :
 	parent( utility::pointer::make_shared< P_AA_pp_EnergyCreator >() ),
-	p_aa_( ScoringManager::get_instance()->get_P_AA() )
+	p_aa_( core::scoring::ScoringManager::get_instance()->get_P_AA() )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 P_AA_pp_Energy::clone() const
 {
 	return utility::pointer::make_shared< P_AA_pp_Energy >();
@@ -81,7 +82,7 @@ void
 P_AA_pp_Energy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -89,7 +90,7 @@ P_AA_pp_Energy::residue_energy(
 		return;
 	}
 
-	emap[ p_aa_pp ] += p_aa_.P_AA_pp_energy( rsd );
+	emap[ core::scoring::p_aa_pp ] += p_aa_.P_AA_pp_energy( rsd );
 }
 
 
@@ -121,12 +122,12 @@ P_AA_pp_Energy::atoms_with_dof_derivatives( conformation::Residue const & rsd, p
 Real
 P_AA_pp_Energy::eval_residue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,// min_data,
+	core::scoring::ResSingleMinimizationData const &,// min_data,
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const &,// pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -135,7 +136,7 @@ P_AA_pp_Energy::eval_residue_dof_derivative(
 	}
 
 	if ( ! tor_id.valid() ) return 0.0;
-	return numeric::conversions::degrees( weights[ p_aa_pp ] * p_aa_.get_Paa_pp_deriv( rsd, tor_id ));
+	return numeric::conversions::degrees( weights[ core::scoring::p_aa_pp ] * p_aa_.get_Paa_pp_deriv( rsd, tor_id ));
 }
 
 
@@ -144,8 +145,8 @@ P_AA_pp_Energy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const & pose,
-	ScoreFunction const &, //sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &, //sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -154,7 +155,7 @@ P_AA_pp_Energy::eval_dof_derivative(
 	}
 
 	if ( ! tor_id.valid() ) return 0.0;
-	return numeric::conversions::degrees( weights[ p_aa_pp ] * p_aa_.get_Paa_pp_deriv( pose.residue( tor_id.rsd() ), tor_id ));
+	return numeric::conversions::degrees( weights[ core::scoring::p_aa_pp ] * p_aa_.get_Paa_pp_deriv( pose.residue( tor_id.rsd() ), tor_id ));
 }
 
 /// @brief P_AA_pp_Energy is context independent; indicates that no
@@ -169,7 +170,6 @@ P_AA_pp_Energy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

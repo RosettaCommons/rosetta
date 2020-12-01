@@ -44,21 +44,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the EnvSmoothEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 EnvSmoothEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< EnvSmoothEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 EnvSmoothEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( envsmooth );
 	return sts;
@@ -71,7 +72,7 @@ DistanceSquared const start_sig2 = start_sig*start_sig;
 DistanceSquared const end_sig2   = end_sig*end_sig;
 
 /// c-tor
-EnvSmoothEnergy::EnvSmoothEnergy( EnergyMethodOptions const & options ) :
+EnvSmoothEnergy::EnvSmoothEnergy( core::scoring::methods::EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< EnvSmoothEnergyCreator >() )
 {
 	initialize( options );
@@ -84,7 +85,7 @@ EnvSmoothEnergy::EnvSmoothEnergy( EnvSmoothEnergy const & src ) :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 EnvSmoothEnergy::clone() const
 {
 	return utility::pointer::make_shared< EnvSmoothEnergy >( *this );
@@ -93,7 +94,7 @@ EnvSmoothEnergy::clone() const
 
 /// initialize with envdata from database
 void
-EnvSmoothEnergy::initialize( EnergyMethodOptions const & options )
+EnvSmoothEnergy::initialize( core::scoring::methods::EnergyMethodOptions const & options )
 {
 	// envdata is provided for each aa in 40 bins, corresponding to number of neighbors in 12A neighbor graph
 	core::Size const num_bins( 40 );
@@ -140,7 +141,7 @@ inline Real sqr ( Real x ) {
 void
 EnvSmoothEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -181,8 +182,8 @@ EnvSmoothEnergy::setup_for_derivatives(
 
 		core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
 
-		const Energies & energies( pose.energies() );
-		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
+		const core::scoring::Energies & energies( pose.energies() );
+		const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 
 		Real countN    =  0.0;
 
@@ -229,7 +230,7 @@ EnvSmoothEnergy::setup_for_derivatives(
 void
 EnvSmoothEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -244,7 +245,7 @@ void
 EnvSmoothEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// ignore scoring residues which have been marked as "REPLONLY" residues (only the repulsive energy will be calculated)
@@ -256,7 +257,7 @@ EnvSmoothEnergy::residue_energy(
 	if ( ! rsd.is_protein() ) return;
 	if ( rsd.aa() == chemical::aa_unk ) return;
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 	Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
 	core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
@@ -285,7 +286,7 @@ EnvSmoothEnergy::residue_energy(
 
 	calc_energy( countN, rsd.aa(), score, dscoredN );
 
-	emap[ envsmooth ] += score;
+	emap[ core::scoring::envsmooth ] += score;
 }
 
 
@@ -296,8 +297,8 @@ EnvSmoothEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & ,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -321,7 +322,7 @@ EnvSmoothEnergy::eval_atom_derivative(
 
 	core::conformation::Atom const & atom_i = rsd.atom( atom_id.atomno() );
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 
 	// its possible both of these are true
 	bool const input_atom_is_nbr( i_nbr_atom == Size (atom_id.atomno()) );
@@ -346,17 +347,17 @@ EnvSmoothEnergy::eval_atom_derivative(
 				/// two birds, one stone
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ envsmooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
+					weights[ core::scoring::envsmooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
 					F1, F2 );
 			} else {
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ envsmooth ] * ( residue_dEdN_[ j ] ),
+					weights[ core::scoring::envsmooth ] * ( residue_dEdN_[ j ] ),
 					F1, F2 );
 
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_nbr_atom ),
-					weights[ envsmooth ] * ( residue_dEdN_[ i ] ),
+					weights[ core::scoring::envsmooth ] * ( residue_dEdN_[ i ] ),
 					F1, F2 );
 			}
 		} else if ( input_atom_is_nbr && (rsd_j.is_protein() && rsd_j.aa()<=core::chemical::num_canonical_aas) ) {
@@ -364,14 +365,14 @@ EnvSmoothEnergy::eval_atom_derivative(
 
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_rep_atom ),
-				weights[ envsmooth ] * ( residue_dEdN_[ j ] ),
+				weights[ core::scoring::envsmooth ] * ( residue_dEdN_[ j ] ),
 				F1, F2 );
 
 		} else {
 			Size const resj_nbr_atom = rsd_j.nbr_atom();
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_nbr_atom ),
-				weights[ envsmooth ] * ( residue_dEdN_[ i ] ),
+				weights[ core::scoring::envsmooth ] * ( residue_dEdN_[ i ] ),
 				F1, F2 );
 
 		}
@@ -438,7 +439,7 @@ EnvSmoothEnergy::atomic_interaction_cutoff() const
 void
 EnvSmoothEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 void
@@ -521,7 +522,6 @@ core::Size
 EnvSmoothEnergy::version() const
 {
 	return 1; // Initial versioning
-}
 }
 }
 }

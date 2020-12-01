@@ -43,7 +43,7 @@ class RG_Energy_Tests : public CxxTest::TestSuite {
 public:
 
 	Pose pose;
-	RG_Energy_Fast rg_energy_fast;
+	core::energy_methods::RG_Energy_Fast rg_energy_fast;
 	core::chemical::ResidueTypeSetCAP rsd_set;
 	core::scoring::ScoreFunctionOP scorefxn;
 

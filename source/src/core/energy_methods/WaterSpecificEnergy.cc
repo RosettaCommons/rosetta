@@ -46,21 +46,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the WaterSpecificEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterSpecificEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< WaterSpecificEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 WaterSpecificEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( wat_desolv );
 	return sts;
@@ -88,7 +89,7 @@ WaterSpecificEnergy::WaterSpecificEnergy() :
 }
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 WaterSpecificEnergy::clone() const {
 	return utility::pointer::make_shared< WaterSpecificEnergy >( *this );
 }
@@ -102,7 +103,7 @@ void
 WaterSpecificEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// These terms are only meant to be used with water
@@ -112,8 +113,8 @@ WaterSpecificEnergy::residue_energy(
 	// and it has a constant value if the molecule is near the protein
 	// This might need to be revisited, for now we find away rotamers simply by their position,
 	// We might actually want to check for neighbors
-	if ( rsd.name() != "TP3" || rsd.xyz(1).x() > pose.residue(1).xyz(1).x() + 10000 ) emap[ wat_desolv ] = 0;
-	else  emap[ wat_desolv ] = wat_desolv_;
+	if ( rsd.name() != "TP3" || rsd.xyz(1).x() > pose.residue(1).xyz(1).x() + 10000 ) emap[ core::scoring::wat_desolv ] = 0;
+	else  emap[ core::scoring::wat_desolv ] = wat_desolv_;
 
 }
 
@@ -124,8 +125,8 @@ WaterSpecificEnergy::eval_dof_derivative(
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const &, //  tor_id
 	pose::Pose const &, // pose
-	ScoreFunction const &, //sfxn
-	EnergyMap const & // weights
+	core::scoring::ScoreFunction const &, //sfxn
+	core::scoring::EnergyMap const & // weights
 ) const
 {
 	return 0.0;
@@ -143,7 +144,6 @@ WaterSpecificEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

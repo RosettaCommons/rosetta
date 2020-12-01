@@ -19,16 +19,14 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace disulfides {
+namespace energy_methods {
 
 class DisulfideMatchingEnergy;
 
 typedef utility::pointer::shared_ptr< DisulfideMatchingEnergy > DisulfideMatchingEnergyOP;
 typedef utility::pointer::shared_ptr< DisulfideMatchingEnergy const > DisulfideMatchingEnergyCOP;
 
-} // namespace disulfides
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

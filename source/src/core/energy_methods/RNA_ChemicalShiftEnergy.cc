@@ -36,22 +36,21 @@
 // C++
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace chemical_shift {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RNA_ChemicalShiftEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_ChemicalShiftEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_ChemicalShiftEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_ChemicalShiftEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_chem_shift );
 	return sts;
@@ -61,11 +60,11 @@ RNA_ChemicalShiftEnergyCreator::score_types_for_method() const {
 /// c-tor
 RNA_ChemicalShiftEnergy::RNA_ChemicalShiftEnergy():
 	parent( utility::pointer::make_shared< RNA_ChemicalShiftEnergyCreator >() ),
-	rna_chemical_shift_potential_( ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() )
+	rna_chemical_shift_potential_( core::scoring::ScoringManager::get_instance()->get_RNA_ChemicalShiftPotential() )
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_ChemicalShiftEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_ChemicalShiftEnergy >();
@@ -78,7 +77,7 @@ RNA_ChemicalShiftEnergy::clone() const
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & ) const
+RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, core::scoring::ScoreFunction const & ) const
 {
 	//MIGHT BENEFIT FROM SOME BOOKKEEPING such as MAPPING atom_namerealatomdata_index/ to atom_index for fast look-up;
 }
@@ -86,7 +85,7 @@ RNA_ChemicalShiftEnergy::setup_for_scoring( pose::Pose &, ScoreFunction const & 
 
 /////////////////////////////////////////////////////////////////////////////
 void
-RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const
+RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, core::scoring::ScoreFunction const & ) const
 {
 	//MIGHT BENEFIT FROM SOME BOOKKEEPING such as MAPPING atom_namerealatomdata_index/ to atom_index for fast look-up;
 	//or precalculate the calc_chem_shift values of the atoms with CS_data
@@ -98,8 +97,8 @@ RNA_ChemicalShiftEnergy::setup_for_derivatives( pose::Pose &, ScoreFunction cons
 void
 RNA_ChemicalShiftEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	rna_chemical_shift_potential_.finalize_total_energy( pose, totals );
 } // finalize_total_energy
@@ -110,8 +109,8 @@ RNA_ChemicalShiftEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -126,7 +125,5 @@ RNA_ChemicalShiftEnergy::version() const
 }
 
 
-} //chemical_shift
-} //rna
 } //scoring
 } //core

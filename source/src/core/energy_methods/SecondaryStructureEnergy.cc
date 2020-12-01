@@ -30,21 +30,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the SecondaryStructureEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SecondaryStructureEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SecondaryStructureEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SecondaryStructureEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( hs_pair );
 	sts.push_back( ss_pair );
@@ -57,7 +58,7 @@ SecondaryStructureEnergyCreator::score_types_for_method() const {
 /// c-tor
 SecondaryStructureEnergy::SecondaryStructureEnergy() :
 	parent( utility::pointer::make_shared< SecondaryStructureEnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_SecondaryStructurePotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_SecondaryStructurePotential() )
 {}
 
 
@@ -66,7 +67,7 @@ SecondaryStructureEnergy::SecondaryStructureEnergy( SecondaryStructureEnergy con
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SecondaryStructureEnergy::clone() const
 {
 	return utility::pointer::make_shared< SecondaryStructureEnergy >( *this );
@@ -79,7 +80,7 @@ SecondaryStructureEnergy::clone() const
 
 
 void
-SecondaryStructureEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+SecondaryStructureEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	//std::cout << "SecondaryStructureEnergy::setup_for_scoring" << std::endl;
 	pose.update_residue_neighbors();
@@ -91,8 +92,8 @@ SecondaryStructureEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction co
 void
 SecondaryStructureEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & totals
 ) const
 {
 	//std::cout << "SecondaryStructureEnergy::finalize_total_energy" << std::endl;
@@ -102,10 +103,10 @@ SecondaryStructureEnergy::finalize_total_energy(
 		pose, scorefxn.energy_method_options().secondary_structure_weights(),
 		hs_score, ss_score, rsigma_score, sheet_score );
 
-	totals[ hs_pair ] = hs_score;
-	totals[ ss_pair ] = ss_score;
-	totals[ rsigma ]  = rsigma_score;
-	totals[ sheet ]   = sheet_score;
+	totals[ core::scoring::hs_pair ] = hs_score;
+	totals[ core::scoring::ss_pair ] = ss_score;
+	totals[ core::scoring::rsigma ]  = rsigma_score;
+	totals[ core::scoring::sheet ]   = sheet_score;
 	//std::cout << "hs_score: " << hs_score << " ss_score: " <<  ss_score << " rsigma_score: " << rsigma_score << " sheet_score: " << sheet_score << std::endl;
 }
 
@@ -130,6 +131,5 @@ SecondaryStructureEnergy::version() const
 }
 
 
-}
 }
 }

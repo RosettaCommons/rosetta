@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/core/scoring/saxs/FastSAXSEnergyCreator.hh
+/// @file src/core/energy_methods/FastSAXSEnergyCreator.hh
 /// @brief  Energy Creator for FastSAX scoring of Stovgaard et al (BMC Bioinf. 2010)
 /// @author Frank DiMaio
 
@@ -21,23 +21,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace saxs {
+namespace energy_methods {
 
-class FastSAXSEnergyCreator : public methods::EnergyMethodCreator {
+class FastSAXSEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
 public:
 
 	FastSAXSEnergyCreator() {}
 
 	/// @brief Instantiate a new SAXSEnergy
-	methods::EnergyMethodOP create_energy_method(methods::EnergyMethodOptions const &) const override;
+	core::scoring::methods::EnergyMethodOP create_energy_method( core::scoring::methods::EnergyMethodOptions const &) const override;
 
 	/// @brief Return the set of score types claimed by the EnergyMethod
 	/// this EnergyMethodCreator creates in its create_energy_method() function
-	ScoreTypes score_types_for_method() const override;
+	core::scoring::ScoreTypes score_types_for_method() const override;
 };
 
-}
 }
 }
 

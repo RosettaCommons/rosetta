@@ -12,15 +12,15 @@
 ///         by Zhou H & Skolnick J, Biophys J 2011, 101(8):2043-52.
 /// @author Hahnbeom Park
 
-#ifndef INCLUDED_core_scoring_methods_GoapEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_GoapEnergy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_GoapEnergy_FWD_HH
+#define INCLUDED_core_energy_methods_GoapEnergy_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
 #include <core/chemical/ResidueType.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class GoapRsdType;
 typedef utility::pointer::shared_ptr< GoapRsdType > GoapRsdTypeOP;
@@ -32,7 +32,6 @@ typedef utility::pointer::shared_ptr< GoapEnergy > GoapEnergyOP;
 //typedef std::map< chemical::AA const *, GoapRsdTypeOP > GoapRsdTypeMap;
 typedef std::map< std::string, GoapRsdTypeOP > GoapRsdTypeMap;
 
-} // methods
 } // scoring
 } // core
 

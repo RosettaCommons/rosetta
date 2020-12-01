@@ -36,21 +36,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the P_AA_pp_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 YHHPlanarityEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< YHHPlanarityEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 YHHPlanarityEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( yhh_planarity );
 	return sts;
@@ -63,7 +64,7 @@ YHHPlanarityEnergy::YHHPlanarityEnergy() :
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 YHHPlanarityEnergy::clone() const
 {
 	return utility::pointer::make_shared< YHHPlanarityEnergy >();
@@ -78,7 +79,7 @@ void
 YHHPlanarityEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	using numeric::constants::d::degrees_to_radians;
@@ -89,7 +90,7 @@ YHHPlanarityEnergy::residue_energy(
 		return;
 	}
 	if ( defines_score_for_rsd(rsd) ) {
-		emap[ yhh_planarity ] += 0.5 * (std::cos( pi - 2*rsd.chi(3)*degrees_to_radians)+1);
+		emap[ core::scoring::yhh_planarity ] += 0.5 * (std::cos( pi - 2*rsd.chi(3)*degrees_to_radians)+1);
 	}
 }
 
@@ -122,12 +123,12 @@ YHHPlanarityEnergy::atoms_with_dof_derivatives(
 Real
 YHHPlanarityEnergy::eval_residue_dof_derivative(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,// min_data,
+	core::scoring::ResSingleMinimizationData const &,// min_data,
 	id::DOF_ID const &,// dof_id,
 	id::TorsionID const & tor_id,
 	pose::Pose const &,// pose,
-	ScoreFunction const &,// sfxn,
-	EnergyMap const & weights
+	core::scoring::ScoreFunction const &,// sfxn,
+	core::scoring::EnergyMap const & weights
 ) const
 {
 	using numeric::constants::d::degrees_to_radians;
@@ -138,7 +139,7 @@ YHHPlanarityEnergy::eval_residue_dof_derivative(
 	if ( ! tor_id.valid() ) return 0.0;
 	if ( defines_score_for_rsd(rsd) && tor_id.type() == id::CHI && tor_id.torsion() == 3 ) {
 		return
-			weights[ yhh_planarity ] * std::sin(pi -2*rsd.chi(3)*degrees_to_radians);
+			weights[ core::scoring::yhh_planarity ] * std::sin(pi -2*rsd.chi(3)*degrees_to_radians);
 	} else {
 		return 0.0;
 	}
@@ -162,7 +163,6 @@ YHHPlanarityEnergy::defines_score_for_rsd( conformation::Residue const & rsd ) c
 	return (rsd.aa() == chemical::aa_tyr || rsd.aa() == chemical::aa_dty ) && rsd.type().nchi() == 3 && rsd.type().atom_is_hydrogen( rsd.type().chi_atoms(3)[4] );
 }
 
-} // methods
 } // scoring
 } // core
 

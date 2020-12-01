@@ -54,21 +54,22 @@
 #endif // SERIALIZATION
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the RG_Energy_Fast class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_Energy_FastCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RG_Energy_Fast >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RG_Energy_FastCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rg );
 	return sts;
@@ -80,12 +81,12 @@ RG_Energy_Fast::RG_Energy_Fast() :
 {}
 
 /// c-tor
-RG_Energy_Fast::RG_Energy_Fast( EnergyMethodCreatorOP CreatorOP ) :
+RG_Energy_Fast::RG_Energy_Fast( core::scoring::methods::EnergyMethodCreatorOP CreatorOP ) :
 	parent( CreatorOP )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RG_Energy_Fast::clone() const
 {
 	return utility::pointer::make_shared< RG_Energy_Fast >();
@@ -98,14 +99,14 @@ RG_Energy_Fast::clone() const
 void
 RG_Energy_Fast::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
 
 	PROF_START( basic::RG );
 
-	totals[ rg ] = calculate_rg_score( pose );
+	totals[ core::scoring::rg ] = calculate_rg_score( pose );
 
 	PROF_STOP( basic::RG );
 } // finalize_total_energy
@@ -205,7 +206,7 @@ RG_Energy_Fast::calculate_rg_score(
 
 
 void
-RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const {
+RG_Energy_Fast::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	RG_MinData &mindata = nonconst_mindata_from_pose( pose );
 
 	// calculate center of mass
@@ -250,8 +251,8 @@ RG_Energy_Fast::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -288,25 +289,26 @@ RG_Energy_Fast::eval_atom_derivative(
 	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 	f1 = ( atom_x.cross( atom_y ) );
 
-	F1 += weights[ rg ] * f1;
-	F2 += weights[ rg ] * f2;
+	F1 += weights[ core::scoring::rg ] * f1;
+	F2 += weights[ core::scoring::rg ] * f2;
 }
 
 
 RG_MinData const &
 RG_Energy_Fast::mindata_from_pose( pose::Pose const & pose) const {
 	using namespace core::pose::datacache;
-	return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA ) ));
+	using namespace core::scoring;
+	return *( utility::pointer::static_pointer_cast< RG_MinData const > ( pose.data().get_const_ptr( CacheableDataType::RG_MINDATA ) ));
 
 }
 
 RG_MinData &
 RG_Energy_Fast::nonconst_mindata_from_pose( pose::Pose & pose) const {
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::RG_MINDATA ) ) {
-		return *( utility::pointer::static_pointer_cast< core::scoring::methods::RG_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_MINDATA ) ));
+		return *( utility::pointer::static_pointer_cast< RG_MinData > ( pose.data().get_ptr( core::pose::datacache::CacheableDataType::RG_MINDATA ) ));
 	}
 	// else
-	RG_MinDataOP rgmindata( new RG_MinData );
+	RG_MinDataOP rgmindata( utility::pointer::make_shared< RG_MinData >() );
 	pose.data().set( core::pose::datacache::CacheableDataType::RG_MINDATA, rgmindata );
 	return *rgmindata;
 }
@@ -318,7 +320,6 @@ RG_Energy_Fast::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core
 
@@ -327,7 +328,7 @@ RG_Energy_Fast::version() const
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-core::scoring::methods::RG_MinData::save( Archive & arc ) const {
+core::energy_methods::RG_MinData::save( Archive & arc ) const {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( CEREAL_NVP( com ) ); // numeric::xyzVector<core::Real>
 	arc( CEREAL_NVP( rg ) ); // core::Real
@@ -337,15 +338,15 @@ core::scoring::methods::RG_MinData::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-core::scoring::methods::RG_MinData::load( Archive & arc ) {
+core::energy_methods::RG_MinData::load( Archive & arc ) {
 	arc( cereal::base_class< basic::datacache::CacheableData >( this ) );
 	arc( com ); // numeric::xyzVector<core::Real>
 	arc( rg ); // core::Real
 	arc( nres_scored ); // core::Size
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( core::scoring::methods::RG_MinData );
-CEREAL_REGISTER_TYPE( core::scoring::methods::RG_MinData )
+SAVE_AND_LOAD_SERIALIZABLE( core::energy_methods::RG_MinData );
+CEREAL_REGISTER_TYPE( core::energy_methods::RG_MinData )
 
-CEREAL_REGISTER_DYNAMIC_INIT( core_scoring_methods_RG_Energy_Fast )
+CEREAL_REGISTER_DYNAMIC_INIT( core_energy_methods_RG_Energy_Fast )
 #endif // SERIALIZATION

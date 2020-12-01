@@ -12,8 +12,8 @@
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_MultipoleElecEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_MultipoleElecEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_MultipoleElecEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_MultipoleElecEnergy_fwd_hh
 
 // Unit Headers
 
@@ -25,13 +25,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 ///
 class MultipoleElecEnergy;
 
-}
 }
 }
 

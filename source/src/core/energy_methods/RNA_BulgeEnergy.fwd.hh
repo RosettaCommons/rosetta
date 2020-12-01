@@ -17,12 +17,10 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_BulgeEnergy;
 
-} //rna
 } //scoring
 } //core
 

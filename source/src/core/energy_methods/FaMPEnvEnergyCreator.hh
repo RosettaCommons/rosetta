@@ -29,8 +29,7 @@
 #include <utility/vector1.hh>
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 /// @brief Creator Class for Membrane CBeta Energy Method
 class FaMPEnvEnergyCreator : public core::scoring::methods::EnergyMethodCreator {
@@ -49,7 +48,6 @@ public:
 };
 
 
-} // membrane
 } // scoring
 } // core
 

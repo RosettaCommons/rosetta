@@ -12,22 +12,21 @@
 /// @author Joaquin Ambia, Jason K. Lai
 
 
-#ifndef INCLUDED_core_scoring_methods_WaterSpecificEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_WaterSpecificEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_WaterSpecificEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_WaterSpecificEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class WaterSpecificEnergy;
 
 typedef utility::pointer::shared_ptr< WaterSpecificEnergy > WaterSpecificEnergyOP;
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_WaterSpecificEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_WaterSpecificEnergy_FWD_HH

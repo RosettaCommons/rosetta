@@ -12,8 +12,8 @@
 /// @author James Thompson
 
 
-#ifndef INCLUDED_core_scoring_methods_CustomAtomPairEnergy_hh
-#define INCLUDED_core_scoring_methods_CustomAtomPairEnergy_hh
+#ifndef INCLUDED_core_energy_methods_CustomAtomPairEnergy_hh
+#define INCLUDED_core_energy_methods_CustomAtomPairEnergy_hh
 
 // Unit Headers
 #include <core/energy_methods/CustomAtomPairEnergy.fwd.hh>
@@ -34,13 +34,13 @@
 // Utility headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class CustomAtomPairEnergy : public ContextIndependentTwoBodyEnergy  {
+
+class CustomAtomPairEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy parent;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 	CustomAtomPairEnergy( Size const cst_seq_sep );
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 
@@ -57,11 +57,11 @@ public:
 
 
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 
 	void
-	setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void
 	prepare_rotamers_for_packing(
@@ -83,8 +83,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void
@@ -92,8 +92,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -110,14 +110,14 @@ public:
 	) const override;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -136,7 +136,6 @@ private:
 	core::Size version() const override;
 };
 
-} // constraints
 } // scoring
 } // core
 

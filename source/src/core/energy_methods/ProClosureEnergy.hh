@@ -14,8 +14,8 @@
 /// @author Vikram K. Mulligan (vmullig@uw.edu) -- added support for D-proline and for oligoureas.
 
 
-#ifndef INCLUDED_core_scoring_methods_ProClosureEnergy_hh
-#define INCLUDED_core_scoring_methods_ProClosureEnergy_hh
+#ifndef INCLUDED_core_energy_methods_ProClosureEnergy_hh
+#define INCLUDED_core_energy_methods_ProClosureEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/ProClosureEnergy.fwd.hh>
@@ -31,13 +31,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class ProClosureEnergy : public ContextIndependentTwoBodyEnergy  {
+
+class ProClosureEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -48,7 +48,7 @@ public:
 	~ProClosureEnergy() override;
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -70,8 +70,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	bool
@@ -86,13 +86,13 @@ public:
 	Size const atom_index,
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const & minsingle_data1,
-	ResSingleMinimizationData const & minsingle_data2,
-	ResPairMinimizationData const & min_data,
+	core::scoring::ResSingleMinimizationData const & minsingle_data1,
+	core::scoring::ResSingleMinimizationData const & minsingle_data2,
+	core::scoring::ResPairMinimizationData const & min_data,
 	pose::Pose const & pose, // provides context
 	kinematics::DomainMap const & domain_map,
-	ScoreFunction const & sfxn,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & sfxn,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -101,13 +101,13 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const &,
 		pose::Pose const &,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	/// @brief Non-virtual interface; takes only the needed parameters.
@@ -116,7 +116,7 @@ public:
 	Size const atom_index,
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	EnergyMap const & weights,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 	) const;*/
@@ -132,8 +132,8 @@ public:
 		conformation::Residue const & pro_residue,
 		conformation::Residue const & other_residue,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	/// @brief Penalize the pucker-up residue type if its chi1 is positive;
@@ -147,20 +147,20 @@ public:
 		conformation::Residue const & pro_residue,
 		conformation::Residue const & other_residue,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 
 	bool
-	defines_intrares_energy( EnergyMap const & weights ) const override;
+	defines_intrares_energy( core::scoring::EnergyMap const & weights ) const override;
 
 	void
 	eval_intrares_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -174,10 +174,10 @@ public:
 	void
 	eval_intrares_derivatives(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		pose::Pose const & pose,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 	) const override;
 
 	/// @brief ProClosure Energy is context independent and thus
@@ -256,7 +256,6 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 

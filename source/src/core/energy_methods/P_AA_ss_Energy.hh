@@ -12,8 +12,8 @@
 /// @author Ron Jacak
 
 
-#ifndef INCLUDED_core_scoring_methods_P_AA_ss_Energy_hh
-#define INCLUDED_core_scoring_methods_P_AA_ss_Energy_hh
+#ifndef INCLUDED_core_energy_methods_P_AA_ss_Energy_hh
+#define INCLUDED_core_energy_methods_P_AA_ss_Energy_hh
 
 // Unit headers
 #include <core/energy_methods/P_AA_ss_Energy.fwd.hh>
@@ -34,29 +34,29 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 // fd: this probably should be context-dependent
-class P_AA_ss_Energy : public ContextIndependentOneBodyEnergy  {
+class P_AA_ss_Energy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
 	P_AA_ss_Energy();
 
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
-		ScoreFunction const & ) const override;
+		core::scoring::ScoreFunction const & ) const override;
 
 	void
 	setup_for_minimizing(
 		pose::Pose & ,
-		ScoreFunction const & ,
+		core::scoring::ScoreFunction const & ,
 		kinematics::MinimizerMapBase const &
 	) const override;
 
@@ -64,13 +64,13 @@ public:
 	Real
 	eval_dof_derivative(
 		id::DOF_ID const & dof_id, id::TorsionID const & tor_id, pose::Pose const & pose,
-		ScoreFunction const & sfxn, EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn, core::scoring::EnergyMap const & weights
 	) const;
 
 	void residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// @brief P_AA_ss_Energy is context independent; indicates that no context graphs are required
@@ -78,14 +78,13 @@ public:
 
 private:
 
-	P_AA_ss const & P_AA_ss_;
+	core::scoring::P_AA_ss const & P_AA_ss_;
 
 	core::Size version() const override;
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_P_AA_ss_Energy_HH
+#endif // INCLUDED_core_energy_methods_P_AA_ss_Energy_HH

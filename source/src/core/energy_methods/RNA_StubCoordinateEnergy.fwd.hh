@@ -25,13 +25,11 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 class RNA_StubCoordinateEnergy;
 
-} //rna
 } //scoring
 } //core
 

@@ -42,21 +42,22 @@
 static basic::Tracer TR( "core.scoring.AbegoEnergy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the Abego class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 AbegoEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< Abego >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 AbegoEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( paa_abego3 );
 	return sts;
@@ -67,11 +68,11 @@ AbegoEnergyCreator::score_types_for_method() const {
 Abego::Abego() :
 	//parent( utility::pointer::make_shared< AbegoEnergyCreator >() ),
 	WholeStructureEnergy( utility::pointer::make_shared< AbegoEnergyCreator >() ),
-	paa_abego3_( ScoringManager::get_instance()->get_P_AA_ABEGO3() )
+	paa_abego3_( core::scoring::ScoringManager::get_instance()->get_P_AA_ABEGO3() )
 {}
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 Abego::clone() const
 {
 	return utility::pointer::make_shared< Abego >();
@@ -79,7 +80,7 @@ Abego::clone() const
 
 void Abego::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 
@@ -130,11 +131,11 @@ void Abego::setup_for_scoring(
 
 void Abego::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & totals) const
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals) const
 {
 	TR << "ABEGO::finalize_total_energy start" << std::endl;
-	totals[ paa_abego3 ] = energy_sum_;
+	totals[ core::scoring::paa_abego3 ] = energy_sum_;
 	TR << "ABEGO::finalize_total_energy end" << std::endl;
 }
 
@@ -153,7 +154,6 @@ Abego::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

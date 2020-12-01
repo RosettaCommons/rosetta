@@ -30,23 +30,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace rna {
-namespace chemical_shift {
+namespace energy_methods {
 
 
 /////////////////////////////////////////////////////////////////////////////
-class RNA_ChemicalShiftEnergy : public methods::WholeStructureEnergy{
+class RNA_ChemicalShiftEnergy : public core::scoring::methods::WholeStructureEnergy{
 
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
 	RNA_ChemicalShiftEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -54,17 +52,17 @@ public:
 	/////////////////////////////////////////////////////////////////////////////
 
 	void
-	setup_for_scoring( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_scoring( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	void
-	setup_for_derivatives( pose::Pose &, ScoreFunction const & ) const override;
+	setup_for_derivatives( pose::Pose &, core::scoring::ScoreFunction const & ) const override;
 
 	/////////////////////////////////
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////
@@ -73,8 +71,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2 ) const override;
 
@@ -85,16 +83,14 @@ public:
 
 private:
 
-	RNA_ChemicalShiftPotential rna_chemical_shift_potential_; //Can I make this not mutable?
+	core::scoring::rna::chemical_shift::RNA_ChemicalShiftPotential rna_chemical_shift_potential_; //Can I make this not mutable?
 
 	core::Size version() const override;
 
 };
 
 
-} //chemical_shift
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_RG_Energy_RNA_HH
+#endif // INCLUDED_core_energy_methods_RG_Energy_RNA_HH

@@ -13,8 +13,8 @@
 /// @author Andrew Leaver-Fay
 /// @author Vatsan Raman
 
-#ifndef INCLUDED_core_scoring_methods_DistanceChainbreakEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_DistanceChainbreakEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_DistanceChainbreakEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_DistanceChainbreakEnergy_fwd_hh
 
 // Unit headers
 
@@ -23,13 +23,12 @@
 // Project headers
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 class DistanceChainbreakEnergy;
 
-} // methods
 } // scoring
 } // core
 

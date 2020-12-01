@@ -63,21 +63,24 @@
 #include <string>
 
 namespace core {
-namespace scoring {
-namespace cryst {
+namespace energy_methods {
 
 // tracer
 static basic::Tracer TR( "core.scoring.cryst.XtalMLEnergy" );
 
-ScoreTypes XtalMLEnergyCreator::score_types_for_method() const {
-	ScoreTypes sts;
-	sts.push_back( xtal_ml );
-	sts.push_back( xtal_rwork );
-	sts.push_back( xtal_rfree );
+core::scoring::ScoreTypes
+XtalMLEnergyCreator::score_types_for_method() const {
+	core::scoring::ScoreTypes sts;
+	sts.push_back( core::scoring::xtal_ml );
+	sts.push_back( core::scoring::xtal_rwork );
+	sts.push_back( core::scoring::xtal_rfree );
 	return sts;
 }
 
-methods::EnergyMethodOP XtalMLEnergyCreator::create_energy_method( methods::EnergyMethodOptions const &) const {
+core::scoring::methods::EnergyMethodOP
+XtalMLEnergyCreator::create_energy_method(
+	core::scoring::methods::EnergyMethodOptions const &
+) const {
 	return utility::pointer::make_shared< XtalMLEnergy >();
 }
 
@@ -88,34 +91,46 @@ XtalMLEnergy::XtalMLEnergy() :
 }
 
 /// clone
-methods::EnergyMethodOP XtalMLEnergy::clone() const {
+core::scoring::methods::EnergyMethodOP
+XtalMLEnergy::clone() const {
 	return utility::pointer::make_shared< XtalMLEnergy >( *this );
 }
 
-void XtalMLEnergy::setup_for_scoring( pose::Pose & , ScoreFunction const & ) const {
+void XtalMLEnergy::setup_for_scoring( pose::Pose & , core::scoring::ScoreFunction const & ) const {
 
 }
 
-void XtalMLEnergy::finalize_total_energy(pose::Pose & pose, ScoreFunction const &sf, EnergyMap & emap) const {
+void
+XtalMLEnergy::finalize_total_energy(
+	pose::Pose & pose,
+	core::scoring::ScoreFunction const &sf,
+	core::scoring::EnergyMap & emap
+) const {
 	using namespace core::scoring;
 	if ( sf.get_weight( core::scoring::xtal_ml ) > 1e-8 || sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 || sf.get_weight( core::scoring::xtal_rfree) > 1e-8 ) {
-		emap[ xtal_ml ] += getPhenixInterface().getScore( pose );
-		emap[ xtal_rwork ] += getPhenixInterface().getR( );
-		emap[ xtal_rfree ] += getPhenixInterface().getRfree( );
+		emap[ core::scoring::xtal_ml ] += cryst::getPhenixInterface().getScore( pose );
+		emap[ core::scoring::xtal_rwork ] += cryst::getPhenixInterface().getR( );
+		emap[ core::scoring::xtal_rfree ] += cryst::getPhenixInterface().getRfree( );
 	}
 }
 
 void
-XtalMLEnergy::setup_for_minimizing( pose::Pose & pose, ScoreFunction const &,
-	kinematics::MinimizerMapBase const & ) const
-{
+XtalMLEnergy::setup_for_minimizing(
+	pose::Pose & pose,
+	core::scoring::ScoreFunction const &,
+	kinematics::MinimizerMapBase const &
+) const {
 	using namespace core::chemical;
-	getPhenixInterface().getScore( pose );
-	getPhenixInterface().updateSolventMask();
+	core::scoring::cryst::getPhenixInterface().getScore( pose );
+	core::scoring::cryst::getPhenixInterface().updateSolventMask();
 }
 
 
-void XtalMLEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & sf) const {
+void
+XtalMLEnergy::setup_for_derivatives(
+	pose::Pose & pose,
+	core::scoring::ScoreFunction const & sf
+) const {
 	using namespace core::chemical;
 
 	if ( sf.get_weight( core::scoring::xtal_rwork ) > 1e-8 ) {
@@ -126,9 +141,9 @@ void XtalMLEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const
 	}
 
 	//fpd update mask
-	getPhenixInterface().updateSolventMask( pose );
+	core::scoring::cryst::getPhenixInterface().updateSolventMask( pose );
 	if ( sf.get_weight( core::scoring::xtal_ml ) > 1e-8 ) {
-		ml = getPhenixInterface().getScoreAndDerivs( pose, dml_dx );
+		ml = core::scoring::cryst::getPhenixInterface().getScoreAndDerivs( pose, dml_dx );
 	} else {
 		ml = 0;
 	}
@@ -138,8 +153,8 @@ void XtalMLEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const & ,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -183,8 +198,8 @@ void XtalMLEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> atom_y = -f2 + atom_x;
 	Vector const f1( atom_x.cross( atom_y ) );
 
-	F1 += weights[ xtal_ml ] * f1;
-	F2 += weights[ xtal_ml ] * f2;
+	F1 += weights[ core::scoring::xtal_ml ] * f1;
+	F2 += weights[ core::scoring::xtal_ml ] * f2;
 }
 
 
@@ -194,8 +209,6 @@ XtalMLEnergy::version() const
 	return 1; // Initial versioning
 }
 
-
-} // cryst
-} // scoring
+} // energy_methods
 } // core
 

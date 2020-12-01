@@ -32,18 +32,17 @@
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
-class RNA_JR_SuiteEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class RNA_JR_SuiteEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy parent;
 
 	RNA_JR_SuiteEnergy();
 
 	/// clone
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
@@ -54,8 +53,8 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override {};
 
 
@@ -64,8 +63,8 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	/// called during gradient-based minimization inside dfunc
@@ -78,16 +77,16 @@ public:
 		id::AtomID const &,
 		pose::Pose const &,
 		kinematics::DomainMap const &,
-		ScoreFunction const &,
-		EnergyMap const &,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const &,
 		Vector &,
 		Vector &
 	) const override {};
 
-	bool defines_intrares_energy( EnergyMap const & ) const override { return true; }
+	bool defines_intrares_energy( core::scoring::EnergyMap const & ) const override { return true; }
 
 	bool
-	defines_residue_pair_energy( EnergyMap const & ) const { return true; }
+	defines_residue_pair_energy( core::scoring::EnergyMap const & ) const { return true; }
 
 	Distance atomic_interaction_cutoff() const override { return 0; }
 
@@ -103,8 +102,7 @@ private:
 	core::pose::rna::RNA_SuiteName suitename_;
 };
 
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_RNA_LJ_BaseEnergy_HH
+#endif // INCLUDED_core_energy_methods_RNA_LJ_BaseEnergy_HH

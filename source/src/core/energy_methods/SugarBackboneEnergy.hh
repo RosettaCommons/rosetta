@@ -12,8 +12,8 @@
 /// @author  Labonte <JWLabonte@jhu.edu>
 
 
-#ifndef INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_HH
-#define INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_HH
+#ifndef INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_HH
+#define INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_HH
 
 // Unit header
 #include <core/energy_methods/SugarBackboneEnergy.fwd.hh>
@@ -33,9 +33,8 @@
 #include <map>
 
 namespace core {
-namespace scoring {
-namespace methods {
-namespace carbohydrates {
+namespace energy_methods {
+
 
 
 /// @details  This class makes use of the "CarboHydrate Intrinsic" (CHI) Energy Functions developed by Woods Lab.\n
@@ -47,14 +46,14 @@ namespace carbohydrates {
 /// All other glycosidic linkages are not scored.
 /// @ref      A.K. Nivedha et al. J. Comput. Chem. 2014, 35, 526-39
 /// @ref      A.K. Nivedha et al. JCTC 2016, 12, 892-901
-class SugarBackboneEnergy : public ContextIndependentOneBodyEnergy {
+class SugarBackboneEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy {
 public:  // Standard Methods //////////////////////////////////////////////////
 	/// @brief  Default constructor
 	SugarBackboneEnergy();
 
 
 public:  // General EnergyMethod Methods //////////////////////////////////////
-	EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	/// @brief   Should this EnergyMethod have score and derivative evaluation evaluated ONLY in the context of a whole
 	/// Pose?
@@ -70,7 +69,7 @@ public:  // General EnergyMethod Methods //////////////////////////////////////
 public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 	/// @brief  Evaluate the one-body carbohydrate backbone energies for a particular residue, in the context of the
 	/// given Pose, and increment those energies in the input Emap.
-	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, EnergyMap & emap ) const override;
+	void residue_energy( conformation::Residue const & rsd, pose::Pose const & pose, core::scoring::EnergyMap & emap ) const override;
 
 	/// @brief   Should the dof_derivative interface be used for this EnergyMethod when calculating derivatives?
 	/// @return  true
@@ -83,12 +82,12 @@ public:  // OneBodyEnergy Methods /////////////////////////////////////////////
 	core::Real
 	eval_residue_dof_derivative(
 		conformation::Residue const & rsd,
-		ResSingleMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const & min_data,
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & torsion_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sf,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sf,
+		core::scoring::EnergyMap const & weights
 	) const override;
 
 
@@ -103,9 +102,7 @@ private:  // Private Data /////////////////////////////////////////////////////
 	scoring::carbohydrates::OmegaPreferencesFunction const & E_opf_;
 };
 
-}  // namespace carbohydrates
-}  // namespace methods
-}  // namespace scoring
+}  // namespace energy_methods
 }  // namespace core
 
-#endif  // INCLUDED_core_scoring_methods_carbohydrates_SugarBackboneEnergy_HH
+#endif  // INCLUDED_core_energy_methods_carbohydrates_SugarBackboneEnergy_HH

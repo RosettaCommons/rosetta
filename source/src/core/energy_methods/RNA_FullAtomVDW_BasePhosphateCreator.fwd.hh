@@ -18,13 +18,11 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_FullAtomVDW_BasePhosphateCreator;
 
 
-} //rna
 } //scoring
 } //core
 

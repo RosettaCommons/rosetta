@@ -36,21 +36,22 @@
 static basic::Tracer TR( "core.scoring.methods.DFIRE_Energy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 namespace dfire {
 
 /// @details This must return a fresh instance of the DFIRE_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DFIRE_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DFIRE_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DFIRE_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( core::scoring::DFIRE );
 	return sts;
@@ -63,14 +64,14 @@ DFIRE_Energy::DFIRE_Energy() :
 	potential_is_loaded_ = core::scoring::methods::dfire::get_DFIRE_potential().is_loaded();
 }
 
-methods::LongRangeEnergyType
+core::scoring::methods::LongRangeEnergyType
 DFIRE_Energy::long_range_type() const {
 	return scoring::methods::DFIRE;
 }
 
 void
 DFIRE_Energy::setup_for_scoring(
-	pose::Pose & pose, ScoreFunction const &
+	pose::Pose & pose, core::scoring::ScoreFunction const &
 ) const {
 	using namespace core::scoring::methods;
 	//std::cout << "called setup_for_scoring" << std::endl;
@@ -79,31 +80,31 @@ DFIRE_Energy::setup_for_scoring(
 		utility_exit_with_message("No potential loaded.");
 	}
 
-	LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
 	// create a container
-	Energies & energies( pose.energies() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::DenseEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::DenseEnergyContainer > ( lrc ) );
 		if ( dec->size() != pose.size() ) {
 			create_new_lre_container = true;
 		}
 	}
 
 	if ( create_new_lre_container ) {
-		LREnergyContainerOP new_dec( new DenseEnergyContainer( pose.size(), gb_elec ) );
+		core::scoring::LREnergyContainerOP new_dec( new core::scoring::DenseEnergyContainer( pose.size(), core::scoring::gb_elec ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DFIRE_Energy::clone() const
 {
 	return utility::pointer::make_shared< DFIRE_Energy >();
@@ -118,7 +119,7 @@ void
 DFIRE_Energy::residue_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	EnergyMap &
+	core::scoring::EnergyMap &
 ) const {
 	//std::cout << "called residue_energy" << std::endl;
 	return;
@@ -136,8 +137,8 @@ void
 DFIRE_Energy::eval_intrares_energy(
 	conformation::Residue const &,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap &
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap &
 ) const {
 	//std::cout << "called eval_intrares_energy" << std::endl;
 	return;
@@ -148,8 +149,8 @@ DFIRE_Energy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const &,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	//std::cout << "residue_pair_energy" << std::endl;
 	emap[ core::scoring::DFIRE ] += core::scoring::methods::dfire::get_DFIRE_potential().eval_dfire_pair_energy( rsd1, rsd2 );
@@ -169,6 +170,5 @@ DFIRE_Energy::version() const {
 
 
 } // dfire
-} // methods
 } // scoring
 } // core

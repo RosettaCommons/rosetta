@@ -8,7 +8,7 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file   test/core/scoring/methods/AARepeatEnergy.cxxtest.hh
-/// @brief  test suite for core::scoring::methods::AARepeatEnergy
+/// @brief  test suite for core::energy_methods::AARepeatEnergy
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 
 // Test headers
@@ -61,7 +61,6 @@ using namespace core;
 using namespace core::pose;
 using namespace core::scoring;
 using namespace core::scoring::methods;
-using namespace core::scoring::aa_repeat_energy;
 using namespace core::scoring::annealing;
 
 using namespace core::pack;

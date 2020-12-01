@@ -42,7 +42,7 @@ namespace features {
 using std::string;
 using core::Size;
 using core::pose::Pose;
-using core::scoring::methods::RG_Energy_Fast;
+using core::energy_methods::RG_Energy_Fast;
 using utility::vector1;
 using utility::sql_database::sessionOP;
 using cppdb::statement;

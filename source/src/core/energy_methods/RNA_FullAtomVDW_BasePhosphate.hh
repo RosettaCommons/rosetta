@@ -30,8 +30,7 @@
 //typedef utility::pointer::shared_ptr< core::scoring::etable::TableLookupEtableEnergy > TableLookupEtableEnergyOP;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 class RNA_FullAtomVDW_BasePhosphate : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
@@ -41,7 +40,7 @@ public:
 public:
 
 	/// @brief ctor
-	RNA_FullAtomVDW_BasePhosphate( methods::EnergyMethodOptions const & options );
+	RNA_FullAtomVDW_BasePhosphate( core::scoring::methods::EnergyMethodOptions const & options );
 
 	/// @brief dtor
 	~RNA_FullAtomVDW_BasePhosphate() override;
@@ -64,7 +63,7 @@ public:
 		Size const at1hend,
 		Size const at2hbegin,
 		Size const at2hend,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -72,7 +71,7 @@ public:
 	void
 	residue_energy(
 		conformation::Residue const & rsd,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 
@@ -80,7 +79,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const &,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -89,8 +88,8 @@ public:
 		id::AtomID const & id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const &, // domain_map,
-		ScoreFunction const & /*sfxn*/, // needed for non-nblist minimization
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const & /*sfxn*/, // needed for non-nblist minimization
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2
 	) const override;
@@ -105,7 +104,7 @@ private:
 private:
 
 	//methods::EnergyMethodOptions const & options_;
-	etable::EtableEvaluatorOP etable_evaluator_;
+	core::scoring::etable::EtableEvaluatorOP etable_evaluator_;
 
 	/*
 
@@ -117,7 +116,6 @@ private:
 
 };
 
-} //rna
 } //scoring
 } //core
 

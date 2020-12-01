@@ -18,8 +18,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace disulfides {
+namespace energy_methods {
 
 class FullatomDisulfideEnergy;
 
@@ -27,8 +26,7 @@ typedef utility::pointer::shared_ptr< FullatomDisulfideEnergy > FullatomDisulfid
 typedef utility::pointer::shared_ptr< FullatomDisulfideEnergy const > FullatomDisulfideEnergyCOP;
 
 
-} // namespace disulfides
-} // namespace scoring
+} // namespace energy_methods
 } // namespace core
 
 #endif

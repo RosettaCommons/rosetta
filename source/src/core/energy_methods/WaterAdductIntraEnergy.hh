@@ -12,8 +12,8 @@
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_hh
-#define INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_hh
+#ifndef INCLUDED_core_energy_methods_WaterAdductIntraEnergy_hh
+#define INCLUDED_core_energy_methods_WaterAdductIntraEnergy_hh
 
 // Unit headers
 #include <core/energy_methods/WaterAdductIntraEnergy.fwd.hh>
@@ -31,13 +31,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class WaterAdductIntraEnergy : public ContextIndependentOneBodyEnergy  {
+
+class WaterAdductIntraEnergy : public core::scoring::methods::ContextIndependentOneBodyEnergy  {
 public:
-	typedef ContextIndependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentOneBodyEnergy  parent;
 
 public:
 
@@ -45,7 +45,7 @@ public:
 	WaterAdductIntraEnergy();
 
 	/// clone
-	EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ public:
 	residue_energy(
 		conformation::Residue const & rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -67,8 +67,8 @@ public:
 		id::DOF_ID const & dof_id,
 		id::TorsionID const & tor_id,
 		pose::Pose const & pose,
-		ScoreFunction const & sfxn,
-		EnergyMap const & weights
+		core::scoring::ScoreFunction const & sfxn,
+		core::scoring::EnergyMap const & weights
 	) const;
 
 	/// @brief WaterAdductIntraEnergy is context independent; indicates that no
@@ -81,9 +81,8 @@ private:
 
 };
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_HH
+#endif // INCLUDED_core_energy_methods_WaterAdductIntraEnergy_HH

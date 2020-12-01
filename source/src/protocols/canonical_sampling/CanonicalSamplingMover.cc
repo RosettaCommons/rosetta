@@ -640,7 +640,7 @@ CanonicalSamplingMover::apply(Pose & pose){
 	mc_->reset( pose );
 
 	//setup Rg score calculator
-	core::scoring::methods::RG_Energy_Fast rge;
+	core::energy_methods::RG_Energy_Fast rge;
 
 	//keep a copy of current pose for rms calculations
 	core::pose::Pose init( pose );

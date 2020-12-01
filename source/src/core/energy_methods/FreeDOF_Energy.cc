@@ -43,21 +43,22 @@ using namespace core::pose::full_model_info;
 static basic::Tracer TR( "core.scoring.methods.FreeDOF_Energy", basic::t_info );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the FreeDOF_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FreeDOF_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< FreeDOF_Energy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 FreeDOF_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( free_suite );
 	sts.push_back( free_2HOprime );
@@ -69,11 +70,11 @@ FreeDOF_EnergyCreator::score_types_for_method() const {
 }
 
 /// ctor
-FreeDOF_Energy::FreeDOF_Energy( methods::EnergyMethodOptions const & energy_method_options ) :
+FreeDOF_Energy::FreeDOF_Energy( core::scoring::methods::EnergyMethodOptions const & energy_method_options ) :
 	parent( utility::pointer::make_shared< FreeDOF_EnergyCreator >() ),
 	energy_method_options_( energy_method_options ),
 	options_( energy_method_options.free_dof_options() ),
-	free_res_weights_( energy_method_options_.method_weights( free_res ) )
+	free_res_weights_( energy_method_options_.method_weights( core::scoring::free_res ) )
 {
 }
 
@@ -91,7 +92,7 @@ FreeDOF_Energy::clone() const
 /////////////////////////////////////////////////////////////////////////////
 
 void
-FreeDOF_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const {
+FreeDOF_Energy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const {
 	// Under the new logic, we actually don't want to assume a valid FMI can be
 	// set up knowing what we know at the moment. Rather, we just want to zero
 	// out this scoreterm entirely.
@@ -106,7 +107,7 @@ void
 FreeDOF_Energy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	if ( !full_model_info_defined( pose ) ) return;
@@ -152,18 +153,18 @@ FreeDOF_Energy::residue_energy(
 	//  all-or-nothing, though.
 	if ( rsd.has_variant_type( chemical::VIRTUAL_SIDE_CHAIN ) )  free_side_chain_energy += options_.free_side_chain_bonus() * rsd.nchi() ;
 
-	emap[ free_suite      ] += free_suite_energy;
-	emap[ free_2HOprime   ] += free_2HOprime_energy;
-	emap[ free_side_chain ] += free_side_chain_energy;
-	emap[ free_dof        ] += free_suite_energy + free_2HOprime_energy + free_side_chain_energy;
+	emap[ core::scoring::free_suite      ] += free_suite_energy;
+	emap[ core::scoring::free_2HOprime   ] += free_2HOprime_energy;
+	emap[ core::scoring::free_side_chain ] += free_side_chain_energy;
+	emap[ core::scoring::free_dof        ] += free_suite_energy + free_2HOprime_energy + free_side_chain_energy;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void
 FreeDOF_Energy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & totals
 ) const
 {
 	if ( !full_model_info_defined( pose ) ) return;
@@ -174,7 +175,7 @@ FreeDOF_Energy::finalize_total_energy(
 	// this should only be computed once for a full_model run, and not for the other poses.
 	// (it looks over all the other_pose's). The good news is that when the other poses are scored
 	// by OtherPoseEnergy, the weight on free_res is set to zero, so it won't be included here.
-	if ( scorefxn.has_nonzero_weight( free_res ) ) {
+	if ( scorefxn.has_nonzero_weight( core::scoring::free_res ) ) {
 		using namespace core::chemical;
 		utility::vector1< char > missing_residues;
 		pose::full_model_info::get_number_missing_residues_and_connections( pose, missing_residues );
@@ -185,14 +186,14 @@ FreeDOF_Energy::finalize_total_energy(
 			if ( Size( aa ) > free_res_weights_.size() ) continue;
 			free_res_energy += free_res_weights_[ aa  ];
 		}
-		totals[ free_res ] += free_res_energy;
+		totals[ core::scoring::free_res ] += free_res_energy;
 	}
 
 	///////////////////////////////////////////////////////////////////////
 	// entropy terms -- cost of base stacking & hydrogen bonding.
 	// set as constants, chosen initially as guesses.
 	///////////////////////////////////////////////////////////////////////
-	if ( !scorefxn.has_nonzero_weight( free_base ) && !scorefxn.has_nonzero_weight( free_dof ) ) return;
+	if ( !scorefxn.has_nonzero_weight( core::scoring::free_base ) && !scorefxn.has_nonzero_weight( core::scoring::free_dof ) ) return;
 
 	utility::vector1< Real > base_stack_energy, base_hbond_energy, sugar_hbond_energy;
 	accumulate_stack_energy( pose, scorefxn, base_stack_energy );
@@ -223,18 +224,18 @@ FreeDOF_Energy::finalize_total_energy(
 		total_free_base_score += free_base_score;
 	}
 
-	totals[ free_base ] += total_free_base_score;
+	totals[ core::scoring::free_base ] += total_free_base_score;
 }
 
 ///////////////////////////////////////////////////////////////////////
 void
-FreeDOF_Energy::do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn ) const {
-	EnergyMap const & weights( scorefxn.weights() );
-	runtime_assert( scorefxn.has_nonzero_weight( fa_stack ) ||
-		( scorefxn.has_nonzero_weight( fa_stack_lower ) &&
-		weights[ fa_stack_upper ] == weights[ fa_stack_lower ] ) );
+FreeDOF_Energy::do_fa_stack_scorefunction_checks( core::scoring::ScoreFunction const & scorefxn ) const {
+	core::scoring::EnergyMap const & weights( scorefxn.weights() );
+	runtime_assert( scorefxn.has_nonzero_weight( core::scoring::fa_stack ) ||
+		( scorefxn.has_nonzero_weight( core::scoring::fa_stack_lower ) &&
+		weights[ core::scoring::fa_stack_upper ] == weights[ core::scoring::fa_stack_lower ] ) );
 
-	if ( !scorefxn.check_methods_in_right_order( fa_stack, free_base ) ) {
+	if ( !scorefxn.check_methods_in_right_order( core::scoring::fa_stack, core::scoring::free_base ) ) {
 		utility_exit_with_message( "fa_stack should be before free_base/free_dof in .wts file!" );
 	}
 
@@ -247,7 +248,7 @@ FreeDOF_Energy::do_fa_stack_scorefunction_checks( ScoreFunction const & scorefxn
 void
 FreeDOF_Energy::accumulate_stack_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
+	core::scoring::ScoreFunction const & scorefxn,
 	utility::vector1< Real > & stack_energy
 ) const
 {
@@ -258,11 +259,11 @@ FreeDOF_Energy::accumulate_stack_energy(
 	stack_energy = utility::vector1< Real >( pose.size(), 0.0 );
 	do_fa_stack_scorefunction_checks( scorefxn );
 
-	EnergyGraph const & energy_graph = pose.energies().energy_graph();
-	EnergyMap const & weights( scorefxn.weights() );
+	core::scoring::EnergyGraph const & energy_graph = pose.energies().energy_graph();
+	core::scoring::EnergyMap const & weights( scorefxn.weights() );
 
-	Real fa_stack_weight( weights[ fa_stack ] );
-	if ( fa_stack_weight == 0.0 ) fa_stack_weight = weights[ fa_stack_upper ];
+	Real fa_stack_weight( weights[ core::scoring::fa_stack ] );
+	if ( fa_stack_weight == 0.0 ) fa_stack_weight = weights[ core::scoring::fa_stack_upper ];
 
 	// accumulate energies, but keep track of which residue supplied the base.
 	for ( Size i=1, i_end = pose.size(); i<= i_end; ++i ) {
@@ -285,7 +286,7 @@ FreeDOF_Energy::accumulate_stack_energy(
 void
 FreeDOF_Energy::get_hbond_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
+	core::scoring::ScoreFunction const & scorefxn,
 	utility::vector1< Real > & base_hbond_energy,
 	utility::vector1< Real > & sugar_hbond_energy
 ) const
@@ -294,7 +295,7 @@ FreeDOF_Energy::get_hbond_energy(
 
 	using namespace core::scoring::hbonds;
 
-	EnergyMap const & weights( scorefxn.weights() );
+	core::scoring::EnergyMap const & weights( scorefxn.weights() );
 
 	// unclear whether we can avoid repeating work elsewhere through caching this.
 	HBondSet hbond_set;
@@ -306,7 +307,7 @@ FreeDOF_Energy::get_hbond_energy(
 	for ( Size n = 1; n <= hbond_set.nhbonds(); ++n ) {
 
 		if ( !hbond_set.allow_hbond(n) ) continue;
-		HBond const & hbond_(hbond_set.hbond(n));
+		core::scoring::hbonds::HBond const & hbond_(hbond_set.hbond(n));
 		Size const i = hbond_.don_res();
 		Size const j = hbond_.acc_res();
 
@@ -345,7 +346,6 @@ FreeDOF_Energy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

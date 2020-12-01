@@ -87,11 +87,11 @@ namespace energy_methods {
 static basic::Tracer TR( "core.energy_methods.DEEREnergy" );
 
 /// @brief  Energy Method creator required by framework (registrator in devel/init.cc)
-scoring::methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DEEREnergyCreator::create_energy_method(
 	scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return scoring::methods::EnergyMethodOP( new DEEREnergy( options ) );
+	return core::scoring::methods::EnergyMethodOP( new DEEREnergy( options ) );
 }
 
 /// @brief  Energy Method descriptor to identify it if a weight is provided in the command line
@@ -128,9 +128,9 @@ DEEREnergy::DEEREnergy(
 DEEREnergy::~DEEREnergy() {}
 
 /// @brief Copy function
-scoring::methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DEEREnergy::clone() const {
-	return scoring::methods::EnergyMethodOP( new DEEREnergy() );
+	return core::scoring::methods::EnergyMethodOP( new DEEREnergy() );
 }
 
 /// @brief Derived function for specifying where the data is getting stored
@@ -227,7 +227,7 @@ DEEREnergy::initialize_energy_method(
 		deer_data_ptr->fetch_and_organize_data( pose );
 		pose.data().set( pose::datacache::CacheableDataType::EPR_DEER_DATA, deer_data_ptr );
 	}
-	// Necessary for clash evaluation using the TenANeighborGraph later (EPRSpinLabel)
+	// Necessary for clash evaluation using the core::scoring::TenANeighborGraph later (EPRSpinLabel)
 	pose.update_residue_neighbors();
 }
 
@@ -248,7 +248,7 @@ DEEREnergy::residue_pair_energy(
 			Real weight_edge = edge_weight.second; // This is to avoid double-counting
 			Real score = get_const_deer_data( pose )->at( edge_id )->score();
 			Real weight_total = get_const_deer_data( pose )->at( edge_id )->relative_weight();
-			emap[ scoring::ScoreType::epr_deer_score ] += score * weight_total * weight_edge;
+			emap[ core::scoring::ScoreType::epr_deer_score ] += score * weight_total * weight_edge;
 		}
 	}
 }
@@ -410,8 +410,8 @@ DEEREnergy::eval_atom_derivative(
 	if ( id.atomno() > 3 ) {
 		return;
 	}
-	F1 += emap[ scoring::ScoreType::epr_deer_score ] * get_const_deer_data( pose )->f1_force( id.rsd() );
-	F2 += emap[ scoring::ScoreType::epr_deer_score ] * get_const_deer_data( pose )->f2_force( id.rsd() );
+	F1 += emap[ core::scoring::ScoreType::epr_deer_score ] * get_const_deer_data( pose )->f1_force( id.rsd() );
+	F2 += emap[ core::scoring::ScoreType::epr_deer_score ] * get_const_deer_data( pose )->f2_force( id.rsd() );
 }
 
 /// @brief  A declared but unused function

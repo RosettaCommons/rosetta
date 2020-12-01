@@ -35,8 +35,7 @@
 #include <map>
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 // singleton class
 class GridInfo : public utility::SingletonBase< GridInfo >
@@ -82,13 +81,13 @@ public:
 	friend class utility::SingletonBase< WaterWeightGridSet >;
 
 	Grid const &
-	get_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
+	get_water_weight_grid( core::scoring::hbonds::HBEvalType const & hbond_eval_type ) const;
 
 	core::Real
-	get_sum_water_weight_grid( hbonds::HBEvalType const & hbond_eval_type ) const;
+	get_sum_water_weight_grid( core::scoring::hbonds::HBEvalType const & hbond_eval_type ) const;
 
 	/// @brief prints a given xz-plane of a water grid
-	void print_water_weight_grid_xz_plane(hbonds::HBEvalType const & hbond_eval_type, int const y) const;
+	void print_water_weight_grid_xz_plane( core::scoring::hbonds::HBEvalType const & hbond_eval_type, int const y) const;
 
 private:
 
@@ -96,30 +95,30 @@ private:
 	WaterWeightGridSet();
 
 	core::Real fill_water_grid( Grid & water_weights,
-		hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
+		core::scoring::hbonds::HBEvalTuple const & hbond_eval_type, GridInfo const & grid_info, bool const water_is_donor);
 
 private:
 
 	// private member data
-	std::map< hbonds::HBEvalType, Grid > all_water_weights_;
-	std::map< hbonds::HBEvalType, core::Real> sum_all_water_weights_;
+	std::map< core::scoring::hbonds::HBEvalType, Grid > all_water_weights_;
+	std::map< core::scoring::hbonds::HBEvalType, core::Real> sum_all_water_weights_;
 
-	hbonds::HBondOptionsOP   hbondoptions_;
-	hbonds::HBondDatabaseCOP hb_database_;
+	core::scoring::hbonds::HBondOptionsOP   hbondoptions_;
+	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 };
 
-typedef std::map< hbonds::HBEvalType, WaterWeightGridSet::Grid >::const_iterator all_water_weights_iterator;
-typedef std::map< hbonds::HBEvalType, core::Real >::const_iterator sum_water_weights_iterator;
+typedef std::map< core::scoring::hbonds::HBEvalType, WaterWeightGridSet::Grid >::const_iterator all_water_weights_iterator;
+typedef std::map< core::scoring::hbonds::HBEvalType, core::Real >::const_iterator sum_water_weights_iterator;
 
 
-class ExactOccludedHbondSolEnergy : public methods::ContextDependentOneBodyEnergy  {
+class ExactOccludedHbondSolEnergy : public core::scoring::methods::ContextDependentOneBodyEnergy  {
 
 public:
 
-	typedef methods::ContextDependentOneBodyEnergy  parent;
+	typedef core::scoring::methods::ContextDependentOneBodyEnergy  parent;
 
 	ExactOccludedHbondSolEnergy(
-		etable::Etable const & etable_in,
+		core::scoring::etable::Etable const & etable_in,
 		bool const analytic_etable_evaluation,
 		bool const exact_occ_skip_Hbonders = false,
 		bool const exact_occ_pairwise = false,
@@ -134,27 +133,27 @@ public:
 
 	~ExactOccludedHbondSolEnergy() override;
 
-	methods::EnergyMethodOP clone() const override;
+	core::scoring::methods::EnergyMethodOP clone() const override;
 
 	void init_hbond_data( pose::Pose const& pose) const;
 
-	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const override;
+	void setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const override;
 
 	void setup_for_packing(pose::Pose & pose, utility::vector1< bool > const &, utility::vector1< bool > const & ) const override;
 
-	void setup_for_derivatives( pose::Pose &pose, ScoreFunction const &  ) const override;
+	void setup_for_derivatives( pose::Pose &pose, core::scoring::ScoreFunction const &  ) const override;
 
-	void setup_for_minimizing(pose::Pose & pose, ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
+	void setup_for_minimizing(pose::Pose & pose, core::scoring::ScoreFunction const & , kinematics::MinimizerMapBase const &) const override;
 
 	void residue_energy(
 		conformation::Residue const & polar_rsd,
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const override;
 
 	void indicate_required_context_graphs( utility::vector1< bool > &  ) const override {};
 
-	virtual bool defines_intrares_energy( EnergyMap const & ) const { return false; }
+	virtual bool defines_intrares_energy( core::scoring::EnergyMap const & ) const { return false; }
 
 	/// @brief computes the desolvation energy (i.e., either SHO or median LK) of a donor atom
 	core::Real compute_donor_atom_energy(
@@ -203,7 +202,7 @@ public:
 		core::conformation::Residue const& res,
 		core::pose::Pose const& ps ) const;
 
-	hbonds::HBondSetCOP hbond_set() const {return hbond_set_;}
+	core::scoring::hbonds::HBondSetCOP hbond_set() const {return hbond_set_;}
 
 	core::Size version() const override;
 
@@ -245,8 +244,8 @@ private:
 	bool const exact_occ_split_between_res_;
 	bool const exact_occ_self_res_occ_;
 	core::Real const occ_radius_scaling_;
-	hbonds::HBondOptionsOP   hbondoptions_;
-	hbonds::HBondDatabaseCOP hb_database_;
+	core::scoring::hbonds::HBondOptionsOP   hbondoptions_;
+	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 	chemical::AtomTypeSetCAP atom_type_set_ptr_;
 
 	// note: this would really be a local variable, it's just that we don't want to pay
@@ -258,7 +257,7 @@ private:
 	core::scoring::hbonds::HBondSetOP hbond_set_;
 
 	/// @brief computes LK energies for H-bonded atoms
-	etable::EtableEvaluatorOP etable_evaluator_;
+	core::scoring::etable::EtableEvaluatorOP etable_evaluator_;
 
 	/// @brief interatomic squared distance below which LK energies are computed
 	core::Real lk_safe_max_dis2_;
@@ -267,9 +266,8 @@ private:
 };
 
 /// @brief creates an ExactOccludedHbondSolEnergy object according to command-line options
-ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline(methods::EnergyMethodOptions const & options);
+ExactOccludedHbondSolEnergyOP create_ExactSHOEnergy_from_cmdline( core::scoring::methods::EnergyMethodOptions const & options);
 
-} // geometric_solvation
 } // scoring
 } // core
 

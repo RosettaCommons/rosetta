@@ -13,16 +13,16 @@
 /// @author Andrew Leaver-Fay (aleaverfay@gmail.com)
 
 
-#ifndef INCLUDED_core_scoring_methods_PoissonBoltzmannEnergy_FWD_HH
-#define INCLUDED_core_scoring_methods_PoissonBoltzmannEnergy_FWD_HH
+#ifndef INCLUDED_core_energy_methods_PoissonBoltzmannEnergy_FWD_HH
+#define INCLUDED_core_energy_methods_PoissonBoltzmannEnergy_FWD_HH
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class PoissonBoltzmannEnergy;
 
@@ -37,7 +37,6 @@ typedef utility::pointer::shared_ptr< PBLifetimeCache > PBLifetimeCacheOP;
 typedef utility::pointer::shared_ptr< PBLifetimeCache const > PBLifetimeCacheCOP;
 typedef utility::pointer::weak_ptr< PBLifetimeCache > PBLifetimeCacheAP;
 typedef utility::pointer::weak_ptr< PBLifetimeCache const > PBLifetimeCacheCAP;
-} // methods
 } // scoring
 } // core
 

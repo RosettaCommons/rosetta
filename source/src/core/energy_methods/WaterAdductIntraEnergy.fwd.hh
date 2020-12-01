@@ -12,22 +12,21 @@
 /// @author Jim Havranek
 
 
-#ifndef INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_fwd_hh
-#define INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_fwd_hh
+#ifndef INCLUDED_core_energy_methods_WaterAdductIntraEnergy_fwd_hh
+#define INCLUDED_core_energy_methods_WaterAdductIntraEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 class WaterAdductIntraEnergy;
 
 typedef utility::pointer::shared_ptr< WaterAdductIntraEnergy > WaterAdductIntraEnergyOP;
 
-} // methods
 } // scoring
 } // core
 
 
-#endif // INCLUDED_core_scoring_methods_WaterAdductIntraEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_WaterAdductIntraEnergy_FWD_HH

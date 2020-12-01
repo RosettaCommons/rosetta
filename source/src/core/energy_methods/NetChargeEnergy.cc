@@ -51,8 +51,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {
-namespace scoring {
-namespace netcharge_energy {
+namespace energy_methods {
 
 static basic::Tracer TR("core.scoring.netcharge_energy.NetChargeEnergy");
 
@@ -66,9 +65,10 @@ NetChargeEnergyCreator::create_energy_method( core::scoring::methods::EnergyMeth
 
 /// @brief Defines the score types that this energy method calculates.
 ///
-ScoreTypes
+core::scoring::ScoreTypes
 NetChargeEnergyCreator::score_types_for_method() const
 {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( netcharge );
 	return sts;
@@ -132,7 +132,7 @@ core::Size NetChargeEnergy::version() const
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void NetChargeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const
+void NetChargeEnergy::finalize_total_energy( core::pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const
 {
 	//Number of residues:
 	core::Size const nres( pose.size() );
@@ -146,13 +146,13 @@ void NetChargeEnergy::finalize_total_energy( core::pose::Pose & pose, ScoreFunct
 		resvector.push_back( pose.residue(ir).get_self_ptr() );
 	}
 
-	//Get the NetChargeEnergySetup objects from the pose and append them to the setup_helpers_ list, making a new setup_helpers list:
-	utility::vector1< NetChargeEnergySetupCOP > setup_helpers;
+	//Get the core::scoring::netcharge_energy::NetChargeEnergySetup objects from the pose and append them to the setup_helpers_ list, making a new setup_helpers list:
+	utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupCOP > setup_helpers;
 	utility::vector1< core::select::residue_selector::ResidueSubset > masks;
-	get_helpers_from_pose( pose, setup_helpers, masks ); //Pulls NetChargeEnergySetupCOPs from pose; generates masks from ResidueSelectors simultaneously.
+	get_helpers_from_pose( pose, setup_helpers, masks ); //Pulls core::scoring::netcharge_energy::NetChargeEnergySetupCOPs from pose; generates masks from ResidueSelectors simultaneously.
 	runtime_assert( masks.size() == setup_helpers.size() ); //Should be guaranteed to be true.
 
-	totals[ netcharge ] += calculate_energy( resvector, setup_helpers, masks ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the netcharge to this value.
+	totals[ core::scoring::netcharge ] += calculate_energy( resvector, setup_helpers, masks ); //Using the vector of residue owning pointers, calculate the repeat energy (unweighted) and set the netcharge to this value.
 
 	return;
 }
@@ -176,7 +176,7 @@ NetChargeEnergy::calculate_energy(
 core::Real
 NetChargeEnergy::calculate_energy(
 	utility::vector1< core::conformation::ResidueCOP > const &resvect,
-	utility::vector1< NetChargeEnergySetupCOP > const &setup_helpers,
+	utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupCOP > const &setup_helpers,
 	utility::vector1< core::select::residue_selector::ResidueSubset > const &masks
 ) const
 {
@@ -187,7 +187,7 @@ NetChargeEnergy::calculate_energy(
 	for ( core::Size ihelper=1, ihelpermax=setup_helpers.size(); ihelper<=ihelpermax; ++ihelper ) { //loop through all setup_helper objects
 
 		// Const owning pointer to the setup helper:
-		NetChargeEnergySetupCOP helper( setup_helpers[ihelper] );
+		core::scoring::netcharge_energy::NetChargeEnergySetupCOP helper( setup_helpers[ihelper] );
 
 		// Number of residues:
 		core::Size const nres( resvect.size() );
@@ -276,16 +276,16 @@ NetChargeEnergy::provide_citation_info(basic::citation_manager::CitationCollecti
 	);
 }
 
-/// @brief Given a pose, pull out the NetChargeEnergySetup objects stored in SequenceConstraints in the pose and
+/// @brief Given a pose, pull out the core::scoring::netcharge_energy::NetChargeEnergySetup objects stored in SequenceConstraints in the pose and
 /// append them to the setup_helpers_ vector, returning a new vector.  This also generates a vector of masks simultaneously.
-/// @param [in] pose The pose from which the NetChargeEnergySetupCOPs will be extracted.
-/// @param [out] setup_helpers The output vector of NetChargeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
+/// @param [in] pose The pose from which the core::scoring::netcharge_energy::NetChargeEnergySetupCOPs will be extracted.
+/// @param [out] setup_helpers The output vector of core::scoring::netcharge_energy::NetChargeEnergySetupCOPs that is the concatenation of those stored in setup_helpers_ and those from the pose.
 /// @param [out] masks The output vector of ResidueSubsets, which will be equal in size to the helpers vector.
 /// @details The output vectors are first cleared by this operation.
 void
 NetChargeEnergy::get_helpers_from_pose(
 	core::pose::Pose const &pose,
-	utility::vector1< NetChargeEnergySetupCOP > &setup_helpers,
+	utility::vector1< core::scoring::netcharge_energy::NetChargeEnergySetupCOP > &setup_helpers,
 	utility::vector1< core::select::residue_selector::ResidueSubset > &masks
 ) const {
 	setup_helpers.clear();
@@ -298,9 +298,9 @@ NetChargeEnergy::get_helpers_from_pose(
 	core::Size const n_sequence_constraints( pose.constraint_set()->n_sequence_constraints() );
 	if ( n_sequence_constraints > 0 ) {
 		for ( core::Size i=1; i<=n_sequence_constraints; ++i ) {
-			NetChargeConstraintCOP cur_cst( utility::pointer::dynamic_pointer_cast<NetChargeConstraint const>( pose.constraint_set()->sequence_constraint(i) ) );
-			if ( !cur_cst ) continue; //Continue if this isn't an NetChargeConstraint.
-			setup_helpers.push_back( cur_cst->netcharge_energy_setup() ); //Append the NetChargeEnergySetup object stored in the current sequence constraint to the list to be used.
+			core::scoring::netcharge_energy::NetChargeConstraintCOP cur_cst( utility::pointer::dynamic_pointer_cast<core::scoring::netcharge_energy::NetChargeConstraint const>( pose.constraint_set()->sequence_constraint(i) ) );
+			if ( !cur_cst ) continue; //Continue if this isn't an core::scoring::netcharge_energy::NetChargeConstraint.
+			setup_helpers.push_back( cur_cst->netcharge_energy_setup() ); //Append the core::scoring::netcharge_energy::NetChargeEnergySetup object stored in the current sequence constraint to the list to be used.
 			core::select::residue_selector::ResidueSelectorCOP selector( cur_cst->selector() ); //Get the ResidueSelector in the current sequence constraint object, if there is one.  (May be NULL).
 			if ( selector ) { //If we have a ResidueSelector, generate a mask from the pose and store it in the masks list.
 				masks.push_back( selector->apply( pose ) );
@@ -316,6 +316,5 @@ NetChargeEnergy::get_helpers_from_pose(
 }
 
 
-} // netcharge_energy
 } // scoring
 } // core

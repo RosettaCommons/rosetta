@@ -58,22 +58,22 @@
 static basic::Tracer tr( "core.scoring.geometric_solvation.OccludedHbondSolEnergy" );
 
 namespace core {
-namespace scoring {
-namespace geometric_solvation {
+namespace energy_methods {
 
 using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the OccludedHbondSolEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OccludedHbondSolEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
-	return utility::pointer::make_shared< geometric_solvation::OccludedHbondSolEnergy >( options );
+	return utility::pointer::make_shared< OccludedHbondSolEnergy >( options );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 OccludedHbondSolEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( occ_sol_fitted );
 	return sts;
@@ -89,13 +89,13 @@ core::Real const MIN_OCC_ENERGY = { 0.01 };
 
 
 OccludedHbondSolEnergy::OccludedHbondSolEnergy(
-	methods::EnergyMethodOptions const & options,
+	core::scoring::methods::EnergyMethodOptions const & options,
 	bool const verbose )
 :
 	parent( utility::pointer::make_shared< OccludedHbondSolEnergyCreator >() ),
 	atom_type_set_ptr_( chemical::ChemicalManager::get_instance()->atom_type_set( chemical::FA_STANDARD ) ),
 	amp_scaling_factors_(atom_type_set_ptr_->n_atomtypes(), 0),
-	occ_hbond_sol_database_( ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
+	occ_hbond_sol_database_( core::scoring::ScoringManager::get_instance()->get_DatabaseOccSolEne( options.etable_type(), MIN_OCC_ENERGY ) ),
 	verbose_( verbose )
 {
 	init_amp_scaling_factors();
@@ -112,7 +112,7 @@ OccludedHbondSolEnergy::OccludedHbondSolEnergy( OccludedHbondSolEnergy const & s
 	if ( verbose_ ) tr <<"OccludedHbondSolEnergy constructor" << std::endl;
 }
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 OccludedHbondSolEnergy::clone() const
 {
 	return utility::pointer::make_shared< OccludedHbondSolEnergy >( *this );
@@ -149,13 +149,13 @@ void OccludedHbondSolEnergy::init_amp_scaling_factors() {
 
 
 void
-OccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+OccludedHbondSolEnergy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
 
 void
-OccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & pose, ScoreFunction const & ) const
+OccludedHbondSolEnergy::setup_for_derivatives( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	pose.update_residue_neighbors();
 }
@@ -166,8 +166,8 @@ OccludedHbondSolEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & ,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( verbose_ ) tr << "jk evaluating residue pair energy" << std::endl;
 
@@ -181,21 +181,21 @@ OccludedHbondSolEnergy::residue_pair_energy(
 		res_res_occ_sol_one_way( rsd2, rsd1 ) ;
 
 	// store the energies
-	emap[ occ_sol_fitted ] += occ_solE;
+	emap[ core::scoring::occ_sol_fitted ] += occ_solE;
 }
 
 void
 OccludedHbondSolEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & ,
-	ScoreFunction const & ,
-	EnergyMap & emap ) const {
+	core::scoring::ScoreFunction const & ,
+	core::scoring::EnergyMap & emap ) const {
 
 	if ( verbose_ ) tr << "jk evaluating intrares energy" << std::endl;
 
 	// behaves as not-same-residue, except that we only do the calculation once
 	Real occ_solE = res_res_occ_sol_one_way( rsd, rsd );
-	emap[ occ_sol_fitted ] += occ_solE;
+	emap[ core::scoring::occ_sol_fitted ] += occ_solE;
 }
 
 /// @details return true if the two residues are moving with respect to each other.
@@ -213,13 +213,13 @@ void
 OccludedHbondSolEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const &, // provides context
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	eval_residue_pair_derivatives_one_way( rsd1, rsd2, weights, r1_atom_derivs, r2_atom_derivs );
@@ -230,9 +230,9 @@ void
 OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 	conformation::Residue const & rsd1, // polar residue
 	conformation::Residue const & rsd2, // occluding residue
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & r1_atom_derivs,
-	utility::vector1< DerivVectorPair > & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 ) const
 {
 	if ( rsd1.has_variant_type( chemical::VIRTUAL_RNA_RESIDUE ) ) return;
@@ -258,7 +258,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 			if ( rsd2.is_virtual( jj ) ) continue;
 			if ( rsd2.is_repulsive( jj ) ) continue;
 			if ( rsd1.xyz( don_h_atom ).distance_squared( rsd2.xyz(jj) ) > atom_pair_cutoff2 ) continue;
-			get_atom_atom_occ_solvation( don_h_atom, don_base_atom, rsd1, jj, rsd2, energy, true, weights[ occ_sol_fitted ],
+			get_atom_atom_occ_solvation( don_h_atom, don_base_atom, rsd1, jj, rsd2, energy, true, weights[ core::scoring::occ_sol_fitted ],
 				r1_atom_derivs[ don_base_atom ].f1(), r1_atom_derivs[ don_base_atom ].f2(),
 				r1_atom_derivs[ don_h_atom ].f1(), r1_atom_derivs[ don_h_atom ].f2(),
 				r2_atom_derivs[ jj ].f1(), r2_atom_derivs[ jj ].f2() );
@@ -277,7 +277,7 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 			if ( rsd2.is_repulsive( jj ) ) continue;
 
 			if ( rsd1.xyz( acc_atom ).distance_squared( rsd2.xyz(jj) ) > atom_pair_cutoff2 ) continue;
-			get_atom_atom_occ_solvation( acc_atom, base_atom, rsd1, jj, rsd2, energy, true, weights[ occ_sol_fitted ],
+			get_atom_atom_occ_solvation( acc_atom, base_atom, rsd1, jj, rsd2, energy, true, weights[ core::scoring::occ_sol_fitted ],
 				r1_atom_derivs[ base_atom ].f1(), r1_atom_derivs[ base_atom ].f2(),
 				r1_atom_derivs[ acc_atom ].f1(), r1_atom_derivs[ acc_atom ].f2(),
 				r2_atom_derivs[ jj ].f1(), r2_atom_derivs[ jj ].f2() );
@@ -289,10 +289,10 @@ OccludedHbondSolEnergy::eval_residue_pair_derivatives_one_way(
 void
 OccludedHbondSolEnergy::eval_intrares_derivatives(
 	conformation::Residue const & rsd,
-	ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
 	pose::Pose const &,
-	EnergyMap const & weights,
-	utility::vector1< DerivVectorPair > & atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair > & atom_derivs
 ) const
 {
 	eval_residue_pair_derivatives_one_way( rsd, rsd, weights, atom_derivs, atom_derivs );
@@ -443,9 +443,9 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 
 	// jumpout with no calculations if easy tests are violated, ie. no contribution to solvation energy
 	Real const dist_sq = ( occ_atom_xyz - polar_atom_xyz).length_squared();
-	if ( dist_sq > occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_max_sq_dist ) ) return;
+	if ( dist_sq > occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_max_sq_dist ) ) return;
 	Real const curr_cos_angle = get_cos_angle( base_atom_xyz, polar_atom_xyz, occ_atom_xyz );
-	if ( curr_cos_angle < occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_min_cos_angle ) ) return;
+	if ( curr_cos_angle < occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_min_cos_angle ) ) return;
 
 	// geometric filters are met, compute energy (and derivatives, if desired)
 	// get the appropriate parameters
@@ -454,11 +454,11 @@ OccludedHbondSolEnergy::get_atom_atom_occ_solvation(
 		tr << "Unsupported atom type index: " << polar_atom_type_lookup_index << std::endl;
 		exit(0);
 	}
-	Real const amp = sf*occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_amp );
-	Real const dist_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_dist_mu );
-	Real const twice_dist_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_twice_dist_sigma_sq );
-	Real const cos_angle_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_cos_angle_mu );
-	Real const twice_cos_angle_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, OccFitParam_twice_cos_angle_sigma_sq );
+	Real const amp = sf*occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_amp );
+	Real const dist_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_dist_mu );
+	Real const twice_dist_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_twice_dist_sigma_sq );
+	Real const cos_angle_mu = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_cos_angle_mu );
+	Real const twice_cos_angle_sigma_sq = occ_hbond_sol_database_( polar_atom_donates, polar_atom_type_lookup_index, occ_atom_type_index, scoring::geometric_solvation::OccFitParam_twice_cos_angle_sigma_sq );
 
 	// Note: differences are in different order. Doesn't matter for scores, does for derivatives (and these make derivatives work).
 	// Briefly, we're in the regime where dist energy contribution gets small as we get big values,
@@ -574,7 +574,6 @@ OccludedHbondSolEnergy::version() const
 }
 
 
-} // geometric_solvation
 } // scoring
 } // core
 

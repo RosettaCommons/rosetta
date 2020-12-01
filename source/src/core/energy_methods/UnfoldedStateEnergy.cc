@@ -32,34 +32,35 @@
 static basic::Tracer TR( "core.scoring.methods.UnfoldedStateEnergy" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the UnfoldedStateEnergy class, never an instance already in use
-methods::EnergyMethodOP
-UnfoldedStateEnergyCreator::create_energy_method( methods::EnergyMethodOptions const & options ) const {
+core::scoring::methods::EnergyMethodOP
+UnfoldedStateEnergyCreator::create_energy_method( core::scoring::methods::EnergyMethodOptions const & options ) const {
 
-	if ( !options.has_method_weights( unfolded ) ) {
+	if ( !options.has_method_weights( core::scoring::unfolded ) ) {
 		return utility::pointer::make_shared< UnfoldedStateEnergy >( options.unfolded_energies_type() );
 	}
 
-	utility::vector1< Real > const & v = options.method_weights( unfolded );
+	utility::vector1< Real > const & v = options.method_weights( core::scoring::unfolded );
 	debug_assert( v.size() == scoring::n_score_types );
 
-	// convert the vector of Reals into an EnergyMap, because that's what the constructor for USE takes.
+	// convert the vector of Reals into an core::scoring::EnergyMap, because that's what the constructor for USE takes.
 	// assumes that the vector of Reals coming in contains the weights for each of the score types in the
 	// scoring namespace enumeration, and more importantly, in the same order.
-	EnergyMap e;
+	core::scoring::EnergyMap e;
 	for ( Size ii=1; ii < scoring::n_score_types; ++ii ) {
-		e[ (ScoreType) ii ] = v[ii];
+		e[ ( core::scoring::ScoreType) ii ] = v[ii];
 	}
 
 	return utility::pointer::make_shared< UnfoldedStateEnergy >( options.unfolded_energies_type(), e );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 UnfoldedStateEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( unfolded );
 	sts.push_back( fa_intra_atr_ref );
@@ -86,16 +87,16 @@ UnfoldedStateEnergyCreator::score_types_for_method() const {
 UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type ) :
 	parent( utility::pointer::make_shared< UnfoldedStateEnergyCreator >() ),
 	type_( type ),
-	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
+	unf_state_potential_( core::scoring::ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( unf_state_potential_.get_unfoled_potential_file_weights() )
 {
 	TR.Debug << "instantiating class with weights: " << score_type_weights_.show_nonzero() << std::endl;
 }
 
-UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const EnergyMap & emap_in ):
+UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const core::scoring::EnergyMap & emap_in ):
 	parent( utility::pointer::make_shared< UnfoldedStateEnergyCreator >() ),
 	type_( type ),
-	unf_state_potential_( ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
+	unf_state_potential_( core::scoring::ScoringManager::get_instance()->get_UnfoldedStatePotential( type ) ),
 	score_type_weights_( emap_in )
 {
 	TR.Debug << "instantiating class with weights: " << score_type_weights_.show_nonzero()  << std::endl;
@@ -103,7 +104,7 @@ UnfoldedStateEnergy::UnfoldedStateEnergy( std::string const & type, const Energy
 
 UnfoldedStateEnergy::~UnfoldedStateEnergy() = default;
 
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 UnfoldedStateEnergy::clone() const {
 	return utility::pointer::make_shared< UnfoldedStateEnergy >( type_, score_type_weights_ );
 }
@@ -112,7 +113,7 @@ void
 UnfoldedStateEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// the value this function returns depends on how this class was constructed. if a set of weights was
@@ -122,33 +123,35 @@ UnfoldedStateEnergy::residue_energy(
 	// established, this class will get recreated with that set of weights and the function will return
 	// meaningful energies.
 
-	EnergyMap unweighted_unfolded_energies;
+	using namespace core::scoring;
+
+	core::scoring::EnergyMap unweighted_unfolded_energies;
 	unf_state_potential_.raw_unfolded_state_energymap( rsd.type().name3(), unweighted_unfolded_energies );
 
 	// don't forget to include the weight for the entire term. no, wait, that weight should get applied later
 	// in the scoring process. this method should just return the unweighted unfolded state energy.
-	emap[ unfolded ] += unweighted_unfolded_energies.dot( score_type_weights_ );
+	emap[ core::scoring::unfolded ] += unweighted_unfolded_energies.dot( score_type_weights_ );
 
 	//Add split out unfolded/reference energies. Basically each component that would go into the combined unfolded term is given its own energy term(referred to with the "_ref" suffix).
 	//Each of these terms has its own weight defined in the .wts file, which needs to be selected with optE.
-	emap[ fa_intra_atr_ref ] += unweighted_unfolded_energies[ fa_intra_atr ];
-	emap[ fa_intra_rep_ref ] += unweighted_unfolded_energies[ fa_intra_rep ];
-	emap[ fa_intra_sol_ref ] += unweighted_unfolded_energies[ fa_intra_sol ];
-	emap[ pro_close_ref ] += unweighted_unfolded_energies[ pro_close ];
-	emap[ rama_ref ] += unweighted_unfolded_energies[ rama ];
-	emap[ p_aa_pp_ref ] += unweighted_unfolded_energies[ p_aa_pp ];
-	emap[ omega_ref ] += unweighted_unfolded_energies[ omega ];
+	emap[ core::scoring::fa_intra_atr_ref ] += unweighted_unfolded_energies[ fa_intra_atr ];
+	emap[ core::scoring::fa_intra_rep_ref ] += unweighted_unfolded_energies[ fa_intra_rep ];
+	emap[ core::scoring::fa_intra_sol_ref ] += unweighted_unfolded_energies[ fa_intra_sol ];
+	emap[ core::scoring::pro_close_ref ] += unweighted_unfolded_energies[ pro_close ];
+	emap[ core::scoring::rama_ref ] += unweighted_unfolded_energies[ rama ];
+	emap[ core::scoring::p_aa_pp_ref ] += unweighted_unfolded_energies[ p_aa_pp ];
+	emap[ core::scoring::omega_ref ] += unweighted_unfolded_energies[ omega ];
 
 	//Should these ones be combined into one term? They normally all get combined and have the same weight, but theoretically they might want to vary independently during optE? Easy to change if needed.
-	emap[ fa_dun_ref ] += unweighted_unfolded_energies[ fa_dun ];
-	emap[ fa_dun_dev_ref ] += unweighted_unfolded_energies[ fa_dun_dev ];
-	emap[ fa_dun_rot_ref ] += unweighted_unfolded_energies[ fa_dun_rot ];
-	emap[ fa_dun_semi_ref ] += unweighted_unfolded_energies[ fa_dun_semi ];
+	emap[ core::scoring::fa_dun_ref ] += unweighted_unfolded_energies[ fa_dun ];
+	emap[ core::scoring::fa_dun_dev_ref ] += unweighted_unfolded_energies[ fa_dun_dev ];
+	emap[ core::scoring::fa_dun_rot_ref ] += unweighted_unfolded_energies[ fa_dun_rot ];
+	emap[ core::scoring::fa_dun_semi_ref ] += unweighted_unfolded_energies[ fa_dun_semi ];
 
 	//mm_std specific terms.
-	emap[ mm_lj_intra_rep_ref ] += unweighted_unfolded_energies[ mm_lj_intra_rep ];
-	emap[ mm_lj_intra_atr_ref ] += unweighted_unfolded_energies[ mm_lj_intra_atr ];
-	emap[ mm_twist_ref ] += unweighted_unfolded_energies[ mm_twist ];
+	emap[ core::scoring::mm_lj_intra_rep_ref ] += unweighted_unfolded_energies[ mm_lj_intra_rep ];
+	emap[ core::scoring::mm_lj_intra_atr_ref ] += unweighted_unfolded_energies[ mm_lj_intra_atr ];
+	emap[ core::scoring::mm_twist_ref ] += unweighted_unfolded_energies[ mm_twist ];
 
 	//Leaving out two body terms since for the split unfolded energy they are covered in SplitUnfoldedTwoBodyEnergy, and I'm not sure if the standard unfolded energy should be optimized with separated energies. It's simple enough to add them later if need be.
 	return;
@@ -164,6 +167,5 @@ UnfoldedStateEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core

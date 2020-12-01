@@ -16,12 +16,10 @@
 #define INCLUDED_core_scoring_hackaro_HackAroEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace hackaro {
+namespace energy_methods {
 
 class HackAroEnergy;
 
-}
 }
 }
 

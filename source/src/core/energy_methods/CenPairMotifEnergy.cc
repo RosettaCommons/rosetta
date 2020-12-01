@@ -45,22 +45,23 @@
 #include <string>
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.CenPairMotifEnergy" );
 
 using namespace core::scoring::motif;
 
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 CenPairMotifEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< CenPairMotifEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 CenPairMotifEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( cen_pair_motifs );
 	return sts;
@@ -77,8 +78,8 @@ CenPairMotifEnergy::CenPairMotifEnergy():
 	}
 }
 
-//I have implemented this as a WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
-void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const{
+//I have implemented this as a core::scoring::methods::WholeStructureEnergy because the DSSP calls would waste time. But it may be useful in the future to develop this term over each residue
+void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, core::scoring::ScoreFunction const &, core::scoring::EnergyMap & totals ) const{
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using core::kinematics::FoldTree;
@@ -93,7 +94,7 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 		}
 	}
 	if ( pose.size() == 0 ) {
-		totals[cen_pair_motifs] = 0;
+		totals[ core::scoring::cen_pair_motifs ] = 0;
 	} else {
 		const FoldTree& tree = pose.fold_tree();
 		core::scoring::dssp::Dssp dssp( pose );
@@ -132,7 +133,7 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 					}
 				}
 			}
-			totals[cen_pair_motifs] =(-1*score)/(Real)(aalist_.size());
+			totals[ core::scoring::cen_pair_motifs ] =(-1*score)/(Real)(aalist_.size());
 		} else {
 			for ( size_t ir = 1; ir <= nres1; ++ir ) {
 				Xform const ibb_stub = core::pose::motif::get_backbone_reference_frame(pose,ir);
@@ -162,7 +163,7 @@ void CenPairMotifEnergy::finalize_total_energy( pose::Pose & pose, ScoreFunction
 					}
 				}
 			}
-			totals[cen_pair_motifs] =(-1*score)/(Real)nres1;
+			totals[ core::scoring::cen_pair_motifs ] =(-1*score)/(Real)nres1;
 		}
 	}
 }
@@ -174,6 +175,5 @@ CenPairMotifEnergy::version() const
 	return 1; // Initial versioning
 }
 
-}//motif
 }//scoring
 }//core

@@ -35,13 +35,12 @@
 
 
 namespace core {
-namespace scoring {
-namespace magnesium {
+namespace energy_methods {
 
 
-class MgEnergy : public methods::ContextIndependentTwoBodyEnergy  {
+class MgEnergy : public core::scoring::methods::ContextIndependentTwoBodyEnergy  {
 public:
-	typedef methods::ContextIndependentTwoBodyEnergy  parent;
+	typedef core::scoring::methods::ContextIndependentTwoBodyEnergy  parent;
 
 public:
 
@@ -49,22 +48,22 @@ public:
 	MgEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
 	// scoring
 	/////////////////////////////////////////////////////////////////////////////
 	void
-	setup_for_scoring( pose::Pose & pose, ScoreFunction const & scfxn ) const override;
+	setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & scfxn ) const override;
 
 	void
 	residue_pair_energy(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 
@@ -72,18 +71,18 @@ public:
 	eval_intrares_energy(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
-		EnergyMap &
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap &
 	) const override;
 
 	void
 	setup_for_minimizing_for_residue(
 		conformation::Residue const &,
 		pose::Pose const &,
-		ScoreFunction const &,
+		core::scoring::ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
 		basic::datacache::BasicDataCache &,
-		ResSingleMinimizationData &
+		core::scoring::ResSingleMinimizationData &
 	) const override;
 
 	void
@@ -91,11 +90,11 @@ public:
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
 		pose::Pose const & pose,
-		ScoreFunction const &,
+		core::scoring::ScoreFunction const &,
 		kinematics::MinimizerMapBase const &,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData & pair_data
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData & pair_data
 	) const override;
 
 	bool
@@ -105,13 +104,13 @@ public:
 	eval_residue_pair_derivatives(
 		conformation::Residue const & ires,
 		conformation::Residue const & jres,
-		ResSingleMinimizationData const &,
-		ResSingleMinimizationData const &,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResSingleMinimizationData const &,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs
 	) const override;
 
 	// virtual
@@ -120,14 +119,14 @@ public:
 	//  id::AtomID const & atom_id,
 	//  pose::Pose const & pose,
 	//  kinematics::DomainMap const & domain_map,
-	//  ScoreFunction const & scorefxn,
-	//  EnergyMap const & weights,
+	//  core::scoring::ScoreFunction const & scorefxn,
+	//  core::scoring::EnergyMap const & weights,
 	//  Vector & F1,
 	//  Vector & F2
 	// ) const;
 
 	bool
-	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return true; }
+	defines_intrares_energy( core::scoring::EnergyMap const & /*weights*/ ) const override { return true; }
 
 	Distance
 	atomic_interaction_cutoff() const override;
@@ -141,10 +140,10 @@ public:
 	residue_pair_energy_ext(
 		conformation::Residue const & rsd1,
 		conformation::Residue const & rsd2,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose,
-		ScoreFunction const &,
-		EnergyMap & emap
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & emap
 	) const override;
 
 private:
@@ -154,19 +153,19 @@ private:
 		conformation::Residue const & rsd1, // The other residue
 		conformation::Residue const & rsd2, // The Mg(2+)
 		pose::Pose const & pose,
-		EnergyMap & emap
+		core::scoring::EnergyMap & emap
 	) const;
 
 	void
 	eval_residue_pair(
 		conformation::Residue const & ires,
 		conformation::Residue const & jres,
-		ResPairMinimizationData const & min_data,
+		core::scoring::ResPairMinimizationData const & min_data,
 		pose::Pose const & pose, // provides context
-		EnergyMap & emap, // fill score values in here.
-		EnergyMap const & weights, // for derivs.
-		utility::vector1< DerivVectorPair > & r1_atom_derivs,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs) const;
+		core::scoring::EnergyMap & emap, // fill score values in here.
+		core::scoring::EnergyMap const & weights, // for derivs.
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs) const;
 
 	void
 	eval_mg_interaction(
@@ -174,10 +173,10 @@ private:
 		Size const atomno1 /*other atomno */,
 		conformation::Residue const & rsd2 /* mg residue */,
 		pose::Pose const & pose, // provides context
-		EnergyMap & emap,
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+		core::scoring::EnergyMap & emap,
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs /* other residue */,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs /* mg residue */
 	) const;
 
 	void
@@ -185,14 +184,14 @@ private:
 		conformation::Residue const & rsd1 /* other residue */,
 		conformation::Residue const & rsd2 /* mg residue */,
 		pose::Pose const & pose, // provides context
-		EnergyMap const & weights,
-		utility::vector1< DerivVectorPair > & r1_atom_derivs /* other residue */,
-		utility::vector1< DerivVectorPair > & r2_atom_derivs /* mg residue */
+		core::scoring::EnergyMap const & weights,
+		utility::vector1< core::scoring::DerivVectorPair > & r1_atom_derivs /* other residue */,
+		utility::vector1< core::scoring::DerivVectorPair > & r2_atom_derivs /* mg residue */
 	) const;
 
 	core::Size version() const override;
 
-	MgKnowledgeBasedPotentialOP mg_lig_knowledge_based_potential_;
+	core::scoring::magnesium::MgKnowledgeBasedPotentialOP mg_lig_knowledge_based_potential_;
 	core::Distance const mg_lig_interaction_cutoff_;
 	core::Real const v_angle_width_;
 	core::Real const v_angle_width2_;
@@ -213,12 +212,11 @@ private:
 
 	core::Distance const mg_sol_interaction_cutoff_;
 	core::Distance const mg_sol_fade_zone_;
-	func::FuncCOP mg_sol_fade_func_;
+	core::scoring::func::FuncCOP mg_sol_fade_func_;
 
 };
 
 
-} //magnesium
 } //scoring
 } //core
 

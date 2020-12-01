@@ -12,8 +12,8 @@
 /// @author Rhiju Das
 
 
-#ifndef INCLUDED_core_scoring_methods_IntermolEnergy_hh
-#define INCLUDED_core_scoring_methods_IntermolEnergy_hh
+#ifndef INCLUDED_core_energy_methods_IntermolEnergy_hh
+#define INCLUDED_core_energy_methods_IntermolEnergy_hh
 
 
 // Package headers
@@ -33,13 +33,13 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
 
 
-class IntermolEnergy : public methods::WholeStructureEnergy  {
+
+class IntermolEnergy : public core::scoring::methods::WholeStructureEnergy  {
 public:
-	typedef methods::WholeStructureEnergy  parent;
+	typedef core::scoring::methods::WholeStructureEnergy  parent;
 
 public:
 
@@ -47,7 +47,7 @@ public:
 	IntermolEnergy();
 
 	/// clone
-	methods::EnergyMethodOP
+	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/////////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ public:
 	void
 	finalize_total_energy(
 		pose::Pose & pose,
-		ScoreFunction const &,
-		EnergyMap & totals
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap & totals
 	) const override;
 
 	/////////////////////////////////
@@ -67,8 +67,8 @@ public:
 		id::AtomID const & atom_id,
 		pose::Pose const & pose,
 		kinematics::DomainMap const & domain_map,
-		ScoreFunction const &,
-		EnergyMap const & weights,
+		core::scoring::ScoreFunction const &,
+		core::scoring::EnergyMap const & weights,
 		Vector & F1,
 		Vector & F2 ) const override;
 
@@ -93,6 +93,5 @@ private:
 
 }
 }
-}
 
-#endif // INCLUDED_core_scoring_methods_IntermolEnergy_HH
+#endif // INCLUDED_core_energy_methods_IntermolEnergy_HH

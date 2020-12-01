@@ -16,13 +16,11 @@
 #define INCLUDED_core_scoring_rna_RNA_SuiteEnergy_fwd_hh
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 class RNA_SuiteEnergy;
 
-} //rna
 } //scoring
 } //core
 
-#endif // INCLUDED_core_scoring_methods_RNA_SuiteEnergy_FWD_HH
+#endif // INCLUDED_core_energy_methods_RNA_SuiteEnergy_FWD_HH

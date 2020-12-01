@@ -34,21 +34,21 @@
 using namespace core::chemical;
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RNA_TorsionEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_TorsionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const {
 	return utility::pointer::make_shared< RNA_TorsionEnergy >( options.rna_options() );
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_TorsionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_torsion );
 	sts.push_back( rna_torsion_sc );
@@ -57,17 +57,17 @@ RNA_TorsionEnergyCreator::score_types_for_method() const {
 
 
 /// ctor
-RNA_TorsionEnergy::RNA_TorsionEnergy( RNA_EnergyMethodOptions const & options,
-	RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
+RNA_TorsionEnergy::RNA_TorsionEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options,
+	core::scoring::rna::RNA_TorsionPotentialOP rna_torsion_potential /* = 0 */ ) :
 	parent( utility::pointer::make_shared< RNA_TorsionEnergyCreator >() ),
 	options_( options ),
 	rna_torsion_potential_(std::move( rna_torsion_potential ))
 {
-	if ( rna_torsion_potential_ == nullptr ) rna_torsion_potential_ = utility::pointer::make_shared< RNA_TorsionPotential >( options );
+	if ( rna_torsion_potential_ == nullptr ) rna_torsion_potential_ = utility::pointer::make_shared< core::scoring::rna::RNA_TorsionPotential >( options );
 }
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_TorsionEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_TorsionEnergy >( options_, rna_torsion_potential_ );
@@ -80,13 +80,13 @@ RNA_TorsionEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
-	emap[ rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
+	emap[ core::scoring::rna_torsion ] += rna_torsion_potential_->residue_pair_energy( rsd1, rsd2, pose );
 }
 
 
@@ -95,13 +95,13 @@ void
 RNA_TorsionEnergy::eval_intrares_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	ScoreFunction const &,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( rsd.has_variant_type( REPLONLY ) ) return;
 
-	emap[ rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
-	emap[ rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.
+	emap[ core::scoring::rna_torsion ]    += rna_torsion_potential_->eval_intrares_energy( rsd, pose );
+	emap[ core::scoring::rna_torsion_sc ] += rna_torsion_potential_->intrares_side_chain_score(); // evaluated at same time as above.
 }
 
 
@@ -111,8 +111,8 @@ RNA_TorsionEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &, // domain_map,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -136,7 +136,6 @@ RNA_TorsionEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core
 

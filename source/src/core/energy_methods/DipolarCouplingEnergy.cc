@@ -55,22 +55,23 @@
 static basic::Tracer tr( "core.scoring.DipolarCoupling" );
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 using namespace ObjexxFCL::format;
 
 /// @details This must return a fresh instance of the DipolarCouplingEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DipolarCouplingEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< DipolarCouplingEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 DipolarCouplingEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dc );
 	return sts;
@@ -87,7 +88,7 @@ DipolarCouplingEnergy::DipolarCouplingEnergy() :
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 DipolarCouplingEnergy::clone() const
 {
 	return utility::pointer::make_shared< DipolarCouplingEnergy >();
@@ -95,7 +96,7 @@ DipolarCouplingEnergy::clone() const
 
 void DipolarCouplingEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	dc_score_ = eval_dc( pose );
@@ -103,19 +104,20 @@ void DipolarCouplingEnergy::setup_for_scoring(
 
 void DipolarCouplingEnergy::finalize_total_energy(
 	pose::Pose &,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const
 {
-	totals[ dc ] = dc_score_;
+	totals[ core::scoring::dc ] = dc_score_;
 }
 
 void DipolarCouplingEnergy::setup_for_minimizing(
 	pose::Pose & pose,
-	ScoreFunction const &,
+	core::scoring::ScoreFunction const &,
 	kinematics::MinimizerMapBase const &
 ) const
 {
+	using namespace core::scoring;
 	DipolarCoupling const& dc_data( * retrieve_DC_from_pose( pose ) );
 	DipolarCoupling::DC_lines const& All_DC_lines( dc_data.get_DC_data() );
 	DipolarCoupling::DC_lines::const_iterator it;
@@ -139,11 +141,12 @@ void DipolarCouplingEnergy::setup_for_minimizing(
 //////////////////////////////////////////////////////
 //@brief
 //////////////////////////////////////////////////////
-DipolarCoupling &
+core::scoring::DipolarCoupling &
 DipolarCouplingEnergy::dc_from_pose(
 	pose::Pose & pose
 ) const
 {
+	using namespace core::scoring;
 	DipolarCouplingOP dc_info( retrieve_DC_from_pose( pose ) );
 	if ( !dc_info ) {
 		dc_info = utility::pointer::make_shared< DipolarCoupling >();
@@ -161,7 +164,7 @@ Real DipolarCouplingEnergy::eval_dc(
 ) const
 {
 
-	DipolarCoupling& dc_data( dc_from_pose( pose ) );
+	core::scoring::DipolarCoupling& dc_data( dc_from_pose( pose ) );
 	Real score = dc_data.compute_dcscore( pose );
 	return score;
 }
@@ -171,8 +174,8 @@ DipolarCouplingEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & score_weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & score_weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -190,10 +193,10 @@ DipolarCouplingEnergy::eval_atom_derivative(
 
 	for ( core::Size ii=1; ii<=dc_nrs.size(); ++ii ) {
 		core::Size dc_nr = dc_nrs[ ii ];
-		DipolarCoupling const& dc_cache( *retrieve_DC_from_pose( pose ) );
+		core::scoring::DipolarCoupling const& dc_cache( *core::scoring::retrieve_DC_from_pose( pose ) );
 		utility::vector1< core::scoring::DC > All_DC_lines( dc_cache.get_DC_data() );
 		runtime_assert( dc_nr <= All_DC_lines.size() );
-		DC const& dc_data( All_DC_lines[ dc_nr ] );
+		core::scoring::DC const& dc_data( All_DC_lines[ dc_nr ] );
 		conformation::Residue const& rsd1( pose.residue( dc_data.res1() ) );
 		conformation::Residue const& rsd2( pose.residue( dc_data.res2() ) );
 
@@ -209,15 +212,15 @@ DipolarCouplingEnergy::eval_atom_derivative(
 
 	// tr.Trace << "fij[0]: " << fij[0]<< " fij[1]: " << fij[1]<< " fij[2]: " << fij[2]<< std::endl;
 	// tr.Trace << "torsion gradient: " << aid << std::endl;
-	// tr.Trace << "score_weights[ dc ]: " << score_weights[ dc ] << std::endl;
+	// tr.Trace << "score_weights[ core::scoring::dc ]: " << score_weights[ core::scoring::dc ] << std::endl;
 	//thanks to Will Sheffler:
 	numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 	numeric::xyzVector<core::Real> const f2( fij );
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
-	F1 += score_weights[ dc ] * f1;
-	F2 += score_weights[ dc ] * f2;
+	F1 += score_weights[ core::scoring::dc ] * f1;
+	F2 += score_weights[ core::scoring::dc ] * f2;
 
 }
 
@@ -227,6 +230,5 @@ DipolarCouplingEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // methods
 } // scoring
 } // core

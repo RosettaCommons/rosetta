@@ -31,21 +31,22 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 
 /// @details This must return a fresh instance of the SymmetricLigandEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SymmetricLigandEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SymmetricLigandEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SymmetricLigandEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( sym_lig );
 	return sts;
@@ -63,7 +64,7 @@ SymmetricLigandEnergy::SymmetricLigandEnergy() :
 SymmetricLigandEnergy::~SymmetricLigandEnergy() = default;
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SymmetricLigandEnergy::clone() const
 {
 	return utility::pointer::make_shared< SymmetricLigandEnergy >();
@@ -78,7 +79,7 @@ void
 SymmetricLigandEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const &,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	numeric::xyzVector<core::Real> target(0,0,4);
@@ -88,13 +89,13 @@ SymmetricLigandEnergy::residue_energy(
 			numeric::xyzVector<core::Real> base = rsd.xyz("CA" );
 			Real score = numeric::min( 0.0, (-10.0 / (cen.distance(target) + 1.0) + 1.0) );
 			score *= dot( (cen-base).normalized(),(target-cen).normalized());
-			emap[sym_lig] += score;
+			emap[ core::scoring::sym_lig] += score;
 
 			Real penalty = rsd.xyz("CA" ).y();
 			penalty *= penalty;
-			emap[sym_lig] += penalty * 0.01;
+			emap[ core::scoring::sym_lig] += penalty * 0.01;
 		}
-		emap[sym_lig] += numeric::min( 0.0, rsd.xyz("CEN").distance(target) - 20.0 ) / 20;
+		emap[ core::scoring::sym_lig] += numeric::min( 0.0, rsd.xyz("CEN").distance(target) - 20.0 ) / 20;
 	} else { // full atom
 		if ( "HIS" == rsd.name3() && rsd.xyz("NE2").z() > 0.0 ) {
 			numeric::xyzVector<core::Real> cen  = rsd.xyz("NE2");
@@ -104,7 +105,7 @@ SymmetricLigandEnergy::residue_energy(
 			// if( score != 0.0 ) {
 			//  std::cerr << "FA HIS BONUS " << score << std::endl;
 			// }
-			emap[sym_lig] += score;
+			emap[ core::scoring::sym_lig] += score;
 		}
 	}
 }
@@ -115,8 +116,8 @@ SymmetricLigandEnergy::eval_atom_derivative(
 	id::AtomID const & id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & /*domain_map*/,
-	ScoreFunction const & /*sfxn*/,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const & /*sfxn*/,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const {
@@ -136,8 +137,8 @@ SymmetricLigandEnergy::eval_atom_derivative(
 	numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 	numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
 
-	F1 += weights[ sym_lig ] * f1;
-	F2 += weights[ sym_lig ] * f2;
+	F1 += weights[ core::scoring::sym_lig ] * f1;
+	F2 += weights[ core::scoring::sym_lig ] * f2;
 }
 
 
@@ -154,7 +155,6 @@ SymmetricLigandEnergy::version() const
 }
 
 
-} // methods
 } // scoring
 } // core
 

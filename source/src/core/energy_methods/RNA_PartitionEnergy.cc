@@ -48,21 +48,21 @@
 static basic::Tracer TR( "core.scoring.rna.RNA_PartitionEnergy" );
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the RNA_PartitionEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_PartitionEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< RNA_PartitionEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_PartitionEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_partition );
 	return sts;
@@ -87,7 +87,7 @@ RNA_PartitionEnergy::RNA_PartitionEnergy(
 {}
 
 /// clone
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_PartitionEnergy::clone() const
 {
 	return utility::pointer::make_shared< RNA_PartitionEnergy >( *this );
@@ -101,8 +101,8 @@ RNA_PartitionEnergy::clone() const
 void
 RNA_PartitionEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace core::pose::full_model_info;
 
@@ -113,7 +113,7 @@ RNA_PartitionEnergy::finalize_total_energy(
 	std::string current_sequence = get_current_global_sequence(pose);
 	Real score;
 	get_score_from_sequences(native_sequence, current_sequence, score);
-	totals[ rna_partition ] = score;
+	totals[ core::scoring::rna_partition ] = score;
 
 }
 
@@ -243,6 +243,5 @@ RNA_PartitionEnergy::version() const
 }
 
 
-} //rna
 } //scoring
 } //core

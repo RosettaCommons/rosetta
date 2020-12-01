@@ -47,21 +47,21 @@
 
 
 namespace core {
-namespace scoring {
-namespace packing {
+namespace energy_methods {
 
 
 /// @details This must return a fresh instance of the SurfEnergy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 SurfEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< SurfEnergy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 SurfEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( dab_sasa );
 	return sts;
@@ -82,16 +82,16 @@ SurfEnergy::SurfEnergy() :
 void
 SurfEnergy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const &,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap & totals
 ) const {
-	totals[ dab_sasa ] = get_surf_tot(pose,1.4);
+	totals[ core::scoring::dab_sasa ] = core::scoring::packing::get_surf_tot(pose,1.4);
 }
 
 void
 SurfEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
 	std::cerr << "SurfEnergy::setup_for_derivatives" << std::endl;
 
@@ -114,7 +114,7 @@ SurfEnergy::setup_for_derivatives(
 	CacheableAtomID_MapVectorOP cachemap2 = utility::pointer::static_pointer_cast< core::id::CacheableAtomID_MapVector > ( dat2 );
 	AtomID_Map< xyzVector< Real > > & sev_derivs(cachemap2->map());
 
-	SurfVolDeriv svd = get_surf_vol_deriv( pose, 1.4 );
+	core::scoring::packing::SurfVolDeriv svd( core::scoring::packing::get_surf_vol_deriv( pose, 1.4 ) );
 
 	core::pose::initialize_atomid_map_heavy_only(sasa_derivs,pose);
 	core::pose::initialize_atomid_map_heavy_only( sev_derivs,pose);
@@ -134,8 +134,8 @@ SurfEnergy::eval_atom_derivative(
 	id::AtomID const & aid,
 	pose::Pose const & pose,
 	kinematics::DomainMap const &,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -162,16 +162,16 @@ SurfEnergy::eval_atom_derivative(
 		numeric::xyzVector<core::Real> const f2( sasa_derivs[aid] );
 		numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 		numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
-		F1 += weights[ dab_sasa ] * f1;
-		F2 += weights[ dab_sasa ] * f2;
+		F1 += weights[ core::scoring::dab_sasa ] * f1;
+		F2 += weights[ core::scoring::dab_sasa ] * f2;
 	}
 	{
 		numeric::xyzVector<core::Real> atom_x = pose.xyz(aid);
 		numeric::xyzVector<core::Real> const f2( sev_derivs[aid] );
 		numeric::xyzVector<core::Real> const atom_y = atom_x - f2;   // a "fake" atom in the direcion of the gradient
 		numeric::xyzVector<core::Real> const f1( atom_x.cross( atom_y ) );
-		F1 += weights[ dab_sev ] * f1;
-		F2 += weights[ dab_sev ] * f2;
+		F1 += weights[ core::scoring::dab_sev ] * f1;
+		F2 += weights[ core::scoring::dab_sev ] * f2;
 	}
 }
 
@@ -182,6 +182,5 @@ SurfEnergy::version() const
 }
 
 
-} // packing
 } // scoring
 } // core

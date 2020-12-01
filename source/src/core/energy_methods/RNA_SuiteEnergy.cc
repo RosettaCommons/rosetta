@@ -67,20 +67,20 @@ static basic::Tracer TR( "core.scoring.rna.RNA_SuiteEnergy", basic::t_info );
 ///////////////////////////////////////////////////////////////////////////////////
 
 namespace core {
-namespace scoring {
-namespace rna {
+namespace energy_methods {
 
 using namespace core::chemical;
 
 /// @details This must return a fresh instance,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 RNA_SuiteEnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const & options
+	core::scoring::methods::EnergyMethodOptions const & options
 ) const { return utility::pointer::make_shared< RNA_SuiteEnergy >( options.rna_options() ); }
 
-ScoreTypes
+core::scoring::ScoreTypes
 RNA_SuiteEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( rna_suite );
 	sts.push_back( suiteness_bonus );
@@ -88,11 +88,11 @@ RNA_SuiteEnergyCreator::score_types_for_method() const {
 }
 
 /// ctor
-RNA_SuiteEnergy::RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
+RNA_SuiteEnergy::RNA_SuiteEnergy( core::scoring::rna::RNA_EnergyMethodOptions const & options ) :
 	parent( utility::pointer::make_shared< RNA_SuiteEnergyCreator >() ),
 	options_( options ),
-	rna_suite_potential_( utility::pointer::make_shared< RNA_SuitePotential >( false ) ),
-	rna_suite_potential_for_suiteness_bonus_(  utility::pointer::make_shared< RNA_SuitePotential >( true, options.suiteness_bonus() ) )
+	rna_suite_potential_( utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( false ) ),
+	rna_suite_potential_for_suiteness_bonus_(  utility::pointer::make_shared< core::scoring::rna::RNA_SuitePotential >( true, options.suiteness_bonus() ) )
 {}
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -101,19 +101,21 @@ RNA_SuiteEnergy::RNA_SuiteEnergy( RNA_EnergyMethodOptions const & options ) :
 void
 RNA_SuiteEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const {
-	using namespace methods;
+	using namespace core::scoring;
+	using namespace core::scoring::methods;
+
 	// create LR energy container
-	LongRangeEnergyType const & lr_type( long_range_type() );
-	Energies & energies( pose.energies() );
+	core::scoring::methods::LongRangeEnergyType const & lr_type( long_range_type() );
+	core::scoring::Energies & energies( pose.energies() );
 	bool create_new_lre_container( false );
 
 	if ( energies.long_range_container( lr_type ) == nullptr ) {
 		create_new_lre_container = true;
 	} else {
-		LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
-		PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
+		core::scoring::LREnergyContainerOP lrc = energies.nonconst_long_range_container( lr_type );
+		core::scoring::PolymerBondedEnergyContainerOP dec( utility::pointer::static_pointer_cast< core::scoring::PolymerBondedEnergyContainer > ( lrc ) );
 		if ( !dec || !dec->is_valid( pose ) ) {
 			create_new_lre_container = true;
 		}
@@ -123,7 +125,7 @@ RNA_SuiteEnergy::setup_for_scoring(
 		utility::vector1< ScoreType > s_types;
 		s_types.push_back( rna_suite );
 		s_types.push_back( suiteness_bonus );
-		LREnergyContainerOP new_dec( new PolymerBondedEnergyContainer( pose, s_types ) );
+		core::scoring::LREnergyContainerOP new_dec( utility::pointer::make_shared< core::scoring::PolymerBondedEnergyContainer >( pose, s_types ) );
 		energies.set_long_range_container( lr_type, new_dec );
 	}
 }
@@ -133,8 +135,8 @@ RNA_SuiteEnergy::residue_pair_energy(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & emap
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & emap
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
@@ -142,11 +144,11 @@ RNA_SuiteEnergy::residue_pair_energy(
 	utility::fixedsizearray1< id::TorsionID, 7 > torsion_ids;
 	Real score;
 	utility::fixedsizearray1< Real, 7 > deriv;
-	if ( scorefxn.has_nonzero_weight( rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
-		emap[ rna_suite ]       += score;
+	if ( scorefxn.has_nonzero_weight( core::scoring::rna_suite ) && rna_suite_potential_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
+		emap[ core::scoring::rna_suite ]       += score;
 	}
-	if ( scorefxn.has_nonzero_weight( suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
-		emap[ suiteness_bonus ] += score;
+	if ( scorefxn.has_nonzero_weight( core::scoring::suiteness_bonus ) && rna_suite_potential_for_suiteness_bonus_->eval_score( rsd1, rsd2, pose, torsion_ids, score, deriv ) ) {
+		emap[ core::scoring::suiteness_bonus ] += score;
 	}
 	debug_assert( emap.is_finite() );
 }
@@ -155,14 +157,15 @@ void
 RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd1,
 	conformation::Residue const & rsd2,
-	ResSingleMinimizationData const &,
-	ResSingleMinimizationData const &,
-	ResPairMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResSingleMinimizationData const &,
+	core::scoring::ResPairMinimizationData const &,
 	pose::Pose const & pose,
-	EnergyMap const & weights,
-	utility::vector1<DerivVectorPair> & r1_atom_derivs,
-	utility::vector1<DerivVectorPair> & r2_atom_derivs
+	core::scoring::EnergyMap const & weights,
+	utility::vector1< core::scoring::DerivVectorPair> & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair> & r2_atom_derivs
 ) const {
+	using namespace core::scoring;
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
 
@@ -177,9 +180,9 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 	conformation::Residue const & rsd2,
 	pose::Pose const & pose,
 	Real const & weight,
-	utility::vector1<DerivVectorPair> & r1_atom_derivs,
-	utility::vector1<DerivVectorPair> & r2_atom_derivs,
-	RNA_SuitePotentialCOP rna_suite_potential
+	utility::vector1< core::scoring::DerivVectorPair> & r1_atom_derivs,
+	utility::vector1< core::scoring::DerivVectorPair> & r2_atom_derivs,
+	core::scoring::rna::RNA_SuitePotentialCOP rna_suite_potential
 ) const {
 	if ( rsd1.has_variant_type( REPLONLY ) ) return;
 	if ( rsd2.has_variant_type( REPLONLY ) ) return;
@@ -203,9 +206,9 @@ RNA_SuiteEnergy::eval_residue_pair_derivatives(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd1 : rsd2 );
 	conformation::Residue const & rsd_hi(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? rsd2 : rsd1 );
-	utility::vector1< DerivVectorPair > & r_lo_derivs(
+	utility::vector1< core::scoring::DerivVectorPair > & r_lo_derivs(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? r1_atom_derivs : r2_atom_derivs );
-	utility::vector1< DerivVectorPair > & r_hi_derivs(
+	utility::vector1< core::scoring::DerivVectorPair > & r_hi_derivs(
 		( rsd1.seqpos() < rsd2.seqpos() ) ? r2_atom_derivs : r1_atom_derivs );
 	Size const rsdnum_lo( rsd_lo.seqpos() ), rsdnum_hi( rsd_hi.seqpos() );
 
@@ -283,7 +286,6 @@ RNA_SuiteEnergy::get_f1_f2(
 	return true;
 }
 
-} //rna
 } //scoring
 } //core
 

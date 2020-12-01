@@ -60,22 +60,23 @@
 
 
 namespace core {
-namespace scoring {
-namespace methods {
+namespace energy_methods {
+
 
 static basic::Tracer TR( "core.scoring.methods.ProQ_Energy.cc" );
 
 /// @details This must return a fresh instance of the ProQ_Energy class,
 /// never an instance already in use
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ProQ_EnergyCreator::create_energy_method(
-	methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const &
 ) const {
 	return utility::pointer::make_shared< ProQ_Energy >();
 }
 
-ScoreTypes
+core::scoring::ScoreTypes
 ProQ_EnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( ProQ ); // water (ProQ2)
 	sts.push_back( ProQM ); // membrane (ProQM)
@@ -87,7 +88,7 @@ ProQ_EnergyCreator::score_types_for_method() const {
 /// c-tor
 ProQ_Energy::ProQ_Energy() :
 	parent( utility::pointer::make_shared< ProQ_EnergyCreator >() ),
-	potential_( ScoringManager::get_instance()->get_ProQPotential() )
+	potential_( core::scoring::ScoringManager::get_instance()->get_ProQPotential() )
 {
 	initialize();
 }
@@ -112,7 +113,7 @@ ProQ_Energy::ProQ_Energy( ProQ_Energy const & src) :
 
 
 /// clone
-EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 ProQ_Energy::clone() const
 {
 	//std::cout << "Cloning ProQ... " << nres_ << "\n";
@@ -123,7 +124,7 @@ ProQ_Energy::clone() const
 // scoring
 /////////////////////////////////////////////////////////////////////////////
 void
-ProQ_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
+ProQ_Energy::setup_for_scoring( pose::Pose & pose, core::scoring::ScoreFunction const & ) const
 {
 	//std::cout << "SecondaryStructureEnergy::setup_for_scoring" << std::endl;
 	pose.update_residue_neighbors();
@@ -133,8 +134,8 @@ ProQ_Energy::setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const
 void
 ProQ_Energy::finalize_total_energy(
 	pose::Pose & pose,
-	ScoreFunction const & scorefxn,
-	EnergyMap & totals
+	core::scoring::ScoreFunction const & scorefxn,
+	core::scoring::EnergyMap & totals
 ) const {
 	using namespace conformation;
 	Size nres2=pose.size();
@@ -143,11 +144,11 @@ ProQ_Energy::finalize_total_energy(
 	TR.Debug << "NRES: " << nres_ <<  " " << nres2 << " " << entropy_.size() << std::endl;
 	const Size num_features_ProQM(potential_.num_features_proqm());
 	const Size num_features_ProQ2(potential_.num_features_proq2());
-	totals[ ProQ ] = 0;
-	totals[ ProQM ] = 0;
+	totals[ core::scoring::ProQ ] = 0;
+	totals[ core::scoring::ProQM ] = 0;
 	Real normalizing_factor=basic::options::option[ basic::options::OptionKeys::ProQ::normalize ]();
 
-	if ( scorefxn.get_weight(ProQM)!=0 && all_inputs_ProQM_ ) {
+	if ( scorefxn.get_weight(core::scoring::ProQM)!=0 && all_inputs_ProQM_ ) {
 		TR.Debug << "ProQM: " << std::endl;
 		ObjexxFCL::FArray2D< Real > feature_vector(nres,num_features_ProQM);
 		ObjexxFCL::FArray1D< Real > proq(nres);
@@ -161,12 +162,12 @@ ProQ_Energy::finalize_total_energy(
 			TR.Debug << "ProQM: " << i << " " << proq(i) << std::endl;
 			proq_mean+=proq(i);
 		}
-		totals[ ProQM ] = proq_mean/normalizing_factor;
+		totals[ core::scoring::ProQM ] = proq_mean/normalizing_factor;
 		if ( basic::options::option[ basic::options::OptionKeys::ProQ::output_local_prediction ]() ) {
 			output_local_prediction(pose,proq,"ProQM");
 		}
 	}
-	if ( scorefxn.get_weight(ProQ) !=0 && all_inputs_ProQ2_ ) {
+	if ( scorefxn.get_weight(core::scoring::ProQ) !=0 && all_inputs_ProQ2_ ) {
 		ObjexxFCL::FArray2D< Real > feature_vector(nres,num_features_ProQ2);
 		ObjexxFCL::FArray1D< Real > proq(nres);
 		feature_vector=0;
@@ -181,7 +182,7 @@ ProQ_Energy::finalize_total_energy(
 			//std::cout << "ProQ: " << i << " " << proq(i) << std::endl;
 			proq_mean+=proq(i);
 		}
-		totals[ ProQ ] = proq_mean/normalizing_factor;
+		totals[ core::scoring::ProQ ] = proq_mean/normalizing_factor;
 		if ( basic::options::option[ basic::options::OptionKeys::ProQ::output_local_prediction ]() ) {
 			output_local_prediction(pose,proq,"ProQ2");
 		}
@@ -494,11 +495,11 @@ ProQ_Energy::calculate_feature_vector_proq2(pose::Pose & pose,
 	ObjexxFCL::FArray2D< Real > feature_vector_orig(nres,174);
 
 
-	dssp::Dssp ss(pose);
+	core::scoring::dssp::Dssp ss(pose);
 	ss.dssp_reduced();
 
 	utility::vector1<Real> rsd_sasa_rel(nres,0.0);
-	calc_per_atom_sasa_sc( pose, rsd_sasa_rel, true /*normalize*/ );
+	core::scoring::calc_per_atom_sasa_sc( pose, rsd_sasa_rel, true /*normalize*/ );
 	//for(int i=1;i<=nres_;++i) {
 	// std::cout << "RSA: " << rsd_sasa_rel[i] << std::endl;
 	//}
@@ -562,11 +563,11 @@ ProQ_Energy::calculate_feature_vector(pose::Pose & pose,
 	const auto nres=(int)nres_;
 	//Calculate secondary structure
 	ObjexxFCL::FArray2D< Real > feature_vector_orig(nres,260);
-	dssp::Dssp ss(pose);
+	core::scoring::dssp::Dssp ss(pose);
 	ss.dssp_reduced();
 
 	utility::vector1<Real> rsd_sasa_rel(nres,0.0);
-	calc_per_atom_sasa_sc( pose, rsd_sasa_rel, true /*normalize*/ );
+	core::scoring::calc_per_atom_sasa_sc( pose, rsd_sasa_rel, true /*normalize*/ );
 	bool use_naccess=false; //just to verify with original method, since the sasa routine is not exactly like naccess.
 	if ( use_naccess ) {
 		utility::io::izstream stream;
@@ -667,8 +668,8 @@ void ProQ_Energy::atom_feature(pose::Pose & pose,ObjexxFCL::FArray2D< Real > & v
 	// ObjexxFCL::FArray2D< Real >res_contact_dist(nres,nres);
 	for ( int i = 1; i <= nres; i=i+1 ) {
 		conformation::Residue const & rsd_i( pose.residue(i) );
-		const Energies & energies( pose.energies() );
-		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
+		const core::scoring::Energies & energies( pose.energies() );
+		const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 		for ( utility::graph::Graph::EdgeListConstIter
 				ir  = graph.get_node(i)->const_edge_list_begin(),
 				ire = graph.get_node(i)->const_edge_list_end();
@@ -775,8 +776,8 @@ void ProQ_Energy::res_feature(pose::Pose & pose, ObjexxFCL::FArray2D< Real > & v
 		//  std::cout << "RES: " << res6(rsd_i) << " " << rsd_i << std::endl;
 		//Size const atomindex_i = rsd.atom_index("CA"); //representative_atom_name( rsd.aa() ));
 		//core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
-		const Energies & energies( pose.energies() );
-		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
+		const core::scoring::Energies & energies( pose.energies() );
+		const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 		// iterate across neighbors within 12 angstroms
 		//  for ( int j = i+1; j <= nres; j=j+1 ) {
 		//j=53;
@@ -1114,7 +1115,7 @@ void ProQ_Energy::surf_feature(pose::Pose &, utility::vector1< Real > & rsd_sasa
 	//std::exit(1);
 }
 
-void ProQ_Energy::stride_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
+void ProQ_Energy::stride_feature(pose::Pose &, core::scoring::dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
 	int windowsize) const
 {
 	const auto nres=(int)nres_;
@@ -1148,7 +1149,7 @@ void ProQ_Energy::stride_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArra
 	//std::cout << std::endl;
 }
 
-void ProQ_Energy::ss_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
+void ProQ_Energy::ss_feature(pose::Pose &, core::scoring::dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int pos, Size index,
 	int windowsize) const
 {
 	const auto nres=(int)nres_;
@@ -1174,7 +1175,7 @@ void ProQ_Energy::ss_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D<
 	//std::cout << std::endl;
 }
 
-void ProQ_Energy::gss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, Size index) const
+void ProQ_Energy::gss_sc_feature(pose::Pose &, core::scoring::dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, Size index) const
 {
 	const auto nres=(int)nres_;
 
@@ -1212,7 +1213,7 @@ void ProQ_Energy::grsa_sc_feature(pose::Pose &, utility::vector1< Real> & rsd_sa
 	}
 }
 
-void ProQ_Energy::ss_sc_feature(pose::Pose &, dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int const pos,
+void ProQ_Energy::ss_sc_feature(pose::Pose &, core::scoring::dssp::Dssp & ss, ObjexxFCL::FArray2D< Real > & vec, int const pos,
 	Size index, int windowsize) const
 {
 	const auto nres=(int)nres_;
@@ -1433,7 +1434,6 @@ void ProQ_Energy::termini_feature(pose::Pose &, ObjexxFCL::FArray2D< Real > & ve
 	//std::cout << "TERMINI " << pos << ": " << vec(pos,index) << " " << vec(pos,index+1) << std::endl;
 }
 
-} // methods
 } // scoring
 } // core
 

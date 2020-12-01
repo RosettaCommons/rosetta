@@ -1175,7 +1175,7 @@ void move_together( core::pose::Pose & pose, int jump, core::scoring::ScoreFunct
 	using namespace basic::options;
 	using namespace core::pose;
 	using namespace protocols::rigid;
-	using namespace core::scoring::methods;
+	using namespace core::energy_methods;
 	using namespace protocols::scoring;
 	using namespace protocols::membrane;
 	using namespace protocols::membrane::geometry;

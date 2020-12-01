@@ -55,8 +55,7 @@ static basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
 using namespace core::scoring::methods;
 
 namespace core {
-namespace scoring {
-namespace membrane {
+namespace energy_methods {
 
 // Distance Constants
 Distance const start_sig = 9.8;
@@ -76,8 +75,9 @@ FaMPEnvSmoothEnergyCreator::create_energy_method(
 }
 
 /// @brief Return relevant score types
-ScoreTypes
+core::scoring::ScoreTypes
 FaMPEnvSmoothEnergyCreator::score_types_for_method() const {
+	using namespace core::scoring;
 	ScoreTypes sts;
 	sts.push_back( FaMPEnvSmooth );
 	return sts;
@@ -114,7 +114,7 @@ FaMPEnvSmoothEnergy::FaMPEnvSmoothEnergy() :
 }
 
 /// @brief Create a clone of this energy method
-methods::EnergyMethodOP
+core::scoring::methods::EnergyMethodOP
 FaMPEnvSmoothEnergy::clone() const
 {
 	return utility::pointer::make_shared< FaMPEnvSmoothEnergy >( *this );
@@ -133,7 +133,7 @@ inline Real sqr ( Real x ) {
 void
 FaMPEnvSmoothEnergy::setup_for_derivatives(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 
@@ -158,8 +158,8 @@ FaMPEnvSmoothEnergy::setup_for_derivatives(
 
 		core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
 
-		const Energies & energies( pose.energies() );
-		const TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
+		const core::scoring::Energies & energies( pose.energies() );
+		const core::scoring::TwelveANeighborGraph & graph ( energies.twelveA_neighbor_graph() );
 
 		Real countN =  0.0;
 
@@ -193,7 +193,7 @@ FaMPEnvSmoothEnergy::setup_for_derivatives(
 void
 FaMPEnvSmoothEnergy::setup_for_scoring(
 	pose::Pose & pose,
-	ScoreFunction const &
+	core::scoring::ScoreFunction const &
 ) const
 {
 	pose.update_residue_neighbors();
@@ -208,13 +208,13 @@ void
 FaMPEnvSmoothEnergy::residue_energy(
 	conformation::Residue const & rsd,
 	pose::Pose const & pose,
-	EnergyMap & emap
+	core::scoring::EnergyMap & emap
 ) const
 {
 	// currently this is only for protein residues
 	if ( ! rsd.is_protein() ) return;
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 	Size const atomindex_i = rsd.atom_index( representative_atom_name( rsd.aa() ));
 
 	core::conformation::Atom const & atom_i = rsd.atom(atomindex_i);
@@ -248,7 +248,7 @@ FaMPEnvSmoothEnergy::residue_energy(
 
 	calc_energy( rsd, pose, countN, rsd.aa(), score, dscoredN );
 
-	emap[ FaMPEnvSmooth ] += score;
+	emap[ core::scoring::FaMPEnvSmooth ] += score;
 }
 
 
@@ -259,8 +259,8 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 	id::AtomID const & atom_id,
 	pose::Pose const & pose,
 	kinematics::DomainMap const & ,
-	ScoreFunction const &,
-	EnergyMap const & weights,
+	core::scoring::ScoreFunction const &,
+	core::scoring::EnergyMap const & weights,
 	Vector & F1,
 	Vector & F2
 ) const
@@ -278,7 +278,7 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 
 	core::conformation::Atom const & atom_i = rsd.atom( atom_id.atomno() );
 
-	TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
+	core::scoring::TwelveANeighborGraph const & graph ( pose.energies().twelveA_neighbor_graph() );
 
 	// its possible both of these are true
 	bool const input_atom_is_nbr( i_nbr_atom == Size (atom_id.atomno()) );
@@ -303,17 +303,17 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 				/// two birds, one stone
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ FaMPEnvSmooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
+					weights[ core::scoring::FaMPEnvSmooth ] * ( residue_dEdN_[ j ] + residue_dEdN_[ i ] ),
 					F1, F2 );
 			} else {
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_rep_atom ),
-					weights[ FaMPEnvSmooth ] * ( residue_dEdN_[ j ] ),
+					weights[ core::scoring::FaMPEnvSmooth ] * ( residue_dEdN_[ j ] ),
 					F1, F2 );
 
 				increment_f1_f2_for_atom_pair(
 					atom_i, rsd_j.atom( resj_nbr_atom ),
-					weights[ FaMPEnvSmooth ] * ( residue_dEdN_[ i ] ),
+					weights[ core::scoring::FaMPEnvSmooth ] * ( residue_dEdN_[ i ] ),
 					F1, F2 );
 			}
 		} else if ( input_atom_is_nbr && rsd_j.is_protein() ) {
@@ -321,14 +321,14 @@ FaMPEnvSmoothEnergy::eval_atom_derivative(
 
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_rep_atom ),
-				weights[ FaMPEnvSmooth ] * ( residue_dEdN_[ j ] ),
+				weights[ core::scoring::FaMPEnvSmooth ] * ( residue_dEdN_[ j ] ),
 				F1, F2 );
 
 		} else {
 			Size const resj_nbr_atom = rsd_j.nbr_atom();
 			increment_f1_f2_for_atom_pair(
 				atom_i, rsd_j.atom( resj_nbr_atom ),
-				weights[ FaMPEnvSmooth ] * ( residue_dEdN_[ i ] ),
+				weights[ core::scoring::FaMPEnvSmooth ] * ( residue_dEdN_[ i ] ),
 				F1, F2 );
 
 		}
@@ -395,7 +395,7 @@ FaMPEnvSmoothEnergy::atomic_interaction_cutoff() const
 void
 FaMPEnvSmoothEnergy::indicate_required_context_graphs( utility::vector1< bool > & context_graphs_required ) const
 {
-	context_graphs_required[ twelve_A_neighbor_graph ] = true;
+	context_graphs_required[ core::scoring::twelve_A_neighbor_graph ] = true;
 }
 
 void
@@ -644,6 +644,5 @@ FaMPEnvSmoothEnergy::version() const
 	return 1; // Initial versioning
 }
 
-} // membrane
 } // scoring
 } // core
