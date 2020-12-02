@@ -81,12 +81,8 @@ class EnumInfo:
 
 def read_lines_from_file(filename):
     """Return each line of a file to a list."""
-    lines = []
     with open(filename) as f:
-        for line in f:
-            if not line.startswith("#") and line != "\n":
-                lines.append(line)
-    return lines
+        return [ line for line in f.read().split('\n') if line.strip() and not line.startswith("#") ]
 
 
 def separate_definitions_from_comments(lines_to_parse):
@@ -101,8 +97,7 @@ def separate_definitions_from_comments(lines_to_parse):
 
         # Check for duplicated definitions.
         if definition in already_used_definitions:
-            print('WARNING: The enum definition', definition, 'is found in',)
-            print('the list twice!  Ignoring...')
+            print('WARNING: The enum definition', definition, 'is found in the list twice! Ignoring...')
             continue
         already_used_definitions.append(definition)
 
