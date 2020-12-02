@@ -75,7 +75,7 @@ namespace energy_methods {
 
 
 
-static basic::Tracer TR( "core.scoring.RamaPreProEnergy" );
+static basic::Tracer TR( "core.energy_methods.RamaPreProEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator

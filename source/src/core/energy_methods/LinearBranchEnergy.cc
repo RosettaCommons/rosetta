@@ -44,7 +44,7 @@ namespace energy_methods {
 
 
 using core::Size;
-static basic::Tracer tr( "core.scoring.methods.LinearBranch", basic::t_info );
+static basic::Tracer tr( "core.energy_methods.LinearBranchEnergy" );
 
 LinearBranchEnergy::LinearBranchEnergy()
 : parent(utility::pointer::make_shared< LinearBranchEnergyCreator >()) {

@@ -75,7 +75,7 @@ ElecDensCenEnergyCreator::score_types_for_method() const {
 
 using namespace core::scoring::methods;
 
-static basic::Tracer TR( "core.scoring.electron_density.ElecDensEnergy" );
+static basic::Tracer TR( "core.energy_methods.ElecDensCenEnergy" );
 
 inline core::Real SQ( core::Real N ) { return N*N; }
 

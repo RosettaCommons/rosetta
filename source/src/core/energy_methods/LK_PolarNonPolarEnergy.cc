@@ -53,7 +53,7 @@
 
 using namespace core::chemical::rna;
 
-static basic::Tracer TR( "core.scoring.methods.LK_PolarNonPolarEnergy", basic::t_info );
+static basic::Tracer TR( "core.energy_methods.LK_PolarNonPolarEnergy" );
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // This is largely deprecated now. The 'lk_costheta' functionality was not found to be any better

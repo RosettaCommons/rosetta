@@ -39,7 +39,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer tr( "core.scoring.methods.Chainbreak", basic::t_info );
+static basic::Tracer tr( "core.energy_methods.ChainbreakEnergy" );
 
 /// @details This must return a fresh instance of the ChainbreakEnergy class, never an instance already in use.
 core::scoring::methods::EnergyMethodOP

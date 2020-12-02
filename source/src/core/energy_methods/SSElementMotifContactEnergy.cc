@@ -55,7 +55,7 @@ using core::Real;
 using std::set;
 using namespace core::scoring::motif;
 
-static basic::Tracer TR( "core.scoring.SSElementMotifContactEnergy" );
+static basic::Tracer TR( "core.energy_methods.SSElementMotifContactEnergy" );
 
 using namespace core::scoring::motif;
 

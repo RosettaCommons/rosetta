@@ -45,7 +45,7 @@ namespace core {
 namespace energy_methods {
 
 using namespace core::scoring::methods;
-static basic::Tracer TR("core.scoring.methods.AARepeatEnergy");
+static basic::Tracer TR( "core.energy_methods.AARepeatEnergy" );
 
 /// @brief This must return a fresh instance of the AARepeatEnergy class, never an instance already in use.
 ///

@@ -77,7 +77,7 @@ namespace core {
 namespace energy_methods {
 
 // tracer
-static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyDens");
+static basic::Tracer TR( "core.energy_methods.FiberDiffractionEnergyDens" );
 
 core::scoring::ScoreTypes FiberDiffractionEnergyDensCreator::score_types_for_method() const {
 	using namespace core::scoring;

@@ -72,7 +72,7 @@ namespace energy_methods {
 
 
 
-static basic::Tracer TR( "core.scoring.AspartimidePenaltyEnergy" );
+static basic::Tracer TR( "core.energy_methods.AspartimidePenaltyEnergy" );
 
 /// @brief EnergyMethod creator, called by the machinery that sets up the scorefunction.
 ///

@@ -2,7 +2,7 @@
 -corrections:beta_nov16
 -s 1stn_short.pdb
 -parser:protocol evolve.xml
--mute core.pack core.scoring protocols.rosetta_scripts.ParsedProtocol protocols.protein_interface_design.movers.TaskAwareCsts  protocols.relax.FastRelax protocols::checkpoint protocols.simple_filters.Sigmoid core.optimization.LineMinimizer
+-mute core.pack core.energy_methods core.scoring protocols.rosetta_scripts.ParsedProtocol protocols.protein_interface_design.movers.TaskAwareCsts  protocols.relax.FastRelax protocols::checkpoint protocols.simple_filters.Sigmoid core.optimization.LineMinimizer
 -nstruct 1
 -pdb_comments true
 -ignore_unrecognized_res

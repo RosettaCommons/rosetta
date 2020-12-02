@@ -47,7 +47,7 @@
 
 
 // Construct tracer.
-static basic::Tracer TR( "core.scoring.methods.carbohydrates.SugarBackboneEnergy" );
+static basic::Tracer TR( "core.energy_methods.SugarBackboneEnergy" );
 
 
 namespace core {

@@ -32,7 +32,7 @@
 
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.scoring.methods.IntermolEnergy" );
+static basic::Tracer TR( "core.energy_methods.IntermolEnergy" );
 
 /////////////////////////////////////////////////////////////////////////////////////
 //

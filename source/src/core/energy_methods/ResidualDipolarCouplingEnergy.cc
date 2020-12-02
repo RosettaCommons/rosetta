@@ -51,7 +51,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static basic::Tracer tr( "core.scoring.ResidualDipolarCoupling" );
+static basic::Tracer tr( "core.energy_methods.ResidualDipolarCouplingEnergy" );
 
 namespace core {
 namespace energy_methods {

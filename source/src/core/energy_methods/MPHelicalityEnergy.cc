@@ -64,7 +64,7 @@
 using namespace core::scoring;
 using namespace core::scoring::methods;
 
-static basic::Tracer TR( "core.scoring.membrane.MPHelicalityEnergy" );
+static basic::Tracer TR( "core.energy_methods.MPHelicalityEnergy" );
 
 namespace core {
 namespace energy_methods {

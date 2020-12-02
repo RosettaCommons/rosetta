@@ -42,7 +42,7 @@
 
 using namespace core::chemical::rna;
 
-static basic::Tracer tr( "core.scoring.rna.RNA_MgPointEnergy" );
+static basic::Tracer tr( "core.energy_methods.RNA_MgPointEnergy" );
 
 //////////////////////////////////////////////////////////////////////////////////////
 //

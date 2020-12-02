@@ -45,7 +45,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "core.scoring.methods.PoissonBoltzmannEnergy" );
+static basic::Tracer TR( "core.energy_methods.PoissonBoltzmannEnergy" );
 
 namespace core {
 namespace energy_methods {

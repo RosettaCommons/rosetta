@@ -45,7 +45,7 @@
 #define pclose _pclose
 #endif
 
-static basic::Tracer TR( "core.scoring.rna.RNA_PartitionEnergy" );
+static basic::Tracer TR( "core.energy_methods.RNA_PartitionEnergy" );
 
 namespace core {
 namespace energy_methods {

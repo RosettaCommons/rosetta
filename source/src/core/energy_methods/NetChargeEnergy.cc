@@ -53,7 +53,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer TR("core.scoring.netcharge_energy.NetChargeEnergy");
+static basic::Tracer TR( "core.energy_methods.NetChargeEnergy" );
 
 /// @brief This must return a fresh instance of the NetChargeEnergy class, never an instance already in use.
 ///

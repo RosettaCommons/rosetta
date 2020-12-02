@@ -43,7 +43,7 @@
 //Numeric Headers
 #include <numeric/deriv/dihedral_deriv.hh>
 
-static basic::Tracer TR( "core.scoring.rna.RNA_SuiteEnergy", basic::t_info );
+static basic::Tracer TR( "core.energy_methods.RNA_SuiteEnergy" );
 
 
 ///////////////////////////////////////////////////////////////////////////////////

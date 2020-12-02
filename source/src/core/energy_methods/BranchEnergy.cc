@@ -38,7 +38,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer tr( "core.scoring.methods.Branch", basic::t_info );
+static basic::Tracer tr( "core.energy_methods.BranchEnergy" );
 
 /// @details This must return a fresh instance of the BranchEnergy class, never an instance already in use.
 core::scoring::methods::EnergyMethodOP

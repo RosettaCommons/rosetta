@@ -45,7 +45,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer TR( "core.scoring.methods.AromaticBackboneRestraintEnergy" );
+static basic::Tracer TR( "core.energy_methods.AromaticBackboneRestraintEnergy" );
 
 /// @details This must return a fresh instance of the AromaticBackboneRestraintEnergy class,
 /// never an instance already in use

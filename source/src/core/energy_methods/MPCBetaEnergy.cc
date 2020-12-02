@@ -45,7 +45,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "core.scoring.membrane.MPCbetaEnergy" );
+static basic::Tracer TR( "core.energy_methods.MPCBetaEnergy" );
 
 using namespace core::scoring;
 using namespace core::scoring::methods;

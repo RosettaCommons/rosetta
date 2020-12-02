@@ -46,7 +46,7 @@
 
 //Vector dummy_res_energy_vector_;
 
-static basic::Tracer TR( "core.scoring.geometric_solvation.exact_model" );
+static basic::Tracer TR( "core.energy_methods.non_scorefxn_exact_model" );
 
 namespace core {
 namespace energy_methods {

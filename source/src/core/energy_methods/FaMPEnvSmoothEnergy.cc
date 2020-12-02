@@ -49,7 +49,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 
-static basic::Tracer TR( "core.scoring.membrane.FaMPEnvSmoothEnergy" );
+static basic::Tracer TR( "core.energy_methods.FaMPEnvSmoothEnergy" );
 
 
 using namespace core::scoring::methods;

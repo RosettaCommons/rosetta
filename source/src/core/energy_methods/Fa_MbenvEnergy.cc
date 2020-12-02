@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR( "core.scoring.methods.Fa_MbEnvEnergy" );
+static basic::Tracer TR( "core.energy_methods.Fa_MbenvEnergy" );
 
 namespace core {
 namespace energy_methods {

@@ -45,7 +45,7 @@ namespace core {
 namespace energy_methods {
 
 using namespace core;
-static basic::Tracer TR( "core.scoring.electron_density_atomwise.ElecDensAtomwiseEnergy" );
+static basic::Tracer TR( "core.energy_methods.ElecDensAtomwiseEnergy" );
 
 /// @details This must return a fresh instance of the ElecDensAtomwiseEnergy class,
 /// never an instance already in use

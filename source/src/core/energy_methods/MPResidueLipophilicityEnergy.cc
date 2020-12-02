@@ -65,7 +65,7 @@
 using namespace core::scoring;
 using namespace core::scoring::methods;
 
-static basic::Tracer TR( "core.scoring.membrane.MPResidueLipophilicityEnergy" );
+static basic::Tracer TR( "core.energy_methods.MPResidueLipophilicityEnergy" );
 
 namespace core {
 namespace energy_methods {

@@ -2,7 +2,7 @@
 -corrections:beta_nov16
 -s 1stn_short.pdb
 -parser:protocol cleanAlignment.xml
--mute core.pack core.scoring protocols.rosetta_scripts.ParsedProtocol protocols.protein_interface_design.movers.TaskAwareCsts
+-mute core.pack core.energy_methods core.scoring protocols.rosetta_scripts.ParsedProtocol protocols.protein_interface_design.movers.TaskAwareCsts
 -nstruct 1
 -pdb_comments true
 -ignore_unrecognized_res

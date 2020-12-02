@@ -63,7 +63,7 @@
 ///    -- rhiju, 2017
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "core.scoring.rna.RNA_StubCoordinateEnergy" );
+static basic::Tracer TR( "core.energy_methods.RNA_StubCoordinateEnergy" );
 
 using namespace basic::options;
 using namespace basic::options::OptionKeys::rna;

@@ -56,7 +56,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
-static basic::Tracer TR("core.scoring.methods.PointWaterEnergy");
+static basic::Tracer TR( "core.energy_methods.PointWaterEnergy" );
 
 namespace core {
 namespace energy_methods {

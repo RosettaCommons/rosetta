@@ -59,7 +59,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer TR("core.scoring.methods.DNA_DihedralEnergy" );
+static basic::Tracer TR( "core.energy_methods.DNA_DihedralEnergy" );
 
 /// @details This must return a fresh instance of the LK_hack class,
 /// never an instance already in use

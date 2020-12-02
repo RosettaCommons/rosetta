@@ -1,4 +1,4 @@
 -inneriterations_scaling 0.001
 -in:file:s inputs/1l2y.pdb
 -parser:protocol inputs/test.xml
--mute core.scoring.util_methods.DumpTrajectoryEnergy
+-mute core.energy_methods.DumpTrajectoryEnergy

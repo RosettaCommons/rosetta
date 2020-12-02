@@ -63,7 +63,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer TR( "core.scoring.methods.ProQ_Energy.cc" );
+static basic::Tracer TR( "core.energy_methods.ProQ_Energy" );
 
 /// @details This must return a fresh instance of the ProQ_Energy class,
 /// never an instance already in use

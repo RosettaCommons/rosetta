@@ -38,7 +38,7 @@
 
 #include <ObjexxFCL/format.hh>
 
-static basic::Tracer tr( "core.scoring.rna.RNA_VDW_Energy" );
+static basic::Tracer tr( "core.energy_methods.RNA_VDW_Energy" );
 
 namespace core {
 namespace energy_methods {

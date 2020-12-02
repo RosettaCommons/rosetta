@@ -59,7 +59,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer trSAXSEnergy( "core.scoring.saxs.SAXSEnergy" );
+static basic::Tracer trSAXSEnergy( "core.energy_methods.SAXSEnergy" );
 
 std::string SAXSEnergy::fa_cfg_file_("ff-rosetta-fa.cfg");
 std::string SAXSEnergy::cen_cfg_file_("ff-rosetta-cen.cfg");

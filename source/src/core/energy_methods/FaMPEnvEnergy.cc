@@ -50,7 +50,7 @@
 // C++ Headers
 #include <cstdlib>
 
-static basic::Tracer TR( "core.scoring.membrane.FaMPEnvEnergy" );
+static basic::Tracer TR( "core.energy_methods.FaMPEnvEnergy" );
 
 namespace core {
 namespace energy_methods {

@@ -35,7 +35,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer tr( "core.scoring.DistanceChainbreak", basic::t_info );
+static basic::Tracer tr( "core.energy_methods.DistanceChainbreakEnergy" );
 
 namespace core {
 namespace energy_methods {

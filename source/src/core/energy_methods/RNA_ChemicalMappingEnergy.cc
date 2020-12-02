@@ -44,7 +44,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "core.scoring.rna.data.RNA_ChemicalMappingEnergy" );
+static basic::Tracer TR( "core.energy_methods.RNA_ChemicalMappingEnergy" );
 
 namespace core {
 namespace energy_methods {

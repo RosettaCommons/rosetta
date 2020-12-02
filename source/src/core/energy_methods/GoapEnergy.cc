@@ -53,7 +53,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer TR( "core.scoring.GoapEnergy" );
+static basic::Tracer TR( "core.energy_methods.GoapEnergy" );
 
 //////////////////////
 /// EnergyMethod Creator

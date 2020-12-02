@@ -84,7 +84,7 @@
 
 // Boost headers
 
-static basic::Tracer TR( "core.scoring.geometric_solvation.ExactOccludedHbondSolEnergy" );
+static basic::Tracer TR( "core.energy_methods.ExactOccludedHbondSolEnergy" );
 
 namespace core {
 namespace energy_methods {

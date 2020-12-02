@@ -41,7 +41,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer TR("core.scoring.util_methods.DumpTrajectoryEnergy");
+static basic::Tracer TR( "core.energy_methods.DumpTrajectoryEnergy" );
 
 /// @brief This must return a fresh instance of the DumpTrajectoryEnergy class, never an instance already in use.
 ///

@@ -51,7 +51,7 @@
 #include <basic/svd/SVD_Solver.hh>
 #include <numeric/PCA.hh>
 
-static basic::Tracer TR( "core.scoring.membrane.MPSpanAngleEnergy"  );
+static basic::Tracer TR( "core.energy_methods.MPSpanAngleEnergy" );
 
 using namespace core::scoring;
 using namespace core::scoring::methods;

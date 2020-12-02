@@ -58,7 +58,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer TR("core.scoring.mhc_epitope_energy.MHCEpitopeEnergy");
+static basic::Tracer TR( "core.energy_methods.MHCEpitopeEnergy" );
 
 ScoreCache::ScoreCache(int nres)
 : utility::VirtualBase(),

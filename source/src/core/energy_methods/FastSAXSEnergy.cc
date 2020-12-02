@@ -56,7 +56,7 @@ namespace core {
 namespace energy_methods {
 
 // tracer
-static basic::Tracer TR( "core.scoring.saxs.FastSAXSEnergy" );
+static basic::Tracer TR( "core.energy_methods.FastSAXSEnergy" );
 
 // ref spectrum
 core::Real ref_spectrum[][21] = {

@@ -38,7 +38,7 @@
 #include <core/pose/motif/reference_frames.hh>
 #include <core/scoring/motif/motif_hash_stuff.hh>
 
-static basic::Tracer TR( "MotifDock" );
+static basic::Tracer TR( "core.energy_methods.MotifDockEnergy" );
 
 typedef numeric::xyzTransform<core::Real> Xform;
 

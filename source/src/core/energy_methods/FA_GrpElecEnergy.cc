@@ -64,7 +64,7 @@
 #include <math.h>
 #endif
 
-static basic::Tracer TR("core.scoring.elec.FA_GrpElecEnergy");
+static basic::Tracer TR( "core.energy_methods.FA_GrpElecEnergy" );
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

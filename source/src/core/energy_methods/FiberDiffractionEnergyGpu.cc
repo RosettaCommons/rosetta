@@ -62,7 +62,7 @@ namespace core {
 namespace energy_methods {
 
 // tracer
-static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionEnergyGpu");
+static basic::Tracer TR( "core.energy_methods.FiberDiffractionEnergyGpu" );
 
 core::scoring::ScoreTypes FiberDiffractionEnergyGpuCreator::score_types_for_method() const {
 	using namespace core::scoring;

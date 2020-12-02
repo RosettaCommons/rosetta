@@ -52,7 +52,7 @@
 #include <ObjexxFCL/format.hh>
 
 
-static basic::Tracer tr( "core.scoring.DipolarCoupling" );
+static basic::Tracer tr( "core.energy_methods.DipolarCouplingEnergy" );
 
 namespace core {
 namespace energy_methods {

@@ -37,7 +37,7 @@
 #include <utility/pointer/memory.hh>
 
 
-static basic::Tracer TR("core.energy_methods.ArgCationPiEnergy");
+static basic::Tracer TR( "core.energy_methods.ArgCationPiEnergy" );
 
 namespace core {
 namespace energy_methods {

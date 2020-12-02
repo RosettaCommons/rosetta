@@ -77,7 +77,7 @@ using namespace basic::options::OptionKeys;
 using namespace core::chemical;
 
 // C++
-static basic::Tracer tr( "core.scoring.rna.StackElecEnergy" );
+static basic::Tracer tr( "core.energy_methods.StackElecEnergy" );
 
 namespace core {
 namespace energy_methods {

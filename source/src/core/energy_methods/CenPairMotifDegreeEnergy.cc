@@ -48,7 +48,7 @@ namespace core {
 namespace energy_methods {
 
 
-static basic::Tracer TR( "core.scoring.CenPairMotifDegreeEnergy" );
+static basic::Tracer TR( "core.energy_methods.CenPairMotifDegreeEnergy" );
 
 using namespace core::scoring::motif;
 using utility::vector1;

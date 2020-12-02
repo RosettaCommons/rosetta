@@ -58,7 +58,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-static basic::Tracer TR( "core.scoring.rna.RNP_LowResPairDistEnergy" );
+static basic::Tracer TR( "core.energy_methods.RNP_LowResPairDistEnergy" );
 using namespace core::chemical;
 using namespace core::chemical::rna;
 using namespace basic::options;

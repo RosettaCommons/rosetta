@@ -47,7 +47,7 @@ namespace energy_methods {
 
 
 using core::Size;
-static basic::Tracer tr( "core.scoring.methods.LinearChainbreak", basic::t_info );
+static basic::Tracer tr( "core.energy_methods.LinearChainbreakEnergy" );
 
 LinearChainbreakEnergy::LinearChainbreakEnergy()
 : parent(utility::pointer::make_shared< LinearChainbreakEnergyCreator >()) {

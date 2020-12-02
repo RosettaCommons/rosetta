@@ -148,8 +148,8 @@ namespace energy_methods {
 
 
 
-static basic::Tracer TR( "core.scoring.CartesianBondedEnergy" );
-static basic::Tracer GEOMETRIES( "core.scoring.CartesianBondedEnergy.GEOMETRIES" );
+static basic::Tracer TR( "core.energy_methods.CartesianBondedEnergy" );
+static basic::Tracer GEOMETRIES( "core.energy_methods.CartesianBondedEnergy.GEOMETRIES" );
 
 // default spring constants
 //  --> only if not specified in config files

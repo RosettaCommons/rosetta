@@ -33,7 +33,7 @@
 #include <numeric/xyz.io.hh>
 
 // C++
-static basic::Tracer TR( "core.scoring.loop_graph.LoopCloseEnergy" );
+static basic::Tracer TR( "core.energy_methods.LoopCloseEnergy" );
 
 namespace core {
 namespace energy_methods {

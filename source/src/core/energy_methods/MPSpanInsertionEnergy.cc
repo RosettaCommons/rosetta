@@ -51,7 +51,7 @@
 //Auto Headers
 #include <core/pose/util.tmpl.hh>
 
-static basic::Tracer TR( "core.scoring.membrane.MPSpanInsertionEnergy"  );
+static basic::Tracer TR( "core.energy_methods.MPSpanInsertionEnergy" );
 
 using namespace core::scoring;
 using namespace core::scoring::methods;

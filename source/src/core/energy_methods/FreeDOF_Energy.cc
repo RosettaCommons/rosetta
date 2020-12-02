@@ -40,7 +40,7 @@
 
 using namespace core::pose::full_model_info;
 
-static basic::Tracer TR( "core.scoring.methods.FreeDOF_Energy", basic::t_info );
+static basic::Tracer TR( "core.energy_methods.FreeDOF_Energy" );
 
 namespace core {
 namespace energy_methods {

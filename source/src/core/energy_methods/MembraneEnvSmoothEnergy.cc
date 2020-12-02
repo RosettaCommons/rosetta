@@ -35,7 +35,7 @@
 #include <basic/database/open.hh>
 
 // C++
-static basic::Tracer TR( "core.scoring.methods.MembraneEnvSmoothEnergy", basic::t_info );
+static basic::Tracer TR( "core.energy_methods.MembraneEnvSmoothEnergy" );
 
 namespace core {
 namespace energy_methods {

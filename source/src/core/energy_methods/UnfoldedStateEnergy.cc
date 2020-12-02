@@ -29,7 +29,7 @@
 #include <utility/vector1.hh>
 
 
-static basic::Tracer TR( "core.scoring.methods.UnfoldedStateEnergy" );
+static basic::Tracer TR( "core.energy_methods.UnfoldedStateEnergy" );
 
 namespace core {
 namespace energy_methods {

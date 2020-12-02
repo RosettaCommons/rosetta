@@ -40,7 +40,7 @@
 
 #include <utility/vector1.hh>
 
-static basic::Tracer TR( "core.scoring.methods.MultipoleElecEnergy" );
+static basic::Tracer TR( "core.energy_methods.MultipoleElecEnergy" );
 
 // Utility headers
 

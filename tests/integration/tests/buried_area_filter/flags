@@ -2,7 +2,7 @@
 -in:file:s inputs/1pu0_trimmed.pdb
 -nstruct 1
 -mute all
--unmute protocols core.select core.scoring
+-unmute protocols core.energy_methods core.select core.scoring
 -out:levels protocols.simple_filters.BuriedSurfaceAreaFilter:500
 ##### these are general flags
 -score:weights talaris2014

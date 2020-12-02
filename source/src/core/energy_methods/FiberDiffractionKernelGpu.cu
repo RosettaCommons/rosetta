@@ -29,7 +29,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer TR("core.scoring.fiber_diffraction.FiberDiffractionKernelGpu");
+static basic::Tracer TR( "core.energy_methods.FiberDiffractionKernelGpu" );
 
 __global__
 void calculate_bessels_kernel(

@@ -54,7 +54,7 @@
 namespace core {
 namespace energy_methods {
 
-static basic::Tracer TR("core.scoring.aa_composition_energy.AACompositionEnergy");
+static basic::Tracer TR( "core.energy_methods.AACompositionEnergy" );
 
 /// @brief This must return a fresh instance of the AACompositionEnergy class, never an instance already in use.
 ///

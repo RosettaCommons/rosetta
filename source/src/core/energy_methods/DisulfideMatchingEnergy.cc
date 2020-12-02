@@ -58,7 +58,7 @@ DisulfideMatchingEnergyCreator::score_types_for_method() const {
 }
 
 
-static basic::Tracer TR( "core.scoring.disulfides.DisulfideMatchingEnergy" );
+static basic::Tracer TR( "core.energy_methods.DisulfideMatchingEnergy" );
 
 
 DisulfideMatchingEnergy::DisulfideMatchingEnergy(
