@@ -59,6 +59,7 @@
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/util.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/util.hh>
 #include <core/chemical/ChemicalManager.hh>
@@ -1809,7 +1810,17 @@ RunPepSpec()
 			for ( Size resnum = prot_begin; resnum <= prot_end; ++resnum ) {
 				pose.replace_residue( resnum, start_pose.residue( resnum ), true );
 			}
-			pose.replace_residue( pep_anchor, pep_anchor_res, true );
+
+			// We cannot call pose.replace_residue directly, as that would overwrite the termini
+			// properties if the anchor happened to be the first or last residue in the peptide
+			// and the pepspec:n_prepend or pepspec:n_append flags had been used.
+			{ // scope
+				core::conformation::ResidueOP anchor_res = pose.residue( pep_anchor ).clone();
+				core::conformation::copy_residue_coordinates_and_rebuild_missing_atoms(
+					pep_anchor_res, *anchor_res, pose.conformation(), false );
+				pose.replace_residue( pep_anchor, *anchor_res, true );
+			}
+
 
 			//replace termini
 			add_termini( pose );
