@@ -399,7 +399,7 @@ void addVirtualResAsRoot(const numeric::xyzVector<core::Real>& xyz, core::pose::
 		new_res->atom(j).xyz( new_res->atom(j).xyz()+xyz );
 	}
 
-	pose.append_residue_by_jump( *new_res , i_min );
+	pose.append_residue_by_jump( *new_res ,i_min,  "", "", true );
 
 	// update PDBinfo
 	if ( pose.pdb_info() ) {

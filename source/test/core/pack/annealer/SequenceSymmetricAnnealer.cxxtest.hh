@@ -154,17 +154,16 @@ public:
 
 		protocols::simple_moves::VirtualRootMover vrm;
 		vrm.apply( * pose );
-		//TS_ASSERT_EQUALS( pose->num_chains(), 4 ); //Not true, adds "X" residue to last chain
+		TS_ASSERT_EQUALS( pose->num_chains(), 4 );
 
 		auto const old_sequence = pose->chain_sequence( 1 );
 		packer.apply( * pose );
-		TS_ASSERT( pose->chain_sequence( 1 ) != old_sequence );//Failure here is a failure of the unit test, not of the protocol
-		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 2 ) );//Failer here is a failure of the protocol
+		TS_ASSERT_DIFFERS( pose->chain_sequence( 1 ), old_sequence );  // Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 2 ) );  // Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ), pose->chain_sequence( 3 ) );  // Failure here is a failure of the unit test, not of the protocol
+		TS_ASSERT_EQUALS( pose->chain_sequence( 4 ), "X" );
 
-		//Add an X for the virtual root
-		TS_ASSERT_EQUALS( pose->chain_sequence( 1 ) + "X", pose->chain_sequence( 3 ) );//Failer here is a failure of the protocol
-
-		TR << "New sequences: " << pose->chain_sequence( 1 ) << " " << pose->chain_sequence( 2 ) << " " << pose->chain_sequence( 3 ) << std::endl;
+		TR << "New sequences: " << pose->chain_sequence( 1 ) << " " << pose->chain_sequence( 2 ) << " " << pose->chain_sequence( 3 ) << " " << pose->chain_sequence( 4 ) << std::endl;
 	}
 
 
