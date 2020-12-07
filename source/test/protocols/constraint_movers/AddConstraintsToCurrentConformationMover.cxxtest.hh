@@ -228,7 +228,7 @@ public:
 		}
 
 		// ASSERT THAT WE HAVE THE NUMBER OF CSTS WE EXPECT
-		constexpr core::Size atoms_per_E = 3; //only the 3 atoms at the tip of E should be included
+		constexpr core::Size atoms_per_E = 4; //only the 4 atoms at the tip of E should be included
 		constexpr core::Size nE = 2; //We have 2 E residues in this pose
 		TS_ASSERT_EQUALS( n_csts_for_resid, atoms_per_E );
 		TS_ASSERT_EQUALS( csts.size(), atoms_per_E*nE );

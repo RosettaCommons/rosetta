@@ -210,7 +210,7 @@ AddConstraintsToCurrentConformationMover::generate_coordinate_constraints(
 				//assert_that_all_atoms_are_moved_by_chi_angle( pose.residue( ires ), nchi, final_chi_atom, iatom_stop );
 				//This assert is bad because it doesn't handle residues like TYR where there are atoms that shouldn't move
 #endif
-				iatom_start = final_chi_atoms[3]; //[3] instead of [4] to preserve verctor to [4]
+				iatom_start = final_chi_atoms[2]; //[1] moves relative to the tip, [2]-[4] do not
 			}
 		} else {
 			continue;
