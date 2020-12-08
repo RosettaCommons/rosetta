@@ -100,21 +100,6 @@ public:
 	MetapatchCOP
 	metapatch( std::string const & name ) const override;
 
-	/// @brief Gets all types with the given aa type and variants
-	/// @details The number of variants must match exactly. Variants can be custom variants.
-	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	ResidueTypeCOPs
-	get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const override;
-
-	/// @brief Gets all types with the given aa type and variants, making exceptions for some variants.
-	/// @details The number of variants must match exactly. Variants can be custom variants, but exceptions must
-	///           be standard types, listed in VariantType.hh.
-	/// (It's assumed that the passed VariantTypeList contains no duplicates.)
-	ResidueTypeCOPs
-	get_all_types_with_variants_aa( AA aa,
-		utility::vector1< std::string > const & variants,
-		utility::vector1< VariantType > const & exceptions ) const override;
-
 	////////////////////////////////////////////////////////////////////////////////
 	// Protected methods in the parent which we're hoisting to public for this class
 public:

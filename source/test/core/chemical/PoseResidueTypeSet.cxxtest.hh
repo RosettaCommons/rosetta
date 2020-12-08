@@ -152,6 +152,65 @@ public:
 		TS_ASSERT_EQUALS( grts->name_mapOP("TYR:sulfated")->interchangeability_group(), "TYS" );
 	}
 
+	void test_get_all_types_with_variants_aa() {
+		using namespace core::chemical;
+
+		GlobalResidueTypeSetOP grts( new GlobalResidueTypeSet( FA_STANDARD, basic::database::full_name( "chemical/residue_type_sets/"+FA_STANDARD+"/" ) ) );
+		PoseResidueTypeSetOP prts( new PoseResidueTypeSet( grts ) );
+
+		utility::vector1< std::string > variants;
+
+		for ( core::Size aa(1); aa <= 20; ++aa ) {
+			ResidueTypeCOPs parent = grts->get_all_types_with_variants_aa( AA(aa), variants );
+			ResidueTypeCOPs mine = prts->get_all_types_with_variants_aa( AA(aa), variants );
+
+			TS_ASSERT_EQUALS( parent.size(), mine.size() );
+		}
+
+		// The response is cached, so we run through it again.
+		for ( core::Size aa(1); aa <= 20; ++aa ) {
+			ResidueTypeCOPs parent = grts->get_all_types_with_variants_aa( AA(aa), variants );
+			ResidueTypeCOPs mine = prts->get_all_types_with_variants_aa( AA(aa), variants );
+
+			TS_ASSERT_EQUALS( parent.size(), mine.size() );
+		}
+
+		variants.push_back("NtermProteinFull");
+
+		for ( core::Size aa(1); aa <= 20; ++aa ) {
+			ResidueTypeCOPs parent = grts->get_all_types_with_variants_aa( AA(aa), variants );
+			ResidueTypeCOPs mine = prts->get_all_types_with_variants_aa( AA(aa), variants );
+
+			TS_ASSERT_EQUALS( parent.size(), mine.size() );
+		}
+
+		// The response is cached, so we run through it again.
+		for ( core::Size aa(1); aa <= 20; ++aa ) {
+			ResidueTypeCOPs parent = grts->get_all_types_with_variants_aa( AA(aa), variants );
+			ResidueTypeCOPs mine = prts->get_all_types_with_variants_aa( AA(aa), variants );
+
+			TS_ASSERT_EQUALS( parent.size(), mine.size() );
+		}
+
+		// Now check that we will combine local RT with the underlying global ones.
+		variants.clear();
+
+		MutableResidueTypeOP new_ser = utility::pointer::make_shared< MutableResidueType >( prts->name_map( "SER" ) );
+		new_ser->name( "SERINE" );
+		prts->add_base_residue_type(new_ser);
+
+		for ( core::Size aa(1); aa <= 20; ++aa ) {
+			ResidueTypeCOPs parent = grts->get_all_types_with_variants_aa( AA(aa), variants );
+			ResidueTypeCOPs mine = prts->get_all_types_with_variants_aa( AA(aa), variants );
+
+			if ( AA(aa) == aa_ser ) {
+				TS_ASSERT_EQUALS( parent.size() + 1 , mine.size() );
+			} else {
+				TS_ASSERT_EQUALS( parent.size(), mine.size() );
+			}
+		}
+
+	}
 
 
 };

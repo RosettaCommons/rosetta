@@ -293,30 +293,6 @@ PoseResidueTypeSet::orbital_type_set(orbitals::OrbitalTypeSetCOP orbital_types) 
 	ResidueTypeSet::orbital_type_set( orbital_types );
 }
 
-ResidueTypeCOPs
-PoseResidueTypeSet::get_all_types_with_variants_aa( AA aa, utility::vector1< std::string > const & variants ) const {
-	// Note: Doesn't quite properly handle types in this set itself which mask types in the default_rts_ object with the same name.
-	ResidueTypeCOPs the_types( ResidueTypeSet::get_all_types_with_variants_aa(aa, variants) );
-	if ( default_rts_ ) {
-		the_types.append( default_rts_->get_all_types_with_variants_aa( aa, variants ) );
-	}
-	return the_types;
-}
-
-ResidueTypeCOPs
-PoseResidueTypeSet::get_all_types_with_variants_aa( AA aa,
-	utility::vector1< std::string > const & variants,
-	utility::vector1< VariantType > const & exceptions ) const
-{
-	// Note: Doesn't quite properly handle types in this set itself which mask types in the default_rts_ object with the same name.
-	ResidueTypeCOPs the_types( ResidueTypeSet::get_all_types_with_variants_aa(aa, variants, exceptions) );
-	if ( default_rts_ ) {
-		the_types.append( default_rts_->get_all_types_with_variants_aa( aa, variants, exceptions ) );
-	}
-	return the_types;
-}
-
-
 // These could be hoisted by using statements, but PyRosetta currently has issues with that.
 void
 PoseResidueTypeSet::add_base_residue_type( MutableResidueTypeOP new_type ) {
