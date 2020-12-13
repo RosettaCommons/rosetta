@@ -58,7 +58,7 @@ for target in targets:
     prefix = f'{working_dir}/output/'
     if not os.path.exists(prefix): os.makedirs(prefix)
 
-    hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
         name=f'{testname}-{target}',
 
         #==> EDIT HERE

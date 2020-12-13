@@ -84,7 +84,7 @@ for target in targets:
 
     for n in range( 0, nstruct ):
         id4 = str(n+1).zfill(4)
-        hpc_job_ids.append( hpc_driver.submit_hpc_job(
+        hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
             name=f'{testname}-{pdb}-{lig}',
             executable = f'{rosetta_dir}/source/bin/coupled_moves.{extension}',
             arguments = command_line.format_map(vars()),

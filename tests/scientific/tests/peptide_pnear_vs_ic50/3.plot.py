@@ -91,7 +91,7 @@ def plot_graph( evals, rmsdvals, hbonds, pnear, delta_g_folding, fig, axs, i, j 
     final_height2 = orig_height2 * scalefactor_y
     delta_y0_2 = (orig_height2 - final_height2)/2.0
     cb.ax.set_position( [box2.x0, box2.y0+delta_y0_2, orig_width2, final_height2 ] )
-    
+
     box1 = ax.get_position()
     orig_height = box1.y1 - box1.y0
     orig_width = box1.x1 - box1.x0
@@ -119,10 +119,8 @@ def plot_one_dataset( fig, axs, suffix='1A', row=1 ) :
     plottitle = f"Computed energy landscape for NDM1i_{suffix}"
 
     # Read in data:
-    if( os.path.exists( f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output.0.log' ) == True ):
-        logfile = f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output.0.log'
-    else:
-        logfile = f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.log'
+    logfile = logfile_names[suffix]
+
     print ( "Reading data from " + logfile + "." )
     rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
     rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]

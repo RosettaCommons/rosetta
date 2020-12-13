@@ -75,7 +75,7 @@ for target in targets:
     subprocess.getoutput( 'sed \'s|{dir_to_replace}|' + f'{rosetta_dir}/tests/scientific/data/{testname}/targets/ab_ensemble|g\' {rosetta_dir}/tests/scientific/data/{testname}/targets/{target}_h3.list > {prefix}/{target}_h3.list' )
     subprocess.getoutput( 'sed \'s|{dir_to_replace}|' + f'{rosetta_dir}/tests/scientific/data/{testname}/targets/ag_ensemble|g\' {rosetta_dir}/tests/scientific/data/{testname}/targets/{target}_ag.list > {prefix}/{target}_ag.list' )
 
-    hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
         name=f'{testname}-{target}',
 
         #==> EDIT HERE

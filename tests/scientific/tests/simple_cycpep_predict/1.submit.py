@@ -29,7 +29,9 @@ hpc_driver  = benchmark.hpc_driver()
 extension   = benchmark.calculate_extension()
 
 run_time = 900 if debug else 9000
-nodes_to_request = 1 if debug else 4
+
+#nodes_to_request = 1 if debug else 4
+ntasks = 32 if debug else 128
 node_time_to_request = 1.5 if debug else 4
 
 #==> EDIT HERE
@@ -61,7 +63,7 @@ command_line = '''
 -cyclic_peptide:min_genkic_hbonds 2
 -cyclic_peptide:min_final_hbonds 2
 -mute all
--unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI 
+-unmute protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI_summary protocols.cyclic_peptide_predict.SimpleCycpepPredictApplication_MPI
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
@@ -83,9 +85,8 @@ hpc_job_ids.append( hpc_driver.submit_mpi_hpc_job(
     arguments = command_line.format_map(vars()),
     working_dir = prefix,
     log_dir = hpc_logs,
-    time=node_time_to_request,
-    requested_nodes=nodes_to_request,
-    requested_processes_per_node=20,
+    time = node_time_to_request,
+    ntasks = ntasks,
     block=False)
 )
 

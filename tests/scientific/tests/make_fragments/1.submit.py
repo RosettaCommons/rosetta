@@ -256,7 +256,7 @@ for db_name, db_data in json_data.items():
         # my_jobs[f'{testname}-{db_name}-{target_name}'] = f"cd {workdir} && {os.path.join(os.getcwd(), 'make_a_fragfile.sh')} {target_data['sequence']} {make_fragments_pl} {workdir}"
         target_data["run_command"] = f"cd {workdir} && {os.path.join(os.getcwd(), 'make_a_fragfile.sh')} {target_data['sequence']} {make_fragments_pl} {workdir}"
 
-        # hpc_job_ids.append(hpc_driver.submit_hpc_job(
+        # hpc_job_ids.append(hpc_driver.submit_serial_hpc_job(
         #     name=f'{testname}-{db_name}-{target_name}',
         #     executable=os.path.join(os.getcwd(), "make_a_fragfile.sh"),
         #     arguments=f"{target_data['sequence']} {make_fragments_pl} {workdir}",

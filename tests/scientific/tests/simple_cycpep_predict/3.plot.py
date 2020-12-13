@@ -32,11 +32,6 @@ outfile = "plot_results.png"
 outfile2 = "plot_results2.png"
 plottitle = "Computed energy landscape"
 
-# Read in data:
-if( os.path.exists( f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log' ) == True ):
-	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log'
-else:
-	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.log'
 print ( "Reading data from " + logfile + "." )
 rmsd_vals = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $3} }'" ) ).split() ]
 rmsd_vals_to_lowest = [ float(i) for i in str( subprocess.getoutput( "grep MPI_worker " + logfile + " -A 1000000 | tail -n+2 | awk '{if( NF == 13 ) {print $4} }'" ) ).split() ]
@@ -71,7 +66,7 @@ for f in range(2):
     else :
         plt.xlabel( x_label2 )
     plt.ylabel( y_label )
-	
+
     # set title
     plt.title( plottitle )
 
@@ -84,7 +79,7 @@ for f in range(2):
     # Y-axis range
     plt.ylim( minenergy - 2.5, minenergy +27.5  )
     plt.xlim( 0, max_overall_rms + 0.1  )
-	
+
     #save figure
     plt.tight_layout()
     if f == 0 :

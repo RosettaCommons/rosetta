@@ -16,7 +16,7 @@ memory = 64
 user_name  = Jane Roe
 user_email = jane.roe@university.edu
 
-# HPC Driver, might have one of the following values: MultiCore, Condor, or none if no HPC Driver should be configured
+# HPC Driver, might have one of the following values: MultiCore, Condor, Slurm or none if no HPC Driver should be configured
 hpc_driver = MultiCore
 
 # when running by daemons branch:revision will be set to appropriate values to represent currently checked version of main repository
@@ -52,3 +52,10 @@ ncbi_blast_plus = /Users/benchmark/prefix/ncbi-blast-2.9.0+/bin/blastp
 
 # path to fragment_picking_database
 fragment_picking_database = /home/benchmark/prefix/fragment_picking_database/2019.05.19
+
+# head-node host name, will be used to submit jobs
+head_node = rosetta
+
+[slurm]
+# head-node host name, if specified will be used to submit jobs
+head_node =

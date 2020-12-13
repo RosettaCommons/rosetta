@@ -81,7 +81,7 @@ for n, target in enumerate(targets):
     print('COMMAND LINE IS:')
     print(cmd_line)
 
-    hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
         name=f'{testname}-{target}',
 
         #==> EDIT HERE

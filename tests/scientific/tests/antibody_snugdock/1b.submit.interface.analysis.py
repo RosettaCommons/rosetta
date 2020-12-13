@@ -43,7 +43,7 @@ for target in targets:
     # get models for analysis
     subprocess.getoutput( f'ls {prefix}/*.pdb > {prefix}/models.list' )
 
-    hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
         name=f'{testname}-1b-{target}',
 
         #==> EDIT HERE

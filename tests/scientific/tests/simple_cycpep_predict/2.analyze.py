@@ -42,10 +42,12 @@ def bool_to_string( bool_in ):
 
 # Relevant filenames
 outfile = f'{working_dir}/result.txt'
-if( os.path.exists( f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log' ) == True ):
-	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.output.0.log'
-else:
-	logfile = f'{working_dir}/hpc-logs/.hpc.{testname}.log'
+
+
+for f in f'.hpc.{testname}.output.0.log .hpc.{testname}.output.log .hpc.{testname}.output'.split():
+    logfile = f'{working_dir}/hpc-logs/{f}'
+    if os.path.isfile(logfile): break
+
 
 # Check that it exists and has contents.
 if not os.path.exists( logfile ):
@@ -148,5 +150,5 @@ with open( outfile, "w" ) as f:
 	f.write( "6+ kcal/mol energy gap?\t" + bool_to_string( big_energy_gap ) + "\n" )
 	f.write( "OVERALL PASS?\t" + bool_to_string( overall_pass ) + "\n" )
 
-benchmark.save_variables('working_dir testname enough_sampling pnear_good pnear_to_lowest_good lowest_E_close_enough sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('working_dir testname enough_sampling pnear_good pnear_to_lowest_good lowest_E_close_enough sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass logfile')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
 #benchmark.save_variables('targets nstruct working_dir testname results scorefiles cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

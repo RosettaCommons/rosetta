@@ -70,7 +70,7 @@ for target in targets:
 
     #print(command_line)
     #print(command_line.format_map(vars()))
-    hpc_job_ids.append( hpc_driver.submit_hpc_job(
+    hpc_job_ids.append( hpc_driver.submit_serial_hpc_job(
         name=f'stepwise_rna_favorites-{target}',
         executable = f'{rosetta_dir}/source/bin/stepwise.{extension}',
         arguments = command_line.format_map(vars()).replace("\n", " "),

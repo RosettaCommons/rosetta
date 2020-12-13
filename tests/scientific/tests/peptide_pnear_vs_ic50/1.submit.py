@@ -30,7 +30,7 @@ extension   = benchmark.calculate_extension()
 maybe_beta  = '--beta' if 'beta' in config['variants'] else ''
 
 samples = 2000 if debug else 80000
-nodes_to_request = 1 if debug else 2
+ntasks = 32 if debug else 128
 node_time_to_request = 1.0 if debug else 4.0
 
 #==> EDIT HERE
@@ -91,9 +91,8 @@ for suffix in suffices:
         arguments = (command_line + " " + command_line_additions.replace('XXXXX', suffix) ).format_map(vars()),
         working_dir = prefix,
         log_dir = f'{working_dir}/hpc-logs_' + suffix,
-        time=node_time_to_request,
-        requested_nodes=nodes_to_request,
-        requested_processes_per_node=20,
+        time = node_time_to_request,
+        ntasks = ntasks,
         block=False)
     )
 

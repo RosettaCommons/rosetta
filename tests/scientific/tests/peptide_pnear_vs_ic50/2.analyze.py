@@ -29,6 +29,8 @@ def bool_to_string( bool_in ):
         return "YES"
     return "NO"
 
+logfile_names = {}
+
 def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_rmsd=0.25, expected_max_rmsd=2.5, expected_min_pnear=0.9, expected_energy_gap=6 ):
     # Things we'll check
     pnear_good = False
@@ -47,10 +49,11 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
 
     # Relevant filenames
     outfile = f'{working_dir}/result_{suffix}.txt'
-    if( os.path.exists( f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output.0.log' ) == True ):
-        logfile = f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output.0.log'
-    else:
-        logfile = f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.log'
+
+    for logfile in f'{working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output.0.log {working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.log {working_dir}/hpc-logs_{suffix}/.hpc.{testname}_NDM1i_{suffix}.output'.split():
+        if os.path.isfile(logfile):
+            logfile_names[suffix] = logfile
+            break
 
     # Check that it exists and has contents.
     if not os.path.exists( logfile ):
@@ -159,7 +162,7 @@ def analyze_one_funnel( suffix='1A', expected_rmsd_of_lowest=0.3, expected_min_r
         f.write( "Sampling beyond " + str(expected_max_rmsd) + " A RMSD?\t" + bool_to_string( sampling_beyond_2_6_A ) + "\n" )
         f.write( str(expected_energy_gap) + "+ kcal/mol energy gap?\t" + bool_to_string( big_energy_gap ) + "\n" )
         f.write( "OVERALL PASS?\t" + bool_to_string( overall_pass ) + "\n" )
-    
+
     print( "Finished analyzing NDM1i-" + suffix + ".  Overall pass = " + bool_to_string( overall_pass ) )
     return ( suffix, DG_folding, DG_folding_to_lowest )
 
@@ -195,7 +198,7 @@ def do_data_fitting( all_DG_foldings, fitting_ic50_vals, fitting_ic50_errs ) :
 
     k, A, rval, pval, stderr = linregress(x_data, y_data )
 
-    return A, k, rval**2 
+    return A, k, rval**2
 
 
 # Analyze the folding funnels.
@@ -231,4 +234,9 @@ print( "R^2:\t", fitted_Rsq )
 
 bundle = [fitted_A, fitted_k, fitted_Rsq]
 
-benchmark.save_variables('fitting_ic50_vals fitting_ic50_errs all_DG_foldings bundle working_dir testname enough_sampling pnear_good pnear_to_lowest_good lowest_E_close_enough sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+# Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('''fitting_ic50_vals fitting_ic50_errs all_DG_foldings bundle
+working_dir testname enough_sampling pnear_good pnear_to_lowest_good lowest_E_close_enough
+sampling_under_0_25_A sampling_beyond_1_5_A sampling_beyond_2_6_A big_energy_gap overall_pass
+logfile_names
+''')
