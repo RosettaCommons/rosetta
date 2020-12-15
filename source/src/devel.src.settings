@@ -15,10 +15,6 @@ sources = {
 		"init",
                 #"init.release",
 	],
-	"devel/buns": [
-		"BuriedUnsatisfiedPolarsCalculator2",
-		"BuriedUnsatHbondFilter2",
-	],
 	"devel/cartesian_frags": [
 		"CartesianFragment",
 		"DNA_FragLib",

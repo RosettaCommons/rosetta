@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/buns/BuriedUnsatHbondFilter2.hh
+/// @file protocols/buns/BuriedUnsatHbondFilter2.hh
 /// @brief
 /// @author Kevin Houlihan (khouli@unc.edu)
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatHbondFilter2_hh
-#define INCLUDED_devel_buns_BuriedUnsatHbondFilter2_hh
+#ifndef INCLUDED_protocols_buns_BuriedUnsatHbondFilter2_hh
+#define INCLUDED_protocols_buns_BuriedUnsatHbondFilter2_hh
 
-#include <devel/buns/BuriedUnsatHbondFilter2.fwd.hh>
+#include <protocols/buns/BuriedUnsatHbondFilter2.fwd.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 
@@ -25,9 +25,9 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.fwd.hh>
+#include <protocols/buns/BuriedUnsatisfiedPolarsCalculator2.fwd.hh>
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 
@@ -73,10 +73,10 @@ private:
 	core::Size jump_num_;
 	core::pack::task::TaskFactoryOP task_factory_; // dflt NULL; only residues defined as packable by the taskoperations will be tested for burial
 	//protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator2OP calc_;
-	devel::buns::BuriedUnsatisfiedPolarsCalculator2OP calc_;
+	protocols::buns::BuriedUnsatisfiedPolarsCalculator2OP calc_;
 	// std::string calc_name_;
 };
 
 } //buns
-} //devel
+} //protocols
 #endif

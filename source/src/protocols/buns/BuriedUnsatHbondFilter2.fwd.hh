@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/buns/BuriedUnsatHbondFilter2.fwd.hh
+/// @file   protocols/buns/BuriedUnsatHbondFilter2.fwd.hh
 /// @brief
 /// @author Kevin Houlihan (khouli@unc.edu)
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatHbondFilter2_fwd_hh
-#define INCLUDED_devel_buns_BuriedUnsatHbondFilter2_fwd_hh
+#ifndef INCLUDED_protocols_buns_BuriedUnsatHbondFilter2_fwd_hh
+#define INCLUDED_protocols_buns_BuriedUnsatHbondFilter2_fwd_hh
 
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 class BuriedUnsatHbondFilter2;

@@ -19,6 +19,9 @@ namespace protocols {
 using protocols::filters::FilterRegistrator;
 
 static FilterRegistrator< protocols::simple_filters::BuriedUnsatHbondFilterCreator > reg_BuriedUnsatHbondFilterCreator;
+
+static FilterRegistrator< protocols::buns::BuriedUnsatHbondFilter2Creator > reg_BuriedUnsatHbondFilter2Creator;
+
 static FilterRegistrator< protocols::calc_taskop_filters::ConservedPosMutationFilterCreator > reg_ConservedPosMutationFilterCreator;
 static FilterRegistrator< protocols::calc_taskop_filters::MultipleSigmoidsFilterCreator > reg_MultipleSigmoidsFilterCreator;
 static FilterRegistrator< protocols::calc_taskop_filters::OperatorFilterCreator > reg_OperatorFilterCreator;

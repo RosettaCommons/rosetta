@@ -54,7 +54,6 @@
 #include <devel/matdes/GenericSymmetricSamplerCreator.hh>
 #include <devel/replica_docking/IrmsdFilterCreator.hh>
 #include <devel/replica_docking/CaIrmsdFilterCreator.hh>
-#include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
 #include <devel/replica_docking/FnatFilterCreator.hh>
 #include <devel/replica_docking/LrmsdFilterCreator.hh>
 #include <devel/replica_docking/FnonnatFilterCreator.hh>
@@ -124,7 +123,6 @@ static protocols::filters::FilterRegistrator< devel::replica_docking::FnatFilter
 static protocols::filters::FilterRegistrator< devel::replica_docking::LrmsdFilterCreator > LrmsdCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::FnonnatFilterCreator > FnonnatCreator_registrator;
 static protocols::filters::FilterRegistrator< devel::replica_docking::CaIrmsdFilterCreator > CaIrmsdCreator_registrator;
-static protocols::filters::FilterRegistrator< devel::buns::BuriedUnsatHbondFilter2Creator > BuriedUnsatHbondFilter2_registrator;
 
 static protocols::evaluation::EvaluatorRegistrator< devel::replica_docking::WrapFilterAsEvaluatorCreator > reg_WrapFilterAsEvaluatorCreator;
 

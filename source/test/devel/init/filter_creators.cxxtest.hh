@@ -34,7 +34,7 @@
 #include <devel/replica_docking/LrmsdFilterCreator.hh>
 #include <devel/replica_docking/FnonnatFilterCreator.hh>
 #include <devel/replica_docking/CaIrmsdFilterCreator.hh>
-#include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
+#include <protocols/buns/BuriedUnsatHbondFilter2Creator.hh>
 
 class BackwardsDevelFilterCreatorTests : public CxxTest::TestSuite
 {
@@ -67,8 +67,8 @@ public:
 	void test_devel_replica_docking_CaIrmsdFilterCreator_name()
 	{ devel::replica_docking::CaIrmsdFilterCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "Ca_Irms" ); }
 
-	void test_devel_buns_BuriedUnsatHbondFilter2Creator_name()
-	{ devel::buns::BuriedUnsatHbondFilter2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuriedUnsatHbonds2" ); }
+	void test_protocols_buns_BuriedUnsatHbondFilter2Creator_name()
+	{ protocols::buns::BuriedUnsatHbondFilter2Creator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuriedUnsatHbonds2" ); }
 
 
 	//void test_protocols_denovo_design_filters_CavityVolumeFilterCreator()

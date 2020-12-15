@@ -7,14 +7,14 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/buns/BuriedUnsatPolarsFinder2.hh
+/// @file protocols/buns/BuriedUnsatPolarsFinder2.hh
 /// @brief
 /// @details
 /// @author Kevin Houlihan (khouli@unc.edu)
 /// @author Bryan Der
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_hh
-#define INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_hh
+#ifndef INCLUDED_protocols_buns_BuriedUnsatisfiedPolarsCalculator2_hh
+#define INCLUDED_protocols_buns_BuriedUnsatisfiedPolarsCalculator2_hh
 
 #include <core/pose/metrics/PoseMetricCalculatorBase.hh>
 #include <core/pose/Pose.fwd.hh>
@@ -39,7 +39,7 @@
 #include <cereal/types/polymorphic.fwd.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 class BuriedUnsatisfiedPolarsCalculator2 : public core::pose::metrics::EnergyDependentCalculator {
@@ -254,10 +254,10 @@ public:
 }; // BuriedUnsatisfiedPolarsCalculator2
 
 } // namespace buns
-} // namespace devel
+} // namespace protocols
 
 #ifdef    SERIALIZATION
-CEREAL_FORCE_DYNAMIC_INIT( devel_buns_BuriedUnsatisfiedPolarsCalculator2 )
+CEREAL_FORCE_DYNAMIC_INIT( protocols_buns_BuriedUnsatisfiedPolarsCalculator2 )
 #endif // SERIALIZATION
 
 

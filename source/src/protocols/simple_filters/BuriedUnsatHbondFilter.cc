@@ -735,7 +735,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	rosetta_scripts::attributes_for_parse_task_operations( attlist );
 
-	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "A filter for computing the number of buried unsatisfied hydrogen bond donors and/or acceptors, and discarding poses with too many.", attlist );
 }
 
 std::string BuriedUnsatHbondFilterCreator::keyname() const {

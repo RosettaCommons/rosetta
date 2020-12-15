@@ -7,7 +7,7 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/buns/BuriedUnsatPolarsFinder2.cc
+/// @file protocols/buns/BuriedUnsatPolarsFinder2.cc
 /// @brief
 /// @details
 /// @author Kevin Houlihan (khouli@unc.edu)
@@ -15,11 +15,11 @@
 
 // Unit headers
 
-#include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
+#include <protocols/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 
 //Project Headers
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
-//#include <devel/vardist_solaccess/VarSolDRotamerDots.hh>
+//#include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <protocols/vardist_solaccess/VarSolDRotamerDots.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
@@ -52,7 +52,7 @@
 #include <core/chemical/AtomType.hh>
 #include <utility/vector1.hh>
 
-static basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
+static basic::Tracer TR( "protocols.buns.BuriedUnsatisfiedPolarsCalculator2" );
 
 
 #ifdef    SERIALIZATION
@@ -70,7 +70,7 @@ static basic::Tracer TR( "devel.buns.BuriedUnsatisfiedPolarsCalculator2" );
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 using namespace core;
@@ -743,17 +743,17 @@ BuriedUnsatisfiedPolarsCalculator2::show() {
 }
 
 } // namespace buns
-} // namespace devel
+} // namespace protocols
 
 #ifdef    SERIALIZATION
 
 /// @brief Default constructor required by cereal to deserialize this class
-devel::buns::BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2() {}
+protocols::buns::BuriedUnsatisfiedPolarsCalculator2::BuriedUnsatisfiedPolarsCalculator2() {}
 
 /// @brief Automatically generated serialization method
 template< class Archive >
 void
-devel::buns::BuriedUnsatisfiedPolarsCalculator2::save( Archive & arc ) const {
+protocols::buns::BuriedUnsatisfiedPolarsCalculator2::save( Archive & arc ) const {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
 	arc( CEREAL_NVP( all_bur_unsat_polars_ ) ); // core::Size
 	arc( CEREAL_NVP( special_region_bur_unsat_polars_ ) ); // core::Size
@@ -774,7 +774,7 @@ devel::buns::BuriedUnsatisfiedPolarsCalculator2::save( Archive & arc ) const {
 /// @brief Automatically generated deserialization method
 template< class Archive >
 void
-devel::buns::BuriedUnsatisfiedPolarsCalculator2::load( Archive & arc ) {
+protocols::buns::BuriedUnsatisfiedPolarsCalculator2::load( Archive & arc ) {
 	arc( cereal::base_class< core::pose::metrics::EnergyDependentCalculator >( this ) );
 	arc( all_bur_unsat_polars_ ); // core::Size
 	arc( special_region_bur_unsat_polars_ ); // core::Size
@@ -792,8 +792,8 @@ devel::buns::BuriedUnsatisfiedPolarsCalculator2::load( Archive & arc ) {
 	arc( metal_dist_cutoff_ ); // core::Real
 }
 
-SAVE_AND_LOAD_SERIALIZABLE( devel::buns::BuriedUnsatisfiedPolarsCalculator2 );
-CEREAL_REGISTER_TYPE( devel::buns::BuriedUnsatisfiedPolarsCalculator2 )
+SAVE_AND_LOAD_SERIALIZABLE( protocols::buns::BuriedUnsatisfiedPolarsCalculator2 );
+CEREAL_REGISTER_TYPE( protocols::buns::BuriedUnsatisfiedPolarsCalculator2 )
 
-CEREAL_REGISTER_DYNAMIC_INIT( devel_buns_BuriedUnsatisfiedPolarsCalculator2 )
+CEREAL_REGISTER_DYNAMIC_INIT( protocols_buns_BuriedUnsatisfiedPolarsCalculator2 )
 #endif // SERIALIZATION

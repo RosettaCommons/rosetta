@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/buns/BuriedUnsatHbondFilter2.cc
+/// @file protocols/buns/BuriedUnsatHbondFilter2.cc
 /// @brief
 /// @author Kevin Houlihan (khouli@unc.edu)
 
-#include <devel/buns/BuriedUnsatHbondFilter2.hh>
-#include <devel/buns/BuriedUnsatHbondFilter2Creator.hh>
+#include <protocols/buns/BuriedUnsatHbondFilter2.hh>
+#include <protocols/buns/BuriedUnsatHbondFilter2Creator.hh>
 
 #include <core/pose/Pose.hh>
 // PDBInfo for debug
@@ -26,7 +26,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <basic/MetricValue.hh>
 #include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
-#include <devel/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
+#include <protocols/buns/BuriedUnsatisfiedPolarsCalculator2.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <utility/string_util.hh>
 
@@ -34,10 +34,10 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
-static basic::Tracer TR( "devel.buns.BuriedUnsatHbondFilter2" );
+static basic::Tracer TR( "protocols.buns.BuriedUnsatHbondFilter2" );
 
 
 
@@ -70,9 +70,9 @@ BuriedUnsatHbondFilter2::parse_my_tag( utility::tag::TagCOP tag, basic::datacach
 	jump_num_ = tag->getOption<core::Size>( "jump_number", 1 );
 	upper_threshold_ = tag->getOption<core::Size>( "cutoff", 20 );
 
-	// calc_ = utility::pointer::make_shared< devel::buns::BuriedUnsatisfiedPolarsCalculator2 >("default");
+	// calc_ = utility::pointer::make_shared< protocols::buns::BuriedUnsatisfiedPolarsCalculator2 >("default");
 	//  sboyken NEED DIFFERENT NAME THAN "default" OTHERWISE DOES NOT PLAY NICE WHEN CALL MULTIPLE UNSAT FILTERS WITHIN SAME XML!!!
-	calc_ = utility::pointer::make_shared< devel::buns::BuriedUnsatisfiedPolarsCalculator2 >("bunsat_calc2_default_weak_bunsat_calc");
+	calc_ = utility::pointer::make_shared< protocols::buns::BuriedUnsatisfiedPolarsCalculator2 >("bunsat_calc2_default_weak_bunsat_calc");
 
 	if ( tag->hasOption("generous_hbonds") ) {
 		calc_->set_generous_hbonds(tag->getOption<bool>( "generous_hbonds", true  ));
@@ -242,7 +242,7 @@ void BuriedUnsatHbondFilter2::provide_xml_schema( utility::tag::XMLSchemaDefinit
 	protocols::rosetta_scripts::attributes_for_get_score_function_name( attlist );
 	protocols::rosetta_scripts::attributes_for_parse_task_operations( attlist );
 
-	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "XRW TO DO", attlist );
+	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "A filter for computing the number of buried unsatisfied hydrogen bond donors and/or acceptors, and discarding poses with too many.  This is the same thing that the BuriedUnsatHbonds filter does, but this filter does it a somewhat different way.  What the difference is has been lost to the mists of time.", attlist );
 }
 
 std::string BuriedUnsatHbondFilter2Creator::keyname() const {

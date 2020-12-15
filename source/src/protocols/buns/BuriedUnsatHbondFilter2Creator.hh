@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   devel/buns/BuriedUnsatHbondFilterCreator2.hh
+/// @file   protocols/buns/BuriedUnsatHbondFilterCreator2.hh
 /// @brief  FilterCreator for the BuriedUnsatHbondFilterCreator2
 /// @author Kevin Houlihan (khouli@unc.edu)
 
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatHbondFilter2Creator_hh
-#define INCLUDED_devel_buns_BuriedUnsatHbondFilter2Creator_hh
+#ifndef INCLUDED_protocols_buns_BuriedUnsatHbondFilter2Creator_hh
+#define INCLUDED_protocols_buns_BuriedUnsatHbondFilter2Creator_hh
 
 // Package Headers
 #include <protocols/filters/FilterCreator.hh>
@@ -24,7 +24,7 @@
 // c++ headers
 #include <string>
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 class BuriedUnsatHbondFilter2Creator : public protocols::filters::FilterCreator

@@ -7,17 +7,17 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file devel/buns/BuriedUnsatisfiedPolarsCalculator2.fwd.hh
+/// @file protocols/buns/BuriedUnsatisfiedPolarsCalculator2.fwd.hh
 /// @brief
 /// @author Kevin Houlihan
 
 
-#ifndef INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
-#define INCLUDED_devel_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
+#ifndef INCLUDED_protocols_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
+#define INCLUDED_protocols_buns_BuriedUnsatisfiedPolarsCalculator2_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
-namespace devel {
+namespace protocols {
 namespace buns {
 
 class BuriedUnsatisfiedPolarsCalculator2;

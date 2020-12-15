@@ -14,6 +14,8 @@
 //FilterCreator #includes
 #include <protocols/filters/FilterFactory.hh>
 
+#include <protocols/buns/BuriedUnsatHbondFilter2Creator.hh>
+
 #include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>
 #include <protocols/constraint_filters/SavePoseConstraintToFileFilterCreator.hh>
 #include <protocols/constraint_filters/ShowConstraintsFilterCreator.hh>
@@ -127,7 +129,6 @@
 #include <protocols/simple_filters/ContactMolecularSurfaceFilterCreator.hh>
 #include <protocols/calc_taskop_filters/ConservedPosMutationFilterCreator.hh>
 #include <protocols/simple_ddg/DdgFilterCreator.hh>
-#include <protocols/constraint_filters/ConstraintScoreFilterCreator.hh>
 #include <protocols/simple_filters/ChainCountFilterCreator.hh>
 #include <protocols/simple_filters/DeltaFilterCreator.hh>
 #include <protocols/simple_filters/DisulfideEntropyFilterCreator.hh>
