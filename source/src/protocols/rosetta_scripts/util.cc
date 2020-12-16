@@ -57,6 +57,7 @@
 // Basic Headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/jd2.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 
@@ -228,10 +229,12 @@ legacy_saved_pose_or_input(
 		// Look at data map resources in those cases (like testing) where you explicitly need to test the legacy input approach.
 		TR.Warning << class_name << " is (implicitly) attempting to get the input pose during setup." << std::endl;
 		TR.Warning << "You should likely use the SavePoseMover to save the pose at the beginning of the PROTOCOL block, and then use the " << refname << " attribute to explicitly set the reference structure." << std::endl;
+		if ( basic::options::option[basic::options::OptionKeys::jd2::parse_script_once_only]() ) utility_exit_with_message("-jd2:parse_script_once_only will prevent " + class_name + " from working correctly. See warning above about input pose.");
 		return data.get_resource<core::pose::Pose>("input_pose");
 	} else if ( protocols::jd2::jd2_used() ) { // Hacky, hacky workaround, but this allows legacy XMLs to (mostly) work
 		TR.Warning << class_name << " is (implicitly) attempting to get the input pose during setup." << std::endl;
 		TR.Warning << "You should likely use the SavePoseMover to save the pose at the beginning of the PROTOCOL block, and then use the " << refname << " attribute to explicitly set the reference structure." << std::endl;
+		if ( basic::options::option[basic::options::OptionKeys::jd2::parse_script_once_only]() ) utility_exit_with_message("-jd2:parse_script_once_only will prevent " + class_name + " from working correctly. See warning above about input pose.");
 		core::pose::PoseCOP input_pose = protocols::jd2::get_current_jobs_starting_pose();
 		if ( input_pose == nullptr ) {
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError, "Mover " + class_name + " tried to get access the input pose during setup, but can't!" );

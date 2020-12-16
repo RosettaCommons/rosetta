@@ -78,6 +78,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <utility/pointer/memory.hh>
 
 /**@brief This is a protocol... **/
 namespace protocols
@@ -117,6 +118,7 @@ void MotifGraftMover::init_parameters(
 	bool        const & b_only_allow_if_C_point_match_aa_identity,
 	bool        const & b_revert_graft_to_native_sequence,
 	bool        const & b_allow_repeat_same_graft_output,
+	bool        const & b_reinit_every_apply,
 	core::Real  const & r_output_cluster_tolerance,
 	filters::FilterCOP const & f_output_filter)
 {
@@ -140,6 +142,7 @@ void MotifGraftMover::init_parameters(
 		b_only_allow_if_C_point_match_aa_identity,
 		b_revert_graft_to_native_sequence,
 		b_allow_repeat_same_graft_output,
+		b_reinit_every_apply,
 		r_output_cluster_tolerance,
 		f_output_filter);
 }
@@ -154,7 +157,7 @@ void MotifGraftMover::apply(core::pose::Pose & pose)
 	TR.Debug << "TEST runstatus: gp_b_is_first_run_: " << gp_b_is_first_run_ << std::endl;
 	//IF we dont want to duplicate the already grafted fragments return fail_do_not_retry after round 1
 	if ( !gp_b_is_first_run_ ) {
-		if ( !gp_b_allow_repeat_same_graft_output_ ) {
+		if ( !gp_b_allow_repeat_same_graft_output_ && !gp_b_reinit_every_apply_ ) {
 			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 			return;
 		}
@@ -164,8 +167,12 @@ void MotifGraftMover::apply(core::pose::Pose & pose)
 	gp_b_is_first_run_=false;
 
 	if ( !motif_match_results_.empty() ) {
-		// Error
-		TR.Warning << "Received new input pose with matches remaining." << std::endl;
+		if ( gp_b_reinit_every_apply_ ) {
+			// priority_queue doesn't have clear...
+			motif_match_results_ = std::priority_queue<MotifMatch>();
+		} else {
+			TR.Warning << "Received new input pose with matches remaining. Consider using reinit_every_apply=\"true\"." << std::endl;
+		}
 	}
 
 	motif_match_results_ = generate_scaffold_matches(pose, gp_p_motif_, gp_p_contextStructure_);
@@ -435,7 +442,10 @@ void MotifGraftMover::get_matching_fragments(
 	// Ok, so here's the deal with the atomic radii we choose here. 2.0 is carbon, 1.6 is oxygen.
 	// But Daniel's clashing function uses half the atomic radii. So 1.6 is too small, but the
 	// "correct" number might be something like 0.9
-	numeric::geometry::hashing::MinimalClashHash context_clash_hash( 0.25f, clash_atom_scale*1.8f, context_balls );
+	if ( ! context_clash_hash_ ) {
+		context_clash_hash_ = utility::pointer::make_shared< numeric::geometry::hashing::MinimalClashHash >(  0.25f, clash_atom_scale*1.8f, context_balls );
+	}
+	numeric::geometry::hashing::MinimalClashHash & context_clash_hash = *context_clash_hash_;
 
 
 	//Test combinations of fragments (outer loop)
@@ -1686,6 +1696,7 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 	bool        const & b_only_allow_if_C_point_match_aa_identity,
 	bool        const & b_revert_graft_to_native_sequence,
 	bool        const & b_allow_repeat_same_graft_output,
+	bool        const & b_reinit_every_apply,
 	core::Real  const & r_output_cluster_tolerance,
 	filters::FilterCOP const & f_output_filter )
 {
@@ -1902,6 +1913,9 @@ void MotifGraftMover::parse_my_string_arguments_and_cast_to_globalPrivateSpaceVa
 		TR.Warning << "If the number of matches in a single pose is < nstruct, when all the matches are generated the mover will stop." << std::endl;
 	}
 
+	//OPTIONAL: allow multiple outputs of the same graft?
+	gp_b_reinit_every_apply_ = b_reinit_every_apply;
+
 	//OPTIONAL: cluster outputs to remove redundant ones?
 	gp_r_output_cluster_tolerance_ = r_output_cluster_tolerance;
 	if ( gp_r_output_cluster_tolerance_ < 0 ) {
@@ -1937,6 +1951,7 @@ void MotifGraftMover::parse_my_tag(
 	bool        b_full_motif_bb_alignment;
 	bool        b_allow_independent_alignment_per_fragment;
 	bool        b_allow_repeat_same_graft_output;
+	bool        b_reinit_every_apply;
 	bool        b_only_allow_if_N_point_match_aa_identity;
 	bool        b_only_allow_if_C_point_match_aa_identity;
 	bool        b_revert_graft_to_native_sequence;
@@ -2082,6 +2097,14 @@ void MotifGraftMover::parse_my_tag(
 	}
 
 	//OPTIONAL
+	if ( tag->hasOption("reinit_every_apply") ) {
+		b_reinit_every_apply = tag->getOption< bool >("reinit_every_apply");
+	} else {
+		TR.Warning << "No reinit_every_apply option defined, the default \"false\" will be used" << std::endl;
+		b_reinit_every_apply=false;
+	}
+
+	//OPTIONAL
 	if ( tag->hasOption("output_cluster_tolerance") ) {
 		r_output_cluster_tolerance = tag->getOption< core::Real >("output_cluster_tolerance");
 	} else {
@@ -2120,6 +2143,7 @@ void MotifGraftMover::parse_my_tag(
 		b_only_allow_if_C_point_match_aa_identity,
 		b_revert_graft_to_native_sequence,
 		b_allow_repeat_same_graft_output,
+		b_reinit_every_apply,
 		r_output_cluster_tolerance,
 		f_output_filter);
 }
@@ -2272,6 +2296,12 @@ void MotifGraftMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xs
 		"rosetta will stop only when -nstructs are generated "
 		"(even if it has to repeat n-times the same result) or if the mover "
 		"fails (i.e. no graft matches at all).", "false");
+
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"reinit_every_apply", xsct_rosetta_bool,
+		"If turned on it will clear the outputs every time apply is called. "
+		"Useful for -parse_script_once_only", "false");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
 		"output_cluster_tolerance", xsct_real,

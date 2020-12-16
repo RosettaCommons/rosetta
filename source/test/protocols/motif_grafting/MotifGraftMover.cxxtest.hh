@@ -91,6 +91,7 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool  b_revert_to_native  = false;              //revert to the native scafold sequence after grafting
 		bool  b_allow_repeat    = false;              //Allow repeat same graft
+		bool  b_reinit_every_apply    = false;         //reinit_every_apply
 		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
 		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
@@ -113,6 +114,7 @@ public:
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
 			b_allow_repeat,
+			b_reinit_every_apply,
 			r_output_cluster_tolerance,
 			f_output_filter);
 
@@ -193,6 +195,7 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = true;               //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		bool  b_reinit_every_apply    = false;         //reinit_every_apply
 		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
 		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
@@ -215,6 +218,7 @@ public:
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
 			b_allow_repeat,
+			b_reinit_every_apply,
 			r_output_cluster_tolerance,
 			f_output_filter);
 
@@ -296,6 +300,7 @@ public:
 		bool  b_only_if_Cpoint_eq  = false;              //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = false;              //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		bool  b_reinit_every_apply    = false;         //reinit_every_apply
 		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
 		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
@@ -318,6 +323,7 @@ public:
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
 			b_allow_repeat,
+			b_reinit_every_apply,
 			r_output_cluster_tolerance,
 			f_output_filter);
 
@@ -398,6 +404,7 @@ public:
 		bool  b_only_if_Cpoint_eq  = true;               //graft only if Cpoint aminoacid identities are equal
 		bool   b_revert_to_native  = true;               //revert to the native scafold sequence after grafting
 		bool   b_allow_repeat    = false;              //Allow repeat same graft
+		bool  b_reinit_every_apply    = false;         //reinit_every_apply
 		core::Real r_output_cluster_tolerance = -1.0; // Don't cluster output
 		protocols::filters::FilterCOP f_output_filter = nullptr; // Don't filter output
 
@@ -420,6 +427,7 @@ public:
 			b_only_if_Cpoint_eq,
 			b_revert_to_native,
 			b_allow_repeat,
+			b_reinit_every_apply,
 			r_output_cluster_tolerance,
 			f_output_filter);
 

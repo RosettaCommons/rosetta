@@ -230,6 +230,7 @@ public:
 		bool        const & b_only_allow_if_C_point_match_aa_identity,
 		bool        const & b_revert_graft_to_native_sequence,
 		bool        const & b_allow_repeat_same_graft_output,
+		bool        const & b_reinit_every_apply,
 		core::Real  const & r_output_cluster_tolerance,
 		filters::FilterCOP const & f_output_filter );
 
@@ -467,6 +468,7 @@ public:
 		bool        const & b_only_allow_if_C_point_match_aa_identity,
 		bool        const & b_revert_graft_to_native_sequence,
 		bool        const & b_allow_repeat_same_graft_output,
+		bool        const & b_reinit_every_apply,
 		core::Real  const & r_output_cluster_tolerance,
 		filters::FilterCOP const & f_output_filter );
 
@@ -497,6 +499,7 @@ protected:
 	bool               gp_b_full_motif_bb_alignment_;
 	bool               gp_b_allow_independent_alignment_per_fragment_;
 	bool               gp_b_allow_repeat_same_graft_output_;
+	bool               gp_b_reinit_every_apply_;
 	bool               gp_b_is_first_run_;
 	bool               gp_b_graft_only_hotspots_by_sidechain_replacement_;
 	bool               gp_b_only_allow_if_N_point_match_aa_identity_;
@@ -509,6 +512,9 @@ protected:
 	core::Real         gp_r_output_cluster_tolerance_;
 	utility::vector1< numeric::HomogeneousTransform< core::Real > > output_transforms_; // Used for output cluster tolerance
 	filters::FilterCOP gp_f_output_filter_;
+
+	// cache
+	numeric::geometry::hashing::MinimalClashHashOP context_clash_hash_;
 }; //END class MotifGraftMover
 
 }//END namespace movers

@@ -1382,6 +1382,7 @@ Options = Option_Group( '',
 		Option( 'seed_ensemble_weights', 'RealVector', desc = "Specifiy weights for seeded ensemble.  Must match number of inputs.  See also: -seed_ensemble_weights_file"),
 		Option( 'seed_ensemble_weights_file', 'File', desc='A file specifying weights to use for each input structure.  Two columns.  basename with extension (or relative path or full path), weight'),
 		Option( 'HOSTNAME_in_jobname', 'Boolean', desc='Pre-prefixes job with $HOSTNAME env var; useful for determining which server a job came from.  When running in k8s pods, makes jobs distinct if they are all _0001'),
+		Option( 'parse_script_once_only', 'Boolean', default='false', desc='Skip reparsing the xml for every input and use the movers as they are? Some movers may not work correctly with this enabled.'),
 
 	), # jd2
 	Option_Group( 'view',
