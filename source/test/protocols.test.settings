@@ -90,6 +90,10 @@ sources = {
 		"RingPlaneFlipMover",
 		"TautomerizeAnomerMover",
 	],
+    
+    "chromophore" : [
+        "ReadResidueCoordinatesFromPDBTests",
+    ],
 
 	"cluster" : [
 		"APCluster",
@@ -927,6 +931,7 @@ testinputfiles = [
 	"branch_angle/branch_angle_2.txt",
 #	"core/conformation/dock_in.pdb", # RestrictToInterfaceOperation and others in toolbox use this pdb file
 	"carbohydrates/N-linked_14-mer_glycan.pdb",
+    "chromophore/test.pdb",
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",

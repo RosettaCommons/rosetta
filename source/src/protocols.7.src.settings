@@ -109,6 +109,9 @@ sources = {
 		"Gp_quantification_metrics",
 		"UBQ_GTPaseMover",
 	],
+    "protocols/chromophore": [
+        "ReadResidueCoordinatesFromPDB",
+    ],
 	"protocols/constel" : [
 		"AromaticFilter",
 		"ChainTerm",
