@@ -34,7 +34,7 @@ ATOM  H2' Hapo H   0.09
 ATOM HO2' Hpol H   0.42
 ATOM  H1' Hapo H   0.09
 ATOM  H1  Hpol H   0.26
-ATOM  H2  Hapo H   0.13
+ATOM  H2  Haro H   0.13
 ATOM  H8  Haro H   0.12
 BOND  P    OP2
 BOND  P    OP1

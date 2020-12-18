@@ -68,7 +68,7 @@ MC_RNA_KIC_Sampler::MC_RNA_KIC_Sampler(
 	verbose_( false ),
 	did_close_( false ),
 	used_current_solution_( false ),
-	cutpoint_handler_(TransientCutpointHandlerOP ( new TransientCutpointHandler( moving_suite, chainbreak_suite, change_ft ))),
+	cutpoint_handler_(TransientCutpointHandlerOP( new TransientCutpointHandler( moving_suite, chainbreak_suite, change_ft ))),
 	solution_( 0 )
 {
 	update_pose_ = mc_pose;

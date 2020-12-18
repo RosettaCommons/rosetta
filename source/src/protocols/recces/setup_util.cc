@@ -95,8 +95,8 @@ pose_setup_turner(
 	// Need to specify which nucleotides get 'A-form' range, which will
 	//  also determine how large the Gaussian steps are during sampling.
 	std::string secstruct_legacy;
-	core::Size const len1( seq1.size() );
-	core::Size const len2( seq2.size() );
+	core::Size const len1( core::pose::get_sequence_len( seq1 ) );
+	core::Size const len2( core::pose::get_sequence_len( seq2 ) );
 	core::Size const n_bp( std::min( len1, len2 ) );
 	core::Size const total_len( len1 + len2 );
 	for ( core::Size i = 1; i <= total_len; ++i ) {

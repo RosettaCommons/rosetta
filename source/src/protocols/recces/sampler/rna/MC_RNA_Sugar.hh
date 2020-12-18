@@ -40,13 +40,13 @@ public:
 	void init() override;
 
 	/// @brief Reset to current angle
-	void reset() override { stored_pucker_state_ = active_pucker_state_; }
+	void reset() override { active_pucker_state_ = stored_pucker_state_; }
 
 	/// @brief Generate new active DOFs
 	void operator++() override;
 
 	/// @brief Update the stored DOFs
-	void update() override { active_pucker_state_ = stored_pucker_state_; }
+	void update() override { stored_pucker_state_ = active_pucker_state_; }
 
 	/// @brief Apply DOFs to pose
 	void apply( core::pose::Pose & pose ) override;
