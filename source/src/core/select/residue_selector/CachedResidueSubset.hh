@@ -51,6 +51,8 @@ public:
 	ResidueSubsetCOP get_subset( std::string const & name ) const;
 
 	bool has_subset( std::string const & name ) const;
+	/// @brief used to search for residue subsets with a given prefix
+	bool has_subset_prefix( std::string const & name ) const;
 
 private:
 	ResidueSubsetMap subsets_;

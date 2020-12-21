@@ -11,6 +11,7 @@
 /// @brief Use this when you give Rosetta a multimer to design and you want the sequences of the chains to be the same but you don't need strict physical symmetry.
 /// @details see SequenceSymmetricAnnealer for more info
 /// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Updated by Tim Neary, timdot10@gmail.com
 
 
 #ifndef INCLUDED_core_pack_task_operation_KeepSequenceSymmetry_hh
@@ -20,9 +21,15 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 
+#include <core/select/residue_selector/ResidueSelector.fwd.hh>
+
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+#include <utility/vector0.hh>
+
+// Cpp headers
+#include <string>
 
 namespace core {
 namespace pack {
@@ -67,8 +74,16 @@ public:
 		return setting_;
 	}
 
-private:
-	bool setting_;
+	/// @brief Sets the name used for determining sequence symmetric selectors.
+	void
+	set_prefix_name( std::string const & setting ) { setup_magic_name_prefix_ = "SequenceSymmetricAnnealer_" + setting + "_"; }
+
+	std::string
+	prefix_name() const { return setup_magic_name_prefix_; }
+
+private: // Member variables
+	bool setting_ = true;
+	std::string setup_magic_name_prefix_;
 
 };
 

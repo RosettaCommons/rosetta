@@ -17,6 +17,7 @@
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 
 #include <basic/Tracer.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
@@ -89,6 +90,19 @@ bool
 CachedResidueSubset::has_subset( std::string const & name ) const
 {
 	return ( subsets_.find( name ) != subsets_.end() );
+}
+
+
+bool
+CachedResidueSubset::has_subset_prefix( std::string const & name ) const
+{
+	for ( auto const & it : subsets_ ) {
+		std::string const key_name = it.first;
+		if ( utility::startswith( key_name, name ) ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 basic::datacache::CacheableDataOP

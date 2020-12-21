@@ -9,6 +9,7 @@
 
 /// @file   core/pack/annealer/SequenceSymmetricAnnealer.cc
 /// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Updated by Tim Neary, timdot10@gmail.com
 
 
 #include <basic/Tracer.hh>
@@ -34,6 +35,9 @@
 #include <utility/vector1.hh>
 #include <utility/cxx_versioning_macros.hh>
 
+// External headers
+#include <boost/function.hpp>
+
 //C++
 #include <fstream>
 #include <iostream>
@@ -51,65 +55,6 @@ namespace core {
 namespace pack {
 namespace annealer {
 
-namespace {
-
-//MUCH of this is infuenced by StoredResidueSubsetSelector.cc
-void
-search_pose_for_residue_subsets(
-	core::pose::Pose const & pose,
-	utility::vector1< utility::vector1< bool > > & residue_subsets
-){
-	residue_subsets.clear();
-
-	//Look for selections
-	if ( ! pose.data().has( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET ) ) {
-		return;
-	}
-
-	auto const temp_ptr = pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET );
-	core::select::residue_selector::CachedResidueSubset const & stored_subsets =
-		*( utility::pointer::static_pointer_cast< core::select::residue_selector::CachedResidueSubset const >( temp_ptr ) );
-
-	for ( core::Size num = 1; true; ++num ) {
-		std::string const magic_selector_name =
-			"SequenceSymmetricAnnealer_" + std::to_string( num );
-		if ( ! stored_subsets.has_subset( magic_selector_name ) ) {
-#ifndef NDEBUG
-			TR << "Subset " << magic_selector_name << " is absent" << std::endl;
-#endif
-			break;
-		}
-		core::select::residue_selector::ResidueSubsetCOP subset =
-			stored_subsets.get_subset( magic_selector_name );
-#ifndef NDEBUG
-		TR << "Printing Subset #" << num << std::endl;
-		for ( core::Size resid = 1; resid <= subset->size(); ++resid ) {
-			TR << resid << " " << (*subset)[ resid ] << std::endl;
-		}
-#endif
-		runtime_assert( subset != nullptr );
-		residue_subsets.emplace_back( * subset );
-	}
-
-}
-
-
-core::Size
-determine_num_chains( core::pose::Pose const & pose ){
-	//Okay this implementation is kinda lazy, but is cold so it's okay
-	//we need to count the number of chains that have nonvirtual residues in them
-	//The goal is to avoid caring about virtual roots and similar ideas
-	std::unordered_set< core::Size > chains;
-	for ( core::Size resid = 1; resid <= pose.size(); ++resid ) {
-		if ( ! pose.residue( resid ).is_virtual_residue() ) {
-			chains.insert( pose.chain( resid ) );
-		}
-	}
-	//TR << "chains.size(): " << chains.size() << std::endl;
-	return chains.size();
-}
-
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
@@ -122,7 +67,8 @@ SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
 	FixbbRotamerSetsCOP rotamer_sets,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,
-	FArray1D_float & rot_freq
+	FArray1D_float & rot_freq,
+	std::string const & rs_prefix
 ):
 	RotamerAssigningAnnealer(
 	rot_to_pack,
@@ -138,10 +84,10 @@ SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
 	starting_sequence_( pose.sequence() ),
 	pdb_info_( pose.pdb_info() ),
 	ig_(std::move(ig)),
-	record_annealer_trajectory_( false )
+	record_annealer_trajectory_( false ),
+	rs_prefix_( rs_prefix )
 {
-	num_chains_ = determine_num_chains( pose );
-	search_pose_for_residue_subsets( pose, residue_subsets_ );
+	search_pose_for_residue_subsets( pose );
 	power_mode_ = ! residue_subsets_.empty();
 }
 
@@ -154,7 +100,8 @@ SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
 	FixbbRotamerSetsCOP rotamer_set,
 	FArray1_int & current_rot_index,
 	bool calc_rot_freq,
-	FArray1D_float & rot_freq
+	FArray1D_float & rot_freq,
+	std::string const & rs_prefix
 ):
 	RotamerAssigningAnnealer(
 	(ig->get_num_total_states()),
@@ -169,146 +116,292 @@ SequenceSymmetricAnnealer::SequenceSymmetricAnnealer(
 	starting_sequence_( pose.sequence() ),
 	pdb_info_( pose.pdb_info() ),
 	ig_(std::move(ig)),
-	record_annealer_trajectory_( false )
+	record_annealer_trajectory_( false ),
+	rs_prefix_( rs_prefix )
 {
-	num_chains_ = determine_num_chains( pose );
-	search_pose_for_residue_subsets( pose, residue_subsets_ );
+	search_pose_for_residue_subsets( pose );
 	power_mode_ = ! residue_subsets_.empty();
 }
 
 /// @brief virtual destructor
 SequenceSymmetricAnnealer::~SequenceSymmetricAnnealer() = default;
 
+core::Size
+process_linked_res_set(
+	std::unordered_set< core::Size> & set,
+	utility::vector1< utility::vector1< Size > > const & corresponding_mress_for_mres,
+	utility::vector1< bool > & processed ) {
+	core::Size count = 0;
+	for ( core::Size const lkd_mres : set ) { // now create an union from all linked mres
+		if ( processed[ lkd_mres ] == true ) {
+			++count;
+			continue; // skip if we have already processed this mres.
+		}
+
+		for ( core::Size jj = 1; jj <=corresponding_mress_for_mres[ lkd_mres ].size(); ++jj ) {
+			set.emplace( corresponding_mress_for_mres[ lkd_mres ][ jj ] );
+		}
+		++count;
+		processed[ lkd_mres ] = true;
+	}
+	return count;
+}
+
 //NODISCARD_ATTR
 utility::vector1< utility::vector1< Size > >
 SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
-	Size const nmoltenres = ig_->get_num_nodes();
-
-	//#ifndef NDEBUG //This is worthwhile in release mode
-	//check quality of residue_subsets_
-	for ( core::Size ii = 1; ii < residue_subsets_.size(); ++ii ) {
-		for ( core::Size jj = ii + 1; jj <= residue_subsets_.size(); ++jj ) {
-			//check they are the same size
-			debug_assert( residue_subsets_[ ii ].size() == residue_subsets_[ jj ].size() );
-
-			//check that no residue is enabled in BOTH
-			for ( core::Size resid = 1; resid <= residue_subsets_[ ii ].size(); ++resid ) {
-				bool const both_true = residue_subsets_[ ii ][ resid ] && residue_subsets_[ jj ][ resid ];
-				if ( both_true ) {
-					utility_exit_with_message( "Residue is enabled for multiple subsets. This is currently not supported for the SequenceSymmetricAnnealer. The residue in question is " + std::to_string( resid ) + " but there may be additional violators." );
-				}
-			}
-		}
-	}
-	//#endif
-
-	utility::vector1< utility::vector1< Size > > corresponding_mress_for_mres( nmoltenres );
-
-	using Num  = Size;
-	using Mres = Size;
-
 	struct Key {
-		Num num;
-		Size selection = 0;
+		core::Size idx;
+		core::Size sele_uid = 0;
 
 		bool operator == ( Key const & o ) const {
-			return o.num == num && o.selection == selection;
+			return o.idx == idx && o.sele_uid == sele_uid;
 		}
 	};
 
 	//https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key
 	struct KeyHasher {
 		std::size_t operator() ( Key const & k ) const {
-			return ((std::hash< Num >()( k.num )
-				^ (std::hash< Size >()(k.selection) << 1)) >> 1);
+			return ((std::hash< core::Size >()( k.idx )
+				^ (std::hash< core::Size >()( k.sele_uid ) << 1)) >> 1);
 		}
 	};
 
+	using SizePair = std::pair< core::Size, core::Size >;
+	struct SizePairHash { // So pair can be hased
+		std::size_t operator() ( std::pair<core::Size, core::Size> const & pair ) const
+		{
+			return (std::hash< core::Size >()( pair.first )
+				^ std::hash< core::Size >()( pair.second ));
+		}
+	};
 
-	std::unordered_map< Key, std::list< Mres >, KeyHasher > mress_for_key;
-	mress_for_key.max_load_factor( 0.1 );
+	Size const nmoltenres = ig_->get_num_nodes();
+	utility::vector1< utility::vector1< Size > > corresponding_mress_for_mres( nmoltenres );
 
+	std::unordered_map< Key, std::list< core::Size >, KeyHasher > idx_for_key;
+	idx_for_key.max_load_factor( 0.1 );
+	std::unordered_map< SizePair, core::Size, SizePairHash > idx_tracker;
+	idx_tracker.max_load_factor( 0.1 );
+
+	if ( residue_subsets_.size() == 0 ) return corresponding_mress_for_mres; // We have no links so want to return empty vect of vect
+	core::Size num_res = residue_subsets_[ 1 ][ 1 ].size(); // Technically this may fail if the corresponding residue selector is cached and then residues are added/removed
+
+	for ( core::Size resid = 1; resid <= num_res; ++resid ) {
+		Key key;
+		for ( core::Size linked_subset = 1; linked_subset <= residue_subsets_.size(); ++linked_subset ) {
+			key.sele_uid = linked_subset;
+
+			for ( core::Size sele_id_in_group = 1; sele_id_in_group <= residue_subsets_[ linked_subset ].size(); ++sele_id_in_group ) {
+				if ( residue_subsets_[ linked_subset ][ sele_id_in_group ][ resid ] ) {
+					// std::unordered_map< SizePair, core::Size >::iterator
+					auto it = idx_tracker.find( SizePair( linked_subset, sele_id_in_group ) ); // get iterator to key
+					core::Size idx;
+					if ( it == idx_tracker.end() ) {
+						idx = 0;
+						idx_tracker[ SizePair( linked_subset, sele_id_in_group ) ] = 0;
+					} else {
+						++(it->second);
+						idx = it->second;
+					}
+					key.idx = idx;
+					idx_for_key[ key ].emplace_back( resid );
+				}
+			}
+		}
+	}
+
+	std::unordered_map< core::Size, core::Size > mres_to_resid; // Using map as pdb_num may be greater than nmoltenres
+
+	// get map of resid -> mres
 	for ( Size mres = 1; mres <= nmoltenres; ++mres ) {
 		//TR << mres << " " << rotamer_sets()->nrotamers_for_moltenres( mres ) << std::endl;
 
 		if ( rotamer_sets()->nrotamers_for_moltenres( mres ) == 0 ) continue;
 		if ( rotamer_sets()->rotamer_for_moltenres( mres, 1 )->is_virtual_residue() ) continue;
 		Size const resid = rotamer_sets()->moltenres_2_resid( mres );
-		Size const pdb_num = pdb_info_->number( resid );
+		// Size const pdb_num = pdb_info_->number( resid );
 
-		Key key;
-		key.num = pdb_num;
-		key.selection = 0;
-
-		for ( core::Size ii = 1; ii <= residue_subsets_.size(); ++ii ) {
-			if ( residue_subsets_[ ii ][ resid ] ) {
-				key.selection = ii;
-				break;
-			}
-		}
-
-		KeyHasher kh;
-		TR << mres << ", " << key.selection << "," << key.num << "," << kh( key ) << std::endl;
-
-		if ( key.selection > 0 || ! power_mode_ ) {
-			//If the user provides residue subsets, do not enforce sequence symmetry on regions not covered by any selection
-			mress_for_key[ key ].push_back( mres );
-		}
+		mres_to_resid[ resid ] = mres;
 	}
 
-#ifndef NDEBUG
-	TR << "START RESID CLUSTERS" << std::endl;
-#endif
+	// Build linked residues using mres not resids
+	for ( std::pair< const Key, std::list< core::Size > > const & iter : idx_for_key ) {
+		std::list< core::Size > const & res_ids = iter.second;
 
-	for ( std::pair< const Key, std::list< Mres > > const & iter : mress_for_key ) {
-		std::list< Mres > const & mress = iter.second;
+		for ( auto iter1 = res_ids.begin(); iter1 != res_ids.end(); ++iter1 ) {
+			auto mres1 = mres_to_resid.find( *iter1 );
+			if (  mres1 == mres_to_resid.end() ) continue;
 
-		for ( auto iter = mress.begin(); iter != mress.end(); ++iter ) {
-			Mres const mres1 = * iter;
-#ifndef NDEBUG
-			TR << mres1 << " ";
-#endif
-			for ( auto iter2 = std::next( iter ); iter2 != mress.end(); ++iter2 ) {
-				Mres const mres2 = * iter2;
-				corresponding_mress_for_mres[ mres1 ].push_back( mres2 );
-				corresponding_mress_for_mres[ mres2 ].push_back( mres1 );
+			for ( auto iter2 = std::next( iter1 ); iter2 != res_ids.end(); ++iter2 ) {
+				auto mres2 = mres_to_resid.find( *iter2 );
+				if (  mres2 == mres_to_resid.end() ) {
+					continue;
+				}
+				corresponding_mress_for_mres[ mres1->second ].push_back( mres2->second );
+				corresponding_mress_for_mres[ mres2->second ].push_back( mres1->second );
 				//TR << "ADDING " << mres1 << " and " << mres2 << std::endl;
 			}
 		}
-#ifndef NDEBUG
-		TR << std::endl;
-#endif
-
 	}
 
-#ifndef NDEBUG
-	TR << "END RESID CLUSTERS" << std::endl;
-#endif
+	// Now ensure that we have union of all linked residues and remove duplicate entries
+	utility::vector1< bool > processed( corresponding_mress_for_mres.size(), false ); // used to speed up processing
+	for ( core::Size ii = 1; ii <= corresponding_mress_for_mres.size(); ++ii ) {
+		if ( processed[ ii ] == true ) continue; // Skip this mres if we have already processed it
 
+		std::unordered_set< core::Size > set;
+		for ( core::Size jj = 1; jj <= corresponding_mress_for_mres[ ii ].size(); ++jj ) {
+			set.emplace( corresponding_mress_for_mres[ ii ][ jj ] );
+		}
+		processed[ ii ] = true;
 
+		core::Size count = 0;
+		while ( count < set.size() ) {
+			// need to repeat the set creation until all res are linked
+			// This process can almost certainly be optimised but is only ever done once so its probably ok as is.
+			count = process_linked_res_set( set, corresponding_mress_for_mres, processed );
+		}
+
+		for ( core::Size const mres : set ) {
+			std::unordered_set< core::Size > mres_set; // to remove current res
+			std::copy( set.begin(), set.end(), std::inserter( mres_set, mres_set.begin() ) );
+			mres_set.erase( mres );
+			corresponding_mress_for_mres[ mres ] = utility::vector1< core::Size >( mres_set.begin(), mres_set.end() );
+		}
+	}
 	return corresponding_mress_for_mres;
 }
 
-/// @brief sim_annealing for fixed backbone design mode
-void SequenceSymmetricAnnealer::run()
-{
-	Size const nmoltenres = ig_->get_num_nodes();
+void
+SequenceSymmetricAnnealer::update_shared_residue_map(
+	core::Size const id,
+	std::unordered_map< char, core::Size > & map ) const {
 
-	utility::vector1< utility::vector1< Size > > const corresponding_mress_for_mres =
-		create_corresponding_mress_for_mres();
+	rotamer_set::RotamerSetCOP rotamer_set =
+		rotamer_sets()->rotamer_set_for_moltenresidue( id );
+	Size const num_rots = rotamer_set->num_rotamers();
 
 #ifndef NDEBUG
-	TR << "Linked Resids:" << std::endl;
+	TR << "Residue type set for resid (Rosetta numbering): " << std::to_string( rotamer_sets()->moltenres_2_resid( id ) ) << " = ";
+#endif
+	std::unordered_set< char > curr_set; // To store all res_types
+	// Get the current set of residue types for the given mres (id)
+	for ( Size rot_id = 1; rot_id <= num_rots; ++rot_id ) {
+		char const res_type = rotamer_set->rotamer( rot_id )->name1();
+		curr_set.insert( res_type );
+	}
+
+	// Map contains a count of the number of times a residue type was seen for each linked mres
+	// now we need to update the map with whether the res type was seen for the current mres
+	for ( char const res_n1 : curr_set ) {
+#ifndef NDEBUG
+		TR << res_n1 << ", ";
+#endif
+		if ( map.find( res_n1 ) == map.end() ) {
+			map.emplace( std::make_pair( res_n1, 1 ) );
+		} else {
+			map[ res_n1 ] += 1;
+		}
+	}
+#ifndef NDEBUG
+	TR << std::endl;
+#endif
+}
+
+std::unordered_set< char >
+SequenceSymmetricAnnealer::get_shared_residue_types(
+	core::Size const curr_mres,
+	utility::vector1< core::Size > const & linked_res ) const {
+
+	std::unordered_set< char > common_res_types;
+
+	if ( linked_res.size() == 0 ) {
+		return common_res_types;
+	}
+	// A map with a count of the number of times a residue type was seen for a set of mres
+	std::unordered_map< char, core::Size > shared_res_types;
+
+	// Now we need to get a set of the residue types present for a given set of linked_res
+	// As linked_res does not include the current res, must add it here.
+	update_shared_residue_map( curr_mres, shared_res_types );
+
+	for ( core::Size ii = 1; ii <= linked_res.size(); ++ii ) {
+		update_shared_residue_map( linked_res[ ii ], shared_res_types ); // Update map for the linked mres
+
+		// Determine if any (rotamer) residue types are shared across all linked res
+		bool any_shared = false;
+		for ( auto const & it : shared_res_types ) {
+			if ( it.second == ii + 1 ) { // Accounts for addition of current res too
+				any_shared = true;
+				break;
+			}
+		}
+		if ( ! any_shared ) {
+			return common_res_types;
+		}
+	}
+
+	// Now make set with all res types found in each linked residue.
+	for ( auto const & it : shared_res_types ) {
+		if ( it.second == linked_res.size() + 1 ) common_res_types.insert( it.first );
+	}
+	return common_res_types;
+}
+
+void
+SequenceSymmetricAnnealer::print_linked_residues( utility::vector1< utility::vector1< core::Size > > const & corresponding_mress_for_mres ) const {
+	TR << "Linked Resids (Rosetta numbering):" << std::endl;
 	for ( core::Size mres = 1; mres <= corresponding_mress_for_mres.size(); ++mres ) {
-		TR << "mres_" << mres;
+		Size const resid_1 = rotamer_sets()->moltenres_2_resid( mres );
+		TR << "Residue " << resid_1 << " links: ";
 		auto const & v = corresponding_mress_for_mres[ mres ];
 		for ( auto const i : v ) {
-			TR << " " << i;
+			Size const resid_2 = rotamer_sets()->moltenres_2_resid( i );
+			TR << " " << resid_2;
 		}
 		TR << std::endl;
 	}
 	TR << "End Linked Resids" << std::endl;
-#endif
+}
+
+SeqSymmAnnealerSetup
+SequenceSymmetricAnnealer::setup_for_linked_residues() {
+	utility::vector1< utility::vector1< Size > > const corresponding_mress_for_mres =
+		create_corresponding_mress_for_mres();
+	print_linked_residues( corresponding_mress_for_mres );
+
+	// Determine if any mres do not share any residue types as this is an impossible problem for this annealer.
+	utility::vector1< CharSetOP > common_res_types( ig_->get_num_nodes() );
+	for ( core::Size ii = 1; ii <= corresponding_mress_for_mres.size(); ++ii ) {
+		auto new_set = utility::pointer::make_shared< std::unordered_set< char > >(
+			get_shared_residue_types( ii, corresponding_mress_for_mres[ ii ] ) );
+		if ( ! corresponding_mress_for_mres[ ii ].empty() && new_set->empty() ) {
+			// If there are linked res but no common residue types
+			std::string exit_msg;
+			exit_msg +=
+				"Some linked residues were found to not share any residue types, though there may be more. "
+				"The linked residues (Rosetta numbering) were: " + std::to_string( rotamer_sets()->moltenres_2_resid( ii ) ) + " ";
+			for ( core::Size const mres : corresponding_mress_for_mres[ ii ] ) exit_msg += std::to_string( rotamer_sets()->moltenres_2_resid( mres ) ) + " ";
+			utility_exit_with_message( exit_msg );
+		}
+
+		for ( auto const & mres : corresponding_mress_for_mres[ ii ] ) common_res_types[ mres ] = new_set; // assign all linked res the common set.
+	}
+
+	return SeqSymmAnnealerSetup{ corresponding_mress_for_mres, common_res_types };
+}
+
+/// @brief sim_annealing for fixed backbone design mode
+void
+SequenceSymmetricAnnealer::run() {
+	auto setup_info = setup_for_linked_residues(); // Setup for annealer run, get linked res information.
+	utility::vector1< utility::vector1< core::Size > > corresponding_mress_for_mres =
+		std::move( setup_info.corresponding_mress_for_mres );
+	utility::vector1< CharSetOP > common_res_types = // CharSetOP == utility::pointer::shared_ptr< std::unordered_set< char > >
+		std::move( setup_info.common_res_types );
+
+	Size const nmoltenres = ig_->get_num_nodes();
 
 	FArray1D_int state_on_node( nmoltenres,0 ); // parallel representation of interaction graph's state
 	FArray1D_int best_state_on_node( nmoltenres,0 );
@@ -355,8 +448,8 @@ void SequenceSymmetricAnnealer::run()
 
 		int inneriterations = get_inneriterations();
 
-		float treshold_for_deltaE_inaccuracy = std::sqrt( get_temperature() );
-		ig_->set_errorfull_deltaE_threshold( treshold_for_deltaE_inaccuracy );
+		float threshold_for_deltaE_inaccuracy = std::sqrt( get_temperature() );
+		ig_->set_errorfull_deltaE_threshold( threshold_for_deltaE_inaccuracy );
 
 		//inner loop
 		for ( int n = 1; n <= inneriterations; ++n ) {
@@ -365,22 +458,14 @@ void SequenceSymmetricAnnealer::run()
 
 			char const name1 = rotamer_sets()->rotamer( ranrotamer )->name1();
 			int const moltenres_id = rotamer_sets()->moltenres_for_rotamer( ranrotamer );
-			int const resid = rotamer_sets()->moltenres_2_resid( moltenres_id );
-
-			//Do not let position mutate if we can not mutate its partner (disabled in power mode)
-			if ( corresponding_mress_for_mres[ moltenres_id ].size() != num_chains_ - 1 && ! power_mode_ ) {
-				//only allow if this does not cause a mutation
-				if ( name1 != starting_sequence_[ resid - 1 ] ) {
-					continue;
-				}
-			}
-
+			// int const resid = rotamer_sets()->moltenres_2_resid( moltenres_id );
 
 			/// removed const from rotamer_state_on_moltenres for code that virtualizes waters half the time
 			int rotamer_state_on_moltenres = rotamer_sets()->rotid_on_moltenresidue( ranrotamer );
 			int const prevrotamer_state = state_on_node(moltenres_id);
 
-			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
+			if ( rotamer_state_on_moltenres == prevrotamer_state && corresponding_mress_for_mres[ moltenres_id ].empty() ) continue;
+			// can only implicitly know to skip iteration if there is no links
 
 			// for waters, set to virtual 50% of the time
 			core::conformation::Residue curres( *rotamer_sets()->rotamer_for_moltenres(moltenres_id, rotamer_state_on_moltenres) );
@@ -391,9 +476,7 @@ void SequenceSymmetricAnnealer::run()
 				if ( rand_num < (nrot/2.0-1)/nrot ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 			}
 
-			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
-
-			if ( corresponding_mress_for_mres.size() == 0 ) {
+			if ( corresponding_mress_for_mres[ moltenres_id ].empty() ) {
 				//Do normal protocol
 
 				core::PackerEnergy previous_energy_for_node( 0.0 ), delta_energy( 0.0 );
@@ -403,12 +486,11 @@ void SequenceSymmetricAnnealer::run()
 				if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) ) {
 					currentenergy = ig_->commit_considered_substitution();
 					state_on_node(moltenres_id) = rotamer_state_on_moltenres;
-					if ( (prevrotamer_state == 0)||(currentenergy < bestenergy() ) ) {
+					if ( (prevrotamer_state == 0)||( currentenergy < bestenergy() ) ) {
 						best_state_on_node = state_on_node;
 						bestenergy() = currentenergy;
 					}
 				}
-
 				continue;
 
 			} else {
@@ -424,36 +506,21 @@ void SequenceSymmetricAnnealer::run()
 					int previous_state;
 				};
 
-				bool any_previous_unassigned = false;
+				// If picked a non common residue type then skip iteration
+				if ( common_res_types[ moltenres_id ]->find( name1 ) == common_res_types[ moltenres_id ]->end() ) continue;
 
-				std::list< SavedState > starting_state;
+				bool any_previous_unassigned = false;
+				utility::vector1< SavedState > starting_state;
+
 				starting_state.emplace_back( moltenres_id, prevrotamer_state );
 				any_previous_unassigned |= ( prevrotamer_state == 0 );
-				bool fail = false;
+
 				for ( auto const other_moltenres_id : corresponding_mress_for_mres[ moltenres_id ] ) {
 					//cache current state
 					auto const state = state_on_node( other_moltenres_id );
 					any_previous_unassigned |= ( state == 0 );
 					starting_state.emplace_back( other_moltenres_id, state );
-
-					//ensure that there is at least one candidate state
-					rotamer_set::RotamerSetCOP other_rotamer_set =
-						rotamer_sets()->rotamer_set_for_moltenresidue( other_moltenres_id );
-					Size const num_other_rots = other_rotamer_set->num_rotamers();
-					bool at_least_one_good_one = false;
-					//Size num_good_ones = 0;
-					for ( Size other_rot_id=1; other_rot_id<=num_other_rots; ++other_rot_id ) {
-						if ( other_rotamer_set->rotamer( other_rot_id )->name1() == name1 ) {
-							at_least_one_good_one = true;
-							break;
-							//++num_good_ones;
-						}
-					}
-					fail |= ! at_least_one_good_one;
-					//TR << num_good_ones << " good rots for " << other_moltenres_id << std::endl;
 				}
-
-				if ( fail ) continue;
 
 				core::PackerEnergy global_previous_energy = 0;
 				core::PackerEnergy global_deltaE = 0;
@@ -473,22 +540,22 @@ void SequenceSymmetricAnnealer::run()
 				global_deltaE = delta_energy;
 
 				std::map< int /*Node*/, int /*state*/ > state_for_node_map;
+				core::Size num_changes = 0;
 
-				for ( auto const other_moltenres_id : corresponding_mress_for_mres[ moltenres_id ] ) {
-
+				for ( core::Size ii = 1; ii <= corresponding_mress_for_mres[ moltenres_id ].size(); ++ii ) {
+					core::Size const other_moltenres_id = corresponding_mress_for_mres[ moltenres_id ][ ii ];
 					//Determine candidate rotamers for this position
 					rotamer_set::RotamerSetCOP other_rotamer_set =
 						rotamer_sets()->rotamer_set_for_moltenresidue( other_moltenres_id );
 					Size const num_other_rots = other_rotamer_set->num_rotamers();
 					utility::vector1< Size > local_ids_for_good_rotamers;
-					for ( Size other_rot_id=1; other_rot_id<=num_other_rots; ++other_rot_id ) {
+					for ( Size other_rot_id = 1; other_rot_id <= num_other_rots; ++other_rot_id ) {
 						if ( other_rotamer_set->rotamer( other_rot_id )->name1() == name1 ) {
 							local_ids_for_good_rotamers.push_back( other_rot_id );
 						}
 					}
 
 					//TR << local_ids_for_good_rotamers.size() << " good rots for " << other_moltenres_id << std::endl;
-
 
 					//This should have been checked ~30 lines ago
 					runtime_assert( ! local_ids_for_good_rotamers.empty() );//failure here is failure of the code, not the runtime
@@ -497,29 +564,33 @@ void SequenceSymmetricAnnealer::run()
 					auto const rand_index =
 						numeric::random::random_range( 1, local_ids_for_good_rotamers.size() );
 					int const other_rotamer_state = local_ids_for_good_rotamers[ rand_index ];
-					ig_->consider_substitution(
-						//input:
-						other_moltenres_id,
-						other_rotamer_state,
-						//output:
-						delta_energy,
-						previous_energy_for_node
-					);
-					current_energy = ig_->commit_considered_substitution();
-					global_previous_energy += previous_energy_for_node;
-					global_deltaE += delta_energy;
 
+					if ( starting_state[ ii ].previous_state != other_rotamer_state ) {
+						// Can skip the subsitution consideriation if the new random state is identical to previous.
+
+						ig_->consider_substitution(
+							//input:
+							other_moltenres_id,
+							other_rotamer_state,
+							//output:
+							delta_energy,
+							previous_energy_for_node
+						);
+						current_energy = ig_->commit_considered_substitution();
+						global_previous_energy += previous_energy_for_node;
+						global_deltaE += delta_energy;
+						++num_changes;
+					}
 					state_for_node_map[ other_moltenres_id ] = other_rotamer_state;
 				}
 
-				core::Size const num_changes =
-					corresponding_mress_for_mres[ moltenres_id ].size() + 1;
 				core::PackerEnergy const previous_energy_average =
 					global_previous_energy / num_changes;
 				core::PackerEnergy const delta_energy_average = global_deltaE / num_changes;
 
 				if ( any_previous_unassigned ||
 						pass_metropolis( previous_energy_average, delta_energy_average ) ) {
+					// Accept changes if any state is previously unassigned or the average change in energy passes the MC.
 
 					state_on_node( moltenres_id ) = rotamer_state_on_moltenres;
 					for ( auto const & node_state_pair : state_for_node_map ) {
@@ -527,7 +598,7 @@ void SequenceSymmetricAnnealer::run()
 					}
 
 					currentenergy = current_energy;
-					if ( any_previous_unassigned || (currentenergy < bestenergy() ) ) {
+					if ( any_previous_unassigned || ( currentenergy < bestenergy() ) ) {
 						best_state_on_node = state_on_node;
 						bestenergy() = currentenergy;
 					}
@@ -580,14 +651,59 @@ void SequenceSymmetricAnnealer::run()
 	}
 }
 
-void SequenceSymmetricAnnealer::record_annealer_trajectory( bool setting ) {
+void
+SequenceSymmetricAnnealer::record_annealer_trajectory( bool setting ) {
 	record_annealer_trajectory_ = setting;
 }
 
-void SequenceSymmetricAnnealer::trajectory_file_name( std::string const & setting ) {
+void
+SequenceSymmetricAnnealer::trajectory_file_name( std::string const & setting ) {
 	trajectory_file_name_ = setting;
 }
 
+//MUCH of this is infuenced by StoredResidueSubsetSelector.cc
+void
+SequenceSymmetricAnnealer::search_pose_for_residue_subsets( core::pose::Pose const & pose ) {
+	residue_subsets_.clear();
+
+	//Look for selections
+	if ( ! pose.data().has( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET ) ) {
+		return;
+	}
+
+	auto const temp_ptr = pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::STORED_RESIDUE_SUBSET );
+	core::select::residue_selector::CachedResidueSubset const & stored_subsets =
+		*( utility::pointer::static_pointer_cast< core::select::residue_selector::CachedResidueSubset const >( temp_ptr ) );
+
+	for ( core::Size ii = 0; true; ++ii ) {
+		if ( ! stored_subsets.has_subset_prefix( rs_prefix_ + std::to_string(ii) ) ) {
+			break;
+		}
+		utility::vector1< utility::vector1< bool > > linked_subsets;
+		for ( core::Size jj = 0; true; ++jj ) {
+			std::string const magic_selector_name =
+				rs_prefix_ + std::to_string(ii) + "_" + std::to_string(jj);
+			if ( ! stored_subsets.has_subset( magic_selector_name ) ) {
+#ifndef NDEBUG
+				TR << "Subset " << magic_selector_name << " is absent" << std::endl;
+#endif
+				break;
+			}
+			core::select::residue_selector::ResidueSubsetCOP subset =
+				stored_subsets.get_subset( magic_selector_name );
+			runtime_assert( subset != nullptr );
+#ifndef NDEBUG
+			TR << "Printing Subset # " << ii << "," << jj << std::endl;
+			for ( core::Size resid = 1; resid <= subset->size(); ++resid ) {
+				TR << resid << " " << (*subset)[ resid ] << std::endl;
+			}
+#endif
+			linked_subsets.emplace_back( *subset );
+		}
+		residue_subsets_.emplace_back( linked_subsets );
+	}
+
+}
 
 }//end namespace annealer
 }//end namespace pack

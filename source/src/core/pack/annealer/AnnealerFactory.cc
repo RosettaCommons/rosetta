@@ -63,7 +63,8 @@ AnnealerFactory::create_annealer(
 		TR.Debug << "Creating SequenceSymmetricAnnealer" << std::endl;
 		return utility::pointer::make_shared< SequenceSymmetricAnnealer >(
 			pose, rot_to_pack, bestrotamer_at_seqpos, bestenergy, start_with_current, ig,
-			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq );
+			rotamer_sets, current_rot_index, calc_rot_freq, rot_freq,
+			task->sequence_symmetric_uid_prefix() );
 	} else if ( task->rotamer_couplings_exist() ) {
 		TR.Debug << "Creating FixbbCoupledRotamerSimAnnealer" << std::endl;
 		return utility::pointer::make_shared< FixbbCoupledRotamerSimAnnealer >(

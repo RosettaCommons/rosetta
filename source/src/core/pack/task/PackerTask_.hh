@@ -294,9 +294,21 @@ public:
 		return keep_sequence_symmetry_;
 	}
 
+	/// @brief Enables SequenceSymmetricAnnealer
 	void
 	keep_sequence_symmetry( bool const setting ) override {
 		keep_sequence_symmetry_ = setting;
+	}
+
+	std::string
+	sequence_symmetric_uid_prefix() const override {
+		return seq_sym_uid_prefix_;
+	}
+
+	/// @brief Sets the prefix used when searching for symmetry defining residue selectors in the datacache
+	void
+	sequence_symmetric_uid_prefix( std::string const & prefix ) override {
+		seq_sym_uid_prefix_ = prefix;
 	}
 
 	/// @brief is there at RotamerCouplings object to worry about? (for DNA GC AT pairing, etc)
@@ -511,6 +523,7 @@ private:
 	bool smart_annealer_disable_during_quench_ = true;
 
 	bool keep_sequence_symmetry_ = false;
+	std::string seq_sym_uid_prefix_;
 
 	/// @brief keep track: are we optimizing H at all positions?
 	/// don't use linmem_ig_ if so.

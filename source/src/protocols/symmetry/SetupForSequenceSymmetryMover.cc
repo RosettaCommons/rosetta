@@ -9,6 +9,8 @@
 
 /// @file protocols/symmetry/SetupForSequenceSymmetryMover.cc
 /// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Updated by Tim Neary, timdot10@gmail.com
+
 
 // Unit headers
 #include <protocols/symmetry/SetupForSequenceSymmetryMover.hh>
@@ -21,6 +23,7 @@
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <core/pack/task/xml_util.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -52,16 +55,34 @@ SetupForSequenceSymmetryMover::~SetupForSequenceSymmetryMover() = default;
 
 
 void
+SetupForSequenceSymmetryMover::add_residue_selector(
+	core::Size region,
+	core::select::residue_selector::ResidueSelectorCOP const & selector ) {
+
+	if ( independent_regions_.size() <= region ) {
+		while ( independent_regions_.size() <= region )
+				{
+			independent_regions_.emplace_back( utility::vector0< core::select::residue_selector::ResidueSelectorCOP >() );
+		}
+	}
+	independent_regions_[region].emplace_back( selector );
+}
+
+
+void
 SetupForSequenceSymmetryMover::apply( core::pose::Pose & pose ) {
-	TR << "Adding " << independent_region_selectors_.size() << " selectors" << std::endl;
-	for ( core::Size ii = 1; ii <= independent_region_selectors_.size(); ++ii ) {
-		std::string const magic_selector_name =
-			"SequenceSymmetricAnnealer_" + std::to_string( ii );
-		residue_selectors::StoreResidueSubsetMover add_subset( independent_region_selectors_[ ii ], magic_selector_name, true );
-		add_subset.apply( pose );
+	for ( core::Size ii = 0; ii < independent_regions_.size(); ++ii ) {
+		validate_residue_selectors( pose, independent_regions_[ ii ] );
+		for ( core::Size jj = 0; jj < independent_regions_[ii].size(); ++jj ) {
+			std::string const magic_selector_name =
+				setup_magic_name_prefix_ + std::to_string(ii) + "_" + std::to_string(jj);
+			residue_selectors::StoreResidueSubsetMover add_subset( independent_regions_[ii][jj],
+				magic_selector_name, true );
+			add_subset.apply( pose );
 #ifndef NDEBUG
-		TR << "Subset " << magic_selector_name << " is being added" << std::endl;
+			TR << "Added subset: " << magic_selector_name << std::endl;
 #endif
+		}
 	}
 }
 
@@ -69,20 +90,70 @@ void SetupForSequenceSymmetryMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & datamap
 ) {
-
 	using namespace basic::options;
+	using namespace core::select::residue_selector;
 
-	std::string const selectors = tag->getOption< std::string >( "independent_regions", "" );
-	if ( selectors.size() == 0 ) return;
+	// Get the name of the corresponding KeepSequenceSymmetry
+	std::string const kssto = tag->getOption< std::string >( "sequence_symmetry_behaviour" );
+	if ( datamap.has( core::pack::task::TASK_OPERATIONS_TAG, kssto ) ) { //
+		/* core::pack::task::TaskoperationCOP task_op =
+		datamap.get< utility::tag::TagCOP >( "TaskOperation", kssto );
+		if ( !task_op->getName() == "KeepSequenceSymmetry" ) {
+		utility_exit_with_message( "Must specify a valid task operation of type KeepSequenceSymmetry." );
+		} */
+		// Must exist and have a name
+		setup_magic_name_prefix_ = "SequenceSymmetricAnnealer_" + kssto + "_" ;
+	} else {
+		utility_exit_with_message( "Must specify a valid task operation of type KeepSequenceSymmetry." );
+	}
 
-	utility::vector1< std::string > const elements =
-		utility::string_split( selectors, ',' );
+	independent_regions_.clear();
+	for ( utility::tag::TagCOP symm_def : tag->getTags() ) {
+		if ( symm_def->hasOption( "residue_selectors" ) ) {
+			utility::vector0< std::string > const res_selector_names =
+				utility::string_split( symm_def->getOption< std::string >( "residue_selectors" ), ',' );
 
-	independent_region_selectors_.clear();
-	for ( std::string const & selector_name : elements ) {
-		independent_region_selectors_.emplace_back(
-			core::select::residue_selector::get_residue_selector( selector_name, datamap )
-		);
+			TR << "Given residue selectors: ";
+			for ( auto const & s : res_selector_names ) { TR << s << ", "; }
+			TR << std::endl;
+
+			if ( res_selector_names.size() == 0 ) {
+				continue;
+			}
+
+			utility::vector0< core::select::residue_selector::ResidueSelectorCOP > res_seles;
+			for ( auto rs : res_selector_names ) {
+				res_seles.emplace_back( core::select::residue_selector::get_residue_selector( rs, datamap ) );
+			}
+			// Easiest place to validate the inputs is at apply time when we can access the vector< bool >
+			independent_regions_.emplace_back( res_seles );
+		}
+	}
+}
+
+void
+SetupForSequenceSymmetryMover::validate_residue_selectors(
+	core::pose::Pose const & pose,
+	utility::vector0< core::select::residue_selector::ResidueSelectorCOP > const & residue_selectors ) const {
+
+	utility::vector0< core::Size > num_res;
+	for ( auto res_sele : residue_selectors ) {
+		core::Size count = 0;
+		core::select::residue_selector::ResidueSubset const subset = res_sele->apply( pose );
+		for ( auto const val : subset ) {
+			if ( val ) ++count;
+		}
+		num_res.emplace_back( count );
+	}
+
+	for ( core::Size ii = 0; ii < num_res.size() - 1; ++ii ) {
+		if ( num_res[ ii ] != num_res[ ii + 1 ] ) {
+			utility_exit_with_message(
+				"Provided invalid residue selectors. Each linked residue selector must define the same number of residues. "
+				"Selectors of type " + residue_selectors[ ii ]->get_name() + " and " + residue_selectors[ ii + 1 ]->get_name() +
+				" were found to specify " + std::to_string(num_res[ ii ]) + " and " + std::to_string(num_res[ ii + 1 ]) +
+				" residue(s), respecitvely.");
+		}
 	}
 }
 
@@ -90,9 +161,27 @@ void SetupForSequenceSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaD
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute( "independent_regions", xs_string , "Comma-separated list of residue selectors. Each one defines a region of sequence symmetry. For example, say you had a dimer and a trimer in the same system. You would pass one residue selector that selects all of the residues in the dimer and a second residue selector that selects all of the residues in the trimer. independent_regions=\"dimer_selector,trimer_selector\". If the user provides residue selectors, this will not enforce sequence symmetry on regions not covered by any selection. Otherwise the entire protein will be treated as one single region of sequence symmetry." );
+	attlist + XMLSchemaAttribute( "sequence_symmetry_behaviour", xs_string ,
+		"Name of the KeepSequenceSymmetry task operation defininting the intended sequence symmetry behaviour." );
 
-	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "XRW TODO", attlist );
+	AttributeList symmetry_attrs;
+	symmetry_attrs + XMLSchemaAttribute( "residue_selectors", xs_string,
+		"Comma separated list of selected residue selectors to define the sequence symmetry."
+		" Residues in each listed selector will be linked."
+		" Each residue selector listed must be equivalent." );
+
+	XMLSchemaSimpleSubelementList attrs_subelements;
+	attrs_subelements.add_simple_subelement( "SequenceSymmetry", symmetry_attrs,
+		"Used to define each linked set of residues." );
+
+	XMLSchemaComplexTypeGenerator ct_gen;
+	ct_gen.complex_type_naming_func( & protocols::moves::complex_type_name_for_mover )
+		.element_name( mover_name() )
+		.description( "Defines the regions of the protein to enforce sequence symmetry on." )
+		.add_attributes( attlist )
+		.add_optional_name_attribute()
+		.set_subelements_repeatable( attrs_subelements, 1 )
+		.write_complex_type_to_schema( xsd );
 }
 
 std::string SetupForSequenceSymmetryMoverCreator::keyname() const {

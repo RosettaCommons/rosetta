@@ -149,6 +149,7 @@ PackerTask_::update_commutative(
 	mca_history_size_ = std::max( mca_history_size_, o.mca_history_size_ );
 
 	keep_sequence_symmetry_ |= o.keep_sequence_symmetry_;
+	seq_sym_uid_prefix_ = o.seq_sym_uid_prefix_;
 
 	optimize_H_ |= o.optimize_H_;
 
@@ -1224,6 +1225,7 @@ core::pack::task::PackerTask_::save( Archive & arc ) const {
 	arc( CEREAL_NVP( dlig_mem_limit_ ) ); // Size
 	arc( CEREAL_NVP( multi_cool_annealer_ ) ); // _Bool
 	arc( CEREAL_NVP( keep_sequence_symmetry_ ) ); // _Bool
+	arc( CEREAL_NVP( seq_sym_uid_prefix_ ) ); // std::string
 	arc( CEREAL_NVP( smart_annealer_ ) );
 	arc( CEREAL_NVP( smart_annealer_model_ ) );
 	arc( CEREAL_NVP( smart_annealer_cutoff_ ) );
@@ -1265,6 +1267,7 @@ core::pack::task::PackerTask_::load( Archive & arc ) {
 	arc( dlig_mem_limit_ ); // Size
 	arc( multi_cool_annealer_ ); // _Bool
 	arc( keep_sequence_symmetry_ ); // _Bool
+	arc( seq_sym_uid_prefix_ ); // std::string
 	arc( smart_annealer_ );
 	arc( smart_annealer_model_ );
 	arc( smart_annealer_cutoff_ );

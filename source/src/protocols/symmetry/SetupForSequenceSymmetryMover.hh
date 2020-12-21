@@ -9,6 +9,7 @@
 
 /// @file protocols/symmetry/SetupForSequenceSymmetryMover.hh
 /// @author Jack Maguire, jackmaguire1444@gmail.com
+/// @author Updated by Tim Neary, timdot10@gmail.com
 
 
 #ifndef INCLUDED_protocols_simple_moves_symmetry_SetupForSequenceSymmetryMover_hh
@@ -20,7 +21,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <utility/vector1.hh>
+#include <utility/vector0.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
 
@@ -66,12 +67,20 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
 	void
-	add_residue_selector( core::select::residue_selector::ResidueSelectorCOP const & selector ){
-		independent_region_selectors_.emplace_back( selector );
-	}
+	add_residue_selector( core::Size region, core::select::residue_selector::ResidueSelectorCOP const & selector );
 
-private:
-	utility::vector1< core::select::residue_selector::ResidueSelectorCOP > independent_region_selectors_;
+	void
+	set_prefix_name( std::string const & setting ) { setup_magic_name_prefix_ = setting; }
+
+private: // Member methods
+
+	void
+	validate_residue_selectors( core::pose::Pose const & pose,
+		utility::vector0< core::select::residue_selector::ResidueSelectorCOP > const & res_seles ) const;
+
+private: // Member variables
+	std::string setup_magic_name_prefix_;
+	utility::vector0< utility::vector0< core::select::residue_selector::ResidueSelectorCOP > > independent_regions_;
 
 };
 

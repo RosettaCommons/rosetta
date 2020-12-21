@@ -225,6 +225,22 @@ public:
 	void
 	keep_sequence_symmetry( bool const setting ) = 0;
 
+	/* virtual
+	std::string
+	sequence_symmetric_rotamer_selection_logic() const = 0; */
+
+	/* virtual
+	void
+	sequence_symmetric_rotamer_selection_logic( std::string const & selection_mode ) = 0; */
+
+	virtual
+	std::string
+	sequence_symmetric_uid_prefix() const = 0;
+
+	virtual
+	void
+	sequence_symmetric_uid_prefix( std::string const & prefix ) = 0;
+
 	virtual
 	bool
 	rotamer_couplings_exist() const = 0;
