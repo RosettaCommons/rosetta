@@ -346,7 +346,6 @@ SilentStruct::print_scores( std::ostream & out ) const {
 void
 SilentStruct::print_comments( std::ostream & out ) const {
 	using std::map;
-	using std::string;
 	string const remark( "REMARK" );
 
 	for ( auto const & comment : silent_comments_ ) {
@@ -716,7 +715,6 @@ void SilentStruct::energies_from_pose( core::pose::Pose const & pose ) {
 
 	// add comments from the Pose
 	using std::map;
-	using std::string;
 	map< string, string > comments = core::pose::get_all_comments( pose );
 	for ( auto const & elem : comments ) {
 		add_comment( elem.first, elem.second );
@@ -737,7 +735,6 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	using namespace basic::options::OptionKeys;
 	using namespace core::pose::datacache;
 	using namespace core::scoring;
-	using std::string;
 	using utility::vector1;
 	// make sure that the pose has ARBITRARY_FLOAT_DATA in the DataCache
 	if ( !pose.data().has( ( CacheableDataType::ARBITRARY_FLOAT_DATA ) ) ) {
@@ -798,7 +795,6 @@ void SilentStruct::energies_into_pose( core::pose::Pose & pose ) const {
 	pose.data().set( CacheableDataType::ARBITRARY_FLOAT_DATA, data );
 
 	using std::map;
-	using std::string;
 	map< string, string > comments = get_all_comments();
 	for ( auto const & comment : comments ) {
 		// only keep this score if we want it.
@@ -945,7 +941,6 @@ void SilentStruct::detect_fullatom( core::Size pos, core::Size natoms, bool& ful
 void
 SilentStruct::print_parent_remarks( std::ostream & out ) const {
 	using std::map;
-	using std::string;
 	string const remark( "PARENT REMARK" );
 
 	for ( auto const & elem : parent_remarks_map_ ) {

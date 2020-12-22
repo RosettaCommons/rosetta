@@ -622,7 +622,7 @@ private:
 
 	bool valid_index(core::Size index) const
 	{
-		return (index >= 0) && (index < npoints_);
+		return (index < npoints_); //Note that core::Size is always >= 0.
 	}
 
 	// setValue for GridPt

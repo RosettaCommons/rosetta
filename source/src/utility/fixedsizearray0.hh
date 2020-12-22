@@ -125,8 +125,7 @@ protected:
 
 	bool
 	range( Size index ) const {
-		//return index > (Size) 0 && index <= (Size) S;
-		return index >= (Size) 0 && index < (Size) S; // should be indexed by 0, changed by Georg Kuenze 05/10/2016
+		return index < (Size) S; // Size is always >= 0; VKM addressed "always true" error on gcc 10.2 on 21 Dec 2020.
 	}
 
 private:

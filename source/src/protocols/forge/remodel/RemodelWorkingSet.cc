@@ -351,7 +351,6 @@ void RemodelWorkingSet::workingSetGen( pose::Pose const & input_pose, protocols:
 	using core::fragment::Frame;
 	using core::fragment::FrameOP;
 	using core::chemical::ChemicalManager;
-	using build::BuildInstructionOP;
 
 	SegmentInsertOP segIns;
 
