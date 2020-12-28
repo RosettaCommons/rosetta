@@ -21,7 +21,7 @@ from argparse import ArgumentParser
 # list of ROSIE scipt-modules, add your app name here and put related code int <app-name>.py file
 #
 script_modules = '''
-util
+util docking
 '''
 
 def rosie_scripts():
@@ -32,9 +32,7 @@ def rosie_scripts():
         module = importlib.import_module('rosie.' + module_name)
         scripts.update( module.register() )
 
-
     return scripts
-
 
 
 
@@ -56,6 +54,8 @@ def execute_flag_file(file_name):
                     sys.exit(1)
 
 
+
+
 def main(args) -> None:
     ''' ROSIE scripts '''
 
@@ -72,7 +72,6 @@ def main(args) -> None:
     os.chdir(options.working_directory)
 
     execute_flag_file(options.flags)
-
 
 
 
