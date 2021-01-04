@@ -146,6 +146,7 @@ sources = {
 		"PoseFromSFRBuilder",
 	],
 	"io/pdb" : [
+		"DAminoAcidImportTests",
 		"Field",
 		"pdb_reader",
 		"record_def_io",
@@ -1021,6 +1022,8 @@ testinputfiles = [
 	"io/pdb/1BH4.pdb",
 	"io/pdb/4TTL.pdb",
 	"io/pdb/1e68_link.pdb",
+	"io/pdb/cycpep_with_ddpp.pdb",
+	"io/pdb/cycpep_with_ddpp_and_ldpp.pdb",
 	"io/pdb/extra_res_pose.pdb",
 	"io/pdb/fake_pdb_record_defs",
 	"io/pdb/test.params",

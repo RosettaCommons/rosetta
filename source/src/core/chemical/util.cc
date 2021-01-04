@@ -667,7 +667,7 @@ detect_ld_chirality_from_polymer_residue(
 
 	// Exclude known achiral.
 	if ( name3 == "GLY" || name3 == "B3G" || name3 == "C15" || name3 == "C16" || name3 == "MAL" ||
-			name3 == "A98" || name3 == "B02" || name3 == "B06" ) {
+			name3 == "A98" || name3 == "B02" || name3 == "B06" || name3 == "AIB" ) {
 		return;
 	}
 
@@ -714,7 +714,7 @@ detect_ld_chirality_from_polymer_residue(
 	}
 
 	// Explicitly exclude peptoids and PNAs.
-	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && xyz.find( " NG " ) == xyz.end() ) {
+	if ( xyz.find( " CA " ) != xyz.end() && xyz.find( " CA1" ) == xyz.end() && (xyz.find( " NG " ) == xyz.end() || name3 == "DPP" /*DPP has an NG atom, unfortunately.  Ugh.*/) ) {
 		// There are four atoms bonded to CA.
 		if ( xyz.find( " Pbb" ) != xyz.end() ) {
 			// Phosphonate
@@ -736,6 +736,7 @@ detect_ld_chirality_from_polymer_residue(
 			} // other possibilities: GLY
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		return;
 
 		// Gammas--notably we need all this because just C2 C3 C4 are also had by sugars.
 		// What a terrible method.
@@ -753,6 +754,7 @@ detect_ld_chirality_from_polymer_residue(
 			characteristic_angle = numeric::dihedral_degrees( xyz.at( " N  " ), xyz.at( " C3 " ), xyz.at( "CB4 " ), xyz.at( " C4 " ) );
 		}
 		( characteristic_angle > 0 ) ? is_d_aa = true : is_l_aa = true;
+		return;
 	}
 
 	//if ( characteristic_angle == 0 ) {
