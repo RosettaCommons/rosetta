@@ -12,7 +12,6 @@
 /// and destruction in a way that prevents memory leaks.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-
 #ifndef INCLUDED_basic_tensorflow_manager_RosettaTensorflowTensorContainer_hh
 #define INCLUDED_basic_tensorflow_manager_RosettaTensorflowTensorContainer_hh
 
@@ -33,14 +32,19 @@
 // External headers
 #include <tensorflow/c/c_api.h>
 
+// c++
+#include <type_traits>
+
 namespace basic {
 namespace tensorflow_manager {
 
 /// @brief A container class for Tensorflow's TF_Tensor objects, which manages access, creation,
 /// and destruction in a way that prevents memory leaks.
+/// @note Cannot be subclassed.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+/// @author Jack Maguire, jackmaguire1444@gmail.com - added static utilities
 template < typename T >
-class RosettaTensorflowTensorContainer : public utility::VirtualBase {
+class RosettaTensorflowTensorContainer final : public utility::VirtualBase {
 
 	//Needed to allow the TF_Session to access the TF_Tensor directly:
 	friend class RosettaTensorflowSessionContainer;
@@ -88,6 +92,14 @@ public:
 	/// @details If already initialized, the old tensor is first deleted.
 	/// @note This fills the tensor with the value passed as the third parameter.
 	void initialize( TF_DataType const datatype, utility::vector1< int64_t > const & dimensions, T const & init_value  );
+
+	/// @brief Initialize this to be tensor with N dimensions.
+	/// @details Convenience function that avoids the need to specify the datatype.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
+	void initialize( utility::vector1< int64_t > const & dimensions ){
+		initialize( get_datatype(), dimensions );
+	}
+
 
 	/// @brief Is the TF_Tensor pointer pointing to something?
 	/// @details Returns false if tensor_ == nullptr, true otherwise.
@@ -211,7 +223,7 @@ public: //Getters
 	}
 
 
-public: //Setters
+public: //Accessors
 
 	/// @brief Access an entry.  (Non-const.)
 	/// @details Works with any tensor dimension.
@@ -307,30 +319,33 @@ public: //Setters
 		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord2 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord3 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord4 - 1)*TF_Dim(tensor_, 4) + (coord5-1) ];
 	}
 
-	//More verbose option
+	/// @brief More verbose alternative to operator(), to access an entry.
+	/// @author Jack Magurie, Menten AI (jack@menten.ai).
 	template< typename... Args>
 	T &
 	value( Args&&... args ) {
 		return operator()( std::forward<Args>(args)... );
 	}
 
-protected: //Danger Zone!
-	TF_Tensor const * raw_tensor_ptr() const {
-		return tensor_;
+	/// @brief A means of initializing a tensor from an array or other container.
+	/// @details The array or container must (a) have the same datatype as the tensor (there is
+	/// a compile-time check for this), and (b) must have the same number of elements as the
+	/// tensor (there is a debug-mode runtime check for this).
+	/// @note The order of elements is not checked!  Use with caution!
+	/// @author Jack Magurie, Menten AI (jack@menten.ai).
+	template< typename Container >
+	void
+	copy_data_from_container( Container const & src ){
+		//This assert confirms that we are passing a vector< T >
+		//We would hate to memcpy from a vector< double > if T is float
+		static_assert( std::is_same< typename Container::value_type, T >::value,
+			"copy_data_from_container must take a container with the same value type as the tensor" );
+
+		debug_assert( src.size() == num_tensor_elements() );
+		copy_data( src.data() );
 	}
 
-	TF_Tensor * raw_tensor_ptr() {
-		return tensor_;
-	}
-
-	T const * raw_tensor_data_ptr() const {
-		return tensor_data_;
-	}
-
-	T * raw_tensor_data_ptr() {
-		return tensor_data_;
-	}
-
+private:
 	/// @brief Get the Tensorflow data type given the C++ data type.
 	static TF_DataType
 	get_datatype() {
@@ -353,9 +368,10 @@ protected: //Danger Zone!
 public: //static utilities
 
 	static
-	RosettaTensorflowTensorContainer< T >
+	void
 	combine_tensors(
-		utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
+		utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector,
+		RosettaTensorflowTensorContainer< T > & combined_tensor
 	);
 
 	static
@@ -365,14 +381,7 @@ public: //static utilities
 		utility::vector1< RosettaTensorflowTensorContainer<T> > & tensor_vector
 	);
 
-	template< typename Container >
-	void
-	copy_data_from_container( Container const & src ){
-		debug_assert( src.size() == num_tensor_elements() );
-		copy_data( src.data() );
-	}
-
-protected:
+private:
 
 	///@brief memcpy data from src to tensor_data_
  	void
@@ -394,6 +403,7 @@ private:
 	T * tensor_data_ = nullptr;
 
 };
+
 
 } //tensorflow_manager
 } //basic

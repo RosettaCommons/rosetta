@@ -11,7 +11,6 @@
 /// @brief A container for Rosetta Tensorflow sessions, allowing sessions to be loaded once and stored in the global Tensorflow session manager.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-
 #ifndef INCLUDED_basic_tensorflow_manager_RosettaTensorflowSessionContainer_hh
 #define INCLUDED_basic_tensorflow_manager_RosettaTensorflowSessionContainer_hh
 
@@ -36,8 +35,9 @@ namespace basic {
 namespace tensorflow_manager {
 
 /// @brief A container for Rosetta Tensorflow sessions, allowing sessions to be loaded once and stored in the global Tensorflow session manager.
+/// @note Cannot be subclassed.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-class RosettaTensorflowSessionContainer : public utility::VirtualBase {
+class RosettaTensorflowSessionContainer final : public utility::VirtualBase {
 
 	friend class RosettaTensorflowManager;
 
@@ -105,7 +105,8 @@ public:
 		std::chrono::duration< double, std::micro > & runtime
 	) const;
 
-	//overload of multirun_session for those who don't need runtime
+	/// @brief Overload of multirun_session for those who don't need runtime.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
 	template< typename T1, typename T2 >
 	void multirun_session(
 		std::string const & input_name,
@@ -117,6 +118,66 @@ public:
 		multirun_session( input_name, output_name, input_tensor_vector, output_tensor_vector, runtime );
 	}
 
+
+	/// @brief Equivalent of run_session() but for networks with multiple heads (multiple input tensors per run)
+ 	/// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
+ 	/// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).
+ 	/// @param[in]	input_names		The name of the input tensors in the Tensorflow session graph.
+ 	/// @param[in]	output_name		The name of the output tensor in the Tensorflow session graph.
+ 	/// @param[in]	input_tensor	The tensors of inputs, must be in the same order as input_names.
+ 	/// @param[out]	ouput_tensor	The place to stick the outputs, overwritten by this operation.
+ 	/// @param[out]	runtime			The time for the actual Tensorflow session evaluation, in microseconds.  The contents of runtime will be overwritten by tihs operation.
+ 	/// @note There is no tracer output produced by this operation.  If you wish to write out runtime information, do something
+ 	/// with the runtime output variable.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
+ 	template< typename T1, typename T2 >
+ 	void run_multiinput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		std::string const & output_name,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensors,
+ 		RosettaTensorflowTensorContainer<T2> & output_tensor,
+ 		std::chrono::duration< double, std::micro > & runtime
+ 	) const;
+
+	/// @brief Overload of run_multiinput_session for those who don't need runtime.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
+ 	template< typename T1, typename T2 >
+ 	void run_multiinput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		std::string const & output_name,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensors,
+ 		RosettaTensorflowTensorContainer<T2> & output_tensor
+ 	) const {
+ 		std::chrono::duration< double, std::micro > runtime;
+ 		run_multiinput_session( input_names, output_name, input_tensors, output_tensor, runtime );
+ 	}
+
+
+	/// @brief Run multiple passes of a network with multiple inputs
+	/// @details for input_tensors, the INNER vector groups the different heads, the OUTER vector
+	/// groups the different runs. input_tensors[x].size() == output_tensors.size(), if that helps.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
+ 	template< typename T1, typename T2 >
+ 	void multirun_multiinput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		std::string const & output_name,
+ 		utility::vector1< utility::vector1< RosettaTensorflowTensorContainer<T1> > > const & input_tensors,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensors,
+ 		std::chrono::duration< double, std::micro > & runtime
+ 	) const;
+
+	/// @brief Overload of multirun_multiinput_session for those who don't need runtime.
+	/// @author Jack Maguire, Menten AI (jack@menten.ai).
+ 	template< typename T1, typename T2 >
+ 	void multirun_multiinput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		std::string const & output_name,
+ 		utility::vector1< utility::vector1< RosettaTensorflowTensorContainer<T1> > > const & input_tensors,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensors
+ 	) const {
+ 		std::chrono::duration< double, std::micro > runtime;
+ 		multirun_multiinput_session( input_names, output_name, input_tensors, output_tensors, runtime );
+ 	}
 
 	/// @brief List all of the operations available in a loaded model.
 	void list_all_operations( std::ostream & outstream ) const;

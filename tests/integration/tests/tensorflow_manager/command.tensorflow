@@ -38,6 +38,7 @@ sleep 10 #To ensure we don't get a short test error.
     | sed 's/[0-9.]\+ microsecond/[TIME] microsecond/g' \
     | sed 's/[0-9.]\+ Hz/[FREQUENCY] Hz/g' \
     | sed 's/XLA service 0x[0-9a-ef]\+ initialized/XLA service [SERVICE_NUMBER] initialized/g' \
+    | egrep -v "XLA service" \
     > log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
@@ -53,6 +54,24 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
     | sed 's/[0-9.]\+ microsecond/[TIME] microsecond/g' \
     | sed 's/[0-9.]\+ Hz/[FREQUENCY] Hz/g' \
     | sed 's/XLA service 0x[0-9a-ef]\+ initialized/XLA service [SERVICE_NUMBER] initialized/g' \
+    | egrep -v "XLA service" \
+    >> log
+
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
+
+# MULTI INPUT
+
+[ -x %(bin)s/tensorflow_manager_multi_input_test.%(binext)s ] || exit 1
+
+%(bin)s/tensorflow_manager_multi_input_test.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST -select:path_to_model multi_input_test/saved_models/1579363313/  2>&1 \
+    | egrep -vf ../../ignore_list \
+    | sed 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}.[0-9]\+/[DATESTAMP]/' \
+    | sed 's/[0-9.]\+ microsecond/[TIME] microsecond/g' \
+    | sed 's/[0-9.]\+ Hz/[FREQUENCY] Hz/g' \
+    | sed 's/XLA service 0x[0-9a-ef]\+ initialized/XLA service [SERVICE_NUMBER] initialized/g' \
+    | egrep -v "XLA service" \
     >> log
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so

@@ -145,22 +145,6 @@ RosettaTensorflowManager::get_session(
     return sessions_by_string_.at( key );
 }
 
-/// @brief Want to give the manager your own session that you loaded yourself? Use this.
-/// @details Threadsafe.
-/// @details The manager takes lifetime ownership of this session
-/// @author Jack Maguire, jackmaguire1444@gmail.com
-void
-RosettaTensorflowManager::set_session(
-    std::string const & key,
-		RosettaTensorflowSessionContainerOP session
-) {
-	std::function< RosettaTensorflowSessionContainerOP () > creator = [=](){
-		return session;
-	};
-	RosettaTensorflowSessionContainerCOP ptr = utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( sessions_by_string_mutex_ ), key, sessions_by_string_ );
-	runtime_assert( ptr != nullptr );
-}
-
 /// @brief Returns true if a session exists, false otherwise.
 /// @details Note that, if you use this, it is possible for another thread to create a session with this
 /// key right after this function resturns "false".  For this reason, all of the get_session functions,

@@ -92,12 +92,6 @@ public:   // Public methods ///////////////////////////////////////////////////
 	/// @note This assumes that the session was alredy created, and will throw an error if it was not!
 	RosettaTensorflowSessionContainerCOP get_session( std::string const & key ) const;
 
-	/// @brief Want to give the manager your own session that you loaded yourself? Use this.
-	/// @details Threadsafe.
-	/// @details The manager takes lifetime ownership of this session
-	/// @author Jack Maguire, jackmaguire1444@gmail.com
-	void set_session( std::string const & key, RosettaTensorflowSessionContainerOP session );
-
 	/// @brief Returns true if a session exists, false otherwise.
 	/// @details Note that, if you use this, it is possible for another thread to create a session with this
 	/// key right after this function resturns "false".  For this reason, all of the get_session functions,

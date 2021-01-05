@@ -237,9 +237,10 @@ RosettaTensorflowTensorContainer<T>::update_tensor_data_pointer() {
 /// @brief combine utility::vector1< RosettaTensorflowTensorContainer<T1> > into one RosettaTensorflowTensorContainer<T1>
 /// @details requires all tensors in the vector have dimensions { 1, x, y, ... , z } where x, y, z are THE SAME for all tensors
 template< typename T >
-RosettaTensorflowTensorContainer< T >
+void
 RosettaTensorflowTensorContainer< T >::combine_tensors(
-	utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector
+	utility::vector1< RosettaTensorflowTensorContainer< T > > const & tensor_vector,
+	RosettaTensorflowTensorContainer< T > & combined_tensor
 ){
 	runtime_assert( ! tensor_vector.empty() );
 
@@ -269,7 +270,7 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 		debug_assert( tensor_vector[ t ].num_tensor_elements() == n_elements_per_tensor );
 	}
 
-	RosettaTensorflowTensorContainer< T > combined_tensor( new_dimensions );
+	combined_tensor.initialize( new_dimensions );
 	//tensor_ and tensor_data_ are updated at this point
 
 	//Okay time for some power user optimizations
@@ -280,7 +281,7 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 		platform::Size const zero_indexed_offset_in_dest = (t-1) * n_elements_per_tensor;
 		T * const destination = & ( combined_tensor( zero_indexed_offset_in_dest + 1 ) );
 
-		T const * const source = tensor_vector[ t ].raw_tensor_data_ptr();
+		T const * const source = tensor_vector[ t ].tensor_data_;
 		std::memcpy( destination, source, size_of_tensor );
 	}
 
@@ -288,7 +289,7 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
 		platform::Size const offset = (t-1) * n_elements_per_tensor;
 
-		//We want to check that all of the values are what they shoudl be
+		//We want to check that all of the values are what they should be
 		//This is really messy when the dimension count is unknown,
 		// so we're just going to treat each tensor as if it were 1D
 		//This should work as of March 2020
@@ -298,7 +299,6 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 	}
 #endif
 
-	return combined_tensor;
 }
 
 template< typename T >
@@ -313,7 +313,7 @@ RosettaTensorflowTensorContainer< T >::split_combined_tensors(
 		tensor_vector[ 1 ].num_tensor_elements();
 	platform::Size const size_of_tensor = sizeof( T ) * n_elements_per_tensor;
 	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
-		T * const destination = tensor_vector[ t ].raw_tensor_data_ptr();
+		T * const destination = tensor_vector[ t ].tensor_data_;
 
 		platform::Size const zero_indexed_offset_in_source = (t-1) * n_elements_per_tensor;
 		T * const source = & ( combined_tensors( zero_indexed_offset_in_source + 1 ) );

@@ -62,7 +62,7 @@ RosettaTensorflowSessionContainer::RosettaTensorflowSessionContainer(
 /// @brief Destructor.
 /// @details It is necessary to clean up Tensorflow objects here.
 RosettaTensorflowSessionContainer::~RosettaTensorflowSessionContainer(){
-	TF_DeleteSession(session_, status_);
+	TF_DeleteSession( session_, status_ );
 	TF_DeleteSessionOptions( sess_options_ );
 	TF_DeleteGraph( graph_ );
 	TF_DeleteStatus( status_ );
