@@ -111,6 +111,7 @@ sources = {
 	],
     "protocols/chromophore": [
         "ReadResidueCoordinatesFromPDB",
+        "ChromophoreDataReader",
     ],
 	"protocols/constel" : [
 		"AromaticFilter",

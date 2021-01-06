@@ -93,6 +93,7 @@ sources = {
     
     "chromophore" : [
         "ReadResidueCoordinatesFromPDBTests",
+        "ChromophoreDataReaderTests",
     ],
 
 	"cluster" : [
@@ -932,6 +933,7 @@ testinputfiles = [
 #	"core/conformation/dock_in.pdb", # RestrictToInterfaceOperation and others in toolbox use this pdb file
 	"carbohydrates/N-linked_14-mer_glycan.pdb",
     "chromophore/test.pdb",
+    "chromophore/sample_CRO_data_file.txt",
 	"comparative_modeling/1f4pA.pdb",
 	"comparative_modeling/4gat_all.pdb",
 	"comparative_modeling/4gat_protein.pdb",

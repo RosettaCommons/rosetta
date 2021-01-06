@@ -1,0 +1,32 @@
+# This file provides information about correspondence between atom names
+# in a fluorescent protein (FP) chromophore (CRO) as deposited in the PDB 
+# and atom names of the standard amino acids (as used in Rosetta) from which 
+# that chromophore was formed. 
+# It is a space-delimited tabele containing the following information:
+# Input (CRO) atom name | Rosetta atom name replacement | aa number in the CRO
+# residue #1 (Thr in the immature chromophore)
+N1   N    1
+CA1  CA   1
+C1   C    1
+CB1  CB   1
+CG1  CG2  1
+OG1  OG1  1
+# residue #2 (Tyr in the immature chromophore)
+N2   N    2
+CA2  CA   2
+C2   C    2
+O2   O    2
+CB2  CB   2
+CG2  CG   2
+CD1  CD1  2
+CD2  CD2  2
+CE1  CE1  2
+CE2  CE2  2
+CZ   CZ   2
+OH   OH   2
+# residue #3 (Gly in the immature chromophore)
+N3   N    3
+CA3  CA   3
+C3   C    3
+O3   O    3 
+
