@@ -58,31 +58,29 @@ with open( datafile, "w" ) as f:
 		x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
 		y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
 		# map values to floats (were strings)
-		#x = list( map( float, x ))
-		y = sorted(list( map( float, y )))[0]
+		y = list( map( float, y ))
+		y = float(np.average(y))
+
 		f.write(targets[i] + ' ' + str(y) + '\n')
 f.close()
-# Now run correlation tests with Kd
-with open('CoreSet.dat','r') as f:
-	with open('cstemp','w+') as f1:
-		for i in f.readlines():
-			if i.startswith('#'):
-				if i.startswith('#code'):
-					f1.writelines(i)
-				else:
-					continue
-			else:
-				f1.writelines(i)
-	f1.close()
-f.close()
+
+# making a copy of CoreSet to mess with
+os.system( "cp CoreSet.dat cstemp" )
+
+# reading in cstemp file with logKa and datafile with score
 aa = pd.read_csv('cstemp', sep='[,,\t, ]+', engine='python')
 aa = aa.drop_duplicates(subset=['#code'],keep='first')
 bb = pd.read_csv(datafile, sep='[,,\t, ]+', engine='python')
 testdf1 = pd.merge(aa,bb,on='#code')
+
+# multiply score by (-1)
 testdf1['score'] = testdf1['score'].apply(np.negative)
 testdf2 = testdf1[testdf1.score > 0]
+
+# write into run_processed_score.csv
 testdf2.to_csv('run_processed_score.csv', columns=['#code', 'logKa', 'score', 'target'], sep='\t', index=False)
 
+# create the linear regression
 regr = linear_model.LinearRegression()
 regr.fit(testdf2[['score']], testdf2[['logKa']])
 testpredy = regr.predict(testdf2[['score']])
@@ -94,8 +92,8 @@ regr_coef = float(regr.coef_)
 regr_intercept = float(regr.intercept_)
 testr = float(testr)
 
-if os.path.exists('cstemp'):
-	os.remove('cstemp')
+#if os.path.exists('cstemp'):
+#	os.remove('cstemp')
 
 ## done with scoring test
 ## Ranking test
@@ -103,8 +101,13 @@ if os.path.exists('cstemp'):
 #Get the representative complex in each cluster
 group=testdf1.groupby('target')
 
+#=======================
+# get topN values from column
 def top(df,n=1,column='logKa'):
 	return df.sort_values(by=column)[-n:]
+#=======================
+
+
 toptardf=testdf1.groupby('target').apply(top)
 targetlst=toptardf['#code'].tolist()
 
@@ -118,13 +121,13 @@ for i,j in group.__iter__():
 	tartemp=top(testdf2)['#code'].tolist()
 	tar=''.join(tartemp)
 	if len(testdf2) == 5:
-		spearman.ix[tar]['spearman']=testdf2.corr('spearman')['logKa']['score']
-		rankresults.ix[tmp]['Rank1']=''.join(testdf2[0:1]['#code'].tolist())
-		rankresults.ix[tmp]['Rank2']=''.join(testdf2[1:2]['#code'].tolist())
-		rankresults.ix[tmp]['Rank3']=''.join(testdf2[2:3]['#code'].tolist())
-		rankresults.ix[tmp]['Rank4']=''.join(testdf2[3:4]['#code'].tolist())
-		rankresults.ix[tmp]['Rank5']=''.join(testdf2[4:5]['#code'].tolist())
-		rankresults.ix[tmp]['Target']=tar
+		spearman.loc[tar]['spearman']=testdf2.corr('spearman')['logKa']['score']
+		rankresults.loc[tmp]['Rank1']=''.join(testdf2[0:1]['#code'].tolist())
+		rankresults.loc[tmp]['Rank2']=''.join(testdf2[1:2]['#code'].tolist())
+		rankresults.loc[tmp]['Rank3']=''.join(testdf2[2:3]['#code'].tolist())
+		rankresults.loc[tmp]['Rank4']=''.join(testdf2[3:4]['#code'].tolist())
+		rankresults.loc[tmp]['Rank5']=''.join(testdf2[4:5]['#code'].tolist())
+		rankresults.loc[tmp]['Target']=tar
 		tmp+=1
 	else:
 		spearman.drop(tar,inplace=True)
@@ -145,31 +148,24 @@ with open(outfile, 'w+') as f2:
 	f2.writelines("\nThe Spearman correlation coefficient (SP) = %0.3f"%(spearmanmean))
 f2.close()
 
-if os.path.exists('cstemp'):
-	os.remove('cstemp')
+#if os.path.exists('cstemp'):
+#	os.remove('cstemp')
 
-# read cutoff file
-target = subprocess.getoutput( "grep -v Target cutoffs | awk '{print $1}'" ).splitlines()
-cutoff = subprocess.getoutput( "grep -v Target cutoffs | awk '{print $2}'" ).splitlines()
+## Find failure clusters for ranking test
+# open 'cutoffs' file. This is the average Spearman correlation of each target based on 2 separate runs
+cutoffs_df = pd.read_csv('cutoffs', delim_whitespace=True, engine='python')
+cutoffs = cutoffs_df.set_index('#Target').to_dict('dict')
 
-# map values to floats (were strings)
-cutoff = list( map( float, cutoff ))
-
-# create dictionary for easy lookup
-cutoffs = dict( zip( target, cutoff ) )
-
-# list of targets with spearman < 0.25
-below_25 = []
-
-## Find failure targets for ranking test
+# open run_Spearman.results file which reports Spearman correlation for each target in current run
 cc = pd.read_csv('run_Spearman.results', delim_whitespace=True, engine='python')
+
+# if spearman coor. for target is within 0.2 of cutoff: SUCCESS, else: FAILURE.
 for index, row in cc.iterrows():
-
-	if float(row['spearman']) < 0.25:
-		below_25.append(row['#Target'])
-	if row['spearman'] < cutoffs[row['#Target']]:
-		failures.append(row['#Target'])
+	min_val = float(cutoffs['spearman'][str(row['#Target'])] - 0.2)
+	max_val = float(cutoffs['spearman'][str(row['#Target'])] + 0.2)
+	if min_val <= float(row['spearman']) <= max_val:
+			successes.append(row['#Target'])
 	else:
-		successes.append(row['#Target'])
+		failures.append(row['#Target'])
 
-benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures successes below_25 regr_coef regr_intercept testr')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets working_dir testname scorefiles datafile outfile failures successes regr_coef regr_intercept testr')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
