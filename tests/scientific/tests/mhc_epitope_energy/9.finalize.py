@@ -22,8 +22,6 @@ from benchmark.tests import _TestsKey_
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
-debug  = config['debug']
-
 
 # read readme
 readme = subprocess.getoutput( "cat readme.md" ).splitlines()
@@ -46,6 +44,14 @@ if len( failures ) > 0:
 else:
     _index_html_template_ += "&nbsp;&nbsp;&nbsp;&nbsp;None<br>\n"
 
+_index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
+
+#List of results
+for result in subtest_dict.keys():
+    _index_html_template_ += "</p>\n<h4>" + result + "</h4>\n"
+    _index_html_template_ += '<img src="plot_results_' + result + '.png" alt="alternative text" style="max-width: 100%">\n'
+
+
 # add text from readme
 for l in readme:
 
@@ -60,13 +66,6 @@ for l in readme:
     # insert the actual text as a paragraph
     else:
         _index_html_template_ += "<p>" + l + "</p>\n"
-
-_index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
-
-#List of results
-for result in subtest_dict.keys():
-    _index_html_template_ += "</p>\n<h4>" + result + "</h4>\n"
-    _index_html_template_ += '<img src="plot_results_' + result + '.png" alt="alternative text" style="max-width: 100%">\n'
 
 # html closing tag
 _index_html_template_ += "</body></html>\n"

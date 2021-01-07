@@ -76,4 +76,4 @@ for target in targets:
 
 hpc_driver.wait_until_complete(hpc_job_ids, silent=True)
 
-benchmark.save_variables('targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

@@ -27,7 +27,7 @@ from benchmark.util.pdb_io_utils import THREE2ONE, ca_pdb_reader
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into
 config = benchmark.config()
 
-
+#============================================
 def get_rmsds(CAs, fragments, ca_olcs, sequence: str):
     rmsds = []
     for i, residue_fragments in enumerate(fragments.per_residue_fragments):
@@ -55,7 +55,7 @@ def get_rmsds(CAs, fragments, ca_olcs, sequence: str):
         rmsds.append(sub_rmsds)
     return rmsds
 
-
+#============================================
 def get_rmsds_wrapper(db_name, target_name):
     with open("1.checkpoint.json") as fh:
         json_data = json.loads(fh.read())
@@ -70,6 +70,7 @@ def get_rmsds_wrapper(db_name, target_name):
     ca_pdb, ca_olcs = ca_pdb_reader(pdb_lines)
     working_rmsds = get_rmsds(ca_pdb, fragments, ca_olcs, sequence)
     return working_rmsds
+#============================================
 
 
 checkpoint_filename = "2.checkpoint.json"

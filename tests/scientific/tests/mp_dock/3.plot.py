@@ -79,11 +79,9 @@ for i in range( 0, len( scorefiles ) ):
 	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
 	# x axis limits
-	plt.xlim( left=0 )
-	if targets[i] == "2L35_AB":
-		plt.ylim( -6100, -5900 )
-	else:
-		plt.ylim( top=2 )
+#	plt.xlim( left=0 )
+	plt.xlim( 0, 70 )
+	plt.ylim( top=2 )
 	
 #save figure
 plt.tight_layout()

@@ -26,6 +26,7 @@ config = benchmark.config()
 debug = config['debug']
 
 
+#============================================
 def adjacent_values(vals, q1, q3):
     upper_adjacent_value = q3 + (q3 - q1) * 1.5
     upper_adjacent_value = np.clip(upper_adjacent_value, q3, vals[-1])
@@ -35,6 +36,7 @@ def adjacent_values(vals, q1, q3):
     return lower_adjacent_value, upper_adjacent_value
 
 
+#============================================
 def set_axis_style(ax, labels):
     ax.get_xaxis().set_tick_params(direction='out')
     ax.xaxis.set_ticks_position('bottom')
@@ -42,6 +44,7 @@ def set_axis_style(ax, labels):
     ax.set_xticklabels(labels, rotation=45, ha='right')
     ax.set_xlim(0.25, len(labels) + 0.75)
     ax.set_ylabel('min rmsd fragment rmsd')
+#============================================
 
 final_figure_file = "plot_results.png"
 

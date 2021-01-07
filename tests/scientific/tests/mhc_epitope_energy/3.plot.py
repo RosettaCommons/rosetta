@@ -166,4 +166,4 @@ for plot in plotlist:
 	plt.savefig( outfile )
 	plt.close()
 
-benchmark.save_variables('targets nstruct working_dir testname results outfile cutoffs_mhc_epitope_dict cutoffs_delta_mhc_epitope_dict failures failures_dict')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname results outfile cutoffs_mhc_epitope_dict cutoffs_delta_mhc_epitope_dict failures failures_dict')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

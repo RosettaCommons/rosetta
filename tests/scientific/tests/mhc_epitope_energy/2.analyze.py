@@ -232,4 +232,4 @@ f_delta_packstat.close()
 f_delta_buns.close()
 f_delta_netcharge.close()
 
-benchmark.save_variables('targets nstruct working_dir testname results scorefiles cutoffs_mhc_epitope_dict cutoffs_delta_mhc_epitope_dict failures failures_dict')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname results scorefiles cutoffs_mhc_epitope_dict cutoffs_delta_mhc_epitope_dict failures failures_dict')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

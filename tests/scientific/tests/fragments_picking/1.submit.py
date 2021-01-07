@@ -89,6 +89,7 @@ ab_initio_command_line = '''
 n_frags = 200
 n_candidates = 1000
 nstruct = 2 if debug else 300
+
 #==> EDIT HERE
 targets = '1ptqA 1urnA 1tulA 1bkrA 1r69A 1vlsA 1tenA 1bk2A 5croA 2vikA'.split(" ")
 targets = targets[:1] if debug else targets

@@ -1,2 +1,5 @@
-#==> EDIT HERE
-1. Conway, P., Tyka, M. D., DiMaio, F., Konerding, D. E. & Baker, D. Relaxation of backbone bond geometry improves protein energy landscape modeling. Protein Sci. 23, 47–55 (2014).
+Protocol: 
+1. Gront, D., Kulp, D. W., Vernon, R. M., Strauss, C. E. M. & Baker, D. Generalized Fragment Picking in Rosetta : Design , Protocols and Applications. 6, (2011).
+
+Quality measures:
+2. de Oliveira SH, Shi J, Deane CM. Building a better fragment library for de novo protein structure prediction. PLoS One. 2015;10(4):e0123998. Published 2015 Apr 22. doi:10.1371/journal.pone.0123998
