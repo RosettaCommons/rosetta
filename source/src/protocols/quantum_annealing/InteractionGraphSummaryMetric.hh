@@ -104,6 +104,18 @@ public:
 	/// @details False by default.
 	inline bool short_version() const { return short_version_; }
 
+	/// @brief If this value is not empty, we will dump the IG summary to a file during calculation and simply return the filename as the return string.
+	/// @detials this will perform variable substituion on the "{rand}" substring such that "path/to/{rand}.txt" will result in something like "path/to/5748295.txt". The number will be different for each call so you can re-use the same metric without overwriting previous results.
+	void set_filename( std::string const & str ) {
+		filename_ = str;
+	}
+
+	/// @brief If this value is not empty, we will dump the IG summary to a file during calculation and simply return the filename as the return string.
+	/// @detials this will perform variable substituion on the "{rand}" substring such that "path/to/{rand}.txt" will result in something like "path/to/5748295.txt". The number will be different for each call so you can re-use the same metric without overwriting previous results.
+	std::string const & filename() const {
+		return filename_;
+	}
+
 public:
 
 	/// @brief called by parse_my_tag -- should not be used directly
@@ -128,6 +140,10 @@ private: //Variables
 
 	/// @brief The scorefunction that we'll use.
 	core::scoring::ScoreFunctionCOP scorefxn_;
+
+	/// @brief If this value is not empty, we will dump the IG summary to a file during calculation and simply return the filename as the return string.
+	/// @detials this will perform variable substituion on the "{rand}" substring such that "path/to/{rand}.txt" will result in something like "path/to/5748295.txt". The number will be different for each call so you can re-use the same metric without overwriting previous results.
+	std::string filename_ = "";
 
 	/// @brief If true, then only the interaction graph summary is printed.  If false, then the
 	/// interaction graph summary plus the full information needed to reconstruct the pose is included.

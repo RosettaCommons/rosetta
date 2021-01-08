@@ -47,7 +47,7 @@ namespace interaction_graph {
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 void
 get_annealable_graph_summary(
-	std::stringstream & igstream,
+	std::ostream & igstream,
 	core::pose::Pose const & pose,
 	core::pack::rotamer_set::RotamerSets const & rot_sets,
 	AnnealableGraphBaseCOP const & anngraph,

@@ -41,6 +41,9 @@
 #include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 
+#include <numeric/random/random.hh>
+#include <fstream>
+
 // XSD Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -133,6 +136,8 @@ InteractionGraphSummaryMetric::parse_my_tag(
 	set_scorefunction( new_sfxn );
 
 	set_short_version( tag->getOption<bool>("skip_pose_reconstruction_info", false) );
+
+	set_filename( tag->getOption< std::string >( "filename", "" ) );
 }
 
 void
@@ -145,6 +150,9 @@ InteractionGraphSummaryMetric::provide_xml_schema( utility::tag::XMLSchemaDefini
 	rosetta_scripts::attributes_for_parse_score_function( attlist );
 
 	attlist + XMLSchemaAttribute::attribute_w_default ( "skip_pose_reconstruction_info", xsct_rosetta_bool, "If true, then this metric only stores a summary of the interaction graph.  If false (the default), then it stores both the interaction graph summary and full information for reconstructing the pose.  False by default.", "false" );
+
+	attlist + XMLSchemaAttribute::attribute_w_default ( "filename", xs_string, "If this value is not empty, we will dump the IG summary to a file during calculation and simply return the filename as the return string. This results in a large amount of information being written directly to disk by each process. This will perform variable substituion on the \"{rand}\" substring such that \"path/to/{rand}.txt\" will result in something like \"path/to/5748295.txt\". The number will be different for each call so you can re-use the same metric without overwriting previous results.", "" );
+
 
 	core::simple_metrics::xsd_simple_metric_type_definition_w_attributes(xsd, name_static(),
 		"A metric for writing out a description of the Rosetta-calculated interaction graph, which can be read in by external annealers or optimizers.", attlist);
@@ -175,6 +183,7 @@ InteractionGraphSummaryMetric::calculate(const core::pose::Pose & pose ) const {
 	}
 
 	my_task->or_precompute_ig( true );
+	my_task->and_linmem_ig( false );
 
 	core::pack::rotamer_set::RotamerSetsOP rot_sets( core::pack::rotamer_set::RotamerSetsFactory::create_rotamer_sets( *pose_copy ) );
 
@@ -182,11 +191,31 @@ InteractionGraphSummaryMetric::calculate(const core::pose::Pose & pose ) const {
 
 	core::pack::pack_rotamers_setup( *pose_copy, *scorefxn_, my_task, rot_sets, intgraph );
 
-	std::stringstream igstream;
+	if ( filename_.empty() ) {
+		// Store in memory and return entire result as a string
+		std::stringstream igstream;
 
-	core::pack::interaction_graph::get_annealable_graph_summary( igstream, *pose_copy, *rot_sets, intgraph, short_version() );
+		core::pack::interaction_graph::get_annealable_graph_summary( igstream, *pose_copy, *rot_sets, intgraph, short_version() );
 
-	return igstream.str();
+		return igstream.str();
+	} else {
+		// Store to disk and return filename
+
+		//2147483647 is the max value for an int
+		int const random_number = numeric::random::random_range( 0, 99999999 );
+		std::string const filename =
+			utility::replace_in( filename_, "{rand}", std::to_string( random_number ) );
+
+		//TODO manage this disk access somehow?
+		//Though this is entirely opt-in so it is not urgent
+		std::ofstream outfile;
+		outfile.open( filename );
+
+		core::pack::interaction_graph::get_annealable_graph_summary( outfile, *pose_copy, *rot_sets, intgraph, short_version() );
+
+		outfile.close();
+		return filename;
+	}
 }
 
 void
@@ -219,6 +248,7 @@ protocols::quantum_annealing::InteractionGraphSummaryMetric::save( Archive & arc
 	arc( CEREAL_NVP( task_factory_ ) );
 	arc( CEREAL_NVP( scorefxn_ ) );
 	arc( CEREAL_NVP( short_version_ ) ); //bool
+	arc( CEREAL_NVP( filename_ ) ); //string
 }
 
 template< class Archive >
@@ -235,6 +265,7 @@ protocols::quantum_annealing::InteractionGraphSummaryMetric::load( Archive & arc
 	scorefxn_ = local_scorefxn; //Again, non-const to const.
 
 	arc( short_version_ ); //bool
+	arc( filename_ ); //string
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::quantum_annealing::InteractionGraphSummaryMetric );

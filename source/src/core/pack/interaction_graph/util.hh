@@ -45,7 +45,7 @@ namespace interaction_graph {
 /// @param[in] short_version  If true, only the interaction graph summary is returned.  If false, information needed to reconstruct the pose
 /// is also included.  False by default.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
-void get_annealable_graph_summary( std::stringstream & igstream, core::pose::Pose const & pose, core::pack::rotamer_set::RotamerSets const & rot_sets, AnnealableGraphBaseCOP const & anngraph, bool const short_version=false );
+void get_annealable_graph_summary( std::ostream & igstream, core::pose::Pose const & pose, core::pack::rotamer_set::RotamerSets const & rot_sets, AnnealableGraphBaseCOP const & anngraph, bool const short_version=false );
 
 /// @brief Given a description of a packer problem, a description of the solution, and a pose to put a result in, generate
 /// a pose representing the solution.
