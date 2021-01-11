@@ -274,7 +274,7 @@ main( int argc, char** argv )
 			core::PackerEnergy bestenergy( 0.0 );
 			utility::vector0< int > rot_to_pack;
 			// Packing with SA but no replacement of residue
-			pack_rotamers_run( *myPose, pack2, rotsets, ig, rot_to_pack, bestrotamer_at_seqpos, bestenergy );
+			pack_rotamers_run( *myPose, pack2, rotsets, ig, rot_to_pack, nullptr, bestrotamer_at_seqpos, bestenergy );
 
 			std::cout << "Best spinlabel rotamer at resid " << seqid << ": ID " << rotsets->rotid_on_moltenresidue(bestrotamer_at_seqpos(seqid)) << std::endl;
 			std::cout << "PackerEnergy " << bestenergy << std::endl;

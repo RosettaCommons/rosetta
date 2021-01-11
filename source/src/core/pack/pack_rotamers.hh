@@ -29,6 +29,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
+#include <core/pack/annealer/AnnealerObserver.fwd.hh>
 
 #include <utility/vector0.hh>
 #include <utility/vector1.fwd.hh>
@@ -113,7 +114,8 @@ pack_rotamers_run(
 	task::PackerTaskCOP task,
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
 	interaction_graph::AnnealableGraphBaseOP ig,
-	utility::vector0<int> rot_to_pack = utility::vector0<int>()
+	utility::vector0<int> rot_to_pack = utility::vector0<int>(),
+	annealer::AnnealerObserverOP observer = nullptr
 );
 
 /// @brief Run simulated annealing and return the best rotamer assignment
@@ -125,6 +127,7 @@ pack_rotamers_run(
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
 	interaction_graph::AnnealableGraphBaseOP ig,
 	utility::vector0< int > rot_to_pack,
+	annealer::AnnealerObserverOP observer,
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy
 );

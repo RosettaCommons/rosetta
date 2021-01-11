@@ -163,6 +163,9 @@ void FixbbSimAnnealer::run()
 		annealer_trajectory.open(trajectory_file_name_.c_str() );
 	}
 
+	AnnealerObserverOP observer = get_annealer_observer();
+	if ( observer != nullptr ) observer->setup_for_mc( rotamer_sets() );
+
 	//outer loop
 	for ( int nn = 1; nn <= outeriterations; ++nn ) {
 		setup_temperature(loopenergy,nn);
@@ -197,6 +200,13 @@ void FixbbSimAnnealer::run()
 				if ( numeric::random::rg().uniform() < (static_cast<core::Real>(nrot)/2.0-1)/static_cast<core::Real>(nrot) ) rotamer_state_on_moltenres = rotamer_sets()->nrotamers_for_moltenres(moltenres_id);
 			}
 
+			core::conformation::ResidueCOP existing_rotamer = nullptr;
+			if ( prevrotamer_state != 0 ) {
+				existing_rotamer = rotamer_sets()->rotamer_for_moltenres( moltenres_id, prevrotamer_state );
+			}
+			core::conformation::ResidueCOP const candidate_rotamer =
+				rotamer_sets()->rotamer_for_moltenres( moltenres_id, rotamer_state_on_moltenres );
+
 			if ( rotamer_state_on_moltenres == prevrotamer_state ) continue; //skip iteration
 
 			// initializing to zero but should be updated below.
@@ -208,7 +218,13 @@ void FixbbSimAnnealer::run()
 			//bk keep new rotamer if it is lower in energy or accept it at some
 			//bk probability if it is higher in energy, if it is the first
 			//bk rotamer to be tried at this position automatically accept it.
-			if ( (prevrotamer_state == 0) || pass_metropolis(previous_energy_for_node,delta_energy) ) {
+
+			bool const was_unassigned = (prevrotamer_state == 0);
+			bool passed = false;
+
+			if ( was_unassigned || pass_metropolis(previous_energy_for_node,delta_energy) ) {
+				if ( ! was_unassigned ) passed = true;
+
 				//std::cout << " accepted\n";
 				currentenergy = ig_->commit_considered_substitution();
 				state_on_node(moltenres_id) = rotamer_state_on_moltenres;
@@ -223,6 +239,19 @@ void FixbbSimAnnealer::run()
 
 			} else if ( record_annealer_trajectory_ ) {
 				annealer_trajectory << moltenres_id << " " << rotamer_state_on_moltenres << " R\n";
+			}
+
+			if ( ! was_unassigned && observer != nullptr ) {
+				float const temp = ( quench() ? 0 : get_temperature() );
+				int const resid = rotamer_sets()->moltenres_2_resid( moltenres_id );
+				observer->observe_mc(
+					resid,
+					moltenres_id,
+					* existing_rotamer,
+					* candidate_rotamer,
+					temp,
+					passed
+				);
 			}
 
 			loopenergy(nn) = currentenergy;

@@ -1139,7 +1139,7 @@ BasicSimAnnealerRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	core::PackerEnergy   rotamer_energy;
 
 	core::pack::pack_rotamers_run(
-		*pose(), task(), rot_sets(), ig(), rot_to_pack,
+		*pose(), task(), rot_sets(), ig(), rot_to_pack, nullptr,
 		rotamer_assignment, rotamer_energy );
 
 	RotamerAssignmentAndEnergy result;
@@ -1220,7 +1220,7 @@ DenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	for ( core::Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
 
 	core::pack::pack_rotamers_run(
-		*pose(), task(), rsubset, dense_ig, all_rots,
+		*pose(), task(), rsubset, dense_ig, all_rots, nullptr,
 		rotamer_assignment, rotamer_energy );
 
 	RotamerAssignmentAndEnergy result;
@@ -1370,7 +1370,7 @@ DoubleDenseIGRepacker::repack( utility::vector0< int > const & rot_to_pack )
 	for ( core::Size ii = 0; ii < all_rots.size(); ++ii ) all_rots[ ii ] = ii+1;
 
 	core::pack::pack_rotamers_run(
-		*pose(), task(), rsubset, dense_ig, all_rots,
+		*pose(), task(), rsubset, dense_ig, all_rots, nullptr,
 		rotamer_assignment, rotamer_energy );
 
 	RotamerAssignmentAndEnergy result;

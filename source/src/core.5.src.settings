@@ -50,6 +50,7 @@ sources = {
 #	],
 	"core/pack/annealer": [
 		"AnnealerFactory",
+		"AnnealerObserver",
 		"DebuggingAnnealer",
 		"FASTERAnnealer",
 		"FixbbCoupledRotamerSimAnnealer",

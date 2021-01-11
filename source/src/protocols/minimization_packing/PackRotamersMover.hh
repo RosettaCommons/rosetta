@@ -33,6 +33,8 @@
 #include <core/pack/rotamer_set/RotamerSets.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 
+#include <core/pack/annealer/AnnealerObserver.fwd.hh>
+
 // Utility headers
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
@@ -213,6 +215,11 @@ public:
 	static void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 	static void list_options_read( utility::options::OptionKeyList & opts );
 
+	void
+	set_annealer_observer( core::pack::annealer::AnnealerObserverOP observer ){
+		observer_ = observer;
+	}
+
 protected:
 	/// @brief get rotamers, energies. Also performs lazy initialization of ScoreFunction, PackerTask.
 	virtual void setup( Pose & pose );
@@ -242,6 +249,8 @@ private:
 	// 'really private:' packer data, actually created and owned by this class
 	RotamerSetsOP rotamer_sets_;
 	AnnealableGraphBaseOP ig_;
+
+	core::pack::annealer::AnnealerObserverOP observer_;
 };
 
 std::ostream &operator<< (std::ostream &os, PackRotamersMover const &mover);

@@ -52,7 +52,6 @@
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
 
-
 namespace protocols {
 namespace minimization_packing {
 
@@ -318,7 +317,7 @@ void PackRotamersMover::setup( Pose & pose )
 
 core::PackerEnergy PackRotamersMover::run( Pose & pose, utility::vector0< int > rot_to_pack ) const
 {
-	return pack_rotamers_run( pose, task_, rotamer_sets_, ig_, rot_to_pack );
+	return pack_rotamers_run( pose, task_, rotamer_sets_, ig_, rot_to_pack, observer_ );
 }
 
 /// @brief Clean up cached pose and mover data after the fact.

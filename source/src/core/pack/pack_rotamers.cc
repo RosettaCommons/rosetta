@@ -266,7 +266,8 @@ pack_rotamers_run(
 	task::PackerTaskCOP task,
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
 	interaction_graph::AnnealableGraphBaseOP ig,
-	utility::vector0< int > rot_to_pack // defaults to an empty vector (no effect)
+	utility::vector0< int > rot_to_pack, // defaults to an empty vector (no effect)
+	annealer::AnnealerObserverOP observer //defaults to nullptr
 )
 {
 	using namespace ObjexxFCL::format;
@@ -274,7 +275,7 @@ pack_rotamers_run(
 	FArray1D_int bestrotamer_at_seqpos( pose.size() );
 	core::PackerEnergy bestenergy( 0.0 );
 
-	pack_rotamers_run( pose, task, rotsets, ig, rot_to_pack, bestrotamer_at_seqpos, bestenergy );
+	pack_rotamers_run( pose, task, rotsets, ig, rot_to_pack, observer, bestrotamer_at_seqpos, bestenergy );
 
 	// place new rotamers on input pose
 	for ( uint ii = 1; ii <= rotsets->nmoltenres(); ++ii ) {
@@ -297,6 +298,7 @@ pack_rotamers_run(
 	rotamer_set::FixbbRotamerSetsCOP rotsets,
 	interaction_graph::AnnealableGraphBaseOP ig,
 	utility::vector0< int > rot_to_pack,
+	annealer::AnnealerObserverOP observer,
 	ObjexxFCL::FArray1D_int & bestrotamer_at_seqpos,
 	core::PackerEnergy & bestenergy
 )
@@ -325,6 +327,7 @@ pack_rotamers_run(
 	if ( task->low_temp()  > 0.0 ) annealer->set_lowtemp(  task->low_temp()  );
 	if ( task->high_temp() > 0.0 ) annealer->set_hightemp( task->high_temp() );
 	annealer->set_disallow_quench( task->disallow_quench() );
+	annealer->set_annealer_observer( observer );
 
 	PROF_START( basic::SIMANNEALING );
 	annealer->run();

@@ -244,7 +244,7 @@ std::string RotamerDumpMover::get_annealer_pick_table(core::pack::interaction_gr
 	utility::vector0<int> rot_to_pack;
 	float bestenergy = 0;
 
-	core::pack::pack_rotamers_run(pose,task,rotamer_sets,ig,rot_to_pack,bestrotamer_at_seqpos,bestenergy);
+	core::pack::pack_rotamers_run(pose,task,rotamer_sets,ig,rot_to_pack,nullptr,bestrotamer_at_seqpos,bestenergy);
 
 	core::Size n_molten_res =rotamer_sets->nmoltenres();
 	for ( core::Size molten_res =1; molten_res <= n_molten_res; ++molten_res ) {

@@ -17,12 +17,13 @@
 
 // Unit Headers
 #include <core/pack/annealer/SimAnnealerBase.fwd.hh>
+#include <utility/VirtualBase.hh>
 
 // Package Headers
 #include <core/types.hh>
 
 // Utility Headers
-#include <utility/VirtualBase.hh>
+#include <core/pack/annealer/AnnealerObserver.hh>
 
 // ObjexxFCL Headers
 
@@ -91,6 +92,21 @@ public:
 		inneriterations_scaling_ = si; return;
 	}
 
+	AnnealerObserverOP
+	get_annealer_observer() {
+		return observer_;
+	}
+
+	AnnealerObserverCOP
+	get_annealer_observer() const {
+		return observer_;
+	}
+
+	void
+	set_annealer_observer( AnnealerObserverOP obs ){
+		observer_ = obs;
+	}
+
 protected:
 
 	static const core::PackerEnergy hightemp;
@@ -140,6 +156,8 @@ private:
 
 	bool const low_temp_annealing_;
 	bool disallow_quench_;
+
+	AnnealerObserverOP observer_ = nullptr;
 
 	SimAnnealerBase(const SimAnnealerBase& rhs);
 };
