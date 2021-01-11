@@ -1,0 +1,6 @@
+-s input/1MFG.pdb
+-ignore_unrecognized_res
+
+-backrub:ntrials 500
+-in:file:movemap input/1MFG.movemap
+-out:nooutput

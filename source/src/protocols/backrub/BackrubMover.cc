@@ -29,15 +29,17 @@
 #include <core/id/DOF_ID_Range.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/scoring/mm/MMBondAngleResidueTypeParamSet.hh>
-#include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
+#include <core/select/movemap/util.hh>
+#include <core/select/jump_selector/JumpIndexSelector.hh>
 
 // Numeric Headers
 #include <numeric/angle.functions.hh>
@@ -59,7 +61,11 @@
 #include <set>
 
 // option key includes
-
+#include <basic/options/option.hh>
+#include <basic/Tracer.hh>
+#include <basic/datacache/DataMap.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
+#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 
 #include <core/id/TorsionID_Range.hh>
@@ -88,6 +94,7 @@ BackrubMover::BackrubMover() :
 	max_angle_disp_7_(numeric::conversions::radians(20.)),
 	max_angle_disp_slope_(numeric::conversions::radians(-1./3.)),
 	next_segment_id_(0),
+	movemap_(/* NULL */),
 	preserve_detailed_balance_(false),
 	require_mm_bend_(true),
 	custom_angle_(false)
@@ -107,13 +114,19 @@ init_backrub_mover_with_options(
 {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
-
 	utility::vector1<core::Size> pivot_residues;
 	for ( core::Size i = 1; i <= option[ OptionKeys::backrub::pivot_residues ].size(); ++i ) {
 		if ( option[ OptionKeys::backrub::pivot_residues ][i] >= 1 ) pivot_residues.push_back(option[ OptionKeys::backrub::pivot_residues ][i]);
 	}
 
-	mover.set_pivot_residues(pivot_residues);
+	if ( option[in::file::movemap].user() ) {
+		core::kinematics::MoveMapOP movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
+		movemap_->init_from_file( option[in::file::movemap]() );
+		mover.set_movemap(movemap_);
+	} else {
+		mover.set_pivot_residues(pivot_residues);
+	}
+
 	mover.set_pivot_atoms(option[ OptionKeys::backrub::pivot_atoms ]);
 	mover.set_min_atoms(option[ OptionKeys::backrub::min_atoms ]);
 	mover.set_max_atoms(option[ OptionKeys::backrub::max_atoms ]);
@@ -128,11 +141,18 @@ BackrubMover::init_with_options()
 void
 BackrubMover::parse_my_tag(
 	utility::tag::TagCOP tag,
-	basic::datacache::DataMap & /*data*/
+	basic::datacache::DataMap & data
 )
 {
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
 	if ( tag->hasOption("pivot_residues") ) {
 		pivot_residue_selector_ = core::pose::get_resnum_selector(tag, "pivot_residues");
+		// Clear the command-line input movemap
+		if ( option[in::file::movemap].user() ) {
+			core::kinematics::MoveMapOP movemap_ = utility::pointer::make_shared< core::kinematics::MoveMap >();
+			this->set_movemap(movemap_);
+		}
 	}
 
 	if ( tag->hasOption("pivot_atoms") ) {
@@ -148,12 +168,36 @@ BackrubMover::parse_my_tag(
 	set_preserve_detailed_balance( tag->getOption<bool>( "preserve_detailed_balance", preserve_detailed_balance() ) );
 	set_require_mm_bend( tag->getOption<bool>( "require_mm_bend", require_mm_bend() ) );
 
+	if ( tag->hasOption("movemap_factory") ) {
+		TR.Debug << "Identified the parser for Movemap Factory" << std::endl;
+		parse_movemap_factory(tag, data);
+	}
 
 	clear_segments();
 	// set_input_pose(PoseCOP( PoseOP( new core::pose::Pose(pose) ) )); // Will be called on first apply() call.
 	// add_mainchain_segments(); // Will be called on apply() call
 
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();
+}
+
+void
+BackrubMover::parse_movemap_factory(
+	utility::tag::TagCOP tag,
+	basic::datacache::DataMap & data
+)
+{
+	using namespace core::select::movemap;
+
+	TR << "Defining movemap as per the Movemap Factory Attribute" << std::endl;
+	// Including the following option in case a movemap parser is added in the future
+	if ( tag->hasOption("chi") || tag->hasOption("bb") ) {
+		throw CREATE_EXCEPTION( utility::excn::RosettaScriptsOptionError, "BackrubMover can accept either a MoveMapFactory or bb/chi (as input to a Movemap).");
+	} else if ( tag->hasOption("pivot_residues") ) {
+		TR.Warning << "*** Pivot residues parser exists. Movemap Factory attribute will be overriden by user-defined pivot residues ***" << std::endl;
+	}
+
+	MoveMapFactoryOP mmf = core::select::movemap::parse_movemap_factory(tag, data);
+	set_movemap_factory(mmf);
 }
 
 void
@@ -200,6 +244,12 @@ BackrubMover::apply(
 	Pose & pose
 )
 {
+	// If movemap_factory attribute present, the update the movemap and corresponding pivot_residues
+	if ( movemap_factory_ && !(pivot_residue_selector_) ) {
+		TR.Debug << "*** Movemap Factory is defined, so setting up movemap ***" << std::endl;
+		core::kinematics::MoveMapOP updated_movemap( movemap_factory_->create_movemap_from_pose(pose)->clone() );
+		this->set_movemap(updated_movemap);
+	}
 	// the BranchAngleOptimizer must be initialized by reading a database. Do so now if this has not occurred
 	if ( ! branchopt_.initialized() ) branchopt_.read_database();
 
@@ -670,6 +720,12 @@ BackrubMover::set_pivot_residue_selector(
 	core::select::residue_selector::ResidueSelectorCOP pivot_residues
 ) {
 	pivot_residue_selector_ = pivot_residues;
+}
+
+
+void
+BackrubMover::set_movemap_factory( core::select::movemap::MoveMapFactoryCOP mmf ){
+	movemap_factory_ = mmf;
 }
 
 void
@@ -1214,6 +1270,16 @@ std::string BackrubMover::mover_name() {
 void BackrubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
+
+	auto ct_gen = complex_type_generator_for_backrub_mover( xsd );
+	ct_gen->element_name( mover_name() )
+		.description( "Performs purely local moves using rotations around axes defined by two backbone atoms" )
+		.write_complex_type_to_schema( xsd );
+}
+
+utility::tag::XMLSchemaComplexTypeGeneratorOP
+BackrubMover::complex_type_generator_for_backrub_mover( utility::tag::XMLSchemaDefinition & xsd ){
+	using namespace utility::tag;
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute(
 		"pivot_residues", xs_string,
@@ -1254,10 +1320,29 @@ void BackrubMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"if true and used with MetropolisHastings, will exit if mm_bend is not in the score function",
 		"true");
 
-	protocols::moves::xsd_type_definition_w_attributes(
-		xsd, mover_name(),
-		"Purely local moves using rotations around axes defined by two backbone atoms",
-		attlist );
+	core::select::movemap::attributes_for_parse_movemap_factory_default_attr_name( attlist,
+		"The name of the pre-defined MoveMapfactory that will be used to alter the"
+		" default behaviour of the MoveMap. By default, all backbone, chi, and jump"
+		" DOFs are allowed to change. A MoveMapFactory can be used to change which "
+		"of those DOFs are actually enabled. The provision of MoveMapFactory can allow"
+		"dynamic allocation as the factory can take residues from the residue selector."
+		"Be warned that combining a MoveMapFactory with a Movemap can result in "
+		"unexpected behaviour. The Movemap provided as a subelement of this element "
+		"will be generated, and then the DoF modifications specified in the MoveMap "
+		"Factory will be applied afterwards. Note that if residues are defined with "
+		"the pivot_residues tag, they will override residues defined by both the movemap"
+		" or the movemap factory");
+
+	XMLSchemaSimpleSubelementList subelements;
+	rosetta_scripts::append_subelement_for_parse_movemap_factory_legacy( xsd, subelements );
+
+	//XMLSchemaComplexTypeGeneratorOP ct_gen( utility::pointer::make_shared< XMLSchemaComplexTypeGenerator >() );
+	XMLSchemaComplexTypeGeneratorOP ct_gen( new XMLSchemaComplexTypeGenerator );
+	ct_gen->complex_type_naming_func( & moves::complex_type_name_for_mover )
+		.add_attributes( attlist )
+		.set_subelements_repeatable( subelements )
+		.add_optional_name_attribute();
+	return ct_gen;
 }
 
 std::string BackrubMoverCreator::keyname() const {

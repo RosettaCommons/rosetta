@@ -15,14 +15,15 @@
 #ifndef INCLUDED_protocols_backrub_BackrubMover_hh
 #define INCLUDED_protocols_backrub_BackrubMover_hh
 
+// Unit Headers
 #include <protocols/backrub/BackrubMover.fwd.hh>
-
 
 // Core Headers
 #include <core/id/DOF_ID_Range.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
+#include <core/select/movemap/MoveMapFactory.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 
 // Protocols Headers
@@ -34,6 +35,7 @@
 
 // Utility Headers
 #include <utility/keys/Key3Vector.hh>
+#include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // Numeric Headers
 #include <numeric/IntervalSet.fwd.hh>
@@ -74,6 +76,11 @@ public:
 		basic::datacache::DataMap & data
 	) override;
 
+	void
+	parse_movemap_factory(
+		utility::tag::TagCOP tag,
+		basic::datacache::DataMap & data
+	);
 
 	void
 	initialize_simulation(
@@ -190,6 +197,10 @@ public:
 	set_pivot_residue_selector(
 		core::select::residue_selector::ResidueSelectorCOP pivot_residues
 	);
+
+	/// @brief Sets up movemap from the movemap factory inputs.
+	virtual void
+	set_movemap_factory( core::select::movemap::MoveMapFactoryCOP mmf );
 
 	/// @brief Sets Pivot Residues from the Movemap.  Each contiguous set of residues
 	/// with BB enabled will be used as a segment.
@@ -381,6 +392,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	static
+	utility::tag::XMLSchemaComplexTypeGeneratorOP complex_type_generator_for_backrub_mover( utility::tag::XMLSchemaDefinition & xsd );
 
 private:
 
@@ -402,6 +415,8 @@ private:
 	std::string last_end_atom_name_;
 	core::Real next_angle_;
 	core::Real last_angle_;
+	core::kinematics::MoveMapOP movemap_;
+	core::select::movemap::MoveMapFactoryCOP movemap_factory_;
 	bool preserve_detailed_balance_;
 	bool require_mm_bend_;
 	bool custom_angle_;

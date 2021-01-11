@@ -1,0 +1,28 @@
+<ROSETTASCRIPTS>
+<SCOREFXNS>
+    <ScoreFunction name="score_func" weights="ref2015"/>
+</SCOREFXNS>
+<FILTERS>
+</FILTERS>
+<RESIDUE_SELECTORS>
+    <Chain name="chA" chains="A" />
+    <Chain name="chB" chains="B" />
+    <InterfaceByVector name="interfaceAB" grp1_selector="chA" grp2_selector="chB" />
+</RESIDUE_SELECTORS>
+<MOVE_MAP_FACTORIES>
+    <MoveMapFactory name="Interface">
+            <Backbone residue_selector="interfaceAB"/>
+            <Chi residue_selector="interfaceAB"/>
+    </MoveMapFactory>
+</MOVE_MAP_FACTORIES>
+<SIMPLE_METRICS>
+</SIMPLE_METRICS>
+<MOVERS>
+    <Backrub name="bbmover" movemap_factory="Interface" preserve_detailed_balance="1" require_mm_bend="0"/>
+ </MOVERS>
+ <APPLY_TO_POSE>
+ </APPLY_TO_POSE>
+ <PROTOCOLS>
+     <Add mover_name="bbmover"/>
+</PROTOCOLS>
+</ROSETTASCRIPTS>

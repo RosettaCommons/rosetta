@@ -1,0 +1,4 @@
+-in:file:s input/1MFG.pdb
+-parser:protocol input/1MFG_test1.xml
+
+-out:nooutput
