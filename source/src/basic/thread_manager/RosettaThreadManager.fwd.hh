@@ -24,6 +24,7 @@
 // C++ headers
 #include <functional>
 
+
 // Forward
 namespace basic {
 namespace thread_manager {

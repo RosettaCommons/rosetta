@@ -408,6 +408,7 @@ sources = {
                 "measure_sequence_similarity_to_native",
                 "tensorflow_manager_test1",
                 "tensorflow_test2",
+                "test_rosetta_thread_manager_preallocation",
         ],
 	"pilot/jadolfbr" : [
 		"rosetta_scripts_jd3",

@@ -141,6 +141,7 @@ sources = {
 	],
 	"basic/thread_manager" : [
 		"RosettaThread",
+		"RosettaThreadAllocation",
 		"RosettaThreadAssignmentInfo",
 		"RosettaThreadPool",
 		"RosettaThreadManager",

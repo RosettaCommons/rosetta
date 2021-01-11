@@ -42,7 +42,9 @@ static basic::Tracer TR( "basic.thread_manager.RosettaThreadManager" );
 namespace basic {
 namespace thread_manager {
 
-#define MAX_THREAD_INDEX_WARNINGS 8 //The maximum number of warnings about threads not managed by the RosettaThreadManager that the user will see.
+#ifdef MULTI_THREADED
+constexpr int MAX_THREAD_INDEX_WARNINGS = 8; //The maximum number of warnings about threads not managed by the RosettaThreadManager that the user will see.
+#endif
 
 // Private methods ////////////////////////////////////////////////////////////
 
@@ -156,7 +158,7 @@ RosettaThreadManager::do_work_vector_in_threads(
 	RosettaThreadAssignmentInfo &
 #endif
 ) {
-	if ( vector_of_work.size() == 0 ) {
+	if ( vector_of_work.empty() ) {
 		TR.Warning << "A work vector of size zero was passed to the RosettaThreadManager!  Duly returning without doing anything." << std::endl;
 		return;
 	}
@@ -176,6 +178,41 @@ RosettaThreadManager::do_work_vector_in_threads(
 #else
 	//In non-threaded builds, just iterate through and do all of the work.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_work_vector_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
+	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
+		(vector_of_work[i])(); //Do the ith piece of work.
+	}
+#endif
+}
+
+/// @brief Given a vector of functions that were bundled with their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute in parallel with any other, run all of these in threads.
+///@details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no other functions in the vector are operating on.
+void
+RosettaThreadManager::do_work_vector_in_threads(
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
+#ifdef MULTI_THREADED
+	RosettaThreadAllocation & allocation,
+	RosettaThreadAssignmentInfo & thread_assignment
+#else
+	RosettaThreadAllocation &,
+	RosettaThreadAssignmentInfo &
+#endif
+) {
+	if ( vector_of_work.empty() ) {
+		TR.Warning << "A work vector of size zero was passed to the RosettaThreadManager!  Duly returning without doing anything." << std::endl;
+		return;
+	}
+#ifdef MULTI_THREADED
+	utility::vector1< std::mutex > mutexes( vector_of_work.size() );
+	utility::vector1< AtomicBoolContainer > jobs_completed( vector_of_work.size() ); // Initialized to false automatically.
+
+	RosettaThreadFunction fxn(
+		std::bind(
+		&RosettaThreadManager::work_vector_thread_function, this,
+		std::cref( vector_of_work ), std::ref( mutexes ), std::ref( jobs_completed ), std::cref( thread_assignment )
+		)
+	);
+	run_function_in_threads( fxn, RosettaThreadManagerAdvancedAPIKey(), allocation );
+#else
 	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
 		(vector_of_work[i])(); //Do the ith piece of work.
 	}
@@ -220,8 +257,49 @@ RosettaThreadManager::do_work_vector_in_threads_no_locking(
 #else
 	//In non-threaded builds, just iterate through and do all of the work.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::do_work_vector_in_threads_no_locking(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
-	for ( platform::Size i(1), imax(vector_of_work.size()); i<=imax; ++i ) {
-		(vector_of_work[i])(); //Do the ith piece of work.
+	for ( RosettaThreadFunction const & func : vector_of_work ) {
+		func();
+	}
+#endif
+}
+
+/// @brief VARIANT BASIC API THAT SHOULD BE USED FOR WORK VECTORS OF NEAR-EQUAL SIZED CHUNKS WHERE THE CHUNKS ARE SMALL.  Given a vector of
+/// functions that were bundled with their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
+/// in parallel with any other, run all of these in threads.
+/// @details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with
+/// std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions
+/// should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no
+/// other functions in the vector are operating on.
+/// @note Under the hood, this sets up no mutexes, instead giving each thread a staggered subset of the work in the vector.  It calls
+/// run_function_in_threads() to do the work.  The work is done concurrently in 1 <= actual count <= min( requested thread count, total
+/// thread count ) threads.  The function blocks until all threads have finished their work, which means that the individual work units
+/// should be small, that the longest-running work unit should be short compared to the total runtime, and that the number of work units
+/// should be much greater than the number of threads requested.
+/// This function works best for cases in which it is known that most of the work in the vector is of equal size (i.e. load-balancing is
+/// unlikely to be an issue), and where the overhead of locking mutexes for each job is likely to be comparable in size to the cost of a
+/// job (so we want to avoid this overhead).
+void
+RosettaThreadManager::do_work_vector_in_threads_no_locking(
+	utility::vector1< RosettaThreadFunction > const & vector_of_work,
+#ifdef MULTI_THREADED
+	RosettaThreadAllocation & allocation,
+	RosettaThreadAssignmentInfo & thread_assignment
+#else
+	RosettaThreadAllocation &,
+	RosettaThreadAssignmentInfo &
+#endif
+) {
+#ifdef MULTI_THREADED
+	RosettaThreadFunction fxn(
+		std::bind(
+		&RosettaThreadManager::work_vector_thread_function_no_locking, this,
+		std::cref( vector_of_work ), std::cref( thread_assignment )
+		)
+	);
+	run_function_in_threads( fxn, RosettaThreadManagerAdvancedAPIKey(), allocation );
+#else
+	for ( RosettaThreadFunction const & func : vector_of_work ) {
+		func();
 	}
 #endif
 }
@@ -250,7 +328,7 @@ RosettaThreadManager::do_multistage_work_vector_in_threads(
 	RosettaThreadAssignmentInfo &
 #endif
 ) {
-	if ( multistage_vector_of_work.size() == 0 ) {
+	if ( multistage_vector_of_work.empty() ) {
 		TR.Warning << "A work vector of size zero was passed to the RosettaThreadManager!  Duly returning without doing anything." << std::endl;
 		return;
 	}
@@ -358,6 +436,61 @@ RosettaThreadManager::run_function_in_threads(
 	// In non-threaded builds, just run the function.
 	runtime_assert_string_msg( requested_thread_count == 0 || requested_thread_count == 1, "Error in RosettaThreadManager::run_function_in_threads(): In non-threaded builds, only one thread may be requested.  Compile Rosetta with the \"extras=cxx11thread\" option to enable multi-threading." );
 	(function_to_execute)();
+#endif
+}
+
+/// @brief ADVANCED API THAT SHOULD NOT BE USED IN MOST CIRCUMSTANCES.  Given a function that was bundled with its
+/// arguments with std::bind, run it in many threads.  This calls RosettaThreadPool::run_function_in_threads for
+/// the already-running thread pool.  If the thread pool has not been created, it first creates it by calling
+/// create_thread_pool().  IF YOU DECIDE TO USE THE ADVANCED API, YOU MUST:
+/// 1. Pass this function a RosettaThreadManagerAdvancedAPIKey from the calling context.  Since
+/// the RosettaThreadManagerAdvancedAPIKey class has a private constructor, it can only be created in
+/// whitelisted contexts in its friend list, which means that you must:
+/// 2. Add the class that calls this advanced API to the friend list for the RosettaThreadManagerAdvancedAPIKey
+/// class.  Since this will trigger breakage of the central_class_modification regression test, you must finally:
+/// 3. Justify to the developer community why you must call this interface and not the safer, basic interface (do_work_vector_in_threads)
+/// in both the comments in RosettaThreadManagerAdvancedAPIKey's friend list, the comments in the calling class, AND in your
+/// pull request description.  Andrew Leaver-Fay and Vikram K. Mulligan will both scrutinize this closely.  It is highly recommended
+/// that before using the run_function_in_threads() function, you first contact Andrew or Vikram and discuss whether it is possible
+/// to do what you want to do using the basic API (the do_work_vector_in_threads() function).
+///
+/// @details The function is assigned to as many threads as the RosettaThreadPool decides to assign it to, always
+/// including the thread from which the request originates.  It is guaranteed to run in 1 <= actual_thread_count <=
+/// requested_thread_count threads.  After assigning the function to up to (requsted_thread_count - 1) other threads,
+/// the function executes in the current thread, then the current thread blocks until the assigned threads report that
+/// they are idle.  All of this is handled by the RosettaThreadPool class (or its derived classes, which may have)
+/// different logic for assigning thread requests to threads).
+///
+/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
+/// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
+/// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
+/// execute by the calling function if the function to execute requires access to this information.  Note also that the
+/// function passed in is responsible for ensuring that it is able to carry out a large block of work, alone or concurrently
+/// with many copies of itself in parallel threads, in a threadsafe manner.  Finally, note that this function requires a
+/// RosettaThreadManagerAdvancedAPIKey, which can only be instantiated by friend classes in the whitelist in the
+/// RosettaThreadManagerAdvancedAPIKey class definition.  This ensures that only select classes can access the advanced
+/// RosettaThreadManager API.
+void
+RosettaThreadManager::run_function_in_threads(
+	RosettaThreadFunction & function_to_execute,
+	RosettaThreadManagerAdvancedAPIKey const &,
+#ifdef MULTI_THREADED
+	RosettaThreadAllocation & allocation
+#else
+	RosettaThreadAllocation &
+#endif
+) {
+#ifdef MULTI_THREADED
+	if ( thread_pool_was_launched_ == false ) {
+		std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
+		if ( thread_pool_ == nullptr ) {
+			create_thread_pool();
+		}
+	} //End of lock scope.
+	thread_pool_->run_function_in_threads( &function_to_execute, allocation );
+#else
+	// In non-threaded builds, just run the function.
+	function_to_execute();
 #endif
 }
 
@@ -540,6 +673,45 @@ RosettaThreadManager::multistage_work_vector_thread_function(
 	}
 }
 
+#endif
+
+#ifdef MULTI_THREADED
+void
+RosettaThreadManager::release_threads(
+	RosettaThreadAllocation & allocation
+){
+	debug_assert( thread_pool_ != nullptr );
+	thread_pool_->release_threads( allocation );
+	allocation.thread_ids.clear();
+}
+
+RosettaThreadAllocation
+RosettaThreadManager::reserve_threads(
+	platform::Size const requested_thread_count,
+	RosettaThreadAssignmentInfo & thread_assignment
+) {
+	if ( thread_pool_was_launched_ == false ) {
+		std::lock_guard< std::mutex > lock( thread_pool_mutex_ );
+		if ( thread_pool_ == nullptr ) {
+			create_thread_pool();
+		}
+	} //End of lock scope.
+	return thread_pool_->preallocate_threads( requested_thread_count, thread_assignment );
+}
+#else
+void
+RosettaThreadManager::release_threads(
+	RosettaThreadAllocation &
+){}
+
+RosettaThreadAllocation
+RosettaThreadManager::reserve_threads(
+	platform::Size const,
+	RosettaThreadAssignmentInfo &
+) {
+	RosettaThreadAllocation dummy;
+	return dummy;
+}
 #endif
 
 } //thread_manager

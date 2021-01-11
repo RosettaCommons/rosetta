@@ -28,7 +28,9 @@
 #include <basic/thread_manager/RosettaThreadManagerInitializationTracker.hh>
 #include <basic/thread_manager/RosettaThreadPool.fwd.hh>
 #endif
+
 #include <basic/thread_manager/RosettaThreadManagerAdvancedAPIKey.hh>
+#include <basic/thread_manager/RosettaThreadAllocation.hh>
 
 // Utility header
 #include <utility/SingletonBase.hh>
@@ -167,6 +169,25 @@ public:  // Public methods ////////////////////////////////////////////////////
 		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
+	/// @brief BASIC API THAT SHOULD BE USED IN MOST CIRCUMSTANCES.  Given a vector of functions that were bundled with
+	/// their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
+	/// in parallel with any other, run all of these in threads.
+	/// @details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with
+	/// std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions
+	/// should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no
+	/// other functions in the vector are operating on.
+	/// @note Under the hood, this sets up appropriate mutexes and then calls run_function_in_threads() to do the work.  The work
+	/// is done concurrently in 1 <= actual count <= min( requested thread count, total thread count ) threads.  The function blocks
+	/// until all threads have finished their work, which means that the individual work units should be small, that the longest-running
+	/// work unit should be short compared to the total runtime, and that the number of work units should be much greater than the
+	/// number of threads requested.
+	void
+	do_work_vector_in_threads(
+		utility::vector1< RosettaThreadFunction > const & vector_of_work,
+		RosettaThreadAllocation & allocation,
+		RosettaThreadAssignmentInfo & thread_assignment
+	);
+
 	/// @brief VARIANT BASIC API THAT SHOULD BE USED FOR WORK VECTORS OF NEAR-EQUAL SIZED CHUNKS WHERE THE CHUNKS ARE SMALL.  Given a vector of
 	/// functions that were bundled with their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
 	/// in parallel with any other, run all of these in threads.
@@ -186,6 +207,28 @@ public:  // Public methods ////////////////////////////////////////////////////
 	do_work_vector_in_threads_no_locking(
 		utility::vector1< RosettaThreadFunction > const & vector_of_work,
 		platform::Size const requested_thread_count,
+		RosettaThreadAssignmentInfo & thread_assignment
+	);
+
+	/// @brief VARIANT BASIC API THAT SHOULD BE USED FOR WORK VECTORS OF NEAR-EQUAL SIZED CHUNKS WHERE THE CHUNKS ARE SMALL.  Given a vector of
+	/// functions that were bundled with their arguments with std::bind, each of which can be executed in any order and each of which is safe to execute
+	/// in parallel with any other, run all of these in threads.
+	/// @details The bundled functions should be atomistic pieces of work.  They should be bundled with their arguments with
+	/// std::bind, and the arguments should include the place to store output (i.e. they should return void).  These functions
+	/// should not handle any mutexes themselves, but should ensure that they are operating only on memory locations that no
+	/// other functions in the vector are operating on.
+	/// @note Under the hood, this sets up no mutexes, instead giving each thread a staggered subset of the work in the vector.  It calls
+	/// run_function_in_threads() to do the work.  The work is done concurrently in 1 <= actual count <= min( requested thread count, total
+	/// thread count ) threads.  The function blocks until all threads have finished their work, which means that the individual work units
+	/// should be small, that the longest-running work unit should be short compared to the total runtime, and that the number of work units
+	/// should be much greater than the number of threads requested.
+	/// This function works best for cases in which it is known that most of the work in the vector is of equal size (i.e. load-balancing is
+	/// unlikely to be an issue), and where the overhead of locking mutexes for each job is likely to be comparable in size to the cost of a
+	/// job (so we want to avoid this overhead).
+	void
+	do_work_vector_in_threads_no_locking(
+		utility::vector1< RosettaThreadFunction > const & vector_of_work,
+		RosettaThreadAllocation & allocation,
 		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
@@ -249,11 +292,64 @@ public:  // Public methods ////////////////////////////////////////////////////
 		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
+	/// @brief ADVANCED API THAT SHOULD NOT BE USED IN MOST CIRCUMSTANCES.  Given a function that was bundled with its
+	/// arguments with std::bind, run it in many threads.  This calls RosettaThreadPool::run_function_in_threads for
+	/// the already-running thread pool.  If the thread pool has not been created, it first creates it by calling
+	/// create_thread_pool().  IF YOU DECIDE TO USE THE ADVANCED API, YOU MUST:
+	/// 1. Pass this function a RosettaThreadManagerAdvancedAPIKey from the calling context.  Since
+	/// the RosettaThreadManagerAdvancedAPIKey class has a private constructor, it can only be created in
+	/// whitelisted contexts in its friend list, which means that you must:
+	/// 2. Add the class that calls this advanced API to the friend list for the RosettaThreadManagerAdvancedAPIKey
+	/// class.  Since this will trigger breakage of the central_class_modification regression test, you must finally:
+	/// 3. Justify to the developer community why you must call this interface and not the safer, basic interface (do_work_vector_in_threads)
+	/// in both the comments in RosettaThreadManagerAdvancedAPIKey's friend list, the comments in the calling class, AND in your
+	/// pull request description.  Andrew Leaver-Fay and Vikram K. Mulligan will both scrutinize this closely.  It is highly recommended
+	/// that before using the run_function_in_threads() function, you first contact Andrew or Vikram and discuss whether it is possible
+	/// to do what you want to do using the basic API (the do_work_vector_in_threads() function).
+	///
+	/// @details The function is assigned to as many threads as the RosettaThreadPool decides to assign it to, always
+	/// including the thread from which the request originates.  It is guaranteed to run in 1 <= actual_thread_count <=
+	/// requested_thread_count threads.  After assigning the function to up to (requsted_thread_count - 1) other threads,
+	/// the function executes in the current thread, then the current thread blocks until the assigned threads report that
+	/// they are idle.  All of this is handled by the RosettaThreadPool class (or its derived classes, which may have)
+	/// different logic for assigning thread requests to threads).
+	///
+	/// @note A RosettaThreadAssignmentInfo object should be passed in.  It will be populated with
+	/// the number of threads requested, the number actually assigned, the indices of the assigned threads, and a map of
+	/// system thread ID to Rosetta thread index.  The same owning pointer may optionally be provided to the function to
+	/// execute by the calling function if the function to execute requires access to this information.  Note also that the
+	/// function passed in is responsible for ensuring that it is able to carry out a large block of work, alone or concurrently
+	/// with many copies of itself in parallel threads, in a threadsafe manner.  Finally, note that this function requires a
+	/// RosettaThreadManagerAdvancedAPIKey, which can only be instantiated by friend classes in the whitelist in the
+	/// RosettaThreadManagerAdvancedAPIKey class definition.  This ensures that only select classes can access the advanced
+	/// RosettaThreadManager API.
+	void
+	run_function_in_threads(
+		RosettaThreadFunction & function_to_execute,
+		RosettaThreadManagerAdvancedAPIKey const & key,
+		RosettaThreadAllocation & allocation
+	);
+
 	/// @brief Get the Rosetta thread index.
 	platform::Size get_rosetta_thread_index() const;
 
-private:  // Private fxns /////////////////////////////////////////////////////
+public: //Preallocation Section
 
+	///@brief Allocate threads before supplying the work vector
+	RosettaThreadAllocation
+	reserve_threads(
+		platform::Size const requested_thread_count,
+		RosettaThreadAssignmentInfo & thread_assignment
+	);
+
+	///@breif deallocate threads given by reserve_threads()
+	///@details This is called by RosettaThreadAllocation's destructor, so you don't need to worry about it
+	void
+	release_threads(
+		RosettaThreadAllocation & allocation
+	);
+
+private:  // Private fxns /////////////////////////////////////////////////////
 #ifdef MULTI_THREADED
 
 	/// @brief The function that is passed by do_work_vector_in_threads() to run_function_in_threads() to run in parallel,

@@ -22,12 +22,13 @@
 #include <basic/thread_manager/RosettaThreadPool.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
 #include <basic/thread_manager/RosettaThread.hh>
+#include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/Tracer.hh>
 
 #include <condition_variable>
+#include <atomic>
 
 static basic::Tracer TR( "basic.thread_manager.RosettaThreadPool" );
-
 
 namespace basic {
 namespace thread_manager {
@@ -121,6 +122,8 @@ RosettaThreadPool::run_function_in_threads(
 		// If we're requesting one thread, we still have to ensure that the thread assignment info is initialized.
 		debug_assert( assigned_threads.empty() ); //Should be true.
 		thread_assignment.set_assigned_child_threads( assigned_threads );
+		// ^ This does nothing, right?? - Old Jack
+		// Wrong! Logic is still in place to handle the master thread even if the vector is empty - New Jack
 		thread_assignment.set_requested_thread_count(1);
 	}
 
@@ -144,6 +147,108 @@ RosettaThreadPool::run_function_in_threads(
 		} //End of lock scope.
 	}
 } //run_function_in_threads
+
+void
+RosettaThreadPool::release_threads(
+	RosettaThreadAllocation & allocation
+){
+	std::lock_guard< std::mutex > lock( working_thread_list_mutex_ ); //Don't allow work assignments.
+	for ( auto const thread_id : allocation.thread_ids ) {
+		threads_[ thread_id ]->set_available_for_new_work();
+		//is this it??
+	}
+}
+
+RosettaThreadAllocation
+RosettaThreadPool::preallocate_threads(
+	platform::Size const requested_thread_count,
+	RosettaThreadAssignmentInfo & thread_assignment
+) {
+	runtime_assert_string_msg( requested_thread_count > 0, "Error in RosettaThreadPool::preallocate_threads():  Zero threads were requested!");
+	if ( requested_thread_count > threads_.size() + 1 ) {
+		TR.Warning << "Warning: " << requested_thread_count << " threads were requested, but only " << threads_.size() + 1 << " exist in the RosettaThreadPool." << std::endl;
+	}
+
+	//Can we use make_shared here?
+	//I always forget the ordering of basic and utility...
+	RosettaThreadAllocation allocation;
+	platform::Size assigned_thread_count = 0;
+
+	//Assign work to other threads.  Note that if the request is coming from one of the threads in the pool,
+	//that thread will be considered "not idle", so work won't be assigned to it in this step.  Below, the
+	//function will *also* run in this thread.
+	if ( requested_thread_count > 1 ) {
+		//We lock the thread assignment mutex while assigning to threads, to prevent other threads from trying to assign to the same threads.
+		std::lock_guard< std::mutex > lock( working_thread_list_mutex_ );
+		platform::Size ii = 1;
+		for ( RosettaThreadOP & thread : threads_ ) {
+			if ( thread->is_available_for_new_work() && thread->is_idle() ) {
+				thread->set_forced_idle( true );
+				allocation.thread_ids.push_back( ii );
+
+				++assigned_thread_count;
+				if ( assigned_thread_count == requested_thread_count - 1 ) break;
+			}
+			++ii;
+		}
+
+		//Store the information about assignments
+		debug_assert( assigned_thread_count == allocation.thread_ids.size() );
+		thread_assignment.set_assigned_child_threads( allocation.thread_ids );
+
+	} /*End of mutex lock scope*/ else {
+		thread_assignment.set_assigned_child_threads( allocation.thread_ids );
+	}
+
+	thread_assignment.set_requested_thread_count( requested_thread_count );
+
+	return allocation;
+} //preallocate_threads
+
+void
+RosettaThreadPool::run_function_in_threads(
+	RosettaThreadFunction * function_to_execute,
+	RosettaThreadAllocation & allocation
+) {
+	runtime_assert_string_msg( function_to_execute != nullptr, "Error in RosettaThreadPool::run_function_in_threads():  A null pointer was passed to this function!" );
+
+	//Variables to use to determine when all jobs are done:
+	std::mutex job_completion_mutex;
+	std::unique_lock< std::mutex > job_completion_lock( job_completion_mutex );
+	platform::Size jobs_finished = 0;
+	std::condition_variable cv;
+
+	if ( ! allocation.thread_ids.empty() ) {
+		//We lock the thread assignment mutex while assigning to threads, to prevent other threads from trying to assign to the same threads.
+		std::lock_guard< std::mutex > lock( working_thread_list_mutex_ );
+		for ( platform::Size const thread_id : allocation.thread_ids ) {
+			debug_assert( threads_[ thread_id ]->is_idle() );
+			threads_[ thread_id ]->set_forced_idle( true );
+			runtime_assert( threads_[ thread_id ]->set_function( function_to_execute, job_completion_mutex, cv, jobs_finished ) ); //Should always succeed.
+			threads_[ thread_id ]->set_forced_idle( false );
+		}
+
+	} /*End of mutex lock scope*/
+
+	//Also run the function in this thread (the requesting thread):
+	(*function_to_execute)();
+
+	//Now wait until all the other threads have finished.
+	if ( ! allocation.thread_ids.empty() ) {
+
+		//Wait for all threads to finish
+		if ( jobs_finished != allocation.thread_ids.size() ) {
+			platform::Size const nthreads_to_wait_for = allocation.thread_ids.size();
+			cv.wait( job_completion_lock, [&jobs_finished, nthreads_to_wait_for]{ return jobs_finished == nthreads_to_wait_for; } );
+		}
+
+		for ( platform::Size const thread_id : allocation.thread_ids ) {
+			runtime_assert( threads_[ thread_id ]->is_idle() );
+		}
+
+	}
+} //run_function_in_threads
+
 
 /// @brief Force all threads to terminate.  Called by the destructor of the RosettaThreadManager class, and
 /// by the destructor of this class.

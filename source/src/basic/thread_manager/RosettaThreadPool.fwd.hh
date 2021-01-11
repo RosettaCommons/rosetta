@@ -17,8 +17,6 @@
 /// Derived classes can implement different behaviour for assigning work to threads.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-#ifdef MULTI_THREADED
-
 #ifndef INCLUDED_basic_thread_manager_RosettaThreadPool_fwd_hh
 #define INCLUDED_basic_thread_manager_RosettaThreadPool_fwd_hh
 
@@ -31,16 +29,22 @@
 namespace basic {
 namespace thread_manager {
 
+#ifdef MULTI_THREADED
 class RosettaThreadPool;
 
 typedef utility::pointer::shared_ptr< RosettaThreadPool > RosettaThreadPoolOP;
 typedef utility::pointer::shared_ptr< RosettaThreadPool const > RosettaThreadPoolCOP;
 typedef utility::pointer::weak_ptr< RosettaThreadPool > RosettaThreadPoolAP;
 typedef utility::pointer::weak_ptr< RosettaThreadPool const > RosettaThreadPoolCAP;
+#endif //MULTI_THREADED
+
+struct RosettaThreadAllocation;
+
+using RosettaThreadAllocationOP = utility::pointer::shared_ptr< RosettaThreadAllocation >;
+using RosettaThreadAllocationCOP = utility::pointer::shared_ptr< RosettaThreadAllocation const >;
 
 } //thread_manager
 } //basic
 
 #endif //INCLUDED_basic_thread_manager_RosettaThreadPool_fwd_hh
 
-#endif //MULTI_THREADED

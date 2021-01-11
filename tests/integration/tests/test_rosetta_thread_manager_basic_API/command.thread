@@ -49,6 +49,13 @@ test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executabl
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
+[ -x %(bin)s/test_rosetta_thread_manager_basic_API.%(binext)s ] || exit 1
+%(bin)s/test_rosetta_thread_manager_preallocation.%(binext)s %(additional_flags)s -multithreading:total_threads 2 -database %(database)s -testing:INTEGRATION_TEST  2>&1 \
+    | egrep -vf ../../ignore_list \
+    > log_preallocate
+
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
+
 
 # Check that the version that generates each cell in a different thread produces 100 lines of unique output:
 grep test_rosetta_thread_manager_basic_API_output log1 | sed 's/ 10/ 0/g' | sort -nk 3,102 > temp1.txt

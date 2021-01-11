@@ -17,29 +17,31 @@
 /// Derived classes can implement different behaviour for assigning work to threads.
 /// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org)
 
-#ifdef MULTI_THREADED
-
 #ifndef INCLUDED_basic_thread_manager_RosettaThreadPool_hh
 #define INCLUDED_basic_thread_manager_RosettaThreadPool_hh
+
+#ifdef MULTI_THREADED
 
 #include <basic/thread_manager/RosettaThreadPool.fwd.hh>
 #include <basic/thread_manager/RosettaThread.fwd.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.fwd.hh>
 #include <basic/thread_manager/RosettaThreadManager.fwd.hh>
+#include <basic/thread_manager/RosettaThreadAllocation.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.hh>
-
-// Platform headers
-#include <platform/types.hh>
 
 // STL headers
 #include <functional>
 #include <mutex>
 #include <thread>
 #include <map>
+
+// Platform headers
+#include <platform/types.hh>
+
+#include <utility/vector1.hh>
 
 namespace basic {
 namespace thread_manager {
@@ -113,6 +115,27 @@ public: //Functions
 		RosettaThreadAssignmentInfo & thread_assignment
 	);
 
+
+	//PREALLOCATION SECTION
+
+	RosettaThreadAllocation
+	preallocate_threads(
+		platform::Size const requested_thread_count,
+		RosettaThreadAssignmentInfo & thread_assignment
+	);
+
+	void
+	release_threads(
+		RosettaThreadAllocation & allocation
+	);
+
+	void
+	run_function_in_threads(
+		RosettaThreadFunction * function_to_execute,
+		RosettaThreadAllocation & allocation
+	);
+
+
 	/// @brief Force all threads to terminate.  Called by the destructor of the RosettaThreadManager class, and
 	/// by the destructor of this class.
 	/// @details At the end of this operation, the threads_ object is empty.
@@ -135,9 +158,8 @@ private: //Data
 
 };
 
-
 } //thread_manager
 } //basic
 
-#endif //INCLUDED_basic_thread_manager_RosettaThreadPool_hh
 #endif //MULTI_THREADED
+#endif //INCLUDED_basic_thread_manager_RosettaThreadPool_hh
