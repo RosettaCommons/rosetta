@@ -152,6 +152,7 @@ private:
 	//Additional setting to prefix/suffix for RosettaScripts -
 	//  so that many different configured SMs can be called in one RunSimpleMetric run
 	std::string custom_type_ = "";
+	std::string tag_name_ = "";
 
 #ifdef    SERIALIZATION
 public:

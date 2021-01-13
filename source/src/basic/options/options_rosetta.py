@@ -3848,6 +3848,17 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 	), # -AnchoredDesign
 
 	##############################################################################
+	# Simple Metrics Options -----------------------------------------------
+	Option_Group( 'simple_metrics',
+		Option( 'use_name_as_custom_type', 'Boolean',
+		desc="Use the name of the tag as the custom_type unless a custom_type. For use outside of Protocols section",
+		default='false'),
+		Option( 'use_name_as_metric', 'Boolean',
+		desc="Use the name of the tag as the full name of the metric. For use outside of Protocols section. ",
+		default='false'),
+	), # -simple_metrics
+
+	##############################################################################
 	# Rosetta Antibody Options -----------------------------------------------
 	Option_Group('antibody',
 		Option( 'antibody', 'Boolean',

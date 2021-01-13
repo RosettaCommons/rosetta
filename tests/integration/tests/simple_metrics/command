@@ -6,3 +6,13 @@ cd %(workdir)s
 %(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
     -parser:protocol test_simple_metrics.xml -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > log
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
+    -parser:protocol test_simple_metrics.xml -simple_metrics:use_name_as_custom_type -out:prefix name_as_ct_ -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > name_as_ct_log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s @flags -database %(database)s \
+    -parser:protocol test_simple_metrics.xml -simple_metrics:use_name_as_metric -out:prefix name_as_metric_ -testing:INTEGRATION_TEST 2>&1 | egrep -vf ../../ignore_list > name_as_metric_log
+test "${PIPESTATUS[0]}" != '0' && exit 1 || true
+
+

@@ -19,6 +19,9 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/util.hh>
 
+#include <basic/options/keys/simple_metrics.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
+
 // NOTE: This file should have NO dependencies other than its header.
 
 #ifdef    SERIALIZATION
@@ -32,7 +35,7 @@
 
 namespace core {
 namespace simple_metrics {
-
+using namespace basic::options;
 
 
 SimpleMetric::SimpleMetric( std::string const & simple_metric_type_name ):
@@ -82,6 +85,14 @@ SimpleMetric::get_custom_type() const {
 
 void
 SimpleMetric::parse_base_tag(utility::tag::TagCOP tag ){
+
+	if ( tag->hasOption("name") ) {
+		tag_name_ = tag->getOption< std::string >("name");
+	}
+
+	if ( option [OptionKeys::simple_metrics::use_name_as_custom_type]() && ! tag_name_.empty() ) {
+		set_custom_type(tag_name_);
+	}
 	set_custom_type(tag->getOption< std::string >("custom_type", custom_type_));
 }
 
@@ -90,7 +101,12 @@ SimpleMetric::get_final_sm_type() const{
 	std::string custom_type = get_custom_type();
 
 	if ( custom_type != "" ) custom_type=custom_type+"_";
-	return custom_type + metric();
+
+	if ( option [OptionKeys::simple_metrics::use_name_as_metric]() && ! tag_name_.empty() ) {
+		return tag_name_;
+	} else {
+		return custom_type + metric();
+	}
 }
 
 /// @brief Provide citations to the passed CitationCollectionList
@@ -147,7 +163,7 @@ void
 core::simple_metrics::SimpleMetric::save( Archive & arc ) const {
 	arc( CEREAL_NVP( simple_metric_type_));
 	arc( CEREAL_NVP( custom_type_ ) );
-
+	arc( CEREAL_NVP( tag_name_ ) );
 }
 
 template< class Archive >
@@ -155,6 +171,7 @@ void
 core::simple_metrics::SimpleMetric::load( Archive & arc ) {
 	arc( simple_metric_type_ );
 	arc( custom_type_ );
+	arc( tag_name_ );
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::simple_metrics::SimpleMetric );
