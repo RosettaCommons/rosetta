@@ -203,7 +203,7 @@ CustomBaseTypePackerPalette::provide_citation_info(basic::citation_manager::Cita
 		name(), basic::citation_manager::CitedModuleType::PackerPalette
 		)
 	);
-	my_citation->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "Mulligan_2020_underreview" ) );
+	my_citation->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi( "10.1002/pro.3974" ) );
 	citations.add( my_citation );
 }
 

@@ -530,12 +530,12 @@
         Computational design of mixed chirality peptide macrocycles with internal symmetry
     [END_TITLE]
     [BEGIN_JOURNAL]
-        XXX
+        Protein Sci
     [END_JOURNAL]
     [BEGIN_VOLUME_ISSUE_PAGES]
-        XXX
+        29(12):2433-45
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
-        Mulligan_2020_underreview
+        10.1002/pro.3974
     [END_DOI]
 [END_CITATION]
