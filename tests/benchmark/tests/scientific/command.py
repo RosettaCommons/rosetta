@@ -57,7 +57,12 @@ def symlink_tree(source, dest):
 
 
 def run_multi_step_test(test, rosetta_dir, working_dir, platform, config, hpc_driver, verbose, variants, python_packages):
-    test_source_dir = f'{rosetta_dir}/tests/scientific/tests/{test}'
+
+    tests_dirs = 'tests sfxn_comparison_tests'.split()
+    for tests_dir in tests_dirs:
+        test_source_dir = f'{rosetta_dir}/tests/scientific/{tests_dir}/{test}'
+        if os.path.isdir(test_source_dir): break
+    else: raise BenchmarkError(f'Unknown scripts test: {test}! No dir {test!r} as found in {tests_dirs!r} tests dirs, aborting...')
 
     symlink_tree(test_source_dir, working_dir)
 
@@ -121,7 +126,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         stepwise_rna_favorites = 'numpy matplotlib==3.2',
         rna_denovo_favorites   = 'numpy matplotlib==3.2',
         simple_cycpep_predict  = 'numpy matplotlib==3.2',
-	peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
+		peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
 
         enzyme_design          = 'numpy matplotlib==3.2',
         fragments_picking      = 'numpy matplotlib==3.2',
@@ -153,9 +158,62 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         ligand_docking	       = 'numpy matplotlib==3.2',
         ligand_scoring_ranking = 'numpy matplotlib==3.2 pandas==0.23.4 sklearn scipy ',
         mhc_epitope_energy     = 'numpy matplotlib==3.2',
+
         FlexPepDock            = 'numpy matplotlib==3.2',
         docking                = 'numpy matplotlib==3.2',
         ddg_ala_scan           = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+
+
+	# LARGE-SCALE SCOREFUNCTION COMPARISONS============================
+
+        sb_ref2015_relax_cartesian   = 'numpy matplotlib==3.2',
+        sb_ref2015_relax_fast        = 'numpy matplotlib==3.2',
+        sb_ref2015_relax_fast_5iter  = 'numpy matplotlib==3.2',
+
+        sb_talaris14_relax_cartesian = 'numpy matplotlib==3.2',
+        sb_talaris14_relax_fast      = 'numpy matplotlib==3.2',
+        sb_talaris14_relax_fast_5iter= 'numpy matplotlib==3.2',
+
+        sb_talaris13_relax_cartesian = 'numpy matplotlib==3.2',
+        sb_talaris13_relax_fast      = 'numpy matplotlib==3.2',
+        sb_talaris13_relax_fast_5iter= 'numpy matplotlib==3.2',
+
+        sb_score12_relax_cartesian   = 'numpy matplotlib==3.2',
+        sb_score12_relax_fast        = 'numpy matplotlib==3.2',
+        sb_score12_relax_fast_5iter  = 'numpy matplotlib==3.2',
+
+        sb_ref2015_loop_modeling_ngk_12res = 'numpy matplotlib==3.2',
+        sb_ref2015_loop_modeling_kic_fragments_12res = 'numpy matplotlib==3.2',
+        sb_ref2015_loop_modeling_kic_12res = 'numpy matplotlib==3.2',
+        sb_ref2015_loop_modeling_ccd_12res = 'numpy matplotlib==3.2',
+
+        sb_talaris14_loop_modeling_ngk_12res = 'numpy matplotlib==3.2',
+        sb_talaris14_loop_modeling_kic_fragments_12res = 'numpy matplotlib==3.2',
+        sb_talaris14_loop_modeling_kic_12res = 'numpy matplotlib==3.2',
+        sb_talaris14_loop_modeling_ccd_12res = 'numpy matplotlib==3.2',
+
+        sb_talaris13_loop_modeling_ngk_12res = 'numpy matplotlib==3.2',
+        sb_talaris13_loop_modeling_kic_fragments_12res = 'numpy matplotlib==3.2',
+        sb_talaris13_loop_modeling_kic_12res = 'numpy matplotlib==3.2',
+        sb_talaris13_loop_modeling_ccd_12res = 'numpy matplotlib==3.2',
+
+        sb_score12_loop_modeling_ngk_12res = 'numpy matplotlib==3.2',
+        sb_score12_loop_modeling_kic_fragments_12res = 'numpy matplotlib==3.2',
+        sb_score12_loop_modeling_kic_12res = 'numpy matplotlib==3.2',
+        sb_score12_loop_modeling_ccd_12res = 'numpy matplotlib==3.2',
+
+        sb_ligand_docking	= 'numpy matplotlib==3.2',
+
+        sb_ref2015_docking      = 'numpy matplotlib==3.2',
+        sb_talaris14_docking    = 'numpy matplotlib==3.2',
+        sb_talaris13_docking    = 'numpy matplotlib==3.2',
+        sb_score12_docking      = 'numpy matplotlib==3.2',
+
+        sb_ref2015_fast_design   = 'numpy matplotlib==3.2',
+        sb_talaris14_fast_design = 'numpy matplotlib==3.2',
+        sb_talaris13_fast_design = 'numpy matplotlib==3.2',
+        sb_score12_fast_design   = 'numpy matplotlib==3.2',
+
     )
 
     test, _, variants = test.partition('.')

@@ -1,0 +1,35 @@
+<ROSETTASCRIPTS>
+
+  <SCOREFXNS>
+    <ScoreFunction name="sfxn" weights="ref2015"/> 
+  </SCOREFXNS>
+
+  <RESIDUE_SELECTORS>
+		<True name="full_pose" />
+  </RESIDUE_SELECTORS>
+
+  <TASKOPERATIONS>
+    <IncludeCurrent name="keep_curr"/>   
+    <ExtraRotamersGeneric name="extrachi"
+			  ex1="1" ex2="1" ex3="0" ex4="0"
+			  ex1_sample_level="1" ex2_sample_level="1" ex3_sample_level="0" ex4_sample_level="0"
+			  extrachi_cutoff="12"/> 
+    <SetIGType name="linmem_ig" lin_mem_ig="true"/>
+  </TASKOPERATIONS>
+
+  <MOVERS>
+		<SavePoseMover name="save_native" reference_name="native_pose"/>
+    <FastDesign name="RelaxDesign" repeats="1" disable_design="false" scorefxn="sfxn" task_operations="keep_curr,linmem_ig"/>
+    <RunSimpleMetrics name="seqrec" >
+      <SequenceRecoveryMetric custom_type="seqrec" residue_selector="full_pose" reference_name="native_pose" />
+    </RunSimpleMetrics>
+  </MOVERS>
+
+  <PROTOCOLS>	
+    <Add mover="save_native"/>
+    <Add mover="RelaxDesign"/>
+    <Add mover="seqrec"/>
+  </PROTOCOLS>
+      	
+  <OUTPUT scorefxn="sfxn"/>
+</ROSETTASCRIPTS>

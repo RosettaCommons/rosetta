@@ -1,0 +1,45 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="hardrep" weights="ref2015" />
+    <ScoreFunction name="softrep" weights="ref2015_soft" />
+  </SCOREFXNS>
+  <TASKOPERATIONS>
+    <DetectProteinLigandInterface name="ligand_interface" cut1="6.0" cut2="8.0" cut3="10.0" cut4="12.0" design="true" design_to_cys="false" />
+    <InitializeFromCommandline name="cmdline" />
+    <ProteinLigandInterfaceUpweighter name="upweighter" interface_weight="1.8" />
+    <LimitAromaChi2 name="arochi2" />
+    <RetrieveStoredTask name="stored_task" task_name="design_task" />
+  </TASKOPERATIONS>
+  <RESIDUE_SELECTORS>
+  </RESIDUE_SELECTORS>
+  <SIMPLE_METRICS>
+  </SIMPLE_METRICS>
+  <MOVERS>
+    <StoreTaskMover name="store_task" task_name="design_task" task_operations="ligand_interface,cmdline,upweighter,arochi2" />
+    <EnzRepackMinimize name="pack_soft" cycles="1" design="true" task_operations="stored_task"
+        minimize_rb="true" minimize_bb="false" minimize_sc="true" minimize_lig="false" 
+        scorefxn_repack="softrep" scorefxn_minimize="hardrep" />
+    <EnzRepackMinimize name="pack_hard" cycles="1" design="true" task_operations="stored_task"
+        minimize_rb="true" minimize_bb="false" minimize_sc="true" minimize_lig="false" 
+        scorefxn_repack="hardrep" scorefxn_minimize="hardrep" />
+    <EnzRepackMinimize name="min_hard" cycles="1" design="false" repack_only="false" task_operations="stored_task"
+        minimize_rb="true" minimize_bb="false" minimize_sc="true" minimize_lig="false" 
+        scorefxn_repack="hardrep" scorefxn_minimize="hardrep" />
+
+   <RunSimpleMetrics name="seqrec" >
+     <SequenceRecoveryMetric name="seq_rec2" task_operations="stored_task" use_native="true" />
+     <SequenceRecoveryMetric name="pssm_rec" task_operations="stored_task" pssm="%%PSSM%%" custom_type="pssm" />
+     <SequenceRecoveryMetric name="pssm_delta" task_operations="stored_task" pssm="%%PSSM%%" use_ave_pssm="true" use_native="true" custom_type="pssm_delta" />
+   </RunSimpleMetrics>
+
+  </MOVERS>
+  <PROTOCOLS>
+    <Add mover="store_task"/> # Use a consistent task, such that sequence recovery is calculatable.
+
+    <Add mover="pack_soft"/>
+    <Add mover="pack_hard"/>
+    <Add mover="min_hard" />
+
+    <Add mover="seqrec" />
+  </PROTOCOLS>
+</ROSETTASCRIPTS>

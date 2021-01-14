@@ -15,6 +15,24 @@
 import os, os.path, sys, imp, shutil, json, math
 import numpy as np
 
+#=======================================
+def check_all_values_above_cutoff( col, cutoff, tag, filehandle ):
+
+	out = "All " + tag + "s > cutoff"
+	filehandle.write( out + " " + str(cutoff) + "\t" )
+
+	if all( i >= cutoff for i in col ):
+		value = True
+	else:
+		value = False
+
+	filehandle.write( str( value ) + "\n" )
+	return {out : value}
+
+#=======================================
+def check_all_values_below_cutoff( col, cutoff, tag, filehandle ):
+
+	return check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, 100 )
 
 # =======================================
 def kabsch_align(r1_coords: np.ndarray, r2_coords: np.ndarray):

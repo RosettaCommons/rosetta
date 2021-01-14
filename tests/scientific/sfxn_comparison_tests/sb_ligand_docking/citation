@@ -1,0 +1,4 @@
+1. Meiler, J., Baker, D. (2006) ROSETTALIGAND: protein-small molecule docking with full side-chain flexibility. Proteins 65(3):538-48. (original protocol)
+2. Lemmon, G., Meiler, J. (2012) Rosetta ligand docking with flexible XML protocols. Methods Mol Biol. 819:143-55. 
+3. DeLuca, S., Khar, K., Meiler, J. (2015) Fully flexible docking of medium sized ligand libraries with RosettaLigand. PLoS ONE 10(7): e0132508. (description of Transform Mover) 
+4. Friedrich, N., Meyder, A., Kirchmair, J. (2017) High-quality dataset of protein-bound ligand conformations and its application to benchmarking conformer ensemble generators. J. Chem. Inf. Model. 57(3):529-539. (Description of dataset)
