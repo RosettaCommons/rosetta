@@ -75,7 +75,7 @@ def run_test_suite(rosetta_dir, working_dir, platform, config, hpc_driver=None, 
         compiler = platform['compiler']
         extras   = ','.join(platform['extras'])
 
-        command_line = 'cd {}/source && test/run.py --compiler={compiler} --mode={mode} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras, mode=mode, additional_flags=additional_flags)
+        command_line = 'cd {}/source && test/run.py --verbose --compiler={compiler} --mode={mode} --extras={extras} -j{jobs} --mute all {additional_flags}'.format(rosetta_dir, jobs=jobs, compiler=compiler, extras=extras, mode=mode, additional_flags=additional_flags)
         TR( 'Running unit test script: {}'.format(command_line) )
 
         if debug: res, output = 0, 'unit.py: debug is enabled, skipping unit-tests script run...\n'

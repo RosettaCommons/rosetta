@@ -152,7 +152,7 @@ class Tester:
             self.testpath = Options.testpath
             self.log( "Skipping platform identification. Using explicit directory instead: " + self.testpath )
             return
-        self.log( "Identifying platform...\n")
+        self.log( "Identifying platform...")
         # We use sys.executable here, so we use the same Python as the test script (if it was explicitly specified).
         cmd_str = sys.executable + " ./scons.py unit_test_platform_only log=platform"
         if Options.extras:
@@ -245,7 +245,9 @@ class Tester:
         f.close()
 
         output = [ to_unicode(s) for s in output ]
+        if Options.verbose: output = command_line + '\n' + output
         with codecs.open(log_file, 'w', encoding='utf-8', errors='backslashreplace') as f: f.write(''.join(output))
+
 
     def parseOneLib(self, test_name, f, output):
         '''Parse output for OneLib run for regular unit tests.'''
@@ -306,7 +308,8 @@ class Tester:
         #print "timelimit:", timelimit
 
         command_line = path + ' ' + timelimit + exe + " 1>&2"
-        #print 'Executing:', command_line
+        if Options.verbose:  print('Executing:', command_line)
+
         f = subprocess.Popen(command_line, bufsize=0, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stderr
         if Options.valgrind:
             self.parseOneSuiteValgrind(f, output, lib, suite, yjson_file)
@@ -315,6 +318,7 @@ class Tester:
         f.close()
 
         output = [ to_unicode(s) for s in output ]
+        if Options.verbose: output.insert(0, command_line + '\n')
         with codecs.open(log_file, 'w', encoding='utf-8', errors='backslashreplace') as f: f.write(''.join(output))
 
 
@@ -467,6 +471,7 @@ class Tester:
         else: # running Unit test on multiple CPU's, new style, fully parallel
             for suite in Options.test_list:
                 for lib in self.libs_for_test.get( suite, set() ):
+
                     pid = self.mfork()
                     if not pid:  # we are child process
                         if Options.debug: print('DEBUG MODE ENABLED: Skipping tests run: ' + lib + ' ' + suite)
@@ -733,6 +738,10 @@ def main(args):
     parser.add_option("--leakcheck",
       action="store_true",
       help="Tell Valgrind to output details about memory leaks in addition to finding uninitialized variables. (default is no info, which is faster)",
+    )
+    parser.add_option('-v', '--verbose',
+      action="store_true",
+      help="Print an extra info during run. (default is no info, more compact logs)",
     )
 
     (options, args) = parser.parse_args(args=args[1:])
