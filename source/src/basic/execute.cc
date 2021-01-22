@@ -24,7 +24,9 @@
 
 #include <iostream>
 
+#ifndef WIN32
 #include <sys/wait.h>
+#endif
 
 namespace basic {
 
@@ -37,6 +39,9 @@ static basic::Tracer TR("basic.execute");
 
 ExecutionResult execute(std::string const & message, std::string const & command, std::vector<std::string> const & args, bool terminate_on_failure, bool silent)
 {
+#ifdef WIN32
+	utility_exit_with_message("basic::execute is not currently supported on Windows");
+#else
 	if ( !silent )  TR << message << ' ' << command << ' ' << utility::to_string(args) << std::endl;  // TR.flush();
 
 	ExecutionResult r {1, ""};
@@ -77,6 +82,7 @@ ExecutionResult execute(std::string const & message, std::string const & command
 
 	if ( terminate_on_failure && r.result ) utility_exit_with_message("basic.execute encounter error while runnning " + command + ' ' + utility::to_string(args) + '\n'+ r.output +"\nExiting...");
 	return r;
+#endif
 }
 
 

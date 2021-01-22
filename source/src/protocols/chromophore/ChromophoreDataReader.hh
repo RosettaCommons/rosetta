@@ -25,6 +25,7 @@
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace chromophore {

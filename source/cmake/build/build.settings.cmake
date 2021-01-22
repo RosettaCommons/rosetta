@@ -231,6 +231,9 @@ if( ${COMPILER} STREQUAL "cl" )
 	# Disable automatic linking for Boost.
 	ADD_DEFINITIONS(-DBOOST_ALL_NO_LIB)
 
+	# Required to build rdkit on MSVC (see source\external\rdkit\GraphMol\SLNParse\CMakeLists.txt)
+	ADD_DEFINITIONS(-DYY_NO_UNISTD_H)
+
 	# Only permit four link commands to be run at once.
 	# Rosetta builds *massive* static libraries which are linked together to make executables,
 	# these libraries are massive enough that they can cause MSVC's linker comsume all physical
