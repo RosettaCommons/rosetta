@@ -165,6 +165,10 @@ public:
 		do_test_one_tag("<name abc=\" \"/>", "abc", " ");
 	}
 
+	void test_6_sq() {
+		do_test_one_tag("<name abc='def'/>", "abc", "def");
+	}
+
 	void test_7() {
 		do_test_one_tag(">>> <name abc=\" \"/> >>>", "abc", " ");
 	}
@@ -197,6 +201,10 @@ public:
 		do_test_one_tag("<name abc=\" ---> \"/>", "abc", " ---> ");
 	}
 
+	void test_22_sq() {
+		do_test_one_tag("<name abc=' ---> '/>", "abc", " ---> ");
+	}
+
 	void test_23() {
 		do_test_one_tag("<name abc=\" -- \"/>", "abc", " -- ");
 	}
@@ -211,6 +219,14 @@ public:
 
 	void test_26() {
 		do_test_one_tag("<name abc=\" '' \"/>", "abc", " '' ");
+	}
+
+	void test_25sq() {
+		do_test_one_tag("<name abc=' \" '/>", "abc", " \" ");
+	}
+
+	void test_26sq() {
+		do_test_one_tag("<name abc=' \"\" '/>", "abc", " \"\" ");
 	}
 
 	void test_40() {

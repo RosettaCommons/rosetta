@@ -34,9 +34,10 @@
 ///  comment_tag      := '<!--' ((char - '-') | ('-' (char - '-')))* '-->'
 ///  tag              := leaf_tag | branch_tag
 ///  leaf_tag         := '<' name options* '/>'
-///  option           := name '=' ( name | quote )
+///  option           := name '=' ( name | quote | squote )
 ///  name             := (alnum | '_' | '-' | '.' | '*' | ',' )+
 ///  quote            := '"' (alnum - '"')* '"'
+///  squote           := '\'' (alnum - '\'')* '\''
 ///  branch_tag       := '<' name options* '>' ( tag | misc )* '</' name '>'
 ///  *whitespace allowed between all tokens
 ///
@@ -613,6 +614,7 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 		rule<Scanner,option_closure::context_t> option;
 		rule<Scanner,string_closure::context_t> name_or_quote;
 		rule<Scanner,string_closure::context_t> quote;
+		rule<Scanner,string_closure::context_t> squote;
 		rule<Scanner,tag_closure::context_t> branch_tag;
 		rule<Scanner,name_and_options_closure::context_t> open_tag;
 		rule<Scanner,string_closure::context_t> close_tag;
@@ -652,9 +654,10 @@ struct tag_grammar : public grammar<tag_grammar,tag_closure::context_t> {
 
 			option  = name[ phoenix::bind( &option_value_type::first)(option.value) = arg1 ] >> *space_p >> ch_p('=') >> *space_p >> name_or_quote[ phoenix::bind( &option_value_type::second)(option.value) = arg1 ] >> *space_p;
 
-			name_or_quote = name[name_or_quote.value = arg1 ] | quote[name_or_quote.value = arg1 ];
+			name_or_quote = name[name_or_quote.value = arg1 ] | quote[name_or_quote.value = arg1 ] | squote[name_or_quote.value = arg1 ];
 
-			quote = ch_p('"') >> (*~ch_p('"'))[ quote.value = construct_<string>(arg1,arg2) ] >> ch_p('"') >> *space_p;
+			quote  = ch_p('"' ) >> (*~ch_p('"' ))[  quote.value = construct_<string>(arg1,arg2) ] >> ch_p('"' ) >> *space_p;
+			squote = ch_p('\'') >> (*~ch_p('\''))[ squote.value = construct_<string>(arg1,arg2) ] >> ch_p('\'') >> *space_p;
 
 
 			branch_tag =
