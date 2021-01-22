@@ -109,7 +109,7 @@ MinMover::MinMover() :
 	dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "linmin", 0.01, true, false, false );
+	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 }
 
 MinMover::MinMover( std::string const & name ) :
@@ -122,7 +122,7 @@ MinMover::MinMover( std::string const & name ) :
 	dof_tasks_()
 {
 	omega_ = true;
-	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "linmin", 0.01, true, false, false );
+	min_options_ = utility::pointer::make_shared< MinimizerOptions >( "lbfgs_armijo_nonmonotone", 0.01, true, false, false );
 }
 
 MinMover::~MinMover()= default;
