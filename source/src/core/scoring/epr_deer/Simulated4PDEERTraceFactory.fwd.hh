@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/epr_deer/Simulated4PDEERTrace.fwd.hh
+/// @file   core/scoring/epr_deer/Simulated4PDEERTraceFactory.cc
 /// @brief  Class that simulates the observable signal resulting from electron dipolar coupling
 /// @details The dipolar coupling signal between two electrons can be simulated from a distance
 ///       distribution. This class does that simulation by pulling values from the datacache
 ///       container objects (DEERData) and effectively storing a vector with values of interest.
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
-#ifndef INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_fwd_hh
-#define INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_fwd_hh
+#ifndef INCLUDED_core_scoring_epr_deer_Simulated4PDEERTraceFactory_fwd_hh
+#define INCLUDED_core_scoring_epr_deer_Simulated4PDEERTraceFactory_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
 
@@ -23,14 +23,14 @@ namespace core {
 namespace scoring {
 namespace epr_deer {
 
-class Simulated4PDEERTrace;
+class Simulated4PDEERTraceFactory;
 
-typedef utility::pointer::shared_ptr< Simulated4PDEERTrace > Simulated4PDEERTraceOP;
-typedef utility::pointer::shared_ptr< Simulated4PDEERTrace const > Simulated4PDEERTraceCOP;
+typedef utility::pointer::shared_ptr< Simulated4PDEERTraceFactory > Simulated4PDEERTraceFactoryOP;
+typedef utility::pointer::shared_ptr< Simulated4PDEERTraceFactory const > Simulated4PDEERTraceFactoryCOP;
 
 
 } // namespace epr_deer
 } // namespace scoring
 } // namespace core
 
-#endif // INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_fwd_hh%
+#endif // INCLUDED_core_scoring_epr_deer_Simulated4PDEERTraceFactory_fwd_hh

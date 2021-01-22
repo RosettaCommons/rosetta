@@ -25,10 +25,10 @@ namespace core {
 namespace scoring {
 namespace epr_deer {
 
-class DEERDistanceIO;
+class DEERIO;
 
-typedef utility::pointer::shared_ptr< DEERDistanceIO > DEERIOOP;
-typedef utility::pointer::shared_ptr< DEERDistanceIO const > DEERIOCOP;
+typedef utility::pointer::shared_ptr< DEERIO > DEERIOOP;
+typedef utility::pointer::shared_ptr< DEERIO const > DEERIOCOP;
 
 } // namespace epr_deer
 } // namespace scoring

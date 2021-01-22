@@ -18,7 +18,7 @@
 #define INCLUDED_core_energy_methods_DEEREnergy_hh
 
 // Unit headers
-#include <core/scoring/epr_deer/DEERData.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/DEERDataCache.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/energy_methods/DEEREnergy.fwd.hh>
@@ -56,6 +56,7 @@ class DEEREnergy : public scoring::methods::ContextDependentLRTwoBodyEnergy
 public: // Methods
 
 	/// @brief  Constructor
+	/// @param  energymethodcreator: Creator object
 	DEEREnergy(
 		scoring::methods::EnergyMethodCreatorOP energymethodcreator
 	);
@@ -74,55 +75,46 @@ public: // Methods
 	);
 
 	/// @brief Copy function
+	/// @return Pointer to new object that is a copy of this object
 	core::scoring::methods::EnergyMethodOP
 	clone() const override;
 
 	/// @brief  Destructor
 	~DEEREnergy() override;
 
-	/// @brief  Returns the parsed input file (const)
-	scoring::epr_deer::DEERDataCacheCOP const
-	get_const_deer_data(
-		pose::Pose const & pose
-	) const;
+	///////////////////////////
+	/// INHERITED FUNCTIONS
 
-	/// @brief  Returns the parsed input file (non-const)
-	scoring::epr_deer::DEERDataCacheOP
-	get_deer_data(
-		pose::Pose & pose
-	) const;
+	/// @brief Inherited function specifying where the data is getting stored
+	/// @return Descriptor of this energy method
+	scoring::methods::LongRangeEnergyType
+	long_range_type() const override;
 
-	/// @brief Calculates the score for a specific data set
-	/// @detail Called by setup_for_scoring() and setup_for_derivatives.
-	///     EPRSpinLabel is used to calculate where the spin label
-	///     is/can be. Edge ID corresponds to the specific set of
-	///     data being interrogated/scored. Modifier is used for derivative
-	///     calculation since the determination of derivatives is not
-	///     analytically solvable in many cases
-	Real
-	get_score(
-		pose::Pose & pose,
-		scoring::epr_deer::EPRSpinLabel & sl,
-		Size const & edge_id,
-		Real const & modifier = 0.0
-	) const;
 
-	/// @brief Overrides virtual fxn for finding scores for a given pose
+	/// @brief Set up scoring process
+	/// @param pose: Pose being scored
 	void
 	setup_for_scoring(
 		pose::Pose & pose,
 		scoring::ScoreFunction const &
 	) const override;
 
-	/// @brief Initialize energy method
+	/// @brief Add energy/score for a given pair of residues to map.
+	/// @param rsd1: First residue
+	/// @param rsd2: Second residue
+	/// @param pose: Pose being scored
+	/// @param emap: Where we are adding the score
+	/// @detail Because some sets of data may be between more than two
+	/// @detail residues, this function looks at a map kept in
+	/// @detail DEERDataCache specifically maintained for this purpose
 	void
-	initialize_energy_method(
-		pose::Pose & pose
-	) const;
-
-	/// @brief Derived function for specifying where the data is getting stored
-	scoring::methods::LongRangeEnergyType
-	long_range_type() const override;
+	residue_pair_energy(
+		conformation::Residue const & rsd1,
+		conformation::Residue const & rsd2,
+		pose::Pose const & pose,
+		scoring::ScoreFunction const &,
+		scoring::EnergyMap & emap
+	) const override;
 
 	/// @brief  A declared but unused function
 	void
@@ -133,12 +125,17 @@ public: // Methods
 	) const override;
 
 	/// @brief  Returns "false" by default
+	/// @return Returns false (DEER cannot evaluate anything intra-residue)
 	bool
 	defines_intrares_energy(
 		scoring::EnergyMap const &
 	) const override;
 
 	/// @brief Fetches if two residues are "connected" (i.e. there is a score)
+	/// @param pose: Pose being scored
+	/// @param rsd1: First residue
+	/// @param rsd2: Second residue
+	/// @return Whether the pair of residues are linked by data
 	bool
 	defines_residue_pair_energy(
 		pose::Pose const & pose,
@@ -146,36 +143,12 @@ public: // Methods
 		Size rsd2
 	) const override;
 
-	/// @brief Get energy/score for a given pair of residues.
-	/// @detail Because some sets of data may be between more than two residues,
-	///     this function looks at a map kept in DEERDataCache specifically
-	///     maintained for this purpose
-	void
-	residue_pair_energy(
-		conformation::Residue const & rsd1,
-		conformation::Residue const & rsd2,
-		pose::Pose const & pose,
-		scoring::ScoreFunction const &,
-		scoring::EnergyMap & emap
-	) const override;
-
 	/// @brief  Calculates the derivatives for minimization. Done numerically
+	/// @param pose: Pose being scored/modified
 	void
 	setup_for_derivatives(
 		pose::Pose & pose,
 		scoring::ScoreFunction const &
-	) const override;
-
-	/// @brief Returns the res-specific F1 and F2 vectors saved in DEERDataCache
-	void
-	eval_atom_derivative(
-		id::AtomID const & id,
-		pose::Pose const & pose,
-		kinematics::DomainMap const &,
-		scoring::ScoreFunction const & /*sfxn*/,
-		scoring::EnergyMap const & emap,
-		numeric::xyzVector< Real > & F1,
-		numeric::xyzVector< Real > & F2
 	) const override;
 
 	/// @brief  A declared but unused function
@@ -195,15 +168,89 @@ public: // Methods
 		scoring::EnergyMap &
 	) const override;
 
+	/// @brief  Apply atom derivative to atom
+	/// @param id: Atom ID in pose
+	/// @param pose: Pose being modified
+	/// @param emap: Energy map with scores used by derivatives
+	/// @param F1 vector to modify for atom
+	/// @param F2 vector to modify for atom
+	void
+	eval_atom_derivative(
+		id::AtomID const & id,
+		pose::Pose const & pose,
+		kinematics::DomainMap const &,
+		scoring::ScoreFunction const & /*sfxn*/,
+		scoring::EnergyMap const & emap,
+		numeric::xyzVector< Real > & F1,
+		numeric::xyzVector< Real > & F2
+	) const override;
+
 	/// @brief  A declared but unused function
 	void
 	indicate_required_context_graphs(
 		utility::vector1< bool > &
 	) const override;
 
-	/// @brief  Version 1 (as of 30 January 2017)
+	/// @brief  Version 1 (as of 3 January 2021)
+	/// @return Version 1
 	Size
 	version() const override;
+
+	////////////////////////////////////////////
+	/// NON-VIRTUAL FUNCTIONS
+
+	/// @brief  Returns the DEERDataCache in the pose (const)
+	/// @param pose: Pose with DEERDataCache stashed in it
+	/// @return Pointer to const DEERDataCache object
+	/// @detail This will crash if the DEERDataCache object is absent!
+	scoring::epr_deer::DEERDataCacheCOP const
+	get_const_deer_data(
+		pose::Pose const & pose
+	) const;
+
+	/// @brief  Returns the DEERDataCache in the pose (non-const)
+	/// @param pose: Pose with DEERDataCache stashed in it
+	/// @return Pointer to non-const DEERDataCache object
+	/// @detail This will crash if the DEERDataCache object is absent!
+	scoring::epr_deer::DEERDataCacheOP
+	get_deer_data(
+		pose::Pose & pose
+	) const;
+
+	/// @brief This checks if multiple sets of spin labels is being used
+	/// @param pose: Pose being scored
+	/// @param mod: Modifier to X-axis (for calculating derivatives)
+	/// @return Map of edges/data indices to scores for those edges/indices
+	/// @detail This is used when spin labels are obtained for specific
+	/// @detail proteins a priori, e.g., by triangulation/multilateration,
+	/// @detail and the solution is underdetermined, so multiple solutions
+	/// @detail are required.
+	std::map< Size, Real >
+	iter_over_labels(
+		pose::Pose & pose,
+		int const & mod = 0
+	) const;
+
+	/// @brief Calculates the score for a specific data set
+	/// @param pose: Pose being scored
+	/// @param sl: Spin label being used to obtain score
+	/// @param edge_id: Index of data being scored (in DEERDataCache)
+	/// @param mod: Modifier to X-axis (zero when scored)
+	/// @return Score corresponding to the data
+	Real
+	get_score(
+		pose::Pose & pose,
+		scoring::epr_deer::EPRSpinLabel & sl,
+		Size const & edge_id,
+		int const & mod = 0
+	) const;
+
+	/// @brief Initializes energy method
+	/// @param pose: Pose being evaluated/used for scoring
+	void
+	initialize_energy_method(
+		pose::Pose & pose
+	) const;
 
 };
 

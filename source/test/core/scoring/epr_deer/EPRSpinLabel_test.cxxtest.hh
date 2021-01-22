@@ -34,16 +34,27 @@ public:
 		// NULL
 	}
 
+	void test_read_db() {
+		core::scoring::epr_deer::EPRSpinLabel sl;
+		auto coords = sl.read_db_file( "DEFAULT" );
+		TS_ASSERT_EQUALS( coords.size(), 50 );
+		coords = sl.read_db_file( "DEFAULT_FAST" );
+		TS_ASSERT_EQUALS( coords.size(), 13 );
+	}
+
 	void test_histograms() {
 		core::pose::Pose test_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( test_pose, "core/scoring/epr_deer/2lzm.pdb" );
+		core::io::pdb::build_pose_from_pdb_as_is( test_pose,
+			"core/scoring/epr_deer/2lzm.pdb" );
 		test_pose.update_residue_neighbors();
 
 		core::scoring::epr_deer::EPRSpinLabel sl;
-		std::pair< core::Size, std::string > res1 = std::make_pair( 60, "DEFAULT" );
-		std::pair< core::Size, std::string > res2 = std::make_pair( 94, "DEFAULT_FAST" );
+		std::pair< core::Size, std::string > res1
+			= std::make_pair( 60, "DEFAULT" );
+		std::pair< core::Size, std::string > res2
+			= std::make_pair( 94, "DEFAULT_FAST" );
 		for ( auto & item : { res1, res2 } ) {
-			sl.label( item.first, item.second, test_pose );
+			sl.label( item, test_pose );
 		}
 		auto histogram_1 = sl.histogram( { res1, res2 }, 2 );
 		TS_ASSERT( histogram_1.size() > 0 );
@@ -51,10 +62,14 @@ public:
 		TS_ASSERT( histogram_2.size() > 0 );
 
 		// spot check
-		TS_ASSERT_DELTA( sl.normalize_distribution( histogram_1 )[ 49 ], sl.normalize_distribution( histogram_2 )[ 49 ], 1e-6 );
+		TS_ASSERT_DELTA( histogram_1[ 49 ], histogram_2[ 49 ], 1e-6 );
 
-		sl.label( 123, "DEFAULT", test_pose );
-		TS_ASSERT_EQUALS( sl[ std::make_pair( 123, "DEFAULT" ) ].size(), 50 );
+		sl.label( std::make_pair( 123, "DEFAULT" ), test_pose );
+		TS_ASSERT_EQUALS( 31, sl[ std::make_pair( 123, "DEFAULT" ) ].size() );
+
+		sl.label( std::make_pair( 123, "DEFAULT_FAST" ), test_pose );
+		TS_ASSERT_EQUALS( 10,
+			sl[ std::make_pair( 123, "DEFAULT_FAST" ) ].size() );
 	}
 
 };

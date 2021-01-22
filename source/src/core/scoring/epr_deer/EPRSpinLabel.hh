@@ -22,6 +22,7 @@
 
 // Project headers
 #include <core/pose/Pose.hh>
+#include <core/scoring/AtomVDW.fwd.hh>
 #include <core/types.hh>
 
 // Utility headers
@@ -35,13 +36,23 @@ namespace core {
 namespace scoring {
 namespace epr_deer {
 
-typedef std::pair< numeric::xyzVector< Real >, Real > PseudoElectron;
+/// @brief Alias to save space throughout core/scoring/epr_deer
+using PseudoSL = std::pair< numeric::xyzVector< Real >, Real >;
 
-static
-	std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
+/// @brief Alias to asve space when defining residues and spin labels
+using PairSizeString = std::pair< Size, std::string >;
 
-static const
-numeric::xyzVector< Real > cb_coord_( -1.3116, -0.5715, 0.5398 );
+/// @brief Object use to calculate VDW radii of centroid atoms
+/// @details Global to avoid re-instantiating with every new object
+static scoring::AtomVDWOP atom_vdw_ = scoring::AtomVDWOP( nullptr );
+
+/// @brief Default coordinates map
+/// @details Global to avoid re-reading from database with every new object
+static std::map< std::string, utility::vector1< PseudoSL > > deflt_coords_;
+
+/// @brief Virtual, idealized CB atom for center-of-mass calculation
+/// @details Global to avoid reinstantiation with every new object
+static const numeric::xyzVector< Real > vrt_cb_( -1.3116, -0.5715, 0.5398 );
 
 class EPRSpinLabel {
 
@@ -53,104 +64,189 @@ public:
 	/// @brief Destructor
 	~EPRSpinLabel();
 
-	/// @brief Operator to return electrons from specific residue
-	utility::vector1< PseudoElectron > &
-	operator[]( std::pair< Size, std::string > const & res );
+	/// @brief Initialize object used to calculate centroid clashes
+	void
+	init_vdw() const;
 
-	/// @brief Allows const spin label data to be accessed
-	utility::vector1< PseudoElectron > const &
-	at( std::pair< Size, std::string > const & res ) const;
-
-	/// @brief Returns a histogram between all coordinates for all residues - assumes complete labeling
-	std::map< Size, Real >
-	histogram(
-		utility::vector1< std::pair< Size, std::string > > const & residues,
-		Size const & bins_per_a,
-		Real const & modifer = 0.0,
-		std::map< Size, Real > const & dist_ids = {}
+	/// @brief Read DB file for a given type of spin label
+	/// @param Name of file/SL type
+	/// @return PseudoSLs used for simulation of DEER distributions
+	utility::vector1< PseudoSL >
+	read_db_file(
+		std::string const & name
 	);
 
-	/// @brief Returns a histogram between all coordinates between two residue/SL combinations
+	/// @brief Operator to return nnn-const PseudoSL from specific residue
+	/// @param res: Residue info (number and spin label type)
+	/// @return Coords corresponding to residue
+	utility::vector1< PseudoSL > &
+	operator[]( PairSizeString const & res );
+
+	/// @brief Return const PseudoSL from specific residue
+	/// @param res: Residue info (number and spin label type)
+	/// @return Coords corresponding to residue
+	utility::vector1< PseudoSL > const &
+	at( PairSizeString const & res ) const;
+
+	/// @brief Returns histogram between coordinate sets for residues
+	/// @param residues: Residues contributing to histogram
+	/// @param bins_per_a: Granularity of histogram (bins per angstrom)
+	/// @param mod: What to add to the X-axis
+	/// @param dist_ids: If a custom X-axis is used (default: empty)
+	/// @return Histogram with X- and Y-values being keys and values
+	/// @detail Note: the X-axis = bins_per_a * distance, rounded to an int
+	/// @detail Note: Equal labeling assumed for all sites
+	/// @detail This matters if residues.size() > 2
 	std::map< Size, Real >
 	histogram(
-		std::pair< Size, std::string > const & res1,
-		std::pair< Size, std::string > const & res2,
+		utility::vector1< PairSizeString > const & residues,
 		Size const & bins_per_a,
-		Real const & modifer = 0.0,
+		int const & mod = 0,
 		Real const & stdev = 1.0,
 		std::map< Size, Real > const & dist_ids = {}
 	);
 
-	/// @brief Return a value for a gaussian distribution at a particular value, given a average and standard deviation
-	Real
-	gauss(
-		Real const & dist,
-		Real const & avg,
-		Real const & stdev
-	) const;
+	/// @brief Return histogram for pair of coordinate sets
+	/// @param res1_coords: Pair of PseudoSL coords for res1
+	/// @param res2_coords: Pair of PseudoSL coords for res2
+	/// @param bins_per_a: Bins per angstrom for distribution
+	/// @param mod: How much to shift X-axis
+	/// @param stdev: St deviation of gauss used to convolute pairwise dists
+	/// @param dist_ids: If a custom X-axis is used (default: empty)
+	/// @return Histogram with X- and Y-values being keys and values
+	/// @detail Note: the X-axis = bins_per_a * distance, rounded to an int
+	std::map< Size, Real >
+	histogram(
+		utility::vector1< PseudoSL > const & res1_coords,
+		utility::vector1< PseudoSL > const & res2_coords,
+		Size const & bins_per_a,
+		int const & mod = 0,
+		Real const & stdev = 1.0,
+		std::map< Size, Real > const & dist_ids = {}
+	);
+
+	/// @brief Returns histogram between coordinate sets for residues
+	/// @param res1: Residue 1
+	/// @param res2: Residue 2
+	/// @param bins_per_a: Granularity of histogram (bins per angstrom)
+	/// @param mod: What to add to the X-axis
+	/// @param dist_ids: If a custom X-axis is used (default: empty)
+	/// @return Histogram with X- and Y-values being keys and values
+	/// @detail Note: the X-axis = bins_per_a * distance, rounded to an int
+	std::map< Size, Real >
+	histogram(
+		PairSizeString const & res1,
+		PairSizeString const & res2,
+		Size const & bins_per_a,
+		int const & mod = 0,
+		Real const & stdev = 1.0,
+		std::map< Size, Real > const & dist_ids = {}
+	);
 
 	/// @brief Label a residue with a certain spin label
+	/// @param res: Residue index
+	/// @param label: SL type
+	/// @param pose: Pose used for superimposition
+	/// @param skip_clash_eval: Whether clash evaluation is skipped
+	/// @detail Clashes are skipped for custom coordinates for reasons
+	/// @detail  relating to the way they have been calculated
 	void
 	label(
-		Size const & res,
-		std::string const & label,
+		PairSizeString const & res_label,
 		pose::Pose const & pose,
 		bool const & skip_clash_eval = false
 	);
 
-	/// @brief Normalize distribution so that the sum is equal to one
+	/// @brief Normalize distribution so that the sum is equal to 1.0
+	/// @param sim_map: Simulated DEER distribution
+	/// @result Identical std::map except values add up to 1.0
 	std::map< Size, Real >
-	normalize_distribution(
+	normalize(
 		std::map< Size, Real > sim_map
 	) const;
 
-	/// @brief Given a set of electrons, a pose, and a residue of interest, find viable coords
-	utility::vector1< PseudoElectron >
-	get_electrons_for_residue(
-		core::Size const & res,
+	/// @brief Get positions of unpaired electrons at a residue
+	/// @param res: Residue number
+	/// @param pose: Pose for clash eval
+	/// @param sl_vec: Vector of PseudoSLs, which have positions of unpaired e
+	/// @param skip_clash_eval: Exactly what it suggested by the title
+	/// @param min_rad: Lowest radius for clash eval to check
+	/// @return Vector of PseudoSLs in local coordinate frame of residue
+	utility::vector1< PseudoSL >
+	calc_sl_for_res(
+		Size const & res,
 		pose::Pose const & pose,
-		utility::vector1< PseudoElectron > const & electrons,
-		bool const & skip_clash_eval = false
+		utility::vector1< PseudoSL > const & sl_vec,
+		bool const & skip_clash_eval = false,
+		Real const & min_rad = 0.0
 	);
 
 	/// @brief retrieve weight for given coordinate
+	/// @param res1: Residue over which the coordinate is being superimposed
+	/// @param clash_xyz: Coordinate used for clash calculation
+	/// @param w: Weight, passed by value since we need a new obj to modify
+	/// @param pose: Pose with all the residues we check for clash evaluation
+	/// @param vdw_rad: Radius of the clash_xyz atom to consider
+	/// @return Weight of PseudoSL at position given local environment of pose
 	Real
-	get_weight(
-		core::Size const & source_res,
-		numeric::xyzVector< core::Real > const & center_of_mass,
+	weight(
+		Size const & res1,
+		numeric::xyzVector< core::Real > const & clash_xyz,
+		Real w,
 		pose::Pose const & pose,
-		Real const & forgive_factor
+		Real const & rad
 	);
 
-	/// @brief Retrieve cuttof for weights (if the weight is less than this, it is set to zero)
+	/// @brief Getter for cutoff for weights
+	/// @return Weight cutoff
 	Real
 	cutoff() const;
 
 	/// @brief Allows a custom set of electrons to be read without superimposition
+	/// @param all_coords: Custom residue-specific PseudoSLs
 	void
 	load_custom_electrons(
-		std::map< Size, utility::vector1< PseudoElectron > > const & all_coords
+		std::map< Size, utility::vector1< PseudoSL > > const & all_coords
+	);
+
+	/// @brief Goes through every residue in provided list and calculates
+	/// @param pose: Pose to label
+	/// @param residues: Residues that need to be labeled
+	/// @param skip_clash_eval: Whether clash evaluation should be skipped
+	void
+	label_everything(
+		pose::Pose & pose,
+		utility::vector1< PairSizeString > const & residues,
+		bool const & skip_clash_eval
 	);
 
 private:
 
-	/// @brief   Returns the center of mass between a given electron coordinate and its CB
-	/// @details  The precise value 0.875 descrbed the average value that is crystallographically observed
-	///      in MTSSL rotamers for the distance between the CB and the electron vs the distance between
-	///      the CB and the nitroxide ring center of mass, from which clashes are evaluated here.
-	///      Described in detail in a forthcoming publication
+	/// @brief Returns the center of mass between coordinate and CB
+	/// @param coord: Coordinate xyz
+	/// @param cb: CB coordinate
+	/// @return XYZ of bulk / center of mass of nitroxide ring
+	/// @detail See del Alamo et al 2020 Biophysical Journal for details on
+	///   why 0.875 was computed/chosen
 	numeric::xyzVector< Real >
-	center_of_mass(
-		numeric::xyzVector< Real > const & electron,
+	bulk(
+		numeric::xyzVector< Real > const & coord,
 		numeric::xyzVector< Real > const & cb
 	) const;
 
 private: // data
 
-	std::map< std::pair< Size, std::string >, utility::vector1< PseudoElectron > > mapped_coords_;
-	utility::vector1< PseudoElectron > custom_electrons_;
-	std::map< Size, utility::vector1< PseudoElectron > > custom_coords_;
+	/// @brief Coordinates for each residue being stored
+	std::map< PairSizeString, utility::vector1< PseudoSL > > coords_;
+
+	/// @brief Custom coordinates (residue-specific)
+	std::map< Size, utility::vector1< PseudoSL > > custom_coords_;
+
+	/// @brief Cutoff for clash evaluation
 	Real cutoff_ = 0.001;
+
+	/// @brief Path for files describing default PseudoSL objects to read
+	std::string path_ = "scoring/epr_deer/";
 
 };
 

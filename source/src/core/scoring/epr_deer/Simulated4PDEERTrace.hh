@@ -7,21 +7,24 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington UW TechTransfer, email: license@u.washington.edu.
 
-/// @file   core/scoring/epr_deer/decay/Simulated4PDEERTrace.cc
+/// @file   core/scoring/epr_deer/Simulated4PDEERTrace.cc
 /// @brief  Class that simulates the observable signal resulting from electron dipolar coupling
 /// @details The dipolar coupling signal between two electrons can be simulated from a distance
 ///       distribution. This class does that simulation by pulling values from the datacache
 ///       container objects (DEERData) and effectively storing a vector with values of interest.
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
+#ifndef INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_hh
+#define INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_hh
+
 #include <core/scoring/epr_deer/Simulated4PDEERTrace.fwd.hh>
 
-#include <core/scoring/epr_deer/DEERData.hh>
 #include <core/types.hh>
 
 #include <utility/vector1.hh>
 
 #include <map>
+#include <tuple>
 
 namespace core {
 namespace scoring {
@@ -32,116 +35,147 @@ class Simulated4PDEERTrace {
 public:
 
 	/// @brief Default constructor
-	Simulated4PDEERTrace();
+	Simulated4PDEERTrace() = default;
 
-	/// @brief Custom constructor
+	/// @brief Destructor
+	~Simulated4PDEERTrace() = default;
+
+	/// @brief Default copy constructor
+	/// @param rhs: To copy
 	Simulated4PDEERTrace(
-		std::map< Real, Real > const & exp_trace,
-		FittingInfo & fit_info,
-		std::map< Size, Real > const & sim_histogram,
-		Size const & bins_per_a
+		Simulated4PDEERTrace const & rhs
 	);
 
-	/// @brief Bracket operator for accessing the DEER trace
-	Real
+	/// @brief Constructor that instantiates everything
+	/// @param deer_trace: The final DEER trace
+	/// @param deer_trace_intra: The intramolecular DEER trace
+	/// @param time_pts: Time points for the DEER trace
+	/// @param depth: Modulation depth
+	/// @param slope: Background slope
+	/// @param dim: Background dimensionality
+	Simulated4PDEERTrace(
+		utility::vector1< Real > const & deer_trace,
+		utility::vector1< Real > const & deer_trace_intra,
+		utility::vector1< Real > const & time_pts,
+		Real const & depth,
+		Real const & slope,
+		Real const & dim
+	);
+
+	/// @brief Copy assignment operator
+	/// @param rhs: Trace object to copy
+	/// @return Copy
+	Simulated4PDEERTrace &
+	operator=(
+		Simulated4PDEERTrace const & rhs
+	);
+
+	std::tuple< Real, Real, Real >
 	operator[](
-		Real const & t
+		Size const & i
 	) const;
 
-	/// @brief Main function for simulating 4-pulse DEER trace
-	/// @detail This function first simulates the intramolecular dipolar coupling
-	///     form factor using the evolution kernel described in
-	///     "DEER Distance Measurements on Proteins" by Jeschke (2012).
-	///     It then finds the best background fit for the experimental data,
-	///     if necessary (3D by default, but can be set to "NONE" or "NON-3D")
-	///     Background-fitted DEER trace is saved and returned.
-	std::map< Real, Real >
-	simulate_decay(
-		std::map< Real, Real > const & exp_trace,
-		FittingInfo & fit_info,
-		std::map< Size, Real > const & sim_histogram,
-		Size const & bins_per_a
-	);
+	/// @brief DEER trace getter
+	/// @return The final DEER trace
+	utility::vector1< Real >
+	deer_trace() const;
 
-	/// @brief Deterine the intramolecular DEER trace
-	std::map< Real, Real >
-	calc_4pdeer(
-		std::map< Real, Real > const & exp_trace,
-		FittingInfo const & fit_info,
-		std::map< Size, Real > const & sim_histogram,
-		Size const & bins_per_a
-	);
+	/// @brief Intramolecular DEER trace getter
+	/// @return The intramolecular DEER trace
+	utility::vector1< Real >
+	deer_trace_intra() const;
 
-	/// @brief Fit the background decay using linear regression
+	/// @brief Time point getter
+	/// @return Time points for the DEER trace
+	utility::vector1< Real >
+	time_pts() const;
+
+	/// @brief Modulation depth getter
+	/// @return Modulation depth
 	Real
-	fit_k(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & trace,
-		FittingInfo & fit_info,
-		Real const & d,
-		Real const & l
-	);
+	depth() const;
 
-	/// @brief Optimize the background function of the DEER trace: general function
-	std::map< Real, Real >
-	optimize_bckg(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & trace_no_bckg,
-		FittingInfo & fit_info
-	);
+	/// @brief Background slope getter
+	/// @return Background slope
+	Real
+	slope() const;
 
-	/// @brief Optimize the modulation depth using simple gradient descent
+	/// @brief Background dimensionality getter
+	/// @return Background dimensionality
+	Real
+	dim() const;
+
+	/// @brief  Return size of DEER trace
+	/// @return Size of DEER trace
+	Size
+	size() const;
+
+	/// @brief Final DEER trace setter
+	/// @param deer_trace: The final DEER trace
 	void
-	optimize_mod_depth(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & trace,
-		FittingInfo & fit_info,
-		Real & d,
-		Real & k,
-		Real & l,
-		bool fit_dim // = false
+	deer_trace(
+		utility::vector1< Real > const & val
 	);
 
-	/// @brief Optimize the background function of the DEER trace: detailed function
-	std::map< Real, Real >
-	optimize_bckg(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & trace,
-		FittingInfo & fit_info,
-		bool const & optimize_dim
+	/// @brief Intramolecular DEER trace setter
+	/// @param deer_trace_intra: The intramolecular DEER trace
+	void
+	deer_trace_intra(
+		utility::vector1< Real > const & val
 	);
 
-	/// @brief Convert an intramolecular trace to an intermolecular trace given background parameters
-	std::map< Real, Real >
-	fit_trace(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & trace,
-		Real const & d,
-		Real const & k,
-		Real const & l
+	/// @brief Time point vector setter
+	/// @param time_pts: Time points for the DEER trace
+	void
+	time_pts(
+		utility::vector1< Real > const & val
 	);
 
-	/// @brief Determine the residuals between an experimental trace and a simulated trace
-	Real
-	sum_of_squares(
-		std::map< Real, Real > const & exp_trace,
-		Real const & noise = 1.0
+	/// @brief Modulation depth setter
+	/// @param depth: Modulation depth
+	void
+	depth(
+		Real const & val
 	);
 
-	/// @brief Determine the residuals between an experimental trace and a simulated trace
-	Real
-	sum_of_squares(
-		std::map< Real, Real > const & exp_trace,
-		std::map< Real, Real > const & sim_trace,
-		Real const & noise = 1.0
+	/// @brief Background slope setter
+	/// @param slope: Background slope
+	void
+	slope(
+		Real const & val
+	);
+
+	/// @brief Dimensionality setter
+	/// @param dim: Background dimensionality
+	void
+	dim(
+		Real const & val
 	);
 
 private:
 
-	std::map< Real, Real > trace_;
+	/// @brief Final DEER trace
+	utility::vector1< Real > deer_trace_;
+
+	/// @brief Intramolecular DEER trace (no background)
+	utility::vector1< Real > deer_trace_intra_;
+
+	/// @brief Time points for DEER traces
+	utility::vector1< Real > time_pts_;
+
+	/// @brief Modulation depth in final DEER trace
+	Real depth_;
+
+	/// @brief Background slope of final DEER trace
+	Real slope_;
+
+	/// @brief Background dimensionality of final DEER trace
+	Real dim_;
 
 };
 
 } // namespace epr_deer
 } // namespace scoring
 } // namespace core
+
+#endif // INCLUDED_core_scoring_epr_deer_Simulated4PDEERTrace_hh

@@ -42,35 +42,49 @@ public:
 
 	void test_energy_method_big() {
 		core::pose::Pose test_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( test_pose, "core/scoring/epr_deer/2lzm.pdb" );
+		core::io::pdb::build_pose_from_pdb_as_is( test_pose,
+			"core/scoring/epr_deer/2lzm.pdb" );
 
 		core::scoring::ScoreFunction sfxn;
 		sfxn.set_weight_if_zero( core::scoring::ScoreType::epr_deer_score, 1.0 );
 		sfxn.setup_for_scoring( test_pose );
-		core::scoring::epr_deer::DEERDataCacheOP datacache = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDataCache >(
-			test_pose.data().get_ptr( core::pose::datacache::CacheableDataType::EPR_DEER_DATA ) );
+		core::scoring::epr_deer::DEERDataCacheOP datacache
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::DEERDataCache >(
+			test_pose.data().get_ptr(
+			core::pose::datacache::CacheableDataType::EPR_DEER_DATA ) );
 		TS_ASSERT_EQUALS( datacache->size(), 6 );
-		TS_ASSERT_EQUALS( datacache->edge( 60, 94 ).size(), 5 );
+		TS_ASSERT_EQUALS( datacache->edge( 60, 94 ).size(), 4 );
 		TS_ASSERT_EQUALS( datacache->edge( 94, 123 ).size(), 1 );
+		TS_ASSERT_EQUALS( datacache->edge( 64, 122 ).size(), 1 );
 	}
 
 	void test_energy_method_details() {
 		core::pose::Pose test_pose;
-		core::io::pdb::build_pose_from_pdb_as_is( test_pose, "core/scoring/epr_deer/2lzm.pdb" );
+		core::io::pdb::build_pose_from_pdb_as_is( test_pose,
+			"core/scoring/epr_deer/2lzm.pdb" );
 
 		core::energy_methods::DEEREnergy energy_method;
 		energy_method.initialize_energy_method( test_pose );
-		core::scoring::epr_deer::DEERDataCacheOP datacache = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDataCache >(
-			test_pose.data().get_ptr( core::pose::datacache::CacheableDataType::EPR_DEER_DATA ) );
+		core::scoring::epr_deer::DEERDataCacheOP datacache
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::DEERDataCache >(
+			test_pose.data().get_ptr(
+			core::pose::datacache::CacheableDataType::EPR_DEER_DATA ) );
 		core::scoring::epr_deer::EPRSpinLabel sl;
+		test_pose.update_residue_neighbors();
 		core::Real score_1 = energy_method.get_score( test_pose, sl, 1 );
 		TS_ASSERT_EQUALS( score_1, ( *datacache )[ 1 ]->score() );
-		TS_ASSERT_EQUALS( energy_method.defines_residue_pair_energy( test_pose, 94, 123 ), true );
-		TS_ASSERT_EQUALS( energy_method.defines_residue_pair_energy( test_pose, 94, 155 ), false );
+		TS_ASSERT_EQUALS( energy_method.defines_residue_pair_energy(
+			test_pose, 94, 123 ), true );
+		TS_ASSERT_EQUALS( energy_method.defines_residue_pair_energy(
+			test_pose, 94, 155 ), false );
 
 		core::scoring::ScoreFunction sfxn;
+		sfxn.set_weight_if_zero( core::scoring::ScoreType::epr_deer_score, 1.0 );
 		energy_method.setup_for_derivatives( test_pose, sfxn );
-		TS_ASSERT( datacache->f1_force( 60 ) != numeric::xyzVector< core::Real >( 0.0, 0.0, 0.0 ) );
-		TS_ASSERT( datacache->f2_force( 60 ) != numeric::xyzVector< core::Real >( 0.0, 0.0, 0.0 ) );
+		numeric::xyzVector< core::Real > nullvec( 0.0, 0.0, 0.0 );
+		TS_ASSERT( datacache->f1_force( 60 ) != nullvec );
+		TS_ASSERT( datacache->f2_force( 60 ) != nullvec );
 	}
 };

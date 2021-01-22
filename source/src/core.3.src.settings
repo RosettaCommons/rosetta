@@ -392,13 +392,24 @@ sources = {
 		"FullatomCustomPairDistanceEnergy",
 	],
 	"core/scoring/epr_deer" : [
-		"DEERData",
 		"DEERDataCache",
 		"DEERIO",
 		"EPRSpinLabel",
 		"Simulated4PDEERTrace",
+		"Simulated4PDEERTraceFactory",
+		"util",
 	],
-
+	"core/scoring/epr_deer/metrics" : [
+		"DEERData",
+		"DEERDecayData",
+		"DEERChiSqMethod",
+		"DEERDistanceBounds",
+		"DEERDistanceDistribution",
+		"DEERJSMethod",
+		"DEERJaccardMethod",
+		"DEERMiscMethod",
+		"DEEROverlapMethod",
+	],
 	"core/scoring/disulfides": [
 		"CentroidDisulfideEnergyContainer",
 		"CentroidDisulfidePotential",

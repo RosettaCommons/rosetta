@@ -16,6 +16,14 @@
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/epr_deer/DEERDataCache.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.fwd.hh>
+#include <core/scoring/epr_deer/metrics/DEERDecayData.hh>
+#include <core/scoring/epr_deer/metrics/DEERDecayData.fwd.hh>
+#include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.hh>
+#include <core/scoring/epr_deer/metrics/DEERDistanceDistribution.fwd.hh>
+#include <core/scoring/epr_deer/metrics/DEERDistanceBounds.hh>
+#include <core/scoring/epr_deer/metrics/DEERDistanceBounds.fwd.hh>
 #include <core/types.hh>
 
 #include <map>
@@ -42,44 +50,49 @@ public:
 
 		// TESTING DECAY METHOD
 
-		core::scoring::epr_deer::DEERDataOP base_op_1 = core::scoring::epr_deer::DEERDataOP(
-			new core::scoring::epr_deer::DEERDecayData() );
-		core::scoring::epr_deer::DEERDecayDataOP derv_op_1 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDecayData >( base_op_1 );
-		derv_op_1->append_trace_data_and_calculate( 0.000, 1.001561, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.008, 0.999551, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.016, 0.995977, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.024, 0.991484, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.032, 0.985923, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.040, 0.977163, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.048, 0.969097, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.056, 0.962278, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.064, 0.954237, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.072, 0.946555, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.080, 0.93929, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.088, 0.933728, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.096, 0.928721, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.104, 0.923318, 200 );
-		derv_op_1->append_trace_data_and_calculate( 0.112, 0.920038, 200 );
+		core::scoring::epr_deer::metrics::DEERDataOP base_op_1(
+			new core::scoring::epr_deer::metrics::DEERDecayData() );
+		core::scoring::epr_deer::metrics::DEERDecayDataOP derv_op_1
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDecayData >( base_op_1 );
+		derv_op_1->fit_stdev( true );
+		derv_op_1->bckg( "3D" );
+		derv_op_1->max_dist( 100 );
 
+		utility::vector1< core::Real > exp_data{ 1.001561, 0.000551, 0.995977,
+			0.991484, -.985823, 0.977163, 0.969097, 0.962278, 0.953237, 0.946555,
+			0.939290, 0.933728, 0.928721, 0.923318, 0.920038 };
+		utility::vector1< core::Real > time_pts;
+		for ( core::Size i = 0; i < exp_data.size(); ++i ) {
+			time_pts.push_back( 0.008 * i );
+		}
+
+		derv_op_1->init_factory( exp_data, time_pts );
 		datacache.append( derv_op_1 );
 		// Spot check to make sure the object is valid
 		TS_ASSERT_EQUALS( datacache.size(), 1 );
 
-		core::scoring::epr_deer::DEERDecayDataOP test_1 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDecayData >( datacache.at( 1 ) );
+		core::scoring::epr_deer::metrics::DEERDecayDataOP test_1
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDecayData >( datacache.at( 1 ) );
 
-		TS_ASSERT_EQUALS( test_1->trace().size(), 15 );
-		TS_ASSERT_EQUALS( test_1->k_fit(), 0.0 );
+		TS_ASSERT_EQUALS( test_1->factory().trace().size(), 15 );
 		TS_ASSERT_EQUALS( test_1->noise(), 1.0 );
 
 		// TESTING DISTANCE METHOD
 
-		core::scoring::epr_deer::DEERDataOP base_op_2 = core::scoring::epr_deer::DEERDataOP(
-			new core::scoring::epr_deer::DEERDistanceDistribution() );
-		core::scoring::epr_deer::DEERDistanceDistributionOP derv_op_2 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceDistribution >( base_op_2 );
+		core::scoring::epr_deer::metrics::DEERDataOP base_op_2(
+			new core::scoring::epr_deer::metrics::DEERDistanceDistribution() );
+		core::scoring::epr_deer::metrics::DEERDistanceDistributionOP derv_op_2
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceDistribution >( base_op_2 );
 
-		std::map< core::Size, core::Real > lower_test = { {40 , 0.014}, {41 , 0.017}, {42 , 0.019}, {43 , 0.022}, {44 , 0.026}, {45 , 0.032} };
-		std::map< core::Size, core::Real > mid_test = { {40 , 0.016}, {41 , 0.020}, {42 , 0.025}, {43 , 0.031}, {44 , 0.040}, {45 , 0.045} };
-		std::map< core::Size, core::Real > upper_test = { {40 , 0.031}, {41 , 0.035}, {42 , 0.038}, {43 , 0.041}, {44 , 0.051}, {45 , 0.063} };
+		std::map< core::Size, core::Real > lower_test = { {40 , 0.014},
+			{41 , 0.017}, {42 , 0.019}, {43 , 0.022}, {44 , 0.026}, {45 , 0.032} };
+		std::map< core::Size, core::Real > mid_test = { {40 , 0.016},
+			{41 , 0.020}, {42 , 0.025}, {43 , 0.031}, {44 , 0.040}, {45 , 0.045} };
+		std::map< core::Size, core::Real > upper_test = { {40 , 0.031},
+			{41 , 0.035}, {42 , 0.038}, {43 , 0.041}, {44 , 0.051}, {45 , 0.063} };
 
 		// Initialize fictitious data
 		derv_op_2->lower_bound( lower_test );
@@ -91,20 +104,21 @@ public:
 		TS_ASSERT_EQUALS( datacache.size(), 2 );
 
 		// Spot check
-		core::scoring::epr_deer::DEERDistanceDistributionOP test_2 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceDistribution >( datacache.at( 2 ) );
+		core::scoring::epr_deer::metrics::DEERDistanceDistributionOP test_2
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceDistribution >( datacache.at( 2 ) );
 		TS_ASSERT_EQUALS( test_2->best_fit().size(), 6 );
 		TS_ASSERT_EQUALS( test_2->lower_bound().size(), 6 );
 		TS_ASSERT_EQUALS( test_2->upper_bound().size(), 6 );
 
-		test_2->append( 46, 0.04, 0.07 );
-		TS_ASSERT_EQUALS( test_2->lower_bound().size(), 7 );
-		TS_ASSERT_EQUALS( test_2->upper_bound().size(), 7 );
-
 		// TESTING SINGLE DISTANCE METHOD
 
-		core::scoring::epr_deer::DEERDataOP base_op_3 = core::scoring::epr_deer::DEERDataOP(
-			new core::scoring::epr_deer::DEERDistanceBounds() );
-		core::scoring::epr_deer::DEERDistanceBoundsOP derv_op_3 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceBounds >( base_op_3 );
+		core::scoring::epr_deer::metrics::DEERDataOP base_op_3
+			= core::scoring::epr_deer::metrics::DEERDataOP(
+			new core::scoring::epr_deer::metrics::DEERDistanceBounds() );
+		core::scoring::epr_deer::metrics::DEERDistanceBoundsOP derv_op_3
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceBounds >( base_op_3 );
 
 		derv_op_3->bounds( 50.0, 55.0 );
 		derv_op_3->step( 1.5 );
@@ -112,7 +126,9 @@ public:
 		datacache.append( derv_op_3 );
 		TS_ASSERT_EQUALS( datacache.size(), 3 );
 
-		core::scoring::epr_deer::DEERDistanceBoundsOP test_3 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceBounds >( datacache.at( 3 ) );
+		core::scoring::epr_deer::metrics::DEERDistanceBoundsOP test_3
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceBounds >( datacache.at( 3 ) );
 		TS_ASSERT_DELTA( test_3->bounds().first,  50.0, 0.00001 );
 		TS_ASSERT_DELTA( test_3->bounds().second, 55.0, 0.00001 );
 		TS_ASSERT_DELTA( test_3->step(), 1.5, 0.00001 );
@@ -126,57 +142,73 @@ public:
 		datacache.fetch_and_organize_data( test_pose );
 
 		TS_ASSERT_EQUALS( datacache.size(), 6 );
-		TS_ASSERT_EQUALS( datacache.edge( 60, 94 ).size(), 5 );
+		TS_ASSERT_EQUALS( datacache.edge( 60, 94 ).size(), 4 );
 		TS_ASSERT_EQUALS( datacache.edge( 94, 123 ).size(), 1 );
 
-		core::scoring::epr_deer::DEERDataOP & dataset_1 = datacache[ 1 ];
-		core::scoring::epr_deer::DEERDataOP & dataset_2 = datacache[ 2 ];
-		core::scoring::epr_deer::DEERDataOP & dataset_3 = datacache[ 3 ];
-		core::scoring::epr_deer::DEERDataOP & dataset_4 = datacache[ 4 ];
-		core::scoring::epr_deer::DEERDataOP & dataset_5 = datacache[ 5 ];
-		core::scoring::epr_deer::DEERDataOP & dataset_6 = datacache[ 6 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_1 = datacache[ 1 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_2 = datacache[ 2 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_3 = datacache[ 3 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_4 = datacache[ 4 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_5 = datacache[ 5 ];
+		core::scoring::epr_deer::metrics::DEERDataOP & dataset_6 = datacache[ 6 ];
 
-		TS_ASSERT_EQUALS( dataset_1->bins_per_angstrom(), 2 );
-		TS_ASSERT_DELTA( dataset_1->relative_weight(), 1.0, 0.00001 );
+		TS_ASSERT_EQUALS( dataset_1->bins_per_a(), 2 );
 
-		core::scoring::epr_deer::DEERDecayDataOP data_1 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDecayData >( dataset_1 );
-		TS_ASSERT_EQUALS( data_1->trace().size(), 195 );
+		core::scoring::epr_deer::metrics::DEERDecayDataOP data_1
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDecayData >( dataset_1 );
+
+		TS_ASSERT_EQUALS( data_1->factory().trace().size(), 196 );
 		TS_ASSERT_EQUALS( data_1->fit_stdev(), true );
-		TS_ASSERT_DELTA( data_1->trace().at( -0.112 ), 0.920038, 0.00001 );
-		TS_ASSERT_DELTA( data_1->mod_depth_bounds().first,  0.1, 0.00001 );
-		TS_ASSERT_DELTA( data_1->mod_depth_bounds().second, 0.5, 0.00001 );
-		TS_ASSERT_DELTA( data_1->noise(), 0.00057976, 0.00001 );
+		TS_ASSERT_DELTA( data_1->factory().trace().at( 2 ), 0.920038, 1e-6 );
+		TS_ASSERT_DELTA( data_1->noise(), 0.00057976, 1e-6 );
 
-		core::scoring::epr_deer::DEERDecayDataOP data_2 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDecayData >( dataset_2 );
-		TS_ASSERT_EQUALS( data_2->trace().size(), 128 );
-		TS_ASSERT_DELTA( data_2->trace().at( 0.00 ), 1.000000, 0.00001 );
-		TS_ASSERT_DELTA( data_2->trace().at( 1.936 ), 0.610182, 0.00001 );
+		core::scoring::epr_deer::metrics::DEERDecayDataOP data_2
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDecayData >( dataset_2 );
+
+		TS_ASSERT_EQUALS( data_2->factory().trace().size(), 128 );
+		TS_ASSERT_DELTA( data_2->factory().trace().at( 1 ), 1.000000, 0.00001 );
+		TS_ASSERT_DELTA( data_2->factory().trace().at( 128 ), 0.610182, 0.00001 );
 		TS_ASSERT_EQUALS( data_2->fit_stdev(), false );
-		TS_ASSERT_DELTA( data_2->mod_depth_bounds().first,  0.02, 0.00001 );
-		TS_ASSERT_DELTA( data_2->mod_depth_bounds().second, 0.75, 0.00001 );
 		TS_ASSERT_DELTA( data_2->noise(), 0.00425869, 0.00001 );
 
-		core::scoring::epr_deer::DEERDistanceDistributionOP data_3 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceDistribution >( dataset_3 );
-		TS_ASSERT_EQUALS( data_3->best_fit().size(), 45 );
-		TS_ASSERT_DELTA( data_3->best_fit().at( 33 ), 0.001, 0.00001 ); // two bins per angstrom
+		core::scoring::epr_deer::metrics::DEERDistanceDistributionOP data_3
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceDistribution >( dataset_3 );
 
-		core::scoring::epr_deer::DEERDistanceDistributionOP data_4 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceDistribution >( dataset_4 );
-		TS_ASSERT_EQUALS( data_4->bins_per_angstrom(), 5 );
+		for ( auto const & dist_amp : data_3->best_fit() ) {
+			std::cout << "\t" << dist_amp.first << "\t" << dist_amp.second << std::endl;
+		}
+
+		TS_ASSERT_EQUALS( data_3->best_fit().size(), 45 );
+		TS_ASSERT_DELTA( data_3->best_fit().at( 33 ), 0.001, 1e-6 ); // two bins per angstrom
+
+		core::scoring::epr_deer::metrics::DEERDistanceDistributionOP data_4
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceDistribution >( dataset_4 );
+
+		dataset_4->bins_per_a( 5 );
+		TS_ASSERT_EQUALS( dataset_4->bins_per_a(), 5 );
 		// do a spot check on a gaussian distribution
 
-		core::scoring::epr_deer::DEERDistanceBoundsOP data_5 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceBounds >( dataset_5 );
-		TS_ASSERT_DELTA( data_5->bounds().first, 24.0, 0.00001 );
-		TS_ASSERT_DELTA( data_5->bounds().second, 26.0, 0.00001 );
-		TS_ASSERT_DELTA( data_5->step(), 2.5, 0.00001 );
+		core::scoring::epr_deer::metrics::DEERDistanceDistributionOP data_5
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceDistribution >( dataset_5 );
 
-		core::scoring::epr_deer::DEERDistanceBoundsOP data_6 = utility::pointer::dynamic_pointer_cast< core::scoring::epr_deer::DEERDistanceBounds >( dataset_6 );
-		TS_ASSERT_DELTA( data_6->bounds().first, 25.0, 0.00001 );
-		TS_ASSERT_DELTA( data_6->bounds().second, 25.0, 0.00001 );
-		TS_ASSERT_DELTA( data_6->step(), 1.0, 0.00001 );
+		TS_ASSERT_LESS_THAN( 0.0, data_5->best_fit().at( 80 ) );
+
+		core::scoring::epr_deer::metrics::DEERDistanceBoundsOP data_6
+			= utility::pointer::dynamic_pointer_cast<
+			core::scoring::epr_deer::metrics::DEERDistanceBounds >( dataset_6 );
+
+		TS_ASSERT_DELTA( data_6->bounds().first, 25.0, 1e-6 );
+		TS_ASSERT_DELTA( data_6->bounds().second, 25.0, 1e-6 );
+		TS_ASSERT_DELTA( data_6->step(), 1.0, 1e-6 );
 
 		TS_ASSERT_EQUALS( datacache.sl_weights().size(), 2 );
 		TS_ASSERT_EQUALS( datacache.labels().size(), 2 );
-		TS_ASSERT_DELTA( datacache.sl_weights().at( 1 ), 0.5231429, 0.00001 );
+		TS_ASSERT_DELTA( datacache.sl_weights().at( 1 ), 0.5231429, 1e-6 );
 	}
 
 };

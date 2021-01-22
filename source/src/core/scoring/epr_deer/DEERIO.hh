@@ -19,7 +19,7 @@
 #ifndef INCLUDED_core_scoring_epr_deer_DEERIO_hh
 #define INCLUDED_core_scoring_epr_deer_DEERIO_hh
 
-#include <core/scoring/epr_deer/DEERData.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.hh>
 #include <core/scoring/epr_deer/DEERIO.fwd.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/types.hh>
@@ -34,91 +34,185 @@ namespace core {
 namespace scoring {
 namespace epr_deer {
 
+static std::map< Size, metrics::DEERDataOP > epr_deer_input_data_;
+
+using SplitLine = utility::vector1< std::string >;
+using SplitLines = utility::vector1< SplitLine >;
+using SplitLineMap = std::map< std::string, SplitLines >;
+
+/// @brief Alias to asve space when defining residues and spin labels
+using PairSizeString = std::pair< Size, std::string >;
+
 class DEERIO {
 
 public:
 
 	/// @brief    Constructor
-	DEERIO();
+	DEERIO() = default;
+
+	/// @brief    Copy Constructor
+	DEERIO(
+		DEERIO const & io
+	) = default;
 
 	/// @brief    Destructor
-	~DEERIO();
+	~DEERIO() = default;
+
+	/// @brief Split an input line into vector of strings
+	/// @param  line: Line of interest
+	/// @return Vector of strings
+	/// @detail Ignores lines starting with "#"
+	SplitLine
+	split_line(
+		std::string const & line
+	) const;
 
 	/// @brief Generates the data for use. Core function
-	std::map< Size, DEERDataOP >
+	/// @param  pose: Input pose (used for residue numbering)
+	/// @return Map of input data
+	/// @detail Will only compute this once! Otherwise, the data is saved
+	/// @detail  in a static/global object (epr_deer_input_data_) defined in
+	/// @detail  header file
+	std::map< Size, metrics::DEERDataOP >
 	generate_data(
 		core::pose::Pose const & pose
-	);
+	) const;
 
-	/// @brief Reads the input file(s) and makes an unsorted vector of their whitespace-separated contents
-	utility::vector1< utility::vector1< std::string > >
-	get_splitlines();
+	/// @brief  Parses file
+	/// @param  pose: Pose (for residue numbering)
+	/// @return Map of strings (grouped by data index)
+	std::map< Size, SplitLines >
+	parse_input() const;
 
-	/// @brief Reads lines that start with DESC, which contain residue and spin label information
+	/// @brief Parse the input lines into actual data containers
+	/// @param  pose: Pose (used for residue numbering)
+	/// @param  idx: Index of datum (used for error messages)
+	/// @param  lines: Lines associated with this dataset
+	/// @return Proper data container that can be used by Rosetta
+	metrics::DEERDataOP
+	parse_data(
+		pose::Pose const & pose,
+		SplitLines const & lines
+	) const;
+
+	/// @brief  Parse inputs lines into DEERDecayDataOP
+	/// @param  pose: Pose (used for residue renumbering)
+	/// @param  sorted_data: Input lines sorted by linetype
+	/// @return Proper data container that can be used by Rosetta
+	metrics::DEERDataOP
+	parse_decay_data(
+		pose::Pose const & pose,
+		std::map< std::string, SplitLines > const & sorted_data
+	) const;
+
+	/// @brief  Parse inputs lines into DEERDistanceBoundsOP
+	/// @param  pose: Pose (used for residue renumbering)
+	/// @param  sorted_data: Input lines sorted by linetype
+	/// @return Proper data container that can be used by Rosetta
+	metrics::DEERDataOP
+	parse_bounds_data(
+		pose::Pose const & pose,
+		std::map< std::string, SplitLines > const & sorted_data
+	) const;
+
+	/// @brief  Parse inputs lines into DEERDistanceDistributionOP
+	/// @param  pose: Pose (used for residue renumbering)
+	/// @param  sorted_data: Input lines sorted by linetype
+	/// @return Proper data container that can be used by Rosetta
+	metrics::DEERDataOP
+	parse_dist_data(
+		pose::Pose const & pose,
+		std::map< std::string, SplitLines > const & sorted_data
+	) const;
+
+	/// @brief Parses lines labeled "INFO" into information usable by Rosetta
+	/// @param  info_lines: Lines with the information (as strings)
+	/// @return Proper data container that can be used by Rosetta
+	/// @detail Note that this container, upon output, is incomplete!
+	metrics::DEERDataOP
+	parse_dist_info_lines(
+		SplitLines const & info_lines
+	) const;
+
+	/// @brief Parses lines labeled "DIST" into information usable by Rosetta
+	/// @param  dist_lines: Lines with the distance distributions
+	/// @param  data: DEERData object (passed by reference and modified here)
 	void
-	read_desc_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines,
-		pose::Pose const & pose
-	);
+	parse_dist_lines(
+		SplitLines const & dist_lines,
+		metrics::DEERDataOP data
+	) const;
 
-	/// @brief Reads lines that start with INFO, which gives additional options specific for each bit of data
+	/// @brief  Determines function used by DEERDistanceDistribution
+	/// @param  info_lines: Lines labeled "INFO" in input file
+	/// @return Proper data container that can be used by Rosetta
+	/// @detail Note that this container, upon output, is incomplete!
+	metrics::DEERDataOP
+	parse_dist_datatype(
+		SplitLines const & info_lines
+	) const;
+
+	/// @brief  Parses data for DEERDistanceBounds object
+	/// @param  bounds_lines: Lines labeled "BOUNDS" in input file
+	/// @param  data: Proper data container that can be used by Rosetta
+	/// @detail Note that only the last BOUNDS line will be used
 	void
-	read_info_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines
-	);
+	parse_bounds_lines(
+		SplitLines const & bounds_lines,
+		metrics::DEERDataOP bounds_data
+	) const;
 
-	/// @brief Read lines for decay data (raw data)
+	/// @brief  Parses information data for DEERDecayData object
+	/// @param  info_lines: Lines labeled "INFO" in input file
+	/// @param  data: Proper data container that can be used by Rosetta
 	void
-	read_decay_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & data_lines
-	);
+	parse_decay_info_lines(
+		SplitLines const & info_lines,
+		metrics::DEERDataOP data
+	) const;
 
-	/// @brief Read lines for bounded distance restraints
+	/// @brief  Parses decay data for DEERDecayData object
+	/// @param  decay_lines: Lines labeled "DECAY" in input file
+	/// @param  data: Proper data container that can be used by Rosetta
 	void
-	read_bounds_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines
-	);
+	parse_decay_lines(
+		SplitLines const & decay_lines,
+		metrics::DEERDataOP & data
+	) const;
 
-	/// @brief Read lines for gaussian-distributed distance data
-	void
-	read_gauss_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines
-	);
+	/// @brief  Parse input lines for information on residues involved in data
+	/// @param  pose: Pose (used for residue renumbering)
+	/// @param  desc_lines: Input lines containing this information
+	/// @return List of residues describing both the ID# and spin label type
+	utility::vector1< PairSizeString >
+	parse_desc_lines(
+		pose::Pose const & pose,
+		SplitLines const & desc_lines
+	) const;
 
-	/// @brief Read lines for non-gaussian-distributed distance data
-	void
-	read_dist_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines
-	);
-
-	/// @brief Read the lines starting with PAIR, which are for easy input
-	void
-	read_pair_lines(
-		std::map< Size, DEERDataOP > & output,
-		utility::vector1< utility::vector1< std::string > > const & splitlines,
-		pose::Pose const & pose
-	);
-
-	/// @brief Normalize distance distributions so their integrals equal 1
-	Real
-	normalize_distribution(
-		std::map< Size, Real > & in_map
-	);
-
-	/// @brief Get custom spin label coordinates
+	/// @brief  Parse coordinate files for custom spin labels
+	/// @param  pose: Pose (used for residue renumbering)
+	/// @return List of spin labels and corresponding weights
 	utility::vector1< std::pair< EPRSpinLabel, Real > >
-	pull_coords() const;
+	pull_coords(
+		pose::Pose const & pose
+	) const;
 
 private:
 
-	Size ANGSTROM_LIMIT_   = 100;
-	Size BINS_PER_ANGSTROM_ = 2;
+	/// @brief Defines the default max distance (for DEERDecayData objects)
+	Size const ANGSTROM_LIMIT_   = 100;
+
+	/// @brief Defines the default bins per angstrom in distributions
+	Size const BINS_PER_A_ = 2;
+
+	/// @brief Sets the first line that will replace "PAIR" lines
+	utility::vector1< std::string > const pairline1_ =
+	{ "DESC", "", "DEFAULT", "", "DEFAULT", "" };
+
+	/// @brief Sets the second line that will replace "PAIR" lines
+	utility::vector1< std::string > const pairline2_ =
+	{ "BOUNDS", "", "", "", "1.0" };
 
 };
 

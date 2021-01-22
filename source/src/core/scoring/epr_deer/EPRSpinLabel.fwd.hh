@@ -18,8 +18,6 @@
 #define INCLUDED_core_scoring_epr_deer_EPRSpinLabel_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <numeric/xyzVector.hh>
-#include <core/types.hh>
 
 namespace core {
 namespace scoring {

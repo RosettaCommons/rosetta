@@ -14,20 +14,23 @@
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
 // Unit headers
-#include <core/scoring/epr_deer/DEERData.hh>
 #include <core/scoring/epr_deer/DEERIO.hh>
 #include <core/scoring/epr_deer/DEERDataCache.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
+#include <core/scoring/epr_deer/metrics/DEERData.hh>
 
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <basic/datacache/CacheableData.hh>
-#include <basic/datacache/CacheableData.fwd.hh>
 #include <core/types.hh>
 
 // Basic headers
+#include <basic/datacache/CacheableData.hh>
+#include <basic/datacache/CacheableData.fwd.hh>
 #include <basic/Tracer.hh>
+
+// Utility headers
+#include <utility/excn/Exceptions.hh>
 
 // C++ headers
 #include <string>
@@ -36,6 +39,10 @@
 namespace core {
 namespace scoring {
 namespace epr_deer {
+
+/// @brief Tracer used for error messages
+/// @details Global to avoid re-instantiating tracer with every new object
+static basic::Tracer TR( "core.scoring.epr_deer.metrics.DEERDataCache" );
 
 /// @brief Destructor
 DEERDataCache::~DEERDataCache() {}
@@ -46,102 +53,210 @@ DEERDataCache::clone() const {
 	return basic::datacache::CacheableDataOP( new DEERDataCache( *this ) );
 }
 
-/// @brief Returns non-const data for a given ID
-DEERDataOP &
+/// @brief Returns non-const data for a given ID (or nullptr if empty)
+/// @param  i: Index of data object ()
+/// @return Requested DEERDataOP object (or nullptr)
+metrics::DEERDataOP &
 DEERDataCache::operator[](
 	Size const & i
 ) {
-	return data_[ i ];
+	if ( data_.find( i ) == data_.end() ) {
+		throw CREATE_EXCEPTION( utility::excn::KeyError, "Data with key "
+			+ std::to_string( i ) + " not found in DEERDataCache!" );
+	} else {
+		return data_[ i ];
+	}
 }
 
-/// @brief Returns const data for a given ID
-DEERDataOP const &
+/// @brief Returns const data for a given ID (or nullptr if empty)
+/// @param  i: Index of data object ()
+/// @return Requested DEERDataOP object (or nullptr)
+metrics::DEERDataOP const &
 DEERDataCache::at(
 	Size const & i
 ) const {
-	return data_.at( i );
+	if ( data_.find( i ) == data_.end() ) {
+		throw CREATE_EXCEPTION( utility::excn::KeyError, "Data with key "
+			+ std::to_string( i ) + " not found in DEERDataCache!" );
+	} else {
+		return data_.at( i );
+	}
 }
 
+/// @brief Adds DEERDataOP object to DEERDataCache at earliest spot
+/// @param data: metrics::DEERDataOP object to insert
 void
 DEERDataCache::append(
-	DEERDataOP const & data
+	metrics::DEERDataOP const & data
 ) {
-	data_[ size() + 1 ] = data;
+	for ( Size i = 1; i <= size() + 1; ++i ) {
+		if ( data_.find( i ) == data_.end() ) {
+			data_[ i ] = data;
+			return;
+		}
+	}
 }
 
-/// @brief Returns number of DEERData objects stored here
+/// @brief Adds DEERDataOP object to DEERDataCache at predefined spot
+/// @param data: Object to insert
+/// @param i: Position to insert object
+void
+DEERDataCache::append(
+	metrics::DEERDataOP const & data,
+	Size const & i
+) {
+	if ( data_.find( i ) != data_.end() ) {
+		TR.Warning << "Overwriting data at pos " << i << std::endl;
+		TR.Warning << "Existing data has been discarded!" << std::endl;
+	}
+	data_[ i ] = data;
+}
+
+/// @brief Adds DEERDataOP object to DEERDataCache at last spot
+/// @param data: metrics::DEERDataOP object to insert
+void
+DEERDataCache::push_back(
+	metrics::DEERDataOP const & data
+) {
+	data_[ data_.rbegin()->first + 1 ] = data;
+}
+
+/// @brief Returns number of DEERDataOPs stored here
+/// @return Size object ofnumber of DEERDataOPs in map
+/// @detail Note: output could be less than data_.rbegin()->first)
 Size
 DEERDataCache::size() const {
-	if ( data_.size() == 0 ) {
-		return 0;
-	} else {
-		return data_.rbegin()->first;
+	return data_.size();
+}
+
+/// @brief Returns set of keys in the data map
+/// @return Set object containing all keys in map
+std::set< Size >
+DEERDataCache::indices() const {
+	std::set< Size > output;
+	for ( auto const & data : data_ ) {
+		output.insert( data.first );
 	}
+	return output;
 }
 
 /// @brief Fetches are parses data from command line using DEERIO object
+/// @param pose: Pose object from which data will be fetched
 void
 DEERDataCache::fetch_and_organize_data(
-	pose::Pose & pose
+	pose::Pose const & pose
 ) {
-	// First get the data from the command line via DEERIO object
+
+	// Data IO from file
 	data_ = DEERIO().generate_data( pose );
+	set_up_residues();
 
-	// Go through the residues and store that info
-	for ( auto const & edge : data_ ) {
-		auto const & deer_res = edge.second->residues();
-		for ( auto const & res : deer_res ) {
-			labeled_residues_.insert( res );
+	// In case epr_deer:custom_coords is used
+	auto const sl_data = DEERIO().pull_coords( pose );
+	if ( sl_data.size() ) {
+		for ( auto const & sl_weight : sl_data ) {
+			spin_labels_.push_back( sl_weight.first );
+			sl_weights_.push_back( sl_weight.second );
 		}
-		// Store all combinations of residue pairs
-		for ( Size i = 1; i < deer_res.size(); ++i ) {
-			Real weight_per_pair = ( deer_res.size() * ( deer_res.size() - 1.0 ) ) / 2.0;
-			for ( Size j = i + 1; j <= deer_res.size(); ++j ) {
-				auto const & min_res = std::min( deer_res.at( i ).first, deer_res.at( j ).first );
-				auto const & max_res = std::max( deer_res.at( i ).first, deer_res.at( j ).first );
-				auto res_pair = std::make_pair( min_res, max_res );
-				if ( pair_to_data_map_.find( res_pair ) == pair_to_data_map_.end() ) {
-					pair_to_data_map_[ res_pair ] = std::map< Size, Real >();
-				}
-				pair_to_data_map_[ res_pair ][ edge.first ] = weight_per_pair;
-			}
-		}
-	}
-
-	// Next pull custom coordinates from command line
-	auto sl_data = DEERIO().pull_coords();
-	if ( sl_data.size() == 0 ) return;
-	for ( auto const & sl_weight : sl_data ) {
-		spin_labels_.push_back( sl_weight.first );
-		sl_weights_.push_back( sl_weight.second );
 	}
 }
 
-/// @brief Returns the number of edges corresponding to the pair of residues
+/// @brief Initializer function following reading of data
+void
+DEERDataCache::set_up_residues() {
+
+	// Clear existing data
+	labeled_residues_.clear();
+	pair_data_.clear();
+
+	// Iterate across sets for redistribution of data
+	for ( auto const & edge : data_ ) {
+		auto const & ids = edge.second->residues();
+		for ( auto const & res : ids ) {
+			labeled_residues_.insert( res );
+		}
+
+		// Iterate across pairs of residues in that dataset
+		for ( Size i = 1; i < ids.size(); ++i ) {
+			for ( Size j = i + 1; j <= ids.size(); ++j ) {
+
+				// Pair ID is ( first, last )
+				auto const pair = std::make_pair(
+					std::min( ids.at( i ).first, ids.at( j ).first ),
+					std::max( ids.at( i ).first, ids.at( j ).first ) );
+
+				// Add pair (and weight) to appropriate map
+				if ( pair_data_.find( pair ) == pair_data_.end() ) {
+					pair_data_[ pair ] = std::map< Size, Real >();
+				}
+				auto const w = ids.size() * ( ids.size() - 1 ) / 2.0;
+				pair_data_[ pair ][ edge.first ] = w;
+			}
+		}
+	}
+}
+
+/// @brief Returns number of edges corresponding to the pair of residues
+/// @param rsd1: identity of first residue (AA sequence)
+/// @param rsd2: identity of second residue (AA sequence)
+/// @return Map with edges and weights for residue pair
 std::map< Size, Real >
 DEERDataCache::edge(
 	Size const & rsd1,
 	Size const & rsd2
 ) const {
-	std::pair< Size, Size > respair = std::make_pair( std::min( rsd1, rsd2 ), std::max( rsd1, rsd2 ) );
-	if ( pair_to_data_map_.find( respair ) == pair_to_data_map_.end() ) {
+
+	// Pair ID is ( first, last )
+	std::pair< Size, Size > const respair = std::make_pair(
+		std::min( rsd1, rsd2 ),
+		std::max( rsd1, rsd2 ) );
+
+	// Return the map (if found) or an empty map (if not found)
+	if ( pair_data_.find( respair ) == pair_data_.end() ) {
 		return std::map< Size, Real >();
-	} else return pair_to_data_map_.at( respair );
+	} else {
+		return pair_data_.at( respair );
+	}
 }
 
-/// @brief Returns list of residues and appropriate spin labels to compute
-std::set< std::pair< Size, std::string > >
+/// @brief Returns set of residues and appropriate spin labels to compute
+/// @return Residues in data
+//std::set< std::pair< Size, std::string > >
+//DEERDataCache::labeled_residues() const {
+// return labeled_residues_;
+//}
+
+/// @brief Returns vector of residues and appropriate spin labels to compute
+/// @return Residues in data
+utility::vector1< std::pair< Size, std::string > >
 DEERDataCache::labeled_residues() const {
-	return labeled_residues_;
+	utility::vector1< std::pair< Size, std::string > > output;
+	for ( auto const & res_sl : labeled_residues_ ) {
+		output.push_back( res_sl );
+	}
+	return output;
 }
 
-/// @brief Stores the normalized coordinates for residues with CUSTOM spin labels
+/// @brief Returns list of residues spin labels to compute
+/// @return Labels required by data
+std::set< std::string >
+DEERDataCache::label_types() const {
+	std::set< std::string > output;
+	for ( auto const & res_sl : labeled_residues_ ) {
+		output.insert( res_sl.second );
+	}
+	return output;
+}
+
+/// @brief Stores the coordinates for residues with CUSTOM spin labels
+/// @return utility::vector1< EPRSpinLabel > of custom SL rotamers in data
 utility::vector1< EPRSpinLabel >
 DEERDataCache::labels() const {
 	return spin_labels_;
 }
 
 /// @brief Stores the normalized coordinates for residues with CUSTOM spin labels
+/// @param labels: Custom rotamers across model
 void
 DEERDataCache::set_labels(
 	utility::vector1< EPRSpinLabel > const & labels
@@ -150,12 +265,14 @@ DEERDataCache::set_labels(
 }
 
 /// @brief Returns the weights assigned to CUSTOM spin label coordinates
+/// @return Vector of weights
 utility::vector1< Real > const &
 DEERDataCache::sl_weights() const {
 	return sl_weights_;
 }
 
 /// @brief Stores the weights assigned to CUSTOM spin label coordinates
+/// @param weights: Vector of weights for custom SLs
 void
 DEERDataCache::set_sl_weights(
 	utility::vector1< Real > const & weights
@@ -163,6 +280,9 @@ DEERDataCache::set_sl_weights(
 	sl_weights_ = weights;
 }
 
+/// @brief Returns if F1 force is stored for residue
+/// @param res: Residue ID of interest
+/// @return True or false if residue is stored in F1 force map
 bool
 DEERDataCache::has_f1_force(
 	Size const & res
@@ -170,6 +290,9 @@ DEERDataCache::has_f1_force(
 	return f1_forces_.find( res ) != f1_forces_.end();
 }
 
+/// @brief Returns if F2 force is stored for residue
+/// @param res: Residue ID of interest
+/// @return True or false if residue is stored in F2 force map
 bool
 DEERDataCache::has_f2_force(
 	Size const & res
@@ -177,7 +300,9 @@ DEERDataCache::has_f2_force(
 	return f2_forces_.find( res ) != f2_forces_.end();
 }
 
-/// @brief Stores the F1 force applied to a residue, used for gradient minimzation
+/// @brief Sets F1 force stored for residue
+/// @param res: Residue ID of interest
+/// @param vec: Vector of F1 force
 void
 DEERDataCache::f1_force(
 	Size const & res,
@@ -186,7 +311,9 @@ DEERDataCache::f1_force(
 	f1_forces_[ res ] = vec;
 }
 
-/// @brief Stores the F2 force applied to a residue, used for gradient minimzation
+/// @brief Sets F2 force stored for residue
+/// @param res: Residue ID of interest
+/// @param vec: Vector of F2 force
 void
 DEERDataCache::f2_force(
 	Size const & res,
@@ -195,7 +322,9 @@ DEERDataCache::f2_force(
 	f2_forces_[ res ] = vec;
 }
 
-/// @brief Returns the F1 force applied to a residue, used for gradient minimzation
+/// @brief Returns the F1 force applied to a residue
+/// @param res: Residue ID of interest
+/// @return F1 force
 numeric::xyzVector< Real > const &
 DEERDataCache::f1_force(
 	Size const & res
@@ -203,7 +332,9 @@ DEERDataCache::f1_force(
 	return f1_forces_.at( res );
 }
 
-/// @brief Returns the F2 force applied to a residue, used for gradient minimzation
+/// @brief Returns the F2 force applied to a residue
+/// @param res: Residue ID of interest
+/// @return F2 force
 numeric::xyzVector< Real > const &
 DEERDataCache::f2_force(
 	Size const & res
@@ -211,18 +342,24 @@ DEERDataCache::f2_force(
 	return f2_forces_.at( res );
 }
 
-/// @brief Sets the relative weight assigned to the pose storing this object. Used for multi-pose fitting
+/// @brief Removes data at specific spot and reparameterizes
+/// @param i: Key of data in map
 void
-DEERDataCache::set_ensemble_weight(
-	Real const & input
+DEERDataCache::delete_data(
+	core::Size const & i
 ) {
-	ensemble_weight_ = input;
+	data_.erase( i );
+	set_up_residues();
 }
 
-/// @brief Returns the relative weight assigned to the pose storing this object. Used for multi-pose fitting
-Real
-DEERDataCache::ensemble_weight() const {
-	return ensemble_weight_;
+/// @brief Check and return if data in spot is occupied
+/// @param i: Key to check
+/// @return Whether key is being used
+bool
+DEERDataCache::has_data(
+	core::Size const & i
+) {
+	return data_.find( i ) != data_.end();
 }
 
 } // namespace epr_deer
