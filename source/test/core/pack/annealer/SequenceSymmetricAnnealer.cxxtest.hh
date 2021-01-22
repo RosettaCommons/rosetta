@@ -513,7 +513,6 @@ public:
 
 	// Tests for validation of a proper xml schema. Ensures that each of the relevant parts are properly used.
 	// Uses three tests to ensure that other linked tags must be parsed properly too.
-	// Then performs a packing to ensure that everything is correctly processed.
 	void test_xml_validation() {
 		TR << "starting test_xml_validation" << std::endl;
 
@@ -583,6 +582,39 @@ public:
 			TR << "SetupForSequenceSymmetry was parsed incorrectly, it should have been accepted." << std::endl;
 			TS_ASSERT( false ); // This should not fail anymore.
 		}
+	}
+
+	// Tests for validation of a proper xml schema. It parses an xml and ensures that the resulting protein is packed correctly.
+	void test_initialise_annealer_from_xml() {
+		TR << "starting test_initialise_annealer_from_xml" << std::endl;
+
+		std::string kss_xml =
+			"<KeepSequenceSymmetry name=\"test_kss\" setting=\"true\"/>";
+		std::string sss_xml =
+			"<SetupForSequenceSymmetry name=\"test_sss\" sequence_symmetry_behaviour=\"test_kss\">\n"
+			"\t<SequenceSymmetry residue_selectors=\"cA,cB\"/>\n"
+			"</SetupForSequenceSymmetry>";
+
+		auto pose = import_and_test_pose();
+
+		auto res1_sel = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "1" );
+		auto res2_sel = utility::pointer::make_shared< core::select::residue_selector::ChainSelector >( "2" );
+
+		// Create tags to test XML parsing
+		utility::tag::TagCOP kss_tag = utility::tag::Tag::create( kss_xml );
+		utility::tag::TagCOP sss_tag = utility::tag::Tag::create( sss_xml );
+		basic::datacache::DataMap dm;
+
+		auto kss_top = utility::pointer::make_shared< core::pack::task::operation::KeepSequenceSymmetry >();
+		auto sss_mov = utility::pointer::make_shared< protocols::symmetry::SetupForSequenceSymmetryMover >();
+
+		dm.add( "ResidueSelector", "cA", res1_sel ); // Needed for parsing SSS
+		dm.add( "ResidueSelector", "cB", res2_sel ); // Needed for parsing SSS
+
+		kss_top->parse_tag( kss_tag, dm );
+		dm.add( core::pack::task::TASK_OPERATIONS_TAG, "test_kss", kss_top );
+		sss_mov->parse_my_tag( sss_tag, dm );
+		sss_mov->apply( * pose );
 
 		// Now to pack the protein to assess whether the mover has been properly processed.
 		auto operations = setup_speedup_task_ops();

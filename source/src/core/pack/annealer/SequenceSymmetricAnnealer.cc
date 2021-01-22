@@ -131,20 +131,18 @@ process_linked_res_set(
 	std::unordered_set< core::Size> & set,
 	utility::vector1< utility::vector1< Size > > const & corresponding_mress_for_mres,
 	utility::vector1< bool > & processed ) {
-	core::Size count = 0;
-	for ( core::Size const lkd_mres : set ) { // now create an union from all linked mres
+	std::unordered_set< core::Size > set_copy(set);
+	for ( core::Size const lkd_mres : set_copy ) { // now create an union from all linked mres
 		if ( processed[ lkd_mres ] == true ) {
-			++count;
 			continue; // skip if we have already processed this mres.
 		}
 
 		for ( core::Size jj = 1; jj <=corresponding_mress_for_mres[ lkd_mres ].size(); ++jj ) {
 			set.emplace( corresponding_mress_for_mres[ lkd_mres ][ jj ] );
 		}
-		++count;
 		processed[ lkd_mres ] = true;
 	}
-	return count;
+	return set_copy.size();
 }
 
 //NODISCARD_ATTR
@@ -201,7 +199,7 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 						idx = 0;
 						idx_tracker[ SizePair( linked_subset, sele_id_in_group ) ] = 0;
 					} else {
-						++(it->second);
+						it->second += 1;
 						idx = it->second;
 					}
 					key.idx = idx;
@@ -251,6 +249,7 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 		if ( processed[ ii ] == true ) continue; // Skip this mres if we have already processed it
 
 		std::unordered_set< core::Size > set;
+		set.max_load_factor( 0.1 );
 		for ( core::Size jj = 1; jj <= corresponding_mress_for_mres[ ii ].size(); ++jj ) {
 			set.emplace( corresponding_mress_for_mres[ ii ][ jj ] );
 		}
@@ -264,10 +263,13 @@ SequenceSymmetricAnnealer::create_corresponding_mress_for_mres() const {
 		}
 
 		for ( core::Size const mres : set ) {
-			std::unordered_set< core::Size > mres_set; // to remove current res
-			std::copy( set.begin(), set.end(), std::inserter( mres_set, mres_set.begin() ) );
-			mres_set.erase( mres );
-			corresponding_mress_for_mres[ mres ] = utility::vector1< core::Size >( mres_set.begin(), mres_set.end() );
+			utility::vector1< core::Size > & vec = corresponding_mress_for_mres[ mres ];
+			vec.clear(); // Need to clear current contents as we do not want duplicates
+			vec.resize( set.size() - 1 );
+			std::copy_if( set.begin(), set.end(), vec.begin(),
+				[=]( core::Size i ){ return i != mres; } );
+			// copy everything but the mres itself
+			processed[ mres ] = true; // Should help to speed up creation of linked mres as all linked res will also be removed from the list
 		}
 	}
 	return corresponding_mress_for_mres;
@@ -286,6 +288,7 @@ SequenceSymmetricAnnealer::update_shared_residue_map(
 	TR << "Residue type set for resid (Rosetta numbering): " << std::to_string( rotamer_sets()->moltenres_2_resid( id ) ) << " = ";
 #endif
 	std::unordered_set< char > curr_set; // To store all res_types
+	curr_set.max_load_factor( 0.1 );
 	// Get the current set of residue types for the given mres (id)
 	for ( Size rot_id = 1; rot_id <= num_rots; ++rot_id ) {
 		char const res_type = rotamer_set->rotamer( rot_id )->name1();
@@ -315,6 +318,7 @@ SequenceSymmetricAnnealer::get_shared_residue_types(
 	utility::vector1< core::Size > const & linked_res ) const {
 
 	std::unordered_set< char > common_res_types;
+	common_res_types.max_load_factor( 0.1 );
 
 	if ( linked_res.size() == 0 ) {
 		return common_res_types;
