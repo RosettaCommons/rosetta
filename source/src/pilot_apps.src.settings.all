@@ -1117,6 +1117,7 @@ sources = {
 		"test_multithreaded_packing_performance",
 		"test_rosetta_thread_manager_advanced_API",
 		"test_rosetta_thread_manager_basic_API",
+		"test_tensorflow_graph_convolutional_nn",
 	],
 
 	# Z ######################################################################

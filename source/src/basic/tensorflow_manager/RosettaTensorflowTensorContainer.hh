@@ -147,9 +147,9 @@ public: //Getters
 		debug_assert( tensor_ != nullptr );
 		debug_assert( TF_NumDims(tensor_) == 2 );
 		debug_assert( tensor_data_ != nullptr );
-		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
-		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
-		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 2) + (coord2 - 1) ];
+		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 0) ) );
+		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
+		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1) + (coord2 - 1) ];
 	}
 
 	/// @brief Access an entry.  (Const.)
@@ -165,10 +165,10 @@ public: //Getters
 		debug_assert( tensor_ != nullptr );
 		debug_assert( TF_NumDims(tensor_) == 3 );
 		debug_assert( tensor_data_ != nullptr );
-		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
-		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
-		debug_assert( coord2 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 3) ) );
-		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3) + (coord2 - 1)*TF_Dim(tensor_, 3) + (coord3 - 1) ];
+		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 0) ) );
+		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
+		debug_assert( coord3 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
+		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1)*TF_Dim(tensor_, 2) + (coord2 - 1)*TF_Dim(tensor_, 2) + (coord3 - 1) ];
 	}
 
 	/// @brief Access an entry.  (Const.)
@@ -185,11 +185,11 @@ public: //Getters
 		debug_assert( tensor_ != nullptr );
 		debug_assert( TF_NumDims(tensor_) == 4 );
 		debug_assert( tensor_data_ != nullptr );
-		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
-		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
-		debug_assert( coord2 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 3) ) );
-		debug_assert( coord2 > 0 && coord4 <= static_cast<platform::Size>( TF_Dim(tensor_, 4) ) );
-		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord2 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord3 - 1)*TF_Dim(tensor_, 4) + (coord4 - 1) ];
+		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 0) ) );
+		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
+		debug_assert( coord2 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
+		debug_assert( coord2 > 0 && coord4 <= static_cast<platform::Size>( TF_Dim(tensor_, 3) ) );
+		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3) + (coord2 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3) + (coord3 - 1)*TF_Dim(tensor_, 3) + (coord4 - 1) ];
 	}
 
 	/// @brief Access an entry.  (Const.)
@@ -207,12 +207,12 @@ public: //Getters
 		debug_assert( tensor_ != nullptr );
 		debug_assert( TF_NumDims(tensor_) == 5 );
 		debug_assert( tensor_data_ != nullptr );
-		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
-		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
-		debug_assert( coord2 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 3) ) );
-		debug_assert( coord2 > 0 && coord4 <= static_cast<platform::Size>( TF_Dim(tensor_, 4) ) );
-		debug_assert( coord2 > 0 && coord5 <= static_cast<platform::Size>( TF_Dim(tensor_, 5) ) );
-		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord2 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord3 - 1)*TF_Dim(tensor_, 4)*TF_Dim(tensor_, 5) + (coord4 - 1)*TF_Dim(tensor_, 5) + (coord5-1) ];
+		debug_assert( coord1 > 0 && coord1 <= static_cast<platform::Size>( TF_Dim(tensor_, 0) ) );
+		debug_assert( coord2 > 0 && coord2 <= static_cast<platform::Size>( TF_Dim(tensor_, 1) ) );
+		debug_assert( coord2 > 0 && coord3 <= static_cast<platform::Size>( TF_Dim(tensor_, 2) ) );
+		debug_assert( coord2 > 0 && coord4 <= static_cast<platform::Size>( TF_Dim(tensor_, 3) ) );
+		debug_assert( coord2 > 0 && coord5 <= static_cast<platform::Size>( TF_Dim(tensor_, 4) ) );
+		return tensor_data_[ (coord1 - 1)*TF_Dim(tensor_, 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord2 - 1)*TF_Dim(tensor_, 2)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord3 - 1)*TF_Dim(tensor_, 3)*TF_Dim(tensor_, 4) + (coord4 - 1)*TF_Dim(tensor_, 4) + (coord5-1) ];
 	}
 
 	//More verbose option

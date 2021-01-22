@@ -118,7 +118,6 @@ public:
 		multirun_session( input_name, output_name, input_tensor_vector, output_tensor_vector, runtime );
 	}
 
-
 	/// @brief Equivalent of run_session() but for networks with multiple heads (multiple input tensors per run)
  	/// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
  	/// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).

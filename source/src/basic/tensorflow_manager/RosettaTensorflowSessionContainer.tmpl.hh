@@ -77,8 +77,6 @@ RosettaTensorflowSessionContainer::run_session(
 	output_tensor.update_tensor_data_pointer();
 }
 
-
-
 /// @brief Given a vector of input tensors and vector of outputs, run the Tensorflow session.
 /// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
 /// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).
@@ -130,7 +128,6 @@ RosettaTensorflowSessionContainer::run_multiinput_session(
  	RosettaTensorflowTensorContainer<T2> & output_tensor,
  	std::chrono::duration< double, std::micro > & runtime
 ) const {
-
 	//Debug-mode sanity checks:
 	debug_assert( status_ != nullptr );
  	debug_assert( graph_ != nullptr );
@@ -160,6 +157,8 @@ RosettaTensorflowSessionContainer::run_multiinput_session(
 		debug_assert( out_op != nullptr);
 	}
 
+	//Actually run the network given the input data.  (Note that the RosettaTensorflowSessionContainer is the sole class allowed to access the private
+	//member data of the RosettaTensorflowTensorContainer class.):
  	std::chrono::time_point<std::chrono::system_clock> const starttime( ROSETTA_TENSORFLOW_CLOCK::now() );
 	TF_SessionRun( session_, nullptr, inputs.get(), input_values.get(), ninputs,
 		outputs.get(), &(output_tensor.tensor_), noutputs, nullptr, 0,
@@ -172,9 +171,9 @@ RosettaTensorflowSessionContainer::run_multiinput_session(
  		utility_exit_with_message( "Unable to evaluate TensorFlow session: " + std::string( TF_Message(status_) ) );
  	}
 
+
 	//Ensure that the output tensor is in a good state for reading out the output:
 	output_tensor.update_tensor_data_pointer();
-
 }
 
 template< typename T1, typename T2 >
