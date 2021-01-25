@@ -343,6 +343,7 @@ sources = {
 		"AmbiguousNMRDistanceConstraint",
 		"AngleConstraint",
 		"AtomPairConstraint",
+		"AtomToAxisConstraint",
 		"BackboneStubConstraint",
 		"BackboneStubLinearConstraint",
 		"BasePairConstraint",

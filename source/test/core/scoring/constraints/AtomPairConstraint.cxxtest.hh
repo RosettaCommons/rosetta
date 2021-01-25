@@ -19,21 +19,27 @@
 #include <test/util/deriv_funcs.hh>
 
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/AtomTree.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/annotated_sequence.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/select/movemap/MoveMapFactory.hh>
 
 #include <core/scoring/constraints/AtomPairConstraint.hh>
+#include <core/scoring/constraints/AtomToAxisConstraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>
 #include <core/scoring/func/FourPointsFunc.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/XYZ_Func.hh>
+#include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
 
+#include <protocols/minimization_packing/MinMover.hh>
 
 //Auto Headers
 #include <platform/types.hh>
@@ -295,6 +301,63 @@ public:
 		}
 		TS_ASSERT( *instance == *instance2 );
 #endif // SERIALIZATION
+	}
+
+	void test_atom_to_axis(){
+		using namespace core;
+		using namespace core::id;
+		using namespace core::scoring;
+		using namespace core::scoring::constraints;
+		using namespace core::scoring::func;
+
+		ScoreFunction sfxn;
+		TS_ASSERT_EQUALS( sfxn.get_nonzero_weighted_scoretypes().size(), 0 );
+		sfxn.set_weight( atom_pair_constraint, 1.0 );
+		TS_ASSERT_EQUALS( sfxn.get_nonzero_weighted_scoretypes().size(), 1 );
+
+		core::pose::Pose pose;
+		core::pose::make_pose_from_sequence( pose, "GGG/GF", "fa_standard" );
+		sfxn.score( pose );
+		TS_ASSERT( pose.num_chains() == 2 );
+		TS_ASSERT( pose.size() == 5 );
+
+		core::pose::Pose pose2 = pose;
+
+		utility::vector1< core::id::AtomID > axis1, axis2;
+		axis1.emplace_back( 1, 1 );
+		axis2.emplace_back( 1, 3 );
+		core::id::AtomID const atom1( 1, 1 );
+		core::id::AtomID const atom2( 1, 3 );
+
+		TS_ASSERT( pose.atom_tree().has( atom1 ) );
+		TS_ASSERT( pose.atom_tree().has( atom2 ) );
+
+		//residue 4 is " CA"...?
+		core::conformation::Residue const & Fres = pose.residue(5);
+
+		//Distance to center of the ring
+		core::Real const target_dist =
+			Fres.xyz( "CG" ).distance( Fres.xyz( "CZ" ) ) / 2.0;
+
+		FuncOP const func( new HarmonicFunc( target_dist, 0.0001 ) );
+
+		for ( std::string s : { "CG", "CD1", "CD2", "CE1", "CE2", "CZ" } ) {
+			core::id::AtomID const atom( Fres.atom_index(s), 5 );
+			TS_ASSERT( pose.atom_tree().has( atom ) );
+			AtomToAxisConstraintOP cst(new AtomToAxisConstraint( atom, axis1, axis2, func ));
+			pose.add_constraint( cst );
+			//                                                          v REVERSED v
+			AtomToAxisConstraintOP cst2(new AtomToAxisConstraint( atom, axis2, axis1, func ));
+			pose2.add_constraint( cst2 );
+		}
+
+		TS_ASSERT_EQUALS( pose.constraint_set()->get_all_constraints().size(), 6 );
+		TS_ASSERT_EQUALS( pose2.constraint_set()->get_all_constraints().size(), 6 );
+
+		TR << "Score: " << sfxn( pose ) << std::endl;
+
+		//Axis order shouldn't matter!
+		TS_ASSERT_DELTA( sfxn( pose ), sfxn( pose2 ), 0.01 );
 	}
 
 };

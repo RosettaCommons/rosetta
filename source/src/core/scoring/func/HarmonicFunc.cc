@@ -60,7 +60,7 @@ bool HarmonicFunc::operator == ( Func const & other ) const
 
 bool HarmonicFunc::same_type_as_me( Func const & other ) const
 {
-	return dynamic_cast< HarmonicFunc const * > ( &other );
+	return dynamic_cast< HarmonicFunc const * > ( &other ) != nullptr;
 }
 
 

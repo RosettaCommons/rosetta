@@ -66,7 +66,7 @@ LinearPenaltyFunction::func( Real const x ) const {
 Real
 LinearPenaltyFunction::dfunc( Real const /*x*/ ) const
 {
-	return 0.0;
+	return 0.0; //Why zero??
 }
 
 void
