@@ -147,7 +147,7 @@ TaskAwareSymMinMover::apply(Pose & pose) {
 			}
 		}
 		core::pose::symmetry::make_symmetric_movemap( pose, *movemap );
-		TR << *movemap << std::endl;
+		TR.Debug << *movemap << std::endl;
 		protocols::minimization_packing::symmetry::SymMinMover m2( movemap, scorefxn_, min_type_, tolerance_, true, false, false );
 		m2.apply(pose);
 	}
