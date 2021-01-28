@@ -64,9 +64,18 @@ LinearPenaltyFunction::func( Real const x ) const {
 }
 
 Real
-LinearPenaltyFunction::dfunc( Real const /*x*/ ) const
+LinearPenaltyFunction::dfunc( Real const x ) const
 {
-	return 0.0; //Why zero??
+	Real const dev = fabs(x-x_middle_);
+	if ( dev <= half_width_ ) {
+		return 0;
+	} else {
+		if ( x < x_middle_ ) {
+			return -slope_;
+		} else {
+			return slope_;
+		}
+	}
 }
 
 void
