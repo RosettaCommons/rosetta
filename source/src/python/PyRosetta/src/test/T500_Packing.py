@@ -12,7 +12,7 @@ from __future__ import print_function
 import pyrosetta
 import pyrosetta.rosetta as rosetta
 
-from pyrosetta import init, get_fa_scorefxn, standard_packer_task, standard_task_factory
+from pyrosetta import init, get_fa_scorefxn, standard_packer_task, standard_task_factory, pose_from_sequence
 from pyrosetta.rosetta import core, protocols
 
 init(extra_options = "-constant_seed")  # WARNING: option '-constant_seed' is for testing only! MAKE SURE TO REMOVE IT IN PRODUCTION RUNS!!!!!
@@ -67,3 +67,26 @@ tf.push_back(pr)
 pack = protocols.minimization_packing.PackRotamersMover( scorefxn )
 pack.task_factory(tf)
 pack.apply(pose)
+
+
+# Test rotamer elimination
+def elim_everything_except_G( pose, sfxn, task, graph, rotamer_sets ):
+    vec1 = pyrosetta.rosetta.utility.vector1_bool( rotamer_sets.nrotamers() )
+    for i in range( 1, rotamer_sets.nrotamers() + 1 ):
+        # True means it will be deleted
+        vec1[ i ] = rotamer_sets.rotamer( i ).name1() != 'G'
+    return vec1
+
+elimer = core.pack.rotamer_set.PyRotamerEliminator()
+elimer.set_eliminator_function( elim_everything_except_G )
+elimerTO = core.pack.rotamer_set.PyRotamerEliminatorTaskOperation()
+elimerTO.set_eliminator( elimer )
+
+pr2 = protocols.minimization_packing.PackRotamersMover()
+op_list = pyrosetta.rosetta.std.list_std_shared_ptr_core_pack_task_operation_TaskOperation_std_allocator_std_shared_ptr_core_pack_task_operation_TaskOperation_t()
+op_list.push_back( elimerTO )
+pr2.initialize_task_factory_with_operations( op_list )
+
+pose2 = pose_from_sequence( "HI" )
+pr2.apply( pose2 )
+assert pose2.sequence() == "GG"

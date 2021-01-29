@@ -903,6 +903,25 @@ RotamerSets::rotamer_for_moltenres( uint moltenres_id, uint rotamerid ) const
 uint
 RotamerSets::nrotamer_offset_for_moltenres( uint mresid ) const { return nrotamer_offsets_[ mresid ]; }
 
+/// @brief rotamers_to_delete must be of size nrotmaers -- each position
+/// in the array that's "true" is removed from the set of rotamers
+void
+RotamerSets::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete ) {
+	debug_assert( rotamers_to_delete.size() == nrotamers() );
+
+	//For every residue, copy over the slice of booleans into their own vector and pass the logic down to the RotamerSet
+	for ( uint i = 1; i <= nmoltenres(); ++i ) {
+		utility::vector1< bool > rot_to_delete_mres( nrotamers_for_moltenres(i), false );
+		uint const offset = nrotamer_offset_for_moltenres( i );
+		//Slow but safe. This isn't performance critical but it is correctness critical
+		for ( uint r = 1; r <= rot_to_delete_mres.size(); ++r ) {
+			rot_to_delete_mres[ r ] = rotamers_to_delete[ offset + r ];
+		}
+		rotamer_set_for_moltenresidue( i )->drop_rotamers( rot_to_delete_mres );
+	}
+}
+
+
 /// @brief Does this RotamerSets object store a rotamer set for a residue at position resid
 /// in the pose?
 /// @details Rotamer sets for non-packable residues aren't generated, but could conceivably

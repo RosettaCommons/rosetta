@@ -162,6 +162,7 @@ sources = {
 		"ContinuousRotamerSet",
 		"DeleteAllRotamerSetOperation",
 		"FixbbRotamerSets",
+		"PyRotamerEliminator",
 		"rotamer_building_functions",
 		"rna_rotamer_building_functions",
 		"RotamerCouplings",

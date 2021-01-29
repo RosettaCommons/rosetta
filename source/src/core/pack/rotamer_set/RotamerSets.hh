@@ -112,6 +112,12 @@ public:
 	uint
 	nrotamer_offset_for_moltenres( uint ) const override;
 
+	/// @brief rotamers_to_delete must be of size nrotmaers -- each position
+	/// in the array that's "true" is removed from the set of rotamers
+	void
+	drop_rotamers( utility::vector1< bool > const & rotamers_to_delete );
+
+
 	/// @brief Does this RotamerSets object store a rotamer set for a residue at position resid
 	/// in the pose?
 	/// @details Rotamer sets for non-packable residues aren't generated, but could conceivably

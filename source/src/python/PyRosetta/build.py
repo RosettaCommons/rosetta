@@ -632,7 +632,7 @@ def generate_bindings(rosetta_source_path):
     signature_update(config)
 
     includes = ''.join( [' -isystem '+i for i in get_rosetta_system_include_directories()] ) + ''.join( [' -I'+i for i in get_rosetta_include_directories()] )
-    defines  = ''.join( [' -D'+d for d in get_defines()] )
+    defines  = ''.join( [' -D'+d for d in get_defines()] ) + ' -DPYROSETTA_BINDER'
 
     if Platform == 'macos':
         includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
