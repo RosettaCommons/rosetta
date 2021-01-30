@@ -95,7 +95,7 @@ def run_general(mode, rosetta_dir, platform, jobs, TR, debug, full_log, build_co
         timeout = 24*60*60  # If we've spent a full day on it, and it's still running, we're probably hosed.
 
     python_environment = local_python_install(platform, config)
-    python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, 'numpy scipy mmtf-python networkx mrcfile')
+    python_virtual_environment = setup_persistent_python_virtual_environment(python_environment, 'numpy scipy mmtf-python pubmed-lookup networkx mrcfile')
 
     command_line = f'{python_virtual_environment.activate} && cd {rosetta_dir}/tests/integration && python ./integration.py --mode={mode} --compiler={compiler} --extras={extras} --timeout={timeout} -j{jobs} {additional_flags}'
 
