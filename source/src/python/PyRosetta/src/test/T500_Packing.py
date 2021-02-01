@@ -87,6 +87,7 @@ op_list = pyrosetta.rosetta.std.list_std_shared_ptr_core_pack_task_operation_Tas
 op_list.push_back( elimerTO )
 pr2.initialize_task_factory_with_operations( op_list )
 
-pose2 = pose_from_sequence( "HI" )
+pose2 = pose_from_sequence( "FRED" )
 pr2.apply( pose2 )
-assert pose2.sequence() == "GG"
+print( pose2.sequence() )
+assert pose2.sequence() == "GGGG"

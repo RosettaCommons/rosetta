@@ -919,6 +919,9 @@ RotamerSets::drop_rotamers( utility::vector1< bool > const & rotamers_to_delete 
 		}
 		rotamer_set_for_moltenresidue( i )->drop_rotamers( rot_to_delete_mres );
 	}
+	
+	update_offset_data();
+	debug_assert( offset_data_up_to_date() );
 }
 
 
