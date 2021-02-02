@@ -1105,6 +1105,9 @@ sources = {
 	"pilot/yfsong" : [
 		#"plot_hb",
 	],
+	"pilot/ysrinivasan" : [
+		"mucintypeglycosylation",
+	],
 	"pilot/vmullig" : [
 		"cycpep_analysis",
 		"fit_helixparams",

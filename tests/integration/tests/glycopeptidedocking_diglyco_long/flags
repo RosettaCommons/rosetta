@@ -1,0 +1,15 @@
+-in:file:s input/T12_CompletePeptideSubstrate_monoglycoCatC_noUDP_noMN_001_noGal_0001_glycosylated_alpha_glycosylated_alpha_0001.pdb
+-in:file:native input/T12_CompletePeptideSubstrate_monoglycoCatC_noUDP_noMN_001_noGal_0001_glycosylated_alpha_glycosylated_alpha_0001.pdb
+-include_sugars
+-out:prefix output/
+-nstruct 1
+-residue_to_glycosylate 540B
+-substrate_type peptide
+-low_res true
+-ntotal_backbone 4
+-nevery_interface 2
+#-mute all
+-overwrite
+-prevent_anchor_repacking false
+-tree_type docking
+-allow_glycan_torsion_moves true

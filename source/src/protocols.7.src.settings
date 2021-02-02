@@ -160,6 +160,13 @@ sources = {
 		"SecondaryMatchProtocol",
 		"RemoveLigandFilter",
 	],
+	"protocols/glycopeptide_docking": [
+		"GlycopeptideDockingProtocol",
+		"GlycopeptideDockingHighResRefinement",
+		"GlycopeptideDockingLowResRefinement",
+		"GlycopeptideDockingFlags",
+    	"utils",
+    ],
 	"protocols/helical_bundle_predict" : [
 		"HBPHelixAssignments",
 		"HBP_FinalFullatomRefinementMoveGenerator",

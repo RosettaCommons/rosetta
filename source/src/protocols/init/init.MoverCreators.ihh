@@ -213,6 +213,8 @@
 // G //////////////////////////////////////////////////////////////////////////
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
+#include <protocols/glycopeptide_docking/GlycopeptideDockingProtocolCreator.hh>
+
 #include <protocols/grafting/AnchoredGraftMoverCreator.hh>
 #include <protocols/grafting/CCDEndsGraftMoverCreator.hh>
 #include <protocols/grafting/simple_movers/DeleteRegionMoverCreator.hh>

@@ -2288,6 +2288,83 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='default.table',
 			legal=['default.table', 'original.table', 'core/chemical/carbohydrates/test_linkage_data_table.tsv']
 			),
+        #### Glycosylation Options ####
+        Option_Group('glycopeptide_docking',
+            Option('residue_to_glycosylate', 'String',
+                desc='Indicates to the Glycosylation Protocol which residue is being glycosylated.'
+                ),
+            Option('anchor_residue', 'String',
+                desc='Indicates to the Glycosylation Protocol which residue is being glycosylated.'
+                ), 
+           # Option('residue_to_randomize', 'String',
+           #     desc='Indicates to the Glycosylation Protocol which residue is being glycosylated.'
+           #     ),
+            Option('low_res', 'Boolean',
+                desc='Indicate to the Glycosylation Protocol whether to perform low-resolution refinement of the substrate.',
+                default='false'
+                ),
+            Option('high_res', 'Boolean',
+                desc='Indicate to the Glycosylation Protocol whether to perform high-resolution refinement of the substrate.',
+                default='true'
+                ),
+            Option('substrate_type', 'String',
+                desc='Indicate the type of substrate that is being glycosylated i.e. peptide, protein, lipid, etc.',
+                default='peptide'
+                ),
+             Option('tree_type', 'String',
+                desc='Indicate the type of foldtree to be used i.e. outward or downstream',
+                default='outward'
+                ),
+             Option('randomize_substrate_torsions', 'Boolean',
+                desc='Randomize torsions of the substrate before running the protocol. Always on for abinitio docking. Can be turned on for refinement.',
+                default='false'
+                ),
+						 Option('enable_backbone_moves_pp', 'Boolean',
+                desc='Enable backbone moves for peptide substrate.',
+                default='true'
+                ),
+             Option('prevent_anchor_repacking', 'Boolean',
+                desc='Prevent glycosylated residue on the substrate from repacking.',
+                default='true'
+                ),
+             Option('sugardonor_residue', 'String',
+                desc='Residue number of UDPGalNac (or another sugar donating entity) in Rosetta Numbering for calculating distance with anomeric Carbon',
+                default='-1'),
+             Option('output_debug_pdbs', 'Boolean',
+                desc='outputs large number of intermediate conformations from low and highres protocols',
+                default='false'),
+             Option('fix_weights', 'Boolean',
+                desc='starting valu of repulsive weight is incorrectly ramped up instead of down - fix it',
+                default='true'),
+             Option('nevery_interface', 'String',
+                desc='Every Nth move in high res mode for repacking interface residues',
+                default='8'),
+             Option('ntotal_backbone', 'String',
+                desc='Total backbone/rigid moves in high res mode',
+                default='16'),
+             Option('allow_glycan_torsion_moves', 'Boolean',
+                desc='Add glycan to torsion movemap in highres',
+                default='false'
+                ),
+             Option('interface_distance', 'Real',
+                desc='Interface distance for sidechain repacking in high res mode',
+                default='8.0'
+                ),
+             Option('score_only', 'Boolean',
+                desc='Skip docking. Score only with all glycopeptide/peptide docking metrics.',
+                default='false'
+                ),#output_distance_metrics
+             Option('output_distance_metrics', 'Boolean',
+                desc='Output additional distance metrics.',
+                default='false'
+                ),
+             Option('preglycosylate_residues', 'String',
+                desc='Comma separated residue positions in internal rosetta numbering.',
+                ),
+						 Option('preglycosylate_sugar_names', 'String',
+                desc='Comma separated sugar names (eg. GalpNAc). Must match in number to option -glycopeptide_docking:preglycosylate_residues',
+                ),
+        ), # glycopeptide_docking
 
 
 		#### Glycan Relax Options #####

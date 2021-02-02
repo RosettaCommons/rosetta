@@ -1,0 +1,15 @@
+-in:file:s input/ppGalNAc-T2_UDP_glycopeptide.DSTTPAP.ppk.pdb
+-in:file:s input/ppGalNAc-T2_UDP_glycopeptide.DSTTPAP.native.pdb
+-include_sugars
+-out:prefix output/
+-nstruct 1
+-residue_to_glycosylate 4P
+-cst_fa_file input/ppGalNAc-T2_UDP_glycopeptide.constraints
+#-randomize_substrate_torsions
+-enable_backbone_moves_pp false
+-substrate_type peptide
+-low_res true
+-ntotal_backbone 4
+-nevery_interface 2
+#-mute all
+-overwrite
