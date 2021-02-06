@@ -162,6 +162,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         FlexPepDock            = 'numpy matplotlib==3.2',
         docking                = 'numpy matplotlib==3.2',
         ddg_ala_scan           = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        RosettaCM              = 'numpy matplotlib==3.2',
 
 
 	# LARGE-SCALE SCOREFUNCTION COMPARISONS============================
