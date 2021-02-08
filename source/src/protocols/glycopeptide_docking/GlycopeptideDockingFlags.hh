@@ -376,7 +376,7 @@ private:
 	core::Size nevery_interface_moves_=3;//done
 	core::Size ntotal_backbone_moves_=30;//done
 	bool allow_glycan_torsion_moves_=false;//done
-	core::Real interface_distance_;//done
+	core::Real interface_distance_=8.0;//done
 	bool score_only_=false; //done
 	bool additional_metrics_=false;
 	utility::vector1<core::Size> preglycosylate_residues_;
