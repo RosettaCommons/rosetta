@@ -84,20 +84,19 @@ FaWaterToBilayerEnergy::FaWaterToBilayerEnergy() :
 	using namespace basic;
 	using namespace core;
 
-#ifdef USEMPI
-	utility_exit_with_message("fa_water_to_bilayer is not yet threadsafe for MPI mode!");
-#endif
+	// #ifdef USEMPI
+	//  utility_exit_with_message("fa_water_to_bilayer is not yet threadsafe for MPI mode!");
+	// #endif
 
-#ifdef MULTI_THREADED
-	utility_exit_with_message("fa_water_to_bilayer is not yet threadsafe for MPI mode!");
-#endif
+	// #ifdef MULTI_THREADED
+	//  utility_exit_with_message("fa_water_to_bilayer is not yet threadsafe for MULTI_THREADED mode!");
+	// #endif
 
 	utility::io::izstream infile;
 	TR << "Reading fa_water_to_bilayer parameters from the database" << std::endl;
 	database::open( infile, dbfile );
 	if ( !infile.good() ) {
 		utility_exit_with_message( "Unable to open database file containing reference energies" );
-
 	}
 
 	std::string line;

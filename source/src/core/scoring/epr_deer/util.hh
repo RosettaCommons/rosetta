@@ -11,6 +11,9 @@
 /// @brief  Miscellaneous functions that pop up everywhere in epr_deer calculation
 /// @author  Diego del Alamo ( del.alamo@vanderbilt.edu )
 
+#ifndef INCLUDED_core_scoring_epr_deer_util_hh
+#define INCLUDED_core_scoring_epr_deer_util_hh
+
 #include <map>
 #include <tuple>
 
@@ -112,3 +115,5 @@ append_to_map(
 }
 }
 }
+
+#endif

@@ -51,6 +51,10 @@ namespace scoring {
 namespace nmr {
 namespace pre {
 
+#ifdef PYROSETTA
+#undef B0
+#endif
+
 class PREMultiSet {
 
 public: // Typedefs
