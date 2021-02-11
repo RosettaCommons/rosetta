@@ -474,15 +474,20 @@ void RNA_ScoreMover::apply( core::pose::Pose & pose ) {
 		//s.add_energy( "new_rms", rmsd );
 
 		// dihedral rms
-		if ( option[ dihedral_rms ]() ) {
+		if ( option[ dihedral_rms ]()  && pose.size() == native_pose_->size() ) {
 			//s.add_energy( "dih_rms", calc_dihedral_rms( pose, *native_pose_, false ) );
 			setPoseExtraScore( pose, "dih_rms", calc_dihedral_rms( pose, *native_pose_, false ) );
 		}
-		if ( option[ gdt_ha ]() ) {
+		if ( option[ gdt_ha ]() && pose.size() == native_pose_->size() ) {
 			// requires perfect correspondence!
 			//s.add_energy( "gdt_ha", gdtsc( pose, *native_pose_, resmap ) );
-			setPoseExtraScore( pose, "gdt_ha", gdtsc( pose, *native_pose_, resmap ) );
+			setPoseExtraScore( pose, "rna_gdt_ha_1", rnagdt( pose, *native_pose_, resmap, 1 ) );
+			setPoseExtraScore( pose, "rna_gdt_ha_2", rnagdt( pose, *native_pose_, resmap, 2 ) );
+			setPoseExtraScore( pose, "rna_gdt_ha_4", rnagdt( pose, *native_pose_, resmap, 4 ) );
+			setPoseExtraScore( pose, "rna_gdt_ha_8", rnagdt( pose, *native_pose_, resmap, 8 ) );
 		}
+
+		setPoseExtraScore( pose, "inf_bp", core::pose::rna::get_inf_base_pairs(pose, *native_pose_ ) );
 
 		// Stem RMSD
 		// if ( option[params_file].user() ) {
