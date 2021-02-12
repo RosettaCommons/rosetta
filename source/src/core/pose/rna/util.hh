@@ -165,9 +165,6 @@ get_number_base_pairs(pose::Pose const & pose,
 	Size & N_BP
 );
 
-core::Real
-get_inf_base_pairs(pose::Pose & pose, pose::Pose const & native_pose);
-
 void
 add_number_base_pairs( pose::Pose const & pose, io::silent::SilentStruct & s );
 

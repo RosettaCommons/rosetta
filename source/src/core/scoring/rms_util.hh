@@ -77,15 +77,6 @@ core::Real gdtsc(const core::pose::Pose& ref,
 	const core::pose::Pose& model,
 	const std::map<core::Size, core::Size>& residues);
 
-// A "CASP-like" GDT -- all heavyatoms, thresh meant to be 1/2/4/8 angstroms --
-// but for RNA.
-core::Real rnagdt(
-	const core::pose::Pose& ref,
-	const core::pose::Pose& mod,
-	const std::map<core::Size, core::Size>& residues,
-	const core::Real thresh
-);
-
 /// @brief Returns the average fraction of residues superimposable under a
 /// series of distance thresholds-- 0.5, 1.0, 2.0, and 4.0 Angstroms.
 core::Real gdtha(const core::pose::Pose& ref,
