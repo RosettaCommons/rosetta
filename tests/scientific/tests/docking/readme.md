@@ -23,7 +23,7 @@ Proteins were extracted directly from the PDB according to the PDB ID of the nat
 #### Is there a publication that describes the protocol?
 #### How many CPU hours does this benchmark take approximately?
 
-Protocol (as per the publication below): "RosettaDock is a Monte Carlo-plus-minimization algorithm consisting of a low-resolution stage, which simulates conformer selection during the formation of the encounter complex, followed by a high-resolution stage, which simulates induced fit in the bound complex. To produce a variety of starting states for the different trajectories, the ligand (the smaller protein) is first randomly rotated and translated about the receptor (the larger protein). In the low-resolution stage, side chains are replaced by coarse-grained “pseudoatoms”, allowing the ligand to efficiently sample the interface by rigid-body movements in a smoothened energy landscape. These rigid-body moves are coupled with backbone conformation swaps where the current backbone conformations of the ligand and the receptor are swapped with different ones from a pre-generated ensemble of conformations. In the high-resolution stage, the side chains are reintroduced to the putative encounter complex and those at the interface are packed for tight binding. There is minimal rigid-body motion in this second stage."
+Protocol (as per the publication below): "RosettaDock is a Monte Carlo-plus-minimization algorithm consisting of a low-resolution stage, which simulates conformer selection during the formation of the encounter complex, followed by a high-resolution stage, which simulates induced fit in the bound complex. To produce a variety of starting states for the different trajectories, the ligand (the smaller protein) is first randomly rotated and translated about the receptor (the larger protein). In the low-resolution stage, side chains are replaced by coarse-grained "pseudoatoms", allowing the ligand to efficiently sample the interface by rigid-body movements in a smoothened energy landscape. These rigid-body moves are coupled with backbone conformation swaps where the current backbone conformations of the ligand and the receptor are swapped with different ones from a pre-generated ensemble of conformations. In the high-resolution stage, the side chains are reintroduced to the putative encounter complex and those at the interface are packed for tight binding. There is minimal rigid-body motion in this second stage."
 
 Publication:
 The methodological details of the protocol, RosettaDock 4.0 and the performance on the benchmark have been thoroughly discussed in Marze, N. A., Roy Burman, S. S. et al. <a href="https://doi.org/10.1093/bioinformatics/bty355">Bioinfo., 2018</a>. 
@@ -47,7 +47,7 @@ Unbound structures are docked and compared to the bound native structure.
 ## DEFINITIONS AND COMMENTS
 #### State anything you think is important for someone else to replicate your results. 
 
-For best results, use ensembles.
+For speed, this test does not use conformational enembles of unbound proteins. For best results, use ensembles as described in the article.
 
 ## LIMITATIONS
 #### What are the limitations of the benchmark? Consider dataset, quality measures, protocol etc. 
