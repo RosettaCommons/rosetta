@@ -85,14 +85,21 @@ DEERDataCache::at(
 
 /// @brief Adds DEERDataOP object to DEERDataCache at earliest spot
 /// @param data: metrics::DEERDataOP object to insert
+/// @detail Not threadsafe
 void
 DEERDataCache::append(
 	metrics::DEERDataOP const & data
 ) {
-	for ( Size i = 1; i <= size() + 1; ++i ) {
-		if ( data_.find( i ) == data_.end() ) {
-			data_[ i ] = data;
-			return;
+
+	// Failsafe in case there are no objects in vector
+	if ( data_.size() == 0 ) {
+		data_[ 1 ] = data;
+	} else {
+		for ( Size i = 1; i <= size() + 1; ++i ) {
+			if ( data_.find( i ) == data_.end() ) {
+				data_[ i ] = data;
+				return;
+			}
 		}
 	}
 }
@@ -100,6 +107,7 @@ DEERDataCache::append(
 /// @brief Adds DEERDataOP object to DEERDataCache at predefined spot
 /// @param data: Object to insert
 /// @param i: Position to insert object
+/// @detail Not threadsafe
 void
 DEERDataCache::append(
 	metrics::DEERDataOP const & data,
@@ -114,11 +122,18 @@ DEERDataCache::append(
 
 /// @brief Adds DEERDataOP object to DEERDataCache at last spot
 /// @param data: metrics::DEERDataOP object to insert
+/// @detail Not threadsafe
 void
 DEERDataCache::push_back(
 	metrics::DEERDataOP const & data
 ) {
-	data_[ data_.rbegin()->first + 1 ] = data;
+
+	// Failsafe in case there are no objects in vector
+	if ( data_.size() == 0 ) {
+		data_[ 1 ] = data;
+	} else {
+		data_[ data_.rbegin()->first + 1 ] = data;
+	}
 }
 
 /// @brief Returns number of DEERDataOPs stored here

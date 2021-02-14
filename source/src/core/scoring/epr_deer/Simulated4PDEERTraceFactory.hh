@@ -70,9 +70,10 @@ utility::vector1< Real >
 add_bckg(
 	utility::vector1< Real > const & sim_trace,
 	utility::vector1< Real > const & time_pts,
-	Real const & depth,
-	Real const & slope,
-	Real const & dim
+	Real depth,
+	Real slope,
+	Real dim,
+	bool const thru_sigmoid = true
 );
 
 /// @brief Unpacks data passed to lmmin function
@@ -189,6 +190,13 @@ public:
 		utility::vector1< Real > const & deer_trace
 	);
 
+	/// @brief Performs an initial search for background parameters
+	/// @param  deer_trace: Intramolecular DEER trace
+	void
+	initial_search(
+		utility::vector1< Real > const & deer_trace
+	);
+
 	/// @brief  Adds a time point to the saved experimental DEER data
 	/// @param  trace_datum: The datapoint (Y-axis)
 	/// @param  time_point: The datapoint's time (X-axis)
@@ -199,6 +207,10 @@ public:
 		Real const & trace_datum,
 		Real const & time_point
 	);
+
+	/// @brief Reset background calculation to force initial search
+	void
+	reset();
 
 	/// @brief Returns experimental data
 	/// @return DEER data
@@ -219,6 +231,21 @@ public:
 	/// @return Bins per angstrom in the kernel matrix
 	Size
 	bins_per_a() const;
+
+	// @brief Return depth
+	// @return  Depth
+	Real
+	depth() const;
+
+	// @brief Return slope
+	// @return  Slope
+	Real
+	slope() const;
+
+	// @brief Return dimensionality
+	// @return  Dimensionality
+	Real
+	dim() const;
 
 	/// @brief Sets experimental data to new DEER trace
 	/// @param  val: New data to set
@@ -285,183 +312,15 @@ private:
 	bool optimized_ = false;
 
 	/// @brief How many times to run LM the first time
-	Size init_runs_ = 10;
+	Size init_runs_ = 100;
 
 	/// @brief How many times to run LM subsequent times
-	Size runs_ = 2;
+	Size runs_ = 5;
+
+	/// @brief Time points squared, used by initial_search() fxn
+	Real tpts_sqd_ = 0.0;
 
 };
-
-/*
-
-/// @brief Struct for fitting DEER traces. Copies are stored in each DEERDecayData object
-struct FittingInfo {
-Real last_slope_ = 0.0;
-Real last_mod_depth_ = 0.0;
-Real last_dim_ = 3.0;
-Real time_pts_sqd_ = 0.0;
-std::map< Size, std::map< Size, Real > > spin_map_; // distance outer, time inner
-std::pair< Real, Real > mod_depth_bounds_ = std::make_pair( 0.02, 0.75 );
-std::string bckg_ = "3D";
-};
-
-class Simulated4PDEERTraceFactory {
-
-public:
-
-/// @brief Default constructor
-Simulated4PDEERTraceFactory();
-
-/// @brief Custom constructor
-Simulated4PDEERTraceFactory(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-metrics::FittingInfo & fit_info,
-std::map< Size, Real > const & sim_histogram,
-Size const & bins_per_a
-);
-
-/// @brief Bracket operator for accessing the DEER trace
-Size
-operator[](
-Size const & t
-) const;
-
-/// @brief Main function for simulating 4-pulse DEER trace
-/// @detail This function first simulates the intramolecular dipolar coupling
-///     form factor using the evolution kernel described in
-///     "DEER Distance Measurements on Proteins" by Jeschke (2012).
-///     It then finds the best background fit for the experimental data,
-///     if necessary (3D by default, but can be set to "NONE" or "NON-3D")
-///     Background-fitted DEER trace is saved and returned.
-utility::vector1< Real >
-simulate_decay(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-metrics::FittingInfo & fit_info,
-std::map< Size, Real > const & sim_histogram,
-Size const & bins_per_a
-);
-
-/// @brief Deterine the intramolecular DEER trace
-utility::vector1< Real >
-calc_4pdeer(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-metrics::FittingInfo const & fit_info,
-std::map< Size, Real > const & sim_histogram,
-Size const & bins_per_a
-);
-
-/// @brief Fit the background decay using linear regression
-Real
-fit_k(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo & fit_info,
-Real const & d,
-Real const & l
-);
-
-/// @brief Optimize the background function of the DEER trace: general function
-utility::vector1< Real >
-optimize_bckg(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo & fit_info
-);
-
-/// @brief Optimize the modulation depth using simple gradient descent
-void
-optimize_mod_depth(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo & fit_info,
-Real & d,
-Real & k,
-Real & l,
-bool fit_dim // = false
-);
-
-/// @brief Optimize the background function of the DEER trace: detailed function
-utility::vector1< Real >
-optimize_bckg(
-utility::vector1< Real > const & exp_trace,
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo & fit_info,
-bool const & optimize_dim
-);
-
-/// @brief Convert an intramolecular trace to an intermolecular trace given background parameters
-utility::vector1< Real >
-fit_trace(
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-Real const & d,
-Real const & k,
-Real const & l
-);
-
-utility::vector1< Real >
-fit_trace(
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo const & info
-);
-
-utility::vector1< Real >
-return_intra(
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-metrics::FittingInfo const & info
-);
-
-utility::vector1< Real >
-return_intra(
-std::map< Size, Real > const & time_pts,
-utility::vector1< Real > const & trace,
-Real const & d,
-Real const & k,
-Real const & l
-);
-
-/// @brief Determine the residuals between an experimental trace and a simulated trace
-Real
-sum_of_squares(
-utility::vector1< Real > const & exp_trace,
-Real const & noise = 1.0
-);
-
-/// @brief Determine the residuals between an experimental trace and a simulated trace
-Real
-sum_of_squares(
-utility::vector1< Real > const & exp_trace,
-utility::vector1< Real > const & sim_trace,
-Real const & noise = 1.0
-);
-
-private:
-
-utility::vector1< Real > trace_;
-utility::vector1< Real > time_pts_;
-
-Real last_slope_ = 0.0;
-Real last_mod_depth_ = 0.0;
-Real last_dim_ = 3.0;
-Real time_pts_sqd_ = 0.0;
-std::map< Size, std::map< Size, Real > > spin_map_; // distance outer, time inner
-std::pair< Real, Real > mod_depth_bounds_ = std::make_pair( 0.02, 0.75 );
-std::string bckg_ = "3D";
-
-
-
-};
-
-*/
 
 } // namespace epr_deer
 } // namespace scoring

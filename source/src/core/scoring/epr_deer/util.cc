@@ -64,6 +64,25 @@ probit(
 	return sqrt( 2.0 ) * boost::math::erf_inv( 2 * x - 1 );
 }
 
+/// @brief Calculate logit function given certain value
+/// @param x: Value to calculate
+/// @param lo: Lower bound
+/// @param hi: Upper bound
+/// @return: Logit value
+Real
+logit(
+	Real const & x,
+	Real const & lo, // = 0.0
+	Real const & hi // = 1.0
+) {
+	Real const mod_x = ( x - lo ) / ( hi - lo );
+	if ( mod_x < 0.0 || mod_x > 1.0 ) {
+		throw CREATE_EXCEPTION( utility::excn::RangeError,
+			"Logit function accessing number outside its range (0-1)!" );
+	}
+	return log( mod_x / ( 1.0 - mod_x ) );
+}
+
 /// @brief  Safe version of log() that doesn't crash when zero is passed
 /// @param  q: Value to take logarithm
 /// @return natural logarithm of q, or arbitrarily large number of q=0.0

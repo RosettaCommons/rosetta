@@ -27,6 +27,7 @@
 #include <numeric/MathMatrix_operations.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/nls/lmmin.hh>
+#include <numeric/random/random.hh>
 
 #include <utility/excn/Exceptions.hh>
 #include <utility/vector1.hh>
@@ -51,6 +52,8 @@ using TriVecC = std::tuple< utility::vector1< Real > const,
 /// @details Global to avoid re-instantiating tracer with every new object
 static basic::Tracer TR( "core.scoring.epr_deer.Simulated4PDEERTraceFactory" );
 
+
+
 /// @brief Function for adding non-3D background coupling to DEER trace
 /// @param  sim_trace: Simulated DEER trace (intramolecular)
 /// @param  time_pts: Time points for DEER trace
@@ -63,19 +66,23 @@ utility::vector1< Real >
 add_bckg(
 	utility::vector1< Real > const & sim_trace,
 	utility::vector1< Real > const & time_pts,
-	Real const & depth,
-	Real const & slope,
-	Real const & dim
+	Real depth,
+	Real slope,
+	Real dim,
+	bool const thru_sigmoid // = true
 ) {
-	Real const true_depth = sigmoid( depth, mindepth_, maxdepth_ );
-	Real const true_slope = sigmoid( slope, minslope_, maxslope_ );
-	Real const true_dim = sigmoid( dim, mindim_, maxdim_ );
+
+	// First we need to check if a sigmoid transformation is necessary
+	if ( thru_sigmoid ) {
+		depth = sigmoid( depth, mindepth_, maxdepth_ );
+		dim = sigmoid( dim, mindim_, maxdim_ );
+	}
 
 	utility::vector1< Real > output( sim_trace.size(), 0.0 );
 	for ( Size i = 1; i <= sim_trace.size(); ++i ) {
-		Real const bckg = std::exp( -1 * pow( abs( time_pts[ i ] ) * true_slope,
-			true_dim / 3.0 ) );
-		output[ i ] = bckg * ( 1 - true_depth * ( 1 - sim_trace[ i ] ) );
+		Real const bckg = std::exp( -1 * pow( abs( time_pts[ i ] ) * abs( slope ),
+			dim / 3.0 ) );
+		output[ i ] = bckg * ( 1 - depth * ( 1 - sim_trace[ i ] ) );
 	}
 	return output;
 }
@@ -181,6 +188,9 @@ Simulated4PDEERTraceFactory::Simulated4PDEERTraceFactory(
 	max_dist_ = max_dist;
 	n_bins_ = n_bins;
 
+	tpts_sqd_ = std::inner_product( time_pts_.begin(), time_pts_.end(),
+		time_pts.begin(), 0 );
+
 	// Calculate the kernel matrix used to convert distances to decays
 	kernel_ = initialize_kernel( time_pts, bins_per_a, max_dist, n_bins );
 }
@@ -213,7 +223,7 @@ Simulated4PDEERTraceFactory::initialize_kernel(
 
 			// Dipolar coupling constant
 			Real const c_top = t * 326.98;
-			Real const c_bot = pow( Real( bins_per_a * col + 1 ) / 10, 3 );
+			Real const c_bot = pow( Real( col + 1 ) / ( bins_per_a * 10.0 ), 3 );
 			Real const c = c_top / c_bot;
 			Real val = 0.0;
 
@@ -221,7 +231,7 @@ Simulated4PDEERTraceFactory::initialize_kernel(
 			for ( Size bin = 0; bin <= n_bins; ++bin ) {
 				Real const a = bin * numeric::constants::d::pi_over_2 / n_bins;
 				Real const coupling = 1 - 3 * pow( std::cos( a ), 2 );
-				val += std::sin( a ) * std::cos( coupling ) * ( c );
+				val += std::sin( a ) * std::cos( coupling * c );
 			}
 
 			// Assign result to position of interest in kernel
@@ -261,12 +271,7 @@ Simulated4PDEERTraceFactory::kernel_mult(
 	// Convert map to the right object
 	numeric::MathVector< Real > d_vec( kernel_.get_number_cols(), 0.0 );
 	for ( Size i = 0; i < kernel_.get_number_cols(); ++i ) {
-		if ( distr.find( i ) != distr.end() ) {
-			d_vec( i ) = distr.at( i );
-			//  TR << "\t" << i << "\t" << distr.at( i ) << std::endl;
-			// } else {
-			//  TR << "\t" << i << "\t" << 0 << std::endl;
-		}
+		d_vec( i ) = ( distr.find( i ) != distr.end() ) ? distr.at( i ) : 0;
 	}
 
 	// The actual conversion
@@ -276,8 +281,8 @@ Simulated4PDEERTraceFactory::kernel_mult(
 	Real maxval = *std::max_element( trace.begin(), trace.end() );
 
 	// Edge cases if something doesn't work
-	if ( maxval == 0.0 ) {
-		TR.Error << "Simulated DEER trace is full of zeros!" << std::endl;
+	if ( maxval <= 0.0 ) {
+		TR.Error << "Simulated DEER trace is negative or full of zeros!" << std::endl;
 		return utility::vector1< Real >( trace.size(), 1.0 );
 	} else if ( std::isinf( std::abs( maxval ) ) ) {
 		throw CREATE_EXCEPTION( utility::excn::RangeError,
@@ -291,6 +296,7 @@ Simulated4PDEERTraceFactory::kernel_mult(
 	utility::vector1< Real > output;
 	std::transform( trace.begin(), trace.end(), std::back_inserter( output ),
 		[&]( Real const & val ){ return val / maxval; } );
+
 	return output;
 }
 
@@ -314,14 +320,33 @@ Simulated4PDEERTraceFactory::opt_bckg(
 		return deer_trace;
 	} else {
 
+		// Corrective measure
+		bool const check = sigmoid( depth_, mindepth_, maxdepth_ ) < 0.02;
+		if ( check ) {
+			TR.Warning << "Resetting background coupling parameters!"
+				<< std::endl;
+		}
+
+		// Periodically re-optimize the background
+		if ( check || numeric::random::uniform() < 0.0001 ) {
+			depth_ = 0.0;
+			slope_ = 0.0;
+			optimized_ = false;
+		}
+
 		// The "data" being passed to LM optimization
 		numeric::nls::lm_status_struct status;
 		TriVec tuple_data = std::make_tuple( time_pts_, exp_data_, deer_trace );
 		auto * data = &tuple_data;
-		utility::vector1< Real > params{ depth_, slope_ };
 
 		// Number of iterations
-		auto const n_iter = ( optimized_ ) ? runs_ : init_runs_;
+		auto n_iter = runs_;
+		if ( !optimized_ ) {
+			n_iter = init_runs_;
+			initial_search( deer_trace );
+		}
+
+		utility::vector1< Real > params{ depth_, slope_ };
 
 		// The function itself depends on if a non-3D background is used
 		if ( bckg_type_ != "3D" ) {
@@ -354,6 +379,65 @@ Simulated4PDEERTraceFactory::opt_bckg(
 	}
 }
 
+/// @brief Performs an initial search for background parameters
+/// @param  deer_trace: Intramolecular DEER trace
+void
+Simulated4PDEERTraceFactory::initial_search(
+	utility::vector1< Real > const & deer_trace
+) {
+
+	// Here we calculate the best modulation depth by a quick grid search
+	// This only needs to be done once
+	// We save the best score and value
+	Real best_score = std::numeric_limits< Real >::max();
+	Real best_depth = 0.0;
+	Real best_k = 0.0;
+
+	// Perform a relatively coarse search
+	for ( Real depth = mindepth_; depth <= maxdepth_ - 0.05; depth += 0.01 ) {
+
+		// We need to get time points squared for this function
+		if ( tpts_sqd_ == 0.0 ) {
+			for ( auto const & t : time_pts_ ) {
+				tpts_sqd_ += pow( t, 2 );
+			}
+		}
+
+		// Now perform the linear regression
+		Real val = 0.0;
+		for ( Size i = 1; i <= time_pts_.size(); ++i ) {
+			Real intra = 1.0 - depth * ( 1.0 - deer_trace[ i ] );
+			val += time_pts_[ i ] * log( exp_data_[ i ] / intra );
+		}
+
+		// Ensure that the eventual slope is within bounds to avoid errors
+		//Real const k = std::max( minslope_, std::min( maxslope_, val / tpts_sqd_ ) );
+		Real const k = -1 * val / tpts_sqd_;
+
+		// Get the optimal background and transform
+		auto const sim_trace = add_bckg( deer_trace, time_pts_, depth, k, 3,
+			false );
+
+		// Check sum of squared residuals
+		Real score = 0.0;
+		for ( Size i = 1; i <= sim_trace.size(); ++i ) {
+			score += pow( sim_trace[ i ] - exp_data_[ i ], 2 );
+		}
+
+		// Compare to previous best
+		if ( score < best_score ) {
+			best_score = score;
+			best_depth = depth;
+			best_k = k;
+		}
+	}
+
+	// Assign values
+	depth_ = logit( best_depth, mindepth_, maxdepth_);
+	slope_ = best_k;
+	//slope_ = logit( best_k, minslope_, maxslope_ );
+}
+
 /// @brief  Adds a time point to the saved experimental DEER data
 /// @param  trace_datum: The datapoint (Y-axis)
 /// @param  time_point: The datapoint's time (X-axis)
@@ -366,7 +450,13 @@ Simulated4PDEERTraceFactory::append_data_and_recalculate(
 ) {
 	exp_data_.push_back( trace_datum );
 	time_pts_.push_back( time_point );
-	kernel_ = initialize_kernel( time_pts_, bins_per_a_, max_dist_, 200 );
+	kernel_ = initialize_kernel( time_pts_, bins_per_a_, max_dist_, n_bins_ );
+}
+
+/// @brief Reset background calculation to force initial search
+void
+Simulated4PDEERTraceFactory::reset() {
+	optimized_ = false;
 }
 
 /// @brief Returns experimental data
@@ -395,6 +485,27 @@ Simulated4PDEERTraceFactory::bckg_type() const {
 Size
 Simulated4PDEERTraceFactory::bins_per_a() const {
 	return bins_per_a_;
+}
+
+// @brief Return depth
+// @return  Depth
+Real
+Simulated4PDEERTraceFactory::depth() const {
+	return sigmoid( depth_, mindepth_, maxdepth_ );
+}
+
+// @brief Return slope
+// @return  Slope
+Real
+Simulated4PDEERTraceFactory::slope() const {
+	return slope_; //sigmoid( slope_, minslope_, maxslope_ );
+}
+
+// @brief Return dimensionality
+// @return  Dimensionality
+Real
+Simulated4PDEERTraceFactory::dim() const {
+	return sigmoid( dim_, mindim_, maxdim_ );
 }
 
 /// @brief Sets experimental data to new DEER trace

@@ -365,11 +365,11 @@ EPRSpinLabel::normalize(
 			"Total distribution area is zero!" );
 
 		// ... or an infinitely large number...
-	} else if ( std::isinf( abs( total ) ) ) {
+	} else if ( std::isinf( std::abs( total ) ) ) {
 		throw CREATE_EXCEPTION( utility::excn::RangeError,
 			"Total distribution area is infinite!" );
 
-	} else if ( std::isnan( abs( total ) ) ) {
+	} else if ( std::isnan( std::abs( total ) ) ) {
 		throw CREATE_EXCEPTION( utility::excn::RangeError,
 			"Total distribution area is NaN!" );
 

@@ -45,6 +45,18 @@ probit(
 	Real const & x
 );
 
+/// @brief Calculate logit function given certain value
+/// @param x: Value to calculate
+/// @param lo: Lower bound
+/// @param hi: Upper bound
+/// @return: Logit value
+Real
+logit(
+	Real const & x,
+	Real const & lo = 0.0,
+	Real const & hi = 1.0
+);
+
 /// @brief  Safe version of log() that doesn't crash when zero is passed
 /// @param  q: Value to take logarithm
 /// @return natural logarithm of q, or arbitrarily large number of q=0.0

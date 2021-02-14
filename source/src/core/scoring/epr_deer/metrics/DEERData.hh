@@ -37,7 +37,7 @@ namespace scoring {
 namespace epr_deer {
 namespace metrics {
 
-/// @brief Alias to asve space when defining residues and spin labels
+/// @brief Alias to save space when defining residues and spin labels
 using PairSizeString = std::pair< Size, std::string >;
 
 /// Base class

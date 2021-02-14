@@ -73,8 +73,8 @@ public:
 
 	/// @brief Returns DEER trace factory object
 	/// @return Factory object
-	Simulated4PDEERTraceFactory
-	factory() const;
+	Simulated4PDEERTraceFactory &
+	factory();
 
 	/// @brief  Returns the noise from the imaginary component
 	/// @return Noise level

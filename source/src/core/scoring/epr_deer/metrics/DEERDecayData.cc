@@ -144,8 +144,8 @@ DEERDecayData::init_factory(
 
 /// @brief Returns DEER trace factory object
 /// @return Factory object
-Simulated4PDEERTraceFactory
-DEERDecayData::factory() const{
+Simulated4PDEERTraceFactory &
+DEERDecayData::factory() {
 	return factory_;
 }
 
