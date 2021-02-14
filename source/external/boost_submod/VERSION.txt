@@ -1,3 +1,14 @@
 The current version of Boost we're targeting is 1.74.0
 
 (Though individual submodules may have slightly different settings.)
+
+Specifically:
+------------
+Use of Rosetta-specific modifications (See README)
+* multi_index 
+* lexical_cast
+
+From boost_org repos:
+* range (486c74fbeba9ee9975e6d68e974230ec8ec22fb0) - Pick up deprecated header fixes (Is included in 1.75)
+* graph (e4e12158e78157397254505f6cbae688e3e3174f) - Pick up deprecated header fixes (Should be included in 1.76)
+* property_tree (7c33c0d7ff6b90f3864dd1be8c5ee47a5337721) - Pick up deprecated header fixes (May be included in 1.76)

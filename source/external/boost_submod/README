@@ -51,10 +51,10 @@ MODULES WITH MODIFICATIONS:
 
 * multi_index 
     * Alterations to the buckets on the bucket array for PyRosetta
-* integer
-    * Disable some templates for PyRosetta
 * lexical_cast
     * Disable compile time checking for PyRosetta (specifically for the PYROSETTA_DISABLE_LCAST_COMPILE_TIME_CHECK define.)
+* integer
+    * Disable some templates for PyRosetta (no longer in use)
 
 
 To update the boost/ directory symlinks
