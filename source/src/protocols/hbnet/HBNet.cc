@@ -35,6 +35,8 @@
 #include <basic/options/option.hh>
 #include <basic/thread_manager/RosettaThreadManager.hh>
 #include <basic/thread_manager/RosettaThreadAssignmentInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Core headers
 #include <core/chemical/AtomType.hh>
@@ -3769,6 +3771,18 @@ void HBNet::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		"for all networks within the design space that you define with TaskOperations",
 		attlist );
 }
+
+/// @brief Provide the citation.
+void
+HBNet::provide_citation_info( basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	basic::citation_manager::CitationCollectionOP collection( utility::pointer::make_shared< basic::citation_manager::CitationCollection >( get_name(), basic::citation_manager::CitedModuleType::Mover ) );
+	collection->add_citation( cm->get_citation_by_doi( "10.1021/acs.jctc.8b00033" ) );
+	collection->add_citation( cm->get_citation_by_doi( "10.1126/science.aad8865" ) );
+
+	citations.add( collection );
+}
+
 
 void HBNet::initialize_hbond_graph(){
 	debug_assert( rotamer_sets_ );

@@ -596,6 +596,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void
+	provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
+
 public: //Monte Carlo Protocol Public methods
 	///@brief turn on or off the monte carlo branching protocol
 	inline void set_monte_carlo_branch( bool setting ){

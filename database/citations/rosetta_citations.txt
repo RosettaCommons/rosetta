@@ -253,6 +253,44 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "" "Boyken" "SE"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "" "Chen" "Z"
+        "" "Groves" "B"
+        "" "Langan" "RA"
+        "" "Oberdorfer" "G"
+        "" "Ford" "A"
+        "" "Gilmore" "JM"
+        "" "Xu" "C"
+        "" "DiMaio" "F"
+        "" "Pereira" "JH"
+        "" "Sankaran" "B"
+        "" "Seelig" "G"
+        "" "Zwart" "PH"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2016
+    [END_YEAR]
+    [BEGIN_TITLE]
+        De novo design of protein homo-oligomers with modular hydrogen-bond network-mediated specificity.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Science
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        352(6286):680-7
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1126/science.aad8865
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Bobo" "Dang" "B"
         "Haifan" "Wu" "H"
         "Vikram Khipple" "Mulligan" "VK"
@@ -506,6 +544,34 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "" "Maguire" "JB"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "" "Boyken" "SE"
+        "" "Baker" "D"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "" "Kuhlman" "B"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2018
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Rapid Sampling of Hydrogen Bond Networks for Computational Protein Design.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        J Chem Theory Comput
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        14(5):2751-2760
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1021/acs.jctc.8b00033
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Vikram Khipple" "Mulligan" "VK"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
@@ -539,3 +605,42 @@
         10.1002/pro.3974
     [END_DOI]
 [END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Jack B" "Maguire" "JB"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Hugh K" "Haddox" "HK"
+        "Devin" "Strickland" "D"
+        "Samer F" "Halabiya" "SF"
+        "Brian" "Coventry" "B"
+        "Jermel R" "Griffin" "JR"
+        "Surya V S R K" "Pulavarti" "SVSRK"
+        "Matthew" "Cummins" "M"
+        "David F" "Thieker" "DF"
+        "Eric" "Klavins" "E"
+        "Thomas" "Szyperski" "T"
+        "Frank" "DiMaio" "F"
+        "David" "Baker" "D"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Brian" "Kuhlman" "B"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2020
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Perturbing the energy landscape for improved packing during computational protein design.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        "in press"
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/prot.26030
+    [END_DOI]
+[END_CITATION]
+

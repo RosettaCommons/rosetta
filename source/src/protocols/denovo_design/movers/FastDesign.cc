@@ -361,6 +361,7 @@ FastDesign::provide_citation_info(basic::citation_manager::CitationCollectionLis
 	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
 	basic::citation_manager::CitationCollectionOP collection( utility::pointer::make_shared< basic::citation_manager::CitationCollection >( get_name(), basic::citation_manager::CitedModuleType::Mover ) );
 	collection->add_citation( cm->get_citation_by_doi( "10.1038/nature19791" ) );
+	collection->add_citation( cm->get_citation_by_doi( "10.1002/prot.26030" ) );
 
 	citations.add( collection );
 	RelaxProtocolBase::provide_citation_info( citations );
