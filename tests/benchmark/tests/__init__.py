@@ -603,10 +603,10 @@ def local_python_install(platform, config):
         '2.7' : 'https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz',
 
         '3.5' : 'https://www.python.org/ftp/python/3.5.9/Python-3.5.9.tgz',
-        '3.6' : 'https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tgz',
+        '3.6' : 'https://www.python.org/ftp/python/3.6.12/Python-3.6.12.tgz',
         '3.7' : 'https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz',
         '3.8' : 'https://www.python.org/ftp/python/3.8.3/Python-3.8.3.tgz',
-        '3.9' : 'https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz',
+        '3.9' : 'https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz',
     }
 
     # map of env -> ('shell-code-before ./configure', 'extra-arguments-for-configure')

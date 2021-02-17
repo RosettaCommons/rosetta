@@ -119,13 +119,30 @@ def run_python_test(rosetta_dir, working_dir, platform, config):
 
     if platform['python'][0] == '2': pass
     else:
-        ve = setup_python_virtual_environment(working_dir, python_environment, packages='colr dice')
-        execute('Testing local Python virtual enviroment...', f"{ve.activate} && {ve.python} -c 'import colr, dice'")
-        execute('Testing local Python virtual enviroment...', f"{ve.activate} && python -c 'import colr, dice'")
 
-        pve = setup_persistent_python_virtual_environment(python_environment, packages='colr dice xdice pdp11games')
-        execute('Testing local Python virtual enviroment...', f"{pve.activate} && {pve.python} -c 'import colr, dice, xdice, pdp11games'")
-        execute('Testing local Python virtual enviroment...', f"{pve.activate} && python -c 'import colr, dice, xdice, pdp11games'")
+        if platform['os'] == 'mac' and int( platform['python'].partition('.')[2] ) > 6 :
+            # SSL certificate test
+            import urllib.request; urllib.request.urlopen('https://benchmark.graylab.jhu.edu')
+
+        ves = [
+            setup_persistent_python_virtual_environment(python_environment, packages='colr dice xdice pdp11games'),
+            setup_python_virtual_environment(working_dir, python_environment, packages='colr dice xdice pdp11games'),
+        ]
+
+        for ve in ves:
+            commands = [
+                'import colr, dice, xdice, pdp11games',
+            ]
+
+            if platform['os'] == 'mac' and int( platform['python'].partition('.')[2] ) > 6 :
+                # SSL certificate test
+                commands.append('import urllib.request; urllib.request.urlopen("https://benchmark.graylab.jhu.edu/queue")')
+
+            for command in commands:
+                execute('Testing local Python virtual enviroment...', f"{ve.activate} && {ve.python} -c '{command}'")
+                execute('Testing local Python virtual enviroment...', f"{ve.activate} && python -c '{command}'")
+
+
 
     return {_StateKey_ : _S_passed_,  _ResultsKey_ : {},  _LogKey_ : f'Done!'}
 
