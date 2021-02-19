@@ -73,7 +73,7 @@ class MoleculeClass:
     def __init__(self,mol2file, option=None, mol2fileobj=None):
         self.name = ''
         #self.resname = 'LG1' # goes to option
-        if not os.path.exists(mol2file):
+        if mol2fileobj is None and not os.path.exists(mol2file):
             raise IOError("Cannot find %s"%mol2file)
         self.mol2file = mol2file
         self.mol2fileobj = mol2fileobj
@@ -249,8 +249,9 @@ class MoleculeClass:
             elif mode == 4:
                 self.parse_crystinfo(l)
                 mode = 0
-                
-        atms = rename_atoms(atms, bonds)
+        
+        if self.option.opt.rename_atoms:
+            atms = rename_atoms(atms, bonds)
         # Re-ordering scheme for Rosetta
         # add up here with new index based on heavy or H
         newindex.sort()

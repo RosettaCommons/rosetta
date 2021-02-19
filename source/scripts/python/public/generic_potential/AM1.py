@@ -21,7 +21,7 @@ import numpy.linalg
 import numpy.testing
 import scipy.sparse.csgraph
 
-from numba import autojit, jit, prange
+from numba import jit, prange
 
 import AM1_overlap as ovr
 

@@ -313,6 +313,12 @@ def search_special_biaryl_ring(mol,ring):
                     further_connected = True
 
             if a2_is_special_biaryl and further_connected:
+                #Final check using the input conformation
+                #if the torsion around a1-a2 is planar, treat it as conjuated.
+                #e.g UZARAP
+                #GZ, Aug,20,2020
+                if mol.option.opt.infer_conjugation and is_planar(mol, a1, a2):
+                    continue
                 biaryl_pivot_extra.append((a1,a2))
             
     return biaryl_pivot_extra
@@ -477,6 +483,30 @@ def is_colinear(crd1, crd2, crd3, eps=1.0e-5):
         return True
     return False
 
+# determine if the torsion defined around the central atm1-atm2 bond is planar
+def is_planar(mol, atm1, atm2):
+    dihe = None
+    # If one of the central atom is sp1, the torsion is not well defined around atm1-atm2
+    # so we don't consider it as planar at this point.
+    # GZ, Aug,20,2020
+    if mol.atms[atm1].hyb == 1 or mol.atms[atm2].hyb == 1:
+        return False
+    for itor,(a1,a2,a3,a4) in enumerate(mol.torsions):
+        if ( atm1 == a2 and atm2 == a3 ) or \
+            ( atm1 == a3 and atm2 == a2 ):
+            xyz0 = mol.xyz[a1]
+            xyz1 = mol.xyz[a2]
+            xyz2 = mol.xyz[a3]
+            xyz3 = mol.xyz[a4]
+            dihe = dihedral(xyz0,xyz1,xyz2,xyz3)
+            break
+    if dihe is None:
+        print("Warning: No torsion defined around the single bond between atm: %d, %d. Set dihe=0 "%(atm1, atm2))
+        dihe = 0.0
+    if abs(dihe) >= CUTOFF_PLANAR and abs(dihe) <= (180-CUTOFF_PLANAR) :
+        return False
+    return True
+    
 def validate_order(nodes, parents):
     new_nodes = []
     cur_parent=-999
@@ -582,8 +612,14 @@ def is_biaryl_ring(mol,ring1,ring2):
                     if atm1 in ring.atms and atm2 in ring.atms:
                         is_connected_by_ring = True
                         break
-                if not is_connected_by_ring:
-                    return (atm1,atm2)
+                if is_connected_by_ring:
+                    continue
+                if mol.option.opt.infer_conjugation:
+                    if ACLASS_ID[mol.atms[atm1].aclass] in CONJUGATING_ACLASSES and \
+                        ACLASS_ID[mol.atms[atm2].aclass] in CONJUGATING_ACLASSES and \
+                        is_planar(mol, atm1, atm2):
+                        continue
+                return (atm1,atm2)
     return False
 
 def define_conjugation(mol):
@@ -621,7 +657,11 @@ def define_conjugation(mol):
         aclass2 = ACLASS_ID[mol.atms[bond.atm2].aclass]
         is_amide_connection = (aclass1 in ['Nad','Nad3']) and (aclass2 in ['Nad','Nad3'])
         if is_amide_connection: # append into special biaryl
-            mol.biaryl_pivots.append((bond.atm1,bond.atm2))
+            #A final check, if the initial conformation is planar around the amide bond
+            #We need to treat it as conjugated bond and disallow the rotation.
+            #GZ, Aug,20,2020
+            if mol.option.opt.infer_conjugation and not is_planar(mol, bond.atm1, bond.atm2):
+                mol.biaryl_pivots.append((bond.atm1,bond.atm2))
             
     if mol.option.opt.reassign_biaryl_aclass:
         reassign_biaryl_atypes(mol)
@@ -723,6 +763,11 @@ def assign_bond_conjugation(mol):
         #       ACLASS_ID[mol.atms[bond.atm1].aclass] in CONJUGATING_ACLASSES,
         #       ACLASS_ID[mol.atms[bond.atm2].aclass] in CONJUGATING_ACLASSES)
 
+        #CONJUGATING_ACLASSES doesn't include Nad3, which in some structure 
+        #can form conjugate bond with aromatic rings.
+        #Added Nad3 to CONJUGATING_ACLASSES. The conjugation will be determined 
+        #according to the planarity of the initial conformation.
+        #GZ, Aug,20,2020
         if ACLASS_ID[mol.atms[bond.atm1].aclass] not in CONJUGATING_ACLASSES or \
            ACLASS_ID[mol.atms[bond.atm2].aclass] not in CONJUGATING_ACLASSES: continue
 
@@ -736,22 +781,11 @@ def assign_bond_conjugation(mol):
         # Use the dihedral angle as a second check, if the angle is clearly not planar,
         # don't assign it as conjugated bond.
         # GZ, July,6,2020
-        is_not_conjugated_single_bond = False
-        if bond.order == 1:
-            for itor,(a1,a2,a3,a4) in enumerate(mol.torsions):
-                if ( bond.atm1 == a2 and bond.atm2 == a3 ) or \
-                    ( bond.atm1 == a3 and bond.atm2 == a2 ):
-                    xyz0 = mol.xyz[a1]
-                    xyz1 = mol.xyz[a2]
-                    xyz2 = mol.xyz[a3]
-                    xyz3 = mol.xyz[a4]
-                    dihe = dihedral(xyz0,xyz1,xyz2,xyz3)
-                    break
-            if abs(dihe) >= CUTOFF_PLANAR and abs(dihe) <= (180-CUTOFF_PLANAR) :
-                is_not_conjugated_single_bond = True #don't assign it conjugated 
-        if is_not_conjugated_single_bond:
-            mol.bonds[ibond].is_conjugated = False
-            continue
+        if bond.order == 1 and (not mol.atms[bond.atm1].is_H) \
+            and (not mol.atms[bond.atm2].is_H):
+            if mol.option.opt.infer_conjugation and not is_planar(mol, bond.atm1, bond.atm2):
+                mol.bonds[ibond].is_conjugated = False #don't assign it conjugated 
+                continue
 
         #Note: any bond reaches at this point will be assigned as conjugated. 
         #GZ, July,6,2020
@@ -815,6 +849,9 @@ def define_rotable_torsions(mol):
         atm1 = mol.atms[atms[1]]
         atm2 = mol.atms[atms[2]]
         atm3 = mol.atms[atms[3]]
+        #GZ, make torsion around CSQ @ CSQ non-rotatable, Sep 3, 2020
+        if mol.in_same_ring(atms[1],atms[2]) and ACLASS_ID[atm1.aclass] == "CSQ" and ACLASS_ID[atm2.aclass] == "CSQ":
+            continue
         border = mol.bond_order(atms[1],atms[2])
 
         if (atms[1],atms[2]) in covered or (atms[2],atms[1]) in covered: continue #avoid

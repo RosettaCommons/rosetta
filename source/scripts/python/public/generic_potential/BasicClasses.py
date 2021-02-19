@@ -38,6 +38,7 @@ class OptionClass:
         self.opt.longest_puckering_ring = 6
         self.opt.ring_sampling_sp3_only = True
         
+        
 
         
     def init_from_parser(self,argv):
@@ -147,8 +148,20 @@ class OptionClass:
         parser.add_option("--freeze_ringring",
                           dest="report_ringring_chi",
                           default=False,
-                          help="Define  as rotatable CHI",
+                          help="Define as rotatable CHI",
                           action="store_false"
+                          )
+        parser.add_option("--infer_conjugation_from_structure",
+                          dest="infer_conjugation",
+                          default=False,
+                          help="Infer bond conjugation from the input structure conformation",
+                          action="store_true"
+                          )
+        parser.add_option("--rename_atoms",
+                          dest="rename_atoms",
+                          default=False,
+                          help="Rename atom names",
+                          action="store_true" 
                           )
 
         if len(argv) < 2:

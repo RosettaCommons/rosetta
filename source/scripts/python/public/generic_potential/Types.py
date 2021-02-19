@@ -113,11 +113,17 @@ POLARCLASSES = ['Oat','Oad','Ohx','Oal','OG2','OG3',
 
 # Still can be rotable if included as in biaryl_pivots
 CONJUGATING_ACLASSES = ['CD','CD1','CD2','CR','CDp','CRp',
-                        'Nad','Nin','Nim','Ngu1','Ngu2','NG2','NG21','NG22', 
-                        'Ofu','OG2','Ssl','SG2']
+                        'Nad','Nin','Nim','Ngu1','Ngu2','NG2','NG21','NG22',
+                        'Nad3','Ofu','OG2','Ssl','SG2']
 #dropped:
 #Nad3; tertiary amides can be more flexible
 #NG21: Nitrogen with 1H not part of aro-ring
+
+#Add Nad3 back to CONJUGATING_ACLASSES. 
+#There are certain cases that Nad3 is conjugated with aromatic ring
+#e.g. UZARAP, USIZUS
+#GZ, Aug,20, 2020
+
 
 # atomtypes to assert nH
 ASSERT_NHYDROGENS = {'Nam2':[1,2],
