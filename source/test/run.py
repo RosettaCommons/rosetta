@@ -51,6 +51,7 @@ _timeout_factors_ = {
 
     'core:ContactOrderEnergy_Tests' : 2,
     'core:RotamerSetsTests' : 2,
+    'core:SequenceSymmetricAnnealerTests' : 2,
 }
 
 def to_unicode(b):
