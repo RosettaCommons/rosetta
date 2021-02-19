@@ -15,8 +15,8 @@
 #include <--path--/--class--.hh>
 #include <--path--/--class--Creator.hh>
 
-#include <core/scoring/methods/TwoBodyEnergy.hh> 
-#include <core/scoring/methods/EnergyMethod.hh> 
+#include <core/scoring/methods/TwoBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
 
 // Package headers
 #include <core/scoring/ScoreFunction.hh>
@@ -316,7 +316,7 @@ void
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"--class--", basic::citation_manager::CitedModuleType::EnergyMethod,
-		--name--,
+		"--name--",
 		"TODO: institution",
 		"--email--",
 		"Wrote the --class-- energy method."

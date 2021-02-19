@@ -19,14 +19,14 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 
 // Project Headers
-#include <core/scoring/methods/EnergyMethod.hh> 
+#include <core/scoring/methods/EnergyMethod.hh>
 
-#include <core/scoring/ScoreFunction.fwd.hh> 
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/pose/Pose.fwd.hh>
 
 // Basic/Utility headers
-#include <utility/vector1.hh> 
+#include <utility/vector1.hh>
 #include <core/types.hh>
 #include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
@@ -58,7 +58,7 @@ public:
 	virtual
 	void setup_for_scoring( pose::Pose & pose, ScoreFunction const & ) const;
 
-	/// @brief Is the score context dependent or context independent? 
+	/// @brief Is the score context dependent or context independent?
 	virtual void indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
 
 	/// @brief Indicates the current version of this score term

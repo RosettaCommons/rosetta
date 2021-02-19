@@ -130,9 +130,9 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
 
     def get_mover_path(self):
         if not self.options.mover_namespace:
-            return "\n"
+            return ""
         else:
-            return "#include <"+"/".join(self.options.mover_namespace)+"/"+self.options.class_name+".hh>\n"
+            return "#include <"+"/".join(self.options.mover_namespace)+"/"+self.options.class_name+".hh>"
 
     def get_base_outdir(self):
         if self.options.test:
@@ -154,7 +154,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
             if not opt in self.options.app_options:
                 self.options.app_options.append(opt)
 
-        lines = ["\n"]
+        lines = []
         line_fmt = "\toption.add_relevant( {opt} );"
         for opt in self.options.app_options:
 
@@ -167,7 +167,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         Get a string for registering new app options if not empty (Outside Try).
         :rtype: str
         """
-        opt_lines = ["\n"]
+        opt_lines = []
         line_fmt = "OPT_{opt_n}KEY( {opt_type}, {opts} )"
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:
@@ -193,7 +193,7 @@ class GenerateAppTemplate(GenerateRosettaTemplates):
         :rtype str:
         """
 
-        opt_lines = ["\n//this won't compile until you fill in brief and default yourself"]
+        opt_lines = ["\t\t//this won't compile until you fill in brief and default yourself"]
         line_fmt = "\t\tNEW_OPT( {opt_name}, brief, default );"
         all_opts = vars(self.options)
         for opt_type in self.option_type_names:

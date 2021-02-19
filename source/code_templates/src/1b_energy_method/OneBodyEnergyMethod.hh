@@ -19,8 +19,8 @@
 #include <core/scoring/methods/OneBodyEnergy.hh>
 
 // Package Headers
-#include <core/scoring/methods/EnergyMethod.hh> 
-#include <core/scoring/EnergyMap.fwd.hh> 
+#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Project headers
@@ -46,12 +46,12 @@ class --class-- : public core::scoring::methods::OneBodyEnergy {
 
 public:
 
-	typedef core::scoring::methods::OneBodyEnergy parent; 
-    typedef core::pose::Pose Pose;
-    typedef core::conformation::Residue Residue;
-    typedef core::scoring::ScoreFunction ScoreFunction;
-    typedef core::scoring::EnergyMap EnergyMap;
-    typedef core::scoring::ResPairMinimizationData ResPairMinimizationData;
+	typedef core::scoring::methods::OneBodyEnergy parent;
+	typedef core::pose::Pose Pose;
+	typedef core::conformation::Residue Residue;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMap EnergyMap;
+	typedef core::scoring::ResPairMinimizationData ResPairMinimizationData;
 
 public:
 

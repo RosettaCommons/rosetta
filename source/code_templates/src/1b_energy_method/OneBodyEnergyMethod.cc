@@ -17,8 +17,8 @@
 #include <core/scoring/methods/OneBodyEnergy.hh>
 
 // Package Headers
-#include <core/scoring/methods/EnergyMethod.hh> 
-#include <core/scoring/EnergyMap.fwd.hh> 
+#include <core/scoring/methods/EnergyMethod.hh>
+#include <core/scoring/EnergyMap.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 // Project headers
@@ -55,24 +55,24 @@ methods::EnergyMethodOP
 --class--::clone() const;
 
 /// @brief Indicate required setup steps for scoring
-void 
+void
 --class--::setup_for_scoring( core::pose::Pose & pose, ScoreFunction const & ) const;
 
-/// @brief Is the score context dependent or context independent? 
-void 
+/// @brief Is the score context dependent or context independent?
+void
 --class--::indicate_required_context_graphs( utility::vector1< bool > &context_graphs_required ) const;
 
 /// @brief Indicates the current version of this score term
-core::Size 
+core::Size
 --class--::version() const;
 
 /// @brief Actually calculate the total energy
 /// @details Called by the scoring machinery.
-void 
+void
 --class--::finalize_total_energy( core::pose::Pose & pose, ScoreFunction const &, EnergyMap & totals ) const;
 
-Distance 
---class--::atomic_interaction_cutoff() const; 
+Distance
+--class--::atomic_interaction_cutoff() const;
 
 /// @brief This energy method is unpublished.  It returns --name-- as its author.
 void
@@ -80,7 +80,7 @@ void
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"--class--", basic::citation_manager::CitedModuleType::EnergyMethod,
-		--name--,
+		"--name--",
 		"TODO: institution",
 		"--email--",
 		"Wrote the --class-- energy method."

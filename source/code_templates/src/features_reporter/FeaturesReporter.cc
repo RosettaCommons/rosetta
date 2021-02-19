@@ -32,7 +32,7 @@ static basic::Tracer TR( "--namespace_dot--.--class--" );
 --namespace--
 
 --class--::--class--():
- 	protocols::features::FeaturesReporter()
+	protocols::features::FeaturesReporter()
 {
 
 }

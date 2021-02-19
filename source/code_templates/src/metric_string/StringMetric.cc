@@ -86,7 +86,8 @@ void
 		utility::tag::TagCOP tag,
 		basic::datacache::DataMap &  )
 {
-    SimpleMetric::parse_base_tag( tag );
+	SimpleMetric::parse_base_tag( tag );
+
 	if (tag->hasOption("bogus_option")){
 		return;
 	}
@@ -118,7 +119,7 @@ void
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"--class--", basic::citation_manager::CitedModuleType::SimpleMetric,
-		--name--,
+		"--name--",
 		"TODO: institution",
 		"--email--",
 		"Wrote the --class--."

@@ -120,7 +120,7 @@ void
 	citations.add(
 		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
 		"--class--", basic::citation_manager::CitedModuleType::SimpleMetric,
-		--name--,
+		"--name--",
 		"TODO: institution",
 		"--email--",
 		"Wrote the --class--."

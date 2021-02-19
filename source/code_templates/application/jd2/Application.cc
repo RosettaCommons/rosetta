@@ -37,7 +37,7 @@ void register_options() {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 
-	--app_options--
+--app_options--
 
 }
 
@@ -51,14 +51,10 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		--new_app_options_in--
+--new_app_options_in--
 
 		devel::init( argc, argv );
 		register_options();
-
-		if ( ( ! option [ in::file::l ].user() ) && ( ! option [ in::file::s ].user() ) ) {
-			utility_exit_with_message("Please specify either -s or -l to specify the input PDB.");
-		}
 
 
 		--mover_namespace--::--class--OP mover_protocol( new --mover_namespace--::--class--() );

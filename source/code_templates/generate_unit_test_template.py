@@ -80,7 +80,7 @@ class GenerateUnitTestTemplate(GenerateRosettaTemplates):
             for func_name in self.options.test_functions:
                 if not re.search("test", func_name):
                     func_name = "test_"+func_name
-                block = "\n\tvoid "+func_name+"(){\n\n\n\t}"
+                block = "\n\tvoid "+func_name+"() {\n\n\n\t}"
                 blocks.append(block)
             return "\n".join(blocks)
 

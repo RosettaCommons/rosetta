@@ -37,18 +37,17 @@ class --class-- : public CxxTest::TestSuite {
 
 public:
 
-	void setUp(){
+	void setUp() {
 		core_init();
 
 	}
 
-	void tearDown(){
+	void tearDown() {
 
 	}
 
 
 --test_functions--
-
 
 
 };

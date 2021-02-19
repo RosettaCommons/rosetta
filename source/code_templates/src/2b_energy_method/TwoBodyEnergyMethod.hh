@@ -16,8 +16,8 @@
 
 // Unit headers
 #include <--path--/--class--.fwd.hh>
-#include <core/scoring/methods/TwoBodyEnergy.hh> 
-#include <core/scoring/methods/EnergyMethod.hh> 
+#include <core/scoring/methods/TwoBodyEnergy.hh>
+#include <core/scoring/methods/EnergyMethod.hh>
 
 // Core headers
 #include <core/pose/Pose.fwd.hh>
@@ -52,14 +52,14 @@ class --class-- : public core::scoring::methods::TwoBodyEnergy {
 
 public:
 
-    //Simply to keep the interface clean
+	//Simply to keep the interface clean
 
-    typedef core::pose::Pose Pose;
-    typedef core::conformation::Residue Residue;
-    typedef conformation::RotamerSetBase RotamerSetBase;
-    typedef core::scoring::ScoreFunction ScoreFunction;
-    typedef core::scoring::EnergyMap EnergyMap;
-    typedef core::scoring::ResPairMinimizationData ResPairMinimizationData;
+	typedef core::pose::Pose Pose;
+	typedef core::conformation::Residue Residue;
+	typedef conformation::RotamerSetBase RotamerSetBase;
+	typedef core::scoring::ScoreFunction ScoreFunction;
+	typedef core::scoring::EnergyMap EnergyMap;
+	typedef core::scoring::ResPairMinimizationData ResPairMinimizationData;
 
 public:
 

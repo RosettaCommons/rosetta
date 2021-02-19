@@ -32,7 +32,7 @@
 static basic::Tracer TR( "--namespace_dot--.--class--" );
 
 --namespace--
-    using namespace core::pack::task::operation;
+using namespace core::pack::task::operation;
 
 --class--::--class--():
 	TaskOperation()
@@ -71,10 +71,10 @@ void
 --class--::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
-    AttributeList attlist;
-    //attlist + XMLSchemaAttribute("motif", xs_string, motif_str);
+	AttributeList attlist;
+	//attlist + XMLSchemaAttribute("motif", xs_string, motif_str);
 
-    task_op_schema_w_attributes( xsd, keyname(), attlist, "DOCUMENTATION" );
+	task_op_schema_w_attributes( xsd, keyname(), attlist, "DOCUMENTATION" );
 }
 
 TaskOperationOP

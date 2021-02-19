@@ -65,7 +65,7 @@ main( int argc, char * argv [] )
 		using namespace basic::options;
 		using namespace basic::options::OptionKeys;
 
-		--new_app_options_in--
+--new_app_options_in--
 
 		devel::init( argc, argv );
 

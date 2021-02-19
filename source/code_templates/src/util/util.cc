@@ -22,9 +22,5 @@ static basic::Tracer TR( "--namespace_dot--.util" );
 
 
 
-
-
-
 --end_namespace--
-
 
