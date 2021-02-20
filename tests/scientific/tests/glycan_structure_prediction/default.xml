@@ -1,0 +1,15 @@
+<JobDefinitionFile>
+   <Job>
+      <Input>
+         <PDB filename="%%fname%%"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_%%branch%%/glycan-build_default_%%branch%%_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="xmls/glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=%%branch%% cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=%%map%% symmdef=%%symmdef%% shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="%%fname%%" />
+      </Options>
+   </Job>
+</JobDefinitionFile>

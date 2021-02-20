@@ -194,12 +194,26 @@ class Condor_HPC_Driver(HPC_Driver):
 
 
 
-    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=512, time=12, block=True, process_coefficient="1", requested_nodes=1, requested_processes_per_node=1):
+    def submit_mpi_hpc_job(self, name, executable, arguments, working_dir, log_dir, memory=512, time=12, block=True, process_coefficient="1", requested_nodes=None, requested_processes_per_node=None, requested_cpus=None ):
         ''' submit jobs as MPI job
             process_coefficient should be string representing fraction of process to launch on each node, for example '3 / 4' will start only 75% of MPI process's on each node
+            Specify nodes either by using requested_cpus or requested_nodes and requested_processes_per_node.
+
         '''
+
+        total_processes = 1
+        if requested_cpus and (requested_processes_per_node or requested_nodes):
+            raise Exception("Cannot provide requested_cpus and nodes/procs per node!")
+
+        elif requested_cpus:
+            total_processes = requested_cpus
+        elif requested_processes_per_node and requested_nodes:
+            total_processes = requested_nodes*requested_processes_per_node
+        else:
+            raise Exception("requested_cpus or requested_nodes and requested_processes_per_node must be used!")
+
         max_cpu = self.maximum_number_of_mpi_cpu
-        if requested_nodes*requested_processes_per_node > max_cpu : raise Exception(f'Condor_HPC_Driver.submit_mpi_hpc_job: requested_nodes times requested_processes_per_node should be below `maximum_number_of_mpi_cpu` (got requested_nodes={requested_nodes}, requested_processes_per_node={requested_processes_per_node} when maximum_number_of_mpi_cpu={self.maximum_number_of_mpi_cpu()})')
+        if total_processes > max_cpu : raise Exception(f'Condor_HPC_Driver.submit_mpi_hpc_job: requested_nodes times requested_processes_per_node should be below `maximum_number_of_mpi_cpu` (got requested_nodes={requested_nodes}, requested_processes_per_node={requested_processes_per_node} when maximum_number_of_mpi_cpu={self.maximum_number_of_mpi_cpu})')
 
         self.cpu_usage -= self.get_condor_accumulated_usage()
 
@@ -231,7 +245,7 @@ class Condor_HPC_Driver(HPC_Driver):
                                                    working_dir=working_dir, log_dir=log_dir,
                                                    memory=memory, process='$(Process)', run_time=run_time,
                                                    jobs_to_queue = 1,
-                                                   machine_count = requested_nodes*requested_processes_per_node,
+                                                   machine_count = total_processes,
                                                    requirements = self.config['condor']['mpi_requirements'],
         )
 

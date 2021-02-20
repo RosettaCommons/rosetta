@@ -126,7 +126,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         stepwise_rna_favorites = 'numpy matplotlib==3.2',
         rna_denovo_favorites   = 'numpy matplotlib==3.2',
         simple_cycpep_predict  = 'numpy matplotlib==3.2',
-		peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
+	      peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
 
         enzyme_design          = 'numpy matplotlib==3.2',
         fragments_picking      = 'numpy matplotlib==3.2',
@@ -147,7 +147,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         antibody_grafting    = 'numpy matplotlib==3.2',
         antibody_h3_modeling = 'numpy matplotlib==3.2',
-        antibody_snugdock    = 'numpy matplotlib==3.2 pandas',
+        antibody_snugdock    = 'numpy matplotlib==3.2 pandas==0.24.2',
 
         loop_modeling_ngk_12res           = 'numpy matplotlib==3.2',
         loop_modeling_kic_fragments_12res = 'numpy matplotlib==3.2',
@@ -162,6 +162,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         FlexPepDock            = 'numpy matplotlib==3.2',
         docking                = 'numpy matplotlib==3.2',
         ddg_ala_scan           = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        glycan_structure_prediction  = 'numpy matplotlib==3.2 pandas==0.24.2 seaborn',
         RosettaCM              = 'numpy matplotlib==3.2',
 
 

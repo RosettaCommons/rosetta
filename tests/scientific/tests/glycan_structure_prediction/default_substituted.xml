@@ -1,0 +1,67 @@
+<JobDefinitionFile>
+   <Job>
+      <Input>
+         <PDB filename="./data/glycan_modeling/pdbs/3uue_refined.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_253A/glycan-build_default_253A_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=253A cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=./data/density_maps/3uue_2mFo-DFc_map.ccp4 symmdef=./data/glycan_modeling/symdefs/3uue_crys.symm shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="./data/glycan_modeling/pdbs/3uue_refined.pdb" />
+      </Options>
+   </Job>
+   <Job>
+      <Input>
+         <PDB filename="./data/glycan_modeling/pdbs/1jnd_refined.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_200A/glycan-build_default_200A_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=200A cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=./data/density_maps/1jnd_2mFo-DFc_map.ccp4 symmdef=./data/glycan_modeling/symdefs/1jnd_crys.symm shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="./data/glycan_modeling/pdbs/1jnd_refined.pdb" />
+      </Options>
+   </Job>
+   <Job>
+      <Input>
+         <PDB filename="./data/glycan_modeling/pdbs/1gai_refined.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_171A/glycan-build_default_171A_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=171A cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=./data/density_maps/1gai_2mFo-DFc_map.ccp4 symmdef=./data/glycan_modeling/symdefs/1gai_crys.symm shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="./data/glycan_modeling/pdbs/1gai_refined.pdb" />
+      </Options>
+   </Job>
+   <Job>
+      <Input>
+         <PDB filename="./data/glycan_modeling/pdbs/3pfx_refined.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_267A/glycan-build_default_267A_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=267A cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=./data/density_maps/3pfx_2mFo-DFc_map.ccp4 symmdef=./data/glycan_modeling/symdefs/3pfx_crys.symm shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="./data/glycan_modeling/pdbs/3pfx_refined.pdb" />
+      </Options>
+   </Job>
+   <Job>
+      <Input>
+         <PDB filename="./data/glycan_modeling/pdbs/4nyq_refined.pdb"/>
+      </Input>
+      <Output>
+         <PDB filename_pattern="glycan-build_default_35A/glycan-build_default_35A_$"/>
+      </Output>
+      <Options>
+         <parser__protocol value="glycan_tree_relax.xml"/>
+         <parser__script_vars value="branch=35A cartmin=0 layer_size=1 window_size=0 glycan_sampler_rounds=175 quench_mode=0 map=./data/density_maps/4nyq_2mFo-DFc_map.ccp4 symmdef=./data/glycan_modeling/symdefs/4nyq_crys.symm shear=1 rounds=1 gaussian_sampling=1 hybrid_protocol=1 exp=hybrid"/>
+         <in__file__native value="./data/glycan_modeling/pdbs/4nyq_refined.pdb" />
+      </Options>
+   </Job>
+</JobDefinitionFile>
