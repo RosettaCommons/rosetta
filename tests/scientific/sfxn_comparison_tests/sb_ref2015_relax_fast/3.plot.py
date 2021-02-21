@@ -74,11 +74,20 @@ for i in range( 0, len( scorefiles ) ):
 	plt.axvline(x=float(cutoffs_rmsd_dict[targets[i]]), color='b', linestyle='-')
 	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
+	# y axis limits
+	ymin = float(subprocess.getoutput( "grep " + targets[i] + " result.txt| grep score | grep min | awk '{i=$7-$10;print i}'" ))
+	ymax = float(subprocess.getoutput( "grep " + targets[i] + " result.txt| grep score | grep min | awk '{i=$8+$10+3;print i}'" ))
+	
 	# x axis limits
-	if targets[i] in failures:
-		plt.xlim( left=0 )
-	else:
-		plt.xlim( 0, 10 )
+#	ylim = float(cutoffs_score_dict[targets[i]]) + 10
+#	if targets[i] in failures:
+#		plt.xlim( left=0 )
+#		plt.xlim( right=10 )
+#		plt.ylim( top=ylim )
+#	else:
+	plt.xlim( 0, 10 )
+	plt.ylim( ymin, ymax )
+
 	
 #save figure
 plt.tight_layout()

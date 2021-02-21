@@ -115,7 +115,7 @@ def download_test_files(prefix):
 	# put filtering criteria into the get_test_ids() function
 	tests = get_test_ids()
 	
-	tests = [{'test_id': '674014', 'name': 'scientific.glycan_structure_prediction', 'status': 'passed', 'dir': 'https://b3.graylab.jhu.edu/test/674014'}]
+#	tests = [{'test_id': '674827', 'name': 'scientific.sb_talaris14_relax_fast_5iter', 'status': 'failed', 'dir': 'https://b3.graylab.jhu.edu/test/674827'}]
 
 	scientific_tests = [
 		t for t in tests
@@ -169,13 +169,13 @@ def download_test_files(prefix):
 					
 				if "benchmark" in fn:
 					continue
+				
+				if "log" in fn:
+					continue
 
 				if "data" in fn:
 					continue
 				
-#				if "log" in fn:
-#					continue
-
 				if fn.endswith(".pdb"):
 					continue
 

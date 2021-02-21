@@ -10,7 +10,7 @@
 
   <TASKOPERATIONS>
     <IncludeCurrent name="keep_curr"/>   
-    <ExtraRotamersGeneric name="extrachi"
+    ExtraRotamersGeneric name="extrachi"
 			  ex1="1" ex2="1" ex3="0" ex4="0"
 			  ex1_sample_level="1" ex2_sample_level="1" ex3_sample_level="0" ex4_sample_level="0"
 			  extrachi_cutoff="12"/> 

@@ -9,7 +9,7 @@
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file  cartesian_relax/2.analyze.py
-## @brief this script is part of cartesian_relax scientific test
+## @brief this script is part of design_fast scientific test
 ## @author Sergey Lyskov
 
 import os, sys, subprocess, math
@@ -66,11 +66,8 @@ for i in range( 0, len( scorefiles ) ):
 	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
 
 	# map values to floats (were strings) and use top 20 values
-	x = list( map( float, x ))[0:20]
-	y = list( map( float, y ))[0:20]
-
-	# compute average sequence recovery
-	avg_seqrec = sum( x ) / len( x )
+	x = list( map( float, x ))
+	y = list( map( float, y ))
 
 	# check for sequence recoveries above cutoff
 	f.write( targets[i] + "\t" )

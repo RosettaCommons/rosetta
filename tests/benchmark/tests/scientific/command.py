@@ -128,6 +128,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         simple_cycpep_predict  = 'numpy matplotlib==3.2',
 	      peptide_pnear_vs_ic50  = 'numpy scipy matplotlib==3.2',
 
+        design_fast            = 'numpy matplotlib==3.2',
         enzyme_design          = 'numpy matplotlib==3.2',
         fragments_picking      = 'numpy matplotlib==3.2',
         cofactor_binding_sites = 'numpy matplotlib==3.2',

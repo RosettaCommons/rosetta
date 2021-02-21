@@ -1,7 +1,7 @@
 <ROSETTASCRIPTS>
 
   <SCOREFXNS>
-    <ScoreFunction name="sfxn" weights="score12"/> 
+    <ScoreFunction name="sfxn" weights="ref2015"/> 
   </SCOREFXNS>
 
   <RESIDUE_SELECTORS>
@@ -18,7 +18,7 @@
   </TASKOPERATIONS>
 
   <MOVERS>
-		<SavePoseMover name="save_native" reference_name="native_pose"/>
+    <SavePoseMover name="save_native" reference_name="native_pose"/>
     <FastDesign name="RelaxDesign" repeats="1" disable_design="false" scorefxn="sfxn" task_operations="keep_curr,linmem_ig"/>
     <RunSimpleMetrics name="seqrec" >
       <SequenceRecoveryMetric custom_type="seqrec" residue_selector="full_pose" reference_name="native_pose" />

@@ -61,19 +61,27 @@ def main(args):
 		target_results = {}
 
 		# read in score file, scores are sorted, first one is lowest
-		x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
-		y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
+		x1 = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
+		y1 = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
 
 		# map values to floats (were strings)
-		x = list( map( float, x ))
-		y = list( map( float, y ))
-
+		x1 = list( map( float, x1 ))
+		y1 = list( map( float, y1 ))
+		
+		# only keep positive scores as some are huge
+		x = []
+		y = []
+		for j in range(0, len(x1)):
+			if y1[j] < 0:
+				x.append( x1[j] )
+				y.append( y1[j] )
+		
 		# check for RMSDs below cutoff
 		f.write( targets[i] + "\t" )
 		val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f, 90 )
 		target_results.update( val_cutoff )
 
-		# add to failues
+        # add to failues
 		if val_cutoff['All rmsds < cutoff'] == False:
 			failures.append( targets[i] )
 
@@ -82,7 +90,7 @@ def main(args):
 		val_cutoff = qm.check_xpercent_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f, 90 )
 		target_results.update( val_cutoff )
 
-		# add to failures
+        # add to failures
 		if val_cutoff['All scores < cutoff'] == False:
 			failures.append( targets[i] )
 

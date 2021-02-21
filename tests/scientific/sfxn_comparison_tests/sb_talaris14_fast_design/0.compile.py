@@ -25,9 +25,9 @@ if res: benchmark.error(_S_build_failed_, f'Building Rosetta failed!\n{build_com
 
 
 # Compile PyRosetta
-res, output, build_command_line = benchmark.build_and_install_pyrosetta()
-with open('build-log.PyRosetta.txt', 'wb') as f: f.write( to_bytes(output) )
-if res: benchmark.error(_S_build_failed_, f'Building PyRosetta failed!\n{build_command_line}\n{output}\n')
+#res, output, build_command_line = benchmark.build_and_install_pyrosetta()
+#with open('build-log.PyRosetta.txt', 'wb') as f: f.write( to_bytes(output) )
+#if res: benchmark.error(_S_build_failed_, f'Building PyRosetta failed!\n{build_command_line}\n{output}\n')
 
 
 benchmark.save_variables('') # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

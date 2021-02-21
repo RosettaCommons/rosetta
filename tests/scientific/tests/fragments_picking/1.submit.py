@@ -22,7 +22,6 @@ config = benchmark.config()
 testname    = "fragments_picking"
 
 debug       = config['debug']
-print("debug",debug)
 rosetta_dir = config['rosetta_dir']
 working_dir = config['working_dir']
 hpc_driver  = benchmark.hpc_driver()
@@ -32,30 +31,35 @@ extension   = benchmark.calculate_extension()
 frag_command_line = '''
 -database 			{rosetta_dir}/database
 -in::file::vall 		{rosetta_dir}/../tools/fragment_tools/vall.jul19.2011.gz
--frags::frag_sizes		 3 9
--frags::describe_fragments	 {prefix}/{target}.fsc
--out::file::frag_prefix 	 {prefix}/{target}-multiR.3w
--frags::scoring::config 	 {rosetta_dir}/tests/scientific/data/{testname}/scoring-multirama.wghts
--mute 				 core.fragment.picking.VallProvider
--frags::ss_pred 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.psipred_ss2 psipred {rosetta_dir}/tests/scientific/data/{testname}/{target}.porter.ss2 porter {rosetta_dir}/tests/scientific/data/{testname}/{target}.rdb_ss2 rdb
 -in:file::native 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
 -in::file::checkpoint 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.checkpoint
 -in::file::s 			 {rosetta_dir}/tests/scientific/data/{testname}/{target}.pdb
+-frags::frag_sizes		 3 9
+-frags::scoring::config 	 {rosetta_dir}/tests/scientific/data/{testname}/scoring-multirama.wghts
+-frags::ss_pred 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.psipred_ss2 psipred {rosetta_dir}/tests/scientific/data/{testname}/{target}.porter.ss2 porter {rosetta_dir}/tests/scientific/data/{testname}/{target}.rdb_ss2 rdb
 -frags::denied_pdb 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}.homolog
 -frags::n_candidates 	 	 {n_candidates}
 -frags::n_frags 		 {n_frags}
 -frags::picking::quota_config_file	 {rosetta_dir}/tests/scientific/data/{testname}/quota.def
+-frags::describe_fragments	 {prefix}/{target}.fsc
+-out::file::frag_prefix 	 {prefix}/{target}-multiR.3w
+-mute 				 core.fragment.picking.VallProvider
 -mute 				 core.conformation
 -mute 				 core.chemical
--out:file:scorefile 		{prefix}/{target}.score
-
 -multiple_processes_writing_to_one_directory
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
 
+#-out:file:scorefile 		{prefix}/{target}.score
+
+
 #==> EDIT HERE
 ab_initio_command_line = '''
 -database 			{rosetta_dir}/database
+-in:file::native 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}-ideal.pdb
+-in::file::s 			 {rosetta_dir}/tests/scientific/data/{testname}/{target}-ideal.pdb
+-frag3 				{prefix}/{target}-multiR.3w.200.3mers
+-frag9 				{prefix}/{target}-multiR.3w.200.9mers
 -abinitio::rsd_wt_helix 	0.5
 -abinitio::rsd_wt_loop		0.5
 -abinitio::rg_reweight		0.5
@@ -65,34 +69,34 @@ ab_initio_command_line = '''
 -abinitio::stage3a_patch 	{rosetta_dir}/tests/scientific/data/{testname}/crmsd_patch
 -abinitio::stage3b_patch 	{rosetta_dir}/tests/scientific/data/{testname}/crmsd_patch
 -abinitio::stage4_patch  	{rosetta_dir}/tests/scientific/data/{testname}/crmsd_patch
--silent_gz
-
 -nstruct 			{nstruct}
 -increase_cycles 		10
-
--frag3 				{prefix}/{target}-multiR.3w.200.3mers
--frag9 				{prefix}/{target}-multiR.3w.200.9mers
-
--in:file::native 		 {rosetta_dir}/tests/scientific/data/{testname}/{target}-ideal.pdb
--in::file::s 			 {rosetta_dir}/tests/scientific/data/{testname}/{target}-ideal.pdb
-
--out:file:silent 		{prefix}/{target}-abinitio.out
+-out:pdb true
 -out:sf				 {prefix}/{target}-abinitio.fsc
--out:file:scorefile		 {prefix}/{target}.score
-
+-silent_gz
+-out:file:silent 		{prefix}/{target}-abinitio.out
 -multiple_processes_writing_to_one_directory
 -no_color
 '''.replace('\n', ' ').replace('  ', ' ')
-#-parser:protocol {working_dir}/{testname}.xml //nie wiem czy ta linijka im jest potrzebna, na wszelki ją tu zostawiłam
+
+#-out:file:scorefile		 {prefix}/{target}.score
+
 
 #==> EDIT HERE
 n_frags = 200
 n_candidates = 1000
-nstruct = 2 if debug else 300
+# minirosetta app doesn't respect -multiple_processes_writing_to_one_directory flag
+# therefore, if we run nstruct of 300 with 50 parallel jobs, we'll create 15k lines in the score file
+# since we don't actually need the output PDBs, we'll just lower the nstructs to represent 300 models
+# and run the stats on those; this requires jobs_to_queue=50 as
+# ndecoys = (nstruct) x (jobs_to_queue) = 6 x 50 = 300
+# add in a little wiggle room, make n=struct 8
+#nstruct = 2 if debug else 300
+nstruct = 2 if debug else 8
 
 #==> EDIT HERE
 targets = '1ptqA 1urnA 1tulA 1bkrA 1r69A 1vlsA 1tenA 1bk2A 5croA 2vikA'.split(" ")
-targets = targets[:1] if debug else targets
+targets = targets[:2] if debug else targets
 
 #print(f'extension: {extension}')
 #print(f'command_line: {command_line}')

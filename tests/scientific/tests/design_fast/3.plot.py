@@ -9,7 +9,7 @@
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 ## @file  cartesian_relax/3.plot.py
-## @brief this script is part of cartesian_relax scientific test
+## @brief this script is part of design_fast scientific test
 ## @author Sergey Lyskov
 
 import os, sys, subprocess, math
@@ -21,9 +21,9 @@ import benchmark
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
 
-# inputs are header labels from the scorefile to plot, for instance "total_score" and "rmsd"
+# inputs are header labels from the scorefile to plot, for instance "total_score" and "seqrec"
 # => it figures out the column numbers from there
-x_label = "rmsd"
+x_label = "seqrec_seqrec"
 y_label = "total_score"
 outfile = "plot_results.png"
 
@@ -46,12 +46,15 @@ height = 6 * nrows
 plt.rc("font", size=20)
 plt.rcParams['figure.figsize'] = width, height #width, height
 
+# get number of fields in scorefile
+nfields = len( subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[0] + " | grep " + y_label + " | head -n1" ).split())
+
 # go through scorefiles
 for i in range( 0, len( scorefiles ) ):
 
 	# read in score file
-	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
 	
 	# map all values to floats
 	x = list( map( float, x ) )
@@ -71,26 +74,18 @@ for i in range( 0, len( scorefiles ) ):
 	plt.plot(x, y, 'ko')
 	
 	# add horizontal and vertical lines for cutoff
-	plt.axvline(x=float(cutoffs_rmsd_dict[targets[i]]), color='b', linestyle='-')
+	plt.axvline(x=float(cutoffs_seqrec_dict[targets[i]]), color='b', linestyle='-')
 	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
-	# y axis limits
-	ymin = float(subprocess.getoutput( "grep " + targets[i] + " result.txt| grep score | grep min | awk '{i=$7-$10;print i}'" ))
-	ymax = float(subprocess.getoutput( "grep " + targets[i] + " result.txt| grep score | grep min | awk '{i=$8+$10+3;print i}'" ))
-	
 	# x axis limits
-#	ylim = float(cutoffs_score_dict[targets[i]]) + 10
 #	if targets[i] in failures:
 #		plt.xlim( left=0 )
-#		plt.xlim( right=10 )
-#		plt.ylim( top=ylim )
 #	else:
-	plt.xlim( 0, 10 )
-	plt.ylim( ymin, ymax )
-
+#		plt.xlim( 0, 1 )
+	plt.xlim( 0, 0.55 )
 	
 #save figure
 plt.tight_layout()
 plt.savefig( outfile )
 
-benchmark.save_variables('targets nstruct working_dir testname results outfile cutoffs_rmsd_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname results outfile cutoffs_seqrec_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
