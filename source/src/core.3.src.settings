@@ -212,6 +212,7 @@ sources = {
 		"PerResidueGlycanLayerMetric",
 		"PerResidueRMSDMetric",
 		"PerResidueSasaMetric",
+		"SidechainNeighborCountMetric",
 		"WaterMediatedHbondMetric",
 	],
 	"core/simple_metrics/metrics": [

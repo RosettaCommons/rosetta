@@ -15,6 +15,8 @@
 #include <core/select/util/burial_utilities.hh>
 #include <core/pose/Pose.hh>
 #include <core/chemical/ResidueType.hh>
+#include <core/chemical/AtomType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
 namespace core {
@@ -22,6 +24,66 @@ namespace select {
 namespace util {
 
 #define NFOLD_REDUCTION 10 //A tenfold reduction in the distance function value is the point at which we no longer consider whether we might be in the distance cone.
+
+
+utility::vector1< core::Real >
+calc_sc_neighbors( pose::Pose const & pose,
+	core::Real const angle_exponent /* 2.0 */,
+	core::Real const angle_shift_factor /* 0.5 */,
+	core::Real const dist_exponent /* 1.0 */,
+	core::Real const dist_midpoint /* 9.0 */,
+	core::Real const rsd_neighbor_denominator /* 1.0 */)
+{
+	utility::vector1< Real > rsd_sc_neighbors;
+
+	for ( Size i = 1; i <= pose.size(); ++i ) {
+		Real my_neighbors(0.0);
+
+		numeric::xyzVector< Real > my_sc_coordinates;
+		numeric::xyzVector< Real > my_bb_coordinates;
+
+		if ( pose.residue( i ).name3() == "GLY" ) {
+			my_sc_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("2HA")).xyz() ;
+			my_bb_coordinates = pose.residue(i).atom(pose.residue(i).atom_index("CA")).xyz() ;
+		} else {
+			if ( pose.residue(i).is_polymer() ) {
+				my_sc_coordinates = pose.residue(i).atom(pose.residue(i).first_sidechain_atom()).xyz() ;
+				core::Size parent_atom_index = pose.residue(i).icoor( pose.residue(i).first_sidechain_atom() ).stub_atom1().atomno();
+				my_bb_coordinates = pose.residue(i).atom( parent_atom_index ).xyz() ;
+			} else {
+				rsd_sc_neighbors.push_back(0); //For now, ligands do not have their neighbours counted.  This could change in the future.
+				continue;
+			}
+		}
+
+		numeric::xyzVector< Real > my_sc_vector = (my_sc_coordinates - my_bb_coordinates).normalize() ;
+
+		for ( Size j = 1; j <= pose.size(); ++j ) {
+
+			if ( i != j ) {
+
+				numeric::xyzVector< Real > other_bb_coordinates;
+				if ( pose.residue(j).name3() == "GLY" ) {
+					other_bb_coordinates = pose.residue(j).atom(pose.residue(j).atom_index("CA")).xyz();
+				} else {
+					if ( pose.residue(j).is_polymer() ) { //If this is a polymer atom, use the parent of the first sidechain atom.
+						core::Size parent_atom_index = pose.residue(j).icoor( pose.residue(j).first_sidechain_atom() ).stub_atom1().atomno();
+						other_bb_coordinates = pose.residue(j).atom( parent_atom_index ).xyz();
+					} else { //If this is not a polymer residue, use the nbr_atom:
+						core::Size nbr_atom_index = pose.residue(j).nbr_atom();
+						other_bb_coordinates = pose.residue(j).atom( nbr_atom_index ).xyz();
+					}
+				}
+
+				my_neighbors += calculate_point_in_cone( other_bb_coordinates, my_sc_vector, my_sc_coordinates, angle_exponent, angle_shift_factor, dist_exponent, dist_midpoint );
+			}
+		}
+		rsd_sc_neighbors.push_back(my_neighbors / rsd_neighbor_denominator);
+		//TR << i << "  " << my_neighbors << std::endl;
+	}
+
+	return rsd_sc_neighbors;
+}
 
 /// @brief Given a point in 3D space, determine whether or not that point is buried by the method of sidechain neighbor cones.
 /// @note A crude distance cutoff metric is also used to make this calculation more efficient.

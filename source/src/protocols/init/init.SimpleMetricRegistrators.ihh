@@ -50,6 +50,10 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetr
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 
 
+static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::SidechainNeighborCountMetricCreator >
+reg_SidechainNeighborCountMetricCreator;
+
+
 /////////// Testing  /////////////
 static SimpleMetricRegistrator< core::simple_metrics::TestRealMetricCreator  > reg_TestRealMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::TestStringMetricCreator  > reg_TestStringMetricCreator;

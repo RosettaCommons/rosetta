@@ -203,9 +203,6 @@ private: // helper functions
 	utility::vector1< Real > const
 	calc_rsd_sasa( Pose const & pose ) const;
 
-	utility::vector1< Real > const
-	calc_sc_neighbors( Pose const & pose ) const;
-
 protected:
 
 	/// @brief design core ?

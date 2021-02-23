@@ -24,6 +24,19 @@ namespace core {
 namespace select {
 namespace util {
 
+///@brief Calculate SC neighbors using cones.  Code used for LayerSelector.
+/// @param[in] angle_exponent A value defining how rapidly the cone falls off in the angular direction.
+/// @param[in] angle_shift_factor A value that shifts the angluar falloff.
+/// @param[in] dist_exponent A value defining how rapidly the cone falls off with distance.
+/// @param[in] dist_midpoint A value defining the midpoint of the distance falloff.
+utility::vector1< core::Real >
+calc_sc_neighbors( pose::Pose const & pose,
+	core::Real const angle_exponent = 2.0,
+	core::Real const angle_shift_factor = 0.5,
+	core::Real const dist_exponent = 1.0,
+	core::Real const dist_midpoint = 9.0,
+	core::Real const res_denominator = 1.0);
+
 /// @brief Given a point in 3D space, and a vector and floats defining a cone, determine the extent to which the point
 /// is in the cone.
 /// @details The return value ranges from 0 (not in the cone) to 1 (fully in the cone).  The cone has fuzzy boundaries, so

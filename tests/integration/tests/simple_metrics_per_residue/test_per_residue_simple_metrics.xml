@@ -5,6 +5,7 @@
 		<Glycan name="original_glycans" branch="575C" include_root="1"/>
 		<Glycan name="glycans" branch="572C" include_root="1"/>
 		<Not name="protein" selector="glycans"/>
+		<Index name="focal_res" resnums="9"/>
 	</RESIDUE_SELECTORS>
 	<MOVE_MAP_FACTORIES>
 		<MoveMapFactory name="movemap_glycans" bb="0" chi="0">
@@ -25,18 +26,19 @@
 		<SelectedResiduesMetric name="rosetta_sele" residue_selector="glycans" rosetta_numbering="1" custom_type="ROSETTA"/>
 		<SelectedResiduesMetric name="pdb_sele" residue_selector="glycans" rosetta_numbering="0" custom_type="PDB"/>
 		<SelectedResiduesPyMOLMetric name="pymol_selection" residue_selector="glycans" />
-		
+		<SidechainNeighborCountMetric name="sc_neighbors" residue_selector="focal_res"/>
 		<ResidueSummaryMetric name="summary_total" custom_type="sasa_glycans_total" metric="sasa" action="sum" use_cached_data="1" cache_prefix="m2_"/>
 		<ResidueSummaryMetric name="summary_mean"  custom_type= "sasa_glycans_mean" metric="sasa" action="mean" use_cached_data="1" cache_prefix="m2_"/>
 		<ResidueSummaryMetric name="summary_energy" custom_type="n_good_energy_glycans" metric="total_energy" action="n_res_lt" action_value="5.0" />
 
 		<ResidueSummaryMetric name="n_clashes_glycan" custom_type="n_intra_glycan_clashes" metric="glycan_glycan_clashes" action="n_res_gt" action_value="0" use_cached_data="1" cache_prefix="m2_"/>
 		<ResidueSummaryMetric name="n_clashes_protein" custom_type="n_glycan_protein_clashes" metric="glycan_protein_clashes" action="n_res_gt" action_value="0" use_cached_data="1" cache_prefix="m2_"/>
+
 	</SIMPLE_METRICS>
 	<MOVERS>
 		<MinMover name="min_mover" movemap_factory="movemap_glycans" tolerance=".001"/> 
-		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,total_energy,rosetta_sele,pdb_sele" prefix="m1_" />
-		<RunSimpleMetrics name="run_metrics2" metrics="sasa,rmsd,fa_sol,glycan_glycan_clashes,glycan_protein_clashes" prefix="m2_" />
+		<RunSimpleMetrics name="run_metrics1" metrics="sasa,pymol_selection,total_energy,rosetta_sele,pdb_sele,sc_neighbors" prefix="m1_" />
+		<RunSimpleMetrics name="run_metrics2" metrics="sasa,rmsd,fa_sol,glycan_glycan_clashes,glycan_protein_clashes,sc_neighbors" prefix="m2_" />
 		<RunSimpleMetrics name="run_summaries" metrics="summary_total,summary_mean,summary_energy,n_clashes_glycan,n_clashes_protein" />
 	</MOVERS>
 	<PROTOCOLS>
