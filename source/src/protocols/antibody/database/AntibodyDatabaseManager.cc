@@ -519,12 +519,14 @@ AntibodyDatabaseManager::load_cdr_poses(
 			base_statement += " AND IG IN";
 			base_statement += get_question_mark_string(options->exclude_germlines().size());
 		}
+
 		//Lambda vs Kappa
 		if ( ab_info_->get_light_chain_type_enum() != unknown && (ab_info_->get_light_chain_type_enum() != lambda) ) {
 			base_statement += " AND (gene = 'heavy' OR gene = '"+ab_info_->get_light_chain_type()+"')";
 		} else if ( ab_info_->get_light_chain_type_enum() == lambda ) {
 			base_statement += " AND (gene = 'heavy' OR gene = 'lambda6' OR gene = 'lambda')";
 		}
+
 		if ( options->include_only_center_clusters() ) {
 			base_statement = base_statement +
 				"         AND center = 1";

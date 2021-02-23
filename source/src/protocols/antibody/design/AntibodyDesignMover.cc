@@ -131,22 +131,22 @@ AntibodyDesignMover::AntibodyDesignMover():
 
 }
 
-AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
-	graft_mover_(/* NULL */),
-	scorefxn_(/* NULL */),
-	scorefxn_min_(/* NULL */),
-	paratope_epitope_cst_mover_(/* NULL */),
-	paratope_cst_mover_(/* NULL */),
-	cdr_dihedral_cst_mover_ (/* NULL */)
-
-{
-	ab_info_ = ab_info->clone();
-
-	design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >();
-	read_command_line_options();
-	set_defaults();
-
-}
+//AntibodyDesignMover::AntibodyDesignMover( AntibodyInfoCOP ab_info ):
+// graft_mover_(/* NULL */),
+// scorefxn_(/* NULL */),
+// scorefxn_min_(/* NULL */),
+// paratope_epitope_cst_mover_(/* NULL */),
+// paratope_cst_mover_(/* NULL */),
+// cdr_dihedral_cst_mover_ (/* NULL */)
+//
+//{
+// ab_info_ = ab_info->clone();
+//
+// design_enum_manager_ = utility::pointer::make_shared< AntibodyDesignEnumManager >();
+// read_command_line_options();
+// set_defaults();
+//
+//}
 
 AntibodyDesignMover::~AntibodyDesignMover()= default;
 
@@ -174,6 +174,9 @@ AntibodyDesignMover::read_command_line_options(){
 	set_keep_top_designs(option [OptionKeys::antibody::design::top_designs]());
 	set_dock_post_graft(option [OptionKeys::antibody::design::do_dock]());
 	set_dock_rounds(option [OptionKeys::antibody::design::dock_cycle_rounds]());
+	dock_first_cycles_ = option [OptionKeys::antibody::design::dock_first_cycles]();
+	dock_second_cycles_ = option [OptionKeys::antibody::design::dock_second_cycles]();
+
 	//initial_perturb_ = basic::options::option [basic::options::OptionKeys::antibody::design::initial_perturb] ();
 	benchmark_ = option [OptionKeys::antibody::design::random_start]();
 	adapt_graft_ = option [OptionKeys::antibody::design::adapt_graft]();
@@ -309,7 +312,9 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	run_final_AIM_( src.run_final_AIM_),
 	remove_antigen_( src.remove_antigen_),
 	light_chain_( src.light_chain_),
-	additional_outputs_returned_( src.additional_outputs_returned_)
+	additional_outputs_returned_( src.additional_outputs_returned_),
+	dock_first_cycles_(src.dock_first_cycles_),
+	dock_second_cycles_(src.dock_second_cycles_)
 {
 	using namespace protocols::grafting;
 	using namespace protocols::minimization_packing;
@@ -414,7 +419,11 @@ AntibodyDesignMover::parse_my_tag(
 	num_top_designs_ = tag->getOption< core::Size >("top_designs", num_top_designs_);
 
 	dock_post_graft_ = tag->getOption< bool >("do_dock", dock_post_graft_);
+	dock_first_cycles_ = tag->getOption< core::Size >("dock_first_cycles", dock_first_cycles_);
+	dock_second_cycles_ = tag->getOption< core::Size >("dock_second_cycles", dock_second_cycles_);
+
 	dock_cycles_ = tag->getOption< core::Size >("dock_cycles", dock_cycles_);
+
 
 	//initial_perturb_ = basic::options::option [basic::options::OptionKeys::antibody::design::initial_perturb] ();
 	benchmark_ = tag->getOption< bool >("random_start", benchmark_);
@@ -473,6 +482,17 @@ AntibodyDesignMover::set_dock_post_graft(bool dock_post_graft){
 	dock_post_graft_ = dock_post_graft;
 }
 
+
+void
+AntibodyDesignMover::set_dock_first_cycles(core::Size dock_first_cycles){
+	dock_first_cycles_ = dock_first_cycles;
+}
+
+void
+AntibodyDesignMover::set_dock_second_cycles(core::Size dock_second_cycles){
+	dock_second_cycles_ = dock_second_cycles;
+}
+
 void
 AntibodyDesignMover::set_dock_rounds(core::Size dock_rounds){
 	dock_cycles_ = dock_rounds;
@@ -480,7 +500,7 @@ AntibodyDesignMover::set_dock_rounds(core::Size dock_rounds){
 
 void
 AntibodyDesignMover::set_outer_cycles(core::Size graft_rounds){
-	outer_cycles_=graft_rounds;
+	outer_cycles_ = graft_rounds;
 }
 
 void
@@ -1171,7 +1191,10 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 
 			modeler_->dock_low_res(pose, true /*repack_interface*/ ); // This should change once the minimization does some neighbor detection.
 			modeler_->minimize_interface(pose); //Seems to help
-			modeler_->dock_high_res(pose, 3 /*first cycles*/, 10 /*second_cycles*/); //Normal DockMCM is 4/45. This should mainly just be quick to fix overlap from low_res dock.
+
+			//6/25/20 - JAB - reducing cycles from 4/10 to 2/2 with an option to control it further.
+			//  This should actually enable docking integration to work much better.
+			modeler_->dock_high_res(pose, dock_first_cycles_ /*first cycles*/, dock_second_cycles_ /*second_cycles*/); //Normal DockMCM is 4/45. This should mainly just be quick to fix overlap from low_res dock.
 			mc.boltzmann(pose); //Low res dock will definitely screw up the pose - so do MC after both low and high res
 		}
 	}
@@ -1489,9 +1512,7 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	// utility_exit_with_message("PDB must be numbered correctly to identify North CDR clusters.  Please see Antibody Design documentation.");
 	//}
 
-	if ( !ab_info_ ) {
-		ab_info_ = init_ab_info(pose);
-	}
+	ab_info_ = init_ab_info(pose);
 
 	if ( remove_antigen_ && ab_info_->antigen_present() ) {
 		DeleteChainsMover remove_chains_mover = DeleteChainsMover();
@@ -1605,7 +1626,9 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 	}
 
 	//Needs to be called for RosettaScripts integration - should be called for each 'get_other_pose' or whatever it is.
+	ab_info_->setup_CDR_clusters(pose);
 	finalize_pose(ab_info_, pose);
+
 }
 
 core::pose::PoseOP
@@ -1825,6 +1848,14 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute(
 		"do_dock", xsct_rosetta_bool,
 		"Run RosettaDock during the inner cycles? Significantly increases run time. Default False");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dock_first_cycles", xsct_positive_integer,
+		"First set of High-res dock cycles.  Default in Full Docking protocol is 4.", "2");
+
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"dock_second_cycles", xsct_positive_integer,
+		"Second set of High-res dock cycles.  Default in Full Docking protocol is 45.", "2");
 
 	attlist + XMLSchemaAttribute(
 		"use_epitope_csts", xsct_rosetta_bool,

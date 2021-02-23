@@ -4334,7 +4334,15 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Run a short lowres + highres docking step in the inner cycles.  (dock/min).  Recommended 2 inner cycles for better coverage. (dock/min/dock/min). Inner/Outer loops for highres are hard coded, while low-res can be changed through regular low_res options.  If sequence design is enabled, will design regions/CDRs set during the high-res dock. Recommended to ',
 				default='false'
 				),
-
+			Option('dock_first_cycles', 'Integer',
+				desc='Number of first cycles for high res dock.  Default for Full Docking protocol is 4.',
+				default='2'
+				),
+			Option('dock_second_cycles', 'Integer',
+				desc='Number of second cycles for high res dock. Default for Full Docking Protocol is 45.',
+				default='2'
+				),
+			
 			###### Protocol Rounds
 			Option('outer_cycle_rounds', 'Integer',
 				desc='Rounds for outer loop of the protocol (not for deterministic_graft ).  Each round chooses a CDR and designs. One run of 100 cycles with relax takes about 12 hours.\

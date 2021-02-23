@@ -232,7 +232,7 @@ CDRSetOptionsParser::parse_cdr_set_option(std::string const & setting, vector1<s
 	check_line_len(lineSP, 4);
 	std::string type = lineSP[4];
 
-	if ( setting == "INCLUDEONLY" ) {
+	if ( setting == "INCLUDEONLY" || setting == "INCLUDE_ONLY" ) {
 
 		set_cdr_set_include_options(type, lineSP);
 	} else if ( setting == "EXCLUDE" ) {

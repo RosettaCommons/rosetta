@@ -80,7 +80,7 @@ public:
 
 	AntibodyDesignMover();
 
-	AntibodyDesignMover( AntibodyInfoCOP ab_info );
+	// AntibodyDesignMover( AntibodyInfoCOP ab_info );
 
 	AntibodyDesignMover( AntibodyDesignMover const & src );
 
@@ -221,6 +221,18 @@ public:
 
 	void
 	set_dock_rounds(core::Size dock_rounds);
+
+	///@brief Set the first cycles of the High-res MCM dock protocol.
+	/// Default for RAbD is 2.
+	/// Default for FULL docking protocol is 4.
+	void
+	set_dock_first_cycles(core::Size dock_first_cycles);
+
+	///@brief Set the first cycles of the High-res MCM dock protocol.
+	/// Default for RAbD is 2. (Used as A SHORT optimization step)
+	/// Default for FULL docking protocol is 45.
+	void
+	set_dock_second_cycles(core::Size dock_second_cycles);
 
 	/// @brief Sets the protocol to keep a specific number of top designs.  Default is 10
 	void
@@ -485,6 +497,8 @@ private:
 	bool remove_antigen_ = false;
 	std::string light_chain_ = "";
 	core::Size additional_outputs_returned_ = 0; //For get_additional_output() functionality in JD2.
+	core::Size dock_first_cycles_ = 2;
+	core::Size dock_second_cycles_ = 2;
 
 
 };
