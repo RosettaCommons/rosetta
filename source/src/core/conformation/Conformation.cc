@@ -5910,8 +5910,8 @@ Conformation::branch_connection_torsion_angle_atoms(
 	uint const atom4( rsd2.first_adjacent_heavy_atom( atom3 ) );
 
 	if ( atom1 == 0 || atom4 == 0 ) {
-		TR.Warning << "Branch " << branch <<" at position "<< seqpos;
-		TR.Warning << "does not have enough heavy atoms about its connection to define a torsion angle!" << endl;
+		TR.Warning << "Branch " << branch << " at position " << seqpos;
+		TR.Warning << " does not have enough heavy atoms about its connection to define a torsion angle!" << endl;
 		TR.Warning << "Atoms: " << atom1 << " " << atom2 << " " << atom3 << " " << atom4 << std::endl;
 		return fail;
 	}

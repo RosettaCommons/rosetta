@@ -403,6 +403,7 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 	core::Real max_cutoff = options.max_bond_length();
 	core::Real min_cutoff = options.min_bond_length();
 
+	core::Size n_new_links_found = 0;
 	for ( Size ii(1); ii <= rinfos.size(); ++ii ) {
 		std::string const & res_name( rinfos[ii].rosetta_resName() );
 		if ( ! core::chemical::carbohydrates::CarbohydrateInfoManager::is_valid_sugar_code( res_name ) ) { continue; }
@@ -411,7 +412,10 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 		anomeric_name += anomeric;
 		anomeric_name += " ";
 		if ( ! rinfos[ ii ].xyz().count( anomeric_name ) ) {
-			TR << "Sugar residue " << rinfos[ii].resid() << " doesn't have coordinates for the anomeric carbon " << anomeric_name << std::endl;
+			TR << "Carbohydrate residue " << rinfos[ii].resid() <<
+				" doesn't have coordinates for the anomeric carbon '" << anomeric_name <<
+				"'. Does the anomeric carbon have a different atom name? "
+				"Cannot determine glycan linkages with this residue. " << std::endl;
 			continue;
 		}
 		Vector const & anomeric_coords( rinfos[ ii ].xyz().at( anomeric_name ) );
@@ -430,10 +434,13 @@ determine_glycan_links( utility::vector1< core::io::ResidueInformation > const &
 				//TR.Trace << " Distance to " << pair.first << ": " << distance << std::endl;
 				if ( (min_cutoff <= distance) && (distance <= max_cutoff) ) {
 					linkage_map[ anomeric_pair ] = make_pair( jj, pair.first );
+					n_new_links_found += 1;
 				}
 			}
 		}
 	}
+	TR << "Found " << n_new_links_found <<
+		" glycan linkages in the structure based on atomic distances" << std::endl;
 	return linkage_map;
 }
 

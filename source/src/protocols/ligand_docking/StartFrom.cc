@@ -242,8 +242,10 @@ void StartFrom::apply(core::pose::Pose & pose){
 		core::Size const picked_centroid( numeric::random::rg().random_range(1, possible_centroids.size()) );
 		core::Vector const desired_centroid = possible_centroids[picked_centroid];
 		if ( use_nbr_ ) {
+			TR.Debug << "Moving ligand neighbor to desired centroid: " << desired_centroid.to_string() << std::endl;
 			move_ligand_neighbor_to_desired_position(chains_, desired_centroid, pose);
 		} else {
+			TR.Debug << "Moving ligand to desired centroid: " << desired_centroid.to_string() << std::endl;
 			move_ligand_to_desired_centroid(chains_, desired_centroid, pose);
 		}
 	}

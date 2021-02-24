@@ -208,6 +208,15 @@ is_ligand_heavyatom_residues(
 	core::Size atomno
 );
 
+/// @brief Return true is the pose residue and atom specified
+/// is a non-virtual, heavy ring atom of a carbohydrate
+/// @author Morgan Nance <morganlnance@gmail.com>
+bool is_carbohydrate_ring_atom(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & /* pose2 */,
+	core::uint const resno,
+	core::uint const atomno );
+
 /// @brief Return true if the pose residues and atoms specified are non-peptide heavy atoms.
 bool is_non_peptide_heavy_atom(
 	core::pose::Pose const & pose1,

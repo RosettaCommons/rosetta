@@ -243,15 +243,21 @@ has_exocyclic_glycosidic_linkage( conformation::Residue const & rsd, conformatio
 		return false;
 	}
 
-	core::Size const n_carbons = parent_rsd.carbohydrate_info()->n_carbons();
-	core::Size linkage_position = get_linkage_position_of_saccharide_residue( rsd, parent_rsd );
-	core::Size last_carbon = parent_rsd.carbohydrate_info()->last_carbon_in_ring();
+	core::Size const linkage_position =
+		get_linkage_position_of_saccharide_residue( rsd, parent_rsd );
+	core::Size const last_carbon_in_ring =
+		parent_rsd.carbohydrate_info()->last_carbon_in_ring();
 
-	if ( ( n_carbons == linkage_position ) && ( last_carbon != linkage_position ) ) {
+	if ( linkage_position > last_carbon_in_ring ) {
+		TR.Debug << "Resnum " <<
+			rsd.seqpos() << " is exocyclically connected to parent " <<
+			parent_rsd.seqpos() << " as the linkage position (atom " <<
+			linkage_position << ") is greater than the number of carbons (" <<
+			last_carbon_in_ring << ") in the parent ring" << std::endl;
 		return true;
-	} else {
-		return false;
 	}
+
+	return false;
 }
 
 // Return pointers to the two residues of the glycosidic bond.

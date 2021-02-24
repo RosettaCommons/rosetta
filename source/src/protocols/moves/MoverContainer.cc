@@ -225,7 +225,13 @@ SequenceMover::get_name() const {
 void RandomMover::apply( core::pose::Pose & pose )
 {
 	Real weight_sum(0.0);
-	size_t m;
+	Size m;
+
+	if ( movers_.size() == 0 ) {
+		TR << "No Movers in RandomMover! Doing nothing" << std::endl;
+		return;
+	}
+
 	for ( m=0; m< movers_.size(); m++ ) {
 		weight_sum += weight_[m];
 	}
@@ -239,27 +245,42 @@ void RandomMover::apply( core::pose::Pose & pose )
 			sum += weight_[m];
 		}
 		m--;
-		//  TR.Trace << "choose move " << m+1 << " of " << nr_moves() << std::endl;
+
 		// apply the chosen move
-
-		//Difficult to debug without this - JAB:
 		if ( TR.Debug.visible() ) {
-			TR.Debug << "Applying " << movers_[m]->get_name() << std::endl;
+			TR.Debug << "Applying " << movers_[m]->get_name() <<
+				" (Mover " << m+1 << " of " << movers_.size() << ")" << std::endl;
 		}
-
 		movers_[m]->apply( pose );
 		type( type() + movers_[m]->type());
 
 		set_last_move_status( movers_[m]->get_last_move_status() );
 		last_proposal_density_ratio_ = movers_[m]->last_proposal_density_ratio();//ek
+		// Also for debugging, want access to the index of the last Mover used
+		// That way user can confirm everything is right on their end
+		// and interrogate the applied Mover of the given index if needed
+		set_index_of_last_mover_used(m);
 	}
 
 }
 
 std::string RandomMover::get_name_individual_mover(core::Size index)
 {
+	// Note that movers_ list is a vector0 object, so index should be between 0 and movers_.size()
 	std::string name = movers_[index]->get_name();
 	return name;
+}
+
+void
+RandomMover::set_index_of_last_mover_used( core::Size index_of_last_mover_used )
+{
+	index_of_last_mover_used_ = index_of_last_mover_used;
+}
+
+core::Size
+RandomMover::get_index_of_last_mover_used()
+{
+	return index_of_last_mover_used_;
 }
 
 RandomMover::RandomMover( RandomMover const & ) = default;

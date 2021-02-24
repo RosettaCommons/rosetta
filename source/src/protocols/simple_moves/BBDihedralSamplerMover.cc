@@ -119,6 +119,17 @@ std::ostream &operator<< (std::ostream &os, BBDihedralSamplerMover const &mover)
 }
 
 void
+BBDihedralSamplerMover::set_name_of_last_sampler_used( std::string name_of_last_sampler_used ){
+	name_of_last_sampler_used_ = name_of_last_sampler_used;
+}
+
+std::string
+BBDihedralSamplerMover::get_name_of_last_sampler_used(){
+	return name_of_last_sampler_used_;
+}
+
+
+void
 BBDihedralSamplerMover::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector){
 	selector_ = selector->clone();
 	sampler_torsions_.clear();
@@ -182,6 +193,7 @@ void
 BBDihedralSamplerMover::set_dihedral_mask( std::map< core::Size, utility::vector1< core::Size >> mask ){
 	sampler_torsions_.clear();
 	dihedral_mask_ = mask;
+	TR.Debug << "Using dihedral mask: " << mask << std::endl;
 }
 
 void
@@ -189,25 +201,38 @@ BBDihedralSamplerMover::setup_samplers( core::pose::Pose const &  ) {
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "Initializing samplers" << std::endl;
+		TR.Debug << "Overall torsion types available: " << sampler_torsion_types_ << std::endl;
 	}
 
 	//TR.Info << "Torsion Types: " << utility::to_string( sampler_torsion_types_) << std::endl;
 
 	//Apply any mask set for the residue, otherwise set the torsion from the samplers we have.
+	// For every residue specified by either 1) set_single_resnum, 2) set_residue_selector, or 3) setup_all_bb_residues
+	// i.e. for all residues set to be available for sampling
 	for ( core::Size resnum : bb_residues_ ) {
+		// The resnum to vector of torsion IDs mapping should at first be empty
 		sampler_torsions_[ resnum ];
 		//TR.Info << "Resnum " << resnum << std::endl;
+		// For every dihedral available  based on the torsion types specified by all given samplers...
+		// (Note that every residue may not have the same torsion types available to it)
+		// Example: some sugar residues have only phi and psi while another may also have omega
 		for ( core::Size dihedral : sampler_torsion_types_ ) {
-
+			// If the dihedral_mask_ contains this residue (note not every residue needs a mask)
 			if ( dihedral_mask_.count( resnum ) ) {
+				// And if the dihedral_mask_ allows the dihedral for this residue
 				if ( dihedral_mask_[resnum].contains( dihedral ) ) {
+					// Then keep it as an available dihedral to sample for this residue
 					sampler_torsions_[ resnum ].push_back( dihedral );
 				}
 			} else {
+				// If the dihedral_mask_ does not contain this residue, then assume this is an available torsion for sampling
 				sampler_torsions_[ resnum ].push_back( dihedral );
 			}
 		}
 	}
+	// Mapping of residue number to a vector of torsion IDs to sample on
+	// Ex. [ [100] : [1, 2], [101] : [1, 2, 3], ... ]
+	TR.Debug << "Sampling torsions available: " << sampler_torsions_ << std::endl;
 }
 
 void
@@ -220,7 +245,7 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 
 		if ( bb_residues_.size() == 0 ) {
 			TR << "No BB residues to model (remember - no data for root!) Returning) " << std::endl;
-			set_last_move_status(protocols::moves::MS_FAIL);
+			set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 			return;
 		}
 	}
@@ -237,50 +262,52 @@ BBDihedralSamplerMover::apply( core::pose::Pose & pose ){
 		setup_samplers( pose );
 	}
 
-	if ( TR.Debug.visible() ) { TR.Debug << utility::to_string( bb_residues_ ) << std::endl; }
-
-	core::Size resnum;
-	if ( bb_residues_.size() == 1 ) {
-		resnum = bb_residues_[1];
-	} else {
-		//TR.Info << "Selecting a residue number" << std::endl;
-		core::Size index = numeric::random::rg().random_range2( 1, bb_residues_.size() );
-		if ( TR.Debug.visible() ) { TR.Debug << "Selected index " << index << std::endl; }
-		resnum = bb_residues_[ index ];
+	if ( TR.Debug.visible() ) { TR.Debug << "Available residues: " <<
+		utility::to_string( bb_residues_ ) << std::endl;
 	}
 
+	//TR.Info << "Selecting a residue number" << std::endl;
+	core::Size const resnum_index =
+		numeric::random::rg().random_range2( 1, bb_residues_.size() );
+	core::Size const resnum = bb_residues_[ resnum_index ];
+	if ( TR.Debug.visible() ) { TR.Debug << "Selected residue " <<
+		resnum << " at index " << resnum_index << std::endl;
+	}
 
-	//TR.Info << "Optimizing residue " << resnum << std::endl;
 	//Get the one sampler or choose a sampler:
 	bb_sampler::BBDihedralSamplerCOP sampler;
 	if ( sampler_torsions_[ resnum ].size() == 0 ) {
-		utility_exit_with_message(" BBDihedralSamplerMover - a chosen residue num has no dihedral union between movemaps and set bb samplers.  We should never be here!");
-	} else {
-
-		//Choose a TorsionType based on what kind of samplers we have and the MoveMap of the residue.
-		core::Size torsion_index = numeric::random::rg().random_range( 1, sampler_torsions_[ resnum ].size() );
-		//TR.Info << "Torsion Index " << torsion_index << std::endl;
-		core::Size torsion = sampler_torsions_[ resnum ][ torsion_index ];
-
-		//TR.Info << "Selected torsion " << torsion << std::endl;
-		//Choose a sampler from the samplers available for that torsion type.
-		core::Size sampler_index = numeric::random::rg().random_range( 1, samplers_[ torsion ].size() );
-		sampler = samplers_[ torsion ][ sampler_index ];
+		utility_exit_with_message(" BBDihedralSamplerMover - a chosen "
+			"residue number has no dihedral union "
+			"between movemaps and set bb samplers. "
+			"We should never be here!");
 	}
 
+	//Choose a TorsionType based on what kind of samplers we have and the MoveMap of the residue.
+	core::Size const torsion_index =
+		numeric::random::rg().random_range( 1, sampler_torsions_[ resnum ].size() );
+	//TR.Info << "Torsion Index " << torsion_index << std::endl;
+	core::Size const torsion = sampler_torsions_[ resnum ][ torsion_index ];
+
+	//TR.Info << "Selected torsion " << torsion << std::endl;
+	//Choose a sampler from the samplers available for that torsion type.
+	core::Size const sampler_index =
+		numeric::random::rg().random_range( 1, samplers_[ torsion ].size() );
+	sampler = samplers_[ torsion ][ sampler_index ];
 
 	// Apply the sampler
-	TR.Debug << "Optimizing "<< resnum << " with " << sampler->get_name() << " at torsion " << core::Size(sampler->get_torsion_type()) << std::endl;
-
+	TR.Debug << "Optimizing "<< resnum << " with " <<
+		sampler->get_name() << " at torsion " << torsion << std::endl;
+	// And store the name of the sampler as the one last used
+	set_name_of_last_sampler_used( sampler->get_name() );
 
 	try {
 		sampler->set_torsion_to_pose( pose, resnum );
 		set_last_move_status(protocols::moves::MS_SUCCESS);
 
 	} catch ( utility::excn::Exception& excn ) {
-		TR.Error<< "Could not set torsion for resnum "<< resnum << std::endl;
-		set_last_move_status(protocols::moves::MS_FAIL);
-
+		TR.Error << "Could not set torsion for resnum " << resnum << std::endl;
+		set_last_move_status(protocols::moves::FAIL_DO_NOT_RETRY);
 	}
 
 }

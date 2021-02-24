@@ -190,6 +190,10 @@ public:
 
 	std::string get_name_individual_mover(core::Size index);
 
+	///@Brief Get the index of the last Mover used by the RandomMover (0 means RandomMover has not been applied yet)
+	core::Size
+	get_index_of_last_mover_used();
+
 	core::Real last_proposal_density_ratio() override;
 
 	//fpd Only making this MoverContainer parsile since the other MoverContainers already have an RS equivalent
@@ -209,10 +213,15 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+private:
+	///@Brief Set the index of the last Mover used by the RandomMover (0 means RandomMover has not been applied yet)
+	void
+	set_index_of_last_mover_used( core::Size index_of_last_mover_used );
 
 private:
 	core::Size nmoves_;
 	core::Real last_proposal_density_ratio_; //ek added this member 2/25/10
+	core::Size index_of_last_mover_used_ = 0; // Default = 0; But movers_ list is vector0! So 0 actually means the first Mover
 }; // RandomMover class
 
 

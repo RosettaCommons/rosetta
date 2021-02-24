@@ -353,9 +353,14 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 
 	//If we've specified a ligand chain, then every other chain is the fixed chain
 	if ( ligand_chain_.size() != 0 ) {
-		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain( ligand_chain_, pose );
+		// Branched carbohydrate ligands generally have the same chain (ex. A),
+		// but will have different chain ids in Rosetta (ex. 1,2)
+		// Using all chain ids associated with a single chain
+		// will avoid problems with branching molecules
+		utility::vector1< core::Size > ligand_chain_ids =
+			core::pose::get_chain_ids_from_chain( ligand_chain_, pose );
 		for ( core::Size i = 1; i <= pose.conformation().num_chains(); ++i ) {
-			if ( ligand_chain_id != i ) {
+			if ( !ligand_chain_ids.has_value(i) ) {
 				//char chain = core::pose::get_chain_from_chain_id(i, pose);
 				fixed_chains_.insert( static_cast<int>(i) );
 			}
@@ -407,7 +412,7 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 		//Don't use the foldtree to determine which residues to move.
 		separated_pose = make_separated_pose(complexed_pose, downstream_chains_);
 	} else {
-		separated_pose = make_separated_pose( complexed_pose, interface_jump_);
+		separated_pose = make_separated_pose(complexed_pose, interface_jump_);
 	}
 
 	//Redetect disulfides after separation to cleave any that are in the complex pose between the chains.
@@ -453,7 +458,7 @@ void InterfaceAnalyzerMover::set_pose_info( core::pose::Pose const & pose ) {
 		posename_ = pose.pdb_info()->name();
 		posename_base_ = posename_.base();
 	}
-	//Used only for two chain constructor.
+	// Intended to be used for ONLY two chain constructor.
 	if ( ! explicit_constructor_ ) {
 		chain1_ = pose.residue(pose.fold_tree().upstream_jump_residue(interface_jump_)).chain();
 		chain2_ = pose.residue(pose.fold_tree().downstream_jump_residue(interface_jump_)).chain();
@@ -472,8 +477,15 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 	vector1< std::string > chainsSP = utility::string_split( dock_chains_, '_' );
 	if ( pose.conformation().num_chains() == ( chainsSP[ 1 ].length() + chainsSP[ 2 ].length() ) ) {
 		for ( core::Size i = 1; i <= chainsSP[ 1 ].length(); ++i ) {
-			//Setup fixed chains - and let Bens multichain code do it's thing
-			fixed_chains_.insert( core::pose::get_chain_id_from_chain( chainsSP[ 1 ].at( i - 1 ), pose) );
+			// Setup fixed chains - and let Bens multichain code do its thing
+			// Branched carbohydrate ligands or protein-conjugated glycans
+			// generally have the same chain (ex. A), but
+			// will have different chain ids in Rosetta (ex. 1,2)
+			// Using all chain ids associated with a single chain will
+			// avoid problems with branching molecules
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( chainsSP[ 1 ].at( i - 1 ), pose ) ) {
+				fixed_chains_.insert( chain_id );
+			}
 		}
 		return;
 	} else {
@@ -487,7 +499,9 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 			} else {
 				fixed_chains_.insert( i );
 				ignored_chains_.insert( i );
-				TR << "Ignoring chain: " << core::pose::get_chain_from_chain_id( i, pose ) << std::endl;
+				TR << "Ignoring chain: " <<
+					core::pose::get_chain_from_chain_id( i, pose ) <<
+					" (" << chain << ")" << std::endl;
 			}
 		}
 
@@ -506,7 +520,14 @@ InterfaceAnalyzerMover::setup_for_dock_chains( core::pose::Pose & pose, std::str
 
 		//Setup fixedchains, keeping the ignored chains as fixed.
 		for ( core::Size i = 1; i <= chainsSP[ 1 ].length(); ++i ) {
-			fixed_chains_.insert( core::pose::get_chain_id_from_chain( chainsSP[ 1 ].at( i - 1 ), pose ) );
+			// Branched carbohydrate ligands or protein-conjugated glycans generally
+			// have the same chain (ex. A), but will have different chain ids in Rosetta (ex. 1,2)
+			// Using all chain ids associated with a single chain will
+			// avoid problems with branching molecules
+			for ( core::Size chain_id : core::pose::get_chain_ids_from_chain( chainsSP[ 1 ].at( i - 1 ), pose ) ) {
+				fixed_chains_.insert( chain_id );
+			}
+			return;
 		}
 		return;
 	}
@@ -520,6 +541,7 @@ void InterfaceAnalyzerMover::make_interface_set( core::pose::Pose & pose ){
 	upstream_chains_.clear();
 	downstream_chains_.clear();
 	if ( explicit_constructor_ ) {
+		TR << "Making an interface set with fixed chains" << std::endl;
 		make_multichain_interface_set( pose, fixed_chains_ );
 	} else {
 		//std::set< core::Size > interface_set ( get_interface_set() );
@@ -618,6 +640,8 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 	std::set< int > & fixed_chains){
 	using namespace core;
 	using core::kinematics::Edge;
+
+	TR << "Reordering FoldTree to find Jump for multichain interface" << std::endl;
 	core::Size mobile_jump( 1 );  //setup, will be changed later
 	if ( fixed_chains.empty() ) {
 		utility_exit_with_message_status( "Can't find fixed chains.  Exiting...\n", 1 );
@@ -627,13 +651,17 @@ core::Size InterfaceAnalyzerMover::reorder_foldtree_find_jump( core::pose::Pose 
 
 	//Ligand chain last chain in pose, no need to reorder.
 	if ( ligand_chain_.size() != 0 ) {
-		core::Size ligand_chain_id = core::pose::get_chain_id_from_chain( ligand_chain_, pose );
-		if ( ligand_chain_id == numchains ) {
-			core::Size newjump = core::pose::get_jump_id_from_chain_id( ligand_chain_id, pose );
-			return newjump;
+		// Branched carbohydrate ligands or protein-conjugated glycans generally
+		// have the same chain (ex. A), but will have different chain ids in Rosetta (ex. 1,2)
+		// Using all chain ids associated with a single chain will
+		// avoid problems with branching molecules
+		for ( core::Size ligand_chain_id : core::pose::get_chain_ids_from_chain( ligand_chain_, pose ) ) {
+			if ( ligand_chain_id == numchains ) {
+				core::Size newjump = core::pose::get_jump_id_from_chain_id( ligand_chain_id, pose );
+				return newjump;
+			}
 		}
 	}
-
 
 	utility::vector1<core::Size> chain_starts;
 	utility::vector1<core::Size> chain_ends;
@@ -801,7 +829,9 @@ void InterfaceAnalyzerMover::score_separated_chains( core::pose::Pose & complexe
 		repacker->apply( complexed_pose );
 	}
 	if ( pack_separated_ ) {
-		//This is to correctly deal with out-of-date disulfides repacking in the separated pose.  Cannot generate task and apply to both together and separated pose for this reason
+		//This is to correctly deal with out-of-date disulfides repacking in
+		// the separated pose. Cannot generate task and apply to both together
+		// and separated pose for this reason
 		core::pack::task::PackerTaskOP task = setup_task( separated_pose );
 		repacker->task( task );
 		repacker->apply( separated_pose );
@@ -1052,9 +1082,8 @@ void InterfaceAnalyzerMover::compute_interface_energy( core::pose::Pose & comple
 void InterfaceAnalyzerMover::calc_per_residue_and_regional_data( core::pose::Pose & complexed_pose, core::pose::Pose & separated_pose ) {
 	using namespace core::scoring;
 	using namespace core;
-	//using namespace core::scoring::Energies;
-	//pose.update_residue_neighbors();
-	( *sf_ ) ( complexed_pose ); //shits, giggles, and segfault prevention
+
+	( *sf_ ) ( complexed_pose ); //segfault prevention
 	( *sf_ ) ( separated_pose );
 	//itterate over all residues calc total energy for each then take avg
 
@@ -1253,16 +1282,19 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	using namespace core::scoring::hbonds;
 	using namespace core;
 	using namespace core::chemical;
-	( *sf_ ) ( pose ); //shits, giggles, and segfault prevention
+
+	( *sf_ ) ( pose ); //segfault prevention
 	//calculate the per atom sasa
-	// an atomID map is needed for the calc_per_atom_sasa method; it stores the actual calculated sasa for every atom
+	// an atomID map is needed for the calc_per_atom_sasa method;
+	// it stores the actual calculated sasa for every atom
 	//core::id::AtomID_Map< core::Real > atom_sasa;
 	//core::pose::initialize_atomid_map( atom_sasa, pose, (core::Real)0.0 ); // initialize to 0.0 for "not computed"
 
 	//utility::vector1< Real > rsd_sasa( pose.size(), 0.0 );
 	//core::Real probe_radius = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius];
 
-	// create an atom_subset mask such that only the heavy atoms will have their sasa computed (ignore H's to make it faster)
+	// create an atom_subset mask such that only the heavy atoms will
+	// have their sasa computed (ignore H's to make it faster)
 	core::id::AtomID_Map< bool > atom_subset;
 	atom_subset.clear();
 	atom_subset.resize( pose.size() );
@@ -1835,7 +1867,6 @@ bool InterfaceAnalyzerMover::get_use_centroid_dG() const {return use_centroid_;}
 void InterfaceAnalyzerMover::set_use_resfile( bool const use_resfile ) { use_resfile_ = use_resfile; }
 void InterfaceAnalyzerMover::set_use_centroid_dG( bool const use_centroid ) { use_centroid_ = use_centroid; }
 void InterfaceAnalyzerMover::set_compute_packstat( bool const compute_packstat ) { compute_packstat_ = compute_packstat; }
-void InterfaceAnalyzerMover::set_pack_input( bool const pack_input) { pack_input_ = pack_input; }
 void InterfaceAnalyzerMover::set_interface_jump( core::Size const interface_jump ) {
 
 	interface_jump_ = interface_jump;
@@ -1849,10 +1880,20 @@ void InterfaceAnalyzerMover::set_interface( std::string const & interface ){
 
 void InterfaceAnalyzerMover::set_use_tracer( bool const tracer) {tracer_ = tracer;}
 //void InterfaceAnalyzerMover::set_calcs_ready(bool const calcs_ready) {calcs_ready_ = calcs_ready;}
-void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname) { use_jobname_ = use_jobname; }
+void InterfaceAnalyzerMover::set_use_jobname( bool const use_jobname ) { use_jobname_ = use_jobname; }
 void InterfaceAnalyzerMover::set_scorefile_reporting_prefix( std::string const & prefix ) { scorefile_reporting_prefix_ = prefix; }
-void InterfaceAnalyzerMover::set_pack_separated( bool const pack_separated ) { pack_separated_ = pack_separated; }
 void InterfaceAnalyzerMover::set_scorefunction( core::scoring::ScoreFunctionCOP sf ) { sf_ = sf->clone(); }
+
+// Packing the input and/or separated pose changes how results should be interpretted
+// Thus, using tracers to inform user of intended IAM packing behavior
+void InterfaceAnalyzerMover::set_pack_input( bool const pack_input ) {
+	if ( pack_input ) { TR << "Repacking input Pose before calculating bound state values" << std::endl; }
+	pack_input_ = pack_input;
+}
+void InterfaceAnalyzerMover::set_pack_separated( bool const pack_separated ) {
+	if ( pack_separated ) { TR << "Repacking separated Pose before running calculations" << std::endl; }
+	pack_separated_ = pack_separated;
+}
 
 std::string InterfaceAnalyzerMover::get_name() const {
 	return mover_name();

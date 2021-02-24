@@ -342,7 +342,7 @@ DockingInitialPerturbation::apply_body(core::pose::Pose & pose, core::Size jump_
 		//TR << "option[ docking::parallel ]()" << trans << "\n";
 		TR << "option[ docking::dock_pert ]()" << pert_mags[rot] << ' ' << pert_mags[trans] << std::endl;
 		rigid::RigidBodyPerturbMoverOP mover;
-		if ( center_at_interface_ ) mover = utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true );
+		if ( center_at_interface_ ) mover = utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_number, pert_mags[rot], pert_mags[trans], rigid::partner_downstream, true /*interface_in*/ );
 		else mover = utility::pointer::make_shared< rigid::RigidBodyPerturbMover >( jump_number, pert_mags[rot], pert_mags[trans] );
 		mover->apply( pose );
 	}
@@ -830,11 +830,15 @@ void FaDockingSlideIntoContact::apply( core::pose::Pose & pose )
 
 	utility::vector1<rigid::RigidBodyTransMover> trans_movers;
 
+	TR << "Sliding Pose components together into contact" << std::endl;
 	if ( slide_axis_.length() != 0 ) {
+		TR.Debug << "Initializing RigidBodyTransMover with a slide axis and RB Jump" << std::endl;
 		trans_movers.push_back( rigid::RigidBodyTransMover( slide_axis_, rb_jump_ ));
 	} else if ( rb_jumps_.size()<1 ) {
+		TR.Debug << "Initializing RigidBodyTransMover with the Pose and RB Jump" << std::endl;
 		trans_movers.push_back( rigid::RigidBodyTransMover( pose,rb_jump_ ));
 	} else {
+		TR.Debug << "Initializing RigidBodyTransMovers with the Pose and multiple RB Jumps" << std::endl;
 		for ( core::Size & rb_jump : rb_jumps_ ) {
 			trans_movers.push_back( rigid::RigidBodyTransMover(pose, rb_jump ));
 		}

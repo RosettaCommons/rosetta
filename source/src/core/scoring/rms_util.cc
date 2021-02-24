@@ -14,7 +14,6 @@
 /// @author Ian Davis
 /// @date   Wed Aug 22 12:10:37 2007
 
-
 // Unit headers
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/rms_util.tmpl.hh>
@@ -33,6 +32,7 @@
 // Project headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/PDBInfo.hh>
 #include <core/pose/MiniPose.hh>
 #include <core/pose/util.hh>
 #include <core/id/types.hh>
@@ -71,7 +71,7 @@ using namespace ObjexxFCL;
 namespace core {
 namespace scoring {
 
-static basic::Tracer tr( "core.scoring.rms_util" );
+static basic::Tracer TR( "core.scoring.rms_util" );
 
 core::Real gdtsc(const core::pose::Pose& ref,
 	const core::pose::Pose& mod,
@@ -110,7 +110,7 @@ core::Real gdtsc(const core::pose::Pose& ref,
 		{'u', "C4'"} };
 
 	if ( !ref.is_fullatom() || !mod.is_fullatom() ) {
-		tr.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;
+		TR.Warning << "Reference and model must be fullatom for gdtsc()" << std::endl;
 		return -1;
 	}
 
@@ -128,7 +128,7 @@ core::Real gdtsc(const core::pose::Pose& ref,
 		const char mod_residue = mod.residue(mod_idx).name1();
 
 		if ( ref_residue != mod_residue ) {
-			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+			TR.Warning << "Reference and model must have identical sequences for gdtha-- "
 				<< ref_residue << " != " << mod_residue << std::endl;
 			continue;
 		}
@@ -192,7 +192,7 @@ core::Real gdtha(
 		const char mod_residue = mod.residue(mod_idx).name1();
 
 		if ( ref_residue != mod_residue ) {
-			tr.Warning << "Reference and model must have identical sequences for gdtha-- "
+			TR.Warning << "Reference and model must have identical sequences for gdtha-- "
 				<< ref_residue << " != " << mod_residue << std::endl;
 			continue;
 		}
@@ -302,8 +302,11 @@ automorphic_rmsd(
 	using namespace core::chemical;
 	using namespace core::conformation;
 	if ( rsd1.nheavyatoms()  != rsd2.nheavyatoms()  ) {
-		tr.Error << "Residue number-of-heavy-atoms mismatch: " << rsd1.nheavyatoms() << " (for " << rsd1.type().name() << " at position " << rsd1.seqpos() << " ) versus "
-			<< rsd2.nheavyatoms() << " (for " << rsd2.type().name() << " at position " << rsd2.seqpos() << ")" << std::endl;
+		TR.Error << "Residue number-of-heavy-atoms mismatch: " <<
+			rsd1.nheavyatoms() << " (for " << rsd1.type().name() <<
+			" at position " << rsd1.seqpos() << " ) versus " <<
+			rsd2.nheavyatoms() << " (for " << rsd2.type().name() <<
+			" at position " << rsd2.seqpos() << ")" << std::endl;
 		utility_exit_with_message("Residue number-of-heavy-atoms mismatch");
 	}
 	core::Real best_rms = 1e99;
@@ -314,7 +317,7 @@ automorphic_rmsd(
 	// For each permutation of automorphisms...
 	while ( old2new.size() > 0 ) {
 		counter++;
-		if ( counter%10000 == 0 ) tr.Info << counter << " so far..." << std::endl;
+		if ( counter%10000 == 0 ) TR.Info << counter << " so far..." << std::endl;
 
 		// Print out translation table for debugging
 		//std::cout << "[";
@@ -331,17 +334,20 @@ automorphic_rmsd(
 		}
 		// Check vs. minimum rmsd
 		if ( curr_rms < best_rms ) {
-			//tr.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
+			//TR.Debug << "New rms of " << curr_rms << " beats previous best of " << best_rms << std::endl;
 			best_rms = curr_rms;
 		}
 		old2new = ai.next();
 	} // done checking all automorphisms
 	if ( counter == 0 ) {
-		tr.Error << "No automorphisms found for mapping of '" << rsd1.type().name() << "' at position " << rsd1.seqpos() << " to '"
-			<< rsd2.type().name() << "' at position " << rsd2.seqpos() << " - incompatible residue types " << std::endl;
+		TR.Error << "No automorphisms found for mapping of '" <<
+			rsd1.type().name() << "' at position " << rsd1.seqpos() << " to '" <<
+			rsd2.type().name() << "' at position " << rsd2.seqpos() <<
+			" - incompatible residue types " << std::endl;
 		utility_exit_with_message("Incompatible ResidueTypes for automorphic rmsd.");
 	}
-	tr.Debug << counter << " automorphisms from iterator; best rms is " << best_rms << std::endl;
+	TR.Debug << counter <<
+		" automorphisms from iterator; best rms is " << best_rms << std::endl;
 	return best_rms;
 }
 
@@ -517,6 +523,24 @@ is_polymer_heavyatom(
 	return rsd.is_polymer() && !rsd.atom_is_hydrogen(atomno);
 }
 
+/// @details This is a "predicate" function intended for use with glycan-RMSD-calculating functions
+/// @remarks This is useful for glycoligands when calculating ring-atom-only RMSD
+/// @remarks Used as the RMSD metric for model quality in the GlycanDock benchmark
+/// @author Morgan Nance <morganlnance@gmail.com>
+bool
+is_carbohydrate_ring_atom(
+	core::pose::Pose const & pose1,
+	core::pose::Pose const & /* pose2 */,
+	core::uint const resno,
+	core::uint const atomno ) {
+
+	core::conformation::Residue const & rsd = pose1.residue( resno );
+	// Carbohydrates should only have one ring. Ensure not counting virtual atoms
+	// Carbs have virtual atoms so that Rosetta treats them as cyclic molecules
+	return rsd.type().is_ring_atom(1, atomno) && ! rsd.is_virtual( atomno );
+}
+
+
 /// @details This is a "predicate" function intended for use with RMSD-calculating functions.
 /// @remarks This is useful for oligosaccharide ligands, which are "polymers" in the Rosetta sense and do not have CAs.
 /// @author  Labonte <JWLabonte@jhu.edu>
@@ -625,7 +649,7 @@ CA_or_equiv_rmsd(
 	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_or_equiv_rmsd, residue range " << start << " to " << end
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { TR.Warning << "In CA_or_equiv_rmsd, residue range " << start << " to " << end
 		<< " requested but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -659,7 +683,7 @@ CA_rmsd(
 	PredicateOP pred( new ResRangePredicate( start, calc_end, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { tr.Warning << "In CA_rmsd, residue range " << start << " to " << end
+	if ( end != 0 && (int) (calc_end - start + 1) > natoms ) { TR.Warning << "In CA_rmsd, residue range " << start << " to " << end
 		<< " requested but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -812,7 +836,7 @@ CA_or_equiv_rmsd(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsMainAtomPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { TR.Warning << "In CA_rmsd " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -843,7 +867,7 @@ CA_rmsd(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_rmsd " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { TR.Warning << "In CA_rmsd " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -946,7 +970,7 @@ CA_maxsub(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_maxsub " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { TR.Warning << "In CA_maxsub " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -1005,7 +1029,7 @@ CA_gdtmm(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { TR.Warning << "In CA_gdtmm " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -1060,31 +1084,31 @@ xyz_gdtmm(
 	core::Real rmstol, disttol;
 	rmstol = 1.0;
 	disttol = 1.0;
-	tr.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
+	TR.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rmstol, disttol );
 	m_1_1 = core::Real( nali ) / core::Real( natoms );
 
 	rmstol = 2.0;
 	disttol = 2.0;
-	tr.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
+	TR.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rmstol, disttol );
 	m_2_2 = core::Real( nali ) / core::Real( natoms );
 
 	rmstol = 3.0;
 	disttol = 3.0;
-	tr.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
+	TR.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rmstol, disttol );
 	m_3_3 = core::Real( nali ) / core::Real( natoms );
 
 	rmstol = 3.0;
 	disttol = 4.0;
-	tr.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
+	TR.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rmstol, disttol );
 	m_4_3 = core::Real( nali ) / core::Real( natoms );
 
 	rmstol = 4.0;
 	disttol = 7.0;
-	tr.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
+	TR.Trace << "call maxsub with rmstol " << rmstol << " and disttol " << disttol << std::endl;
 	numeric::model_quality::maxsub( natoms, p1a, p2a, mxrms, mxpsi, nali, mxzscore, mxeval, mxscore, rmstol, disttol );
 	m_7_4 = core::Real( nali ) / core::Real( natoms );
 
@@ -1125,7 +1149,7 @@ CA_gdttm(
 	PredicateOP pred( new SelectedResPredicate( residue_selection, utility::pointer::make_shared< IsProteinCAPredicate >() ) );
 	fill_rmsd_coordinates( natoms, p1a, p2a, pose1, pose2, pred.get() );
 
-	if ( (int) residue_selection.size() > natoms ) { tr.Warning << "In CA_gdtmm " << residue_selection.size()
+	if ( (int) residue_selection.size() > natoms ) { TR.Warning << "In CA_gdtmm " << residue_selection.size()
 		<< " residues selected but only " << natoms << " protein CA atoms found." << std::endl;
 	}
 
@@ -1238,7 +1262,9 @@ superimpose_pose(
 	using namespace core::pose::symmetry;
 
 	if ( is_symmetric(mod_pose) && ! (is_symmetric(ref_pose)) ) {
-		tr.Warning << "core::scoring::superimpose_pose: You must desymmetrize the mod pose for accurate superposition. Otherwise, you will get junk!!!" << std::endl;
+		TR.Warning << "core::scoring::superimpose_pose: "
+			"You must desymmetrize the mod pose for accurate superposition. "
+			"Otherwise, you will get junk!!!" << std::endl;
 	}
 
 	id::AtomID_Map< id::AtomID > const atom_id_map = convert_from_std_map( atom_map, mod_pose );
@@ -1376,7 +1402,9 @@ CA_rmsd_symmetric(
 	FArray2D< core::Real > p2a;//( 3, pose2.size() );
 	fill_rmsd_coordinates( natoms, p1a, p2a, native_pose, pose, is_protein_CA );
 	if ( natoms%nres_monomer != 0 ) {
-		tr.Warning << "CA atoms in fill_rmsd " << natoms << "is not a multiple of number of residues per subunit " << nres_monomer << std::endl;
+		TR.Warning << "CA atoms in fill_rmsd " << natoms <<
+			"is not a multiple of number of residues per subunit " <<
+			nres_monomer << std::endl;
 	}
 
 	// Calc rms
@@ -1463,11 +1491,11 @@ rms_at_corresponding_atoms(
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		if ( tr.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
+		if ( TR.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
 				ref_pose.residue( (iter.second).rsd() ).atom_name(  (iter.second).atomno() ) ) ) {
 			conformation::Residue const & mod_res( mod_pose.residue( (iter.first).rsd() ) );
 			conformation::Residue const & ref_res( ref_pose.residue( (iter.second).rsd() ) );
-			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
+			TR.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
 				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter.second).atomno() ) << " in rmsd calculation." << std::endl;
 		}
 
@@ -1495,11 +1523,11 @@ rms_at_all_corresponding_atoms(
 
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
-		if ( tr.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
+		if ( TR.Debug.visible() && ( mod_pose.residue( (iter.first).rsd() ).atom_name(  (iter.first).atomno() ) !=
 				ref_pose.residue( (iter.second).rsd() ).atom_name(  (iter.second).atomno() ) ) ) {
 			conformation::Residue const & mod_res( mod_pose.residue( (iter.first).rsd() ) );
 			conformation::Residue const & ref_res( ref_pose.residue( (iter.second).rsd() ) );
-			tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
+			TR.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter.first).atomno() )
 				<< " and " << ref_res.name() << " " << ref_res.atom_name ( (iter.second).atomno() ) << " in rmsd calculation." << std::endl;
 		}
 
@@ -1541,12 +1569,12 @@ rms_at_corresponding_atoms_no_super(
 		// We're passed an explicit map of atoms to match up. Presume that if there's a mismatch, it's intentional.
 		// But let people know about it to be safe.
 		// Commented this out, because even the .visible() lookup takes a non-negligible amount of time!
-		// if( tr.Debug.visible() &&
+		// if( TR.Debug.visible() &&
 		//   ( mod_pose.residue( (iter->first).rsd() ).atom_name(  (iter->first).atomno() ) !=
 		//    ref_pose.residue( (iter->second).rsd() ).atom_name(  (iter->second).atomno() ) ) ) {
 		//  conformation::Residue const & mod_res( mod_pose.residue( (iter->first).rsd() ) );
 		//  conformation::Residue const & ref_res( ref_pose.residue( (iter->second).rsd() ) );
-		//  tr.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
+		//  TR.Debug << "Including distance between " << mod_res.name() << " " << mod_res.atom_name( (iter->first).atomno() )
 		//    << " and " << ref_res.name() << " " << ref_res.atom_name ( (iter->second).atomno() ) << " in rmsd calculation." << std::endl;
 		// }
 

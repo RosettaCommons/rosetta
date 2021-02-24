@@ -82,7 +82,7 @@ void
 set_glycan_iupac_chi_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
-	core::Size resnum,
+	core::Size const resnum,
 	bool action=true,
 	bool cartesian=false
 );
@@ -92,7 +92,7 @@ void
 set_glycan_iupac_bb_torsions(
 	core::pose::Pose const & pose,
 	core::kinematics::MoveMap & movemap,
-	core::Size resnum,
+	core::Size const resnum,
 	bool action=true,
 	bool cartesian=false);
 

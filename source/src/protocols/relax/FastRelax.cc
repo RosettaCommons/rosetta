@@ -398,6 +398,7 @@ FastRelax::parse_my_tag(
 	std::string script_file("");
 	if ( tag->hasOption("relaxscript") ) {
 		script_file = tag->getOption< std::string >("relaxscript");
+		TR.Debug << "Using provided relaxscript file: " << script_file << std::endl;
 	}
 
 	// Only support single file; is there a way to support multiple input files in rosetta scripts?

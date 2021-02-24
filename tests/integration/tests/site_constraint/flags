@@ -1,2 +1,3 @@
 -include_sugars
+-maintain_links
 -out:levels protocols.simple_moves.ConstraintSetMover:400

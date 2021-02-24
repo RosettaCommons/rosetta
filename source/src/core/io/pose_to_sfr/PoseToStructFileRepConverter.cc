@@ -36,6 +36,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
@@ -107,7 +108,8 @@ PoseToStructFileRepConverter::PoseToStructFileRepConverter( StructFileRepOptions
 /// it with a fresh StruftFileRep object, returning an owning pointer to the
 /// new object.
 core::io::StructFileRepOP
-PoseToStructFileRepConverter::new_sfr() {
+PoseToStructFileRepConverter::new_sfr()
+{
 	atom_indices_initialized_ = false;
 	sfr_ = utility::pointer::make_shared< core::io::StructFileRep >();
 	return sfr_;
@@ -116,7 +118,8 @@ PoseToStructFileRepConverter::new_sfr() {
 
 /// @details Non-const access to the StructFileRep object.
 StructFileRepOP
-PoseToStructFileRepConverter::sfr() {
+PoseToStructFileRepConverter::sfr()
+{
 	return sfr_;
 }
 
@@ -149,7 +152,9 @@ PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose )
 /// @details Read atoms/residue information from Pose object and put it in StructFileRep object using options defined in
 /// StructFileRepOptions.
 void
-PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, StructFileRepOptions const & options )
+PoseToStructFileRepConverter::init_from_pose(
+	core::pose::Pose const & pose,
+	StructFileRepOptions const & options )
 {
 	id::AtomID_Mask mask = id::AtomID_Mask( pose.size() );
 	for ( Size resnum = 1; resnum <= pose.size(); ++resnum ) {
@@ -189,7 +194,9 @@ PoseToStructFileRepConverter::init_from_pose(
 }
 
 void
-PoseToStructFileRepConverter::init_from_pose( core::pose::Pose const & pose, id::AtomID_Mask const & mask )
+PoseToStructFileRepConverter::init_from_pose(
+	core::pose::Pose const & pose,
+	id::AtomID_Mask const & mask )
 {
 	init_from_pose( pose, mask, options_ );
 }
@@ -204,7 +211,6 @@ PoseToStructFileRepConverter::init_from_pose(
 {
 	using namespace core;
 	using core::pose::PDBInfo;
-
 
 	new_sfr();
 	if ( &options_ != &options ) { // Yes, address-of comparison
@@ -327,14 +333,16 @@ PoseToStructFileRepConverter::init_from_pose(
 	// AMW: moved this later because it depends on EITHER the pdb_info or the SFR chains
 	// Get Connectivity Annotation Section information.
 	if ( options.write_pdb_link_records() ) {
-		get_connectivity_annotation_info( pose, fresh_pdb_info );
+		get_connectivity_annotation_info( pose, new_chainIDs, fresh_pdb_info );
 	}
 }
 
 
 // Append pdb information to StructFileRep for a single residue.
 void
-PoseToStructFileRepConverter::append_residue_to_sfr( core::pose::Pose const & pose, core::Size const resnum )
+PoseToStructFileRepConverter::append_residue_to_sfr(
+	core::pose::Pose const & pose,
+	core::Size const resnum )
 {
 	core::Size new_atom_num_start = get_new_atom_serial_num();
 	core::Size const new_tercount( pose.chain( resnum ) - 1 );
@@ -413,7 +421,7 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 	ResidueInformation const & res_info,
 	core::conformation::Residue const & rsd,
 	core::Size const atom_index,
-	bool const use_pdb_info)
+	bool const use_pdb_info )
 {
 	return append_atom_info_to_sfr( pose, res_info, rsd, atom_index, use_pdb_info, get_new_atom_serial_num() /*atom index*/, pose.chain( rsd.seqpos() ) - 1 /*Number of termini before this atom*/);
 }
@@ -522,7 +530,7 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 		ai.resName = NomenclatureManager::get_instance()->pdb_code_from_rosetta_name( rsd.name() );
 		if ( ai.resName == "" ) {
 			TR.Warning << "Could not match " << rsd.name() << " to PDB code. ";
-			TR.Warning << "Please turn off the -write_glycan_pdb_code flag or ";
+			TR.Warning << "Please turn off the -write_glycan_pdb_codes flag or ";
 			TR.Warning << "try adding a record to the pdb_sugar.codes database file." << std::endl;
 			ai.resName = rsd.name3();
 		}
@@ -573,7 +581,8 @@ PoseToStructFileRepConverter::append_atom_info_to_sfr(
 }
 
 core::Size
-PoseToStructFileRepConverter::get_new_atom_serial_num() const {
+PoseToStructFileRepConverter::get_new_atom_serial_num() const
+{
 	core::Size new_atom_num;
 	if ( total_sfr_atoms( *sfr_ ) == 0 ) {
 		new_atom_num = 1;
@@ -621,44 +630,67 @@ PoseToStructFileRepConverter::get_new_chainIDs( pose::Pose const & pose )
 	// Loop through a 1st time to get a list of all current chain IDs.
 	utility::vector1< char > chainIDs( n_chains );
 	for ( uint chain_num( 1 ); chain_num <= n_chains; ++chain_num ) {
+		// Chain number (ex. 1) to chain ID (ex. A)
 		char chainID( pose.pdb_info()->chain( conf.chain_begin( chain_num ) ) );
 		if ( chainID == pose::PDBInfo::empty_record() ) {
-			TR.Warning << "PDBInfo chain ID was left as character '" << pose::PDBInfo::empty_record()
-				<< "', denoting an empty record; for convenience, replacing with space." << std::endl;
+			TR.Warning << "PDBInfo chain ID was left as character '" <<
+				pose::PDBInfo::empty_record() << "', denoting an empty record;"
+				" for convenience, replacing with space." << std::endl;
 			chainID = ' ';
 		}
+		// Ex. chainIDs[ 1 ] = A for matching purposes
 		chainIDs[ chain_num ] = chainID;
 	}
 
 	// Loop through a 2nd time and check that each unconnected chain has a unique ID.
-	for ( uint i( 2 ); i <= n_chains; ++i ) {
-		// Check if chain i is connected to anything.
-		conformation::Residue const & chain_begin_res( pose.residue( conf.chain_begin( i ) ) );
-		// Continue only if residue is not protein
-		// This inherently won't work for free-peptide ligands
-		if ( ! chain_begin_res.is_protein() ) {
-			// Continue if the residue has no lower connections
-			// Also continue if the residue is lower connected to a non-protein residue
-			// This gives branched sugars their own chain, but not sugars covalently attached to protein
-			if ( ( ! chain_begin_res.connected_residue_at_lower() ) || ( ! pose.residue( chain_begin_res.connected_residue_at_lower() ).is_protein() ) ) {
-				// Continue if the residue at the end of the chain is not further connected to something else
-				if ( ! pose.residue( conf.chain_end( i ) ).connected_residue_at_upper() ) {
-					// Chain i is not a peptide and is not connected and thus should have a unique ID
-					// If that option is set.
-					// First, check if it already does.
-					for ( uint j( 1 ); j <= n_chains; ++j ) {
-						if ( i == j ) { continue; }
-						if ( chainIDs[ i ] == chainIDs[ j ] ) {
-							// It is not currently unique.  Give it a new potential ID.
-							char new_chainID( chemical::chr_chains[ ( i - 1 ) % chemical::chr_chains.size() ] );
-							while ( chainIDs.contains( new_chainID ) ) {
-								++new_chainID;
-							}
-							chainIDs[ i ] = new_chainID;
-							break;
-						}
+	for ( uint chain_num( 2 ); chain_num <= n_chains; ++chain_num ) {
+		// Grab the residue that marks the beginning of this chain
+		conformation::Residue const & chain_begin_res( pose.residue( conf.chain_begin( chain_num ) ) );
+		// Check if chain chain_num is lower connected to anything
+		// (We are looking for unconnected chains)
+		// The parent residue (if any) of the beginning residue of the chain
+		// will be relevant for glycan branching and conjugation purposes
+		// If no parent residue exists (i.e. no lower connection), parent_res = 0
+		uint const parent_res( chain_begin_res.connected_residue_at_lower() );
+		// Skip this chain only if the residue at the beginning of the unconnected chain is protein
+		// * THIS INHERENTLY WILL NOT WORK FOR FREE PEPTIDE LIGANDS *
+		if ( chain_begin_res.is_protein() ) { continue; }
+		// Skip this chain if this non-protein residue is lower connected
+		// to a protein residue (is conjugated to the protein or a peptide)
+		// Ex. Sugars covalently attached to a protein should keep the same chain as their protein parents
+		if ( ( parent_res ) && ( pose.residue( parent_res ).is_protein() ) ) { continue; }
+		// Skip this chain if the residue at the end of this chain
+		// is further connected to something else
+		if ( pose.residue( conf.chain_end( chain_num ) ).connected_residue_at_upper() ) { continue; }
+		// At this point, we are continuing with this non-protein chain if the ligand
+		// 1) has no lower connections (no parent residue) i.e. is free
+		// 2) has a lower connected parent, but that residue is non-protein
+		// (this would be the case of a branched glycan chain)
+		// This chain should have a unique chain ID different than that of the main protein
+		// First, check if the chain already does have a unique chain ID
+		for ( uint ii( 1 ); ii <= n_chains; ++ii ) {
+			if ( chain_num == ii ) { continue; } // Skip checking the current chain
+			// If the current chain has the same ID as any other chain in the structure
+			// it is not currently unique. Give it a new potential ID
+			if ( chainIDs[ chain_num ] == chainIDs[ ii ] ) {
+				char new_chainID =
+					chemical::chr_chains[ ( chain_num - 1 ) % chemical::chr_chains.size() ];
+				// If this is a carbohydrate lower connected to a non-protein residue,
+				// it is a carbohydrate residue branched off another carbohydrate
+				// (we already checked if this is a glycan conjugated to a protein)
+				if ( ( chain_begin_res.is_carbohydrate() ) && ( parent_res ) ) {
+					// Set its chain ID as the same unique chain ID as its parent
+					// By this point, the parent glycan chain should have
+					// been assigned its unique chain ID
+					new_chainID = chainIDs[ pose.chain( parent_res ) ];
+				} else {
+					// Otherwise, this ligand should have a new unique chain ID
+					while ( chainIDs.contains( new_chainID ) ) {
+						++new_chainID;
 					}
 				}
+				chainIDs[ chain_num ] = new_chainID;
+				break;
 			}
 		}
 	}
@@ -666,7 +698,9 @@ PoseToStructFileRepConverter::get_new_chainIDs( pose::Pose const & pose )
 }
 
 bool
-PoseToStructFileRepConverter::use_pdb_info_for_num( pose::Pose const & pose, Size resnum )
+PoseToStructFileRepConverter::use_pdb_info_for_num(
+	pose::Pose const & pose,
+	Size resnum )
 {
 	//TR << "use pdb info? " << resnum << " " << pose.pdb_info()->nres()  << " " << pose.pdb_info()->obsolete() << " " << options_.renumber_pdb() << std::endl;
 	// Setup options.
@@ -686,8 +720,13 @@ PoseToStructFileRepConverter::use_pdb_info_for_num( pose::Pose const & pose, Siz
 
 
 LinkInformation
-PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, pose::PDBInfoOP const & fresh_pdb_info ) {
-
+PoseToStructFileRepConverter::get_link_record(
+	core::pose::Pose const & pose,
+	core::Size ii,
+	core::Size conn,
+	utility::vector1< char > const & new_chainIDs,
+	pose::PDBInfoOP const & fresh_pdb_info )
+{
 	using namespace id;
 	LinkInformation link;
 	Size jj = pose.residue( ii ).connected_residue_at_resconn( conn );
@@ -715,6 +754,11 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 		link.resSeq1 = fresh_pdb_info->number( ii );
 		link.iCode1 = fresh_pdb_info->icode( ii );
 	}
+	// new_chainIDs should only be not-empty if -output_ligands_as_separate_chains was set
+	if ( ! new_chainIDs.empty() ) {
+		link.chainID1 = new_chainIDs[ pose.chain( ii ) ];
+	}
+
 	std::stringstream ss;
 	ss.width(6);
 	ss << std::right << link.resSeq1;
@@ -738,6 +782,11 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 		link.resSeq2 = fresh_pdb_info->number( jj );
 		link.iCode2 = fresh_pdb_info->icode( jj );
 	}
+	// new_chainIDs should only be not-empty if -output_ligands_as_separate_chains was set
+	if ( ! new_chainIDs.empty() ) {
+		link.chainID2 = new_chainIDs[ pose.chain( jj ) ];
+	}
+
 	std::stringstream ss2;
 	ss2.width(6);
 	ss2 << std::right << link.resSeq2;
@@ -757,8 +806,12 @@ PoseToStructFileRepConverter::get_link_record( core::pose::Pose const & pose, co
 }
 
 SSBondInformation
-PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, pose::PDBInfoOP const & fresh_pdb_info ) {
-
+PoseToStructFileRepConverter::get_ssbond_record(
+	core::pose::Pose const & pose,
+	core::Size ii,
+	core::Size conn,
+	pose::PDBInfoOP const & fresh_pdb_info )
+{
 	using namespace id;
 	SSBondInformation ssbond;
 
@@ -809,8 +862,13 @@ PoseToStructFileRepConverter::get_ssbond_record( core::pose::Pose const & pose, 
 
 /// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 /// SSBondInformation data as appropriate.
-void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose::Pose const & pose, pose::PDBInfoOP const & fresh_pdb_info ) {
-
+/// Will update chain IDs if -output_ligands_as_separate_chains was set
+void
+PoseToStructFileRepConverter::get_connectivity_annotation_info(
+	core::pose::Pose const & pose,
+	utility::vector1< char > const & new_chainIDs,
+	pose::PDBInfoOP const & fresh_pdb_info )
+{
 	using namespace utility;
 	using namespace id;
 	using namespace kinematics;
@@ -876,7 +934,7 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 			}
 
 			// We're just a "regular" connection
-			LinkInformation link = get_link_record( pose, ii, conn, fresh_pdb_info );
+			LinkInformation link = get_link_record( pose, ii, conn, new_chainIDs, fresh_pdb_info );
 			if ( link.name1 != "ABORT" ) { // Safety check - should never trigger as we've checked it above
 				// Skip if we've already made a link to the (presumably lower-numbered) OTHER record...
 				if ( sfr_->link_map().count( link.resID2 ) && link_in_vector( sfr_->link_map()[link.resID2], link ) ) {
@@ -902,9 +960,8 @@ void PoseToStructFileRepConverter::get_connectivity_annotation_info( core::pose:
 /// by generate_default_remarks().
 void PoseToStructFileRepConverter::get_parametric_info(
 	core::io::RemarksOP remarks,
-	core::pose::Pose const & pose
-) {
-
+	core::pose::Pose const & pose )
+{
 	using namespace core::conformation::parametric;
 
 	core::Size const nsets(pose.conformation().n_parameters_sets()); //How many ParametersSet objects are there in the pose?
@@ -1052,9 +1109,8 @@ PoseToStructFileRepConverter::generate_default_remarks( rcsb::ExperimentalTechni
 /// @brief Set whether to write the fold tree, in the
 /// StructFileRepOptions object (options_).
 void
-PoseToStructFileRepConverter::set_fold_tree_io(
-	bool const setting
-) {
+PoseToStructFileRepConverter::set_fold_tree_io( bool const setting )
+{
 	options_.set_fold_tree_io( setting );
 }
 
@@ -1067,9 +1123,8 @@ PoseToStructFileRepConverter::set_fold_tree_io(
 void
 PoseToStructFileRepConverter::grab_membrane_info(
 	core::pose::Pose const &pose,
-	bool const normalize_to_thk
-) {
-
+	bool const normalize_to_thk )
+{
 	if ( pose.conformation().is_membrane() && normalize_to_thk == true ) {
 
 		// Grab membrane residue & current data
@@ -1152,9 +1207,8 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 	core::pose::Pose const &pose,
 	core::Size const res_index,
 	core::Size const atom_index_in_rsd,
-	core::io::AtomInformation &ai
-) {
-
+	core::io::AtomInformation &ai )
+{
 	if ( options_.skip_connect_info() ) return;
 	if ( pose.size() == 0 ) return; //Probably unnecesary, but why not?
 
@@ -1214,8 +1268,8 @@ PoseToStructFileRepConverter::grab_conect_records_for_atom(
 void
 PoseToStructFileRepConverter::grab_foldtree(
 	core::pose::Pose const &pose,
-	bool const output_foldtree
-) {
+	bool const output_foldtree )
+{
 	if ( !output_foldtree ) return;
 	std::stringstream sstr;
 	sstr << pose.fold_tree();
@@ -1227,8 +1281,8 @@ PoseToStructFileRepConverter::grab_foldtree(
 void
 PoseToStructFileRepConverter::grab_pdb_parents(
 	core::pose::Pose const &pose,
-	bool const output_parents
-) {
+	bool const output_parents )
+{
 	if ( !output_parents ) return;
 	std::string value;
 	bool has_parents = core::pose::get_comment( pose, "parents", value );
@@ -1242,8 +1296,8 @@ PoseToStructFileRepConverter::grab_pdb_parents(
 void
 PoseToStructFileRepConverter::grab_pdb_comments(
 	core::pose::Pose const &pose,
-	bool const output_comments
-) {
+	bool const output_comments )
+{
 	if ( !output_comments ) return;
 	sfr_->pdb_comments() = core::pose::get_all_comments( pose );
 }
@@ -1257,8 +1311,8 @@ PoseToStructFileRepConverter::grab_pdb_comments(
 void
 PoseToStructFileRepConverter::grab_torsion_records(
 	core::pose::Pose const &pose,
-	bool const output_torsions
-) {
+	bool const output_torsions )
+{
 	using namespace ObjexxFCL::format;
 
 	if ( !output_torsions ) return;
@@ -1297,9 +1351,8 @@ PoseToStructFileRepConverter::grab_torsion_records(
 /// StructFileRep for output to pdbs/mmCIF/whatnot.
 /// @details This also abuses REMARK lines, and should be rewritten.
 void
-PoseToStructFileRepConverter::grab_pdbinfo_labels(
-	core::pose::Pose const &pose
-) {
+PoseToStructFileRepConverter::grab_pdbinfo_labels( core::pose::Pose const &pose )
+{
 	using namespace ObjexxFCL::format;
 
 	// Added by Daniel-Adriano Silva, used to write the PDBInfoLabels to the REMARK
@@ -1316,10 +1369,8 @@ PoseToStructFileRepConverter::grab_pdbinfo_labels(
 }
 
 void
-PoseToStructFileRepConverter::grab_pose_energies_table(
-	core::pose::Pose const & pose
-){
-
+PoseToStructFileRepConverter::grab_pose_energies_table( core::pose::Pose const & pose )
+{
 	utility::vector1< std::string > labels;
 	utility::vector1< core::Real >  weights;
 	utility::vector1< std::vector< std::string > > table;
@@ -1409,9 +1460,8 @@ PoseToStructFileRepConverter::grab_simple_metric_data( core::pose::Pose const & 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @brief Get the total number of atoms in the SFR.
 core::Size
-PoseToStructFileRepConverter::total_sfr_atoms(
-	StructFileRep const & sfr
-) const {
+PoseToStructFileRepConverter::total_sfr_atoms( StructFileRep const & sfr) const
+{
 	core::Size total = 0;
 	for ( core::Size chain = 0, chain_max=sfr.chains().size(); chain < chain_max ; ++chain ) {
 		total += total_sfr_atoms( sfr, chain );
@@ -1423,8 +1473,8 @@ PoseToStructFileRepConverter::total_sfr_atoms(
 core::Size
 PoseToStructFileRepConverter::total_sfr_atoms(
 	StructFileRep const & sfr,
-	core::Size const chain_num
-) const {
+	core::Size const chain_num ) const
+{
 	runtime_assert_string_msg( chain_num < sfr.chains().size(), "Error in core::io::pose_to_sfr::PoseToStructFileRepConverter::total_sfr_atoms(): The chain index is out of range.");
 	return sfr.chains()[ chain_num ].size();
 }
@@ -1664,9 +1714,8 @@ PoseToStructFileRepConverter::generate_HELIXInformation(
 	ResidueInformation const & start_info,
 	ResidueInformation const & stop_info,
 	core::Size const index,
-	core::Size const length
-){
-
+	core::Size const length )
+{
 	HELIXInformation helix;
 	helix.helixID = index;
 	helix.helix_name = std::string(ObjexxFCL::format::I(3, index)); //3-width string
@@ -1693,9 +1742,8 @@ void
 PoseToStructFileRepConverter::generate_SHEETInformation(
 	ResidueInformation const & start_info,
 	ResidueInformation const & stop_info,
-	core::Size const index
-){
-
+	core::Size const index )
+{
 	SHEETInformation sheet;
 	//IGNORING strand_num
 	sheet.sheetID = std::string(ObjexxFCL::format::I(3, index)); //3-width string

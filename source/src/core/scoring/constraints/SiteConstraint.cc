@@ -153,14 +153,19 @@ SiteConstraint::setup_csts(
 	func::FuncOP const & func
 ) {
 	//Size target_chain = pose.chain( res );
-	Size constraint_chain = pose::get_chain_id_from_chain( chain, pose );
+	// Conjugated sugars to the main chain protein generally have the same chain (ex. A),
+	// but will have a different chain id in Rosetta (ex. 1,2,3)
+	// Using all chain ids associated with a single chain will avoid problems with branches on proteins
+	utility::vector1< Size > constraint_chain_ids = pose::get_chain_ids_from_chain( chain, pose );
 
-	Size start_res = pose.conformation().chain_begin( constraint_chain );
-	Size end_res = pose.conformation().chain_end( constraint_chain );
 	utility::vector1<bool> residues(pose.size(), false);
+	for ( Size constraint_chain : constraint_chain_ids ) {
+		Size start_res = pose.conformation().chain_begin( constraint_chain );
+		Size end_res = pose.conformation().chain_end( constraint_chain );
 
-	for ( Size j = start_res ; j <= end_res ; ++j ) {
-		residues[j] = true;
+		for ( Size j = start_res ; j <= end_res ; ++j ) {
+			residues[j] = true;
+		}
 	}
 	setup_csts(res, atm_name, residues, pose, func);
 

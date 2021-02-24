@@ -82,6 +82,10 @@ public:
 	void
 	set_dihedral_mask( std::map< core::Size, utility::vector1< core::Size >> mask );
 
+	///@brief Return the name of the last sampler used during the last apply
+	std::string
+	get_name_of_last_sampler_used();
+
 public:
 
 	void
@@ -123,12 +127,17 @@ private:
 	void
 	setup_all_bb_residues( core::pose::Pose const & pose );
 
+	///@brief Set the name of the last sampler used during the last apply
+	void
+	set_name_of_last_sampler_used( std::string const name_of_last_sampler_used );
+
 private:
 
 	//bb_sampler::BBDihedralSamplerOP sampler_;
 
 	std::map< core::Size, utility::vector1< bb_sampler::BBDihedralSamplerOP > > samplers_;
 	utility::vector1< core::Size > sampler_torsion_types_;
+	std::string name_of_last_sampler_used_ = "";
 
 	core::select::residue_selector::ResidueSelectorOP selector_ = nullptr;
 	utility::vector1< core::Size > bb_residues_; //This is faster than turning the movemap into a vector each apply, as we will need to randomly sample on these residues.

@@ -39,15 +39,28 @@ main( int argc, char *argv[] )
 		devel::init( argc, argv );
 
 		// Declare variables.
-		Pose in_pose;
+		Pose in_pose1;
+		Pose in_pose2;
+		protocols::constraint_movers::ConstraintSetMover constraint_setter;
 
 		// Try to load and output the Pose.
-		pose_from_file( in_pose, PATH + "protein_with_glycans.pdb" , core::import_pose::PDB_file);
-		cout << in_pose << endl;
+		// 3AY4 has three protein chains: A, B, C
+		// each with conjugated glycan chains
+		// The glycans on chain A and B are the identical and have one branch point
+		// One of the glycans on chain C has two branches
+		pose_from_file( in_pose1, PATH + "3AY4_modified.pdb" , core::import_pose::PDB_file);
+		cout << in_pose1 << endl;
+		// Apply the constraints
+		constraint_setter.constraint_file( PATH + "3AY4_modified.cst" );
+		constraint_setter.apply( in_pose1 );
 
-		protocols::constraint_movers::ConstraintSetMover constraint_setter;
-		constraint_setter.constraint_file( PATH + "glycan_to_protein_and_glycan.cst" );
-		constraint_setter.apply( in_pose );
+		// Try to load and output the Pose.
+		// 4BJ0 is a carbohydrate-binding module bound to a branched oligosaccharide
+		pose_from_file( in_pose2, PATH + "4BJ0.pdb" , core::import_pose::PDB_file);
+		cout << in_pose2 << endl;
+		// Apply the constraints
+		constraint_setter.constraint_file( PATH + "4BJ0.cst" );
+		constraint_setter.apply( in_pose2 );
 
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

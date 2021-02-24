@@ -46,23 +46,27 @@ public:  // Standard methods //////////////////////////////////////////////////
 		core_init_with_additional_options( "-include_sugars -out:level 500" );
 
 		// Test that oligosaccharides are loaded correctly.
-		pose_from_file( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb" , core::import_pose::PDB_file);
-		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb" , core::import_pose::PDB_file);
+		pose_from_file( maltotriose_, "core/chemical/carbohydrates/maltotriose.pdb", core::import_pose::PDB_file);
+		pose_from_file( isomaltose_, "core/chemical/carbohydrates/isomaltose.pdb", core::import_pose::PDB_file);
 
 		// Test branched oligosaccharide.
-		pose_from_file( branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb" , core::import_pose::PDB_file);
+		pose_from_file( branched_fragment_, "core/chemical/carbohydrates/amylopectin_fragment.pdb", core::import_pose::PDB_file);
 
 		// Test N-linked glycosylation.
-		pose_from_file( N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb" , core::import_pose::PDB_file);
+		pose_from_file( N_linked_, "core/chemical/carbohydrates/glycosylated_peptide.pdb", core::import_pose::PDB_file);
 
 		// Test modified sugar patch system.
-		pose_from_file( glucosamine_, "core/chemical/carbohydrates/GlcN.pdb" , core::import_pose::PDB_file);
+		pose_from_file( glucosamine_, "core/chemical/carbohydrates/GlcN.pdb", core::import_pose::PDB_file);
 
 		// Test a combination of the above.
-		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb" , core::import_pose::PDB_file);
+		pose_from_file( Lex_, "core/chemical/carbohydrates/Lex.pdb", core::import_pose::PDB_file);
 
 		// Test that oligosaccharides can be created from a given sequence.
 		make_pose_from_saccharide_sequence( lactose_, "beta-D-Galp-(1->4)-Glcp" );
+
+		// Test last_carbon_in_ring for ketoses and aldoses
+		// using GlcN as the aldose hexose pyranose
+		pose_from_file( Neu_, "core/chemical/carbohydrates/Neu.pdb", core::import_pose::PDB_file);
 	}
 
 	// Destruction
@@ -152,6 +156,21 @@ public:  // Tests /////////////////////////////////////////////////////////////
 		TS_ASSERT_EQUALS( res2.carbohydrate_info()->branch_point( 1 ), 6 );
 	}
 
+	// Confirm that the last carbon in the ring is assigned correctly.
+	void test_CarbohydrateInfo_last_carbon_in_ring()
+	{
+		using namespace core;
+		using namespace conformation;
+
+		TR << "Testing last_carbon_in_ring() method of CarbohydrateInfo."  << std::endl;
+		// GlcN is a hexose with one exocyclic carbon (pyranose ring)
+		Residue const & res_GlcN( glucosamine_.residue( 1 ) );
+		TS_ASSERT_EQUALS( res_GlcN.carbohydrate_info()->last_carbon_in_ring(), 5 );
+		// Neu is a nonose with three exocyclic carbons (pyranose ring)
+		Residue const & res_Neu( Neu_.residue( 1 ) );
+		TS_ASSERT_EQUALS( res_Neu.carbohydrate_info()->last_carbon_in_ring(), 5 );
+	}
+
 
 private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose maltotriose_;  // a (1alpha->4) trisaccharide of D-glucose
@@ -161,5 +180,6 @@ private:  // Private data /////////////////////////////////////////////////////
 	core::pose::Pose lactose_;  // a (1beta->4) disaccharide of D-glucose and D-galactose
 	core::pose::Pose glucosamine_;  // 2-amino-2-deoxy-D-glucopyranose
 	core::pose::Pose Lex_;  // Lewisx: beta-D-Galp-(1->4)-[alpha-D-Fucp-(1->3)]-D-GlcpNAc
+	core::pose::Pose Neu_;  // ->8)-alpha-neuraminic acid
 
 };  // class CarbohydrateInfoTests

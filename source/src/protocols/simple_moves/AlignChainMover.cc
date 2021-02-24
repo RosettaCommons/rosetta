@@ -57,6 +57,10 @@ Ca_coord( core::pose::Pose const & pose, utility::vector1< core::Size > const po
 
 	coords.clear();
 	for ( core::Size const pos : positions ) {
+		// @mlnance
+		// carbohydrate residues will not have a "CA" atom name
+		// should the anomeric carbon be added? Skipping for now
+		if ( ! pose.residue( pos ).has( "CA" ) ) { continue; }
 		coords.push_back( pose.residue( pos ).xyz( "CA" ) );
 	}
 	return coords;

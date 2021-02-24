@@ -53,14 +53,30 @@ move_ligand_to_desired_centroid(
 	core::Vector const & desired_centroid,
 	core::pose::Pose & pose
 ){
+	TR.Debug << "Start move_ligand_to_desired_centroid using specified chains " << chains << std::endl;
 
 	utility::vector1<core::Size> chain_ids;
 	utility::vector1<core::Size> jump_ids;
 
 	//obtain chain IDs and jump IDs from pose
 	for ( std::string const & chain: chains ) {
-		chain_ids.push_back(core::pose::get_chain_id_from_chain(chain, pose));
-		jump_ids.push_back(core::pose::get_jump_id_from_chain_id(chain_ids.back(), pose));
+		// Glycan ligands may have multiple chain ids (e.g. 4, 5)
+		// for one single chain (e.g. X) due to the effects of branching
+		// Therefore it is necessary to account for multiple chain ids
+		// defining a single chain
+		utility::vector1< core::Size > chain_ids_for_chain =
+			core::pose::get_chain_ids_from_chain( chain, pose );
+		for ( core::Size const & chain_id: chain_ids_for_chain ) {
+			chain_ids.push_back( chain_id );
+		}
+		// Grab the Jump id corresponding to this chain (e.g. X)
+		// If ligand were a branched glycan (e.g. chain X --> chain ids [4,5])
+		// then it should be the first chain id (here 4) that has a Jump id
+		// If the ligand is a small molecule with one chain (e.g. X)
+		// and one chain id (e.g. 2), then chain id 2 should have a Jump id
+		core::Size jump_id = core::pose::get_jump_id_from_chain_id(chain_ids_for_chain.front(), pose);
+		jump_ids.push_back(jump_id);
+		TR.Debug << "chain " << chain << " corresponds to chain ids " << chain_ids << " and Jump id " << jump_id << std::endl;
 	}
 
 	core::Vector const ligand_centroid = protocols::geometry::centroid_by_chains(pose, chain_ids);
@@ -84,6 +100,7 @@ move_ligand_to_desired_centroid(
 			mover.apply(pose);
 		}
 	}
+	TR.Debug << "Finish move_ligand_to_desired_centroid using specified chains " << chains << std::endl;
 }
 
 /// @brief Move the center of the object(s) downstream of jump_id to the desired_centroid
@@ -93,6 +110,7 @@ move_ligand_to_desired_centroid(
 	core::Vector const & desired_centroid,
 	core::pose::Pose & pose
 ){
+	TR.Debug << "Start move_ligand_to_desired_centroid by Jump id " << jump_id << std::endl;
 	core::Vector const ligand_centroid = protocols::geometry::downstream_centroid_by_jump(pose, jump_id);
 	core::Vector const trans_vec = desired_centroid - ligand_centroid;
 	core::Real const trans_len = trans_vec.length();
@@ -102,6 +120,7 @@ move_ligand_to_desired_centroid(
 		mover.trans_axis(trans_vec);
 		mover.apply(pose);
 	}
+	TR.Debug << "Finish move_ligand_to_desired_centroid by Jump id " << jump_id << std::endl;
 }
 
 /// @brief Move the neighbor atom of the specified multiple chains to the desired_position

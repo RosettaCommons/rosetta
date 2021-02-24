@@ -118,7 +118,7 @@ HbondMetric::parse_my_tag(
 	set_include_self(tag->getOption< bool >("include_self", include_self_));
 
 	if ( tag->hasOption("residue_selector2") ) {
-		set_residue_selector2( select::residue_selector::parse_residue_selector( tag, datamap, "residue_selector2" ) );
+		set_residue_selector2( select::residue_selector::parse_residue_selector(tag, datamap, "residue_selector2" ) );
 	}
 }
 

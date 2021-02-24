@@ -85,19 +85,28 @@ public:
 	void init_from_pose(core::pose::Pose const & pose );
 
 	/// @brief Fill StructFileRep object  using information from given Pose object and a set of options.
-	void init_from_pose(core::pose::Pose const & pose, StructFileRepOptions const & options);
+	void init_from_pose(
+		core::pose::Pose const & pose,
+		StructFileRepOptions const & options);
 
 	/// @brief Fill StructFileRep object using information from given Pose object,
 	///  for a specified subset of residues
-	void init_from_pose( core::pose::Pose const & pose, utility::vector1< core::Size > const & residue_indices );
+	void init_from_pose(
+		core::pose::Pose const & pose,
+		utility::vector1< core::Size > const & residue_indices );
 
 	/// @brief Fill StructFileRep object using information from given Pose object,
 	///  for a specified subset of residues and atoms
-	void init_from_pose( core::pose::Pose const & pose, id::AtomID_Mask const & mask);
+	void init_from_pose(
+		core::pose::Pose const & pose,
+		id::AtomID_Mask const & mask);
 
 	/// @brief Fill StructFileRep object using information from given Pose object,
 	///  for a specified subset of residues and atoms
-	void init_from_pose( core::pose::Pose const & pose, id::AtomID_Mask const & mask, StructFileRepOptions const & options);
+	void init_from_pose(
+		core::pose::Pose const & pose,
+		id::AtomID_Mask const & mask,
+		StructFileRepOptions const & options);
 
 	/// @brief Get additional pose data.
 	/// @details This is rewritten from the old core/io/pdb/file_data.cc:write_additional_pdb_data() function.
@@ -121,13 +130,28 @@ public:
 
 	/// @brief Get connectivity annotation information from the Pose object and create LinkInformation and
 	/// SSBondInformation data as appropriate.
-	void get_connectivity_annotation_info( core::pose::Pose const & pose, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+	void get_connectivity_annotation_info(
+		core::pose::Pose const & pose,
+		utility::vector1< char > const & new_chainIDs,
+		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
 
-	LinkInformation get_link_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
-	SSBondInformation get_ssbond_record( core::pose::Pose const & pose, core::Size ii, core::Size conn, core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+	LinkInformation get_link_record(
+		core::pose::Pose const & pose,
+		core::Size ii,
+		core::Size conn,
+		utility::vector1< char > const & new_chainIDs,
+		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
+
+	SSBondInformation get_ssbond_record(
+		core::pose::Pose const & pose,
+		core::Size ii,
+		core::Size conn,
+		core::pose::PDBInfoOP const & fresh_pdb_info = nullptr );
 
 	/// @brief Get parametric information from the Pose object and add it to the PDB remarks.
-	void get_parametric_info( core::io::RemarksOP remarks, core::pose::Pose const & pose );
+	void get_parametric_info(
+		core::io::RemarksOP remarks,
+		core::pose::Pose const & pose );
 
 	/// @brief Grab all the data that makes the pose energies table
 	void grab_pose_energies_table( core::pose::Pose const & pose);
@@ -164,7 +188,9 @@ private: //PRIVATE FUNCTIONS:
 
 	utility::vector1< char > get_new_chainIDs( pose::Pose const & pose );
 
-	bool use_pdb_info_for_num( pose::Pose const & pose, Size resnum );
+	bool use_pdb_info_for_num(
+		pose::Pose const & pose,
+		Size resnum );
 
 	/// @brief Append just residue-based info to StructFileRep
 	///  For now, it is only HETNAM Data
@@ -220,7 +246,9 @@ private: //PRIVATE FUNCTIONS:
 	/// @param [in] normalize_to_thk Normalized MEM lines, useful for visualizing the boundaries
 	/// of the membrane by coupling the NORM and THK coordinates.  Added by Rebecca.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	void grab_membrane_info( core::pose::Pose const & pose, bool const normalize_to_thk );
+	void grab_membrane_info(
+		core::pose::Pose const & pose,
+		bool const normalize_to_thk );
 
 	/// @brief Get the conect record information from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -240,15 +268,21 @@ private: //PRIVATE FUNCTIONS:
 
 	/// @brief Get the foldtree from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
-	void grab_foldtree( core::pose::Pose const &pose, bool const output_foldtree );
+	void grab_foldtree(
+		core::pose::Pose const &pose,
+		bool const output_foldtree );
 
 	/// @brief Get the pdb parents from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
-	void grab_pdb_parents( core::pose::Pose const &pose, bool const output_parents );
+	void grab_pdb_parents(
+		core::pose::Pose const &pose,
+		bool const output_parents );
 
 	/// @brief Get the pdb comments from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
-	void grab_pdb_comments( core::pose::Pose const &pose, bool const output_comments );
+	void grab_pdb_comments(
+		core::pose::Pose const &pose,
+		bool const output_comments );
 
 	/// @brief Get the torsion information from the pose and store it in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -256,7 +290,9 @@ private: //PRIVATE FUNCTIONS:
 	/// records.  This abuses the REMARK lines in the PDB format, and should be
 	/// refactored.  Keeping as-is for now to preserve legacy behaviour (VKM
 	/// 29 January 2016, Chemical XRW).
-	void grab_torsion_records( core::pose::Pose const &pose, bool const output_torsions );
+	void grab_torsion_records(
+		core::pose::Pose const &pose,
+		bool const output_torsions );
 
 	/// @brief Get the pdbinfo labels from the pose and store them in the
 	/// StructFileRep for output to pdbs/mmCIF/whatnot.
@@ -266,7 +302,9 @@ private: //PRIVATE FUNCTIONS:
 	core::Size total_sfr_atoms( StructFileRep const & sfr) const;
 
 	/// @brief Get the total number of atoms in a chain in the SFR.
-	core::Size total_sfr_atoms( StructFileRep const & sfr, core::Size const chain_num ) const;
+	core::Size total_sfr_atoms(
+		StructFileRep const & sfr,
+		core::Size const chain_num ) const;
 
 	/// @brief Return the PDB resName, chainID, resSeq, and iCode for the given Rosetta sequence position.
 	/// @details Output is res_info.

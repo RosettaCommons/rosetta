@@ -643,7 +643,7 @@ RigidBodySpinMover::apply( core::pose::Pose & pose )
 		spin_axis_ = dummy_up - rot_center_;
 	}
 
-	TRBM << "Spin: " << "Rot (before: "
+	TRBM << "Spin: " << "Rot (before): "
 		<< rot_center_.x() << " "
 		<< rot_center_.y() << " "
 		<< rot_center_.z() << std::endl;
@@ -719,7 +719,7 @@ RigidBodyDeterministicSpinMover::apply( core::pose::Pose & pose )
 		spin_axis_ = dummy_up - rot_center_;
 	}
 
-	TRBM << "Spin: " << "Rot (before: "
+	TRBM << "Spin: " << "Rot (before): "
 		<< rot_center_.x() << " "
 		<< rot_center_.y() << " "
 		<< rot_center_.z() << std::endl;
@@ -1004,6 +1004,7 @@ RigidBodyTransMover::apply( core::pose::Pose & pose )
 	if ( axis.is_zero() ) {
 		axis = centroid_axis(pose);
 	}
+	TRBM.Debug << "Centroid axis: " << axis.to_string() << std::endl;
 
 	// set flexible jump in the pose
 	core::kinematics::Jump flexible_jump = pose.jump( rb_jump_ );

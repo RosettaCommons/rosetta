@@ -271,14 +271,21 @@ public: // Accessors/Mutators /////////////////////////////////////////////////
 	core::Size
 	n_ring_carbons() const
 	{
-		return n_carbons_ - 1 /*oxygen*/;
+		if ( is_acyclic() ) { return 0; }
+		return ring_size_ - 1 /*-1 due to cyclic oxygen*/;
 	}
 
 	/// @brief    Get the last carbon of the ring.  Varies with ketose or aldose.
 	core::Size
 	last_carbon_in_ring() const
 	{
-		return n_carbons_ - 1 /*oxygen*/ + anomeric_carbon_ - 1;
+		if ( is_acyclic() ) { return 0; }
+		return n_ring_carbons();
+		// @mlnance Feb 2021
+		// Previous behavior (below) assumed only one exocyclic carbon
+		//return n_carbons_ - 1 /*oxygen*/ + anomeric_carbon_ - 1;
+		// This would not provide an accurate number for sugars like sialic acid
+		// But a more rigorous approach would be best here
 	}
 
 	/// @brief  Return true if the monosaccharide is a triose.

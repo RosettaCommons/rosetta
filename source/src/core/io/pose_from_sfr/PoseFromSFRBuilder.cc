@@ -398,9 +398,13 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 
 	known_links_ = core::io::explicit_links_from_sfr_linkage( sfr_.link_map(), rinfos_ );
 	if ( options_.auto_detect_glycan_connections() ) {
+		TR.Debug << "Auto-detecting glycan connections" << std::endl;
 		//This clears the links before fix_glycan_order call which makes the clear in add_glycan_links_to_map redundant but I'm leaving it for now.
 		if ( !options_.maintain_links() ) {
+			TR.Debug << "Clearing linkages read from provided LINK records" << std::endl;
 			known_links_.clear();
+		} else {
+			TR.Debug << "Keeping linkages read from provided LINK records" << std::endl;
 		}
 		utility::vector1< core::Size > chain_ends = core::io::fix_glycan_order( rinfos_, glycan_positions_, options_, known_links_ );
 		// Reset correspondences for reordered glycans
@@ -414,6 +418,7 @@ PoseFromSFRBuilder::pass_2_resolve_residue_types()
 			}
 		}
 		core::io::add_glycan_links_to_map( known_links_, core::io::determine_glycan_links( rinfos_, options_ ), rinfos_ );
+		TR.Debug << "Finished auto-detecting glycan connections" << std::endl;
 	}
 
 	for ( Size ii = 1; ii <= rinfos_.size(); ++ii ) {
@@ -1328,6 +1333,7 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 	using namespace core::chemical;
 
 	std::string const & resid = rinfos_[ seqpos ].resid();
+	std::string const & name3 = rinfos_[ seqpos ].resName(); // for debugging
 
 	// Carbohydrate base names will have "->?)-" as a prefix if their main-
 	// chain connectivity requires LINK records to determine.  Fortuitously,
@@ -1337,7 +1343,8 @@ PoseFromSFRBuilder::determine_residue_branching_info(
 
 	bool unknown_main_chain_connectivity( false );
 	if ( sfr_.residue_type_base_names().count( resid ) ) {
-		TR.Trace << "Current residue has had its base name extracted from the PDB file: ";
+		TR.Trace << "Current residue '" << name3 <<
+			"' has had its base name extracted from the PDB file: ";
 		TR.Trace << sfr_.residue_type_base_names()[ resid ].second << endl;
 		unknown_main_chain_connectivity =
 			( sfr_.residue_type_base_names()[ resid ].second[ CARB_MAINCHAIN_CONN_POS ] == '?' );
