@@ -63,7 +63,7 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-		core::Size const & jump_id, bool const quick, bool const verbose, Real const & filtered_median_distance = 1000.0f);
+		core::Size const & jump_id, bool const quick, bool const verbose, bool const use_rosetta_radii = false, Real const & filtered_median_distance = 1000.0f);
 
 	~ShapeComplementarityFilter() override= default;
 
@@ -84,6 +84,7 @@ public:// mutator
 	void jump_id( core::Size const & jump_id );
 	void quick( bool const quick );
 	void verbose( bool const verbose );
+	void use_rosetta_radii( bool const use_rosetta_radii );
 	void residues1( std::string const & res_string );
 	void residues2( std::string const & res_string );
 	void sym_dof_name( std::string const & sym_dof_name );
@@ -186,6 +187,7 @@ private:
 	core::Size jump_id_;
 	bool quick_ = false;
 	bool verbose_ = false;
+	bool use_rosetta_radii_ = false;
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
 	bool write_int_area_;

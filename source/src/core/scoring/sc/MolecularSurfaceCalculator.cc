@@ -80,6 +80,7 @@ MolecularSurfaceCalculator::MolecularSurfaceCalculator()
 	settings.weight = 0.5;
 	settings.binwidth_dist = 0.02;
 	settings.binwidth_norm = 0.02;
+	settings.use_rosetta_radii=false;
 
 	Reset();
 }
@@ -322,6 +323,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 		scatom.z(xyz.z());
 		scatom.nresidue = residue.seqpos();
 		scatom.radius = 0;
+		scatom.atom_type_radius = residue.atom_type(i).lj_radius();
 		strncpy(scatom.residue, residue.name3().c_str(), sizeof(scatom.residue)-1);
 		strncpy(scatom.atom, residue.atom_name(i).c_str()+1, sizeof(scatom.atom)-1);
 
@@ -329,6 +331,7 @@ core::Size MolecularSurfaceCalculator::AddResidue(
 			TR.Error << "Failed to add residue " << residue.name3() << " at position " << residue.seqpos() << " to surface - cannot find radius for " << residue.atom_name(i) << std::endl;
 			return 0;
 		}
+
 		scatoms.push_back(scatom);
 	}
 
@@ -387,6 +390,10 @@ int MolecularSurfaceCalculator::AddAtom(int molecule, Atom &atom)
 int MolecularSurfaceCalculator::AssignAtomRadius(Atom &atom)
 {
 	std::vector<ATOM_RADIUS>::const_iterator radius;
+	if ( settings.use_rosetta_radii ) {
+		atom.radius = atom.atom_type_radius;
+		return int( atom.radius != 0 );
+	}
 
 	// Assign radius with wildcard matching
 	for ( radius = radii_.begin(); radius != radii_.end(); ++radius ) {
@@ -1307,6 +1314,7 @@ Atom::Atom() : numeric::xyzVector < MolecularSurfaceCalculator::ScValue > (0.0)
 	nresidue = 0;
 	molecule = 0;
 	radius = 0;
+	atom_type_radius = 0;
 	density = 0;
 	atten = 0;
 	access = 0;

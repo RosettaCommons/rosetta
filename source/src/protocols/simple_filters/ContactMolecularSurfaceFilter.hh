@@ -62,7 +62,7 @@ public:// constructor/destructor
 
 	// @brief constructor with arguments
 	ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
-		bool const quick, bool const verbose );
+		bool const quick, bool const verbose, bool const use_rosetta_radii=false);
 
 	~ContactMolecularSurfaceFilter() override= default;
 
@@ -79,6 +79,7 @@ public:// accessor
 public:// mutator
 	void quick( bool const quick );
 	void verbose( bool const verbose );
+	void use_rosetta_radii( bool const use_rosetta_radii );
 
 public:// parser
 	void parse_my_tag( TagCOP tag,
@@ -129,6 +130,7 @@ private:
 	bool apolar_target_;
 	bool quick_ = false;
 	bool verbose_ = false;
+	bool use_rosetta_radii_ = false;
 	core::select::residue_selector::ResidueSelectorCOP selector1_;
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
 

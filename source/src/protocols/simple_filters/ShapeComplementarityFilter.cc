@@ -66,6 +66,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	jump_id_( 1 ),
 	quick_( false ),
 	verbose_( false ),
+	use_rosetta_radii_( false ),
 	selector1_(),
 	selector2_(),
 	write_int_area_( false ),
@@ -76,7 +77,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 
 // @brief constructor with arguments
 ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc, Real const & filtered_area,
-	core::Size const & jump_id, bool const quick, bool const verbose, Real const & filtered_median_distance /*= 1000.0f*/):
+	core::Size const & jump_id, bool const quick, bool const verbose, bool const use_rosetta_radii, Real const & filtered_median_distance /*= 1000.0f*/):
 	Filter( "ShapeComplementarity" ),
 	filtered_sc_( filtered_sc ),
 	filtered_area_( filtered_area ),
@@ -84,6 +85,7 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc
 	jump_id_( jump_id ),
 	quick_( quick ),
 	verbose_( verbose ),
+	use_rosetta_radii_( use_rosetta_radii ),
 	selector1_(),
 	selector2_(),
 	sym_dof_name_("")
@@ -95,6 +97,7 @@ void ShapeComplementarityFilter::filtered_median_distance( Real const & filtered
 void ShapeComplementarityFilter::jump_id( core::Size const & jump_id ) { jump_id_ = jump_id; }
 void ShapeComplementarityFilter::quick( bool const quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( bool const verbose ) { verbose_ = verbose; }
+void ShapeComplementarityFilter::use_rosetta_radii( bool const use_rosetta_radii ) { use_rosetta_radii_ = use_rosetta_radii; }
 
 void ShapeComplementarityFilter::residues1( std::string const & res_string )
 {
@@ -133,6 +136,9 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 
 	if ( quick_ ) {
 		scc.settings.density = 5.0;
+	}
+	if ( use_rosetta_radii_ ) {
+		scc.settings.use_rosetta_radii = true;
 	}
 	scc.Reset(); // this may not be needed anymore, but I'm leaving it here for safety
 
@@ -303,6 +309,7 @@ ShapeComplementarityFilter::parse_my_tag(
 	write_d_median_ = tag->getOption<bool>( "write_median_dist", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
 	multicomp( tag->getOption< bool >("multicomp", false) );
+	use_rosetta_radii_ = tag->getOption<bool>( "use_rosetta_radii", false );
 
 	if ( tag->hasOption("residues1") ) {
 		residues1( tag->getOption< std::string >( "residues1" ) );
@@ -534,7 +541,8 @@ void ShapeComplementarityFilter::provide_xml_schema( utility::tag::XMLSchemaDefi
 		+ XMLSchemaAttribute( "residues1" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
 		+ XMLSchemaAttribute( "residues2" , xs_string , "Explicitly set which residues are on each side of the interface (both symmetric and non-symmetric poses.)" )
 		+ XMLSchemaAttribute( "residue_selector1" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
-		+ XMLSchemaAttribute( "residue_selector2" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
+		+ XMLSchemaAttribute( "residue_selector2" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
+		+ XMLSchemaAttribute::attribute_w_default( "use_rosetta_radii" , xsct_rosetta_bool , "use rosetta radii instead of historical shape complementarity radii" , "false" );
 
 	protocols::filters::xsd_type_definition_w_attributes( xsd, class_name(), "Calculates the Lawrence and Coleman shape complementarity using a port of the original Fortran code from CCP4's sc. Symmetry aware. Can be calculated across a jump (default behavior) or the two surfaces can be specified by explicitly providing lists of the residues making up each surface.", attlist );
 }

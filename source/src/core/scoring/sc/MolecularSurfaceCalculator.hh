@@ -147,9 +147,11 @@ public:
 	core::Size molecule;
 #ifdef SC_PRECISION_REAL
 	core::Real radius;
+	core::Real atom_type_radius;
 	core::Real density;
 #else
 	float radius;
+	float atom_type_radius;
 	float density;
 #endif
 	int atten;
@@ -199,6 +201,7 @@ public:
 		core::Real binwidth_dist;
 		core::Real binwidth_norm;
 		core::Real near_squared_size;
+		bool use_rosetta_radii;
 
 #ifdef USEOPENCL
 		core::SSize gpu;

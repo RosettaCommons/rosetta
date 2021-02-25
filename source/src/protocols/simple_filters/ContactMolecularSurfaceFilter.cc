@@ -56,6 +56,7 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter():
 	apolar_target_( false ),
 	quick_( false ),
 	verbose_( false ),
+	use_rosetta_radii_( false ),
 	selector1_(),
 	selector2_()
 {}
@@ -63,7 +64,7 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter():
 
 // @brief constructor with arguments
 ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filtered_area, Real const & distance_weight,
-	bool const quick, bool const verbose ):
+	bool const quick, bool const verbose, bool const use_rosetta_radii ):
 	Filter( "ContactMolecularSurface" ),
 	filtered_area_( filtered_area ),
 	distance_weight_( distance_weight ),
@@ -71,12 +72,14 @@ ContactMolecularSurfaceFilter::ContactMolecularSurfaceFilter( Real const & filte
 	apolar_target_( false ),
 	quick_( quick ),
 	verbose_( verbose ),
+	use_rosetta_radii_( use_rosetta_radii ),
 	selector1_(),
 	selector2_()
 {}
 
 void ContactMolecularSurfaceFilter::quick( bool const quick ) { quick_ = quick; }
 void ContactMolecularSurfaceFilter::verbose( bool const verbose ) { verbose_ = verbose; }
+void ContactMolecularSurfaceFilter::use_rosetta_radii( bool const use_rosetta_radii ) { use_rosetta_radii_ = use_rosetta_radii; }
 
 filters::FilterOP
 ContactMolecularSurfaceFilter::clone() const {
@@ -102,6 +105,9 @@ ContactMolecularSurfaceFilter::compute( Pose const & pose ) const
 	scc.settings.near_squared_size = near_squared_size_;
 	if ( quick_ ) {
 		scc.settings.density = 5.0;
+	}
+	if ( use_rosetta_radii_ ) {
+		scc.settings.use_rosetta_radii = true;
 	}
 	scc.Reset(); // this may not be needed anymore, but I'm leaving it here for safety
 
@@ -177,6 +183,7 @@ ContactMolecularSurfaceFilter::parse_my_tag(
 	near_squared_size_ = tag->getOption<Real>( "near_squared_size", 0.0 );
 	verbose_ = tag->getOption<bool>( "verbose", false );
 	quick_ = tag->getOption<bool>( "quick", false );
+	use_rosetta_radii_ = tag->getOption<bool>( "use_rosetta_radii", false );
 	apolar_target_ = tag->getOption<bool>( "apolar_target", false );
 
 	std::string const selector1name = tag->getOption< std::string >( "target_selector", "" );
@@ -249,6 +256,7 @@ void ContactMolecularSurfaceFilter::provide_xml_schema( utility::tag::XMLSchemaD
 		+ XMLSchemaAttribute::attribute_w_default( "near_squared_size" , xsct_real , "The weight factor of the cloest distance betweent the distance that is multiplied by the area by each surface dot." , "0.0" )
 		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If true, print extra calculation details to the tracer." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "quick" , xsct_rosetta_bool , "If true, do a quicker, less accurate calculation by reducing the density." , "false" )
+		+ XMLSchemaAttribute::attribute_w_default( "use_rosetta_radii" , xsct_rosetta_bool , "Use rosetta radii instead of the historical shape complementarity radii." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "apolar_target" , xsct_rosetta_bool , "Only look at non-polar atoms on the target side." , "false" )
 		+ XMLSchemaAttribute( "target_selector" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." )
 		+ XMLSchemaAttribute( "binder_selector" , xs_string , "Explicitly set which residues are on each side of the interface using residue_selectors." ) ;
