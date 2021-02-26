@@ -51,7 +51,7 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetric
 
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::SidechainNeighborCountMetricCreator >
-reg_SidechainNeighborCountMetricCreator;
+	reg_SidechainNeighborCountMetricCreator;
 
 
 /////////// Testing  /////////////
