@@ -189,7 +189,7 @@ Simulated4PDEERTraceFactory::Simulated4PDEERTraceFactory(
 	n_bins_ = n_bins;
 
 	tpts_sqd_ = std::inner_product( time_pts_.begin(), time_pts_.end(),
-		time_pts.begin(), 0 );
+		time_pts.begin(), core::Real(0.0) );
 
 	// Calculate the kernel matrix used to convert distances to decays
 	kernel_ = initialize_kernel( time_pts, bins_per_a, max_dist, n_bins );
