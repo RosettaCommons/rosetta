@@ -608,7 +608,7 @@ RNA_FragmentMonteCarloOptions::initialize_from_tag( utility::tag::TagCOP const &
 		set_align_pdb( tag->getOption< std::string >( "align_pdb", align_pdb_ ) );
 	}
 	if ( tag->hasOption( "rmsd_screen" ) ) {
-		set_rmsd_screen( tag->getOption< bool >( "rmsd_screen", rmsd_screen_ ) );
+		set_rmsd_screen( tag->getOption< core::Real >( "rmsd_screen", rmsd_screen_ ) );
 	}
 
 	if ( tag->hasOption( "symm_hack_arity" ) ) {

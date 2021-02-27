@@ -500,7 +500,7 @@ private:
 	utility::vector1< core::Size > input_res_;
 	utility::vector1< core::Size > input_res_initialize_;
 
-	bool rmsd_screen_ = 0;
+	core::Real rmsd_screen_ = 0;
 	bool disallow_realign_ = true;
 	std::string align_pdb_ = "";
 
