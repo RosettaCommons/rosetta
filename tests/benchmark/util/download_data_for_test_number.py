@@ -166,7 +166,7 @@ def download_test_files(prefix):
 			for fn in files:
 				
 				# download each of those files
-					
+			
 				if "benchmark" in fn:
 					continue
 				
@@ -176,11 +176,11 @@ def download_test_files(prefix):
 				if "data" in fn:
 					continue
 				
-				if fn.endswith(".pdb"):
-					continue
+#				if fn.endswith(".pdb"):
+#					continue
 
-				if fn.endswith(".pdb.gz"):
-					continue
+#				if fn.endswith(".pdb.gz"):
+#					continue
 
 				if fn.endswith(".in_progress"):
 					continue
@@ -193,9 +193,11 @@ def download_test_files(prefix):
 					print ("===", fn, flush=True)
 				
 #				cmd = f'cd {path} && wget --user {user} --password {password} --recursive --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
-				cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
-				print (cmd)
-				os.system( cmd )
+
+				if Options.pdbid.upper() in fn:
+					cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+					print (cmd)
+					os.system( cmd )
 
 				# to PDF files, use weasyprint outside of python
 				# > weasyprint index.html out.pdf
@@ -230,6 +232,7 @@ def main(args) -> None:
 
 	parser.add_argument("--config", default=None, action="store", help="Location of .ini file with main configuration. Default is to use `config.ini` from the script dir.")
 	parser.add_argument("--id", default=None, action="store", help="Test id to get files for. This is the last number in the URL https://b3.graylab.jhu.edu/test/555956 that you can get from the Benchmark server.")
+	parser.add_argument("--pdbid", default=None, action="store", help="PDBID to get files for.")
 	parser.add_argument("--sb", default=False, action="store", help="Download scorefunction comparison tests, yes or no. They start with sb_, therefore the flag.")
 	
 	global Options

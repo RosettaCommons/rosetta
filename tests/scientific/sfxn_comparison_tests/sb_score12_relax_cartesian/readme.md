@@ -31,7 +31,6 @@ Typically, we see deep funnels (vertical score-vs-RMSD plots) for most proteins,
 
 ## DEFINITIONS AND COMMENTS
 #### State anything you think is important for someone else to replicate your results. 
-jkleman who set up this benchmark is not an expert in this protocol!
 
 ## LIMITATIONS
 #### What are the limitations of the benchmark? Consider dataset, quality measures, protocol etc. 

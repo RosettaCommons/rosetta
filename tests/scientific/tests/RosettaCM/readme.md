@@ -10,8 +10,7 @@ This benchmark is meant to test the current performance of generating homology m
 ## BENCHMARK DATASET
 
 The dataset currently consists of 16 of 68 targets from the CASP10 (http://predictioncenter.org/casp10/), and were used in the original
-RosettaCM paper. These 16 targets had pdb codes listed in RosettaCM paper, as well as have a variety of different sizes, folds, and fold complexities.
-Each target uses a set of template structures, which were listed in the original RosettaCM article (Structure 2013), that are used to generate the homology models.
+RosettaCM paper. These 16 targets had pdb codes listed in RosettaCM paper, as well as have a variety of different sizes, folds, and fold complexities. The entire set contains several multi-domain proteins, we did not take them here. Each target uses a set of template structures, which were listed in the original RosettaCM article (Structure 2013), that are used to generate the homology models.
 
 The targets used (by pdb code): 4EPZ 4H41 4JQ6 4FDY 4GHB 4FMZ 4GOQ 4FM3 4FJ6 4FGM 4EZI 4FR9 4AK1 4HES 2LVC 4FCZ
 
@@ -47,11 +46,9 @@ As a current estimate, generating 200 models for each target requires ~ 24 hours
 ## PERFORMANCE METRICS
 
 The metric to use is the global distance test (GDT; Zemla, A., Venclovas, C., Moult, J., and Fidelis, K. (1999). Processing and analysis of CASP3 protein structure predictions.
-Proteins (Suppl 3 ), 22-29.) to compare models to their respective crystal stucture. This test is meant to measure how well Rosetta can generate acurate homology models,
-so in this regard there is no true pass/fail, only a metric of how well the average target GDT changes compared to the original measures.
+Proteins (Suppl 3 ), 22-29.) to compare models to their respective crystal stucture. This test is meant to measure how well Rosetta can generate acurate homology models and tests how well the top target GDT changes compared to the original measures.
 
-The cutoff GDT values for each target are the GDT averages that was obtained from the original RosettaCM paper (Structure 2013). These values were generated from the average of the
-lowest 10% of energy models from several thousands.
+GDT values in orange are the top GDT obtained from the original RosettaCM paper (Structure 2013) - see Table in the Supplement. These values were generated from the average of the lowest 10% of energy models from several thousands, using an older scorefunction (likely talaris13). Here, we define the cutoffs as the top GDT values from the initial run, minus 0.05. If no model is generated above this cutoff, the test fails. We don't use the stdev here as it is meaningless with GDT-MM as a quality measure because there are many models created with all kinds of GDTs. Only the top GDT is meaningful to define model quality. 
 
 ## KEY RESULTS
 

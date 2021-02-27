@@ -44,7 +44,7 @@ command_line = '''
 
 nstruct = 1 if debug else 200
 
-targets = '2LVC_A 4AK1_A 4EPZ_A 4EZI_A 4FCZ_A 4FDY_A 4FGM_A 4FJ6_A 4FM3_A 4FMZ_A 4FR9_A 4GHB_A 4GOQ_A 4H41_A 4HES_A 4JQ6_A'.split()
+targets = '2LVC_A 4EPZ_A 4EZI_A 4F0J_A 4FCZ_A 4FDY_A 4FJ6_A 4FM3_A 4FR9_A 4FS7_A 4GHB_A 4GPV_A 4H1X_A 4H41_A 4IC1_A 4JQ6_A'.split()
 targets = targets[:2] if debug else targets
 
 #print(f'extension: {extension}')

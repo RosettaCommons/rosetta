@@ -55,7 +55,7 @@ The core of the protocol is currently being benchmarked, with a paper to come in
 
 #### How many CPU hours does this benchmark take approximately?
 
-Estimates run at about 3200 CPU hours. 
+Estimates run at about 950 CPU hours. 
 
 ## PERFORMANCE METRICS
 

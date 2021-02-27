@@ -51,12 +51,12 @@ plt.rcParams['figure.figsize'] = width, height #width, height
 for i in range( 0, len( scorefiles ) ):
 
 	# read in score file
-	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+	x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk " + y_index + " | awk '{print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | sort -nk " + y_index + " | awk '{print $" + y_index + "}'" ).splitlines()
 	
-	# map all values to floats
-	x = list( map( float, x ) )
-	y = list( map( float, y ) )
+	# map all values to floats and leave out few highest scores as they are useless and mess up plotting ranges
+	x = list( map( float, x ) )[0:-10]
+	y = list( map( float, y ) )[0:-10]
 	
 	# create subplot
 	plt.subplot( nrows, ncols, i+1 )
@@ -72,14 +72,15 @@ for i in range( 0, len( scorefiles ) ):
 	plt.plot(x, y, 'ko')
 	
 	# add horizontal and vertical lines for cutoff. Score is not a great way to evaluate results alone; GDT is best.
-	plt.axvline(x=float(cutoffs_gdt_dict[targets[i]]), color='b', linestyle='-')
+	plt.axvline(x=float(cutoffs_gdt_dict[targets[i]]), color='blue', linestyle='-')
+	plt.axvline(x=float(cutoffs_paper_dict[targets[i]]), color='orange', linestyle='-')
 	#plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
 	# x axis limits
-	if targets[i] in failures:
-		plt.xlim( left=0 )
-	else:
-		plt.xlim( 0.000, 1.000 )
+#	if targets[i] in failures:
+#		plt.xlim( left=0 )
+#	else:
+	plt.xlim( 0.000, 1.000 )
 	
 #save figure
 plt.tight_layout()

@@ -71,7 +71,6 @@ ab_initio_command_line = '''
 -abinitio::stage4_patch  	{rosetta_dir}/tests/scientific/data/{testname}/crmsd_patch
 -nstruct 			{nstruct}
 -increase_cycles 		10
--out:pdb true
 -out:sf				 {prefix}/{target}-abinitio.fsc
 -silent_gz
 -out:file:silent 		{prefix}/{target}-abinitio.out
@@ -80,7 +79,7 @@ ab_initio_command_line = '''
 '''.replace('\n', ' ').replace('  ', ' ')
 
 #-out:file:scorefile		 {prefix}/{target}.score
-
+#-out:pdb true
 
 #==> EDIT HERE
 n_frags = 200

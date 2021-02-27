@@ -87,6 +87,9 @@ if not os.path.exists(hpc_logs): os.makedirs(hpc_logs)
 if not os.path.exists(hpc_logs+"/test"): os.system("touch " + hpc_logs + "/test")
 hpc_job_ids = []
 
+# create decoys directory
+decoys_dir = f'{working_dir}/decoys'
+if not os.path.exists(decoys_dir): os.makedirs(decoys_dir)
 
 hpc_job_ids.append( hpc_driver.submit_mpi_hpc_job(
     name=testname,

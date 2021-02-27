@@ -24,7 +24,7 @@ config = benchmark.config()
 results = {}
 scorefiles = []
 cutoffs_gdt_dict = {}
-cutoffs_score_dict = {}
+cutoffs_paper_dict = {}
 failures = []
 
 # inputs are header labels from the scorefile, for instance "total_score" and "GDTMM_final"
@@ -45,11 +45,11 @@ y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).s
 # read cutoffs
 protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
 cutoffs_gdt = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
-cutoffs_score = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
+cutoffs_paper = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
 cutoffs_gdt = map( float, cutoffs_gdt )
-cutoffs_score = map( float, cutoffs_score )
+cutoffs_paper = map( float, cutoffs_paper )
 cutoffs_gdt_dict.update( dict( zip ( protein, cutoffs_gdt )))
-cutoffs_score_dict.update( dict( zip ( protein, cutoffs_score )))
+cutoffs_paper_dict.update( dict( zip ( protein, cutoffs_paper )))
 
 # open results output file
 f = open( outfile, "w" )
@@ -67,25 +67,26 @@ for i in range( 0, len( scorefiles ) ):
 	x = list( map( float, x ))
 	y = list( map( float, y ))
 
-	# check for GDTs below cutoff
+	# check for GDTs below cutoff: if all GDT below cutoff, this is a failure
+	# val_cutoff is true or false
 	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_gdt_dict[targets[i]], "GDT", f , 10 )
+	val_cutoff = qm.check_all_values_below_cutoff( x, cutoffs_gdt_dict[targets[i]], "GDT", f )
 #        val_cutoff = qm.check_all_values_below_cutoff( x, cutoffs_gdt_dict[targets[i]], "GDT", f )
 	target_results.update( val_cutoff )
 
-        # add to failues
-	if val_cutoff['All GDTs < cutoff'] == False:
+	# add to failues
+	if val_cutoff['All GDTs < cutoff'] == True:
 		failures.append( targets[i] )
 
 	# check for scores below cutoff
-	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_xpercent_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f , 10 )
+#	f.write( targets[i] + "\t" )
+#	val_cutoff = qm.check_xpercent_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f , 10 )
 #	val_cutoff = qm.check_all_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "score", f )
-	target_results.update( val_cutoff )
+#	target_results.update( val_cutoff )
 
         # add to failures
-	if val_cutoff['All scores < cutoff'] == False:
-		failures.append( targets[i] )
+#	if val_cutoff['All scores < cutoff'] == False:
+#		failures.append( targets[i] )
 
 	# check lowest scoring model has low RMSD
         #       f.write( targets[i] + "\t" )
@@ -98,9 +99,9 @@ for i in range( 0, len( scorefiles ) ):
 	target_results.update( val_rms )
 
 	# check for score range
-	f.write( targets[i] + "\t" )
-	val_score = qm.check_range( y, "score", f )
-	target_results.update( val_score )
+#	f.write( targets[i] + "\t" )
+#	val_score = qm.check_range( y, "score", f )
+#	target_results.update( val_score )
 
 	# check runtime
 	# runtime = subprocess.getoutput( "grep \"reported success\" " + logfiles[i] + " | awk '{print $6}'" ).splitlines()
@@ -124,4 +125,4 @@ for i in range( 0, len( scorefiles ) ):
 
 f.close()
 
-benchmark.save_variables('debug targets nstruct working_dir testname results scorefiles cutoffs_gdt_dict cutoffs_score_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+benchmark.save_variables('debug targets nstruct working_dir testname results scorefiles cutoffs_gdt_dict cutoffs_paper_dict failures')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
