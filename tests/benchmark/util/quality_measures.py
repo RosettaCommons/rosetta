@@ -29,11 +29,6 @@ def check_all_values_above_cutoff( col, cutoff, tag, filehandle ):
 	filehandle.write( str( value ) + "\n" )
 	return {out : value}
 
-#=======================================
-def check_all_values_below_cutoff( col, cutoff, tag, filehandle ):
-
-	return check_xpercent_values_below_cutoff( col, cutoff, tag, filehandle, 100 )
-
 # =======================================
 def kabsch_align(r1_coords: np.ndarray, r2_coords: np.ndarray):
     """Perform kabsch align on two sets of coordinates
@@ -74,6 +69,20 @@ def check_xpercent_values_below_cutoff(col, cutoff, tag, filehandle, percentage)
     else:
         value = False
 
+    filehandle.write(str(value) + "\n")
+    return {out: value}
+
+
+# =======================================
+def check_avgNX_above_cutoff(Nscore, cutoff, tag, filehandle):
+
+    out = "Average " + tag + " >= cutoff"
+    filehandle.write(out + " " + str(cutoff) + "\t")
+
+    if Nscore >= cutoff:
+        value = True
+    else:
+        value = False
     filehandle.write(str(value) + "\n")
     return {out: value}
 
@@ -131,7 +140,7 @@ def check_rmsd_of_topscoring(rmsd_col_sorted, cutoff, filehandle):
         value = False
 
     filehandle.write(str(value) + "\n")
-    return {out: value}
+    return {"RMSD <= cutoff": value}
 
 
 # =======================================
@@ -147,6 +156,21 @@ def check_range(col, tag, filehandle):
         "max": round(max(col), 4),
         "avg": round(np.mean(col), 4),
         "std": round(np.std(col), 4),
+    }
+    return {tag: value}
+
+
+# =======================================
+def get_N5_spread(nscore, nstd, tag, filehandle):
+
+    filehandle.write(
+        tag
+        + "\tavg, std:"
+        + "% 12.3f % 12.3f\n" % (nscore, nstd)
+    )
+    value = {
+        "avg": round(nscore, 4),
+        "std": round(nstd, 4),
     }
     return {tag: value}
 

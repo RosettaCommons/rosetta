@@ -36,7 +36,18 @@ The benchmark takes ~150 hours. The debug mode takes ~4 mins.
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
 
-To assess the performance of a docking simulation, we assess the number of structures with a CAPRI-acceptable or better ranking, which the protocol auto-generates from the native structure. After bootstrap resampling, we classify complexes having N5 >= 3 as successful. N5 >= 3 means that at least 3 out of the top 5 scoring models should be acceptable or better according to CAPRI metrics. CAPRI model rankings are based on a combination of factors like fraction of native contacts, ligand RMSD, and interface RMSD and are described in detail in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.25870"> Lensink, Wodak et al. 2019 PSFBI</a> - Table 3.
+Usually, to assess the performance of a docking simulation, the number of structures with a CAPRI-acceptable or better ranking are analyzed. CAPRI model rankings are based on a combination of factors like fraction of native contacts, ligand RMSD, and interface RMSD and are described in detail in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.25870"> Lensink, Wodak et al. 2019 PSFBI</a> - Table 3. The protocol computes the CAPRI rankings for each model (as well as some of the metrics it is based on), which are written into the score file ("CAPRI_rank"). Rankings are the following:
+
+0 - incorrect model
+1 - acceptable model
+2 - medium quality model
+3 - high quality model
+
+The output models are resampled via bootstrap to remove possible sampling biases. Docking complexes can also be classified via the N5 metric, classifying N5 >= 3 as successful. N5 >= 3 means that at least 3 out of the top 5 scoring models should be acceptable or better according to CAPRI metrics. In this test, we report this metric in the result.txt file but don't use it for a pass/fail criterion because most targets would fail according to it. This scientific test passes if all targets pass the following metrics:
+
+(1) the highest CAPRI ranking sampled for any model should be equal or higher than the cutoff ranking (as computed in the first run) AND
+(2) the interface RMSD of the top-scoring model should be equal or lower than the cutoff I_rmsd (as computed in the first run + 2A)
+
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?
