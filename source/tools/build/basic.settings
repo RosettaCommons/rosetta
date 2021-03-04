@@ -58,9 +58,6 @@ lists of strings.
 
 import os, os.path, subprocess
 
-#shell_gcc = subprocess.getoutput('which gcc').split()[0]
-shell_gcc = subprocess.check_output(["which", "gcc"]).split()[0]
-
 add_on_libraries = ''
 
 # checking if we compiling under Alpine Linux
