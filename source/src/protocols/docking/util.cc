@@ -31,6 +31,9 @@
 // Basic headers
 #include <basic/Tracer.hh>
 
+// Numeric headers
+#include <numeric/random/random.hh>
+
 // Utility headers
 #include <utility/string_util.hh>
 #include <utility/vector1.hh>
@@ -178,7 +181,8 @@ void
 setup_foldtree(
 	core::pose::Pose & pose,
 	std::string const & partner_chainID,
-	DockJumps & movable_jumps )
+	DockJumps & movable_jumps,
+	bool rand_jump_res_partner2 ) // default = false
 {
 	using std::string;
 	using std::stringstream;
@@ -218,7 +222,7 @@ setup_foldtree(
 		partner1 = partner1_selector.apply( pose );
 	}
 
-	setup_foldtree( pose, partner1, movable_jumps, f );
+	setup_foldtree( pose, partner1, movable_jumps, f, rand_jump_res_partner2 );
 	pose.fold_tree( f );
 }
 
@@ -237,7 +241,8 @@ setup_foldtree(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & partner1,
 	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft)
+	core::kinematics::FoldTree & ft,
+	bool rand_jump_res_partner2 ) // default = false
 {
 	using std::endl;
 	using utility::vector1;
@@ -247,26 +252,77 @@ setup_foldtree(
 
 	debug_assert( pose.size() );
 	debug_assert( partner1.size() == pose.size() );
+	TR.Debug << "Setting up the FoldTree for two-body docking" << std::endl;
 
 	// compute which residues belong in partner 2
 	vector1< bool > const partner2( partner1.invert() );
 
-	// identify the residue closest to the center of masses of each partner
-	core::Size const jump_pos1( residue_center_of_mass( pose, partner1 ) );
-	core::Size const jump_pos2( residue_center_of_mass( pose, partner2 ) );
+	// Save CHEMICAL Edges so that branch connections are not destroyed.
+	// Chemical Edge stops will be used to ensure a carbohydrate residue that
+	//  is the child of a branch point is not chosen as that breaks the FoldTree
+	vector1< Edge > const & chemical_edges( pose.fold_tree().get_chemical_edges() );
+	vector1< bool > is_upstream_branch_connect( pose.size() );
+	for ( Edge const & chem_edge : chemical_edges ) {
+		is_upstream_branch_connect[ chem_edge.stop() ] = true;
+	}
+
+	// identify the residue closest to the center of masses of partner1
+	Size const jump_pos1( residue_center_of_mass( pose, partner1 ) );
+
+	// identify the residue in partner2 to serve as the Jump residue
+	Size jump_pos2;
+	// DEFAULT behavior
+	// identify the residue closest to the center of mass of partner2
+	if ( ! rand_jump_res_partner2 ) {
+		jump_pos2 = residue_center_of_mass( pose, partner2 );
+	} else {
+		// NOT default behavior - must be triggered with flag
+		// otherwise, choose a random residue in partner2 for the Jump residue
+		// most use cases should not use this behavior
+		// This FoldTree setup behavior is used in GlycanDock (@mlnance)
+		// glycans (chains of carbohydrates) are ~short, flexible oligomers.
+		// by allowing the kinematic propagation to flow in random directions
+		// this strategy serves to enhance sampling coverage for glycoligand docking
+		// added by @mlnance March 2021
+		TR.Debug << "Identifying a random residue from partner2 for the Jump " << std::endl;
+		vector1< Size > partner2_resnums;
+		for ( Size p2_resnum( 1 ); p2_resnum <= partner2.size(); ++p2_resnum ) {
+			// If this residue is part of partner2
+			if ( partner2[ p2_resnum ] ) {
+				// Don't allow upper connects of a branch point to be
+				// a potential Jump residue as they are not functional Jump points
+				// (Currently one cannot be a Jump residue AND a chemical Edge)
+				if ( ! is_upstream_branch_connect[ p2_resnum ] ) {
+					// This is a potential residue to set as the partner2 Jump
+					partner2_resnums.push_back( p2_resnum );
+				}
+			}
+		} // done identifying all potential partner2 residues
+		// We expect there to be one or more options for the Jump residue
+		// so, pick a random residue in partner2 as the Jump point
+		if ( ! partner2_resnums.empty() ) {
+			jump_pos2 = numeric::random::rg().random_element( partner2_resnums );
+		} else {
+			// however, if no residues in partner2 were deemed allowable Jump points,
+			// (for whatever reason it might be. this probably shouldn't ever happen)
+			// fall back to default behavior and identify the residue closest to the CoM
+			jump_pos2 = residue_center_of_mass( pose, partner2 );
+			TR.Debug << "Partner2 residue selection came up empty "
+				"when selecting a random residue as the Jump residue." << std::endl;
+			TR.Debug << "Falling back to default behavior of identifying the "
+				"residue closest to the center-of-mass of partner2" << std::endl;
+		}
+	} // END identifying random residue from partner2 as the Jump
 
 	if ( TR.Debug.visible() ) {
 		TR.Debug << "jump1: " << jump_pos1 << endl;
 		TR.Debug << "jump2: " << jump_pos2 << endl;
 	}
 
-	// Save CHEMICAL Edges so that branch connections are not destroyed.
-	vector1< Edge > const & chemical_edges( pose.fold_tree().get_chemical_edges() );
-
+	// setup the FoldTree appropriately with the new Jump residues
+	// the provided ft and movable_jumps from input are cleared
 	ft.clear();
 	movable_jumps.clear();
-
-
 	setup_edges_for_partner( pose, partner1, jump_pos1, ft );
 	setup_edges_for_partner( pose, partner2, jump_pos2, ft );
 	movable_jumps.push_back( setup_dock_jump( jump_pos1, jump_pos2, ft, true ) );
@@ -286,11 +342,14 @@ setup_foldtree(
 	}
 	if ( chemical_edges.size() ) {
 		ft.renumber_jumps();  // ...since some were replaced.
-		core::uint const current_movable_jump_label( ft.edge_label( jump_pos1, jump_pos2 ) );
+		core::uint const current_movable_jump_label
+			( ft.edge_label( jump_pos1, jump_pos2 ) );
 		if ( current_movable_jump_label != 1 ) {
 			// Fix if this is now the case because of renumbering.
 			Edge const & current_first_jump( ft.jump_edge( 1 ) );
-			ft.update_edge_label( current_first_jump.start(), current_first_jump.stop(), 1, current_movable_jump_label );
+			ft.update_edge_label( current_first_jump.start(),
+				current_first_jump.stop(), 1,
+				current_movable_jump_label );
 			ft.update_edge_label( jump_pos1, jump_pos2, current_movable_jump_label, 1 );
 		}
 	}

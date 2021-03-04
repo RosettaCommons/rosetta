@@ -1141,6 +1141,7 @@ sources = {
 		"test_C-terminal_conjugation",
 		"test_CarbohydrateInfo",
 		"test_carbohydrate_scoring",
+		"test_carbohydrate_docking",
 		"test_CCD_loop_closure",
 		"test_coenzymes",
 		"test_EnergyMethodOptions",

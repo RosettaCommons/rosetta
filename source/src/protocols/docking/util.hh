@@ -29,6 +29,14 @@
 namespace protocols {
 namespace docking {
 
+/// @details Converts a string representation of the partner from the dock_partners flag to a comma-separated list of
+/// chains that can be passed into a ChainSeletor.
+/// For example, the dock_partners flags "ABC_D" will split into two partners: "ABC" and "D".
+/// This function will convert "ABC" to "A,B,C".
+/// @return A comma-separated list of chains (e.g. "A,B,C")
+std::string
+comma_separated_partner_chains( std::string const & chains );
+
 /// @brief Setup FoldTree for docking across an interface.
 /// The partners are described by a string for the partner chains (using pdb_chain identification) separated by "_".
 /// The foldtree is set up such that the jump points are at the center of masses of the two partners.
@@ -36,7 +44,8 @@ void
 setup_foldtree(
 	core::pose::Pose & pose,
 	std::string const & partner_chainID,
-	DockJumps & movable_jumps );
+	DockJumps & movable_jumps,
+	bool rand_jump_res_partner2 = false ); // default = false
 
 /// @brief Setup foldtree for docking across an interface.
 /// The partners are described by a vector of booleans of the same length as the number of residues in the pose.
@@ -46,7 +55,8 @@ setup_foldtree(
 	core::pose::Pose const & pose,
 	utility::vector1< bool > const & partner1,
 	DockJumps & movable_jumps,
-	core::kinematics::FoldTree & ft);
+	core::kinematics::FoldTree & ft,
+	bool rand_jump_res_partner2 = false ); // default = false
 
 } // docking
 } // protocols
