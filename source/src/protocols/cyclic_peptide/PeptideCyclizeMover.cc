@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/select/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/constraints/Constraint.hh>
@@ -99,7 +100,18 @@ PeptideCyclizeMover::~PeptideCyclizeMover()= default;
 ///
 PeptideCyclizeMover::PeptideCyclizeMover() :
 	Mover("PeptideCyclizeMover"),
-	selector_()
+	selector_(),
+	res1_bond_selector_(),
+	res2_bond_selector_(),
+	res1_dist_selector_(),
+	res2_dist_selector_(),
+	res1_angle_selector_(),
+	res2_angle_selector_(),
+	center_angle_selector_(),
+	res1_tor_selector_(),
+	res2_tor_selector_(),
+	res3_tor_selector_(),
+	res4_tor_selector_()
 {
 	distance_assigned_ = false;
 	bond_assigned_ = false;
@@ -175,6 +187,76 @@ void PeptideCyclizeMover::set_torsion(core::Size res1, std::string atom1, core::
 	return;
 }
 
+
+//these are setters. Set user-defined values.
+//use to set user defined bonds
+//DRH Function Overloading to accept residue selectors for pyrosetta compatibility
+void PeptideCyclizeMover::set_bond(core::select::residue_selector::ResidueSelectorCOP res1, std::string atom1, core::select::residue_selector::ResidueSelectorCOP res2, std::string atom2,  bool add_termini, bool rebuild_fold_tree){
+
+	res1_bond_selector_.push_back(res1);
+	atom1_.push_back(atom1);
+	res2_bond_selector_.push_back(res2);
+	atom2_.push_back(atom2);
+	add_termini_.push_back(add_termini);
+	rebuild_fold_tree_.push_back(rebuild_fold_tree);
+
+	counter_+=1;
+
+	//printf ("I am setting bond for you\n");
+	bond_assigned_=true;
+
+	return;
+}
+//use to set user defined distance constraints
+void PeptideCyclizeMover::set_distance(core::select::residue_selector::ResidueSelectorCOP res1, std::string atom1, core::select::residue_selector::ResidueSelectorCOP res2, std::string atom2, std::string cst_func){
+
+	res1_dist_selector_.push_back(res1);
+	atom1_dist_.push_back(atom1);
+	res2_dist_selector_.push_back(res2);
+	atom2_dist_.push_back(atom2);
+	cst_func_dist_.push_back(cst_func);
+
+	distance_assigned_=true;
+	//printf ("Now I am setting distance for you\n");
+
+	return;
+}
+//setting user defined angle constraints
+void PeptideCyclizeMover::set_angle(core::select::residue_selector::ResidueSelectorCOP res_center, std::string atom_center, core::select::residue_selector::ResidueSelectorCOP res1, std::string atom1, core::select::residue_selector::ResidueSelectorCOP res2, std::string atom2, std::string cst_func){
+
+	res1_angle_selector_.push_back(res1);
+	atom1_angle_.push_back(atom1);
+	res2_angle_selector_.push_back(res2);
+	atom2_angle_.push_back(atom2);
+	center_angle_selector_.push_back(res_center);
+	atom_center_.push_back(atom_center);
+	cst_func_angle_.push_back(cst_func);
+
+	angle_assigned_=true;
+	//printf ("setting angle dude\n");
+
+	return;
+}
+//setting user defined torsion constaints
+void PeptideCyclizeMover::set_torsion(core::select::residue_selector::ResidueSelectorCOP res1, std::string atom1, core::select::residue_selector::ResidueSelectorCOP res2, std::string atom2, core::select::residue_selector::ResidueSelectorCOP res3, std::string atom3, core::select::residue_selector::ResidueSelectorCOP res4, std::string atom4,std::string cst_func){
+
+	res1_tor_selector_.push_back(res1);
+	atom1_torsion_.push_back(atom1);
+	res2_tor_selector_.push_back(res2);
+	atom2_torsion_.push_back(atom2);
+	res3_tor_selector_.push_back(res3);
+	atom3_torsion_.push_back(atom3);
+	res4_tor_selector_.push_back(res4);
+	atom4_torsion_.push_back(atom4);
+	cst_func_torsion_.push_back(cst_func);
+
+	torsion_assigned_=true;
+	//printf ("time for setting torsion\n");
+
+	return;
+}
+
+
 //setting selectors
 void PeptideCyclizeMover::set_selector(
 	core::select::residue_selector::ResidueSelectorCOP selector_in
@@ -221,6 +303,61 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 
 	get_all(subset,pose); //get all the values of constaintrs
 
+	if ( res1_bond_selector_.size() > 0 ) {
+		res1_.clear();
+		for ( core::Size sel_i=1; sel_i<=res1_bond_selector_.size(); ++sel_i ) {
+			res1_.push_back(core::select::get_residues_from_subset( res1_bond_selector_[sel_i]->apply(pose))[1]);
+		}
+		res2_.clear();
+		for ( core::Size sel_i=1; sel_i<=res2_bond_selector_.size(); ++sel_i ) {
+			res2_.push_back(core::select::get_residues_from_subset( res2_bond_selector_[sel_i]->apply(pose))[1]);
+		}
+	}
+
+	if ( res1_dist_selector_.size() > 0 ) {
+		res1_dist_.clear();
+		for ( core::Size sel_i=1; sel_i<=res1_dist_selector_.size(); ++sel_i ) {
+			res1_dist_.push_back(core::select::get_residues_from_subset( res1_dist_selector_[sel_i]->apply(pose))[1]);
+		}
+		res2_dist_.clear();
+		for ( core::Size sel_i=1; sel_i<=res2_dist_selector_.size(); ++sel_i ) {
+			res2_dist_.push_back(core::select::get_residues_from_subset( res2_dist_selector_[sel_i]->apply(pose))[1]);
+		}
+	}
+
+	if ( res1_angle_selector_.size() > 0 ) {
+		res1_angle_.clear();
+		for ( core::Size sel_i=1; sel_i<=res1_angle_selector_.size(); ++sel_i ) {
+			res1_angle_.push_back(core::select::get_residues_from_subset( res1_angle_selector_[sel_i]->apply(pose))[1]);
+		}
+		res_center_.clear();
+		for ( core::Size sel_i=1; sel_i<=center_angle_selector_.size(); ++sel_i ) {
+			res_center_.push_back(core::select::get_residues_from_subset( center_angle_selector_[sel_i]->apply(pose))[1]);
+		}
+		res2_angle_.clear();
+		for ( core::Size sel_i=1; sel_i<=res2_angle_selector_.size(); ++sel_i ) {
+			res2_angle_.push_back(core::select::get_residues_from_subset( res2_angle_selector_[sel_i]->apply(pose))[1]);
+		}
+	}
+
+	if ( res1_tor_selector_.size() > 0 ) {
+		res1_torsion_.clear();
+		for ( core::Size sel_i=1; sel_i<=res1_tor_selector_.size(); ++sel_i ) {
+			res1_torsion_.push_back(core::select::get_residues_from_subset( res1_tor_selector_[sel_i]->apply(pose))[1]);
+		}
+		res2_torsion_.clear();
+		for ( core::Size sel_i=1; sel_i<=res2_tor_selector_.size(); ++sel_i ) {
+			res2_torsion_.push_back(core::select::get_residues_from_subset( res2_tor_selector_[sel_i]->apply(pose))[1]);
+		}
+		res3_torsion_.clear();
+		for ( core::Size sel_i=1; sel_i<=res3_tor_selector_.size(); ++sel_i ) {
+			res3_torsion_.push_back(core::select::get_residues_from_subset( res3_tor_selector_[sel_i]->apply(pose))[1]);
+		}
+		res4_torsion_.clear();
+		for ( core::Size sel_i=1; sel_i<=res4_tor_selector_.size(); ++sel_i ) {
+			res4_torsion_.push_back(core::select::get_residues_from_subset( res4_tor_selector_[sel_i]->apply(pose))[1]);
+		}
+	}
 
 	protocols::cyclic_peptide::CreateDistanceConstraintOP distance(new protocols::cyclic_peptide::CreateDistanceConstraint);
 	distance->set(res1_dist_,atom1_dist_,res2_dist_,atom2_dist_,cst_func_dist_);
@@ -287,23 +424,47 @@ PeptideCyclizeMover::parse_my_tag(
 
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );//enabling addition of multiple user defined tags
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
+
 	counter_=0;
 	for ( tag_it = branch_tags.begin(); tag_it != branch_tags.end(); ++tag_it ) {
 		if ( (*tag_it)->getName() == "Bond" ) {
-			//printf ("you have assigned a Bond to be formed\n");
-			set_bond ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"), (*tag_it)->getOption< bool >( "add_termini" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
+			if ( (*tag_it)->hasOption("res1_sel") ) {
+				//will override these values later from selectors
+				set_bond (protocols::rosetta_scripts::parse_residue_selector( (*tag_it), data, "res1_sel"),(*tag_it)->getOption<std::string> ("atom1"), protocols::rosetta_scripts::parse_residue_selector( (*tag_it), data, "res2_sel"),(*tag_it)->getOption<std::string> ("atom2"), (*tag_it)->getOption< bool >( "add_termini" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
+			} else {
+				//printf ("you have assigned a Bond to be formed\n");
+				set_bond ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"), (*tag_it)->getOption< bool >( "add_termini" ),(*tag_it)->getOption< bool >( "rebuild_fold_tree", false ));
+			}
 		}
+
 		if ( (*tag_it)->getName() == "Distance" ) {
-			//printf ("getting distance constraints from user\n");
-			set_distance ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			if ( (*tag_it)->hasOption("res1_sel") ) {
+				//will override these values later from selectors
+				set_distance (protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res1_sel"),(*tag_it)->getOption<std::string> ("atom1"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res2_sel"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			} else {
+				//printf ("getting distance constraints from user\n");
+				set_distance ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			}
 		}
+
 		if ( (*tag_it)->getName() == "Angle" ) {
-			//printf ("getting angle constraints from user \n");
-			set_angle ((*tag_it)->getOption<core::Size> ("res_center"),(*tag_it)->getOption<std::string> ("atom_center"),(*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			if ( (*tag_it)->hasOption("res1_sel") ) {
+				//will override these values later from selectors
+				set_angle (protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res_center_sel"),(*tag_it)->getOption<std::string> ("atom_center"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res1_sel"),(*tag_it)->getOption<std::string> ("atom1"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res2_sel"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			} else {
+				//printf ("getting angle constraints from user \n");
+				set_angle ((*tag_it)->getOption<core::Size> ("res_center"),(*tag_it)->getOption<std::string> ("atom_center"),(*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<std::string> ("cst_func",""));
+			}
 		}
+
 		if ( (*tag_it)->getName() == "Torsion" ) {
-			//TR << "getting torsion constraints from user" << std::endl;
-			set_torsion ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<core::Size> ("res3"),(*tag_it)->getOption<std::string> ("atom3"),(*tag_it)->getOption<core::Size> ("res4"),(*tag_it)->getOption<std::string> ("atom4"),(*tag_it)->getOption<std::string> ("cst_func"));
+			if ( (*tag_it)->hasOption("res1_sel") ) {
+				//will override these values later from selectors
+				set_torsion (protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res1_sel"),(*tag_it)->getOption<std::string> ("atom1"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res2_sel"),(*tag_it)->getOption<std::string> ("atom2"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res3_sel"),(*tag_it)->getOption<std::string> ("atom3"),protocols::rosetta_scripts::parse_residue_selector((*tag_it), data, "res4_sel"),(*tag_it)->getOption<std::string> ("atom4"),(*tag_it)->getOption<std::string> ("cst_func"));
+			} else {
+				//TR << "getting torsion constraints from user" << std::endl;
+				set_torsion ((*tag_it)->getOption<core::Size> ("res1"),(*tag_it)->getOption<std::string> ("atom1"),(*tag_it)->getOption<core::Size> ("res2"),(*tag_it)->getOption<std::string> ("atom2"),(*tag_it)->getOption<core::Size> ("res3"),(*tag_it)->getOption<std::string> ("atom3"),(*tag_it)->getOption<core::Size> ("res4"),(*tag_it)->getOption<std::string> ("atom4"),(*tag_it)->getOption<std::string> ("cst_func"));
+			}
 		}
 	}
 
@@ -463,33 +624,44 @@ void PeptideCyclizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	XMLSchemaSimpleSubelementList ssl;
 
 	bond_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "res1_sel", xs_string, "Residue one selector" )
 		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
 		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "res2_sel", xs_string, "Residue two selector" )
 		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
 		+ XMLSchemaAttribute( "add_termini", xsct_rosetta_bool, "Add terminal types where necessary" )
 		+ XMLSchemaAttribute::attribute_w_default( "rebuild_fold_tree", xsct_rosetta_bool, "Rebuild the fold tree around this bond", "false" );
 
 	distance_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "res1_sel", xs_string, "Residue one selector" )
 		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
 		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "res2_sel", xs_string, "Residue two selector" )
 		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
 		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
 
 	angle_attributes + XMLSchemaAttribute( "res_center", xsct_non_negative_integer, "Central residue" )
+		+ XMLSchemaAttribute( "res_center_sel", xs_string, "Central residue selector" )
 		+ XMLSchemaAttribute( "atom_center", xs_string, "Central atom" )
 		+ XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "res1_sel", xs_string, "Residue one selector" )
 		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
 		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "res2_sel", xs_string, "Residue two selector" )
 		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
 		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
 
 	torsion_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
+		+ XMLSchemaAttribute( "res1_sel", xs_string, "Residue one selector" )
 		+ XMLSchemaAttribute( "atom1", xs_string, "Atom one" )
 		+ XMLSchemaAttribute( "res2", xsct_non_negative_integer, "Residue two" )
+		+ XMLSchemaAttribute( "res2_sel", xs_string, "Residue two selector" )
 		+ XMLSchemaAttribute( "atom2", xs_string, "Atom two" )
 		+ XMLSchemaAttribute( "res3", xsct_non_negative_integer, "Residue three" )
+		+ XMLSchemaAttribute( "res3_sel", xs_string, "Residue three selector" )
 		+ XMLSchemaAttribute( "atom3", xs_string, "Atom three" )
 		+ XMLSchemaAttribute( "res4", xsct_non_negative_integer, "Residue four" )
+		+ XMLSchemaAttribute( "res4_sel", xs_string, "Residue four selector" )
 		+ XMLSchemaAttribute( "atom4", xs_string, "Atom four" )
 		+ XMLSchemaAttribute( "cst_func", xs_string, "Function to use as a constraint" );
 

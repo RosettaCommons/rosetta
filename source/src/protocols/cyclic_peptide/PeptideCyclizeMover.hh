@@ -53,6 +53,15 @@ public:
 
 	virtual void set_torsion(core::Size, std::string, core::Size, std::string, core::Size, std::string, core::Size, std::string,std::string);
 
+	//overloaded functions
+	virtual void set_bond(core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, bool, bool);
+
+	virtual void set_distance(core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, std::string);
+
+	virtual void set_angle(core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, std::string);
+
+	virtual void set_torsion(core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string, core::select::residue_selector::ResidueSelectorCOP, std::string,std::string);
+
 	virtual void set_selector(core::select::residue_selector::ResidueSelectorCOP);
 
 	virtual void set_default
@@ -123,6 +132,18 @@ private:
 	std::string angle2_func_;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res1_bond_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res2_bond_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res1_dist_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res2_dist_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res1_angle_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res2_angle_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> center_angle_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res1_tor_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res2_tor_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res3_tor_selector_;
+	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res4_tor_selector_;
 
 	void get_all(core::select::residue_selector::ResidueSubset, core::pose::Pose const & );
 	void get_values();
