@@ -412,8 +412,9 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             release('PyRosetta4', release_name, package_dir, working_dir, platform, config, release_as_git_repository = True if kind in ['Release', 'MinSizeRel'] else False )
 
             # releasing PyMOL-RosettaServer scripts
-            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',         use_rosetta_versioning=False)
-            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python3', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.python3.py', use_rosetta_versioning=False)
+            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
+            release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python3',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.python3.py',        use_rosetta_versioning=False)
+            release('PyMOL-RosettaServer', 'PyMOL-Rosetta-relay-client.python3', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-Rosetta-relay-client.python3.py', use_rosetta_versioning=False)
 
             # building and releaseing Wheel archive
             #if (platform['python'][0] == '2' or platform['python'] == '3.5')  and  platform['os'] == 'mac': pass

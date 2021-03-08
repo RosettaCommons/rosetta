@@ -54,4 +54,24 @@ pose.set_psi(2, 10)
 
 pose.set_psi(4, 10)
 
+
+import sys
+import time as time_module
+
+if 'infinite' in sys.argv:
+    pose = pyrosetta.pose_from_sequence('EVAAAVAT')
+    rosetta.protocols.moves.AddPyMOLObserver(pose, keep_history=False)
+
+    psi = 0.0
+    phi = 0.0
+    i = 1
+    while True:
+        pose.set_psi(i, pose.psi(i) + 87)
+        pose.set_phi(i, pose.phi(i) + 19)
+        scorefxn(pose)
+
+        time_module.sleep(0.5)
+        i += 1
+        if i >pose.size(): i=1
+
 observer.detach(pose)
