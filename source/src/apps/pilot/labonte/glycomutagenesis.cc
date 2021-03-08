@@ -34,9 +34,15 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/enzymes/EnzymeManager.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/util.hh>
 
 // Utility headers
 #include <utility/excn/Exceptions.hh>
+
+// Basic headers
+#include <basic/options/option.hh>
+#include <basic/options/keys/run.OptionKeys.gen.hh>
 
 
 using namespace std;
@@ -168,8 +174,13 @@ public:  // Standard Rosetta methods
 
 		if ( ( seqpos < site_residue_position ) || ( seqpos + n_residues_right_of_site > n_res_pre_glycosylation ) ) {
 			cout << "  Sequon will not fit here." << endl;
+			minimizer_->score_function( sf_ );
+			minimizer_->max_iter( 1 );
+			minimizer_->apply ( pose );
 			return;
 		}
+
+		disulfide_treatment( pose, seqpos, n_residues_left_of_site, n_residues_right_of_site );
 
 		for ( core::uint i( seqpos - n_residues_left_of_site ); i <= seqpos + n_residues_right_of_site; ++ i ) {
 			cout << "  Mutating position " << i;
@@ -247,6 +258,12 @@ private:  // Private methods
 	set_commandline_options()
 	{
 		//using namespace basic::options;
+		using namespace basic::options;
+		using namespace basic::options::OptionKeys;
+
+		if ( option[ OptionKeys::run::n_cycles ] > 1 ) {
+			n_cycles_ = option[ OptionKeys::run::n_cycles ];
+		}
 	}
 
 
@@ -311,6 +328,25 @@ private:  // Private methods
 	}
 
 
+	// Breaking disulfide to avoid runtime errors. 
+	// name is "disulfide_treatment: because other alternate option "ignore" can also be used. 
+	void 
+	disulfide_treatment( core::pose::Pose & pose, core::uint const seqpos, Size const n_residues_left_of_site, Size const n_residues_right_of_site )
+	{
+		for ( core::uint i( seqpos - n_residues_left_of_site ); i <= seqpos + n_residues_right_of_site; ++i ) {
+
+			if ( pose.residue_type( i ).is_disulfide_bonded() ) {
+				Size res1_disulf_atom_num = pose.residue_type( i ).atom_index( pose.residue_type( i ).get_disulfide_atom_name() );
+				Size res1_disulf_partner_id = pose.residue_type( i ).residue_connection_id_for_atom( res1_disulf_atom_num );
+				Size res2_disulf_partner_num = pose.residue( i ).residue_connection_partner( res1_disulf_partner_id );
+				cout << "  Disulfide found! Breaking cysteine dimer: CYS[" << i << "]-CYS[" << res2_disulf_partner_num << "]" << endl;
+				change_cys_state( i, "CYS", pose.conformation() );
+				change_cys_state( res2_disulf_partner_num, "CYS", pose.conformation() );
+			}
+		}
+	}
+
+
 private:  // Private data
 	string const species_name_ = "c_jejuni";
 	string const enzyme_name_ = "PglB";
@@ -320,7 +356,7 @@ private:  // Private data
 	kinematics::MoveMapOP mm_;
 
 	Real const kt_ = 0.8;
-	Size const n_cycles_ = 100;
+	Size n_cycles_ = 100;
 
 	// Movers
 	simple_moves::MutateResidueOP mutator_;
