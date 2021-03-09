@@ -217,6 +217,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
         sb_talaris13_fast_design = 'numpy matplotlib==3.2',
         sb_score12_fast_design   = 'numpy matplotlib==3.2',
 
+        self   = '',
     )
 
     test, _, variants = test.partition('.')

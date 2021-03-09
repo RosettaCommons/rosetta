@@ -61,13 +61,13 @@ def download_all_input_files(kind, config):
     # taken from https://www.rcsb.org/pages/download/ftp
     # Rsync only the PDB format coordinates  /pub/pdb/data/structures/divided/pdb (Aproximately 20 GB)
     #${RSYNC} -rlpt -v -z --delete --port=$PORT ${SERVER}/data/structures/divided/pdb/ $MIRRORDIR > $LOGFILE 2>/dev/null
-    #SERVER=rsync.wwpdb.org::ftp                                   # RCSB PDB server name
+    #SERVER=rsync.rcsb.org::ftp                                   # RCSB PDB server name
     #PORT=33444                                                    # port RCSB PDB server is using
 
     suffix = { InputType.pdb: 'pdb', InputType.cif : 'mmCIF'} [kind]
 
     if config['debug']: print('WARNING: Debug mode, skipping PBD downloading...')
-    else: execute(f"Downloading {str(kind).upper()}s from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.wwpdb.org::ftp/data/structures/divided/{suffix}/ {prefix}')
+    else: execute(f"Downloading {str(kind).upper()}s from www.rcsb.org...", f'cd {prefix} && rsync -rlpt -v -z --delete --port=33444 rsync.rcsb.org::ftp_data/structures/divided/{suffix}/ {prefix}')
 
     pattern = { InputType.pdb: 'pdb*.ent.gz', InputType.cif : '*.cif.gz'} [kind]
     files = execute(f"Getting list of available {str(kind).upper()}s...", f"cd {prefix} && find -name '{pattern}'", return_='output', silence_output=True).split()
