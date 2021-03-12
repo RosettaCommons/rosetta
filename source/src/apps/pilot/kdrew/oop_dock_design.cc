@@ -61,6 +61,7 @@
 #include <protocols/ncbb/oop/OopPatcher.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <protocols/rigid/RB_geometry.hh>
+#include <protocols/viewer/viewers.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
@@ -202,6 +203,46 @@ typedef utility::pointer::owning_ptr< OopDockDesignMinimizeMover > OopDockDesign
 typedef utility::pointer::owning_ptr< OopDockDesignMinimizeMover const > OopDockDesignMinimizeMoverCOP;
 */
 
+void*
+my_main(void *)
+{
+	scoring::ScoreFunctionOP score_fxn = get_score_function();
+	scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
+
+	//create mover instance
+	OopDockDesignProtocolOP ODDM_mover( new OopDockDesignProtocol(
+		score_fxn,
+		option[ oddm::mc_temp].value(),
+		option[ oddm::pert_mc_temp].value(),
+		option[ oddm::pert_dock_rot_mag].value(),
+		option[ oddm::pert_dock_trans_mag].value(),
+		option[ oddm::pert_pep_small_temp].value(),
+		option[ oddm::pert_pep_small_H].value(),
+		option[ oddm::pert_pep_small_L].value(),
+		option[ oddm::pert_pep_small_E].value(),
+		option[ oddm::pert_pep_shear_temp].value(),
+		option[ oddm::pert_pep_shear_H].value(),
+		option[ oddm::pert_pep_shear_L].value(),
+		option[ oddm::pert_pep_shear_E].value(),
+		option[ oddm::pert_pep_num_rep].value(),
+		option[ oddm::pert_num].value(),
+		option[ oddm::dock_design_loop_num].value(),
+		option[ oddm::no_design].value(),
+		option[ oddm::final_design_min].value(),
+		option[ oddm::use_soft_rep].value(),
+		option[ oddm::mc_initial_pose].value(),
+		option[ oddm::oop_design_first].value(),
+		option[ oddm::pymol].value(),
+		option[ oddm::keep_history].value()
+		) );
+
+	protocols::ncbb::setup_filter_stats();
+
+	//call job distributor
+	protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );
+	exit( 0 );
+}
+
 int
 main( int argc, char* argv[] )
 {
@@ -248,40 +289,7 @@ main( int argc, char* argv[] )
 		//you MUST HAVE THIS CALL near the top of your main function, or your code will crash when you first access the command line options
 		devel::init(argc, argv);
 
-		scoring::ScoreFunctionOP score_fxn = get_score_function();
-		scoring::constraints::add_fa_constraints_from_cmdline_to_scorefxn(*score_fxn);
-
-		//create mover instance
-		OopDockDesignProtocolOP ODDM_mover( new OopDockDesignProtocol(
-			score_fxn,
-			option[ oddm::mc_temp].value(),
-			option[ oddm::pert_mc_temp].value(),
-			option[ oddm::pert_dock_rot_mag].value(),
-			option[ oddm::pert_dock_trans_mag].value(),
-			option[ oddm::pert_pep_small_temp].value(),
-			option[ oddm::pert_pep_small_H].value(),
-			option[ oddm::pert_pep_small_L].value(),
-			option[ oddm::pert_pep_small_E].value(),
-			option[ oddm::pert_pep_shear_temp].value(),
-			option[ oddm::pert_pep_shear_H].value(),
-			option[ oddm::pert_pep_shear_L].value(),
-			option[ oddm::pert_pep_shear_E].value(),
-			option[ oddm::pert_pep_num_rep].value(),
-			option[ oddm::pert_num].value(),
-			option[ oddm::dock_design_loop_num].value(),
-			option[ oddm::no_design].value(),
-			option[ oddm::final_design_min].value(),
-			option[ oddm::use_soft_rep].value(),
-			option[ oddm::mc_initial_pose].value(),
-			option[ oddm::oop_design_first].value(),
-			option[ oddm::pymol].value(),
-			option[ oddm::keep_history].value()
-			) );
-
-		protocols::ncbb::setup_filter_stats();
-
-		//call job distributor
-		protocols::jd2::JobDistributor::get_instance()->go( ODDM_mover );
+		protocols::viewer::viewer_main( my_main );
 
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

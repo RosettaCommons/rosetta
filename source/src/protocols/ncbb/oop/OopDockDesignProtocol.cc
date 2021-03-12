@@ -56,12 +56,15 @@
 #include <protocols/ncbb/oop/OopDockDesignProtocol.hh>
 #include <protocols/ncbb/util.hh>
 #include <protocols/ncbb/oop/OopDockDesignProtocolCreator.hh>
+#include <protocols/viewer/viewers.hh>
 
 // Filter headers
 #include <basic/MetricValue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 //#include <core/pose/metrics/PoseMetricContainer.fwd.hh>
 #include <core/pose/metrics/simple_calculators/SasaCalculatorLegacy.hh>
+#include <core/select/residue_selector/ResidueIndexSelector.hh>
+#include <core/simple_metrics/metrics/SequenceMetric.hh>
 
 //#include <protocols/simple_pose_metric_calculators/NumberHBondsCalculator.hh>
 //#include <protocols/simple_pose_metric_calculators/BuriedUnsatisfiedPolarsCalculator.hh>
@@ -110,6 +113,29 @@ static basic::Tracer TR( "ODDP" );
 namespace protocols {
 namespace ncbb {
 namespace oop {
+
+
+numeric::xyzVector< Real >
+pep_COM(
+	core::pose::Pose const & pose,
+	core::Size pep_start,
+	core::Size pep_end
+) {
+	numeric::xyzVector< core::Real > massSum( 0.0 );
+	Size nAtms=0;
+	for ( Size i = pep_start; i <= pep_end; ++i ) {
+		conformation::Residue const & rsd( pose.residue(i) );
+		if ( rsd.aa() == core::chemical::aa_vrt ) continue;
+		for ( Size j=1; j<= rsd.nheavyatoms(); ++j ) {
+			conformation::Atom const & atom( rsd.atom(j) );
+			massSum += atom.xyz();
+			nAtms++;
+		}
+	}
+	massSum /= nAtms;
+	return massSum;
+}
+
 
 OopDockDesignProtocol::OopDockDesignProtocol():
 	mc_temp_ ( 1.0),
@@ -284,6 +310,9 @@ OopDockDesignProtocol::apply(
 	// get peptide start and end positions
 	core::Size pep_start( pose.conformation().chain_begin( 2 ) ); core::Size pep_end( pose.size() );
 	TR << "pep_start: " << pep_start << " pep_end: " << pep_end << std::endl;
+
+	core::Vector center_vector = pep_COM( pose, pep_start, pep_end );
+	protocols::viewer::add_conformation_viewer( pose.conformation(), "current", 500, 500, false, true, center_vector );
 
 	// create movemap for peptide
 	kinematics::MoveMapOP pert_pep_mm( new kinematics::MoveMap() );
@@ -474,15 +503,15 @@ OopDockDesignProtocol::apply(
 		for ( core::Size j = 1; j <= core::Size( pert_num_ ); ++j ) {
 			TR << "PERTURB: " << k << " / "  << j << std::endl;
 			pert_trial->apply( pose );
-			protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT (pert score)", (*pert_score_fxn)(pose) );
+			protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT_pert_score", (*pert_score_fxn)(pose) );
 		}
 		pert_mc->recover_low( pose );
-		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT (pert score) recovered low", (*pert_score_fxn)(pose) );
+		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_PERT_pert_score_recovered_low", (*pert_score_fxn)(pose) );
 
 		// design
 		TR << "DESIGN: " << k << std::endl;
 		desn_sequence->apply( pose );
-		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_DESN (hard score)", (*score_fxn_)(pose) );
+		protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_DESN_hard_score", (*score_fxn_)(pose) );
 
 		//kdrew: reset mc after first cycle if not considering initial pose
 		if ( !mc_initial_pose_  && k == 1 ) {
@@ -501,8 +530,19 @@ OopDockDesignProtocol::apply(
 
 	mc->recover_low( pose );
 
-	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL (pert score) ", (*pert_score_fxn)(pose) );
-	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL (hard score) ", (*score_fxn_)(pose) );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL_pert_score", (*pert_score_fxn)(pose) );
+	protocols::jd2::add_string_real_pair_to_current_job( "ENERGY_FINAL_hard_score", (*score_fxn_)(pose) );
+
+	utility::vector1< core::Size > pep_res;
+	for ( core::Size ii = pep_start; ii <= pep_end; ++ii ) {
+		pep_res.push_back( ii );
+	}
+	auto indices = utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >( pep_res );
+	auto metric = core::simple_metrics::metrics::SequenceMetric( indices );
+	metric.set_output_mode( "threeletter" );
+	auto OOP_seq = metric.calculate( pose );
+	protocols::jd2::add_string_string_pair_to_current_job( "OOP_sequence", OOP_seq );
+
 
 	TR << "Ending main loop..." << std::endl;
 	TR << "Checking pose energy..." << std::endl;
@@ -518,6 +558,7 @@ OopDockDesignProtocol::apply(
 
 	calculate_statistics( pose, score_fxn_ );
 
+	protocols::viewer::clear_conformation_viewers();
 }
 
 protocols::moves::MoverOP

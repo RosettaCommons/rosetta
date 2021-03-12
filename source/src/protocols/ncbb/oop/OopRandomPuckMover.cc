@@ -62,6 +62,8 @@ namespace oop {
 void OopRandomPuckMover::apply( core::pose::Pose & pose ){
 
 	TR<< "in OopRandomPuckMover::apply" << std::endl;
+	if ( oop_seq_positions_.empty() ) return;
+
 	//kdrew: for all positions in oop_seq_positions_, input assertion check
 	for ( core::Size i = 1; i <= oop_seq_positions_.size(); i++ ) {
 		core::Size oop_pre_pos = oop_seq_positions_[i];
