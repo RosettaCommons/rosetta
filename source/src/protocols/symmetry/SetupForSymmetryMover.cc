@@ -431,7 +431,7 @@ void ExtractAsymmetricUnitMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	AttributeList attlist;
 	// XRW TO DO: check these attributes
 	attlist + XMLSchemaAttribute( "keep_virtual", xsct_rosetta_bool, "If true, virtual atoms will be left in the pose. If false, the extracted asymmetric unit will not contain virtual atoms." )
-		+ XMLSchemaAttribute( "keep_unknown_aas", xsct_rosetta_bool, "Deprecated option.  All de-symmetrization will keep non-cannonical amino acids." );
+		+ XMLSchemaAttribute( "keep_unknown_aas", xsct_rosetta_bool, "Deprecated option.  All de-symmetrization will keep non-canonical amino acids." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "The inverse of SetupForSymmetry: given a symmetric pose, make a nonsymmetric pose that contains only the asymmetric unit.", attlist );
 }

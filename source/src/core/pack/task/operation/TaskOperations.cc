@@ -850,9 +850,9 @@ void DisallowIfNonnative::apply( pose::Pose const &, PackerTask & task ) const
 
 //helper functions for DisallowIfNonnative
 void
-DisallowIfNonnative::disallow_aas( utility::vector1< bool > const & cannonical_disallowed ){
-	runtime_assert( cannonical_disallowed.size() == chemical::num_canonical_aas );
-	disallowed_aas_ = cannonical_disallowed;
+DisallowIfNonnative::disallow_aas( utility::vector1< bool > const & canonical_disallowed ){
+	runtime_assert( canonical_disallowed.size() == chemical::num_canonical_aas );
+	disallowed_aas_ = canonical_disallowed;
 	allowed_aas_ = invert_vector( disallowed_aas_ );
 }
 void DisallowIfNonnative::disallow_aas( std::string const & aa_string ){

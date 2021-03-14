@@ -32,7 +32,7 @@ parse_res_agnostic_commands(
 
 
 ///@brief Take a Design Sequence Motif (like a simple version of a resfile), and parse into a list of ResfileCommands.
-/// These commands can then be used to do whatever you want with, including non-cannonicals.
+/// These commands can then be used to do whatever you want with, including non-canonicals.
 ///
 /// This is used in the CreateSequenceMotifMover and the SequenceMotifTaskOperation interfaces.
 ///
@@ -50,7 +50,7 @@ parse_res_agnostic_commands(
 ///      These require a % Charactor to start the whole line off.
 ///      For example [%POLAR] is totally cool, as is [%PIKAA ST].
 ///
-///       (Non-cannonical, DNA, RNA, etc. should all work here!!)
+///       (Non-canonical, DNA, RNA, etc. should all work here!!)
 ///
 /// EXAMPLE:
 ///  Glycosylation N-Linked motif design: N[^P][ST]

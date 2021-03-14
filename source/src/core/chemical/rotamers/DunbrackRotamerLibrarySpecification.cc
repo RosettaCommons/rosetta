@@ -78,7 +78,7 @@ DunbrackRotamerLibrarySpecification::clone() const {
 void
 DunbrackRotamerLibrarySpecification::aa( AA aa_setting ) {
 	if ( aa_setting > num_canonical_aas && ! core::chemical::is_canonical_D_aa(aa_setting) ) {
-		utility_exit_with_message("Cannot have a Dunbrack rotamer library with a non-cannonical amino acid." );
+		utility_exit_with_message("Cannot have a Dunbrack rotamer library with a non-canonical amino acid." );
 	}
 	aa_ = aa_setting;
 }

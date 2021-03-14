@@ -234,7 +234,7 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	AttributeList attlist;
 
-	attlist + XMLSchemaAttribute("dihedral", xs_string, "The cannonical dihedral being set.  Currently, only Backbone dihedrals are accepted here.  Works for proteins and carbohydrates ");
+	attlist + XMLSchemaAttribute("dihedral", xs_string, "The canonical dihedral being set.  Currently, only Backbone dihedrals are accepted here.  Works for proteins and carbohydrates ");
 
 	attlist + XMLSchemaAttribute("sd", xsct_real, "The standard deviation used for the CircularHarmonic Func.  Default is 16 degrees, THis which was found by taking the mean SD of all dihedral angles of either PHI or PSI for each North (Antibody) CDR Cluster (CDRs are the main antibody loops).  This is a fairly tight constraint and allows a bit of movement while not changing overall struture much.");
 

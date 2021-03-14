@@ -552,7 +552,7 @@ core::Real MHCEpitopeEnergy::full_rescore(
 			bool chain_break=false, noncanon=false, score_chunk = true;
 			// If we have an overhang (for example, 3), we need to start prior to the terminus (at -3 instead of 0) and pad it.
 			int i=-overhang; // need outside of loop, to jump if not contiguous; must be an int, since in case of overhang will be negative
-			// Check for chainbreaks, noncannonicals, and symmetry breaks.
+			// Check for chainbreaks, noncanonicals, and symmetry breaks.
 			for ( ; i < int(len-overhang); ++i ) {
 				if ( start+i < int(curr_chunk_start) ) { //If we are extending into the previous chain
 					// Pad with the padding character and move on

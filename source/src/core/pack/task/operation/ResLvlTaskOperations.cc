@@ -248,9 +248,9 @@ void DisallowIfNonnativeRLT::apply( ResidueLevelTask & rlt ) const
 	rlt.restrict_nonnative_canonical_aas( allowed_aas_ );
 }
 
-void DisallowIfNonnativeRLT::disallow_aas( utility::vector1< bool > const & cannonical_disallowed ){
-	runtime_assert( cannonical_disallowed.size() == chemical::num_canonical_aas );
-	disallowed_aas_ = cannonical_disallowed;
+void DisallowIfNonnativeRLT::disallow_aas( utility::vector1< bool > const & canonical_disallowed ){
+	runtime_assert( canonical_disallowed.size() == chemical::num_canonical_aas );
+	disallowed_aas_ = canonical_disallowed;
 	allowed_aas_ = invert_vector( disallowed_aas_ );
 }
 void DisallowIfNonnativeRLT::disallow_aas( std::string const & aa_string ){

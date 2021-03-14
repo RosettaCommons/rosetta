@@ -102,7 +102,7 @@ public:
 	//helper functions to define desired AAs
 	void clear();
 	//define as true which residues are NOT allowed
-	void disallow_aas( utility::vector1< bool > const & cannonical_disallowed );
+	void disallow_aas( utility::vector1< bool > const & canonical_disallowed );
 	void disallow_aas( std::string const & aa_string );
 	void parse_tag( TagCOP ) override;
 

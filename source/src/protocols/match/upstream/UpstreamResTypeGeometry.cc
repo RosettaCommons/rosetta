@@ -116,7 +116,7 @@ UpstreamResTypeGeometry::initialize_from_residue_type(
 		Vector halfpoint = 0.5 * ( res.ideal_xyz( N_atom_id_ ) + res.ideal_xyz( C_atom_id_ ) );
 		HTReal ideal_frame( res.ideal_xyz( N_atom_id_ ), halfpoint, res.ideal_xyz( CA_atom_id_ ) );
 
-		/// backbone atoms, besides the cannonical 3
+		/// backbone atoms, besides the canonical 3
 		for ( core::Size ii = 1; ii <= n_atoms; ++ii ) {
 			if ( ii == N_atom_id_ || ii == CA_atom_id_ || ii == C_atom_id_ ) continue;
 			if ( res.last_controlling_chi( ii ) != 0 ) continue;

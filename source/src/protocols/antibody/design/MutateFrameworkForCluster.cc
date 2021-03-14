@@ -252,7 +252,7 @@ MutateFrameworkForCluster::load_data() {
 		mut_pos.pdb_position_ = resnum_str;
 		mut_pos.numbering_scheme_ = manager.numbering_scheme_string_to_enum(scheme_str);
 		mut_pos.mutants_allowed_.clear();
-		mut_pos.mutants_allowed_.resize(20, false); //Standard cannonical aas.
+		mut_pos.mutants_allowed_.resize(20, false); //Standard canonical aas.
 
 		for ( char & iter_aa : aas_str ) {
 			//TR << *iter_aa << std::endl;

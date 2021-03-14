@@ -140,7 +140,7 @@ ProteinInterfaceDesignOperation::apply( core::pose::Pose const & pose, core::pac
 	utility::vector1< core::Size > residues;
 	using namespace core::chemical;
 	utility::vector1< bool > allowed_aas( core::chemical::num_canonical_aas, true );
-	// check if we are allowing design of all cannonical aas
+	// check if we are allowing design of all canonical aas
 	if ( !allow_all_aas_ ) {
 		allowed_aas[ aa_cys ] = false;
 		allowed_aas[ aa_gly ] = false;

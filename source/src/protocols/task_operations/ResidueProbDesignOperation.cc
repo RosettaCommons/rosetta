@@ -233,7 +233,7 @@ ResidueProbDesignOperation::get_weights(AAProbabilities & aa_prob_set) const{
 
 	vector1<Real> aa_weights(20, zero_probs_overwrite_);
 
-	//Non-cannonicals will have to come later
+	//Non-canonicals will have to come later
 	for ( core::Size i = 1; i <= 20; ++i ) {
 		auto amino = static_cast< core::chemical::AA >(i);
 		if ( ! aa_exists(amino, aa_prob_set) || aa_prob_set[amino] == 0.0 ) { continue; }

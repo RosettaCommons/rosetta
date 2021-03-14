@@ -303,7 +303,7 @@ public:
 	void clear();
 	//define as true which residues are NOT allowed.
 	// The functions are not additive, will not remember previous disallowed
-	void disallow_aas( utility::vector1< bool > const & cannonical_disallowed );
+	void disallow_aas( utility::vector1< bool > const & canonical_disallowed );
 	void disallow_aas( std::string const & aa_string );
 	// allow restriction of residues, additive
 	void restrict_to_residue( core::Size const & resid);
