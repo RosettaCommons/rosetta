@@ -71,10 +71,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Select only the asymmetric unit residues or not.
+	void set_asu_only( bool const asu_only );
 
 private:
 	bool reduced_IG_as_L_;
-
+	bool asu_only_;
 
 };
 

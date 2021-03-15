@@ -56,6 +56,7 @@ namespace residue_selector {
 ///
 LayerSelector::LayerSelector() :
 	cache_selection_( false ),
+	asu_only_( false ),
 	srbl_( utility::pointer::make_shared< core::select::util::SelectResiduesByLayer >() )
 	//TODO -- initialize here
 {
@@ -67,6 +68,7 @@ LayerSelector::LayerSelector() :
 ///
 LayerSelector::LayerSelector( LayerSelector const &src ) :
 	cache_selection_( src.cache_selection_ ),
+	asu_only_( src.asu_only_ ),
 	srbl_( src.srbl_->clone() ) //CLONE this -- don't copy it.
 {}
 
@@ -104,8 +106,10 @@ LayerSelector::apply( core::pose::Pose const & pose ) const
 		return cached_subset;
 	}
 
-	utility::vector1<core::Size> selected_residues = srbl_->compute(pose, "", true);
+	// Compute srbl (SelectResiduesByLayer)
+	utility::vector1<core::Size> selected_residues = srbl_->compute(pose, "", true, asu_only_ );
 
+	// Assign selection
 	ResidueSubset subset( nres, false );
 	for ( core::Size i=1, imax=selected_residues.size(); i<=imax; ++i ) {
 		runtime_assert(selected_residues[i] > 0 && selected_residues[i] <= nres);
@@ -131,6 +135,9 @@ LayerSelector::parse_my_tag(
 
 	//Select algorithm:
 	set_use_sc_neighbors( tag->getOption<bool>("use_sidechain_neighbors", true) );
+
+	//Symmetry options
+	set_asu_only( tag->getOption< bool >( "asu_only", false ) );
 
 	//Set algorithm details:
 	if ( tag->hasOption("ball_radius") ) {
@@ -183,6 +190,7 @@ LayerSelector::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		+ XMLSchemaAttribute::attribute_w_default( "select_surface",                 xsct_rosetta_bool, "Should the surface (exposed) layer be selected?",  "false"  )
 		+ XMLSchemaAttribute::attribute_w_default( "cache_selection",                xsct_rosetta_bool, "Should the selection be stored, so that it needn't be recomputed?",  "false"  )
 		+ XMLSchemaAttribute::attribute_w_default( "use_sidechain_neighbors",        xsct_rosetta_bool, "If true (the default), then the sidechain neighbour algorithm is used to determine burial.  If false, burial is based on SASA (solvent-accessible surface area) calculations.",  "true"  )
+		+ XMLSchemaAttribute::attribute_w_default( "asu_only",                       xsct_rosetta_bool, "if true, returns selection of only asymmetric unit.",  "false"  )
 		+ XMLSchemaAttribute( "ball_radius",                    xsct_real , "The radius value for the rolling ball algorithm used for SASA (solvent-accessible surface area) calculations.  Only used if use_sidechain_neighbors=false." )
 		+ XMLSchemaAttribute( "sc_neighbor_dist_midpoint",      xsct_real , "The midpoint of the distance-dependent sigmoidal falloff for the sidechain-neighbours algorithm.  Only used if use_sidechain_neighbors=true." )
 		+ XMLSchemaAttribute( "sc_neighbor_denominator",        xsct_real , "XRW TO DO" )
@@ -322,6 +330,12 @@ LayerSelector::set_dist_exponent( core::Real const val )
 	return;
 }
 
+void
+LayerSelector::set_asu_only( bool const asu_only )
+{
+	asu_only_ = asu_only;
+}
+
 /// @brief Provide the citation.
 void
 LayerSelector::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
@@ -368,6 +382,7 @@ void
 core::select::residue_selector::LayerSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( cache_selection_ ) ); // bool
+	arc( CEREAL_NVP( asu_only_ ) ); // bool
 	arc( CEREAL_NVP( srbl_ ) ); // core::select::util::SelectResiduesByLayerOP
 }
 
@@ -377,6 +392,7 @@ void
 core::select::residue_selector::LayerSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( cache_selection_ ); // bool
+	arc( asu_only_ ); // bool
 	arc( srbl_ ); // core::select::util::SelectResiduesByLayerOP
 }
 

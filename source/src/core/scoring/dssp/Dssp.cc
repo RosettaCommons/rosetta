@@ -24,12 +24,12 @@
 #include <core/pose/Pose.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/sequence/ABEGOManager.hh>
-
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -52,7 +52,6 @@
 #include <core/scoring/dssp/StrandPairing.hh>
 #include <utility/vector1.hh>
 
-
 static basic::Tracer tr( "core.scoring.dssp" );
 
 using namespace core;
@@ -65,9 +64,9 @@ namespace scoring {
 namespace dssp {
 
 
-Dssp::Dssp( core::pose::Pose const& pose ) {
+Dssp::Dssp( core::pose::Pose const& pose, bool const asu_only ) {
 	pair_set_ = nullptr;
-	compute( pose );
+	compute( pose, asu_only );
 }
 
 Dssp::~Dssp() = default;
@@ -299,21 +298,33 @@ Dssp::dssp_reduced() {
 ///
 //////////////////////////////////////////////////////////////////////////////
 void
-Dssp::compute( pose::Pose const& pose ) {
+Dssp::compute( pose::Pose const& pose, bool const asu_only ) {
 
 	float dssp_hbond_threshold = -0.5;
+	core::pose::Pose target_pose;
 
-	core::Size total_residue( pose.size() );
+	//check for symmetry
+	bool sym_check = core::pose::symmetry::is_symmetric( pose );
+	if ( sym_check && asu_only ) {
+		tr.Info << "Pose is symmetric and asu_only=True. Calculating DSSP for asymmetric unit residues ONLY." << std::endl;
+		core::pose::symmetry::extract_asymmetric_unit(pose, target_pose, false );
+		tr.Debug << "Pose.size() = " << pose.size() << std::endl;
+		tr.Debug << "ASU size = " << target_pose.size() << std::endl;
+	} else {
+		target_pose = pose;
+	}
+
+	core::Size total_residue( target_pose.size() );
 	ObjexxFCL::FArray1D_bool invalid; //Should we omit this residue when doing DSSP?
 	dssp_secstruct_.dimension(total_residue);
 	invalid.dimension(total_residue);
 
-	fill_hbond_bb_pair_score_dssp( pose, hbond_bb_pair_score_ ); // fills hbond_bb_pair_score_ array
+	fill_hbond_bb_pair_score_dssp( target_pose, hbond_bb_pair_score_ ); // fills hbond_bb_pair_score_ array
 
 	// Initialize to all loops
 	for ( Size i = 1; i <= total_residue; i++ ) {
 		dssp_secstruct_(i) = ' ';
-		invalid(i) = (! pose.residue(i).is_protein()) || ( pose.residue(i).aa() == core::chemical::aa_vrt);
+		invalid(i) = (! target_pose.residue(i).is_protein()) || ( target_pose.residue(i).aa() == core::chemical::aa_vrt);
 	}
 
 	bool helix;
@@ -354,7 +365,7 @@ Dssp::compute( pose::Pose const& pose ) {
 	}
 
 	// Record all strands (B and E)
-	pair_set_ = utility::pointer::make_shared< StrandPairingSet >( hbond_bb_pair_score_, dssp_hbond_threshold, pose );
+	pair_set_ = utility::pointer::make_shared< StrandPairingSet >( hbond_bb_pair_score_, dssp_hbond_threshold, target_pose );
 
 	for ( Size i = 1; i <= total_residue; i++ ) {
 		char state = pair_set_->dssp_state(i);
@@ -388,8 +399,8 @@ Dssp::compute( pose::Pose const& pose ) {
 		for ( Size i = 3; i <= total_residue - 2; i++ ) {
 			if ( invalid(i-2) || invalid(i) || invalid(i+2) ) continue;
 			if ( dssp_secstruct_(i) == ' ' ) {
-				Vector const v1 ( pose.xyz( id::NamedAtomID("CA",i ) ) - pose.xyz(  id::NamedAtomID("CA",i-2 ) ) );
-				Vector const v2 ( pose.xyz( id::NamedAtomID("CA",i+2 ) ) - pose.xyz(  id::NamedAtomID("CA",i ) ) );
+				Vector const v1 ( target_pose.xyz( id::NamedAtomID("CA",i ) ) - target_pose.xyz(  id::NamedAtomID("CA",i-2 ) ) );
+				Vector const v2 ( target_pose.xyz( id::NamedAtomID("CA",i+2 ) ) - target_pose.xyz(  id::NamedAtomID("CA",i ) ) );
 				Real dot = angle_of( v1, v2 );
 				if ( dot < .34202014 ) {
 					dssp_secstruct_(i) = 'S';

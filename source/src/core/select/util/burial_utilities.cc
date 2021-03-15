@@ -19,6 +19,13 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
+// Project Headers
+#include <basic/Tracer.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
+
+static basic::Tracer TR( "core.select.util.burial_utilities" );
+
 namespace core {
 namespace select {
 namespace util {
@@ -32,11 +39,25 @@ calc_sc_neighbors( pose::Pose const & pose,
 	core::Real const angle_shift_factor /* 0.5 */,
 	core::Real const dist_exponent /* 1.0 */,
 	core::Real const dist_midpoint /* 9.0 */,
-	core::Real const rsd_neighbor_denominator /* 1.0 */)
+	core::Real const rsd_neighbor_denominator /* 1.0 */,
+	bool const asu_only /* false */ )
 {
 	utility::vector1< Real > rsd_sc_neighbors;
 
-	for ( Size i = 1; i <= pose.size(); ++i ) {
+	core::Size target_pose_size;
+
+	//check for symmetry
+	bool sym_check = core::pose::symmetry::is_symmetric( pose );
+	if ( sym_check && asu_only ) {
+		TR.Info << "Pose is symmetric and asu_only=True. Calculating sc_neighbors for asymmetric unit residues ONLY, but it is calculated against the symmetric pose." << std::endl;
+		target_pose_size = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		TR.Debug << "Pose.size() = " << pose.size() << std::endl;
+		TR.Debug << "ASU size = " << target_pose_size << std::endl;
+	} else {
+		target_pose_size = pose.size();
+	}
+
+	for ( Size i = 1; i <= target_pose_size; ++i ) {
 		Real my_neighbors(0.0);
 
 		numeric::xyzVector< Real > my_sc_coordinates;
@@ -60,6 +81,8 @@ calc_sc_neighbors( pose::Pose const & pose,
 
 		for ( Size j = 1; j <= pose.size(); ++j ) {
 
+			//TR.Debug << "Calculating resi " << i << " against resi " << j << std::endl;
+
 			if ( i != j ) {
 
 				numeric::xyzVector< Real > other_bb_coordinates;
@@ -79,7 +102,7 @@ calc_sc_neighbors( pose::Pose const & pose,
 			}
 		}
 		rsd_sc_neighbors.push_back(my_neighbors / rsd_neighbor_denominator);
-		//TR << i << "  " << my_neighbors << std::endl;
+		TR.Debug << "Resi " << i << "; my_neighbors: " << my_neighbors << std::endl;
 	}
 
 	return rsd_sc_neighbors;

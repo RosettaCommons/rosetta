@@ -35,7 +35,8 @@ calc_sc_neighbors( pose::Pose const & pose,
 	core::Real const angle_shift_factor = 0.5,
 	core::Real const dist_exponent = 1.0,
 	core::Real const dist_midpoint = 9.0,
-	core::Real const res_denominator = 1.0);
+	core::Real const res_denominator = 1.0,
+	bool const asu_only=false );
 
 /// @brief Given a point in 3D space, and a vector and floats defining a cone, determine the extent to which the point
 /// is in the cone.

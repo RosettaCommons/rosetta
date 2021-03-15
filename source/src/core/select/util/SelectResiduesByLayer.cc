@@ -25,6 +25,8 @@
 #include <core/scoring/dssp/Dssp.hh>
 #include <basic/Tracer.hh>
 #include <core/select/util/burial_utilities.hh>
+#include <core/pose/symmetry/util.hh>
+#include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>
@@ -290,7 +292,7 @@ SelectResiduesByLayer::calc_rsd_sasa( Pose const & pose ) const {
 
 /// @brief
 utility::vector1< core::Size > const
-SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool const skip_dssp )
+SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool const skip_dssp, bool const asu_only )
 {
 	String secstruct2(secstruct);
 
@@ -327,16 +329,34 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 		TR.Debug << " surface (E, L, H ): " << surface_[ 'E' ] << ' ' << surface_[ 'L' ] << ' ' << surface_[ 'H' ] << std::endl;
 	}
 
+	//calculate layer identity
 	if ( use_sidechain_neighbors_ ) {
-		rsd_sasa_ = calc_sc_neighbors(pose, angle_exponent(), angle_shift_factor(), dist_exponent(), dist_midpoint(), rsd_neighbor_denominator());
+		rsd_sasa_ = calc_sc_neighbors( pose, angle_exponent(), angle_shift_factor(), dist_exponent(), dist_midpoint(), rsd_neighbor_denominator(), asu_only );
 	} else {
 		rsd_sasa_ = calc_rsd_sasa( pose );
 	}
 
-	rsd_layer_.resize( pose.size() );
+	core::Size target_pose_size;
 
+	//check for symmetry
+	bool sym_check = core::pose::symmetry::is_symmetric( pose );
+	if ( sym_check && asu_only ) {
+		TR.Info << "Pose is symmetric and asu_only=True. Returning residues on asymmetric unit ONLY." << std::endl;
+		target_pose_size = core::pose::symmetry::symmetry_info(pose)->num_independent_residues();
+		TR.Debug << "Pose.size() = " << pose.size() << std::endl;
+		TR.Debug << "ASU size = " << target_pose_size << std::endl;
+	} else {
+		target_pose_size = pose.size();
+	}
+
+	rsd_layer_.resize( target_pose_size );
+
+	//apply layer identity to selection
 	utility::vector1< Size > selected_residues;
-	for ( Size iaa=1; iaa<=pose.size(); iaa++ ) {
+
+	for ( Size iaa=1; iaa<=target_pose_size; iaa++ ) {
+
+		//TR.Debug << "resi = " << iaa << std::endl;
 
 		char ss = secstruct2.at( iaa-1 );
 		runtime_assert( ss == 'L' || ss =='E' || ss=='H' );
@@ -363,7 +383,6 @@ SelectResiduesByLayer::compute( Pose const & pose, String const &secstruct, bool
 
 		if ( pick_core_ && ( (rsd_sasa_[ iaa ] <= burial_[ ss ] && !use_sidechain_neighbors_ ) ||
 				(rsd_sasa_[ iaa ] >= burial_[ ss ] &&  use_sidechain_neighbors_ ) ) ) {
-
 
 			selected_core_residues_.push_back( iaa );
 			selected_residues.push_back( iaa );

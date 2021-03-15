@@ -129,6 +129,9 @@ public:
 	/// @details See the core::select::util::SelectResiduesByLayer class for details of the math.
 	void set_dist_exponent( core::Real val );
 
+	/// @brief Set select only the asymmetric unit residues or not.
+	void set_asu_only( bool const asu_only );
+
 public:
 
 	/// @brief Provide the citation.
@@ -138,6 +141,9 @@ private: // data members
 
 	/// @brief Whether to cache the residue selection or recompute it when requested.
 	bool cache_selection_;
+
+	/// @brief Select only the asymmetric unit residues or not.
+	bool asu_only_;
 
 	/// @brief Owning pointer to the calculator that determines what layer
 	/// a residue is in.

@@ -194,7 +194,7 @@ public: // main operation
 
 	/// @brief apply
 	utility::vector1< Size > const
-	compute( Pose const & pose, String const &secstruct="", bool const skip_dssp=false );
+	compute( Pose const & pose, String const &secstruct="", bool const skip_dssp=false, bool const asu_only=false );
 
 
 private: // helper functions
@@ -216,7 +216,6 @@ protected:
 
 	/// @brief recompute residue selection every time?
 	bool cache_selection_;
-
 
 	/// @brief pore radius for calculating asa( accessible surface area )
 	Real pore_radius_;

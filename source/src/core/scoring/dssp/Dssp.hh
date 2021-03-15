@@ -51,7 +51,7 @@ namespace dssp {
 class Dssp {
 public:
 
-	Dssp( core::pose::Pose const& );
+	Dssp( core::pose::Pose const&, bool const asu_only=false );
 	~Dssp();
 
 	void dssp_reduced_IG_as_L_if_adjcent_H( ObjexxFCL::FArray1_char &secstruct );
@@ -85,7 +85,7 @@ public:
 	bool in_paired_strands(Size res1, Size res2 ) const;
 
 private:
-	void compute( core::pose::Pose const& );
+	void compute( core::pose::Pose const&, bool const asu_only=false );
 
 
 	ObjexxFCL::FArray1D_char dssp_secstruct_;

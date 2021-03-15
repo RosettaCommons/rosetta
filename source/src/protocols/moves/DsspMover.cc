@@ -40,7 +40,8 @@ namespace moves {
 
 DsspMover::DsspMover():
 	Mover( DsspMover::mover_name() ),
-	reduced_IG_as_L_(false)
+	reduced_IG_as_L_(false),
+	asu_only_(false)
 {}
 
 DsspMover::~DsspMover() = default;
@@ -60,13 +61,13 @@ DsspMover::MoverOP DsspMover::fresh_instance() const {
 void DsspMover::apply( Pose & pose )
 {
 	if ( !reduced_IG_as_L_ ) {
-		core::scoring::dssp::Dssp dssp( pose );
-		dssp.insert_ss_into_pose( pose );
+		core::scoring::dssp::Dssp dssp( pose, asu_only_ );
+		dssp.insert_ss_into_pose( pose, false );
 		TR << dssp.get_dssp_secstruct() << std::endl;
 	} else {
 		TR << "reduce IG as L" << std::endl;
-		core::scoring::dssp::Dssp dssp( pose );
-		dssp.insert_ss_into_pose_no_IG_helix( pose );
+		core::scoring::dssp::Dssp dssp( pose, asu_only_ );
+		dssp.insert_ss_into_pose_no_IG_helix( pose, false );
 		TR << dssp.get_dssp_secstruct() << std::endl;
 	}
 }
@@ -79,6 +80,8 @@ DsspMover::parse_my_tag(
 )
 {
 	reduced_IG_as_L_ = tag->getOption<bool>( "reduced_IG_as_L" , false );
+	//Symmetry options
+	set_asu_only( tag->getOption< bool >( "asu_only", false ) );
 	TR << "DsspMover loaded." << std::endl;
 }
 
@@ -94,10 +97,9 @@ void DsspMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 	AttributeList attlist;
-	attlist + XMLSchemaAttribute::attribute_w_default(
-		"reduced_IG_as_L", xs_integer,
-		"if set to be 1, will convert IG from Dssp definition as L rather than H",
-		"0");
+	attlist
+		+ XMLSchemaAttribute::attribute_w_default( "reduced_IG_as_L", xs_integer, "if set to be 1, will convert IG from Dssp definition as L rather than H", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "asu_only", xsct_rosetta_bool, "if true, only performs DSSP on asymmetric unit.", "false" );
 
 	protocols::moves::xsd_type_definition_w_attributes(
 		xsd, mover_name(),
@@ -120,6 +122,10 @@ void DsspMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & x
 	DsspMover::provide_xml_schema( xsd );
 }
 
+void DsspMover::set_asu_only( bool const asu_only )
+{
+	asu_only_ = asu_only;
+}
 
 }  // namespace moves
 }  // namespace protocols

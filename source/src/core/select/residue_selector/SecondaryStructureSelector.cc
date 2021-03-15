@@ -116,7 +116,9 @@ SecondaryStructureSelector::get_secstruct( core::pose::Pose const & pose ) const
 		return dssp.get_dssp_secstruct();
 	}
 
-	TR << "Using secondary structure in pose: " << pose.secstruct() << std::endl;
+	TR << "Using STORED secondary structure in pose: (hidden in debug; level 400)";
+	TR.Debug << pose.secstruct();
+	TR << std::endl;
 	return pose.secstruct();
 }
 
@@ -138,6 +140,7 @@ SecondaryStructureSelector::apply( core::pose::Pose const & pose ) const
 		throw CREATE_EXCEPTION(utility::excn::BadInput,  err.str() );
 	}
 
+	TR.Debug << "Fixing secstruct definition: " << std::endl;
 	fix_secstruct_definition( ss );
 
 	ResidueSubset matching_ss( pose.size(), false );
@@ -300,14 +303,14 @@ SecondaryStructureSelector::fix_secstruct_definition( std::string & ss ) const
 	for ( auto const & combo : Econtent ) {
 		if ( combo.second < minE_ ) todel.push_back( combo );
 	}
-	TR << ss << std::endl;
-	TR << todel << std::endl;
+	TR.Debug << "ss: " << ss << std::endl;
+	TR.Debug << "todel: " << todel << std::endl;
 	for ( auto const & combo : todel ) {
 		for ( core::Size ii = 0; ii < combo.second; ++ii ) {
 			ss[ combo.first + ii ] = 'L';
 		}
 	}
-	TR << ss << std::endl;
+	TR.Debug << "ss: " << ss << std::endl;
 }
 
 void
@@ -351,7 +354,6 @@ SecondaryStructureSelector::add_overlap(
 		}
 	}
 }
-
 
 void
 set_pose_secstruct( std::string const & ss );
