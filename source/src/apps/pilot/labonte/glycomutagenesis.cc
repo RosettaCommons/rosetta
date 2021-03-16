@@ -328,9 +328,9 @@ private:  // Private methods
 	}
 
 
-	// Breaking disulfide to avoid runtime errors. 
-	// name is "disulfide_treatment: because other alternate option "ignore" can also be used. 
-	void 
+	// Breaking disulfide to avoid runtime errors.
+	// name is "disulfide_treatment: because other alternate option "ignore" can also be used.
+	void
 	disulfide_treatment( core::pose::Pose & pose, core::uint const seqpos, Size const n_residues_left_of_site, Size const n_residues_right_of_site )
 	{
 		for ( core::uint i( seqpos - n_residues_left_of_site ); i <= seqpos + n_residues_right_of_site; ++i ) {
