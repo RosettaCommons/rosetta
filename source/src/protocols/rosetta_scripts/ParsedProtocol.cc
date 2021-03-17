@@ -166,7 +166,7 @@ ParsedProtocol::apply( Pose & pose )
 
 		if ( get_last_move_status() == protocols::moves::MS_SUCCESS ) { // no point scoring a failed trajectory (and sometimes you get etable vs. pose atomset mismatches
 			final_score(pose);
-			runtime_assert( n_steps_passed_in_previous_run_ == steps_.size() );
+			runtime_assert( n_steps_passed_in_previous_run_ == steps_.size() || mode_ == "single_random" );
 		} else {
 			runtime_assert( n_steps_passed_in_previous_run_ < steps_.size() );
 		}
