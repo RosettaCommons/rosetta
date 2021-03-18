@@ -783,11 +783,13 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		}
 
 		using namespace ObjexxFCL::format;
-		TR << "MembraneCenter " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
-		TR << "MembraneNormal " << F(8,3,best_normal.x())<< F(8,3,best_normal.y())<< F(8,3,best_normal.z()) << std::endl;
-		TR << "ATOM   9999  X   MEM A 999    " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
-		TR << "ATOM   9999  Y   MEM A 999    " << F(8,3,best_center.x()+15.*best_normal.x())<< F(8,3,best_center.y()+15.*best_normal.y())<< F(8,3,best_center.z()+15.*best_normal.z()) << std::endl;
-		TR << "ATOM   9999  Z   MEM A 999    " << F(8,3,best_center.x()-15.*best_normal.x())<< F(8,3,best_center.y()-15.*best_normal.y())<< F(8,3,best_center.z()-15.*best_normal.z()) << std::endl;
+		if ( TR.Debug.visible() ) {
+			TR.Debug << "MembraneCenter " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
+			TR.Debug << "MembraneNormal " << F(8,3,best_normal.x())<< F(8,3,best_normal.y())<< F(8,3,best_normal.z()) << std::endl;
+			TR.Debug << "ATOM   9999  X   MEM A 999    " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
+			TR.Debug << "ATOM   9999  Y   MEM A 999    " << F(8,3,best_center.x()+15.*best_normal.x())<< F(8,3,best_center.y()+15.*best_normal.y())<< F(8,3,best_center.z()+15.*best_normal.z()) << std::endl;
+			TR.Debug << "ATOM   9999  Z   MEM A 999    " << F(8,3,best_center.x()-15.*best_normal.x())<< F(8,3,best_center.y()-15.*best_normal.y())<< F(8,3,best_center.z()-15.*best_normal.z()) << std::endl;
+		}
 	}
 }
 
