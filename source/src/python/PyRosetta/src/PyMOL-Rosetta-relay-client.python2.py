@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #
 # (c) Copyright Rosetta Commons Member Institutions.
 # (c) This file is part of the Rosetta software suite and is made available under license.
@@ -7,6 +7,7 @@
 # (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 from __future__ import print_function
+
 
 """
 @file    PyMOLPyRosettaServer.py
@@ -23,7 +24,7 @@ from __future__ import print_function
 """
 
 import hashlib
-import select as select_module, socket as socket_module, time as time_module, os as os_module
+import select as select_module, socket as socket_module, struct, time as time_module, os as os_module
 
 # specify secret string (password) to use when connecting to relay
 # you will need to use the secret sting in both this script and in rosetta_udp_to_tcp_bridge scripts
@@ -36,8 +37,8 @@ _my_secret_ = _my_secret_ if _my_secret_ else os_module.getenv('ROSETTA_PYMOL_SE
 _default_relay_server_, _default_port_ = 'relay.graylab.jhu.edu', 9989
 
 
-
 # Imports.
+import sys
 import math
 import time
 import socket
@@ -46,13 +47,15 @@ import bz2
 import threading
 from array import array
 
-from io import BytesIO
+try:
+    from cStringIO import StringIO
+    _terminate_ = False
+except ModuleNotFoundError:
+    _terminate_ = True
 
-DEBUG = True
+import pymol
 
-if not DEBUG:
-    import pymol
-    from pymol.cgo import *
+from pymol.cgo import *
 
 #from NetLink import PR_UDPServer
 # ^^^ This does not work on CygWin PyMOL, so we just add our code here....
@@ -273,7 +276,7 @@ class PR_UDPServer:
 
         #print 'Packet count info:', counts
         if counts[1] == 1:  # only one messgage in pack...
-            return array('B', data[22:])  #bz2.decompress(data[22:])
+            return array('c', data[22:])  #bz2.decompress(data[22:])
         else:
             if packet_id not in self.buf:
                 self.buf[packet_id] = [0., {}]
@@ -285,9 +288,9 @@ class PR_UDPServer:
             # Now, let's check if we can find all the pieces of the message....
             if len(d) == counts[1]:  # Yes, they are all here....
                 #print 'Assembling message from %s pieces....' % counts[1]
-                m = array('B')
+                m = array('c')
                 for i in range(counts[1]):
-                    m.extend(array('B', d[i]))
+                    m.extend(array('c', d[i]))
                 del self.buf[packet_id]
 
                 #print 'Message is:', len(m), m, d
@@ -301,7 +304,7 @@ class PR_UDPServer:
                 current_time = time.time()
                 if current_time - self.last_cleanup_time > 2.:
                     # Cleaning up every 2 s
-                    for k in list( self.buf.keys() ):
+                    for k in self.buf.keys():
                         if current_time - self.buf[k][0] > 10.0:
                             print( 'Buffer clean up: %s' % repr(k) )
                             del self.buf[k]
@@ -316,7 +319,7 @@ class PR_PyMOLServer:
         else:
             palette = 'R'
 
-        for i in range(0, len(s), 8):
+        for i in xrange(0, len(s), 8):
             score = ('%s' % s[(i + 6):(i + 8)])
             color = palette + score
             target = '%s and chain %s and resi %s' % (name, s[i], s[(i + 1):(i + 6)])
@@ -334,24 +337,26 @@ class PR_PyMOLServer:
             bytes ...:... - message itself
         """
         #print("the initial message is {0}".format(msg))
-        ptype = msg[:8] #.tobytes()
-        flags = msg[8]
-        name_len = msg[9]
-        name = msg[10:(10 + name_len)].decode('utf-8', 'ignore')
-        data = msg[10 + name_len:]  #
-        #print('Decoy type: %s, name: %s' % (ptype, name) )
+        #print('msg-type:', type(msg))
+        ptype = msg[:8].tostring()
+
+        flags = ord(msg[8])
+        name_len = ord(msg[9])
+        name = msg[10:(10 + name_len)].tostring()
+        data = msg[10 + name_len:]  #.tostring()
+        #print 'Decoy type: %s, name: %s' % (ptype, name)
 
 
         # String is just text that we need to print.
-        if ptype == b'Text    ':
-            print( data.decode('utf-8', 'ignore') )
+        if ptype == 'Text    ':
+            print( data.tostring() )
 
 
         #######################################################################
         # PDB data.
         # String is just a pdb file, no compression.
-        elif ptype == b'PDB     ':
-            #print( 'Getting PDB packet "%s"...' % name )
+        elif ptype == 'PDB     ':
+            #print 'Getting PDB packet "%s"...' % name
             #print 'Processing pdb...'
             #pymol.cmd.delete(name)
             pymol.cmd.read_pdbstr(data, name, 1)
@@ -360,16 +365,16 @@ class PR_PyMOLServer:
             #pymol.cmd.refresh()
 
         # String is a pdb file with compression.
-        elif ptype.startswith(b'PDB.'):
+        elif ptype.startswith('PDB.'):
             #print 'Getting PDB packet "%s"...' % name
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                s = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
-            elif ptype.endswith(b'.bz2 '):
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype.endswith('.bz2 '):
                 s = bz2.decompress(data)
 
-            #print( 'Got compressed PDB:', name )
+            #print 'Got compressed PDB:', name
 
             pymol.cmd.read_pdbstr(s, name, flags ^ 1)
             if flags:  # Go to the new frame.
@@ -377,36 +382,33 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Energy data.
-        elif ptype.startswith(b'Ene'):
+        elif ptype.startswith('Ene'):
             #print 'Getting energy packet "%s"...' % name
-            e_type_len = data[0]
-            e_type = data[1:(1 + e_type_len)]
+            e_type_len = ord(data[0])
+            e_type = data[1:(1 + e_type_len)].tostring()
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                s = gzip.GzipFile('', 'r', 0, BytesIO(data[(1 + e_type_len):])).read()
-            elif ptype.endswith(b'.bz2'):
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0, StringIO(data[(1 + e_type_len):])).read()
+            elif ptype.endswith('.bz2'):
                 s = bz2.decompress(data[(1 + e_type_len):])
             #print 'Compression stats: %s-->%s' % (len(data[(1 + e_type_len):]),
             #                                      len(s) )
             #print("the decompressed data is {0} \n".format(s))
-            s = s.decode('utf-8', 'ignore')
-            #print(f'___ {name} {s} {e_type}')
-
             try:
                #print 'Coloring model:', name
                 self._color_model(name, e_type, s)
             except pymol.parsing.QuietException:
-                print("Coloring failed...")
+                print( "Coloring failed..." )
                 print( "Did you forget to send the pose geometry first?" )
 
         # Label energy per residue.
-        elif ptype == b'lbE1.bz2':
+        elif ptype == 'lbE1.bz2':
             data = bz2.decompress(data)
             # This int must be a single digit, the size of data pieces.
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
@@ -414,23 +416,23 @@ class PR_PyMOLServer:
                                           data[i + 5], data[i:(i + 5)].strip())
                     pymol.cmd.label(sel, dat)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print( "Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
         #######################################################################
         # Display membrane planes
-        elif ptype.startswith(b'Mem'):
-            e_type_len = data[0]
-            e_type = data[1:(1 + e_type_len)]
+        elif ptype.startswith('Mem'):
+            e_type_len = ord(data[0])
+            e_type = data[1:(1 + e_type_len)].tostring()
             pymol.cmd.delete(name + 'membrane_planes')
 
             pymol.cmd.delete('membrane_planes')
 
             # Decompress data (currently only supporting .gzip from C++ end)
-            if ptype.endswith(b'.gzip'):
-                s = gzip.GzipFile('', 'r', 0, BytesIO(data[(1 + e_type_len):]) ).read()
+            if ptype.endswith('.gzip'):
+                s = gzip.GzipFile('', 'r', 0,
+                                  StringIO(data[(1 + e_type_len):])).read()
 
-                s = s.decode('utf-8', 'ignore')
                 # Read top points, bottom points, and normal coordinate
                 mem_data = s.split(',')
 
@@ -461,21 +463,21 @@ class PR_PyMOLServer:
         #######################################################################
         # Display hydrogen bonds.
                 # Energy data.
-        elif ptype.startswith(b'hbd'):
+        elif ptype.startswith('hbd'):
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                data = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
                 #print("data is {0}\n".format(data))
-            elif ptype == b'hbd.bz2 ':
+            elif ptype == 'hbd.bz2 ':
                 data = bz2.decompress(data)
             # First 5 characters are the # of H-bonds.
             nhbonds = data[:5]
-            data = data[5:].decode('utf-8', 'ignore')  # 22 char per H-bond: 6+4 + 6+4 + 2
+            data = data[5:]  # 22 char per H-bond: 6+4 + 6+4 + 2
             try:
                 pymol.cmd.delete(name + '_hbonds')
-                for i in range(int(nhbonds)):
+                for i in xrange(int(nhbonds)):
                     c = 22 * i
                     # Acceptor atom
                     acc_res = data[c:(c + 5)].strip()
@@ -502,50 +504,50 @@ class PR_PyMOLServer:
                 pymol.cmd.hide('labels', 'hb_*_' + name)
                 pymol.cmd.group(name + '_hbonds', 'hb_*_' + name)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         # Update display of secondary structure.
-        elif ptype.startswith(b' ss'):
+        elif ptype.startswith(' ss'):
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                data = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
-            elif ptype == b' ss.bz2 ':
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == ' ss.bz2 ':
                 data = bz2.decompress(data)
 
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             ss_map = {'H':'H', 'E':'S', 'L':'L'}
             try:
-                for i in range(0, len(data), size + 6):
+                for i in xrange(0, len(data), size + 6):
                     dat = ss_map[data[(i + 6):(i + 6 + size)]]
                     sel = '%s and chain %s and resi %s' % (name, data[i + 5],
                                                        data[i:(i + 5)].strip())
                     pymol.cmd.alter(sel, 'ss=\'' + dat + '\'')
                     pymol.cmd.show('cartoon', name)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         # Color by a boolean value for polar residues.
-        elif ptype.startswith(b'pol'):
+        elif ptype.startswith('pol'):
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                data = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
-            elif ptype == b'pol.bz2 ':
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'pol.bz2 ':
                 data = bz2.decompress(data)
 
             #print("in the pol the data is {0}\n".format(data))
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
@@ -557,23 +559,23 @@ class PR_PyMOLServer:
                         color = 'red'
                     pymol.cmd.color(color, sel)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         # Color by MoveMap DOF.
-        elif ptype.startswith(b'mm'):
+        elif ptype.startswith('mm'):
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                data = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
-            elif ptype == b'mm1.bz2 ':
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'mm1.bz2 ':
                 data = bz2.decompress(data)
 
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             try:
                 pymol.cmd.remove('hydro')
                 bb = '(name N or name CA or name C or name O)'
@@ -594,23 +596,23 @@ class PR_PyMOLServer:
                         color = 'green'
                     pymol.cmd.color(color, sel + ' and not ' + bb)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         # Color by foldtree edges.
-        elif ptype.startswith(b'ft1'):
+        elif ptype.startswith('ft1'):
             #print 'etype=%s  msg=%s' % (e_type, data)
 
             # Decompress.
-            if ptype.endswith(b'.gzip'):
-                data = gzip.GzipFile('', 'r', 0, BytesIO(data)).read()
-            elif ptype == b'ft1.bz2 ':
+            if ptype.endswith('.gzip'):
+                data = gzip.GzipFile('', 'r', 0, StringIO(data)).read()
+            elif ptype == 'ft1.bz2 ':
                 data = bz2.decompress(data)
 
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
@@ -623,13 +625,13 @@ class PR_PyMOLServer:
                     #     Residue in a loop = >2; color >= 2300 (varies)
                     pymol.cmd.color(str(int(dat) * 100 + 2000), sel)
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         # Foldtree diagram.
-        elif ptype == b'ftd.bz2 ':
+        elif ptype == 'ftd.bz2 ':
             data = bz2.decompress(data)
 
             # Delete previous fold trees and jumps.
@@ -639,7 +641,7 @@ class PR_PyMOLServer:
             # Get the scale.
             scale = int(data[:2])
             r = int(data[2])
-            data = data[3:].decode('utf-8', 'ignore')
+            data = data[3:]
 
             # Process the chains.
             total = float(data[:4])
@@ -649,13 +651,13 @@ class PR_PyMOLServer:
             nchains = int(data[:2])
             data = data[2:]
             chains = []
-            for i in range(nchains):
+            for i in xrange(nchains):
                 chains.append(int(data[:4]))
                 data = data[4:]
 
             # Visualize the chains.
             chains.append(total)
-            for i in range(len(chains) - 1):
+            for i in xrange(len(chains) - 1):
                 connect = str(25 + i)
                 add_point('foldtree_' + name,
                           [chains[i] / total * scale, 0, 0], connect)
@@ -668,7 +670,7 @@ class PR_PyMOLServer:
 
             # Use for size
             jumps = []
-            for j in range(njump):
+            for j in xrange(njump):
                 # Store jump start, stop, and cut.
                 jumps.append([int(data[:3]), int(data[3:6]), int(data[6:9])])
                 data = data[9:]
@@ -719,8 +721,8 @@ class PR_PyMOLServer:
 
         #######################################################################
         # Generate a graph from data sent.
-        elif ptype == b'grp1.bz2':
-            data = bz2.decompress(data).decode('utf-8', 'ignore')
+        elif ptype == 'grp1.bz2':
+            data = bz2.decompress(data)
             # First 21 data char are options.
             options = data[:21]
             data = data[21:]
@@ -740,8 +742,8 @@ class PR_PyMOLServer:
                    axis_color, num)
 
         # Add a point to graph data.
-        elif ptype == b'pnt.bz2 ':
-            data = bz2.decompress(data).decode('utf-8', 'ignore')
+        elif ptype == 'pnt.bz2 ':
+            data = bz2.decompress(data)
             # First 27 are data; last 22+ are options and banner.
             add_point(name,
                       [float(data[0:9].strip()), float(data[9:18].strip()),
@@ -758,10 +760,10 @@ class PR_PyMOLServer:
         # the PyMOL_Mover code.
         # size sets the length of data units.  size MUST be a single digit!
         # All data[i] MUST be at least size long!
-        elif ptype == b'temp.bz2':
+        elif ptype == 'temp.bz2':
             data = bz2.decompress(data)
             size = int(data[0])
-            data = data[1:].decode('utf-8', 'ignore')
+            data = data[1:]
             try:
                 for i in range(0, len(data), size + 6):
                     dat = data[(i + 6):(i + 6 + size)]
@@ -769,13 +771,13 @@ class PR_PyMOLServer:
                                                        data[i:(i + 5)].strip())
                     # dat-dependent commands to be performed on sel go here.
             except pymol.parsing.QuietException:
-                print("Commands failed...")
-                print("Did you forget to send the pose geometry first?")
+                print( "Commands failed..." )
+                print( "Did you forget to send the pose geometry first?" )
 
 
         #######################################################################
         else:
-            print('Unknown packet type: %s, - ignoring...' % ptype)
+            print( 'Unknown packet type: %s, - ignoring...' % ptype )
 
 ###############################################################################
 # Membrane
@@ -1169,7 +1171,7 @@ def set_spectrum(low='blue', high='red'):
     """
     Sets the energy coloring spectrum using the above COLOR_LIB dictionary.
     """
-    print('New spectrum:', low, '==>', high)
+    print( 'New spectrum:', low, '==>', high )
     low = COLOR_LIB[low]
     high = COLOR_LIB[high]
     #cust = [0] * 3
@@ -1183,36 +1185,60 @@ def set_spectrum(low='blue', high='red'):
 
 ###############################################################################
 # Main PyMOLPyRosettaServer.py routines.
+def main(ip, port):
+    print( 'PyMOL <---> PyRosetta link started!' )
+    print( 'at', ip, 'port', port )
+
+    udp_serv = PR_UDPServer(ip, port)
+    PS = PR_PyMOLServer()
+    while True:
+        r = udp_serv.listen()
+        if r:
+            #print len(r)
+            PS.process_packet(r)
+
+    s.close()
 
 
-if not DEBUG:
-    ###############################################################################
-    # Create our own color spectrum for PyMOL.
-    for i in range(256):
-        pymol.cmd.set_color('R%02x' % i, [i/255., 0, 1 - i/255.])
-    for j in range(256):
-        pymol.cmd.set_color('Hb%02x' % j, [j/255., 1, 0])
-    for i in X11_COLORS:
-        pymol.cmd.set_color('X%02x' % X11_COLORS[i][0], X11_COLORS[i][1:])
+def start_rosetta_server(ip='', port=65000):
+   if not ip:
+       ip = socket.gethostbyname(socket.gethostname())
+       if ip == '127.0.0.1':
+           print( "Unable to automatically determine your IP address. ", end='')
+           print( "Please specify it manually. ", end='' )
+           print( "e.g., start_rosetta_server 192.168.0.1" )
+           return
 
-    # Add commands to PyMOL.
-    pymol.cmd.extend('scale_axes', scale_axes)
-    pymol.cmd.extend('extract_coords', extract_coords)
-    pymol.cmd.extend('make_data', make_data)
-    pymol.cmd.extend('add_point', add_point)
-    pymol.cmd.extend('plot3d', plot3d)
-
-    pymol.cmd.extend('set_spectrum', set_spectrum)
-    pymol.cmd.extend('start_rosetta_server', start_rosetta_server)
+   thread = threading.Thread(target=main, args=[ip, port])
+   thread.setDaemon(1)
+   thread.start()
 
 
+###############################################################################
+# Create our own color spectrum for PyMOL.
+for i in range(256):
+    pymol.cmd.set_color('R%02x' % i, [i/255., 0, 1 - i/255.])
+for j in range(256):
+    pymol.cmd.set_color('Hb%02x' % j, [j/255., 1, 0])
+for i in X11_COLORS:
+    pymol.cmd.set_color('X%02x' % X11_COLORS[i][0], X11_COLORS[i][1:])
+
+# Add commands to PyMOL.
+pymol.cmd.extend('scale_axes', scale_axes)
+pymol.cmd.extend('extract_coords', extract_coords)
+pymol.cmd.extend('make_data', make_data)
+pymol.cmd.extend('add_point', add_point)
+pymol.cmd.extend('plot3d', plot3d)
+
+pymol.cmd.extend('set_spectrum', set_spectrum)
+pymol.cmd.extend('start_rosetta_server', start_rosetta_server)
 
 
 
 def tcp_client_main(ip, port, secret, verbose):
 
     h = hashlib.sha256()
-    h.update( bytes(secret, 'utf-8') )
+    h.update(secret)
 
     secret = h.digest()
 
@@ -1245,39 +1271,45 @@ def tcp_client_main(ip, port, secret, verbose):
 
 
     while True:
-        with socket_module.socket(socket_module.AF_INET, socket_module.SOCK_STREAM) as S:
+        #with socket_module.socket(socket_module.AF_INET, socket_module.SOCK_STREAM) as S:
+            S = socket_module.socket(socket_module.AF_INET, socket_module.SOCK_STREAM)
             S.settimeout(10)
 
             try:
                 S.connect( (ip, port) )
-                print(f'Connected to {ip}:{port}...')
+                print('Connected to {ip}:{port}...'.format(**vars()))
                 S.sendall(secret)
-                S.sendall( bytes('r', 'ascii') )
+                #S.sendall( bytes('r', 'ascii') )
+                S.sendall('r')
 
                 #S.settimeout(10)
 
                 PS = PR_PyMOLServer()
 
                 while True:
-                    length = int.from_bytes(read_from_socket(S, 4), byteorder='little')
-                    #print(f'self_read_test: reading {length} bytes...')
+                    #length = int.from_bytes(read_from_socket(S, 4), byteorder='little')
+                    length_packet = read_from_socket(S, 4)
+                    length = struct.unpack("<i", length_packet)[0]
+                    #print('length_packet:', repr(length_packet), 'length:', length)
+
+                    #print('self_read_test: reading {length} bytes...'.format(**vars()))
                     data = read_from_socket(S, length) if length else b''
 
-                    if verbose: print(f'Recieved lentgh:{len(data)}, data:{data[:16]}...')
+                    if verbose: print('Recieved lentgh:{len(data)}, data:{data[:16]}...'.format(**vars()))
 
                     if len(data) > 4: # filtering ping messages
-                        PS.process_packet(data)
+                        PS.process_packet( array('c', data) )
 
-            except (ConnectionRefusedError, ConnectionResetError, TimeoutError, BrokenPipeError, OSError) as e:
+            except (TimeoutError, socket_module.error, OSError) as e:
                 print(e)
                 S.close()
-                print(f'trying to reconnect to {ip}:{port}...')
+                print('trying to reconnect to {ip}:{port}...'.format(**vars()))
                 time_module.sleep(5)
 
 
 
 def connect_to_rosetta_tcp_server(ip, port, secret, verbose=False):
-    print(f'WARNING: CONNECTION to relay server {ip}:{port} IS NOT ENCRYPTED!')
+    print('WARNING: CONNECTION to realy server {ip}:{port} IS NOT ENCRYPTED!'.format(**vars()))
 
     thread = threading.Thread(target=tcp_client_main, args=[ip, port, secret, verbose])
     thread.setDaemon(1)
@@ -1336,9 +1368,15 @@ class SecretInputDialog(QtWidgets.QDialog):
 
 
 
-if _my_secret_:
-    connect_to_rosetta_tcp_server(_default_relay_server_, _default_port_, secret=_my_secret_)
+
+
+if _terminate_:
+    print('\nERROR ERROR ERROR: This script is only compatible with PyMOL running Python-2.* series! For PyMOL build with Python-3 please use PyMOL-RosettaServer.python3.py instead!!!')
 
 else:
-    dialog = SecretInputDialog()
-    dialog.open()
+    if _my_secret_:
+        connect_to_rosetta_tcp_server(_default_relay_server_, _default_port_, secret=_my_secret_)
+
+    else:
+        dialog = SecretInputDialog()
+        dialog.open()

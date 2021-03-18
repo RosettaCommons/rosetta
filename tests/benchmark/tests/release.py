@@ -360,7 +360,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
 
         distr_file_list = os.listdir(pyrosetta_path+'/build')
 
-        #timeout = 2048 if kind == 'Debug' else 512
+        suite_timeout, test_timeout = (128, 2048) if kind == 'Debug' else (32, 512)
 
         #gui_flag = '--enable-gui' if platform['os'] == 'mac' else ''
         gui_flag, res, output = '', result.exitcode, result.output
@@ -371,7 +371,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             packages = ' '.join( get_required_pyrosetta_python_packages_for_testing(platform) ).replace('>', '=').replace('<', '=')
             python_virtual_environment = setup_persistent_python_virtual_environment(result.python_environment, packages)
 
-            command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py 32 {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs}'
+            command_line = f'{python_virtual_environment.activate} && cd {result.pyrosetta_path}/build && {python_virtual_environment.python} {rosetta_dir}/source/test/timelimit.py {suite_timeout} {python_virtual_environment.python} self-test.py {gui_flag} -j{jobs} --timeout {test_timeout}'
             output += '\nRunning PyRosetta tests: ' + command_line + '\n'
 
             res, o = execute('Running PyRosetta tests...', command_line, return_='tuple')
@@ -415,6 +415,7 @@ def py_rosetta4_release(kind, rosetta_dir, working_dir, platform, config, hpc_dr
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python2',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.py',                use_rosetta_versioning=False)
             release('PyMOL-RosettaServer', 'PyMOL-RosettaServer.python3',        package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-RosettaServer.python3.py',        use_rosetta_versioning=False)
             release('PyMOL-RosettaServer', 'PyMOL-Rosetta-relay-client.python3', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-Rosetta-relay-client.python3.py', use_rosetta_versioning=False)
+            release('PyMOL-RosettaServer', 'PyMOL-Rosetta-relay-client.python2', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=f'{package_dir}/PyMOL-Rosetta-relay-client.python2.py', use_rosetta_versioning=False)
 
             # building and releaseing Wheel archive
             #if (platform['python'][0] == '2' or platform['python'] == '3.5')  and  platform['os'] == 'mac': pass

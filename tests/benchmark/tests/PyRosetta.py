@@ -131,7 +131,7 @@ def run_notebook_tests(rosetta_dir, working_dir, platform, config, hpc_driver, v
 
         jobs = {}
         for n in notebooks:
-            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to script {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 12 {P.python_virtual_environment.bin}/ipython --HistoryManager.enabled=False {n}.py'
+            command_line = f'cd {notebooks_path} && {P.python_virtual_environment.python} -m nbconvert --to python {n}.ipynb && export DEBUG="DEBUG" && {rosetta_dir}/source/test/timelimit.py 12 {P.python_virtual_environment.bin}/ipython --HistoryManager.enabled=False {n}.py'
             jobs[n] = command_line
 
         notebook_test_results = parallel_execute('notebook_tests', jobs, rosetta_dir, working_dir, config['cpu_count'], time=60)
