@@ -100,8 +100,8 @@ DEEROverlapMethod::get_score(
 				? upper_bound_.at( bin ) : distr_.at( bin ) ) : 0.0;
 
 			// Update supremum / greatest discrepancy
-			if ( abs( sim_val - exp_val ) > supremum ) {
-				supremum = abs( sim_val - exp_val );
+			if ( std::abs( sim_val - exp_val ) > supremum ) {
+				supremum = std::abs( sim_val - exp_val );
 			}
 
 			// Deduct overlap from score

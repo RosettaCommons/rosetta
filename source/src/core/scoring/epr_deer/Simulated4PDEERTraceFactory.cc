@@ -80,7 +80,7 @@ add_bckg(
 
 	utility::vector1< Real > output( sim_trace.size(), 0.0 );
 	for ( Size i = 1; i <= sim_trace.size(); ++i ) {
-		Real const bckg = std::exp( -1 * pow( abs( time_pts[ i ] ) * abs( slope ),
+		Real const bckg = std::exp( -1 * pow( std::abs( time_pts[ i ] ) * std::abs( slope ),
 			dim / 3.0 ) );
 		output[ i ] = bckg * ( 1 - depth * ( 1 - sim_trace[ i ] ) );
 	}
