@@ -1913,7 +1913,7 @@ residue_types/polyaramids/PAL.params
 residue_types/polyaramids/PAM.params
 residue_types/polyaramids/PAN.params
 residue_types/polyaramids/PAQ.params
-residue_types/polyaramids/PAR.params
+#residue_types/polyaramids/PAR.params
 residue_types/polyaramids/PAS.params
 residue_types/polyaramids/PAT.params
 residue_types/polyaramids/PAV.params

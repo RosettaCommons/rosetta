@@ -269,6 +269,7 @@ sources = {
 		"MinimizationGraph",
 		"NeighborList",
 		"OmegaTether",
+		"OneDDistPotential",
 		"OneToAllEnergyContainer",
 		"P_AA",
 		"P_AA_ss",

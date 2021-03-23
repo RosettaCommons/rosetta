@@ -34,6 +34,7 @@
 #include <core/scoring/MinimizationData.hh>
 #include <core/scoring/ResidueNeighborList.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/scoring/Energies.hh>
 
 #include <core/scoring/hbonds/HBondSet.hh>
 

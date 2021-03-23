@@ -40,6 +40,8 @@ sources = {
     "protocols/rna/movers": [
         "ErraserMinimizerMover",
         "ERRASER2Protocol",
+        "RNA_Coarsify",
+        "RNA_Decoarsify",
         "RNA_LoopCloser",
         "RNAThreadAndMinimizeMover",
         "RNAIdealizeMover",

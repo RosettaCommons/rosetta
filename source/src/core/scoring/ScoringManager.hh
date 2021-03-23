@@ -21,6 +21,7 @@
 #include <core/scoring/ScoringManager.fwd.hh>
 
 // Package headers
+#include <core/scoring/OneDDistPotential.fwd.hh>
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <core/scoring/CenRotEnvPairPotential.fwd.hh>
 #include <core/scoring/CenHBPotential.fwd.hh>
@@ -323,6 +324,12 @@ public:
 	/// objects is also threadsafe, as far as I can tell.
 	/// @author Rewritten by Vikram K. Mulligan (vmullig@uw.edu).
 	AtomVDW const & get_AtomVDW( std::string const & atom_type_set_name ) const;
+
+	/// @brief Get an instance of an OneDDistPotential
+	/// @details Threadsafe and lazily loaded.
+	/// @note Each element in the one_d_interpolated_potentials_ map is now threadsafe and lazily loaded (independently).
+	/// @author Andy Watkins (amw579@stanford.edu)
+	OneDDistPotential const & get_OneDDistPotential( std::string const & potential_file_name ) const;
 
 	/// @brief Get an instance of the RNA_AtomVDW scoring object.
 	/// @details Threadsafe and lazily loaded.
@@ -919,6 +926,13 @@ private:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	static AtomVDWOP create_atomvdw_instance( std::string const & atom_type_set_name );
 
+	/// @brief Create an instance of the OneDDistPotential object, by owning pointer.
+	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+	/// @note Not intended for use outside of ScoringManager.
+	/// @author Andy Watkins (amw579@stanford.edu)
+	static OneDDistPotentialOP
+	create_OneDDistPotential( std::string const & potential_file_name );
+
 	/// @brief Create an instance of the RNA_AtomVDW object, by owning pointer.
 	/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
 	/// @note Not intended for use outside of ScoringManager.
@@ -1199,6 +1213,7 @@ private:
 	mutable std::mutex secstruct_mutex_;
 	mutable utility::thread::ReadWriteMutex atomvdw_mutex_;
 	mutable std::mutex rna_atomvdw_mutex_;
+	mutable utility::thread::ReadWriteMutex OneDDistPotential_mutex_;
 	mutable std::mutex database_occ_sol_mutex_;
 	mutable std::mutex carbonhbond_mutex_;
 	mutable utility::thread::ReadWriteMutex rna_suite_mutex_;
@@ -1342,6 +1357,7 @@ private:
 	mutable CenHBPotentialOP cen_hb_potential_;
 	mutable SecondaryStructurePotentialOP secondary_structure_potential_;
 	mutable std::map< std::string, AtomVDWOP > atom_vdw_;
+	mutable std::map< std::string, OneDDistPotentialOP > OneDDistPotentials_;
 	mutable rna::RNA_AtomVDWOP rna_atom_vdw_;
 	mutable geometric_solvation::DatabaseOccSolEneOP occ_hbond_sol_database_;
 	mutable dna::DirectReadoutPotentialOP dna_dr_potential_;
@@ -1459,6 +1475,8 @@ private:
 
 
 };
+
+
 } // namespace core
 } // namespace scoring
 

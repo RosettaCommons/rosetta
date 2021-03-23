@@ -471,6 +471,8 @@
 #include <protocols/rigid/UniformRigidBodyMoverCreator.hh>
 
 #include <protocols/rna/denovo/movers/RNA_DeNovoProtocolMoverCreator.hh>
+#include <protocols/rna/movers/RNA_CoarsifyCreator.hh>
+#include <protocols/rna/movers/RNA_DecoarsifyCreator.hh>
 #include <protocols/rna/movers/ErraserMinimizerMoverCreator.hh>
 #include <protocols/rna/movers/ERRASER2ProtocolCreator.hh>
 #include <protocols/rna/movers/RNAIdealizeMoverCreator.hh>

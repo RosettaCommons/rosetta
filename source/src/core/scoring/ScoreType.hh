@@ -697,6 +697,8 @@ enum ScoreType {
 
 	aromatic_restraint, //Restraints for aromatic backbones
 
+	rna_coarse_dist, //Coarse-RNA dist interpolated potential
+
 	// etc etc
 	// Why is there a total score?
 	total_score,

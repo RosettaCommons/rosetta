@@ -82,6 +82,7 @@
 #include <core/energy_methods/CovalentLabelingFAEnergyCreator.hh>
 #include <core/energy_methods/RG_Energy_FastCreator.hh>
 #include <core/energy_methods/RG_LocalEnergyCreator.hh>
+#include <core/energy_methods/RNA_CoarseDistEnergy.hh>
 #include <core/energy_methods/SA_EnergyCreator.hh>
 #include <core/energy_methods/SSElementMotifContactEnergyCreator.hh>
 #include <core/energy_methods/D2H_SA_EnergyCreator.hh>
@@ -639,6 +640,8 @@ static EnergyMethodRegistrator< energy_methods::RNA_ChemicalShiftEnergyCreator >
 //static EnergyMethodRegistrator< energy_methods::FreeResidueBonusEnergyCreator > FreeResidueBonusEnergyCreator_registrator;
 static EnergyMethodRegistrator< scoring::sym_e::symECreator > symECreator_registrator;
 static EnergyMethodRegistrator< energy_methods::PoissonBoltzmannEnergyCreator > PoissonBoltzmannEnergyCreator_registrator;
+
+static EnergyMethodRegistrator< core::energy_methods::RNA_CoarseDistEnergyCreator > RNA_CoarseDistEnergyCreator_registrator;
 
 static EnergyMethodRegistrator< energy_methods::FastSAXSEnergyCreator > FastSAXSEnergyCreator_registrator;
 static EnergyMethodRegistrator< energy_methods::SAXSEnergyCreatorCEN > SAXSEnergyCreatorCEN_registrator;

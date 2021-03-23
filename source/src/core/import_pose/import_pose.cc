@@ -458,12 +458,18 @@ pose_from_file(
 ) {
 	using namespace chemical;
 
-	ResidueTypeSetCOP residue_set( options.centroid() ?
-		pose.residue_type_set_for_pose( CENTROID_t ) :
-		pose.residue_type_set_for_pose( FULL_ATOM_t )
-	);
+	// If in:file:residue_type_set is nondefault, use that.
+	if ( options.residue_type_set_mode() != FULL_ATOM_t ) {
+		TR.Info << "Specified explicit residue type set mode; disregarding -in:file:centroid and -in:file:fullatom." << std::endl;
+		core::import_pose::pose_from_file( pose, *pose.residue_type_set_for_pose( options.residue_type_set_mode() ), filename, options, read_fold_tree, type );
+	} else {
+		ResidueTypeSetCOP residue_set( options.centroid() ?
+			pose.residue_type_set_for_pose( CENTROID_t ) :
+			pose.residue_type_set_for_pose( FULL_ATOM_t )
+		);
 
-	core::import_pose::pose_from_file( pose, *residue_set, filename, options, read_fold_tree, type);
+		core::import_pose::pose_from_file( pose, *residue_set, filename, options, read_fold_tree, type);
+	}
 }
 
 utility::vector1< core::pose::PoseOP >
@@ -485,12 +491,18 @@ poseOPs_from_files(
 ) {
 	using namespace chemical;
 
-	ResidueTypeSetCOP residue_set( options.centroid() ?
-		ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
-		ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
-	);
+	// If in:file:residue_type_set is nondefault, use that.
+	if ( options.residue_type_set_mode() != FULL_ATOM_t ) {
+		TR.Info << "Specified explicit residue type set mode; disregarding -in:file:centroid and -in:file:fullatom." << std::endl;
+		return core::import_pose::poseOPs_from_files( *ChemicalManager::get_instance()->residue_type_set( string_from_type_set_mode( options.residue_type_set_mode() ) ), filenames, options, read_fold_tree, type );
+	} else {
+		ResidueTypeSetCOP residue_set( options.centroid() ?
+			ChemicalManager::get_instance()->residue_type_set( CENTROID ) :
+			ChemicalManager::get_instance()->residue_type_set( FA_STANDARD )
+		);
 
-	return core::import_pose::poseOPs_from_files( *residue_set, filenames, options, read_fold_tree, type);
+		return core::import_pose::poseOPs_from_files( *residue_set, filenames, options, read_fold_tree, type);
+	}
 }
 
 /// @details Only returns full-atom poses

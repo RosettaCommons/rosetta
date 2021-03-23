@@ -1,0 +1,5 @@
+-in:file:silent inputs/decoys.out
+-score:weights empty.wts
+-set_weights rna_coarse_dist 1.0
+-parser:protocol inputs/script.xml
+-out:file:silent decoys_rescored.out

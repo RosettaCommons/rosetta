@@ -11,6 +11,8 @@
 
 sources = {
 	"core/energy_methods": [
+		"RNA_CoarseDistEnergy",
+
 		"FACTSEnergy",
 		"AACompositionEnergy",
 		"AARepeatEnergy",

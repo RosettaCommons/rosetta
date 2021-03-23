@@ -24,6 +24,7 @@
 #include <basic/options/keys/unfolded_state.OptionKeys.gen.hh>
 #include <basic/options/keys/orbitals.OptionKeys.gen.hh>
 
+#include <core/scoring/OneDDistPotential.hh>
 #include <core/scoring/carbon_hbonds/CarbonHBondPotential.hh>
 #include <core/scoring/PairEPotential.hh>
 #include <core/scoring/EnvPairPotential.hh>
@@ -681,6 +682,17 @@ ScoringManager::get_AtomVDW( std::string const & atom_type_set_name ) const
 {
 	std::function< AtomVDWOP () > creator( std::bind( &ScoringManager::create_atomvdw_instance, std::cref( atom_type_set_name ) ) );
 	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( atomvdw_mutex_ ), atom_type_set_name, atom_vdw_ ) );
+}
+
+/// @brief Get an instance of an OneDDistPotential
+/// @details Threadsafe and lazily loaded.
+/// @note Each element in the OneDDistPotentials_ map is now threadsafe and lazily loaded (independently).
+/// @author Andy Watkins (amw579@stanford.edu)
+OneDDistPotential const &
+ScoringManager::get_OneDDistPotential( std::string const & potential_file_name ) const
+{
+	std::function< OneDDistPotentialOP () > creator( std::bind( &ScoringManager::create_OneDDistPotential, std::cref( potential_file_name ) ) );
+	return *( utility::thread::safely_check_map_for_key_and_insert_if_absent( creator, SAFELY_PASS_MUTEX( OneDDistPotential_mutex_ ), potential_file_name, OneDDistPotentials_ ) );
 }
 
 /// @brief Get an instance of the RNA_AtomVDW scoring object.
@@ -2058,6 +2070,19 @@ ScoringManager::create_atomvdw_instance(
 ) {
 	return utility::pointer::make_shared< AtomVDW >( atom_type_set_name );
 }
+
+
+/// @brief Create an instance of the InterpolatedPotential object, by owning pointer.
+/// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
+/// @note Not intended for use outside of ScoringManager.
+/// @author Andy Watkins (amw579@stanford.edu)
+OneDDistPotentialOP
+ScoringManager::create_OneDDistPotential(
+	std::string const & potential_file_name
+) {
+	return utility::pointer::make_shared< OneDDistPotential >( potential_file_name );
+}
+
 
 /// @brief Create an instance of the RNA_AtomVDW object, by owning pointer.
 /// @details Needed for threadsafe creation.  Loads data from disk.  NOT for repeated calls!
