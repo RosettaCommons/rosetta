@@ -14,6 +14,7 @@
 
 #include <core/energy_methods/CenHBEnergy.hh>
 #include <core/energy_methods/CenHBEnergyCreator.hh>
+#include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/CenHBPotential.hh>
 
 #include <core/scoring/ScoringManager.hh>
@@ -29,6 +30,7 @@
 #include <numeric/deriv/angle_deriv.hh>
 #include <numeric/numeric.functions.hh>
 
+#include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
 
@@ -40,15 +42,16 @@
 namespace core {
 namespace energy_methods {
 
+static basic::Tracer TR( "core.energy_methods.CenHBEnergy" );
 
 
 /// @details This must return a fresh instance of the CenHBEnergy class,
 /// never an instance already in use
 core::scoring::methods::EnergyMethodOP
 CenHBEnergyCreator::create_energy_method(
-	core::scoring::methods::EnergyMethodOptions const &
+	core::scoring::methods::EnergyMethodOptions const & opts
 ) const {
-	return utility::pointer::make_shared< CenHBEnergy >( );
+	return utility::pointer::make_shared< CenHBEnergy >( opts );
 }
 
 core::scoring::ScoreTypes
@@ -60,8 +63,9 @@ CenHBEnergyCreator::score_types_for_method() const {
 }
 
 
-/// @details  C-TOR with method options object
-CenHBEnergy::CenHBEnergy( ):
+/// @details  This version of the constructor accesses the global options system to
+/// read the hb_cen_soft option.
+CenHBEnergy::CenHBEnergy():
 	parent( utility::pointer::make_shared< CenHBEnergyCreator >() ),
 	potential_( core::scoring::ScoringManager::get_instance()->get_CenHBPotential( ) ),
 	soft_( false )
@@ -71,6 +75,25 @@ CenHBEnergy::CenHBEnergy( ):
 
 	if ( option[ corrections::score::hb_cen_soft ].user() ) {
 		soft_ = option[ corrections::score::hb_cen_soft ]();
+		if ( TR.visible() && soft_ ) {
+			TR << "Configured CenHBEnergy to use soft potential based on global options." << std::endl;
+		}
+	}
+}
+
+/// @details  This version of the constructor accesses the local options collection to
+/// read the hb_cen_soft option, and avoids reading from the global options system.
+CenHBEnergy::CenHBEnergy( core::scoring::methods::EnergyMethodOptions const & opts ):
+	parent( utility::pointer::make_shared< CenHBEnergyCreator >() ),
+	potential_( core::scoring::ScoringManager::get_instance()->get_CenHBPotential( ) ),
+	soft_( false )
+{
+	using namespace basic::options;
+	using namespace basic::options::OptionKeys;
+
+	soft_ = opts.hb_cen_soft();
+	if ( TR.visible() && soft_ ) {
+		TR << "Configured CenHBEnergy to use soft potential based on locally-set options." << std::endl;
 	}
 }
 

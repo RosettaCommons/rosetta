@@ -143,6 +143,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	symmetric_gly_tables_(false),
 	loop_close_use_6D_potential_(false),
 	fa_stack_base_all_(false),
+	hb_cen_soft_(false),
 
 	//Options for the NMerSVMEnergy:
 	nmer_ref_seq_length_(9),
@@ -283,6 +284,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		symmetric_gly_tables_ = src.symmetric_gly_tables_;
 		loop_close_use_6D_potential_ = src.loop_close_use_6D_potential_;
 		fa_stack_base_all_ = src.fa_stack_base_all_;
+		hb_cen_soft_ = src.hb_cen_soft_;
 
 		//Options for the NMerSVMEnergy:
 		nmer_ref_seq_length_ = src.nmer_ref_seq_length_;
@@ -386,6 +388,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	symmetric_gly_tables_ = options[ basic::options::OptionKeys::score::symmetric_gly_tables ]();
 	loop_close_use_6D_potential_ = options[ basic::options::OptionKeys::score::loop_close::use_6D_potential ]();
 	fa_stack_base_all_ = !options[ basic::options::OptionKeys::score::fa_stack_base_base_only ]();
+	hb_cen_soft_ = options[ basic::options::OptionKeys::corrections::score::hb_cen_soft ]();
 	genbonded_score_full_ = options[ basic::options::OptionKeys::score::genbonded_score_full ]();
 	genbonded_score_hybrid_ = options[ basic::options::OptionKeys::score::genbonded_score_hybrid ]();
 	cartbonded_skip_cutpoints_ = options[ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints ]();
@@ -512,6 +515,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::symmetric_gly_tables
 		+ basic::options::OptionKeys::score::loop_close::use_6D_potential
 		+ basic::options::OptionKeys::score::fa_stack_base_base_only
+		+ basic::options::OptionKeys::corrections::score::hb_cen_soft
 		+ basic::options::OptionKeys::score::genbonded_score_full
 		+ basic::options::OptionKeys::score::genbonded_score_hybrid
 		+ basic::options::OptionKeys::score::cart_bonded_skip_cutpoints
@@ -1357,6 +1361,22 @@ EnergyMethodOptions::fa_stack_base_all() const {
 void
 EnergyMethodOptions::fa_stack_base_all( bool const setting ) {
 	fa_stack_base_all_ = setting;
+}
+
+/// @brief Set whether the CenHBEnergy will use a softened version of its potential.  Default false.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+EnergyMethodOptions::hb_cen_soft(
+	bool const setting
+) {
+	hb_cen_soft_ = setting;
+}
+
+/// @brief Get whether the CenHBEnergy should use a softened version of its potential.  Default false.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+bool
+EnergyMethodOptions::hb_cen_soft() const {
+	return hb_cen_soft_;
 }
 
 
@@ -2342,6 +2362,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( symmetric_gly_tables_ ) ); // _Bool
 	arc( CEREAL_NVP( loop_close_use_6D_potential_ ) ); // _Bool
 	arc( CEREAL_NVP( fa_stack_base_all_ ) ); // _Bool
+	arc( CEREAL_NVP( hb_cen_soft_ ) ); //Bool
 
 
 	arc( CEREAL_NVP( nmer_ref_seq_length_ ) );
@@ -2466,6 +2487,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( symmetric_gly_tables_ ); // _Bool
 	arc( loop_close_use_6D_potential_ ); // _Bool
 	arc( fa_stack_base_all_ ); // _Bool
+	arc( hb_cen_soft_ ); //Bool
 
 	arc( nmer_ref_seq_length_ );
 	arc( nmer_svm_term_length_ );

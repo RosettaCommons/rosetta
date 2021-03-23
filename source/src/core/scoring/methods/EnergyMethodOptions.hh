@@ -726,6 +726,14 @@ public:
 	bool fa_stack_base_all() const;
 	void fa_stack_base_all( bool const setting );
 
+	/// @brief Set whether the CenHBEnergy will use a softened version of its potential.  Default false.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void hb_cen_soft( bool const setting );
+
+	/// @brief Get whether the CenHBEnergy should use a softened version of its potential.  Default false.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool hb_cen_soft() const;
+
 	/// @brief Set the angle exponent for calculating burial by the method of sidechain neighbor cones.
 	/// @details Used by the BuriedUnsatPenalty energy.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu).
@@ -1127,6 +1135,7 @@ private:
 	bool symmetric_gly_tables_;
 	bool loop_close_use_6D_potential_;
 	bool fa_stack_base_all_;
+	bool hb_cen_soft_ = false;
 
 	//Options for the NMerSVMEnergy:
 	core::Size nmer_ref_seq_length_ = 9;

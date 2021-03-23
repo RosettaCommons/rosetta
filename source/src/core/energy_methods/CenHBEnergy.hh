@@ -18,6 +18,7 @@
 // Unit Headers
 #include <core/energy_methods/CenHBEnergy.fwd.hh>
 #include <core/scoring/CenHBPotential.fwd.hh>
+#include <core/scoring/methods/EnergyMethodOptions.fwd.hh>
 
 // Package headers
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
@@ -44,8 +45,10 @@ public:
 public:
 
 	/// @brief  C-tor, requires options to tell us the atom_type_set_name for the AtomVDW data
-	CenHBEnergy( );
+	CenHBEnergy();
 
+	/// @brief Options constructor.
+	CenHBEnergy( core::scoring::methods::EnergyMethodOptions const & opts );
 
 	/// clone
 	core::scoring::methods::EnergyMethodOP

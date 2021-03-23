@@ -200,7 +200,7 @@ public:
 		);
 	}
 
-	void test__list_read_options_in_get_score_function__in_sync_w__get_score_function() {
+	void test_list_read_options_in_get_score_function_in_sync_w_get_score_function() {
 		using namespace core::scoring;
 		typedef utility::keys::VariantKey< utility::options::OptionKey > VariantOptionKey;
 
