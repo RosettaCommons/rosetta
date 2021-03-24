@@ -27,7 +27,6 @@
 #include <protocols/rosetta_scripts/XmlObjects.hh>
 
 // Project headers
-#include <basic/options/option.hh>
 #include <core/pack/palette/PackerPalette.hh>
 #include <core/pack/palette/PackerPaletteFactory.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
@@ -102,7 +101,7 @@ using namespace moves;
 static basic::Tracer TR( "protocols.rosetta_scripts.RosettaScriptsParser" );
 
 RosettaScriptsParser::RosettaScriptsParser() :
-	validator_( new utility::tag::XMLValidator ) {
+	validator_( utility::pointer::make_shared< utility::tag::XMLValidator >() ) {
 
 	set_recursion_limit( basic::options::option );
 	register_factory_prototypes();
@@ -376,13 +375,13 @@ RosettaScriptsParser::initialize_data_map(
 	//default scorefxns end
 
 	// default filters
-	protocols::filters::FilterOP true_filter( new protocols::filters::TrueFilter );
-	protocols::filters::FilterOP false_filter( new protocols::filters::FalseFilter );
+	protocols::filters::FilterOP true_filter( utility::pointer::make_shared< protocols::filters::TrueFilter >() );
+	protocols::filters::FilterOP false_filter( utility::pointer::make_shared< protocols::filters::FalseFilter >() );
 	data.add( "filters", "true_filter", true_filter );
 	data.add( "filters", "false_filter", false_filter );
 
 	// default movers
-	MoverOP null_mover( new protocols::moves::NullMover() );
+	MoverOP null_mover( utility::pointer::make_shared< protocols::moves::NullMover >() );
 	data.add( "movers", "null", null_mover );
 
 	//If native is set, add it to the datamap as a resource instead of loading in each individual mover.  Works in JD3 as well to allow better benchmarking.
@@ -533,8 +532,11 @@ RosettaScriptsParser::generate_mover_for_protocol(
 
 	////// Setup the actual main protocol block.
 	TagCOP const protocols_tag( tag->getTag("PROTOCOLS") );
-	protocols::rosetta_scripts::ParsedProtocolOP protocol( new protocols::rosetta_scripts::ParsedProtocol );
+	protocols::rosetta_scripts::ParsedProtocolOP protocol( utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >() );
 	protocol->parse_my_tag( protocols_tag, data );
+	if ( native_pose_ != nullptr ) {
+		protocol->set_native_pose( native_pose_ );
+	}
 	TR.flush();
 
 	////// Set Output options
@@ -1065,19 +1067,19 @@ RosettaScriptsParser::register_factory_prototypes()
 	using namespace core::pose::metrics;
 
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa_interface" ) ) {
-		PoseMetricCalculatorOP int_sasa_calculator( new core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator( chain1, chain2 ) );
+		PoseMetricCalculatorOP int_sasa_calculator( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceSasaDefinitionCalculator >( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "sasa_interface", int_sasa_calculator );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "sasa" ) ) {
-		PoseMetricCalculatorOP sasa_calculator( new core::pose::metrics::simple_calculators::SasaCalculatorLegacy() );
+		PoseMetricCalculatorOP sasa_calculator( utility::pointer::make_shared< core::pose::metrics::simple_calculators::SasaCalculatorLegacy >() );
 		CalculatorFactory::Instance().register_calculator( "sasa", sasa_calculator );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "ligneigh" ) ) {
-		PoseMetricCalculatorOP lig_neighbor_calc( new core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator( chain1, chain2 ) );
+		PoseMetricCalculatorOP lig_neighbor_calc( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceNeighborDefinitionCalculator >( chain1, chain2 ) );
 		CalculatorFactory::Instance().register_calculator( "ligneigh", lig_neighbor_calc );
 	}
 	if ( !CalculatorFactory::Instance().check_calculator_exists( "liginterfE" ) ) {
-		PoseMetricCalculatorOP lig_interf_E_calc( new core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator( "ligneigh" ) );
+		PoseMetricCalculatorOP lig_interf_E_calc( utility::pointer::make_shared< core::pose::metrics::simple_calculators::InterfaceDeltaEnergeticsCalculator >( "ligneigh" ) );
 		CalculatorFactory::Instance().register_calculator( "liginterfE", lig_interf_E_calc );
 	}
 }

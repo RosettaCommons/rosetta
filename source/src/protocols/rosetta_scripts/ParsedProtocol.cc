@@ -612,7 +612,9 @@ ParsedProtocol::apply_mover( Pose & pose, ParsedProtocolStep const & step ) {
 	}
 
 	TR<<"=======================BEGIN MOVER "<<mover_name<<" - "<<mover_user_name<<"======================="<<std::endl;
-	step.mover->set_native_pose( get_native_pose() );
+	if ( get_native_pose() != nullptr && step.mover->get_native_pose() == nullptr ) { //If the ParsedProtocol native is set and the sub-mover native is not, set sub-mover native to ParsedProtocol native.
+		step.mover->set_native_pose( get_native_pose() );
+	}
 	step.mover->apply( pose );
 
 	last_mover_ = step.mover;
