@@ -24,6 +24,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Utility headers
 #include <utility/tag/Tag.hh>
@@ -52,6 +53,11 @@ void ConstraintGeneratorLoader::load_data(
 			ii_tag,
 			datamap
 		);
+
+		//Register the newly-created constraint generator with the citation manager:
+		basic::citation_manager::CitationCollectionList citations;
+		cst_gen->provide_citation_info( citations );
+		basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
 
 		// if "name" is specified, add it to the data map under that name. Otherwise use the type name.
 		bool const data_add_status = datamap.add( "ConstraintGenerators" ,

@@ -19,11 +19,17 @@
 #include <protocols/constraint_generator/ConstraintGenerator.hh>
 #include <protocols/constraint_generator/ConstraintGeneratorCreator.hh>
 
+// Basic headers
+#include <basic/Tracer.hh>
+
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/xml_schema_group_initialization.hh>
+
+static basic::Tracer TR( "protocols.constraint_generator.ConstraintGeneratorFactory" );
+
 namespace protocols {
 namespace constraint_generator {
 
@@ -65,6 +71,30 @@ ConstraintGeneratorFactory::new_constraint_generator(
 }
 
 
+/// @brief Get the XML schema for a given constraint generator.
+/// @details Throws an error if the constraint generator is unknown to Rosetta.
+/// @author Vikram K. Mulligan (vmullig@uw.edu)
+void
+ConstraintGeneratorFactory::provide_xml_schema(
+	std::string const &cst_generator_name,
+	utility::tag::XMLSchemaDefinition & xsd
+) const {
+	auto iter( creator_map_.find( cst_generator_name ) );
+	if ( iter != creator_map_.end() ) {
+		if ( ! iter->second ) {
+			utility_exit_with_message( "Error: ConstraintGeneratorCreatorOP for " + cst_generator_name + " is NULL!" );
+		}
+		iter->second->provide_xml_schema( xsd );
+	} else {
+		TR << "Available constraint generators: ";
+		for ( auto const & it : creator_map_ ) {
+			TR << it.first << ", ";
+		}
+		TR << std::endl;
+		utility_exit_with_message( cst_generator_name + " is not known to the ConstraintGeneratorFactory. Was it registered via a ConstraintGeneratorRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+	}
+}
+
 
 void
 ConstraintGeneratorFactory::define_constraint_generator_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const{
@@ -88,7 +118,7 @@ ConstraintGeneratorFactory::constraint_generator_xml_schema_group_name(){
 
 std::string
 ConstraintGeneratorFactory::complex_type_name_for_constraint_generator( std::string const & constraint_name ){
-	return "constraint_generator_" + constraint_name + "_complex_type";
+	return "constraint_generator_" + constraint_name + "_type";
 }
 
 void

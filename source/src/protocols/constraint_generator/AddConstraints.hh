@@ -26,6 +26,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 namespace protocols {
 namespace constraint_generator {
@@ -76,6 +77,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide citations to the passed CitationCollectionList.
+	/// This allows this mover to provide citations for itself
+	/// and for any modules that it invokes.
+	/// @details This override cites Tom Linsky, who created the constraint generator framework.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const override;
 
 private:
 	ConstraintGeneratorCOPs generators_;

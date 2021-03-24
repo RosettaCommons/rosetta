@@ -24,6 +24,8 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/tag/Tag.hh>
@@ -79,6 +81,30 @@ AddConstraints::parse_my_tag(
 		add_generator( new_cg );
 		TR << "Added constraint generator " << new_cg->id() << "." << std::endl;
 		data.add( "ConstraintGenerators", new_cg->id(), new_cg );
+	}
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows this mover to provide citations for itself
+/// and for any modules that it invokes.
+/// @details This override cites Tom Linsky, who created the constraint generator framework.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+AddConstraints::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		mover_name(), basic::citation_manager::CitedModuleType::Mover,
+		"Thomas W. Linsky", "Neoleukin Therapeutics Inc", "tlinsky@gmail.com",
+		"Created the ConstraintGenerator framework and the AddConstraints mover."
+		)
+	);
+	citations.add( citation );
+
+	// Add citation info for all of the contained citation generators:
+	for ( auto const & generator : generators_ ) {
+		generator->provide_citation_info( citations );
 	}
 }
 

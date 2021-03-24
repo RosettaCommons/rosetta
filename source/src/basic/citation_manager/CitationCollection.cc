@@ -114,6 +114,7 @@ CitationCollection::get_enumerated_module_type_name(
 		{ CitedModuleType::ScoreFunction, "ScoreFunction" },
 		{ CitedModuleType::EnergyMethod, "EnergyMethod" },
 		{ CitedModuleType::SimpleMetric, "SimpleMetric" },
+		{ CitedModuleType::ConstraintGenerator, "ConstraintGenerator" },
 		{ CitedModuleType::Singleton, "Singleton" },
 		{ CitedModuleType::Application, "Application" }
 		};

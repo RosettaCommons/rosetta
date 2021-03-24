@@ -50,6 +50,12 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide citations to the passed CitationCollectionList.
+	/// This allows the constraint generator to provide citations for itself
+	/// and for any modules that it invokes.
+	/// @details Cites Sharon Guffy.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const override;
 
 public:
 

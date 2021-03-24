@@ -50,6 +50,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide citations to the passed CitationCollectionList.
+	/// This allows the constraint generator to provide citations for itself
+	/// and for any modules that it invokes.
+	/// @details Cites Tom Linsky, who created the constraint generator framework.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const override;
+
 	void
 	set_min_distance( core::Real const dist );
 

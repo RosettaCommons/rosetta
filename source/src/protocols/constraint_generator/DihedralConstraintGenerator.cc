@@ -41,6 +41,8 @@
 // Basic/Utility headers
 #include <numeric/conversions.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/string_util.hh>
@@ -258,6 +260,26 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		class_name(),
 		description,
 		attlist );
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Jared Adolf-Bryfogle.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+DihedralConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Jared Adolf-Bryfogle", "Institute for Protein Innovation", "jadolfbr@gmail.com",
+		"Created the DihedralConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 ///@brief Turn two strings, comma-separated with atom names and resnums into a custom dihedral vector.

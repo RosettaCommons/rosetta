@@ -29,6 +29,7 @@
 #include <core/types.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/VirtualBase.hh>
@@ -55,6 +56,15 @@ public: //overridden virtuals
 	/// @brief generates constraints and adds them to the pose
 	virtual core::scoring::constraints::ConstraintCOPs
 	apply( core::pose::Pose const & pose ) const = 0;
+
+public: //Functions needed for the citation manager
+
+	/// @brief Provide citations to the passed CitationCollectionList.
+	/// This allows the constraint generator to provide citations for itself
+	/// and for any modules that it invokes.
+	/// @details This base class version does nothing.  It should be overridden by derived classes.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	virtual void provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const;
 
 protected:
 	/// @brief called by parse_my_tag -- should not be used directly

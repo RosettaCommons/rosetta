@@ -43,6 +43,18 @@ ConstraintGenerator::ConstraintGenerator( std::string const & class_name ):
 
 ConstraintGenerator::~ConstraintGenerator() = default;
 
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details This base class version does nothing.  It should be overridden by derived classes.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList &
+) const {
+	//GNDN.
+}
+
 /// @brief This is called if this mover is instantiated from XML
 void
 ConstraintGenerator::parse_my_tag(

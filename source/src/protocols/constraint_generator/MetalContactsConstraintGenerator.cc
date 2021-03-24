@@ -45,6 +45,8 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/vector1.functions.hh>
@@ -651,6 +653,26 @@ MetalContactsConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDef
 		class_name(),
 		"Generates distance, angle, and dihedral constraints for the specified metal atom in the selected ligand residue",
 		attlist );
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Sharon Guffy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+MetalContactsConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Sharon Guffy", "University of North Carolina at Chapel Hill", "guffy@email.unc.edu",
+		"Created the MetalContactsConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 

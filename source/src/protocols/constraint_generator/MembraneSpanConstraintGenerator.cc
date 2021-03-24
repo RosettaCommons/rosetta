@@ -22,6 +22,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 
@@ -77,6 +79,26 @@ MembraneSpanConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	core::scoring::constraints::ConstraintCOPs csts;
 	csts.push_back( utility::pointer::make_shared< core::scoring::constraints::MembraneSpanConstraint >( pose ) );
 	return csts;
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Jonathan Weinstein.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+MembraneSpanConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Jonathan Weinstein", "Department of Biomolecular Science, Weizmann Institute of Science", "jonathan.weinstein@weizmann.ac.il",
+		"Created the MembraneSpanConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 

@@ -34,6 +34,7 @@ enum class CitedModuleType {
 	ScoreFunction,
 	EnergyMethod,
 	SimpleMetric,
+	ConstraintGenerator,
 	Singleton,
 	Application,
 	CustomType, //Keep second-to-last

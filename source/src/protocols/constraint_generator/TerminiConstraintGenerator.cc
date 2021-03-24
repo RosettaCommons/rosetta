@@ -26,6 +26,8 @@
 #include <core/scoring/constraints/BoundConstraint.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 // Boost headers
@@ -178,6 +180,26 @@ TerminiConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 		class_name(),
 		"Adds distance constraint between termini",
 		attlist );
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Tom Linsky, who created the constraint generator framework.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+TerminiConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Thomas W. Linsky", "Neoleukin Therapeutics", "tlinsky@gmail.com",
+		"Created the ConstraintGenerator framework and the TerminiConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 

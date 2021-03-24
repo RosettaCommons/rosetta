@@ -31,6 +31,8 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -113,6 +115,26 @@ AtomPairConstraintGenerator::apply( core::pose::Pose const & pose ) const
 	core::select::residue_selector::ResidueSubset const subset = selector_->apply( pose );
 	core::select::residue_selector::ResidueSubset const secondary_subset = secondary_selector_->apply( pose );
 	return generate_atom_pair_constraints( pose, subset, secondary_subset );
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Tom Linsky, who created the constraint generator framework.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+AtomPairConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Thomas W. Linsky", "Neoleukin Therapeutics", "tlinsky@gmail.com",
+		"Created the ConstraintGenerator framework and the AtomPairConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 void

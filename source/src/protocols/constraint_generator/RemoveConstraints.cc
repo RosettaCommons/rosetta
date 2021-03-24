@@ -24,6 +24,8 @@
 #include <core/pose/Pose.hh>
 
 // Basic/Utility headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <utility>
@@ -74,6 +76,30 @@ RemoveConstraints::parse_my_tag(
 protocols::moves::MoverOP
 RemoveConstraints::clone() const{
 	return utility::pointer::make_shared< RemoveConstraints >( *this );
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows this mover to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Tom Linsky, who created the constraint generator framework.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+RemoveConstraints::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	basic::citation_manager::UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+		mover_name(), basic::citation_manager::CitedModuleType::Mover,
+		"Thomas W. Linsky", "Neoleukin Therapeutics Inc", "tlinsky@gmail.com",
+		"Created the ConstraintGenerator framework and the RemoveConstraints mover."
+		)
+	);
+	citations.add( citation );
+
+	// Add citation info for all of the contained citation generators:
+	for ( auto const & generator : generators_ ) {
+		generator->provide_citation_info( citations );
+	}
 }
 
 moves::MoverOP

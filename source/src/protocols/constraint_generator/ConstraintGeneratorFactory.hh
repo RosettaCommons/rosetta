@@ -52,6 +52,11 @@ public:
 	) const;
 
 
+	/// @brief Get the XML schema for a given constraint generator.
+	/// @details Throws an error if the constraint generator is unknown to Rosetta.
+	/// @author Vikram K. Mulligan (vmullig@uw.edu)
+	void provide_xml_schema( std::string const &cst_generator_name, utility::tag::XMLSchemaDefinition & xsd ) const;
+
 	void define_constraint_generator_xml_schema_group( utility::tag::XMLSchemaDefinition & xsd ) const;
 
 	//All of these may move to a new file for schema generation

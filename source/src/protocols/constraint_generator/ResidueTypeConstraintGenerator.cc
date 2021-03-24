@@ -30,6 +30,8 @@
 #include <core/id/SequenceMapping.hh>
 //Basic headers
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 // Utility headers
 #include <utility/fixedsizearray1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -69,6 +71,26 @@ ResidueTypeConstraintGenerator::apply( core::pose::Pose const & pose ) const{
 		csts = generate_residue_type_constraints( pose, *ref_pose_, subset, seqmap );
 	}
 	return csts;
+}
+
+/// @brief Provide citations to the passed CitationCollectionList.
+/// This allows the constraint generator to provide citations for itself
+/// and for any modules that it invokes.
+/// @details Cites Sharon Guffy.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ResidueTypeConstraintGenerator::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	UnpublishedModuleInfoOP citation(
+		utility::pointer::make_shared< UnpublishedModuleInfo >(
+		class_name(), CitedModuleType::ConstraintGenerator,
+		"Sharon Guffy", "University of North Carolina at Chapel Hill", "guffy@email.unc.edu",
+		"Created the ResidueTypeConstraintGenerator."
+		)
+	);
+	citations.add(citation);
 }
 
 void

@@ -51,6 +51,7 @@
 #include <protocols/filters/FilterFactory.hh>
 #include <protocols/moves/MoverFactory.hh>
 #include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/constraint_generator/ConstraintGeneratorFactory.hh>
 
 #include <protocols/jd2/util.hh> // For hacky compatibility purposes only!!
 
@@ -791,7 +792,7 @@ print_information(
 		outstream << xsd.human_readable_summary( component_name, "rlto" );
 	}
 
-	// 6. Check Simple Metrics
+	// 6. Check simple metrics:
 	core::simple_metrics::SimpleMetricFactory* metric_factory( core::simple_metrics::SimpleMetricFactory::get_instance() ); //Must be raw pointer; owning pointer does weird things with static singleton.
 	if ( metric_factory->has_type( component_name ) ) {
 		if ( !missing ) outstream << "\n";
@@ -802,7 +803,18 @@ print_information(
 		outstream << xsd.human_readable_summary( component_name, "simple_metric" );
 	}
 
-	// 7. Check packer palettes:
+	// 7. Check constraint generators:
+	protocols::constraint_generator::ConstraintGeneratorFactory* cst_factory( protocols::constraint_generator::ConstraintGeneratorFactory::get_instance() ); //Must be raw pointer.
+	if ( cst_factory->has_type( component_name ) ) {
+		if ( !missing ) outstream << "\n";
+		missing = false;
+		outstream << "INFORMATION ABOUT CONSTRAINT GENERATOR \"" << component_name << "\":\n\n";
+		utility::tag::XMLSchemaDefinition xsd;
+		cst_factory->provide_xml_schema( component_name, xsd );
+		outstream << xsd.human_readable_summary( component_name, "constraint_generator" );
+	}
+
+	// 8. Check packer palettes:
 	core::pack::palette::PackerPaletteFactory* pp_factory( core::pack::palette::PackerPaletteFactory::get_instance() ); //Must be raw pointer; owning pointer does weird things with static singleton.
 	if ( pp_factory->has_type( component_name ) ) {
 		if ( !missing ) outstream << "\n";
@@ -817,7 +829,7 @@ print_information(
 }
 
 /// @brief Prints out XSD information about the XML-accessible options for a given set of RosettaScipts-accessible
-/// movers, filters, task operations, residue selectors, simple metric, or packer palette.
+/// movers, filters, task operations, residue selectors, simple metric, constraint generators, or packer palette.
 /// @details Calls the single string version.
 /// @author Vikram K. Mulligan (vmullig@uw.edu)
 void
@@ -829,7 +841,7 @@ print_information(
 
 	utility::vector1 < std::string > failed_components;
 	std::stringstream outstream("");
-	outstream << "\nThe rosetta_scripts application was used with the -parser:info flag.\nWriting options for the indicated movers/filters/task operations/residue selectors/simple metrics/packer palettes:\n";
+	outstream << "\nThe rosetta_scripts application was used with the -parser:info flag.\nWriting options for the indicated movers/filters/task operations/residue selectors/simple metrics/constraint generators/packer palettes:\n";
 
 	for ( core::Size i(1); i<=ncomponents; ++i ) {
 		outstream << "--------------------------------------------------------------------------------\n";
@@ -840,7 +852,7 @@ print_information(
 	}
 	outstream << "--------------------------------------------------------------------------------\n";
 	if ( failed_components.size() > 0 ) {
-		outstream << "Warning: the following are not movers, filters, task operations, residue selectors, simple metrics, or packer palettes; no information could be found for these:\n";
+		outstream << "Warning: the following are not movers, filters, task operations, residue selectors, simple metrics, constraint generators, or packer palettes; no information could be found for these:\n";
 		for ( core::Size i(1), imax(failed_components.size()); i<=imax; ++i ) {
 			outstream << failed_components[i] << "\n";
 		}
