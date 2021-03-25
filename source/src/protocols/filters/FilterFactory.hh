@@ -99,6 +99,14 @@ public:
 	void define_filter_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 	static std::string filter_xml_schema_group_name();
 
+	/// @brief Get a human-readable listing of the citations for a given filter, by filter name.
+	/// @details Returns an empty string if there are no citations.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string
+	get_citation_humanreadable(
+		std::string const & filter_name
+	) const;
+
 private:
 	FilterFactory();
 

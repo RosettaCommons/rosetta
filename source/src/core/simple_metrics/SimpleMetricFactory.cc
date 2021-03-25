@@ -113,6 +113,27 @@ SimpleMetricFactory::simple_metric_xml_schema_group_name(){
 	return "simple_metric";
 }
 
+/// @brief Get a human-readable listing of the citations for a given simple metric, by metric name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+SimpleMetricFactory::get_citation_humanreadable(
+	std::string const & metric_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+	auto const iter = creator_map_.find( metric_name );
+	runtime_assert_string_msg( iter != creator_map_.end(), "Error in SimpleMetricFactory::get_citation_humanreadable(): Could not find simple metric \"" + metric_name + "\"!" );
+	SimpleMetricOP new_simple_metric = iter->second->create_simple_metric();
+	runtime_assert_string_msg( new_simple_metric != nullptr, "Error in SimpleMetricFactory::get_citation_humanreadable(): Could not instantiate " + metric_name + "!" );
+	new_simple_metric->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << metric_name << " simple metric:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
+}
 
 } //namespace simple_metrics
 } //namespace core

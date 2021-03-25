@@ -28,6 +28,7 @@
 
 // Basic headers
 #include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Boost headers
 
@@ -68,6 +69,30 @@ ResidueSelectorFactory::provide_xml_schema(
 	}
 	auto iter = creator_map_.find( selector_name );
 	iter->second->provide_xml_schema( xsd );
+}
+
+/// @brief Get a human-readable listing of the citations for a given residue selector, by selector name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+ResidueSelectorFactory::get_citation_humanreadable(
+	std::string const & selector_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+
+	auto const iter = creator_map_.find( selector_name );
+	runtime_assert_string_msg( iter != creator_map_.end(), "Error in ResidueSelectorFactory::get_citation_humanreadable(): Could not recognize " + selector_name + "!" );
+	ResidueSelectorOP selector( iter->second->create_residue_selector() );
+
+	runtime_assert_string_msg( selector != nullptr, "Error in ResidueSelectorFactory::get_citation_humanreadable(): Could not instantiate " + selector_name + "!" );
+	selector->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << selector_name << " residue selector:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
 }
 
 ResidueSelectorOP ResidueSelectorFactory::new_residue_selector(

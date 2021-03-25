@@ -105,6 +105,14 @@ public:
 	/// this should happen automatically.
 	void define_packer_palette_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const;
 
+	/// @brief Get a human-readable listing of the citations for a given packer palette, by packer palette name.
+	/// @details Returns an empty string if there are no citations.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string
+	get_citation_humanreadable(
+		std::string const & palette_name
+	) const;
+
 	/// @brief Get the XML schema for a given packer palette.
 	/// @details Throws an error if the packer palette is unknown to Rosetta.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)

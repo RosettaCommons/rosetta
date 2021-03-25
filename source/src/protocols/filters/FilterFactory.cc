@@ -30,6 +30,7 @@
 
 // Basic headers
 #include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Boost headers
 
@@ -194,6 +195,26 @@ void FilterFactory::define_filter_xml_schema( utility::tag::XMLSchemaDefinition 
 std::string FilterFactory::filter_xml_schema_group_name()
 {
 	return "filter";
+}
+
+/// @brief Get a human-readable listing of the citations for a given filter, by filter name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+FilterFactory::get_citation_humanreadable(
+	std::string const & filter_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+	FilterOP filter( newFilter( filter_name ) );
+	runtime_assert_string_msg( filter != nullptr, "Error in FilterFactory::get_citation_humanreadable(): Could not instantiate " + filter_name + "!" );
+	filter->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << filter_name << " filter:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
 }
 
 } //namespace filters

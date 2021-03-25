@@ -966,9 +966,14 @@ std::string XMLSchemaDefinition::full_definition() const
 std::string
 XMLSchemaDefinition::human_readable_summary(
 	std::string const &component_name/*=""*/,
-	std::string const &component_type/*=""*/
+	std::string const &component_type/*=""*/,
+	std::string const &citation_text/*=""*/
 ) const {
-	return utility::xsd_util::generate_human_readable_summary( full_definition(), component_name, component_type );
+	std::string returnstring ( utility::xsd_util::generate_human_readable_summary( full_definition(), component_name, component_type ) );
+	if ( !(citation_text.empty()) ) {
+		returnstring += "\n\n" + citation_text;
+	}
+	return returnstring;
 }
 
 void XMLSchemaDefinition::validate_new_top_level_element( std::string const & element_name, std::string const & definition )

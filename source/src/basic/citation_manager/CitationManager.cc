@@ -148,6 +148,25 @@ CitationManager::write_all_citations_and_unpublished_author_info() const {
 	}
 }
 
+/// @brief Write out all unpublished modules and citations in a CitationCollectionList to a given output stream.
+void
+CitationManager::write_all_citations_and_unpublished_author_info_from_list_to_stream(
+	CitationCollectionList const & list,
+	std::ostream & outstream
+) const {
+	utility::vector1< CitationCollectionCOP > published;
+	utility::vector1< UnpublishedModuleInfoCOP > unpublished;
+	split_citations( list, published, unpublished );
+
+	if ( ! published.empty() ) {
+		write_collected_citations( outstream, published );
+	}
+
+	if ( ! unpublished.empty() ) {
+		write_unpublished_modules( outstream, unpublished );
+	}
+}
+
 /// @brief Given a DOI string, get a Rosetta citation.
 /// @details Throws if the DOI string isn't in the list of Rosetta papers in the database.
 CitationCOP
@@ -218,6 +237,33 @@ CitationManager::populate_doi_rosetta_citation_map(
 	TR.Debug << "Parsed " << doi_rosetta_citation_map_.size() << " Rosetta citations from database file contents." << std::endl;
 }
 
+/// @brief Split the citations into published & unpublished vectors.
+/// @details Return by reference.
+/// Not threadsafe; list must be protected by a lock guard before calling this if there is the
+/// possibility that another thread could be acting on it.
+void
+CitationManager::split_citations(
+	CitationCollectionList const & list,
+	utility::vector1< CitationCollectionCOP > & published,
+	utility::vector1< UnpublishedModuleInfoCOP > & unpublished
+) const {
+	if ( list.empty() ) { return; }
+	for ( CitationCollectionBaseCOP const & entry : list.citations() ) {
+		CitationCollectionCOP cc = utility::pointer::dynamic_pointer_cast< CitationCollection const >( entry );
+		if ( cc ) {
+			published.push_back( cc );
+			continue;
+		}
+		UnpublishedModuleInfoCOP um = utility::pointer::dynamic_pointer_cast< UnpublishedModuleInfo const >( entry );
+		if ( um ) {
+			unpublished.push_back( um );
+			continue;
+		}
+		//TR.Error << "Unrecognized citation collection type. Typeid: " << typeid(*entry).name() << std::endl;
+		utility_exit_with_message("Error in CitationManager::split_citations():  Unable to determine the type of a citation collection.");
+	}
+}
+
 /// @brief Split the citations into published & unpublished vectors
 /// @details Return by reference.
 void
@@ -225,10 +271,10 @@ CitationManager::split_citations(
 	utility::vector1< CitationCollectionCOP > & published,
 	utility::vector1< UnpublishedModuleInfoCOP > & unpublished
 ) const {
-	if ( citation_list_.empty() ) { return; }
 #ifdef MULTI_THREADED
 	std::lock_guard< std::mutex > guard( mutex_ );
 #endif
+	if ( citation_list_.empty() ) { return; }
 	for ( CitationCollectionBaseCOP const & entry : citation_list_.citations() ) {
 		CitationCollectionCOP cc = utility::pointer::dynamic_pointer_cast< CitationCollection const >( entry );
 		if ( cc ) {
@@ -241,7 +287,7 @@ CitationManager::split_citations(
 			continue;
 		}
 		//TR.Error << "Unrecognized citation collection type. Typeid: " << typeid(*entry).name() << std::endl;
-		utility_exit_with_message("Unable to determine the type of a citation collection.");
+		utility_exit_with_message("CitationManager::split_citations():  Unable to determine the type of a citation collection.");
 	}
 }
 

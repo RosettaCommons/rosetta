@@ -26,6 +26,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
 #include <utility/io/izstream.hh>
@@ -170,6 +171,30 @@ PackerPaletteFactory::define_packer_palette_xml_schema(
 			" must call core::pack::palette::complex_type_name_for_packer_palette when defining"
 			" its XML Schema\n" + e.msg() );
 	}
+}
+
+/// @brief Get a human-readable listing of the citations for a given filter, by filter name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+PackerPaletteFactory::get_citation_humanreadable(
+	std::string const & palette_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+
+	PackerPaletteCreatorMap::const_iterator iter( packer_palette_creator_map_.find( palette_name ) );
+	runtime_assert_string_msg( iter != packer_palette_creator_map_.end(), "Error in PackerPaletteFactory::get_citation_humanreadable(): Could not parse \"" + palette_name + "\"!" );
+	PackerPaletteOP packer_palette( iter->second->create_packer_palette() );
+
+	runtime_assert_string_msg( packer_palette != nullptr, "Error in PackerPaletteFactory::get_citation_humanreadable(): Could not instantiate " + palette_name + "!" );
+	packer_palette->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << palette_name << " packer palette:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
 }
 
 /// @brief Get the XML schema for a given packer palette.

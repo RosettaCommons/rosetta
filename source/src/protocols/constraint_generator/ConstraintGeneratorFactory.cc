@@ -23,6 +23,8 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -135,6 +137,28 @@ ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attribute
 		.add_attributes( attributes )
 		.add_optional_name_attribute()
 		.write_complex_type_to_schema( xsd );
+}
+
+/// @brief Get a human-readable listing of the citations for a given filter, by filter name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+ConstraintGeneratorFactory::get_citation_humanreadable(
+	std::string const & constraint_generator_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+	auto const iter = creator_map_.find( constraint_generator_name );
+	runtime_assert_string_msg( iter != creator_map_.end(), "Error in ConstraintGeneratorFactory::get_citation_humanreadable(): Did not recognize " + constraint_generator_name + "!" );
+	ConstraintGeneratorOP new_constraint_generator = iter->second->create_constraint_generator();
+	runtime_assert_string_msg( new_constraint_generator != nullptr, "Error in ConstraintGeneratorFactory::get_citation_humanreadable(): Could not instantiate " + constraint_generator_name + "!" );
+	new_constraint_generator->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << constraint_generator_name << " constraint generator:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
 }
 
 } //namespace constraint_generator

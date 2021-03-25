@@ -745,7 +745,7 @@ print_information(
 		outstream << "INFORMATION ABOUT FILTER \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		filterfactory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "filter" );
+		outstream << xsd.human_readable_summary( component_name, "filter", filterfactory->get_citation_humanreadable(component_name) );
 	}
 
 	// 2. Check movers:
@@ -756,7 +756,7 @@ print_information(
 		outstream << "INFORMATION ABOUT MOVER \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		moverfactory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "mover" );
+		outstream << xsd.human_readable_summary( component_name, "mover", moverfactory->get_citation_humanreadable(component_name) );
 	}
 
 	// 3. Check residue selectors:
@@ -767,7 +767,7 @@ print_information(
 		outstream << "INFORMATION ABOUT RESIDUE SELECTOR \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		residueselectorfactory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "rs" );
+		outstream << xsd.human_readable_summary( component_name, "rs", residueselectorfactory->get_citation_humanreadable(component_name) );
 	}
 
 	// 4. Check task operations:
@@ -778,7 +778,7 @@ print_information(
 		outstream << "INFORMATION ABOUT TASK OPERATION \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		taskfactory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "to" );
+		outstream << xsd.human_readable_summary( component_name, "to", taskfactory->get_citation_humanreadable(component_name) );
 	}
 
 	// 5. Check residue-level task operations:
@@ -789,7 +789,7 @@ print_information(
 		outstream << "INFORMATION ABOUT RESIDUE LEVEL TASK OPERATION \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		rltaskfactory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "rlto" );
+		outstream << xsd.human_readable_summary( component_name, "rlto", rltaskfactory->get_citation_humanreadable(component_name) );
 	}
 
 	// 6. Check simple metrics:
@@ -800,7 +800,7 @@ print_information(
 		outstream << "INFORMATION ABOUT SIMPLE METRIC \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		metric_factory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "simple_metric" );
+		outstream << xsd.human_readable_summary( component_name, "simple_metric", metric_factory->get_citation_humanreadable(component_name) );
 	}
 
 	// 7. Check constraint generators:
@@ -811,7 +811,7 @@ print_information(
 		outstream << "INFORMATION ABOUT CONSTRAINT GENERATOR \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		cst_factory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "constraint_generator" );
+		outstream << xsd.human_readable_summary( component_name, "constraint_generator", cst_factory->get_citation_humanreadable(component_name) );
 	}
 
 	// 8. Check packer palettes:
@@ -822,7 +822,7 @@ print_information(
 		outstream << "INFORMATION ABOUT PACKER PALETTE \"" << component_name << "\":\n\n";
 		utility::tag::XMLSchemaDefinition xsd;
 		pp_factory->provide_xml_schema( component_name, xsd );
-		outstream << xsd.human_readable_summary( component_name, "packer_palette" );
+		outstream << xsd.human_readable_summary( component_name, "packer_palette", pp_factory->get_citation_humanreadable(component_name) );
 	}
 
 	return missing;

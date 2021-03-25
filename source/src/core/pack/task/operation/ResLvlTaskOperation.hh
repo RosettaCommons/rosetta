@@ -33,6 +33,7 @@
 // C++ Headers
 
 #include <utility/vector1.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef WIN32
 #include <utility/tag/Tag.hh>
@@ -58,6 +59,14 @@ public:
 
 	/// @brief parser xml-like tags to set class data/parameters
 	virtual void parse_tag( TagCOP ) {}
+
+	/// @brief Provide citations to the passed CitationCollectionList
+	/// Subclasses should add the info for themselves and any other classes they use.
+	/// @details The default implementation of this function does nothing.  It may be
+	/// overriden by task operations wishing to provide citation information.
+	virtual void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const {
+		//GNDN.
+	}
 };
 
 // only generalized base classes go here. ResLvlTaskOperations that actually do things do not belong here.

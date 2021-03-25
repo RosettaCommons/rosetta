@@ -72,6 +72,9 @@ public:  // Accessors //////////////////////////////////////////////////////////
 	/// @brief Write out all unpublished modules and citations to the CitationManager's tracer.
 	void write_all_citations_and_unpublished_author_info() const;
 
+	/// @brief Write out all unpublished modules and citations in a CitationCollectionList to a given output stream.
+	void write_all_citations_and_unpublished_author_info_from_list_to_stream( CitationCollectionList const & list, std::ostream & outstream ) const;
+
 	/// @brief Given a DOI string, get a Rosetta citation.
 	/// @details Throws if the DOI string isn't in the list of Rosetta papers in the database.
 	CitationCOP get_citation_by_doi( std::string const & doi ) const;
@@ -99,6 +102,17 @@ private: // Private fxns /////////////////////////////////////////////////////
 	/// @brief Populate the doi_rosetta_citation_map_ from the contents of a
 	/// database file.
 	void populate_doi_rosetta_citation_map( std::string const & database_file_contents );
+
+	/// @brief Split the citations into published & unpublished vectors.
+	/// @details Return by reference.
+	/// Not threadsafe; list must be protected by a lock guard before calling this if there is the
+	/// possibility that another thread could be acting on it.
+	void
+	split_citations(
+		CitationCollectionList const & list,
+		utility::vector1< CitationCollectionCOP > & published,
+		utility::vector1< UnpublishedModuleInfoCOP > & unpublished
+	) const;
 
 	/// @brief Split the citations into published & unpublished vectors
 	/// @details Return by reference.

@@ -25,6 +25,7 @@
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility headers
 #include <utility/exit.hh> // runtime_assert, utility_exit_with_message
@@ -119,6 +120,30 @@ TaskOperationFactory::provide_xml_schema(
 		TR << std::endl;
 		utility_exit_with_message( task_operation_name + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
 	}
+}
+
+/// @brief Get a human-readable listing of the citations for a given filter, by filter name.
+/// @details Returns an empty string if there are no citations.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+std::string
+TaskOperationFactory::get_citation_humanreadable(
+	std::string const & taskop_name
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionList citations;
+
+	auto const iter( task_operation_creator_map_.find( taskop_name ) );
+	runtime_assert_string_msg( iter != task_operation_creator_map_.end(), "Error in TaskOperationFactory::get_citation_humanreadable(): Could not parse \"" + taskop_name + "\"!" );
+
+	TaskOperationOP task_operation( iter->second->create_task_operation() );
+	runtime_assert_string_msg( task_operation != nullptr, "Error in TaskOperationFactory::get_citation_humanreadable(): Could not instantiate " + taskop_name + "!" );
+	task_operation->provide_citation_info(citations);
+	if ( citations.empty() ) return "";
+	std::ostringstream ss;
+	ss << "References and author information for the " << taskop_name << " task operation:" << std::endl;
+	ss << std::endl;
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info_from_list_to_stream( citations, ss );
+	return ss.str();
 }
 
 TaskOperationOP

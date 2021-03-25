@@ -62,6 +62,14 @@ public:
 
 	static std::string simple_metric_xml_schema_group_name();
 
+	/// @brief Get a human-readable listing of the citations for a given simple metric, by metric name.
+	/// @details Returns an empty string if there are no citations.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string
+	get_citation_humanreadable(
+		std::string const & metric_name
+	) const;
+
 private:
 	CreatorMap creator_map_;
 };

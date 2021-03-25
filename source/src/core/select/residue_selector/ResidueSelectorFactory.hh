@@ -46,6 +46,14 @@ public:
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
 	void provide_xml_schema( std::string const &selector_name, utility::tag::XMLSchemaDefinition & xsd ) const;
 
+	/// @brief Get a human-readable listing of the citations for a given residue selector, by selector name.
+	/// @details Returns an empty string if there are no citations.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	std::string
+	get_citation_humanreadable(
+		std::string const & selector_name
+	) const;
+
 	ResidueSelectorOP new_residue_selector(
 		std::string const & selector_name,
 		utility::tag::TagCOP tag,

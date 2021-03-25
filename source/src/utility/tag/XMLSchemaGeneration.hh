@@ -536,7 +536,7 @@ public:
 	/// mover.  Also note, this function uses raw pointers, unfortunately -- the libxml2 functions that I'm calling require it.
 	/// As such, no premature return statements should be added prior to the xmlFreeDoc and xmlCleanupParser statements at the end of the function.
 	/// @author Vikram K. Mulligan (vmullig@uw.edu)
-	std::string human_readable_summary( std::string const &component_name="", std::string const &component_type="" ) const;
+	std::string human_readable_summary( std::string const &component_name="", std::string const &component_type="", std::string const &citation_text="" ) const;
 
 private:
 
