@@ -151,7 +151,7 @@ StrandArchitect::create_motif(
 	std::string const & secstruct,
 	std::string const & abego ) const
 {
-	StructureDataOP sd( new StructureData( id() ) );
+	StructureDataOP sd( utility::pointer::make_shared< StructureData >( id() ) );
 	std::string abego_str = abego;
 	for ( auto const & b : bulges ) {
 		if ( b ) abego_str[ b ] = 'A';
@@ -301,7 +301,7 @@ StrandArchitect::bulge_keyname()
 void
 StrandArchitect::set_length( std::string const & length_str )
 {
-	set_length( parse_length_str< core::Size >( length_str ) );
+	set_length( parse_length_string< core::Size >( length_str ) );
 }
 
 void
@@ -321,7 +321,7 @@ StrandArchitect::set_bulges( std::string const & bulges_str )
 	AllowedStrandBulges allowed_bulges;
 	utility::vector1< std::string > const fields = utility::string_split( bulges_str, ';' );
 	for ( std::string const & bulge_positions : fields ) {
-		allowed_bulges.push_back( parse_length_str< SegmentResid >( bulge_positions ) );
+		allowed_bulges.push_back( parse_length_string< SegmentResid >( bulge_positions ) );
 	}
 
 	set_bulges( allowed_bulges );
@@ -344,7 +344,7 @@ StrandArchitect::set_extended( std::string const & extended_str )
 	AllowedStrandExtended allowed_extended;
 	utility::vector1< std::string > const fields = utility::string_split( extended_str, ';' );
 	for ( std::string const & extended_positions : fields ) {
-		allowed_extended.push_back( parse_length_str< SegmentResid >( extended_positions ) );
+		allowed_extended.push_back( parse_length_string< SegmentResid >( extended_positions ) );
 	}
 
 	set_extended( allowed_extended );

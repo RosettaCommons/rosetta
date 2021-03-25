@@ -28,7 +28,7 @@
 #include <protocols/denovo_design/components/SegmentPairing.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.hh>
 #include <protocols/denovo_design/util.hh>
 #include <protocols/fldsgn/topology/SS_Info2.hh>
 #include <protocols/fldsgn/topology/StrandPairing.hh>

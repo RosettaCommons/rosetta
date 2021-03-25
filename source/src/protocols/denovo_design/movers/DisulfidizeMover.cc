@@ -203,6 +203,12 @@ DisulfidizeMover::set_mutate_pro( bool const mutate_pro )
 	mutate_pro_ = mutate_pro;
 }
 
+void
+DisulfidizeMover::set_max_dist( core::Real const max_dist )
+{
+	max_dist_sq_ = max_dist*max_dist;
+}
+
 /// @brief Given a list of disulfides and a symmetric pose, prune the list to remove symmetry
 /// duplicates.
 /// @details Does nothing if the pose is not symmetric.
@@ -247,10 +253,10 @@ DisulfidizeMover::parse_my_tag(
 		set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 	}
 	set_match_rt_limit( tag->getOption< core::Real >( "match_rt_limit", match_rt_limit_ ) );
-	min_disulfides_ = tag->getOption< core::Size >( "min_disulfides", min_disulfides_ );
-	max_disulfides_ = tag->getOption< core::Size >( "max_disulfides", max_disulfides_ );
-	keep_current_ds_ = tag->getOption< bool >( "keep_current_disulfides", keep_current_ds_ );
-	include_current_ds_ = tag->getOption< bool >( "include_current_disulfides", include_current_ds_ );
+	set_min_disulfides( tag->getOption< core::Size >( "min_disulfides", min_disulfides_ ) );
+	set_max_disulfides( tag->getOption< core::Size >( "max_disulfides", max_disulfides_ ) );
+	set_keep_current_ds( tag->getOption< bool >( "keep_current_disulfides", keep_current_ds_ ) );
+	set_include_current_ds( tag->getOption< bool >( "include_current_disulfides", include_current_ds_ ) );
 	set_min_loop( tag->getOption< core::Size >( "min_loop", min_loop_  ) );
 	set_max_disulf_score( tag->getOption< core::Real >( "max_disulf_score", max_disulf_score_ ) );
 	set_mutate_gly( tag->getOption< bool >( "mutate_gly", mutate_gly_ ) );
@@ -258,12 +264,12 @@ DisulfidizeMover::parse_my_tag(
 
 	if ( tag->hasOption( "max_cb_dist" ) ) {
 		auto const max_dist = tag->getOption< core::Real >( "max_cb_dist" );
-		max_dist_sq_ = max_dist*max_dist;
+		set_max_dist( max_dist );
 	}
 
 	// by default, a disulfide is valid if it passes score OR matchrt
 	// if this option is false, disulfides must pass score AND matchrt
-	score_or_matchrt_ = tag->getOption< bool >( "score_or_matchrt", score_or_matchrt_ );
+	set_score_or_matchrt( tag->getOption< bool >( "score_or_matchrt", score_or_matchrt_ ) );
 	if ( tag->hasOption( "set1" ) ) {
 		set_set1_selector( get_residue_selector( data, tag->getOption< std::string >( "set1" ) ) );
 	}

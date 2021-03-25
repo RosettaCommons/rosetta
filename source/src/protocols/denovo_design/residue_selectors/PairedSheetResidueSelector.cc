@@ -98,9 +98,9 @@ PairedSheetResidueSelector::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & )
 {
-	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
-	sheet_topology_ = tag->getOption< std::string >( "sheet_topology", sheet_topology_ );
-	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
+	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
+	set_sheet_topology( tag->getOption< std::string >( "sheet_topology", sheet_topology_ ) );
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_ ) );
 }
 
 void

@@ -105,8 +105,11 @@ NamedSegmentSelector::apply( core::pose::Pose const & pose ) const
 
 	core::Size resid = 1;
 	for ( ResidueSubset::const_iterator s=subset.begin(); s!=subset.end(); ++s, ++resid ) {
-		if ( *s ) TR.Debug << "Selected ";
-		else TR.Debug << "Ignored ";
+		if ( *s ) {
+			TR.Debug << "Selected ";
+		} else {
+			TR.Debug << "Ignored ";
+		}
 		TR.Debug << "residue " << pose.residue( resid ).name() << " "
 			<< resid << " " << pose.chain( resid ) << std::endl;
 	}
@@ -174,9 +177,14 @@ NamedSegmentSelector::compute_residue_subset(
 	} else {
 		std::stringstream error_msg;
 		error_msg << class_name() << ": The segment name (" << segment_ << ") given was not found." << std::endl;
+		TR.Warning << error_msg.str();
+
 		error_msg << "SD = " << sd << std::endl;
-		if ( error_on_missing_segment_ ) utility_exit_with_message( error_msg.str() );
-		else TR << error_msg.str() << std::endl;
+		if ( error_on_missing_segment_ ) {
+			utility_exit_with_message( error_msg.str() );
+		} else {
+			TR.Debug << error_msg.str() << std::endl;
+		}
 	}
 
 	return subset;
@@ -227,7 +235,7 @@ NamedSegmentSelector::parse_my_tag(
 		throw CREATE_EXCEPTION(utility::excn::Exception,  error_message.str() );
 	}
 
-	error_on_missing_segment_ = tag->getOption< bool >( "error_on_missing_segment", error_on_missing_segment_ );
+	set_error_on_missing_segment( tag->getOption< bool >( "error_on_missing_segment", error_on_missing_segment_ ) );
 }
 
 std::string

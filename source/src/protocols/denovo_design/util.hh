@@ -34,7 +34,11 @@
 
 // Basic/Numeric/Utility Headers
 #include <basic/datacache/DataMap.fwd.hh>
+#include <utility/excn/Exceptions.hh>
 #include <utility/string_util.hh>
+
+// Boost Headers
+#include <boost/lexical_cast.hpp>
 
 // C++ Headers
 #include <set>
@@ -115,9 +119,29 @@ int find_jump_rec(
 /// @brief inserts the peptide edges to accomodate the new jump edge given
 void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Edge const & jedge );
 
-// @brief parses a string containing single integers and ranges. Returns a vector of all possible values.
-utility::vector1< core::Size >
-parse_length_string( std::string const & len_str );
+template< class T >
+utility::vector1< T >
+parse_length_string( std::string const & len_str )
+{
+	std::set< T > retval;
+	utility::vector1< std::string > const str_residues( utility::string_split( len_str , ',' ) );
+	for ( core::Size i = 1; i <= str_residues.size(); ++i ) {
+		if ( str_residues[i] == "" ) continue;
+		utility::vector1< std::string > const ranges( utility::string_split( str_residues[i], ':' ) );
+		if ( ranges.size() == 1 ) {
+			retval.insert( boost::lexical_cast< T >( ranges[1] ) );
+		} else if ( ranges.size() == 2 ) {
+			core::Size const start( boost::lexical_cast< T >( ranges[1] ) );
+			core::Size const end( boost::lexical_cast< T >( ranges[2] ) );
+			for ( core::Size i=start; i<=end; ++i ) {
+				retval.insert( i );
+			}
+		} else {
+			throw CREATE_EXCEPTION(utility::excn::Exception,  "Invalid length input: " + len_str );
+		}
+	}
+	return utility::vector1< T >( retval.begin(), retval.end() );
+}
 
 /// @brief given a number 0 <= x < 1, calculate an integer M <= x <= N
 /// NOTE THAT THIS FUNCTION MODIFIES THE PARAMETER

@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/denovo_design/movers/BuildDeNovoBackboneMover.fwd.hh
+/// @file protocols/denovo_design/movers/FoldArchitectMover.fwd.hh
 /// @brief Mover that builds and folds a structure via fragment insertion
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMover_fwd_hh
-#define INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMover_fwd_hh
+#ifndef INCLUDED_protocols_denovo_design_movers_FoldArchitectMover_fwd_hh
+#define INCLUDED_protocols_denovo_design_movers_FoldArchitectMover_fwd_hh
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
@@ -22,8 +22,12 @@ namespace protocols {
 namespace denovo_design {
 namespace movers {
 
-class BuildDeNovoBackboneMover;
+class FoldArchitectMover;
+typedef utility::pointer::shared_ptr< FoldArchitectMover > FoldArchitectMoverOP;
+typedef utility::pointer::shared_ptr< FoldArchitectMover const > FoldArchitectMoverCOP;
 
+// for backward compatibility
+class BuildDeNovoBackboneMover;
 typedef utility::pointer::shared_ptr< BuildDeNovoBackboneMover > BuildDeNovoBackboneMoverOP;
 typedef utility::pointer::shared_ptr< BuildDeNovoBackboneMover const > BuildDeNovoBackboneMoverCOP;
 
@@ -31,4 +35,4 @@ typedef utility::pointer::shared_ptr< BuildDeNovoBackboneMover const > BuildDeNo
 } //denovo_design
 } //movers
 
-#endif //INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMover_fwd_hh
+#endif //INCLUDED_protocols_denovo_design_movers_FoldArchitectMover_fwd_hh

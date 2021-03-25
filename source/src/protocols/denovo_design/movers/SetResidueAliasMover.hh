@@ -82,6 +82,17 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Sets the name of the alias
+	void
+	set_alias_name( std::string const & alias ) { alias_name_ = alias; }
+
+	/// @brief Sets the name of the segment that contains the residue to which the alias refers
+	void
+	set_segment_name( std::string const & segment ) { segment_name_ = segment; }
+
+	/// @brief Sets the residue within the segment to which the alias refers
+	void
+	set_resid( core::Size const resid ) { resid_ = resid; }
 
 private:
 	std::string alias_name_;

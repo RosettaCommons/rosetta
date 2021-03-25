@@ -49,7 +49,7 @@ StructureArchitect::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data )
 {
-	id_ = tag->getOption< std::string >( "name" );
+	set_id( tag->getOption< std::string >( "name" ) );
 	parse_tag( tag, data );
 }
 

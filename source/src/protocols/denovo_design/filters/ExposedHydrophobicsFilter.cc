@@ -95,8 +95,8 @@ ExposedHydrophobicsFilter::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {
-	sasa_cutoff_ = tag->getOption< core::Real >( "sasa_cutoff", sasa_cutoff_ );
-	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
+	set_sasa_cutoff( tag->getOption< core::Real >( "sasa_cutoff", sasa_cutoff_ ) );
+	set_threshold( tag->getOption< core::Real >( "threshold", threshold_ ) );
 }
 
 std::string

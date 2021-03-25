@@ -274,15 +274,15 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 	}
 
 	// sort out termini first
-	nterm_included_ = tag->getOption< bool >( "nterm", nterm_included_ );
-	cterm_included_ = tag->getOption< bool >( "cterm", cterm_included_ );
+	set_nterm_included( tag->getOption< bool >( "nterm", nterm_included_ ) );
+	set_cterm_included( tag->getOption< bool >( "cterm", cterm_included_ ) );
 
-	posestart_ = tag->getOption< core::Size >( "start" );
+	set_pose_start( tag->getOption< core::Size >( "start" ) );
 	if ( !nterm_included_ ) {
 		--posestart_;
 	}
 
-	ss_ = tag->getOption< std::string >( "ss" );
+	set_ss( tag->getOption< std::string >( "ss" ) );
 	set_abego( tag->getOption< std::string >( "abego" ) );
 	if ( abego_.size() != length() ) {
 		std::stringstream msg;
@@ -314,8 +314,8 @@ Segment::parse_tag( utility::tag::TagCOP tag )
 	set_lower_segment( tag->getOption< std::string >( "lower_segment", "" ) );
 	set_upper_segment( tag->getOption< std::string >( "upper_segment", "" ) );
 
-	movable_group_ = tag->getOption< core::Size >( "mgroup", movable_group_ );
-	movable_group_ = tag->getOption< core::Size >( "group", movable_group_ );
+	set_movable_group( tag->getOption< core::Size >( "mgroup", movable_group_ ) );
+	set_movable_group( tag->getOption< core::Size >( "group", movable_group_ ) );
 }
 
 void
@@ -630,7 +630,7 @@ Segment::delete_residue( SegmentResid const segment_resid )
 	// fix secondary structure
 	std::stringstream newss;
 	newss << ss_.substr( 0, local_resid - 1 ) << ss_.substr( local_resid, std::string::npos );
-	ss_ = newss.str();
+	set_ss( newss.str() );
 
 	// fix abego
 	std::stringstream newabego;
@@ -672,7 +672,7 @@ Segment::delete_residues( core::Size const local_resnum_start, core::Size const 
 	// fix secondary structure
 	std::string newss = ss_.substr( 0, local_resnum_start-1 );
 	newss += ss_.substr( local_resnum_stop, std::string::npos );
-	ss_ = newss;
+	set_ss( newss );
 
 	// fix abego
 	std::string newab = abego_.substr( 0, local_resnum_start-1 );
@@ -749,19 +749,19 @@ Segment::set_template_pose(
 	if ( ( start_resid - 1 > 0 ) &&
 			( full_template_pose.residue( start_resid - 1 ).is_protein() ) &&
 			( full_template_pose.residue( start_resid ).is_protein() ) ) {
-		lower_dihedrals_ = ResidueDihedrals( full_template_pose, start_resid - 1 );
-		lower_residue_ = full_template_pose.residue( start_resid - 1 ).clone();
+		set_lower_dihedrals( ResidueDihedrals( full_template_pose, start_resid - 1 ) );
+		set_lower_residue( full_template_pose.residue( start_resid - 1 ).clone() );
 	} else {
-		lower_dihedrals_ = ResidueDihedrals();
+		set_lower_dihedrals( ResidueDihedrals() );
 	}
 	// TODO: The is-protein() requirement here is to work around a bug in carboyhydrate code.  It should be eventually removed
 	if ( ( stop_resid + 1 <= full_template_pose.size() ) &&
 			( full_template_pose.residue( stop_resid + 1 ).is_protein() ) &&
 			( full_template_pose.residue( stop_resid ).is_protein() ) ) {
-		upper_dihedrals_ = ResidueDihedrals( full_template_pose, stop_resid );
-		upper_residue_ = full_template_pose.residue( stop_resid + 1 ).clone();
+		set_upper_dihedrals( ResidueDihedrals( full_template_pose, stop_resid ) );
+		set_upper_residue( full_template_pose.residue( stop_resid + 1 ).clone() );
 	} else {
-		upper_dihedrals_ = ResidueDihedrals();
+		set_upper_dihedrals( ResidueDihedrals() );
 	}
 }
 
@@ -1041,13 +1041,14 @@ protocols::denovo_design::components::Segment::load( Archive & arc )
 	arc( template_pose_ );
 	arc( lower_dihedrals_ );
 	arc( upper_dihedrals_ );
-	core::conformation::ResidueOP lower_res;
-	arc( lower_res );
-	lower_residue_ = lower_res;
 
-	core::conformation::ResidueOP upper_res;
-	arc( upper_res );
-	upper_residue_ = upper_res;
+	core::conformation::ResidueOP lower_residue;
+	arc( lower_residue );
+	lower_residue_ = lower_residue;
+
+	core::conformation::ResidueOP upper_residue;
+	arc( upper_residue );
+	upper_residue_ = upper_residue;
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::denovo_design::components::Segment );

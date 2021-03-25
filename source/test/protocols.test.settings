@@ -305,8 +305,8 @@ sources = {
 
 	"denovo_design/movers" :[
 		"AlignResiduesMoverTests",
-		"BuildDeNovoBackboneMoverTests",
 		"ExtendChainMover",
+		"FoldArchitectMoverTests",
 	],
 
 	"denovo_design/residue_selectors" :[

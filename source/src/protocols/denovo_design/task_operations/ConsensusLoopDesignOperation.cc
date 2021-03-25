@@ -138,8 +138,8 @@ ConsensusLoopDesignOperation::parse_tag(
 	if ( selector ) set_residue_selector( *selector );
 
 	set_include_adjacent_residues( tag->getOption< bool >( "include_adjacent_residues", include_adjacent_residues_ ) );
-	enrichment_threshold_ = tag->getOption< core::Real >( "enrichment_threshold", enrichment_threshold_ );
-	use_dssp_ = tag->getOption< bool >( "use_dssp", use_dssp_ );
+	set_enrichment_threshold( tag->getOption< core::Real >( "enrichment_threshold", enrichment_threshold_ ) );
+	set_use_dssp( tag->getOption< bool >( "use_dssp", use_dssp_ ) );
 }
 
 /// @brief Returns a residue selector to be used to choose loops
@@ -213,7 +213,6 @@ ConsensusLoopDesignOperation::set_secstruct_from_blueprint( std::string const & 
 
 	protocols::parser::BluePrint bp( bpfile );
 	set_secstruct( bp.secstruct() );
-
 }
 
 void

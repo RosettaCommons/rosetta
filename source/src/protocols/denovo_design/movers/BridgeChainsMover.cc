@@ -21,7 +21,7 @@
 #include <protocols/denovo_design/components/RandomTorsionPoseFolder.hh>
 #include <protocols/denovo_design/components/RemodelLoopMoverPoseFolder.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
@@ -77,7 +77,7 @@ BridgeChainsMover::parse_my_tag(
 	architect_->parse_my_tag( tag, data );
 	set_overlap( tag->getOption< core::Size >( "overlap", overlap_ ) );
 	set_dry_run( tag->getOption< bool >( "dry_run", dry_run_ ) );
-	iterations_ = tag->getOption< core::Size >( "trials", iterations_ );
+	set_iterations( tag->getOption< core::Size >( "trials", iterations_ ) );
 
 	core::scoring::ScoreFunctionCOP sfxn = protocols::rosetta_scripts::parse_score_function( tag, data );
 	if ( sfxn ) set_scorefxn( *sfxn );
@@ -117,7 +117,7 @@ BridgeChainsMover::apply( core::pose::Pose & pose )
 	arch.add_architect( architects::PoseArchitect( "" ) );
 	arch.add_connection( architect() );
 
-	BuildDeNovoBackboneMover assemble;
+	FoldArchitectMover assemble;
 	assemble.set_architect( arch );
 	assemble.set_build_overlap( overlap() );
 	assemble.set_iterations_per_phase( iterations_ );
@@ -222,16 +222,16 @@ void BridgeChainsMover::setup_attlist_for_derived_classes( utility::tag::Attribu
 
 	attlist + XMLSchemaAttribute(
 		"overlap", xsct_non_negative_integer,
-		"Build overlap of nested BuildDeNovoBackboneMover");
+		"Build overlap of nested FoldArchitectMover");
 
 	attlist + XMLSchemaAttribute(
 		"dry_run", xsct_non_negative_integer,
-		"Sets folder of BuildDeNovoBackboneMover to RandomTorsionPoseFolder "
+		"Sets folder of FoldArchitectMover to RandomTorsionPoseFolder "
 		"instead of RemodelLoopMoverPoseFolde");
 
 	attlist + XMLSchemaAttribute(
 		"trials", xsct_non_negative_integer,
-		"iterations per phase of nested BuildDeNovoBackboneMover");
+		"iterations per phase of nested FoldArchitectMover");
 
 	rosetta_scripts::attributes_for_parse_score_function(attlist);
 }

@@ -53,9 +53,9 @@ SetResidueAliasMover::parse_my_tag(
 	basic::datacache::DataMap&
 )
 {
-	alias_name_ = tag->getOption< std::string >( "alias_name", alias_name_ );
-	segment_name_ = tag->getOption< std::string >( "segment_name", segment_name_ );
-	resid_ = tag->getOption< core::Size >( "residue", resid_ );
+	set_alias_name( tag->getOption< std::string >( "alias_name", alias_name_ ) );
+	set_segment_name( tag->getOption< std::string >( "segment_name", segment_name_ ) );
+	set_resid( tag->getOption< core::Size >( "residue", resid_ ) );
 
 	if ( resid_ == 0 ) {
 		std::stringstream msg;

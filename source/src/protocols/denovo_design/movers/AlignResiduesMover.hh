@@ -72,14 +72,37 @@ public:
 	clone() const override;
 
 public:
+	/// @brief Sets the ID of this mover
 	void
 	set_id( std::string const & id );
 
+	/// @brief Adds residue selector that selects the template (i.e. the reference residues that we are aligning to)
+	/// @details Clones the residue selector
 	void
 	add_template_selector( core::select::residue_selector::ResidueSelector const & selector );
 
+	/// @brief Adds residue selector that selects the target (i.e. the residues that we are moving to align with the template)
+	/// @details Clones the residue selector
 	void
 	add_target_selector( core::select::residue_selector::ResidueSelector const & selector );
+
+	/// @brief Adds residue selector that selects the template (i.e. the reference residues that we are aligning to)
+	/// @details Directly stores the ResidueSelectorCOP
+	void
+	add_template_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+
+	/// @brief Adds residue selector that selects the target (i.e. the residues that we are moving to align with the template)
+	/// @details Directly stores the ResidueSelectorCOP
+	void
+	add_target_selector( core::select::residue_selector::ResidueSelectorCOP selector );
+
+	/// @brief clears the list of template residue selectors
+	void
+	clear_template_selectors() { template_selectors_.clear(); }
+
+	/// @brief clears the list of target residue selectors
+	void
+	clear_target_selectors() { target_selectors_.clear(); };
 
 	std::string
 	get_name() const override;

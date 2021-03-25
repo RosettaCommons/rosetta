@@ -87,7 +87,7 @@ SSPredictionFilter::SSPredictionFilter( core::Real const threshold,
 	scratch_dir_("")
 {
 	if ( use_scratch_dir ) set_scratch_dir();
-	psipred_interface_ = utility::pointer::make_shared< PsiPredInterface >( cmd, scratch_dir_ );
+	set_psipred_interface( utility::pointer::make_shared< PsiPredInterface >( cmd, scratch_dir_ ) );
 }
 
 SSPredictionFilter::~SSPredictionFilter() = default;
@@ -235,6 +235,42 @@ void SSPredictionFilter::set_secstruct(std::string const secstruct){
 	secstruct_ = secstruct ;
 }
 
+void
+SSPredictionFilter::set_threshold( core::Real const threshold )
+{
+	threshold_ = threshold;
+}
+
+void
+SSPredictionFilter::set_use_probability( bool const use_probability )
+{
+	use_probability_ = use_probability;
+}
+
+void
+SSPredictionFilter::set_mismatch_probability( bool const mismatch_probability )
+{
+	mismatch_probability_ = mismatch_probability;
+}
+
+void
+SSPredictionFilter::set_use_confidence( bool const use_confidence )
+{
+	use_confidence_ = use_confidence;
+}
+
+void
+SSPredictionFilter::set_temperature( core::Real const temp )
+{
+	temp_ = temp;
+}
+
+void
+SSPredictionFilter::set_use_svm( bool const use_svm )
+{
+	use_svm_ = use_svm;
+}
+
 void SSPredictionFilter::set_scratch_dir() {
 	// There is a default value, but I'm 99% sure no one would ever want to use it
 	if ( ! basic::options::option[ basic::options::OptionKeys::out::path::scratch ].user() ) {
@@ -248,14 +284,14 @@ void SSPredictionFilter::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap &
 ){
-	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
-	use_probability_ = tag->getOption< bool >( "use_probability", use_probability_ );
-	mismatch_probability_ = tag->getOption< bool >( "mismatch_probability", mismatch_probability_ );
-	use_confidence_ = tag->getOption< bool >( "use_confidence", use_confidence_ );
-	temp_ = tag->getOption< core::Real >( "temperature", temp_ );
-	use_svm_ = tag->getOption< bool >( "use_svm", use_svm_ );
+	set_threshold( tag->getOption< core::Real >( "threshold", threshold_ ) );
+	set_use_probability( tag->getOption< bool >( "use_probability", use_probability_ ) );
+	set_mismatch_probability( tag->getOption< bool >( "mismatch_probability", mismatch_probability_ ) );
+	set_use_confidence( tag->getOption< bool >( "use_confidence", use_confidence_ ) );
+	set_temperature( tag->getOption< core::Real >( "temperature", temp_ ) );
+	set_use_svm( tag->getOption< bool >( "use_svm", use_svm_ ) );
 
-	cmd_ = tag->getOption< std::string >( "cmd", "" );
+	set_cmd( tag->getOption< std::string >( "cmd", "" ) );
 	if ( cmd_ == "" && ! use_svm_ ) {
 		utility_exit_with_message("The SSPrediction Filter requires the psipred executable be set with the cmd option in the XML tag if SVM is not being used. Exiting now...");
 	}
@@ -266,18 +302,14 @@ void SSPredictionFilter::parse_my_tag(
 	if ( use_svm_ ) {
 		ss_predictor_ = utility::pointer::make_shared< protocols::ss_prediction::SS_predictor >( "HLE" );
 	} else {
-		psipred_interface_ = utility::pointer::make_shared< PsiPredInterface >( cmd_, scratch_dir_ );
+		set_psipred_interface( utility::pointer::make_shared< PsiPredInterface >( cmd_, scratch_dir_ ) );
 	}
 
 	std::string blueprint_file = tag->getOption< std::string >( "blueprint", "" );
-
-	if ( blueprint_file != "" ) {
-		TR << "Dssp-derived secondary structure will be overridden by user-specified blueprint file." << std::endl;
-		blueprint_ = utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint_file );
-		if ( ! blueprint_ ) {
-			utility_exit_with_message("There was an error getting the blueprint file loaded.");
-		}
+	if ( !blueprint_file.empty() ) {
+		set_blueprint_file( blueprint_file );
 	}
+
 	std::string secstruct = tag->getOption< std::string >( "secstruct", "" );
 	if ( !secstruct.empty() ) {
 		if ( !secstruct.empty() and !blueprint_file.empty() ) {
@@ -287,7 +319,27 @@ void SSPredictionFilter::parse_my_tag(
 	}
 }
 
+void
+SSPredictionFilter::set_cmd( std::string const & cmd )
+{
+	cmd_ = cmd;
+}
 
+void
+SSPredictionFilter::set_blueprint( protocols::parser::BluePrintOP blueprint )
+{
+	blueprint_ = blueprint;
+}
+
+void
+SSPredictionFilter::set_blueprint_file( std::string const & blueprint_file )
+{
+	TR << "Dssp-derived secondary structure will be overridden by user-specified blueprint file." << std::endl;
+	set_blueprint( utility::pointer::make_shared< protocols::parser::BluePrint >( blueprint_file ) );
+	if ( ! blueprint_ ) {
+		utility_exit_with_message("There was an error getting the blueprint file loaded.");
+	}
+}
 
 std::string SSPredictionFilter::name() const {
 	return class_name();

@@ -749,6 +749,25 @@ StructureData::set_abego( std::string const & segment, utility::vector1< std::st
 	set_abego( segment, abego_str( abego ) );
 }
 
+void
+StructureData::set_abego( std::string const & abego )
+{
+	for ( auto s=segments_begin(); s!=segments_end(); ++s ) {
+		Segment & seg = segment_nonconst( *s );
+		std::string seg_abego = "";
+		for ( core::Size resid=seg.lower(); resid<=seg.upper(); ++resid ) {
+			seg_abego += abego[ resid - 1 ];
+		}
+		seg.set_abego( seg_abego );
+	}
+}
+
+void
+StructureData::set_abego( utility::vector1< std::string > const & abego )
+{
+	set_abego( abego_str( abego ) );
+}
+
 /// @brief re-arranges residues such that segment 2 follows segment 1 in sequence
 void
 StructureData::move_segment( std::string const & segment1, std::string const & segment2 )

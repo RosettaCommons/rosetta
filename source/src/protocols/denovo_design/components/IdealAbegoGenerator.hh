@@ -29,6 +29,7 @@
 
 // C++ headers
 #include <set>
+#include <map>
 
 namespace protocols {
 namespace denovo_design {
@@ -44,6 +45,7 @@ public:
 
 	typedef std::string Abego;
 	typedef utility::vector1< std::string > Abegos;
+	typedef std::map< std::string, Abegos > SecstructAbegoMap;
 
 public:
 	IdealAbegoGenerator( std::string const & id_val );
@@ -66,17 +68,29 @@ public:
 	///          get a 4-residue loop of type A-BGAB-A
 	MotifOPs
 	generate(
-		char const abego1,
-		char const abego2,
+		char abego1,
+		char abego2,
 		LengthSet const & lenset,
 		LengthSet const & cutpoint_set ) const;
+
+	/// @brief Returns true if the given SS type should be extended or not
+	bool
+	extend_ss( char const secstruct ) const;
 
 	/// @brief if true, secondary structure may be extended to close the loop.  Overall size of the insert
 	///        will not change.  Therefore, a 4 residue loop might extend a helix by 2 residues and have
 	///        a 2-residue ideal loop if extend_ss is true.  If extend_ss is false, a 4 residue loop must
 	///        have four loop residues.
 	void
-	set_extend_ss( bool const extend_ss );
+	set_extend_ss( std::string const & extend_ss );
+
+	/// @brief if true, the connection rules from https://doi.org/10.1101/2021.03.10.434454 will be used.. If false, all possible abego combinations will be sampled
+	void
+	set_hh_rules_2021( bool const use_hh_rules ) { use_hh_rules_2021_ = use_hh_rules; }
+
+	// public member functions
+	Abegos
+	retrieve_loop_abegos( char const abego1, char const abego2 ) const;
 
 private:
 	// private functions
@@ -108,8 +122,10 @@ private:
 private:
 	// private data
 	std::string segment_name_;
-	bool extend_ss_;
-	bool match_ss_to_abego_;
+	std::string extend_ss_ = "1";
+	bool match_ss_to_abego_ = false;
+	bool use_hh_rules_2021_ = true;
+	SecstructAbegoMap extended_abegos_;
 
 private:
 	// private constants
@@ -126,16 +142,13 @@ private:
 		aa_no_extension;
 
 	static Abegos const
-		ab;
+		aa_no_extension_all;
 
-	static Abegos const
-		ba;
+	static std::map< char, core::Size > const
+		extension_lengths;
 
-	static Abegos const
-		bb;
-
-	static Abegos const
-		alpha_alpha;
+	static Abegos
+	generate_extended_abegos( Abegos const & no_extension_loops, char const abego_n, char const abego_c );
 
 	// hide default constructor
 private:

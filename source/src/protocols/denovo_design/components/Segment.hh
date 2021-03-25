@@ -120,6 +120,14 @@ public:
 	inline bool nterm_included() const { return nterm_included_; }
 	inline bool cterm_included() const { return cterm_included_; }
 
+	/// @brief Sets whether the n-terminal residue of the segment is a part of the segment (or whether it is "padding")
+	void
+	set_nterm_included( bool const inc ) { nterm_included_ = inc; }
+
+	/// @brief Sets whether the n-terminal residue of the segment is a part of the segment (or whether it is "padding")
+	void
+	set_cterm_included( bool const inc ) { cterm_included_ = inc; }
+
 public:
 	//////////////////////////////////////////
 	// pose relationship
@@ -176,6 +184,9 @@ public:
 
 	void
 	set_ss( SegmentResid const segment_resid, char ss_type );
+
+	void
+	set_ss( std::string const & secstruct ) { ss_ = secstruct; }
 
 	std::string const &
 	abego() const;
@@ -278,6 +289,12 @@ public:
 	ResidueDihedrals const &
 	upper_dihedrals() const;
 
+	void
+	set_lower_dihedrals( ResidueDihedrals const & dih ) { lower_dihedrals_ = dih; }
+
+	void
+	set_upper_dihedrals( ResidueDihedrals const & dih ) { upper_dihedrals_ = dih; }
+
 	bool
 	has_lower_residue() const;
 
@@ -289,6 +306,12 @@ public:
 
 	core::conformation::Residue const &
 	upper_residue() const;
+
+	void
+	set_lower_residue( core::conformation::ResidueCOP rsd ) { lower_residue_ = rsd; }
+
+	void
+	set_upper_residue( core::conformation::ResidueCOP rsd ) { upper_residue_ = rsd; }
 
 	core::Size
 	lower_padding() const;

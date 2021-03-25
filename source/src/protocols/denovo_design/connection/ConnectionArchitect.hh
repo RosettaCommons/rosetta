@@ -144,7 +144,11 @@ public:
 
 	/// @brief sets whether to use "ideal abego" loops according to Koga papers
 	void
-	set_ideal_abego( bool const use_ideal_abego, bool const extend_ss );
+	set_ideal_abego( bool const use_ideal_abego, std::string const & extend_ss );
+
+	/// @brief sets whether or not to use the newer HH rules (https://doi.org/10.1101/2021.03.10.434454)
+	void
+	set_use_hh_abego_rules( bool const use_rules );
 
 	/// @brief sets whether to always try to bridge.  If true, a random cutpoint will be selected in the connection
 	///        if the chains to be connected have different movable groups
@@ -198,7 +202,7 @@ private:
 
 private:
 	bool bridge_;
-	components::IdealAbegoGeneratorCOP ideal_abego_;
+	components::IdealAbegoGeneratorOP ideal_abego_;
 	MotifCOPs motifs_;
 	SegmentNames segment1_ids_;
 	SegmentNames segment2_ids_;

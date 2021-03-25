@@ -37,7 +37,34 @@ namespace denovo_design {
 namespace components {
 
 /// @brief Builds a pose from StructureData
-class ExtendedPoseBuilder : public utility::VirtualBase {
+class PoseBuilder : public utility::VirtualBase {
+public:
+	PoseBuilder();
+
+	virtual core::pose::PoseOP
+	apply( StructureData const & sd ) const = 0;
+
+	virtual PoseBuilderOP
+	clone() const = 0;
+
+	/// @brief Returns whether or not to output debugging PDBs will be outputted which could be useful for fixing problems (true=output extra PDBs; false=don't output extra PDBs)
+	bool
+	debug() const { return debug_; }
+
+	/// @brief Sets whether or not to output debugging PDBs will be outputted which could be useful for fixing problems (true=output extra PDBs; false=don't output extra PDBs)
+	void
+	set_debug( bool const debug ) { debug_ = debug; }
+
+	/// @brief Writes a debugging pdb (as described above). Does nothing if "debug_" is false and only outputs a PDB if "debug_" is true
+	bool
+	write_debug_pdb( core::pose::Pose const & pose, std::string const & filename ) const;
+
+private:
+	/// @brief If true, some debugging PDBs will be outputted which could be useful for fixing problems
+	bool debug_;
+};
+
+class ExtendedPoseBuilder : public PoseBuilder {
 public:
 	typedef utility::vector1< core::Size > Resids;
 
@@ -46,17 +73,23 @@ public:
 	~ExtendedPoseBuilder() override;
 
 	core::pose::PoseOP
-	apply( StructureData const & sd ) const;
+	apply( StructureData const & sd ) const override;
+
+	PoseBuilderOP
+	clone() const override;
 
 private:
+	/// @brief Finds the segments that have template conformations
 	SegmentNames
 	find_template_segments( StructureData const & sd ) const;
 
 protected:
+	/// @brief Creates a pose that contains only the template segments
 	// this is protected so it can be unit tested --- should probably simplify this more object-oriented eventually
 	core::pose::PoseOP
 	create_template_pose( StructureData const & sd, SegmentNames const & template_segments ) const;
 
+	/// @brief Extends a pose containing only template segments so that it also includes de novo segments
 	void
 	extend_pose(
 		core::pose::Pose & pose,

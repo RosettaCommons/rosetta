@@ -111,6 +111,18 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Adds a constraint generator. Currently only used if ramp_down_constraints is set. If constraint generators are present, each time the constraint weights are changed, the constraint generators will be used to selectively remove constraint-generated constraints and add new ones
+	void
+	add_constraint_generator( protocols::constraint_generator::ConstraintGeneratorCOP generator );
+
+	/// @brief Clears the list of constraint generators
+	void
+	clear_constraint_generators();
+
+	/// @brief If set, residues that are designable will be mutated to alanine before design
+	void
+	set_clear_designable_residues( bool const clear_res ) { clear_designable_residues_ = clear_res; }
+
 public: // CitationManager fxns:
 
 	/// @brief Provide the citation.

@@ -64,7 +64,7 @@ RemodelLoopMoverPoseFolder::class_name()
 void
 RemodelLoopMoverPoseFolder::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data );
+	set_scorefxn( protocols::rosetta_scripts::parse_score_function( tag, data ) );
 }
 
 /// @brief performs folding
@@ -204,9 +204,15 @@ RemodelLoopMoverPoseFolder::create_scorefxn( core::pose::Pose const & ) const
 }
 
 void
+RemodelLoopMoverPoseFolder::set_scorefxn( core::scoring::ScoreFunctionCOP sfxn )
+{
+	scorefxn_ = sfxn;
+}
+
+void
 RemodelLoopMoverPoseFolder::set_scorefxn( core::scoring::ScoreFunction const & sfxn )
 {
-	scorefxn_ = sfxn.clone();
+	set_scorefxn( sfxn.clone() );
 }
 
 } //protocols

@@ -147,8 +147,8 @@ DeclareStructureDataCovalentBondMover::parse_my_tag(
 	basic::datacache::DataMap&
 )
 {
-	atom1_ = tag->getOption< std::string >( "atom1", atom1_ );
-	atom2_ = tag->getOption< std::string >( "atom2", atom2_ );
+	set_atom1( tag->getOption< std::string >( "atom1", atom1_ ) );
+	set_atom2( tag->getOption< std::string >( "atom2", atom2_ ) );
 	if ( ! atom1_.size() ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Atom1 option must be specified to DeclareCovalentBond." );
 	}

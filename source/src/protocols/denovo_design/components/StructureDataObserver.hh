@@ -75,6 +75,9 @@ public: // interface
 	bool
 	is_attached() const override;
 
+	void
+	set_length_event_link( utility::signals::Link const & length_event ) { length_event_link_ = length_event; }
+
 protected: // virtual observer interface
 
 	/// @brief attach to Pose/Conformation

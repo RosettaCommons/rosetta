@@ -487,9 +487,19 @@ public:
 	char
 	abego( core::Size const resid ) const;
 
+	/// @brief Set abego to use for the entire pose/all segments using a string
+	void
+	set_abego( std::string const & abego );
+
+	/// @brief Set abego to use for the entire pose/all segments using a vector of one-character strings
+	void
+	set_abego( utility::vector1< std::string > const & abego );
+
+	/// @brief Set abego to use for a specific segment using a string
 	void
 	set_abego( std::string const & segment, std::string const & abego );
 
+	/// @brief Set abego to use for a specific segment using a vector of one-character strings
 	void
 	set_abego( std::string const & segment, utility::vector1< std::string > const & abego );
 

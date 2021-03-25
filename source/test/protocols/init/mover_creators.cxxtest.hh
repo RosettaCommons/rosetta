@@ -72,9 +72,9 @@
 #include <protocols/denovo_design/movers/AddSegmentDataMoverCreator.hh>
 #include <protocols/denovo_design/movers/AlignResiduesMoverCreator.hh>
 #include <protocols/denovo_design/movers/BridgeChainsMoverCreator.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh>
 #include <protocols/denovo_design/movers/ExtendChainMoverCreator.hh>
 #include <protocols/denovo_design/movers/FastDesignCreator.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMoverCreator.hh>
 #include <protocols/denovo_design/movers/SetResidueAliasMoverCreator.hh>
 #include <protocols/denovo_design/movers/MakeAsymmetricStructureDataMoverCreator.hh>
 #include <protocols/design_opt/GreedyOptMutationMoverCreator.hh>
@@ -581,6 +581,9 @@ public:
 
 	void test_protocols_denovo_design_movers_BuildDeNovoBackboneMoverCreator_name()
 	{ protocols::denovo_design::movers::BuildDeNovoBackboneMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "BuildDeNovoBackboneMover" ); }
+
+	void test_protocols_denovo_design_movers_FoldArchitectMoverCreator_name()
+	{ protocols::denovo_design::movers::FoldArchitectMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "FoldArchitect" ); }
 
 	void test_protocols_denovo_design_movers_ExtendChainMoverCreator_name()
 	{ protocols::denovo_design::movers::ExtendChainMoverCreator cr; TS_ASSERT_EQUALS( cr.keyname(), "ExtendChain" ); }

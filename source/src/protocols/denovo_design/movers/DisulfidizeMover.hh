@@ -194,6 +194,15 @@ public: //mutators
 	/// @brief sets the min_loop value (number of residues between disulfide-joined residues) (default=8)
 	void set_min_loop( core::Size const minloopval );
 
+	/// @brief sets minimum number of disulfides
+	void set_min_disulfides( core::Size const min_disulf ) { min_disulfides_ = min_disulf; }
+
+	/// @brief sets maximum number of disulfides
+	void set_max_disulfides( core::Size const max_disulf ) { max_disulfides_ = max_disulf; }
+
+	/// @brief sets the maximum distance to have an allowed disulfide
+	void set_max_dist( core::Real const dist );
+
 	/// @brief sets the maximum allowed per-disulfide dslf_fa13 score (default=0.0)
 	void set_max_disulf_score( core::Real const maxscoreval );
 
@@ -227,6 +236,17 @@ public: //mutators
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief If set, the current disulfides in the pose will be kept as-is
+	void
+	set_keep_current_ds( bool const keep_current ) { keep_current_ds_ =  keep_current; }
+
+	/// @brief If set, the current disulfides in the pose will be included in the set of possible disulfide configurations that are returned
+	void
+	set_include_current_ds( bool const include_current ) { include_current_ds_ =  include_current; }
+
+	/// @brief If true, the disulfide score OR the match_rt score can indicate that a disulfide is reasonable. If false, both the disulfide score AND the match_rt score are needed
+	void
+	set_score_or_matchrt( bool const score_or_match ) { score_or_matchrt_ = score_or_match; }
 
 protected:
 	/// @brief Identifies disulfides for a given input pose

@@ -157,7 +157,7 @@ Residue const * residue;
 void
 StructureDataObserver::attach_impl( core::pose::Pose & pose )
 {
-	length_event_link_ = pose.conformation().attach_length_obs( &StructureDataObserver::on_length_change, this );
+	set_length_event_link( pose.conformation().attach_length_obs( &StructureDataObserver::on_length_change, this ) );
 	/* SET
 	core::pose::datacache::LengthEventCollectorOP lencollect( new core::pose::datacache::LengthEventCollector() );
 	pose.observer_cache().set( core::pose::datacache::CacheableObserverType::LENGTH_EVENT_COLLECTOR, lencollect );
@@ -216,10 +216,13 @@ void
 protocols::denovo_design::components::StructureDataObserver::load( Archive & arc )
 {
 	arc( cereal::base_class< core::pose::datacache::CacheableObserver >( this ) );
+	arc( sd_ );
+	/*
 	StructureDataOP local_sd_ptr;
 	arc( local_sd_ptr ); // StructureDataCOP
-	sd_ = local_sd_ptr;
+	set_sd( local_sd_ptr );
 	// EXEMPT length_event_link_
+	*/
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::denovo_design::components::StructureDataObserver );

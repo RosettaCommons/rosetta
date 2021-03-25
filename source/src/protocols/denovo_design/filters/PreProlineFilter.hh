@@ -62,6 +62,7 @@ public:
 	void report( std::ostream & out, core::pose::Pose const & pose ) const override;
 	bool apply( core::pose::Pose const & pose ) const override;
 
+	void set_threshold( core::Real const threshold ) { threshold_ = threshold; }
 	void set_use_statistical_potential( bool const use_stat );
 	void set_selector( core::select::residue_selector::ResidueSelectorCOP selector );
 

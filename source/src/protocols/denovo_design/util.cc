@@ -522,30 +522,6 @@ void insert_peptide_edges( core::kinematics::FoldTree & ft, core::kinematics::Ed
 	TR.Debug << "FT after peptide edge redo: " << ft << std::endl;
 }
 
-// @brief parses a string containing single integers and ranges. Returns a vector of all possible values.
-utility::vector1< core::Size >
-parse_length_string( std::string const & len_str )
-{
-	utility::vector1< core::Size > retval;
-	utility::vector1< std::string > const str_residues( utility::string_split( len_str , ',' ) );
-	for ( core::Size i=1; i<=str_residues.size(); ++i ) {
-		if ( str_residues[i] == "" ) continue;
-		utility::vector1< std::string > const ranges( utility::string_split( str_residues[i], ':' ) );
-		if ( ranges.size() == 1 ) {
-			retval.push_back( boost::lexical_cast< core::Size >( ranges[1] ) );
-		} else if ( ranges.size() == 2 ) {
-			auto const start( boost::lexical_cast< core::Size >( ranges[1] ) );
-			auto const end( boost::lexical_cast< core::Size >( ranges[2] ) );
-			for ( core::Size i=start; i<=end; ++i ) {
-				retval.push_back( i );
-			}
-		} else {
-			throw CREATE_EXCEPTION(utility::excn::Exception,  "Invalid length input: " + len_str );
-		}
-	}
-	return retval;
-}
-
 /// @brief given a number 0 <= x < 1, calculate an integer M <= x <= N
 /// NOTE THAT THIS FUNCTION MODIFIES THE PARAMETER
 core::Size

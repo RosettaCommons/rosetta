@@ -19,6 +19,7 @@
 #include <protocols/denovo_design/architects/BlueprintArchitectCreator.hh>
 #include <protocols/denovo_design/architects/CompoundArchitectCreator.hh>
 #include <protocols/denovo_design/architects/HelixArchitectCreator.hh>
+#include <protocols/denovo_design/architects/MotifArchitectCreator.hh>
 #include <protocols/denovo_design/architects/PoseArchitectCreator.hh>
 #include <protocols/denovo_design/architects/StrandArchitectCreator.hh>
 
@@ -46,6 +47,7 @@ DeNovoArchitectFactory::DeNovoArchitectFactory():
 	add_creator( utility::pointer::make_shared< BlueprintArchitectCreator >() );
 	add_creator( utility::pointer::make_shared< CompoundArchitectCreator >() );
 	add_creator( utility::pointer::make_shared< HelixArchitectCreator >() );
+	add_creator( utility::pointer::make_shared< MotifArchitectCreator >() );
 	add_creator( utility::pointer::make_shared< PoseArchitectCreator >() );
 	add_creator( utility::pointer::make_shared< StrandArchitectCreator >() );
 }
@@ -152,11 +154,6 @@ DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes(
 		.add_attributes( attributes )
 		.write_complex_type_to_schema( xsd );
 }
-
-
-
-
-
 
 } //protocols
 } //denovo_design

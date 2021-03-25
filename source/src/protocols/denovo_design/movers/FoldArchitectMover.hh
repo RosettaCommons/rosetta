@@ -7,15 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh
+/// @file protocols/denovo_design/movers/FoldArchitectMover.hh
 /// @brief Mover that builds and folds a structure via fragment insertion
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMover_hh
-#define INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMover_hh
+#ifndef INCLUDED_protocols_denovo_design_movers_FoldArchitectMover_hh
+#define INCLUDED_protocols_denovo_design_movers_FoldArchitectMover_hh
 
 // Unit headers
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.fwd.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
@@ -48,7 +48,7 @@ namespace denovo_design {
 namespace movers {
 
 ///@brief Mover that builds and folds a structure via fragment insertion
-class BuildDeNovoBackboneMover : public protocols::moves::Mover {
+class FoldArchitectMover : public protocols::moves::Mover {
 public:
 	typedef core::Real FoldScore;
 	typedef utility::vector1< connection::ConnectionArchitectCOP > ConnectionArchitectCOPs;
@@ -62,10 +62,10 @@ public:
 	typedef components::StrandOrientation StrandOrientation;
 
 public:
-	BuildDeNovoBackboneMover();
+	FoldArchitectMover();
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	~BuildDeNovoBackboneMover() override;
+	~FoldArchitectMover() override;
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
@@ -91,14 +91,43 @@ public:
 	std::string const &
 	id() const;
 
+	/// @brief Sets the ID of this mover
 	void
 	set_id( std::string const & id_value );
 
+	/// @brief Sets the architect that will be used to build blueprints dynamically
 	void
 	set_architect( architects::DeNovoArchitect const & architect );
 
+	/// @brief Sets the pose folder that will be used to sample conformations.
+	/// @details Clones the PoseFolder
 	void
 	set_folder( components::PoseFolder const & folder );
+
+	/// @brief Sets the pose folder that will be used to sample conformations
+	/// @details Uses the provided PoseFolder pointer directly
+	void
+	set_folder( components::PoseFolderOP folder );
+
+	/// @brief Sets the pose builder that will be used to create the extended-chain pose
+	/// @details Clones the provided PoseBuilder
+	void
+	set_builder( components::PoseBuilder const & builder );
+
+	/// @brief Sets the pose builder that will be used to create the extended-chain pose
+	/// @details Uses/stores the provided PoseBuilder pointer directly
+	void
+	set_builder( components::PoseBuilderOP builder );
+
+	/// @brief Sets the perturber that will be used to change the plans of the architects
+	/// @details Clones the provided Perturber
+	void
+	set_perturber( components::StructureDataPerturber const & perturber );
+
+	/// @brief Sets the perturber that will be used to change the plans of the architects
+	/// @details Uses/stores the provided Perturber pointer directly
+	void
+	set_perturber( components::StructureDataPerturberOP perturber );
 
 	/// @brief sets names of segments to be included in the starting build phase
 	/// @param[in] segments_csv Comma-separated string containing segment names
@@ -120,24 +149,59 @@ public:
 	void
 	set_stop_segments( SegmentNameSet const & segments );
 
+	/// @brief Sets the number of residues of overlap to use between build phases
 	void
 	set_build_overlap( core::Size const overlap_val );
 
+	/// @brief Sets the filter that will be used to evaluate the generated conformations. Used to return a score, not to evaluate true/false
 	void
 	set_score_filter( protocols::filters::Filter const & filter );
 
+	/// @brief Reads/parses an XML file and uses it to set up the mover
+	void
+	setup_from_xml_file( std::string const & xml_file, basic::datacache::DataMap & data );
+
+	/// @brief Reads/parses an XML string and uses it to set up the mover
+	void
+	setup_from_xml_string( std::string const & xml_string, basic::datacache::DataMap & data );
+
+	/// @brief Reads/parses a Tag object and uses it to set up the mover
+	void
+	setup_from_xml_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
+
+	/// @brief Clears the list of prefold movers
 	void
 	clear_prefold_movers();
 
+	/// @brief Adds a mover to the list of prefold movers
 	void
 	add_prefold_mover( protocols::moves::Mover const & mover );
 
+	/// @brief Clears the list of postfold movers
 	void
 	clear_postfold_movers();
 
+	/// @brief Adds a mover to the list of postfold movers
 	void
 	add_postfold_mover( protocols::moves::Mover const & mover );
 
+	/// @brief Adds a filter to the list of filters that indicate whether a given folding attempt is was successful or not. All filters must pass for a successful folding attempt
+	void
+	add_filter( protocols::filters::Filter const & filter );
+
+	/// @brief Clears the list of filters used to indicate whether a given folding attempt is successful
+	void
+	clear_filters();
+
+	/// @brief If true, extra PDBs will be outputted for debugging purposes. Could be useful for figuring out why folding attempts are failing. If false, no extra files are outputted
+	void
+	set_dump_pdbs( bool const dump ) { dump_pdbs_ = dump; }
+
+	/// @brief The debug value of the poseBuilder will be set based on this
+	void
+	set_debug( bool const debug );
+
+	/// @brief Sets the number of folding attempts for each build phase
 	void
 	set_iterations_per_phase( core::Size const niter );
 
@@ -151,6 +215,12 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	static
+	void
+	provide_xml_schema_with_name(
+		utility::tag::XMLSchemaDefinition & xsd,
+		std::string const & mover_name );
 
 private:
 	FoldScore
@@ -301,9 +371,9 @@ private:
 private:
 	// objects
 	architects::DeNovoArchitectCOP architect_;
-	components::ExtendedPoseBuilderCOP builder_;
-	components::PoseFolderCOP folder_;
-	components::StructureDataPerturberCOP perturber_;
+	components::PoseBuilderOP builder_;
+	components::PoseFolderOP folder_;
+	components::StructureDataPerturberOP perturber_;
 	MoverOPs prefold_movers_;
 	MoverOPs postfold_movers_;
 	FilterCOPs filters_;
@@ -314,6 +384,7 @@ private:
 	std::string id_;
 	bool dry_run_;
 	bool dump_pdbs_;
+	bool debug_;
 	core::Size build_overlap_;
 	core::Size iterations_per_phase_;
 	SegmentNameSet start_segments_;
@@ -357,8 +428,23 @@ public:
 	using utility::excn::Exception::Exception;
 };
 
+// backwards compatibility
+class BuildDeNovoBackboneMover : public FoldArchitectMover {
+public:
+	std::string
+	get_name() const override;
+
+	static
+	std::string
+	mover_name();
+
+	static
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+};
+
 /// @brief goes through loops and adds overlapping residues
-BuildDeNovoBackboneMover::ResidueVector
+FoldArchitectMover::ResidueVector
 add_overlap_to_loops(
 	protocols::loops::Loops & loops,
 	core::Size const overlap,
@@ -371,4 +457,4 @@ add_overlap_to_loops(
 } //denovo_design
 } //movers
 
-#endif //protocols/denovo_design/movers_BuildDeNovoBackboneMover_hh
+#endif //protocols/denovo_design/movers_FoldArchitectMover_hh

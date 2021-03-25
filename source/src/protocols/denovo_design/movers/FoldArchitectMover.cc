@@ -7,13 +7,13 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/denovo_design/movers/BuildDeNovoBackboneMover.cc
+/// @file protocols/denovo_design/movers/FoldArchitectMover.cc
 /// @brief Mover that builds and folds a structure via fragment insertion
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Unit headers
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMoverCreator.hh>
 
 // Protocol headers
 #include <protocols/constraint_generator/AddConstraints.hh>
@@ -65,19 +65,21 @@
 // Boost headers
 
 // C++ headers
+#include <fstream>
 #include <ctime>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
-static basic::Tracer TR( "protocols.denovo_design.movers.BuildDeNovoBackboneMover" );
+static basic::Tracer TR( "protocols.denovo_design.movers.FoldArchitectMover" );
 
 namespace protocols {
 namespace denovo_design {
 namespace movers {
 
-BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
-	protocols::moves::Mover( BuildDeNovoBackboneMover::mover_name() ),
+FoldArchitectMover::FoldArchitectMover():
+	protocols::moves::Mover( FoldArchitectMover::mover_name() ),
 	architect_(),
 	builder_( new components::ExtendedPoseBuilder ),
 	folder_( new components::RemodelLoopMoverPoseFolder ),
@@ -89,24 +91,26 @@ BuildDeNovoBackboneMover::BuildDeNovoBackboneMover():
 	id_(),
 	dry_run_( false ),
 	dump_pdbs_( false ),
+	debug_( false ),
 	build_overlap_( 1 ),
 	iterations_per_phase_( 0 ),
 	start_segments_(),
 	stop_segments_()
 {
+	set_debug( debug_ );
 }
 
-BuildDeNovoBackboneMover::~BuildDeNovoBackboneMover() = default;
+FoldArchitectMover::~FoldArchitectMover() = default;
 
 void
-BuildDeNovoBackboneMover::parse_my_tag(
+FoldArchitectMover::parse_my_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 )
 {
 	set_id( tag->getOption< std::string >( "name" ) );
 
-	build_overlap_ = tag->getOption< core::Size >( "build_overlap", build_overlap_ );
+	set_build_overlap( tag->getOption< core::Size >( "build_overlap", build_overlap_ ) );
 
 	std::string const segments_csv = tag->getOption< std::string >( "start_segments", "" );
 	if ( tag->hasOption( "start_segments" ) ) set_start_segments( segments_csv );
@@ -115,7 +119,37 @@ BuildDeNovoBackboneMover::parse_my_tag(
 	if ( tag->hasOption( "stop_segments" ) ) set_stop_segments( stop_segments_csv );
 
 	set_iterations_per_phase( tag->getOption< core::Size >( "iterations_per_phase", iterations_per_phase_ ) );
-	dump_pdbs_ = tag->getOption< bool >( "dump_pdbs", dump_pdbs_ );
+	set_dump_pdbs( tag->getOption< bool >( "dump_pdbs", dump_pdbs_ ) );
+	set_debug( tag->getOption< bool >( "debug", debug_ ) );
+
+	if ( tag->hasOption( "xml" ) ) {
+		setup_from_xml_file( tag->getOption< std::string >( "xml" ), data );
+	} else {
+		setup_from_xml_tag( tag, data );
+	}
+}
+
+void
+FoldArchitectMover::setup_from_xml_file( std::string const & xml_file, basic::datacache::DataMap & data )
+{
+	std::ifstream is( xml_file );
+	utility::tag::TagCOP tag = utility::tag::Tag::create( is );
+	setup_from_xml_tag( tag, data );
+}
+
+void
+FoldArchitectMover::setup_from_xml_string( std::string const & xml_string, basic::datacache::DataMap & data )
+{
+	utility::tag::TagCOP tag = utility::tag::Tag::create( xml_string );
+	setup_from_xml_tag( tag, data );
+}
+
+void
+FoldArchitectMover::setup_from_xml_tag( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+{
+	clear_prefold_movers();
+	clear_postfold_movers();
+	clear_filters();
 
 	core::Size idx = 1;
 	for ( utility::tag::TagCOP subtag : tag->getTags() ) {
@@ -139,44 +173,53 @@ BuildDeNovoBackboneMover::parse_my_tag(
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
 	}
-	TR << "Finished parsing tag: " << prefold_movers_.size() << " prefold movers found." << std::endl;
+	TR << "Finished parsing tag: Found " << prefold_movers_.size() << " prefold movers, "
+		<< postfold_movers_.size() << " postfold movers, and " << filters_.size()
+		<< " filters." << std::endl;
 }
 
 protocols::moves::MoverOP
-BuildDeNovoBackboneMover::clone() const
+FoldArchitectMover::clone() const
 {
-	return utility::pointer::make_shared< BuildDeNovoBackboneMover >( *this );
+	return utility::pointer::make_shared< FoldArchitectMover >( *this );
 }
 
 
 protocols::moves::MoverOP
-BuildDeNovoBackboneMover::fresh_instance() const
+FoldArchitectMover::fresh_instance() const
 {
-	return utility::pointer::make_shared< BuildDeNovoBackboneMover >();
+	return utility::pointer::make_shared< FoldArchitectMover >();
 }
 
 
 
 std::string const &
-BuildDeNovoBackboneMover::id() const
+FoldArchitectMover::id() const
 {
 	return id_;
 }
 
 void
-BuildDeNovoBackboneMover::set_id( std::string const & id_value )
+FoldArchitectMover::set_id( std::string const & id_value )
 {
 	id_ = id_value;
 }
 
 void
-BuildDeNovoBackboneMover::set_iterations_per_phase( core::Size const niter )
+FoldArchitectMover::set_iterations_per_phase( core::Size const niter )
 {
 	iterations_per_phase_ = niter;
 }
 
+void
+FoldArchitectMover::set_debug( bool const debug )
+{
+	debug_ = debug;
+	builder_->set_debug( debug );
+}
+
 protocols::filters::FilterOP
-BuildDeNovoBackboneMover::default_score_filter()
+FoldArchitectMover::default_score_filter()
 {
 	protocols::filters::CalculatorFilterOP calc_filt( new protocols::filters::CalculatorFilter( "-SS" ) );
 	protocols::filters::FilterOP ss_filt( new protocols::fldsgn::filters::SecondaryStructureFilter );
@@ -185,7 +228,7 @@ BuildDeNovoBackboneMover::default_score_filter()
 }
 
 void
-BuildDeNovoBackboneMover::apply( core::pose::Pose & pose )
+FoldArchitectMover::apply( core::pose::Pose & pose )
 {
 	if ( !architect_ ) {
 		std::stringstream msg;
@@ -198,7 +241,7 @@ BuildDeNovoBackboneMover::apply( core::pose::Pose & pose )
 	components::StructureDataOP sd = architect_->apply( pose );
 	if ( !sd ) {
 		std::stringstream msg;
-		msg << "BuildDeNovoBackboneMover::architect " << architect_->id()
+		msg << "FoldArchitectMover::architect " << architect_->id()
 			<< " failed to generate anything." << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
@@ -233,7 +276,7 @@ pdb_filename( core::Size const phase_num )
 /// @brief builds/folds pose in phases using recursive algorithm
 /// @throws EXCN_Fold if we couldn't fold the pose
 core::pose::PoseOP
-BuildDeNovoBackboneMover::build_in_phases(
+FoldArchitectMover::build_in_phases(
 	components::StructureData const & full_sd,
 	components::BuildPhases const & phases,
 	SegmentNameSet const & finished,
@@ -320,7 +363,7 @@ BuildDeNovoBackboneMover::build_in_phases(
 
 /// @brief checks the pose for whether it folded correctly, according to user's filters
 void
-BuildDeNovoBackboneMover::check_pose( core::pose::Pose const & pose ) const
+FoldArchitectMover::check_pose( core::pose::Pose const & pose ) const
 {
 	core::Size filter_num = 1;
 	for ( auto f=filters_.begin(); f!=filters_.end(); ++f, ++filter_num ) {
@@ -329,7 +372,7 @@ BuildDeNovoBackboneMover::check_pose( core::pose::Pose const & pose ) const
 }
 
 SegmentNames
-BuildDeNovoBackboneMover::segments_to_fold( components::StructureData const & sd ) const
+FoldArchitectMover::segments_to_fold( components::StructureData const & sd ) const
 {
 	SegmentNames segs;
 	for ( auto s=sd.segments_begin(); s!=sd.segments_end(); ++s ) {
@@ -339,7 +382,7 @@ BuildDeNovoBackboneMover::segments_to_fold( components::StructureData const & sd
 }
 
 SegmentNames
-BuildDeNovoBackboneMover::find_roots(
+FoldArchitectMover::find_roots(
 	core::pose::Pose const & pose,
 	protocols::loops::Loops const & loops ) const
 {
@@ -372,31 +415,43 @@ BuildDeNovoBackboneMover::find_roots(
 }
 
 void
-BuildDeNovoBackboneMover::parse_perturber( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::set_perturber( components::StructureDataPerturber const & perturber )
 {
-	perturber_ = components::StructureDataPerturber::create( *tag, data );
+	set_perturber( perturber.clone() );
 }
 
 void
-BuildDeNovoBackboneMover::parse_prefold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::set_perturber( components::StructureDataPerturberOP perturber )
+{
+	perturber_ = perturber;
+}
+
+void
+FoldArchitectMover::parse_perturber( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+{
+	set_perturber( components::StructureDataPerturber::create( *tag, data ) );
+}
+
+void
+FoldArchitectMover::parse_prefold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	MoverOPs const & movers = parse_movers( tag, data );
 	for ( auto const & mover : movers ) {
-		prefold_movers_.push_back( mover );
+		add_prefold_mover( *mover );
 	}
 }
 
 void
-BuildDeNovoBackboneMover::parse_postfold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::parse_postfold_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	MoverOPs const & movers = parse_movers( tag, data );
 	for ( auto const & mover : movers ) {
-		postfold_movers_.push_back( mover );
+		add_postfold_mover( *mover );
 	}
 }
 
-BuildDeNovoBackboneMover::MoverOPs
-BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) const
+FoldArchitectMover::MoverOPs
+FoldArchitectMover::parse_movers( utility::tag::TagCOP tag, basic::datacache::DataMap & data ) const
 {
 	MoverOPs movers;
 	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
@@ -413,16 +468,16 @@ BuildDeNovoBackboneMover::parse_movers( utility::tag::TagCOP tag, basic::datacac
 			msg << type() << "::parse_movers(): ERROR !! mover not found in map: \n" << **subtag << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
-		movers.push_back( mover->clone() );
+		movers.push_back( mover );
 		TR.Debug << "found mover " << mover_name << std::endl;
 	}
 	return movers;
 }
 
 void
-BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::parse_filters( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	filters_.clear();
+	clear_filters();
 	for ( auto subtag=tag->getTags().begin(); subtag!=tag->getTags().end(); ++subtag ) {
 		if ( (*subtag)->getName() != "Add" ) {
 			std::stringstream msg;
@@ -437,13 +492,25 @@ BuildDeNovoBackboneMover::parse_filters( utility::tag::TagCOP tag, basic::dataca
 			msg << type() << "::parse_filters(): ERROR !! filter not found in map: \n" << **subtag << std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
-		filters_.push_back( filter_ptr->clone() );
+		add_filter( *filter_ptr );
 		TR.Debug << "found filter " << filter_name << std::endl;
 	}
 }
 
-BuildDeNovoBackboneMover::MoverOPs
-BuildDeNovoBackboneMover::prefold_movers(
+void
+FoldArchitectMover::add_filter( protocols::filters::Filter const & filter )
+{
+	filters_.push_back( filter.clone() );
+}
+
+void
+FoldArchitectMover::clear_filters()
+{
+	filters_.clear();
+}
+
+FoldArchitectMover::MoverOPs
+FoldArchitectMover::prefold_movers(
 	core::pose::Pose const & pose,
 	protocols::loops::Loops const & loops,
 	ConstraintGeneratorCOPs const & generators ) const
@@ -477,8 +544,8 @@ BuildDeNovoBackboneMover::prefold_movers(
 	return movers;
 }
 
-BuildDeNovoBackboneMover::MoverOPs
-BuildDeNovoBackboneMover::postfold_movers(
+FoldArchitectMover::MoverOPs
+FoldArchitectMover::postfold_movers(
 	core::pose::Pose const & pose,
 	protocols::loops::Loops const & loops,
 	ConstraintGeneratorCOPs const & generators ) const
@@ -527,31 +594,31 @@ BuildDeNovoBackboneMover::postfold_movers(
 }
 
 void
-BuildDeNovoBackboneMover::clear_prefold_movers()
+FoldArchitectMover::clear_prefold_movers()
 {
 	prefold_movers_.clear();
 }
 
 void
-BuildDeNovoBackboneMover::add_prefold_mover( protocols::moves::Mover const & prefold_mover )
+FoldArchitectMover::add_prefold_mover( protocols::moves::Mover const & prefold_mover )
 {
 	prefold_movers_.push_back( prefold_mover.clone() );
 }
 
 void
-BuildDeNovoBackboneMover::clear_postfold_movers()
+FoldArchitectMover::clear_postfold_movers()
 {
 	postfold_movers_.clear();
 }
 
 void
-BuildDeNovoBackboneMover::add_postfold_mover( protocols::moves::Mover const & postfold_mover )
+FoldArchitectMover::add_postfold_mover( protocols::moves::Mover const & postfold_mover )
 {
 	postfold_movers_.push_back( postfold_mover.clone() );
 }
 
 protocols::loops::Loops
-BuildDeNovoBackboneMover::create_loops(
+FoldArchitectMover::create_loops(
 	core::pose::Pose const & pose,
 	ResidueVector & overlap_residues,
 	SegmentNames & movable_segments ) const
@@ -581,7 +648,7 @@ get_score_function( core::pose::Pose const & )
 }
 
 void
-BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
+FoldArchitectMover::fold_attempt( core::pose::Pose & pose ) const
 {
 	// Get StructureData object from pose
 	components::StructureDataFactory const & factory = *components::StructureDataFactory::get_instance();
@@ -625,7 +692,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 		factory.get_from_pose( pose ).check_pose_consistency( pose );
 	} catch ( components::EXCN_PoseInconsistent const & e ) {
 		std::stringstream msg;
-		msg << "BuildDeNovoBackboneMover::fold_attempt(): After pose folder, StructureData no longer agrees with pose."
+		msg << "FoldArchitectMover::fold_attempt(): After pose folder, StructureData no longer agrees with pose."
 			<< " PoseFolders need to ensure that StructureData and pose are synced.  Error =" << std::endl;
 		e.show( msg );
 		utility_exit_with_message( msg.str() );
@@ -643,7 +710,7 @@ BuildDeNovoBackboneMover::fold_attempt( core::pose::Pose & pose ) const
 }
 
 void
-BuildDeNovoBackboneMover::remove_cutpoints( components::StructureData & sd, protocols::loops::Loops const & loops ) const
+FoldArchitectMover::remove_cutpoints( components::StructureData & sd, protocols::loops::Loops const & loops ) const
 {
 	for ( auto const & loop : loops ) {
 		if ( ! loop.cut() ) continue;
@@ -653,7 +720,7 @@ BuildDeNovoBackboneMover::remove_cutpoints( components::StructureData & sd, prot
 }
 
 void
-BuildDeNovoBackboneMover::apply_movers( MoverOPs const & movers, core::pose::Pose & pose ) const
+FoldArchitectMover::apply_movers( MoverOPs const & movers, core::pose::Pose & pose ) const
 {
 	//pose.dump_pdb( "prefold_0.pdb" );
 	core::Size count = 1;
@@ -665,7 +732,7 @@ BuildDeNovoBackboneMover::apply_movers( MoverOPs const & movers, core::pose::Pos
 }
 
 core::select::residue_selector::ResidueSubset
-BuildDeNovoBackboneMover::select_movable_residues(
+FoldArchitectMover::select_movable_residues(
 	core::pose::Pose const & pose,
 	SegmentNames const & movable_segments,
 	ResidueVector const & overlap_residues ) const
@@ -687,26 +754,26 @@ BuildDeNovoBackboneMover::select_movable_residues(
 	return subset;
 }
 
-BuildDeNovoBackboneMover::ConstraintGeneratorCOPs
-BuildDeNovoBackboneMover::create_constraint_generators( ResidueVector const & residues ) const
+FoldArchitectMover::ConstraintGeneratorCOPs
+FoldArchitectMover::create_constraint_generators( ResidueVector const & residues ) const
 {
 	if ( residues.empty() ) {
-		return BuildDeNovoBackboneMover::ConstraintGeneratorCOPs();
+		return FoldArchitectMover::ConstraintGeneratorCOPs();
 	}
 	return { create_overlap_constraint_generator( residues ) };
 }
 
 /// @brief builds a constraint generator for residues that overlap between phases
 /// @param[in] residues Vector of resids corresponding to the overlap residues
-BuildDeNovoBackboneMover::ConstraintGeneratorOP
-BuildDeNovoBackboneMover::create_overlap_constraint_generator( ResidueVector const & residues ) const
+FoldArchitectMover::ConstraintGeneratorOP
+FoldArchitectMover::create_overlap_constraint_generator( ResidueVector const & residues ) const
 {
 	using core::select::residue_selector::ResidueIndexSelector;
 
 	protocols::constraint_generator::AtomPairConstraintGeneratorOP dist_csts(
 		new protocols::constraint_generator::AtomPairConstraintGenerator );
 
-	dist_csts->set_id( "BuildDeNovoBackboneMover_constrain_overlap_residues" );
+	dist_csts->set_id( "FoldArchitectMover_constrain_overlap_residues" );
 	dist_csts->set_ca_only( false );
 	dist_csts->set_min_seq_sep( 0 );
 	dist_csts->set_sd( 1.0 );
@@ -723,8 +790,8 @@ BuildDeNovoBackboneMover::create_overlap_constraint_generator( ResidueVector con
 	return dist_csts;
 }
 
-BuildDeNovoBackboneMover::FoldScore
-BuildDeNovoBackboneMover::folding_score( core::pose::Pose const & pose ) const
+FoldArchitectMover::FoldScore
+FoldArchitectMover::folding_score( core::pose::Pose const & pose ) const
 {
 	if ( !score_filter_ ) return 0.0;
 
@@ -735,19 +802,19 @@ BuildDeNovoBackboneMover::folding_score( core::pose::Pose const & pose ) const
 }
 
 void
-BuildDeNovoBackboneMover::set_score_filter( protocols::filters::Filter const & filter )
+FoldArchitectMover::set_score_filter( protocols::filters::Filter const & filter )
 {
 	score_filter_ = filter.clone();
 }
 
 void
-BuildDeNovoBackboneMover::parse_architect( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::parse_architect( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
-	architect_ = architects::DeNovoArchitectFactory::get_instance()->create_from_tag( tag, data );
+	set_architect( *architects::DeNovoArchitectFactory::get_instance()->create_from_tag( tag, data ) );
 }
 
 void
-BuildDeNovoBackboneMover::parse_folder( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
+FoldArchitectMover::parse_folder( utility::tag::TagCOP tag, basic::datacache::DataMap & data )
 {
 	components::PoseFolderOP folder;
 	if ( tag->getName() == components::RemodelLoopMoverPoseFolder::class_name() ) {
@@ -758,29 +825,47 @@ BuildDeNovoBackboneMover::parse_folder( utility::tag::TagCOP tag, basic::datacac
 		folder = utility::pointer::make_shared< components::NullPoseFolder >();
 	} else {
 		std::stringstream msg;
-		msg << "BuildDeNovoBackboneMover::parse_folder(): Unknown folder type: "
+		msg << "FoldArchitectMover::parse_folder(): Unknown folder type: "
 			<< tag->getName() << std::endl;
 		utility_exit_with_message( msg.str() );
 	}
 
 	folder->parse_my_tag( tag, data );
-	folder_ = folder;
+	set_folder( folder );
 }
 
 void
-BuildDeNovoBackboneMover::set_architect( architects::DeNovoArchitect const & architect )
+FoldArchitectMover::set_architect( architects::DeNovoArchitect const & architect )
 {
 	architect_ = architect.clone();
 }
 
 void
-BuildDeNovoBackboneMover::set_folder( components::PoseFolder const & folder )
+FoldArchitectMover::set_folder( components::PoseFolder const & folder )
 {
-	folder_ = folder.clone();
+	set_folder( folder.clone() );
 }
 
 void
-BuildDeNovoBackboneMover::set_build_overlap( core::Size const overlap_val )
+FoldArchitectMover::set_folder( components::PoseFolderOP folder )
+{
+	folder_ = folder;
+}
+
+void
+FoldArchitectMover::set_builder( components::PoseBuilder const & builder )
+{
+	set_builder( builder.clone() );
+}
+
+void
+FoldArchitectMover::set_builder( components::PoseBuilderOP builder )
+{
+	builder_ = builder;
+}
+
+void
+FoldArchitectMover::set_build_overlap( core::Size const overlap_val )
 {
 	build_overlap_ = overlap_val;
 }
@@ -788,7 +873,7 @@ BuildDeNovoBackboneMover::set_build_overlap( core::Size const overlap_val )
 /// @brief sets names of segments to be included in the starting build phase
 /// @param[in] segments_csv Comma-separated string containing segment names
 void
-BuildDeNovoBackboneMover::set_start_segments( std::string const & segments_csv )
+FoldArchitectMover::set_start_segments( std::string const & segments_csv )
 {
 	set_start_segments( csv_to_container< SegmentNameSet >( segments_csv ) );
 }
@@ -796,7 +881,7 @@ BuildDeNovoBackboneMover::set_start_segments( std::string const & segments_csv )
 /// @brief sets names of segments to be included in the starting build phase
 /// @param[in] segments Set of segment names
 void
-BuildDeNovoBackboneMover::set_start_segments( SegmentNameSet const & segments )
+FoldArchitectMover::set_start_segments( SegmentNameSet const & segments )
 {
 	start_segments_ = segments;
 }
@@ -804,7 +889,7 @@ BuildDeNovoBackboneMover::set_start_segments( SegmentNameSet const & segments )
 /// @brief sets names of segments to be included in the final build phase
 /// @param[in] segments_csv Comma-separated string containing segment names
 void
-BuildDeNovoBackboneMover::set_stop_segments( std::string const & segments_csv )
+FoldArchitectMover::set_stop_segments( std::string const & segments_csv )
 {
 	set_stop_segments( csv_to_container< SegmentNameSet >( segments_csv ) );
 }
@@ -812,7 +897,7 @@ BuildDeNovoBackboneMover::set_stop_segments( std::string const & segments_csv )
 /// @brief sets names of segments to be included in the final build phase
 /// @param[in] segments Set of segment names
 void
-BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
+FoldArchitectMover::set_stop_segments( SegmentNameSet const & segments )
 {
 	stop_segments_ = segments;
 }
@@ -820,51 +905,48 @@ BuildDeNovoBackboneMover::set_stop_segments( SegmentNameSet const & segments )
 
 /////////////// Creator ///////////////
 
-
-
-std::string BuildDeNovoBackboneMover::get_name() const {
+std::string FoldArchitectMover::get_name() const {
 	return mover_name();
 }
 
-std::string BuildDeNovoBackboneMover::mover_name() {
-	return "BuildDeNovoBackboneMover";
+std::string FoldArchitectMover::mover_name() {
+	return "FoldArchitect";
 }
 
-
-std::string BuildDeNovoBackboneMover::folder_ct_namer( std::string folder_name ){
+std::string FoldArchitectMover::folder_ct_namer( std::string folder_name ){
 	return "denovo_folder_" + folder_name + "_complex_type";
 }
 
-std::string BuildDeNovoBackboneMover::perturber_ct_namer( std::string perturber_name ){
+std::string FoldArchitectMover::perturber_ct_namer( std::string perturber_name ){
 	return "denovo_perturber_" + perturber_name + "_complex_type";
 }
 
-std::string BuildDeNovoBackboneMover::folder_group_name(){
+std::string FoldArchitectMover::folder_group_name(){
 	return "denovo_folder";
 }
 
-std::string BuildDeNovoBackboneMover::perturber_group_name(){
+std::string FoldArchitectMover::perturber_group_name(){
 	return "denovo_perturber";
 }
 
 
-std::string BuildDeNovoBackboneMover::build_denovo_backbone_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::build_denovo_backbone_ct_naming_func( std::string subelement_name ){
 	return "build_denovo_backbone_" + subelement_name + "_complex_type";
 }
 
-std::string BuildDeNovoBackboneMover::prefold_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::prefold_ct_naming_func( std::string subelement_name ){
 	return "denovo_prefold_" + subelement_name + "_complex_type";
 }
 
-std::string BuildDeNovoBackboneMover::postfold_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::postfold_ct_naming_func( std::string subelement_name ){
 	return "denovo_postfold_" + subelement_name + "_complex_type";
 }
 
-std::string BuildDeNovoBackboneMover::filters_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::filters_ct_naming_func( std::string subelement_name ){
 	return "denovo_filters_" + subelement_name + "_complex_type";
 }
 
-void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDefinition & xsd ){
+void FoldArchitectMover::define_perturber_group( utility::tag::XMLSchemaDefinition & xsd ){
 
 	using namespace utility::tag;
 	AttributeList helix_or_connection_perturber_attlist;
@@ -948,7 +1030,7 @@ void BuildDeNovoBackboneMover::define_perturber_group( utility::tag::XMLSchemaDe
 }
 
 void
-BuildDeNovoBackboneMover::define_filters_ct( utility::tag::XMLSchemaDefinition & xsd )
+FoldArchitectMover::define_filters_ct( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
@@ -969,7 +1051,7 @@ BuildDeNovoBackboneMover::define_filters_ct( utility::tag::XMLSchemaDefinition &
 		.write_complex_type_to_schema( xsd );
 }
 
-void BuildDeNovoBackboneMover::define_folder_group( utility::tag::XMLSchemaDefinition & xsd ){
+void FoldArchitectMover::define_folder_group( utility::tag::XMLSchemaDefinition & xsd ){
 	using namespace utility::tag;
 
 	AttributeList remodel_folder_attlist;
@@ -1039,7 +1121,7 @@ pre_and_post_fold_mover_subelements()
 }
 
 void
-BuildDeNovoBackboneMover::define_prefold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
+FoldArchitectMover::define_prefold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
@@ -1058,7 +1140,7 @@ BuildDeNovoBackboneMover::define_prefold_movers_ct( utility::tag::XMLSchemaDefin
 }
 
 void
-BuildDeNovoBackboneMover::define_postfold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
+FoldArchitectMover::define_postfold_movers_ct( utility::tag::XMLSchemaDefinition & xsd )
 {
 	using namespace utility::tag;
 
@@ -1076,7 +1158,11 @@ BuildDeNovoBackboneMover::define_postfold_movers_ct( utility::tag::XMLSchemaDefi
 		.write_complex_type_to_schema( xsd );
 }
 
-void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+
+void
+FoldArchitectMover::provide_xml_schema_with_name(
+	utility::tag::XMLSchemaDefinition & xsd,
+	std::string const & mover_name )
 {
 	using namespace utility::tag;
 
@@ -1136,11 +1222,12 @@ void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 		+ XMLSchemaAttribute( "start_segments", xs_string, "Set names of segments to include in the first build phase")
 		+ XMLSchemaAttribute( "stop_segments", xs_string, "Set names of segments to be included in the final build phase")
 		+ XMLSchemaAttribute( "iterations_per_phase", xsct_non_negative_integer, "Number of iterations per build phase")
-		+ XMLSchemaAttribute( "dump_pdbs", xsct_rosetta_bool, "Dump output to PDB files?");
+		+ XMLSchemaAttribute( "dump_pdbs", xsct_rosetta_bool, "Dump output to PDB files?")
+		+ XMLSchemaAttribute( "debug", xsct_rosetta_bool, "Dump debugging PDBs?");
 
 	XMLSchemaComplexTypeGenerator complex_type_generator;
 	complex_type_generator
-		.element_name( mover_name() )
+		.element_name( mover_name )
 		.description( "Mover to generate backbones for de novo design" )
 		.complex_type_naming_func( & moves::complex_type_name_for_mover )
 		.add_attributes( attlist )
@@ -1151,6 +1238,38 @@ void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefini
 		.add_ordered_subelement_set_as_optional( postfold_subelements )
 		.add_ordered_subelement_set_as_optional( filters_subelements )
 		.write_complex_type_to_schema( xsd );
+}
+
+void FoldArchitectMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	provide_xml_schema_with_name( xsd, mover_name() );
+}
+
+std::string FoldArchitectMoverCreator::keyname() const {
+	return FoldArchitectMover::mover_name();
+}
+
+protocols::moves::MoverOP
+FoldArchitectMoverCreator::create_mover() const {
+	return utility::pointer::make_shared< FoldArchitectMover >();
+}
+
+void FoldArchitectMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const
+{
+	FoldArchitectMover::provide_xml_schema( xsd );
+}
+
+std::string BuildDeNovoBackboneMover::get_name() const {
+	return mover_name();
+}
+
+std::string BuildDeNovoBackboneMover::mover_name() {
+	return "BuildDeNovoBackboneMover";
+}
+
+void BuildDeNovoBackboneMover::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
+{
+	provide_xml_schema_with_name( xsd, mover_name() );
 }
 
 std::string BuildDeNovoBackboneMoverCreator::keyname() const {
@@ -1212,13 +1331,13 @@ SetPoseSecstructFromStructureDataMover::apply( core::pose::Pose & pose )
 ////////////// Helper functions /////////////////
 
 /// @brief goes through loops and adds overlapping residues
-BuildDeNovoBackboneMover::ResidueVector
+FoldArchitectMover::ResidueVector
 add_overlap_to_loops(
 	protocols::loops::Loops & loops,
 	core::Size const overlap,
 	core::pose::Pose const & pose )
 {
-	BuildDeNovoBackboneMover::ResidueVector residues;
+	FoldArchitectMover::ResidueVector residues;
 	if ( !overlap ) return residues;
 
 	// go through loops and add proper overlap

@@ -91,23 +91,31 @@ public:
 	RegisterShifts
 	retrieve_register_shifts( components::StructureData const & perm ) const;
 
+	/// @brief Informs the SheetArchitect that another architect will enlongate one of the strands using a string as input
 	void
 	set_strand_extensions( std::string const & extensions_str );
 
+	/// @brief Informs the SheetArchitect that another architect will enlongate one of the strands
 	void
 	add_strand_extension( std::string const & strand_name, core::Size const length );
 
-private:
+	/// @brief Clears the lists of strands/orientations/register shifts
 	void
-	setup_strand_pairings();
+	clear_all_strand_data();
 
+	/// @brief Adds a strand to the sheet definition
 	void
 	add_strand( StrandArchitect const & strand );
+
+	/// @brief Sets the path to the sheet database
+	void
+	set_sheet_db_path( std::string const & sheet_db_path );
 
 	/// @brief generates and stores a vector of permutations based on strands
 	void
 	enumerate_permutations();
 
+private:
 	/// @brief merges a list of permutations
 	StructureDataOP
 	combine_permutations( components::StructureDataCOPs const & chain ) const;
@@ -127,6 +135,7 @@ private:
 	void
 	check_permutation( StructureData const & perm ) const;
 
+	/// @brief gets the length that a given strand will be elongated by using a different architect
 	core::Size
 	extension_length( std::string const & strand ) const;
 

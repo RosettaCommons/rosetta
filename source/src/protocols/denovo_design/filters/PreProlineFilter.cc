@@ -90,13 +90,13 @@ PreProlineFilter::parse_my_tag(
 	basic::datacache::DataMap & data
 )
 {
-	threshold_ = tag->getOption< core::Real >( "threshold", threshold_ );
+	set_threshold( tag->getOption< core::Real >( "threshold", threshold_ ) );
 
 	if ( tag->hasOption( "use_statistical_potential" ) ) {
-		use_statistical_potential_ = tag->getOption< bool >( "use_statistical_potential" );
+		set_use_statistical_potential( tag->getOption< bool >( "use_statistical_potential" ) );
 	}
 
-	selector_ = protocols::rosetta_scripts::parse_residue_selector( tag, data );
+	set_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
 }
 
 std::string

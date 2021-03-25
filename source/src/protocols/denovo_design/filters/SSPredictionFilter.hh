@@ -65,7 +65,50 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
-	void set_secstruct(std::string const secstruct);
+
+	/// @brief Sets the secondary structure to be compared with the psipred result. If neither this nor the blueprint is set, DSSP will be used to determine the pose secondary structure
+	void
+	set_secstruct( std::string const secstruct );
+
+	/// @brief Sets the psipred executable (has no effect if "use_svm" is true)
+	void
+	set_cmd( std::string const & cmd );
+
+	/// @brief Sets a blueprint object which can be used to determine the desired secondary structure
+	void
+	set_blueprint( protocols::parser::BluePrintOP blueprint );
+
+	/// @brief Sets a blueprint file which can be used to determine the desired secondary structure
+	void
+	set_blueprint_file( std::string const & blueprint_file );
+
+	/// @brief Sets the threshold. If use_probablility is true, the filter will pass if the calculated value is <= threshold.  If use_probability is false, the filter will pass if the calcualted value is >= threshold.
+	void
+	set_threshold( core::Real const threshold );
+
+	/// @brief Sets whether or not to use the predicted SS probabilities to compute a value, or to use the predicted secondary structure (match or not matching) for each residue. Values are combined into a boltzmann sum-like-value using the provided temperature, so that poorly predicted residues have a larger impact on the score
+	void
+	set_use_probability( bool const use_probability );
+
+	/// @brief assumes use_probability, if set this will compute the cumulative probability of having correct secondary structure at all residues
+	void
+	set_mismatch_probability( bool const mismatch_probability );
+
+	/// @brief tells whether to use the psipred pass2 confidence values -- overrrides use_probability.
+	void
+	set_use_confidence( bool const use_confidence );
+
+	/// @brief Sets the temperature which is used to compute probability-based values
+	void
+	set_temperature( core::Real const temp );
+
+	/// @brief If set, a trained SVM will be used instead of psipred to predict the secondary structure
+	void
+	set_use_svm( bool const use_svm );
+
+	/// @brief Sets the psipred interface object that will be used to call psipred
+	void
+	set_psipred_interface( core::io::external::PsiPredInterfaceOP psipred ) { psipred_interface_ = psipred; }
 
 private:
 	/// @brief computes the weighted boltzmann sum of the passed vector

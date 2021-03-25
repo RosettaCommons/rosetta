@@ -98,6 +98,9 @@ public:
 	void
 	set_residues( std::string const & residues_str );
 
+	void
+	set_error_on_missing_segment( bool const error_on_missing ) { error_on_missing_segment_ = error_on_missing; }
+
 private:
 	SignedResidSet
 	resid_set() const;

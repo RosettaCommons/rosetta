@@ -22,8 +22,11 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-class ExtendedPoseBuilder;
+class PoseBuilder;
+typedef utility::pointer::shared_ptr< PoseBuilder > PoseBuilderOP;
+typedef utility::pointer::shared_ptr< PoseBuilder const > PoseBuilderCOP;
 
+class ExtendedPoseBuilder;
 typedef utility::pointer::shared_ptr< ExtendedPoseBuilder > ExtendedPoseBuilderOP;
 typedef utility::pointer::shared_ptr< ExtendedPoseBuilder const > ExtendedPoseBuilderCOP;
 

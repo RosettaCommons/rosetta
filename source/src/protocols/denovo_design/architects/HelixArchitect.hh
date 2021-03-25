@@ -65,6 +65,10 @@ public:
 	void
 	set_lengths( Lengths const & lengths );
 
+	/// @brief Returns the list of allowed segments; One of these will be chosen during design
+	components::SegmentCOPs const &
+	motifs() const;
+
 	components::SegmentCOPs::const_iterator
 	motifs_begin() const;
 

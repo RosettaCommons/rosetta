@@ -159,7 +159,7 @@ FastDesign::parse_my_tag(
 	set_up_default_task_factory();
 	FastRelax::parse_my_tag( tag, data );
 
-	clear_designable_residues_ = tag->getOption< bool >( "clear_designable_residues", clear_designable_residues_ );
+	set_clear_designable_residues( tag->getOption< bool >( "clear_designable_residues", clear_designable_residues_ ) );
 
 	// parse constraint generators
 	utility::vector1< std::string > const cgs = utility::string_split( tag->getOption< std::string >( "cgs", "" ), ',' );
@@ -173,7 +173,7 @@ FastDesign::parse_my_tag(
 				<< std::endl;
 			throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 		}
-		cgs_.push_back( new_cg->clone() );
+		add_constraint_generator( new_cg );
 	}
 }
 
@@ -326,6 +326,18 @@ FastDesign::create_default_task_factory() const
 	}
 
 	return local_tf;
+}
+
+void
+FastDesign::add_constraint_generator( protocols::constraint_generator::ConstraintGeneratorCOP generator )
+{
+	cgs_.push_back( generator );
+}
+
+void
+FastDesign::clear_constraint_generators()
+{
+	cgs_.clear();
 }
 
 std::string FastDesign::get_name() const {

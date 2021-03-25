@@ -100,6 +100,9 @@ public:
 	void
 	set_overlap( core::Size const overlap_val );
 
+	void
+	set_iterations( core::Size const iterations ) { iterations_ = iterations; }
+
 	core::scoring::ScoreFunction const &
 	scorefxn() const;
 

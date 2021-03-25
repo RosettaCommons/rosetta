@@ -83,6 +83,23 @@ public:
 	///
 	core::Real rejection_thresh() const {return rejection_thresh_;}
 
+	/// @brief Set the secondary structure to be used for the pose. If unspecified, dssp will be used
+	void
+	set_secstruct( std::string const & secstruct ) { secstruct_ = secstruct; }
+
+	/// @brief Sets the verbosity; if true, shape complementarity information will be printed out to the tracer when the filter is run. Not sure why the code can't just use the Tracer system to do this, but that is how the code works right now
+	void
+	set_verbose( bool const verbose ) { verbose_ = verbose; }
+
+	/// @brief Sets whether or not to include loops in the calculations
+	void
+	set_calc_loops( bool const calc_loops ) { calc_loops_ = calc_loops; }
+
+	/// @brief Sets whether or not to include helices in the calculations
+	void
+	set_calc_helices( bool const calc_helices ) { calc_helices_ = calc_helices; }
+
+	/// @brief Sets the residue selector to be used; clones the residue selector
 	void
 	set_residue_selector( core::select::residue_selector::ResidueSelector const & selector );
 

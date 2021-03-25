@@ -97,6 +97,11 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	void
+	set_atom1( std::string const & atom ) { atom1_ = atom; }
+
+	void
+	set_atom2( std::string const & atom ) { atom2_ = atom; }
 
 private: // methods
 

@@ -78,16 +78,12 @@ BetaSheetArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::DataM
 {
 	std::string const sheet_db_str = tag->getOption< std::string >( "sheet_db", "" );
 	if ( !sheet_db_str.empty() ) {
-		debug_assert( sheetdb_ );
-		sheetdb_->set_db_path( sheet_db_str );
-		use_sheetdb_ = true;
+		set_sheet_db_path( sheet_db_str );
 	}
 	std::string const extensions_str = tag->getOption< std::string >( "strand_extensions", "" );
 	if ( tag->hasOption( "strand_extensions" ) ) set_strand_extensions( extensions_str );
 
-	strands_.clear();
-	orientations_.clear();
-	shifts_.clear();
+	clear_all_strand_data();
 
 	// parse strands, ensure that only strands are present
 	for ( utility::tag::TagCOP const & subtag : tag->getTags() ) {
@@ -155,6 +151,7 @@ BetaSheetArchitect::design( core::pose::Pose const &, core::Real & random ) cons
 	return utility::pointer::make_shared< StructureData >( *permutations_[ idx ] );
 }
 
+/// @brief Informs the SheetArchitect that another architect will enlongate one of the strands using a string as input
 void
 BetaSheetArchitect::set_strand_extensions( std::string const & extensions_str )
 {
@@ -242,18 +239,38 @@ BetaSheetArchitect::add_orientations( std::string const & orientations_str )
 	orientations_.push_back( retval );
 }
 
+/// @brief Sets the path to the sheet database
+void
+BetaSheetArchitect::set_sheet_db_path( std::string const & sheet_db_path )
+{
+	debug_assert( sheetdb_ );
+	sheetdb_->set_db_path( sheet_db_path );
+	use_sheetdb_ = sheet_db_path != "";
+}
+
+/// @brief Informs the SheetArchitect that another architect will enlongate one of the strands
 void
 BetaSheetArchitect::add_strand_extension( std::string const & strand_name, core::Size const length )
 {
 	extensions_[ strand_name ] = length;
 }
 
+/// @brief Adds a strand to the sheet definition
 void
 BetaSheetArchitect::add_strand( StrandArchitect const & strand )
 {
 	StrandArchitectOP new_strand( new StrandArchitect( strand ) );
 	strands_.push_back( new_strand );
 	needs_update();
+}
+
+/// @brief Clears the lists of strands/orientations/register shifts
+void
+BetaSheetArchitect::clear_all_strand_data()
+{
+	strands_.clear();
+	orientations_.clear();
+	shifts_.clear();
 }
 
 /// @brief generates and stores a vector of permutations based on strands

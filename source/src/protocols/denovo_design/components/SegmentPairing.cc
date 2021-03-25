@@ -331,7 +331,7 @@ HelixPairing::parse_tag( utility::tag::Tag const & tag )
 			<< segments() << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
-	parallel_ = tag.getOption< bool >( "parallel" );
+	set_parallel( tag.getOption< bool >( "parallel" ) );
 }
 
 void
@@ -405,9 +405,9 @@ StrandPairing::clone() const
 void
 StrandPairing::parse_tag( utility::tag::Tag const & tag )
 {
-	orient1_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient1", orient1_ ) );
-	orient2_ = architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient2", orient2_ ) );
-	shift_ = tag.getOption< RegisterShift >( "shift", shift_ );
+	set_orient1( architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient1", orient1_ ) ) );
+	set_orient2( architects::StrandArchitect::int_to_orientation( tag.getOption< core::Size >( "orient2", orient2_ ) ) );
+	set_shift( tag.getOption< RegisterShift >( "shift", shift_ ) );
 }
 
 void

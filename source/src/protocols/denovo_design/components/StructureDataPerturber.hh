@@ -128,6 +128,10 @@ public:
 	Permutations
 	enumerate( StructureData const & sd ) const override;
 
+	/// @brief Sets the architect object that designs the connection to be perturbed
+	void
+	set_architect( connection::ConnectionArchitectCOP architect );
+
 private:
 	void
 	retrieve_connection_architect( std::string const & arch_name, basic::datacache::DataMap & data );
@@ -158,6 +162,10 @@ public:
 
 	Permutations
 	enumerate( StructureData const & sd ) const override;
+
+	/// @brief Sets the architect object that designs the helix to be perturbed
+	void
+	set_architect( HelixArchitectCOP architect );
 
 private:
 	/// @brief Gets const pointer to helix architect from the data map and stores it as architect_
@@ -199,8 +207,21 @@ public:
 	Permutations
 	enumerate( StructureData const & sd ) const override;
 
+	/// @brief Sets list of segments that will be ignored by the perturber
 	void
 	set_ignore_segments( SegmentNameSet const & ignore_set ) override;
+
+	/// @brief Add a sub-perturber. Based on the mode, one or all of the perturbers will be called every time a perturbation is requested.
+	void
+	add_perturber( StructureDataPerturberOP perturber );
+
+	/// @brief Clears list of sub-perturber
+	void
+	clear_perturbers();
+
+	/// @brief Sets the mode which defines how the compound perturber uses the sub-perturbers. AND=run all perturbers, OR=choose a perturber randomly and run only that one
+	void
+	set_mode( CombinationMode const mode );
 
 private:
 	Permutations

@@ -53,9 +53,9 @@ AddSegmentDataMover::parse_my_tag(
 	basic::datacache::DataMap &
 )
 {
-	segment_name_ = tag->getOption< std::string >( "segment_name", segment_name_ );
-	abego_ = tag->getOption< std::string >( "abego", abego_ );
-	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+	set_segment_name( tag->getOption< std::string >( "segment_name", segment_name_ ) );
+	set_abego( tag->getOption< std::string >( "abego", abego_ ) );
+	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
 
 	// input checking
 	if ( segment_name_.empty() ) {

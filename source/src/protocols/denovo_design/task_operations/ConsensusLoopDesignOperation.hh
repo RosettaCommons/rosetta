@@ -262,6 +262,9 @@ public:
 	void
 	set_enrichment_threshold( core::Real const threshold );
 
+	void
+	set_use_dssp( bool const use_dssp ) { use_dssp_ = use_dssp; }
+
 private:
 	/// @brief Gets secondary structure to be used for determining what is surrounding
 	///        the loops

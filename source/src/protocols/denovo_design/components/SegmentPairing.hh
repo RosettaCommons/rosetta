@@ -160,6 +160,10 @@ public:
 	PairingType
 	type() const override { return HELIX; }
 
+	/// @brief Sets whether or not the helices are parallel (true) or antiparallel (false)
+	void
+	set_parallel( bool const parallel ) { parallel_ = parallel; }
+
 protected:
 	void
 	parse_tag( utility::tag::Tag const & tag ) override;
@@ -222,6 +226,18 @@ public:
 
 	RegisterShift
 	shift() const;
+
+	/// @brief Sets the orientation for the first strand; used to determine whether the strands are parallel or antiparallel
+	void
+	set_orient1( StrandOrientation const orient ) { orient1_ = orient; }
+
+	/// @brief Sets the orientation for the second strand; used to determine whether the strands are parallel or antiparallel
+	void
+	set_orient2( StrandOrientation const orient ) { orient2_ = orient; }
+
+	/// @brief Sets the register shift
+	void
+	set_shift( RegisterShift const shift ) { shift_ = shift; }
 
 private:
 	RegisterShift

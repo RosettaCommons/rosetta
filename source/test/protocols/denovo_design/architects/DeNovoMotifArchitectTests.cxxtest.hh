@@ -17,7 +17,7 @@
 #include <cxxtest/TestSuite.h>
 
 // Project Headers
-#include <protocols/denovo_design/architects/DeNovoArchitect.hh>
+#include <protocols/denovo_design/architects/MotifArchitect.hh>
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
 
@@ -60,7 +60,7 @@ public:
 	{
 		std::string const test_id = "test_id3";
 
-		DeNovoMotifArchitect dummy( test_id );
+		MotifArchitect dummy( test_id );
 		TS_ASSERT_EQUALS( std::distance( dummy.motifs_begin(), dummy.motifs_end() ), 0 );
 
 		//This will induce a compile error -- I still need to write this and I don't wnat to forget

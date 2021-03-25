@@ -112,7 +112,7 @@
 #include <protocols/denovo_design/movers/AddSegmentDataMoverCreator.hh>
 #include <protocols/denovo_design/movers/AlignResiduesMoverCreator.hh>
 #include <protocols/denovo_design/movers/BridgeChainsMoverCreator.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMoverCreator.hh>
 #include <protocols/denovo_design/movers/DeclareStructureDataCovalentBondMoverCreator.hh>
 #include <protocols/denovo_design/movers/DisulfidizeMoverCreator.hh>
 #include <protocols/denovo_design/movers/ExtendChainMoverCreator.hh>

@@ -231,7 +231,13 @@ ConnectionPerturber::retrieve_connection_architect( std::string const & arch_nam
 	connection::ConnectionArchitectCOP connection =
 		data.get_ptr< connection::ConnectionArchitect >( "ConnectionArchitects", arch_name );
 
-	architect_ = connection;
+	set_architect( connection );
+}
+
+void
+ConnectionPerturber::set_architect( connection::ConnectionArchitectCOP architect )
+{
+	architect_ = architect;
 }
 
 HelixPerturber::HelixPerturber() = default;
@@ -288,6 +294,12 @@ HelixPerturber::retrieve_helix_architect( std::string const & arch_name, basic::
 		utility_exit_with_message( msg.str() );
 	}
 
+	set_architect( architect );
+}
+
+void
+HelixPerturber::set_architect( HelixArchitectCOP architect )
+{
 	architect_ = architect;
 }
 
@@ -304,7 +316,7 @@ CompoundPerturber::CompoundPerturber( CompoundPerturber const & other ):
 	perturbers_()
 {
 	for ( auto const & perturber : other.perturbers_ ) {
-		perturbers_.push_back( perturber->clone() );
+		add_perturber( perturber->clone() );
 	}
 }
 
@@ -317,23 +329,43 @@ CompoundPerturber::clone() const
 }
 
 void
+CompoundPerturber::set_mode( CombinationMode const mode )
+{
+	mode_ = mode;
+}
+
+void
+CompoundPerturber::add_perturber( StructureDataPerturberOP perturber )
+{
+	perturbers_.push_back( perturber );
+}
+
+void
+CompoundPerturber::clear_perturbers()
+{
+	perturbers_.clear();
+}
+
+void
 CompoundPerturber::parse_my_tag( utility::tag::Tag const & tag, basic::datacache::DataMap & data )
 {
 	using utility::tag::Tag;
 
 	std::string const mode = tag.getOption< std::string >( "mode", "AND" );
-	if ( mode == "AND" ) mode_ = AND;
-	else if ( mode == "OR" ) mode_ = OR;
-	else {
+	if ( mode == "AND" ) {
+		set_mode( AND );
+	} else if ( mode == "OR" ) {
+		set_mode( OR );
+	} else {
 		std::stringstream msg;
 		msg << class_name() << "::parse_my_tag(): Invalid mode specified ("
 			<< mode << ") -- valid modes are [ AND, OR ]" << std::endl;
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  msg.str() );
 	}
 
-	perturbers_.clear();
+	clear_perturbers();
 	for ( auto const & subtag : tag.getTags() ) {
-		perturbers_.push_back( StructureDataPerturber::create( *subtag, data ) );
+		add_perturber( StructureDataPerturber::create( *subtag, data ) );
 	}
 }
 

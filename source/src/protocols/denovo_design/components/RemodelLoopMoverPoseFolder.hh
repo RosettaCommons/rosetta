@@ -76,6 +76,9 @@ public:
 	void
 	set_scorefxn( core::scoring::ScoreFunction const & sfxn );
 
+	void
+	set_scorefxn( core::scoring::ScoreFunctionCOP sfxn );
+
 public:
 	static core::scoring::ScoreFunctionOP
 	default_score_function();

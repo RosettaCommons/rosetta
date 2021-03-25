@@ -86,14 +86,18 @@ AlignResiduesMover::parse_my_tag(
 	basic::datacache::DataMap & data
 )
 {
-	id_ = tag->getOption< std::string >( "name" );
+	set_id( tag->getOption< std::string >( "name" ) );
 
 	std::string const template_selector_names = tag->getOption< std::string >( "template_selectors" );
-	template_selectors_ = parse_residue_selectors( template_selector_names, data );
+	for ( auto const & selector : parse_residue_selectors( template_selector_names, data ) ) {
+		add_template_selector( selector );
+	}
 
 
 	std::string const target_selector_names = tag->getOption< std::string >( "target_selectors" );
-	target_selectors_ = parse_residue_selectors( target_selector_names, data );
+	for ( auto const & selector : parse_residue_selectors( target_selector_names, data ) ) {
+		add_target_selector( selector );
+	}
 
 	if ( template_selectors_.size() != target_selectors_.size() ) {
 		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  "Number of template ids must match number of target ids." );
@@ -356,13 +360,25 @@ AlignResiduesMover::add_metadata(
 void
 AlignResiduesMover::add_template_selector( core::select::residue_selector::ResidueSelector const & selector )
 {
-	template_selectors_.push_back( selector.clone() );
+	add_template_selector( selector.clone() );
 }
 
 void
-AlignResiduesMover::add_target_selector( core::select::residue_selector::ResidueSelector const & selector )
+AlignResiduesMover::add_target_selector( core::select::residue_selector::ResidueSelector const &selector )
 {
-	target_selectors_.push_back( selector.clone() );
+	add_target_selector( selector.clone() );
+}
+
+void
+AlignResiduesMover::add_template_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	template_selectors_.push_back( selector );
+}
+
+void
+AlignResiduesMover::add_target_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	target_selectors_.push_back( selector );
 }
 
 void

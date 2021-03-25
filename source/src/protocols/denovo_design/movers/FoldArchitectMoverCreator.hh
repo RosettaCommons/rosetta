@@ -7,12 +7,12 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file protocols/denovo_design/movers/BuildDeNovoBackboneMoverCreator.hh
+/// @file protocols/denovo_design/movers/FoldArchitectMoverCreator.hh
 /// @brief Mover that builds and folds a structure via fragment insertion
 /// @author Tom Linsky (tlinsky@uw.edu)
 
-#ifndef INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMoverCreator_hh
-#define INCLUDED_protocols_denovo_design_movers_BuildDeNovoBackboneMoverCreator_hh
+#ifndef INCLUDED_protocols_denovo_design_movers_FoldArchitectMoverCreator_hh
+#define INCLUDED_protocols_denovo_design_movers_FoldArchitectMoverCreator_hh
 
 #include <protocols/moves/MoverCreator.hh>
 
@@ -20,18 +20,22 @@ namespace protocols {
 namespace denovo_design {
 namespace movers {
 
-class BuildDeNovoBackboneMoverCreator : public protocols::moves::MoverCreator {
-
+class FoldArchitectMoverCreator : public protocols::moves::MoverCreator {
 public:
-
 	protocols::moves::MoverOP create_mover() const override;
 	std::string keyname() const override;
 	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
+};
 
+class BuildDeNovoBackboneMoverCreator : public protocols::moves::MoverCreator {
+public:
+	protocols::moves::MoverOP create_mover() const override;
+	std::string keyname() const override;
+	void provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) const override;
 };
 
 } //protocols
 } //denovo_design
 } //movers
 
-#endif //INCLUDED_protocols/denovo_design/movers_BuildDeNovoBackboneMover_fwd_hh
+#endif //INCLUDED_protocols/denovo_design/movers_FoldArchitectMover_fwd_hh

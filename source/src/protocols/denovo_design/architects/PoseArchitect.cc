@@ -15,6 +15,7 @@
 #include <protocols/denovo_design/architects/PoseArchitect.hh>
 #include <protocols/denovo_design/architects/PoseArchitectCreator.hh>
 #include <protocols/denovo_design/architects/DeNovoArchitectFactory.hh>
+
 // Protocol headers
 #include <protocols/denovo_design/components/Segment.hh>
 #include <protocols/denovo_design/components/StructureData.hh>
@@ -22,6 +23,8 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 // Core headers
+#include <core/select/residue_selector/NotResidueSelector.hh>
+#include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/TrueResidueSelector.hh>
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
@@ -74,7 +77,6 @@ PoseArchitect::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ){
 	core::select::residue_selector::attributes_for_parse_residue_selector( attlist );
 	DeNovoArchitect::add_common_denovo_architect_attributes( attlist );
 	DeNovoArchitectFactory::xsd_architect_type_definition_w_attributes( xsd, architect_name(), "Design segments based on a pose", attlist );
-
 }
 
 
@@ -84,21 +86,41 @@ PoseArchitect::parse_tag(
 	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data )
 {
-	core::select::residue_selector::ResidueSelectorCOP selector_ =
-		protocols::rosetta_scripts::parse_residue_selector( tag, data );
-	add_padding_ = tag->getOption< bool >( "add_padding", add_padding_ );
-	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+	set_residue_selector( protocols::rosetta_scripts::parse_residue_selector( tag, data ) );
+	set_add_padding( tag->getOption< bool >( "add_padding", add_padding_ ) );
+	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
+}
+
+void
+PoseArchitect::set_residue_selector( core::select::residue_selector::ResidueSelectorCOP selector )
+{
+	selector_ = selector;
 }
 
 components::StructureDataOP
-PoseArchitect::design( core::pose::Pose const & pose, core::Real & ) const
+PoseArchitect::design( core::pose::Pose const & pose_in, core::Real & ) const
 {
-	components::StructureDataOP const sd( new components::StructureData( components::StructureDataFactory::get_instance()->create_from_pose( pose, id() ) ) );
+	using core::select::residue_selector::NotResidueSelector;
+	using core::select::residue_selector::ResidueRanges;
+
+	core::pose::PoseOP pose = pose_in.clone();
+	if ( selector_ ) {
+		// select regions to delete
+		NotResidueSelector delete_selector;
+		delete_selector.set_residue_selector( selector_ );
+		ResidueRanges ranges( delete_selector.apply( *pose ) );
+		for ( ResidueRanges::const_reverse_iterator it=ranges.rbegin(); it!=ranges.rend(); ++it ) {
+			TR.Debug << "Deleting residue range " << it->start() << "-" << it->stop() << std::endl;
+			pose->delete_residue_range_slow(it->start(), it->stop());
+		}
+	}
+
+	components::StructureDataOP const sd( utility::pointer::make_shared< components::StructureData >( components::StructureDataFactory::get_instance()->create_from_pose( *pose, id() ) ) );
 	if ( !secstruct_.empty() ) {
 		if ( sd->pose_length() != secstruct_.size() ) {
 			std::stringstream msg;
 			msg << "PoseArchitect::design(): Length of user-provided secstruct (" << secstruct_.size()
-				<< ") does not match input pose length (" << pose.size() << ")" << std::endl;
+				<< ") does not match input pose length (" << pose->size() << ")" << std::endl;
 			utility_exit_with_message( msg.str() );
 		}
 		core::Size resid = 1;
@@ -111,7 +133,7 @@ PoseArchitect::design( core::pose::Pose const & pose, core::Real & ) const
 	for ( auto s=sd->segments_begin(); s!=sd->segments_end(); ++s ) {
 		core::Size const start = sd->segment( *s ).start();
 		core::Size const stop = sd->segment( *s ).stop();
-		sd->set_template_pose( *s, pose, start, stop );
+		sd->set_template_pose( *s, *pose, start, stop );
 		if ( !add_padding_ ) {
 			components::Segment seg = sd->segment( *s );
 			seg.delete_lower_padding();

@@ -7,8 +7,8 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file  protocols/denovo_design/movers/BuildDeNovoBackboneMoverTests.cxxtest.hh
-/// @brief  Test suite for BuildDeNovoBackboneMover
+/// @file  protocols/denovo_design/movers/FoldArchitectMoverTests.cxxtest.hh
+/// @brief  Test suite for FoldArchitectMover
 /// @author Tom Linsky (tlinsky@uw.edu)
 
 // Test headers
@@ -26,7 +26,7 @@
 #include <protocols/denovo_design/components/StructureData.hh>
 #include <protocols/denovo_design/components/StructureDataFactory.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.hh>
 #include <protocols/fldsgn/filters/SecondaryStructureFilter.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
 
@@ -37,9 +37,9 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 
-static basic::Tracer TR("BuildDeNovoBackboneMoverTests");
+static basic::Tracer TR("FoldArchitectMoverTests");
 
-class BuildDeNovoBackboneMoverTests : public CxxTest::TestSuite {
+class FoldArchitectMoverTests : public CxxTest::TestSuite {
 	//Define Variables
 	typedef protocols::denovo_design::architects::CompoundArchitect CompoundArchitect;
 	typedef protocols::denovo_design::architects::HelixArchitect HelixArchitect;
@@ -48,7 +48,7 @@ class BuildDeNovoBackboneMoverTests : public CxxTest::TestSuite {
 	typedef protocols::denovo_design::components::StructureDataFactory StructureDataFactory;
 	typedef protocols::denovo_design::components::RandomTorsionPoseFolder RandomTorsionPoseFolder;
 	typedef protocols::denovo_design::connection::ConnectionArchitect ConnectionArchitect;
-	typedef protocols::denovo_design::movers::BuildDeNovoBackboneMover BuildDeNovoBackboneMover;
+	typedef protocols::denovo_design::movers::FoldArchitectMover FoldArchitectMover;
 
 public:
 
@@ -81,7 +81,7 @@ public:
 		conn.apply( orig_sd );
 		TR << "Created " << orig_sd << std::endl;
 
-		BuildDeNovoBackboneMover fass;
+		FoldArchitectMover fass;
 		protocols::fldsgn::filters::SecondaryStructureFilter ss_filt;
 		ss_filt.set_use_dssp( true );
 		fass.set_score_filter( ss_filt );
@@ -131,7 +131,7 @@ public:
 		conn.set_segment2_ids( seg2 );
 		conn.set_motifs( "0LX", "0" );
 
-		BuildDeNovoBackboneMover fass;
+		FoldArchitectMover fass;
 		fass.set_score_filter( protocols::fldsgn::filters::SecondaryStructureFilter() );
 		CompoundArchitect arch( sd_id );
 		arch.add_architect( PoseArchitect( "trpcage" ) );

@@ -79,6 +79,13 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Sets the threshold; if the calculated filters core is <= threshold, the filter passes, otherwise it fails
+	void
+	set_threshold( core::Real const threshold ) { threshold_ = threshold; }
+
+	/// @brief Sets the SASA cutoff in order for a residue to be considered buried. If a residue has sasa <= sasa_cutoff, it is considered buried and will be ignored by the filter
+	void
+	set_sasa_cutoff( core::Real const sasa_cutoff ) { sasa_cutoff_ = sasa_cutoff; }
 
 private:   // options
 	/// @brief If total calculated filter score is <= theshold_, the filter passes, otherwise it fails.

@@ -80,6 +80,9 @@ public:
 public:
 	// mutators
 
+	void
+	set_use_dssp( bool const use_dssp ) { use_dssp_ = use_dssp; }
+
 	/// @brief Sets sheet topology to be filtered
 	void
 	set_sheet_topology( std::string const & sheet_topology );

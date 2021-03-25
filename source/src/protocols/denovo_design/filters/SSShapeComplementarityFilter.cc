@@ -104,18 +104,18 @@ SSShapeComplementarityFilter::parse_my_tag(
 	std::string const bp_filename( tag->getOption< std::string >( "blueprint", "" ) );
 	if ( bp_filename != "" ) {
 		protocols::parser::BluePrint bp( bp_filename );
-		secstruct_ = bp.secstruct();
+		set_secstruct( bp.secstruct() );
 	}
 
-	secstruct_ = tag->getOption< std::string >( "secstruct", secstruct_ );
+	set_secstruct( tag->getOption< std::string >( "secstruct", secstruct_ ) );
 
 	core::select::residue_selector::ResidueSelectorCOP selector =
 		core::select::residue_selector::parse_residue_selector( tag, data );
 	if ( selector ) set_residue_selector( *selector );
 
-	verbose_ = tag->getOption< bool >( "verbose", verbose_ );
-	calc_loops_ = tag->getOption< bool >( "loops", calc_loops_ );
-	calc_helices_ = tag->getOption< bool >( "helices", calc_helices_ );
+	set_verbose( tag->getOption< bool >( "verbose", verbose_ ) );
+	set_calc_loops( tag->getOption< bool >( "loops", calc_loops_ ) );
+	set_calc_helices( tag->getOption< bool >( "helices", calc_helices_ ) );
 	set_rejection_thresh( tag->getOption< core::Real >("min_sc", 0.0) );
 }
 

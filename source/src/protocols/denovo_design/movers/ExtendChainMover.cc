@@ -18,11 +18,12 @@
 
 //Project Headers
 #include <protocols/denovo_design/architects/CompoundArchitect.hh>
+#include <protocols/denovo_design/architects/MotifArchitect.hh>
 #include <protocols/denovo_design/architects/PoseArchitect.hh>
 #include <protocols/denovo_design/components/RandomTorsionPoseFolder.hh>
 #include <protocols/denovo_design/components/RemodelLoopMoverPoseFolder.hh>
 #include <protocols/denovo_design/connection/ConnectionArchitect.hh>
-#include <protocols/denovo_design/movers/BuildDeNovoBackboneMover.hh>
+#include <protocols/denovo_design/movers/FoldArchitectMover.hh>
 
 //Protocol Headers
 
@@ -62,7 +63,7 @@ namespace movers {
 /// @brief default constructor
 ExtendChainMover::ExtendChainMover() :
 	protocols::moves::Mover( ExtendChainMover::mover_name() ),
-	architect_( new architects::DeNovoMotifArchitect( "ExtendChain_DeNovoMotif__" ) ),
+	architect_( utility::pointer::make_shared< architects::MotifArchitect >( "ExtendChain_Motif__" ) ),
 	segment_names_(),
 	chain_(),
 	prepend_( false ),
@@ -150,7 +151,7 @@ ExtendChainMover::apply( core::pose::Pose & pose )
 	}
 	arch.add_connection( conn );
 
-	BuildDeNovoBackboneMover assemble;
+	FoldArchitectMover assemble;
 	assemble.set_architect( arch );
 
 	assemble.set_build_overlap( 1 );

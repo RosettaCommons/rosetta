@@ -93,7 +93,7 @@ HelixArchitect::design( core::pose::Pose const &, core::Real & random ) const
 
 	components::Segment const & chosen_motif = *motifs_[ motif_idx ];
 	TR << "Designing segment: " << chosen_motif << std::endl;
-	StructureDataOP sd( new components::StructureData( id() ) );
+	StructureDataOP sd( utility::pointer::make_shared< components::StructureData >( id() ) );
 	sd->add_segment( chosen_motif );
 
 	return sd;
@@ -102,7 +102,7 @@ HelixArchitect::design( core::pose::Pose const &, core::Real & random ) const
 void
 HelixArchitect::set_lengths( std::string const & lengths_str )
 {
-	set_lengths( parse_length_str< core::Size >( lengths_str ) );
+	set_lengths( parse_length_string< core::Size >( lengths_str ) );
 }
 
 void
@@ -117,10 +117,16 @@ HelixArchitect::set_lengths( Lengths const & lengths )
 		std::stringstream abego;
 		abego << 'X' << std::string( length, 'A' ) << 'X';
 
-		components::SegmentOP motif( new components::Segment( id() ) );
+		components::SegmentOP motif( utility::pointer::make_shared< components::Segment >( id() ) );
 		motif->extend( ss.str(), abego.str() );
 		motifs_.push_back( motif );
 	}
+}
+
+components::SegmentCOPs const &
+HelixArchitect::motifs() const
+{
+	return motifs_;
 }
 
 components::SegmentCOPs::const_iterator

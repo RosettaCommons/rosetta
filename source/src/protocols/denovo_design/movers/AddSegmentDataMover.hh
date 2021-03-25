@@ -83,6 +83,17 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Sets the name of the segment which will be created
+	void
+	set_segment_name( std::string const & name ) { segment_name_ = name; }
+
+	/// @brief Sets the abego of the segment to be created
+	void
+	set_abego( std::string const & abego ) { abego_ = abego; }
+
+	/// @brief Sets the secondary structure of the segment to be created
+	void
+	set_secstruct( std::string const & secstruct ) { secstruct_ = secstruct; }
 
 private:
 	void

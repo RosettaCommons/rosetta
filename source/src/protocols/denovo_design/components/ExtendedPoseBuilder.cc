@@ -45,12 +45,47 @@ namespace protocols {
 namespace denovo_design {
 namespace components {
 
-ExtendedPoseBuilder::ExtendedPoseBuilder():
-	utility::VirtualBase()
+PoseBuilder::PoseBuilder():
+	utility::VirtualBase(),
+	debug_( false )
+{}
+
+std::string
+create_debug_filename( std::string const & file_prefix, core::Size const index, std::string const & file_suffix )
 {
+	std::stringstream filename;
+	if ( !file_prefix.empty() ) {
+		filename << file_prefix << "_";
+	}
+	filename << std::setfill('0') << std::setw(2) << index;
+	if ( !file_suffix.empty() ) {
+		filename  << "_" << file_suffix;
+	}
+	filename << ".pdb";
+	return filename.str();
 }
 
+bool
+PoseBuilder::write_debug_pdb( core::pose::Pose const & pose, std::string const & filename ) const
+{
+	if ( debug_ ) {
+		return pose.dump_pdb( filename );
+	} else {
+		return true;
+	}
+}
+
+ExtendedPoseBuilder::ExtendedPoseBuilder():
+	PoseBuilder()
+{}
+
 ExtendedPoseBuilder::~ExtendedPoseBuilder() = default;
+
+PoseBuilderOP
+ExtendedPoseBuilder::clone() const
+{
+	return PoseBuilderOP( utility::pointer::make_shared< ExtendedPoseBuilder >( *this ) );
+}
 
 core::pose::PoseOP
 ExtendedPoseBuilder::apply( StructureData const & sd ) const
@@ -67,10 +102,10 @@ ExtendedPoseBuilder::apply( StructureData const & sd ) const
 		FoldGraph fg( cur_sd );
 		newpose->fold_tree( fg.fold_tree( { *cur_sd.segments_begin() } ) );
 	}
+	write_debug_pdb( *newpose, "debug-templates.pdb" );
 
-	newpose->dump_pdb( "frag_templates.pdb" );
 	extend_pose( *newpose, sd, template_segments );
-	newpose->dump_pdb( "frag_built.pdb" );
+	write_debug_pdb( *newpose, "debug-extended.pdb" );
 
 	// rebuild fold tree
 	FoldGraph fg( sd );
@@ -93,10 +128,14 @@ ExtendedPoseBuilder::find_template_segments( StructureData const & sd ) const
 core::pose::PoseOP
 ExtendedPoseBuilder::create_template_pose( StructureData const & sd, SegmentNames const & template_segments ) const
 {
-	core::pose::PoseOP newpose( new core::pose::Pose );
+	core::pose::PoseOP newpose( utility::pointer::make_shared< core::pose::Pose >() );
 
 	// look for segments with template pose
 	// add these segments to the pose
+	std::string const file_prefix = "debug-template";
+	std::string const file_suffix = "";
+	core::Size index = 0;
+
 	auto prev = template_segments.end();
 	for ( auto s=template_segments.begin(); s!=template_segments.end(); ++s ) {
 		Segment const & seg = sd.segment( *s );
@@ -109,6 +148,9 @@ ExtendedPoseBuilder::create_template_pose( StructureData const & sd, SegmentName
 			TR.Debug << "Appending residues from " << *s << std::endl;
 			append_residues_from_template_segment( *newpose, sd.segment( *prev ), seg );
 		}
+
+		write_debug_pdb( *newpose, create_debug_filename( file_prefix, index, file_suffix ) );
+		index++;
 		prev = s;
 	}
 
@@ -143,6 +185,10 @@ ExtendedPoseBuilder::extend_pose(
 	TR.Debug << "Chain endings = " << endings << std::endl;
 	TR.Debug << "SD= " << sd << std::endl;
 
+	std::string const file_prefix = "debug-extension";
+	core::Size index = 0;
+	std::string const file_suffix = "";
+
 	auto prev_template = template_segments.end();
 	auto next_template = template_segments.begin();
 	core::Size cur_resid = 1;
@@ -155,6 +201,8 @@ ExtendedPoseBuilder::extend_pose(
 			TR.Debug << "Template reached: " << *next_template << " extending by " << extend_size << std::endl;
 			core::Size const anchor = cur_resid + sd.segment( *s ).elem_length() - 1;
 			prepend_new_residues( pose, extend_size, cur_resid, anchor, "VAL", sd.segment( *s ).lower_dihedrals() );
+			write_debug_pdb( pose, create_debug_filename( file_prefix, index, file_suffix ) );
+			index++;
 			if ( ( prev_template != template_segments.end() ) && ( !sd.segment( *prev_template ).has_free_upper_terminus() ) ) {
 				TR.Debug << "Removing terminal variants starting at " << cur_resid - 1 << std::endl;
 				core::pose::remove_upper_terminus_type_from_pose_residue( pose, cur_resid - 1 );
@@ -184,6 +232,8 @@ ExtendedPoseBuilder::extend_pose(
 			} else {
 				append_new_residues( pose, extend_size, cur_resid - 1, cur_resid - 2, "VAL", ResidueDihedrals() );
 			}
+			write_debug_pdb( pose, create_debug_filename( file_prefix, index, file_suffix ) );
+			index++;
 			cur_resid += sd.segment( *s ).n_residues_before_cutpoint();
 			TR.Debug << "Cur_resid is now " << cur_resid << std::endl;
 			extend_size = sd.segment( *s ).n_residues_after_cutpoint();
@@ -210,6 +260,8 @@ ExtendedPoseBuilder::extend_pose(
 				"VAL",
 				ResidueDihedrals() );
 		}
+		write_debug_pdb( pose, create_debug_filename( file_prefix, index, file_suffix ) );
+		index++;
 	}
 
 	add_cutpoints( pose, sd );
@@ -322,13 +374,11 @@ append_residues_from_template_segment(
 
 		for ( core::Size resid=1; resid<=segment.upper_padding(); ++resid ) {
 			TR.Debug << "Appending padding residue after position " << pose_resid << std::endl;
-			pose.dump_pdb( "pad_before.pdb" );
 			if ( segment.has_upper_residue() ) {
 				pose.append_polymer_residue_after_seqpos( segment.upper_residue(), pose_resid, false );
 			} else {
 				pose.append_polymer_residue_after_seqpos( *dflt_rsd, pose_resid, true );
 			}
-			pose.dump_pdb( "pad_after.pdb" );
 			++pose_resid;
 		}
 
@@ -418,7 +468,6 @@ prepend_new_residues(
 	}
 	TR.Debug << "setting psi for " << stop - 1 << " to " << lower_dihedrals.psi() << " phi for " << lower_dihedrals.phi() << std::endl;
 	lower_dihedrals.set_in_pose( pose, stop - 1 );
-	pose.dump_pdb( "after_prepend.pdb" );
 }
 
 void
@@ -430,7 +479,6 @@ append_new_residues(
 	std::string const & type,
 	ResidueDihedrals const & upper_dihedrals )
 {
-	pose.dump_pdb( "pre_append.pdb" );
 	TR.Debug << "Appending " << num_residues << " at insert position " << insert_pos << std::endl;
 	if ( num_residues < 1 ) return;
 
@@ -472,7 +520,6 @@ append_new_residues(
 	}
 	TR.Debug << "setting psi/phi dihedrals for " << orig_pos << "/" << orig_pos+1 << " to " << upper_dihedrals.psi() << " " << upper_dihedrals.phi() << std::endl;
 	upper_dihedrals.set_in_pose( pose, orig_pos );
-	pose.dump_pdb( "after_append.pdb" );
 }
 
 } //protocols

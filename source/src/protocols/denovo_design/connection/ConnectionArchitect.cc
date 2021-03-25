@@ -89,9 +89,10 @@ ConnectionArchitect::parse_tag( utility::tag::TagCOP tag, basic::datacache::Data
 
 	bool const use_ideal_abego = tag->getOption< bool >( "ideal_abego", false );
 	if ( use_ideal_abego ) {
-		bool const extend_ss = tag->getOption< bool >( "extend_ss", true );
+		std::string const extend_ss = tag->getOption< std::string >( "extend_ss", "1" );
 		set_ideal_abego( use_ideal_abego, extend_ss );
 	}
+	set_use_hh_abego_rules( tag->getOption< bool >( "use_hh_rules", true ) );
 }
 
 void ConnectionArchitect::attributes_for_parse_my_tag(utility::tag::AttributeList& attlist) {
@@ -135,8 +136,13 @@ void ConnectionArchitect::attributes_for_parse_my_tag(utility::tag::AttributeLis
 		"false");
 
 	attlist + XMLSchemaAttribute::attribute_w_default(
-		"extend_ss", xsct_rosetta_bool,
-		"XSD XRW: TO DO",
+		"extend_ss", xs_string,
+		"Gives the SS types that can be extended during the connection. Extensions are part "
+		"of the loop and are expected to have secondary structure of 'L'. An empty string "
+		"or '0' means not to extend any secondary structures and use only the ideal loop "
+		"ABEGOS, e.g. EA, GG for Strand--Strand connections. With extend_ss='E', ABEGO "
+		"values of EA, EAB, BEA, BEAB, BGG, GGB, and BGGB are allowed. extend_ss='1' means "
+		"that all SS types can be extended.",
 		"true");
 }
 
@@ -250,7 +256,7 @@ ConnectionArchitect::set_user_chain2( core::Size const chain )
 
 /// @brief sets whether to use "ideal abego" loops according to Koga papers
 void
-ConnectionArchitect::set_ideal_abego( bool const ideal_abego, bool const extend_ss )
+ConnectionArchitect::set_ideal_abego( bool const ideal_abego, std::string const & extend_ss )
 {
 	if ( ideal_abego ) {
 		components::IdealAbegoGeneratorOP gen( new components::IdealAbegoGenerator( id() ) );
@@ -258,6 +264,15 @@ ConnectionArchitect::set_ideal_abego( bool const ideal_abego, bool const extend_
 		ideal_abego_ = gen;
 	} else {
 		ideal_abego_ = components::IdealAbegoGeneratorOP();
+	}
+}
+
+/// @brief sets whether or not to use the newer HH rules (https://doi.org/10.1101/2021.03.10.434454)
+void
+ConnectionArchitect::set_use_hh_abego_rules( bool const use_rules )
+{
+	if ( ideal_abego_ ) {
+		ideal_abego_->set_hh_rules_2021( use_rules );
 	}
 }
 
@@ -274,7 +289,12 @@ void
 ConnectionArchitect::set_motifs( std::string const & motif_str, std::string const & cutpoints_str )
 {
 	MotifCOPs const str_motifs = parse_motif_string( motif_str );
-	Lengths cutpoints = parse_length_string( cutpoints_str );
+	Lengths cutpoints;
+	if ( cutpoints_str != "auto" ) {
+		cutpoints = parse_length_string< core::Size >( cutpoints_str );
+	} else {
+		set_bridge( true );
+	}
 
 	if ( !bridge_ && cutpoints.empty() ) {
 		motifs_ = str_motifs;
