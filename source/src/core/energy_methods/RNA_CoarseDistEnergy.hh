@@ -74,7 +74,7 @@ public:
 	//RNA_CoarseDistEnergy( RNA_CoarseDistEnergy const & src );
 
 	// destructor (important for properly forward-declaring smart-pointer members)
-	virtual ~RNA_CoarseDistEnergy();
+	~RNA_CoarseDistEnergy() override;
 
 	/// clone
 	core::scoring::methods::EnergyMethodOP
@@ -108,7 +108,6 @@ public:
 
 	/// @brief Evaluate the interaction between a given residue pair
 	/// accumulating the unweighted energies in an EnergyMap
-	virtual
 	void
 	residue_pair_energy(
 		Residue const & rsd1,
@@ -124,7 +123,6 @@ public:
 	/// a derivative or an energy.  The default implementation returns "true" for all residue pairs.
 	/// Context-dependent two-body energies have the option of behaving as if they are context-independent
 	/// by returning "false" for residue pairs that do no move wrt each other.
-	virtual
 	bool
 	defines_score_for_residue_pair(
 		Residue const & res1,
@@ -139,7 +137,6 @@ public:
 	/// energy evaluation faster than its absense (e.g. a neighbor list). Derived energy methods should
 	/// return 'true' from this function to use the extended interface. The default method implemented
 	/// in this class returns 'false'
-	virtual
 	bool
 	use_extended_residue_pair_energy_interface() const override;
 
@@ -159,7 +156,6 @@ public:
 	/// invoked. This function should not be called unless the use_extended_residue_pair_energy_interface()
 	/// method returns "true".  Default implementation provided by this base class calls
 	/// utility::exit().
-	virtual
 	void
 	residue_pair_energy_ext(
 		Residue const & rsd1,
@@ -175,7 +171,6 @@ public:
 	/// particular residue in the context of a particular Pose.  This base class provides a noop
 	/// implementation for this function if there is nothing that the derived class needs to perform
 	/// in this setup phase.
-	virtual
 	void
 	setup_for_minimizing_for_residue(
 		Residue const & rsd,
@@ -191,7 +186,6 @@ public:
 	/// particular residue in the context of a particular Pose.  This base class provides a noop
 	/// implementation for this function if there is nothing that the derived class needs to perform
 	/// in this setup phase.
-	virtual
 	void
 	setup_for_minimizing_for_residue_pair(
 		Residue const & rsd1,
@@ -207,15 +201,13 @@ public:
 	/// @brief Does this EnergyMethod require the opportunity to examine the residue before scoring begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residues that are uninterested
 	/// in doing so.
-	virtual
 	bool
-	requires_a_setup_for_scoring_for_residue_opportunity( Pose const & pose ) const;
+	requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( Pose const & pose ) const override;
 
 	/// @brief Do any setup work should the coordinates of this residue (who is still guaranteed to be
 	/// of the same residue type as when setup_for_minimizing_for_residue was called) have changed so dramatically
 	/// as to possibly require some amount of setup work before scoring should proceed.
 	/// This function is used for both intra-residue setup and pre-inter-residue setup
-	virtual
 	void
 	setup_for_scoring_for_residue(
 		Residue const & rsd,
@@ -227,12 +219,10 @@ public:
 	/// @brief Does this EnergyMethod require the opportunity to examine each residue before derivative evaluation begins?  Not
 	/// all energy methods would.  The ScoreFunction will not ask energy methods to examine residue pairs that are uninterested
 	/// in doing so.
-	virtual
 	bool
 	requires_a_setup_for_derivatives_for_residue_opportunity( Pose const & pose ) const override;
 
 	/// @brief Do any setup work necessary before evaluating the derivatives for this residue
-	virtual
 	void
 	setup_for_derivatives_for_residue(
 		Residue const & rsd,
@@ -247,7 +237,6 @@ public:
 	/// The calling function must guarantee that the r1_atom_derivs vector1 holds at
 	/// least as many entries as there are atoms in rsd1, and that the r2_atom_derivs
 	/// vector1 holds at least as many entries as there are atoms in rsd2.
-	virtual
 	void
 	eval_residue_pair_derivatives(
 		Residue const & rsd1,
@@ -267,7 +256,6 @@ public:
 	/// equal the weighted result of a call to residue_pair_energy.
 	/// By default, bb_bb & bb_sc return 0 and sc_sc returns
 	/// residue pair energy.
-	virtual
 	void
 	backbone_backbone_energy(
 		Residue const & rsd1,
@@ -284,7 +272,6 @@ public:
 	/// equal the unweighted result of a call to residue_pair_energy.
 	/// By default, bb_bb & bb_sc return 0 and sc_sc returns
 	/// residue pair energy.
-	virtual
 	void
 	backbone_sidechain_energy(
 		Residue const & rsd1,
@@ -300,7 +287,6 @@ public:
 	/// equal the unweighted result of a call to residue_pair_energy.
 	/// By default, bb_bb & bb_sc return 0 and sc_sc returns
 	/// residue pair energy.
-	virtual
 	void
 	sidechain_sidechain_energy(
 		Residue const & rsd1,
@@ -310,19 +296,15 @@ public:
 		EnergyMap & emap
 	) const override;
 
-	virtual
 	bool
 	defines_intrares_energy( EnergyMap const & /*weights*/ ) const override { return false; }
 
-	virtual
 	void
 	eval_intrares_energy( const core::conformation::Residue&, const core::pose::Pose&, const core::scoring::ScoreFunction&, core::scoring::EnergyMap&) const override { }
 
-	virtual
 	core::Size
 	version() const override { return 1; }
 
-	virtual
 	core::Real
 	atomic_interaction_cutoff() const override { return 20; }
 

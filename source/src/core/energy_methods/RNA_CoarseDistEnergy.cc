@@ -298,7 +298,7 @@ RNA_CoarseDistEnergy::setup_for_minimizing_for_residue_pair(
 }
 
 bool
-RNA_CoarseDistEnergy::requires_a_setup_for_scoring_for_residue_opportunity( core::pose::Pose const & /*pose*/ ) const {
+RNA_CoarseDistEnergy::requires_a_setup_for_scoring_for_residue_opportunity_during_minimization( core::pose::Pose const & /*pose*/ ) const {
 	return true;
 }
 
