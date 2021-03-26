@@ -142,6 +142,41 @@ bool SplineFunc::same_type_as_me( Func const & other ) const
 }
 
 
+
+/// @brief Compare this SplineFunc to another one, and determine whether
+/// the two are equal within some threshold.
+/// @details The float threshold is used for comparing floating-point values.
+bool
+SplineFunc::is_approximately_equal(
+	SplineFunc const & other,
+	core::Real const float_threshold
+) const {
+	if ( this == &other ) return true; //If this is the same object, then we're done.
+	if ( !       same_type_as_me( other ) ) return false;
+	if ( ! other.same_type_as_me( *this ) ) return false;
+
+	if ( !equal_within_thresh( exp_val_, other.exp_val_, float_threshold) ) return false;
+	if ( !equal_within_thresh( weight_, other.weight_, float_threshold) ) return false;
+	if ( !equal_within_thresh( bin_size_, other.bin_size_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( lower_bound_x_, other.lower_bound_x_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( lower_bound_y_, other.lower_bound_y_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( upper_bound_x_, other.upper_bound_x_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( upper_bound_y_, other.upper_bound_y_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( lower_bound_dy_, other.lower_bound_dy_, float_threshold ) ) return false;
+	if ( !equal_within_thresh( upper_bound_dy_, other.upper_bound_dy_, float_threshold ) ) return false;
+	if ( bins_vect_.size() != other.bins_vect_.size() ) return false;
+	if ( potential_vect_.size() != other.potential_vect_.size() ) return false;
+	for ( core::Size i(1), imax(bins_vect_.size()); i<=imax; ++i ) {
+		if ( !equal_within_thresh( bins_vect_[i], other.bins_vect_[i], float_threshold ) ) return false;
+	}
+	for ( core::Size j(1), jmax(potential_vect_.size()); j<=jmax; ++j ) {
+		if ( !equal_within_thresh(potential_vect_[j], other.potential_vect_[j], float_threshold) ) return false;
+	}
+
+	return true;
+}
+
+
 // get_ functions to obtain values of member variables (mostly for unit test)
 core::Real SplineFunc::get_exp_val() const
 {
@@ -398,6 +433,16 @@ core::Size SplineFunc::show_violations( std::ostream &out, core::Real x, core::S
 
 	return Func::show_violations( out, x, verbose_level, threshold);
 } // show_violations()
+
+/// @brief Are two values equal within some threshold?
+bool
+SplineFunc::equal_within_thresh(
+	core::Real const val1,
+	core::Real const val2,
+	core::Real const threshold
+) const {
+	return std::abs( val1 - val2 ) < threshold;
+}
 
 } // constraints
 } // scoring

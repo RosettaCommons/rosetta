@@ -73,6 +73,11 @@ public:
 	bool operator == ( Func const & other ) const override;
 	bool same_type_as_me( Func const & other ) const override;
 
+	/// @brief Compare this SplineFunc to another one, and determine whether
+	/// the two are equal within some threshold.
+	/// @details The float threshold is used for comparing floating-point values.
+	bool is_approximately_equal( SplineFunc const & other, core::Real const float_threshold ) const;
+
 	/// @brief return SplineFunc member variables
 	core::Real get_exp_val() const;
 
@@ -118,6 +123,11 @@ public:
 
 	/// @brief show some sort of stringified representation of the violations for this constraint.
 	core::Size show_violations( std::ostream &out, core::Real x, core::Size verbose_level, core::Real threshold = 1 ) const override;
+
+private:
+
+	/// @brief Are two values equal within some threshold?
+	bool equal_within_thresh( core::Real const val1, core::Real const val2, core::Real const threshold ) const;
 
 private:
 

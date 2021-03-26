@@ -151,6 +151,41 @@ public:
  		run_multiinput_session( input_names, output_name, input_tensors, output_tensor, runtime );
  	}
 
+	/// @brief Equivalent of run_session() but for networks with multiple heads (multiple input tensors per run) and
+	/// multiple tails (multiple output tensors per run).
+ 	/// @details This method is provided so that no one needs to handle the TF_Session object directly (and its
+ 	/// creation and destruction can be handled safely by the RosettaTensorflowSessionContainer).
+ 	/// @param[in]	input_names		The names of the input tensors in the Tensorflow session graph.
+ 	/// @param[in]	output_names	The names of the output tensor in the Tensorflow session graph.
+ 	/// @param[in]	input_tensor	The tensors of inputs.  Must be in the same order as input_names.
+ 	/// @param[out]	ouput_tensor	The places to stick the outputs, overwritten by this operation.   Must be in the same order as output_names.
+ 	/// @param[out]	runtime			The time for the actual Tensorflow session evaluation, in microseconds.  The contents of runtime will be
+	/// overwritten by tihs operation.
+ 	/// @note There is no tracer output produced by this operation.  If you wish to write out runtime information, do something
+ 	/// with the runtime output variable.
+	/// @author Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org).
+ 	template< typename T1, typename T2 >
+ 	void run_multiinput_multioutput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		utility::vector1< std::string > const & output_names,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensors,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensors,
+ 		std::chrono::duration< double, std::micro > & runtime
+ 	) const;
+
+	/// @brief Overload of run_multiinput_multioutput_session for those who don't need runtime.
+	/// @author Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org).
+ 	template< typename T1, typename T2 >
+ 	void run_multiinput_multioutput_session(
+ 		utility::vector1< std::string > const & input_names,
+ 		utility::vector1< std::string > const & output_names,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T1> > const & input_tensors,
+ 		utility::vector1< RosettaTensorflowTensorContainer<T2> > & output_tensors
+ 	) const {
+ 		std::chrono::duration< double, std::micro > runtime;
+ 		run_multiinput_multioutput_session( input_names, output_names, input_tensors, output_tensors, runtime );
+ 	}
+
 
 	/// @brief Run multiple passes of a network with multiple inputs
 	/// @details for input_tensors, the INNER vector groups the different heads, the OUTER vector

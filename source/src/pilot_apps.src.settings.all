@@ -1122,6 +1122,7 @@ sources = {
 		"test_rosetta_thread_manager_advanced_API",
 		"test_rosetta_thread_manager_basic_API",
 		"test_tensorflow_graph_convolutional_nn",
+		"test_trRosetta",
 	],
 
 	# Z ######################################################################

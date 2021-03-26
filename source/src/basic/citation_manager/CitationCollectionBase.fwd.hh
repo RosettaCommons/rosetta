@@ -35,6 +35,7 @@ enum class CitedModuleType {
 	EnergyMethod,
 	SimpleMetric,
 	ConstraintGenerator,
+	NeuralNetwork,
 	Singleton,
 	Application,
 	CustomType, //Keep second-to-last

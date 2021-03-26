@@ -44,6 +44,8 @@ namespace utility {
 using ObjexxFCL::uppercase;
 using ObjexxFCL::lowercase;
 using ObjexxFCL::strip_whitespace;
+using ObjexxFCL::lstrip_whitespace;
+using ObjexxFCL::rstrip_whitespace;
 using ObjexxFCL::uppercased;
 using ObjexxFCL::lowercased;
 using ObjexxFCL::stripped_whitespace;

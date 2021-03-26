@@ -29,6 +29,13 @@ sources = {
 	"protocols/rpc": [
 		"rpc",
 	],
+	"protocols/trRosetta" : [
+		"trRosettaMultipleSequenceAlignment",
+		"trRosettaOutputsBase",
+		"trRosettaOutputs_v1",
+		"trRosettaProtocolBase",
+		"trRosettaProtocol_v1",
+	],
 	"protocols/wum": [
 		"DatabaseEntryWorkUnit",
 		"MoverList",

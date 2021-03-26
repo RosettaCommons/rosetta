@@ -89,14 +89,14 @@ RosettaTensorflowTensorContainer<T>::clone() const {
 
 /// @brief Initialize this to be a tensor with N dimensions, given by the entries in a vector.
 /// @details If already initialized, the old tensor is first deleted.
-/// @note This does not fill the tensor with anything.
+/// @note This does not fill the tensor with anything.  Also note that a zero-dimensional tensor
+/// is allowed in Tensorflow.  (A zero-dimensional tensor is a scalar).
 template < typename T >
 void
 RosettaTensorflowTensorContainer<T>::initialize(
 	TF_DataType const datatype,
 	utility::vector1< int64_t > const & dimensions
 ) {
-	runtime_assert_string_msg(!dimensions.empty(), "Error in RosettaTensorflowTensorContainer<T>::initialize(): The dimensions array cannot be empty.");
 
 	platform::Size numentries(1);
 	for( platform::Size const dim : dimensions ) {

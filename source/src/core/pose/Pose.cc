@@ -2199,7 +2199,7 @@ Pose::add_constraint( scoring::constraints::ConstraintCOP cst )
 }
 
 scoring::constraints::ConstraintCOPs
-Pose::add_constraints( scoring::constraints::ConstraintCOPs csts )
+Pose::add_constraints( scoring::constraints::ConstraintCOPs const & csts )
 {
 	energies_->clear();
 	if ( constraint_set_ == nullptr ) {

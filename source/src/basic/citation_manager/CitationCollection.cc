@@ -115,6 +115,7 @@ CitationCollection::get_enumerated_module_type_name(
 		{ CitedModuleType::EnergyMethod, "EnergyMethod" },
 		{ CitedModuleType::SimpleMetric, "SimpleMetric" },
 		{ CitedModuleType::ConstraintGenerator, "ConstraintGenerator" },
+		{ CitedModuleType::NeuralNetwork, "Neural Network" },
 		{ CitedModuleType::Singleton, "Singleton" },
 		{ CitedModuleType::Application, "Application" }
 		};

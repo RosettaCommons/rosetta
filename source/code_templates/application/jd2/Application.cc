@@ -53,8 +53,8 @@ main( int argc, char * argv [] )
 
 --new_app_options_in--
 
-		devel::init( argc, argv );
 		register_options();
+		devel::init( argc, argv );
 
 
 		--mover_namespace--::--class--OP mover_protocol( new --mover_namespace--::--class--() );

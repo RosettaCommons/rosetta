@@ -47,6 +47,9 @@ while test $# -gt 0; do
     if [[ "$1" == *zeromq* ]]; then
         git submodule update --init -- source/external/libzmq
     fi
+    if [[ "$1" == *tensorflow* ]]; then
+        git submodule update --init -- database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule
+    fi
     #if [[ "$1" == "*FOO*" ]]; then
     #    git submodule update --init -- source/exteranl/foo/
     #fi

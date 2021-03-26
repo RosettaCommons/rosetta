@@ -72,24 +72,25 @@ void RNA_IdealCoord::init() {
 	delta_cutoff_ = torsion_info.delta_cutoff();
 
 	//Names of the pdb files
-	utility::vector1 < std::string > pdb_file_list;
-	pdb_file_list.push_back( path_ + "/A_n_std.pdb" );
-	pdb_file_list.push_back( path_ + "/A_s_std.pdb" );
-	pdb_file_list.push_back( path_ + "/G_n_std.pdb" );
-	pdb_file_list.push_back( path_ + "/G_s_std.pdb" );
-	pdb_file_list.push_back( path_ + "/C_n_std.pdb" );
-	pdb_file_list.push_back( path_ + "/C_s_std.pdb" );
-	pdb_file_list.push_back( path_ + "/U_n_std.pdb" );
-	pdb_file_list.push_back( path_ + "/U_s_std.pdb" );
+	utility::vector1 < std::string > const pdb_file_list {
+		path_ + "/A_n_std.pdb",
+		path_ + "/A_s_std.pdb",
+		path_ + "/G_n_std.pdb",
+		path_ + "/G_s_std.pdb",
+		path_ + "/C_n_std.pdb",
+		path_ + "/C_s_std.pdb",
+		path_ + "/U_n_std.pdb",
+		path_ + "/U_s_std.pdb"
+		};
 
 	//Initialize the reference poses
 	chemical::ResidueTypeSetCOP rsd_set;
 	// FA_STANDARD now includes rna_phenix by default.
 	rsd_set = chemical::ChemicalManager::get_instance()->residue_type_set( chemical::FA_STANDARD );
 	for ( std::string const & file : pdb_file_list ) {
-		PoseOP ref_pose( new Pose() );
+		PoseOP ref_pose( utility::pointer::make_shared< Pose >() );
 		io::pdb::build_pose_from_pdb_as_is( *ref_pose, *rsd_set, file );
-		MiniPoseOP ref_mini_pose( new MiniPose( *ref_pose ) );
+		MiniPoseOP ref_mini_pose( utility::pointer::make_shared< MiniPose >( *ref_pose ) );
 		ref_mini_pose_list_.push_back( ref_mini_pose );
 	}
 }

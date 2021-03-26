@@ -16,6 +16,105 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "Kim T" "Simons" "KT"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Richard" "Bonneau" "R"
+        "Ingo" "Ruczinski" "I"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        1999
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Ab initio protein structure prediction of CASP III targets using ROSETTA.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        Suppl 3:171-6
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/(sici)1097-0134(1999)37:3+<171::aid-prot21>3.3.co;2-q
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Richard" "Bonneau" "R"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Jerry" "Tsai" "J"
+        "Ingo" "Ruczinski" "I"
+        "Dylan" "Chivian" "D"
+        "Carol" "Rohl" "C"
+        "Charlie" "Strauss" "CE"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2001
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Rosetta in CASP4: progress in ab initio protein structure prediction.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        Suppl 5:119-26
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/prot.1170
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Srivatsan" "Raman" "S"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Robert" "Vernon" "R"
+        "James" "Thompson" "J"
+        "Michael" "Tyka" "M"
+        "Ruslan" "Sadreyev" "R"
+        "Jimin" "Pei" "J"
+        "David" "Kim" "D"
+        "Elizabeth" "Kellogg" "E"
+        "Frank" "DiMaio" "F"
+        "Oliver" "Lange" "O"
+        "Lisa" "Kinch" "L"
+        "Will" "Sheffler" "W"
+        "Bong-Hyun" "Kim" "BH"
+        "Rhiju" "Das" "R"
+        "Nick V" "Grishin" "NV"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2009
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Structure prediction for CASP8 with all-atom refinement using Rosetta.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        77 Suppl 9:89-99
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/prot.22540
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Steven M" "Lewis" "SM"
     [END_PRIMARY_AUTHORS]
     [BEGIN_SENIOR_AUTHORS]
@@ -603,6 +702,36 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1002/pro.3974
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Jianyi" "Yang" "J"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Ivan" "Anishchenko" "I"
+        "Hahnbeom" "Park" "H"
+        "Zhenling" "Peng" "Z"
+        "Sergey" "Ovchinnikov" "S"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2020
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Improved protein structure prediction using predicted interresidue orientations
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proc Natl Acad Sci USA
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        117(3):1496-503
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1073/pnas.1914677117
     [END_DOI]
 [END_CITATION]
 

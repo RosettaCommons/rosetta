@@ -351,7 +351,7 @@ void set_native_in_mover(
 	using namespace basic::options::OptionKeys;
 
 	if ( options[ in::file::native ].user() ) {
-		core::pose::PoseOP native_pose( new core::pose::Pose );
+		core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
 		core::chemical::ResidueTypeSetCOP rsd_set;
 		if ( options[ in::file::fullatom ]() ) {
 			rsd_set = core::chemical::ChemicalManager::get_instance()->residue_type_set( "fa_standard" );

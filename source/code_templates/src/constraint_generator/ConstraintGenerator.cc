@@ -82,7 +82,7 @@ void
 
 	//here you should write code to describe the XML Schema for the class.  If it has only attributes, simply fill the probided AttributeList.
 
-	ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
+	protocols::constraint_generator::ConstraintGeneratorFactory::xsd_constraint_generator_type_definition_w_attributes(
 		xsd,
 		class_name(),
 		"DOCUMENTATION STRING FOR CLASS",

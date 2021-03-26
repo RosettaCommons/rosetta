@@ -349,8 +349,9 @@ public:
 	scoring::constraints::ConstraintCOP
 	add_constraint( scoring::constraints::ConstraintCOP cst );
 
+	/// @brief Add a list of constraints to a pose.
 	scoring::constraints::ConstraintCOPs
-	add_constraints( scoring::constraints::ConstraintCOPs csts );
+	add_constraints( scoring::constraints::ConstraintCOPs const & csts );
 
 	/// @brief re object_comparison see comment for ConstraintSet::remove_constraint function
 	bool
