@@ -19,6 +19,8 @@ src/utility/pointer/std/owning_ptr.hh:using std::static_pointer_cast;
 src/utility/pointer/std/owning_ptr.hh:using std::make_shared;
 src/utility/string_util.hh:using ObjexxFCL::lowercase;
 src/utility/string_util.hh:using ObjexxFCL::lowercased;
+src/utility/string_util.hh:using ObjexxFCL::lstrip_whitespace;
+src/utility/string_util.hh:using ObjexxFCL::rstrip_whitespace;
 src/utility/string_util.hh:using ObjexxFCL::strip_whitespace;
 src/utility/string_util.hh:using ObjexxFCL::stripped_whitespace;
 src/utility/string_util.hh:using ObjexxFCL::uppercase;

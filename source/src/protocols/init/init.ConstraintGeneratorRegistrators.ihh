@@ -7,11 +7,11 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   src/protocols/init/init.ResidueSelectorRegistrators.ihh
+/// @file   src/protocols/init/init.ConstraintGeneratorRegistrators.ihh
 /// @brief  Declare WidgetRegistrators as static (global) variables in this .cc file
 ///         so that at load time, they will be initialized, and the Creator classes
 ///         they register will be handed to the appropriate WidgetFactory.
-///         This is for ResidueSelectorRegistrators ONLY.
+///         This is for ConstraintGeneratorRegistrators ONLY.
 /// @author Tom Linsky ( tlinsky at uw dot edu )
 
 namespace protocols {
@@ -34,5 +34,6 @@ static ConstraintGeneratorRegistrator< fldsgn::SheetConstraintGeneratorCreator >
 static ConstraintGeneratorRegistrator< fold_from_loops::constraint_generator::SegmentedAtomPairConstraintGeneratorCreator > reg_SegmentedAtomPairConstraintGeneratorCreator;
 static ConstraintGeneratorRegistrator< fold_from_loops::constraint_generator::AutomaticSheetConstraintGeneratorCreator > reg_AutomaticSheetConstraintGeneratorCreator;
 
+static ConstraintGeneratorRegistrator< trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorCreator > reg_trRosettaConstraintGeneratorCreator;
 
 } // namespace protocols

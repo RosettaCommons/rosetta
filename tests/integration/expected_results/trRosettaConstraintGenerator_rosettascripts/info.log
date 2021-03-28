@@ -1,0 +1,97 @@
+core.init: Checking for fconfig files in pwd and ./rosetta/flags 
+core.init: Rosetta version: 2021.11.post.dev+383.vmullig.trRosettaintoRosetta.4e9e67f764e 4e9e67f764ef6017249fd505938ac1177665a154 git@github.com:RosettaCommons/main.git 2021-03-21T05:16:32
+core.init: command: ../../../../source/bin/rosetta_scripts.tensorflow.macosclangrelease -info trRosettaConstraintGenerator
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-47155253 seed_offset=0 real_seed=-47155253
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-47155253 RG_type=mt19937
+core.init: Resolved executable path: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaConstraintGenerator_rosettascripts/../../../../source/bin/rosetta_scripts.tensorflow.macosclangrelease
+core.init: Looking for database based on location of executable: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaConstraintGenerator_rosettascripts/../../../../database/
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.RosettaScripts.util: 
+The rosetta_scripts application was used with the -parser:info flag.
+Writing options for the indicated movers/filters/task operations/residue selectors/simple metrics/constraint generators/packer palettes:
+--------------------------------------------------------------------------------
+INFORMATION ABOUT CONSTRAINT GENERATOR "trRosettaConstraintGenerator":
+
+DESCRIPTION:
+
+The trRosettaConstraintGenerator takes as input a file containing a multiple sequence alignment, feeds this to the trRosetta neural network, and uses the output to generate distance and angle constraints between pairs of residues as described in Yang et al. (2020) Improved protein structure prediction using predicted interresidue orientations. Proc. Natl. Acad. Sci. USA 117(3):1496-503. https://doi.org/10.1073/pnas.1914677117.
+
+The trRosettaConstraintGenerator requires compilation with Tensorflow support.  To compile with Tensorflow support:
+
+1.  Download the Tensorflow 1.15 precompiled libraries for your operating system from one of the following.  (Note that GPU versions require CUDA drivers; see https://www.tensorflow.org/install/lang_c for more information.)
+	Linux/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.15.0.tar.gz
+	Linux/GPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gpu-linux-x86_64-1.15.0.tar.gz
+	Windows/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-1.15.0.zip
+	Windows/GPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gpu-windows-x86_64-1.15.0.zip
+	MacOS/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-darwin-x86_64-1.15.0.tar.gz
+	MacOS/GPU: None available.
+
+2.  Unzip/untar the archive into a suitable directory (~/mydir/ is used here as an example), and add the following environment variables:
+	Linux, Windows:
+		LIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib
+		LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/mydir/lib
+	MacOS:
+		LIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib
+		DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:~/mydir/lib
+
+3.  Edit your user.settings file (Rosetta/main/source/tools/build/user.settings), and uncomment (i.e. remove the octothorpe from the start of) the following lines:
+	import os
+		'program_path'  : os.environ['PATH'].split(':'),
+		'ENV' : os.environ,
+
+4.  Compile Rosetta, appending extras=tensorflow (for CPU-only) or extras=tensorflow_gpu (for GPU) to your scons command.  For example:
+	./scons.py -j 8 mode=release extras=tensorflow bin
+
+USAGE:
+
+<trRosettaConstraintGenerator msa_file=(string) generate_distance_constraints=(bool,"true") generate_omega_constraints=(bool,"true") generate_theta_constraints=(bool,"true") generate_phi_constraints=(bool,"true") distance_constraint_prob_cutoff=(real,"0.05") omega_constraint_prob_cutoff=(real,"0.55") theta_constraint_prob_cutoff=(real,"0.55") phi_constraint_prob_cutoff=(real,"0.65") distance_constraint_weight=(real,"1.0") omega_constraint_weight=(real,"1.0") theta_constraint_weight=(real,"1.0") phi_constraint_weight=(real,"1.0") name=(string)>
+</trRosettaConstraintGenerator>
+
+OPTIONS:
+
+"trRosettaConstraintGenerator" tag:
+
+	msa_file (string):  Filename for a multiple sequence alignment file, in a3m format.  Dashes indicate gap sequences, and lowercase characters will be removed (and flanking regions ligated).  If not provided, the commandline option -trRosetta:msa_file will be used.  One or the other is required.
+
+	generate_distance_constraints (bool,"true"):  Set whether this will generate distance constraints.  Distance constraints constrain the distance between pairs of amino acids.  These are symmetric, and are only generated once per amino acid pair (since dist(a,b) == dist(b,a)).  Defaults to commandline setting -trRosetta:use_distance_constraints.
+
+	generate_omega_constraints (bool,"true"):  Set whether this will generate omega dihedral constraints.  Omega constraints constrain the dihedral between CA1-CB1-CB2-CA2 in pairs of amino acids.  These are symmetric, and are only generated once per amino acid pair (since omega(a,b) == omega(b,a)).  Note that this is NOT omega the backbone dihedral torsion!  Defaults to commandline setting -trRosetta:use_omega_constraints.
+
+	generate_theta_constraints (bool,"true"):  Set whether this will generate theta dihedral constraints.  Theta constraints constrain the dihedral between N1-CA1-CB1-CB2 in pairs of amino acids.  These are asymmetric (i.e. theta(a,b)!=theta(b,a)), so there are two per amino acid pair (unless a == b, which is skipped).  Defaults to commandline setting -trRosetta:use_theta_constraints.
+
+	generate_phi_constraints (bool,"true"):  Set whether this will generate phi angle constraints.  Phi constraints constrain the angle between CA1-CB1-CB2 in pairs of amino acids.  These are asymmetric (i.e. phi(a,b)!=phi(b,a)), so there are two per amino acid pair (unless a == b, which is skipped).  Note that this is NOT phi the backbone dihedral torsion!  Defaults to commandline setting -trRosetta:use_phi_constraints.
+
+	distance_constraint_prob_cutoff (real,"0.05"):  Set the probability cutoff below which we omit a distance constraint.  Default 0.05, or whatever is set on the commandline with the -trRosetta:distance_constraint_prob_cutoff commandline option.
+
+	omega_constraint_prob_cutoff (real,"0.55"):  Set the probability cutoff below which we omit a omega dihedral constraint.  Default 0.55, or whatever is set on the commandline with the -trRosetta:omega_constraint_prob_cutoff commandline option.
+
+	theta_constraint_prob_cutoff (real,"0.55"):  Set the probability cutoff below which we omit a theta dihedral constraint.  Default 0.55, or whatever is set on the commandline with the -trRosetta:theta_constraint_prob_cutoff commandline option.
+
+	phi_constraint_prob_cutoff (real,"0.65"):  Set the probability cutoff below which we omit a phi angle constraint.  Default 0.65, or whatever is set on the commandline with the -trRosetta:phi_constraint_prob_cutoff commandline option.
+
+	distance_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated distance constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:distance_constraint_weight commandline option.
+
+	omega_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated omega dihedral constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:omega_constraint_weight commandline option.
+
+	theta_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated theta dihedral constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:theta_constraint_weight commandline option.
+
+	phi_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated phi angle constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:phi_constraint_weight commandline option.
+
+	name (string):  The name given to this instance.
+
+
+
+References and author information for the trRosettaConstraintGenerator constraint generator:
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+trRosettaConstraintGenerator ConstraintGenerator's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Integrated trRosetta into Rosetta, and wrote the trRosettaConstraintGenerator.)
+
+--------------------------------------------------------------------------------
+
+The rosetta_scripts application will now exit.

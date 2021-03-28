@@ -1,0 +1,3 @@
+-msa_file inputs/T1001.a3m
+-in:file:fasta inputs/T1001.fasta
+-csts_file inputs/subset_of_csts.cst

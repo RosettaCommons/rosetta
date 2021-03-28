@@ -55,7 +55,7 @@ public:
 	trRosettaProtocolBase( trRosettaProtocolBase const & ) = default;
 
 	/// @brief Destructor.
-	virtual ~trRosettaProtocolBase();
+	~trRosettaProtocolBase() override;
 
 public:
 

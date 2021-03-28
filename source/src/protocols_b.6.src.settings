@@ -207,6 +207,9 @@ sources = {
 	"protocols/topology_broker/claims": [
 		"DofClaim",
 	],
+	"protocols/trRosetta_protocols/constraint_generators":[
+		"trRosettaConstraintGenerator",
+	],
 	"protocols/fold_from_loops/filters": [
 		"RmsdFromResidueSelectorFilter",
 		"ScorePoseSegmentFromResidueSelectorFilter",

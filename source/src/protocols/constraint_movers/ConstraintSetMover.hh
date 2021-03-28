@@ -39,6 +39,10 @@ public:
 public:
 	ConstraintSetMover();
 	~ConstraintSetMover() override;
+
+	/// @brief Options constructor that sets the mover name.
+	/// @note This does NOT set the consraint file!  To do that, call
+	/// ConstraintSetMover::constraint_file() after construction.
 	ConstraintSetMover( std::string const & );
 
 	void read_options();

@@ -1,0 +1,59 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="cen" weights="score0.wts" >
+			<Reweight scoretype="atom_pair_constraint" weight="5.0" />
+			<Reweight scoretype="angle_constraint" weight="1.0" />
+			<Reweight scoretype="dihedral_constraint" weight="1.0" />
+		</ScoreFunction>
+		<ScoreFunction name="r15" weights="ref2015.wts" />
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" />
+	</SCOREFXNS>
+	<SIMPLE_METRICS>
+		<RMSDMetric name="measure_rmsd"
+			use_native="true"
+			super="true"
+			custom_type="RMSD_after_centroid_phase_"
+			rmsd_type="rmsd_protein_bb_heavy"
+		/>
+		<RMSDMetric name="measure_rmsd2"
+			use_native="true"
+			super="true"
+			custom_type="RMSD_after_fullatom_phase_"
+			rmsd_type="rmsd_protein_bb_heavy"
+		/>
+
+	</SIMPLE_METRICS>
+	<CONSTRAINT_GENERATORS>
+		<trRosettaConstraintGenerator name="gen_csts"
+			msa_file="inputs/1r6j_msa.a3m"
+		/> 
+	</CONSTRAINT_GENERATORS>
+	<MOVERS>
+		<InitializeByBins name="randomize_bb"
+			bin_params_file="ABBA"
+		/>
+		<AddConstraints name="gen_csts_mover"
+			constraint_generators="gen_csts"
+		/>
+		<MinMover name="minimize"
+			scorefxn="cen"
+			tolerance="0.0000001"
+			bb="true" chi="false" jump="0"
+		/>
+		<ClearConstraintsMover name="remove_csts" />
+		<SwitchResidueTypeSetMover name="make_fullatom" set="fa_standard"/>
+		<FastRelax name="frlx" repeats="3" scorefxn="r15_cst" />
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="randomize_bb" />
+		<Add mover="gen_csts_mover" />
+		<Add mover="minimize" />
+		<Add metrics="measure_rmsd" />
+		<Add mover="remove_csts" />
+		<Add mover="make_fullatom" />
+		<Add mover="gen_csts_mover" />
+		<Add mover="frlx" />
+		<Add metrics="measure_rmsd2" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+</ROSETTASCRIPTS>

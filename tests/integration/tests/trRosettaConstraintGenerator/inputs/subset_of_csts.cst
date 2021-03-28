@@ -1,0 +1,25 @@
+Dihedral N 134 CA 134 CB 134 CB 31 SPLINE TAG ./inputs/134.31_theta.txt 1.0 1.000 0.26180
+Dihedral N 74 CA 74 CB 74 CB 40 SPLINE TAG ./inputs/74.40_theta.txt 1.0 1.000 0.26180
+Angle CA 84 CB 84 CB 111 SPLINE TAG ./inputs/84.111_phi.txt 1.0 1.000 0.26180
+Dihedral N 73 CA 73 CB 73 CB 99 SPLINE TAG ./inputs/73.99_theta.txt 1.0 1.000 0.26180
+Dihedral CA 119 CB 119 CB 125 CA 125 SPLINE TAG ./inputs/119.125_omega.txt 1.0 1.000 0.26180
+Dihedral CA 22 CB 22 CB 112 CA 112 SPLINE TAG ./inputs/22.112_omega.txt 1.0 1.000 0.26180
+AtomPair CB 36 CB 133 SPLINE TAG ./inputs/36.133.txt 1.0 1.000 0.50000
+Angle CA 11 CB 11 CB 16 SPLINE TAG ./inputs/11.16_phi.txt 1.0 1.000 0.26180
+AtomPair CB 69 CB 104 SPLINE TAG ./inputs/69.104.txt 1.0 1.000 0.50000
+Dihedral N 103 CA 103 CB 103 CB 131 SPLINE TAG ./inputs/103.131_theta.txt 1.0 1.000 0.26180
+AtomPair CB 52 CB 84 SPLINE TAG ./inputs/52.84.txt 1.0 1.000 0.50000
+Dihedral N 126 CA 126 CB 126 CB 98 SPLINE TAG ./inputs/126.98_theta.txt 1.0 1.000 0.26180
+Dihedral N 76 CA 76 CB 76 CB 102 SPLINE TAG ./inputs/76.102_theta.txt 1.0 1.000 0.26180
+Angle CA 109 CB 109 CB 113 SPLINE TAG ./inputs/109.113_phi.txt 1.0 1.000 0.26180
+AtomPair CB 74 CB 132 SPLINE TAG ./inputs/74.132.txt 1.0 1.000 0.50000
+Dihedral CA 29 CB 29 CB 52 CA 52 SPLINE TAG ./inputs/29.52_omega.txt 1.0 1.000 0.26180
+Angle CA 136 CB 136 CB 134 SPLINE TAG ./inputs/136.134_phi.txt 1.0 1.000 0.26180
+Dihedral CA 34 CB 34 CB 134 CA 134 SPLINE TAG ./inputs/34.134_omega.txt 1.0 1.000 0.26180
+Dihedral N 138 CA 138 CB 138 CB 131 SPLINE TAG ./inputs/138.131_theta.txt 1.0 1.000 0.26180
+Dihedral N 22 CA 22 CB 22 CB 10 SPLINE TAG ./inputs/22.10_theta.txt 1.0 1.000 0.26180
+Angle CA 94 CB 94 CB 99 SPLINE TAG ./inputs/94.99_phi.txt 1.0 1.000 0.26180
+Dihedral N 133 CA 133 CB 133 CB 134 SPLINE TAG ./inputs/133.134_theta.txt 1.0 1.000 0.26180
+AtomPair CB 55 CB 130 SPLINE TAG ./inputs/55.130.txt 1.0 1.000 0.50000
+AtomPair CB 51 CB 138 SPLINE TAG ./inputs/51.138.txt 1.0 1.000 0.50000
+Dihedral N 91 CA 91 CB 91 CB 102 SPLINE TAG ./inputs/91.102_theta.txt 1.0 1.000 0.26180

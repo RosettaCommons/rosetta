@@ -86,7 +86,7 @@ trRosettaMultipleSequenceAlignment::initialize_from_file_contents(
 	for( std::string linestripped /*Deliberately copied*/ : lines) {
 		if(linestripped.empty()) continue;
 		remove_lcase( utility::rstrip_whitespace( linestripped ) ); //Strip only trailing whitespace and remove lowercase characters.
-		if( linestripped.empty() || linestripped[0] == '>' ) {
+		if( linestripped.empty() || linestripped[0] == '>' || linestripped[0] == '#' ) {
 			continue; //Skip empty lines or annotation lines.
 		}
 		if( minlen == 0 || linestripped.size() < minlen ) {

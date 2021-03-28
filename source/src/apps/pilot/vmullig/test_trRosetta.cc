@@ -49,6 +49,8 @@ void register_options() {
 
 }
 
+#ifdef USE_TENSORFLOW
+
 OPT_KEY( String, expected_inputs_formatted )
 OPT_KEY( String, expected_distance_output_file )
 OPT_KEY( String, expected_phi_output_file )
@@ -57,8 +59,6 @@ OPT_KEY( String, expected_omega_output_file )
 OPT_KEY( Integer, model_version )
 OPT_KEY( Real, error_threshold)
 OPT_KEY( String, input_msa_file )
-
-#ifdef USE_TENSORFLOW
 
 /// @brief Given an input multiple sequence alignment file and its expected conversion to integers,
 /// check that we're converting correctly.
@@ -342,13 +342,8 @@ do_test(
 /// @brief Program entry point.
 int
 main(
-#ifdef USE_TENSORFLOW
 	int argc,
 	char * argv []
-#else // !USE_TENSORFLOW
-	int,
-	char * []
-#endif // USE_TENSORFLOW
 ) {
 	try {
 #ifdef USE_TENSORFLOW
@@ -392,12 +387,14 @@ main(
 		runtime_assert_string_msg( success, errmsg + "The test_trRosetta integration test FAILED." );
 		TR << "The test_trRosetta integration test PASSED." << std::endl;
 #else
+		//Initialize:
+		devel::init( argc, argv );
+
 		utility_exit_with_message(
 			"The test_trRosetta application requires compilation with the extras=tensorflow or extras=tensorflow_gpu option.\n\n"
 			+ basic::tensorflow_manager::get_tensorflow_compilation_instructions( "test_trRosetta application" )
 		);
 #endif
-
 	} catch ( utility::excn::Exception const & e ) {
 		e.display();
 		return -1;

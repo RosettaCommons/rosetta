@@ -29,3 +29,5 @@
 #include <protocols/fldsgn/SheetConstraintGeneratorCreator.hh>
 #include <protocols/fold_from_loops/constraint_generator/SegmentedAtomPairConstraintGeneratorCreator.hh>
 #include <protocols/fold_from_loops/constraint_generator/AutomaticSheetConstraintGeneratorCreator.hh>
+
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGeneratorCreator.hh>

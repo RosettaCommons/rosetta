@@ -1,0 +1,208 @@
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/trRosetta.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="cen" weights="score0.wts">
+			<Reweight scoretype="atom_pair_constraint" weight="5.0"/>
+			<Reweight scoretype="angle_constraint" weight="1.0"/>
+			<Reweight scoretype="dihedral_constraint" weight="1.0"/>
+		</ScoreFunction>
+		<ScoreFunction name="r15" weights="ref2015.wts"/>
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts"/>
+	</SCOREFXNS>
+	<SIMPLE_METRICS>
+		<RMSDMetric custom_type="RMSD_after_centroid_phase_" name="measure_rmsd" rmsd_type="rmsd_protein_bb_heavy" super="true" use_native="true"/>
+		<RMSDMetric custom_type="RMSD_after_fullatom_phase_" name="measure_rmsd2" rmsd_type="rmsd_protein_bb_heavy" super="true" use_native="true"/>
+	</SIMPLE_METRICS>
+	<CONSTRAINT_GENERATORS>
+		<trRosettaConstraintGenerator msa_file="inputs/1r6j_msa.a3m" name="gen_csts"/>
+	</CONSTRAINT_GENERATORS>
+	<MOVERS>
+		<InitializeByBins bin_params_file="ABBA" name="randomize_bb"/>
+		<AddConstraints constraint_generators="gen_csts" name="gen_csts_mover"/>
+		<MinMover bb="true" chi="false" jump="0" name="minimize" scorefxn="cen" tolerance="0.0000001"/>
+		<ClearConstraintsMover name="remove_csts"/>
+		<SwitchResidueTypeSetMover name="make_fullatom" set="fa_standard"/>
+		<FastRelax name="frlx" repeats="3" scorefxn="r15_cst"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="randomize_bb"/>
+		<Add mover="gen_csts_mover"/>
+		<Add mover="minimize"/>
+		<Add metrics="measure_rmsd"/>
+		<Add mover="remove_csts"/>
+		<Add mover="make_fullatom"/>
+		<Add mover="gen_csts_mover"/>
+		<Add mover="frlx"/>
+		<Add metrics="measure_rmsd2"/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15"/>
+</ROSETTASCRIPTS>
+protocols.rosetta_scripts.RosettaScriptsParser: Loading native resource as native_pose to the datamap 
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "randomize_bb" of type InitializeByBins
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "gen_csts_mover" of type AddConstraints
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "minimize" of type MinMover
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "remove_csts" of type ClearConstraintsMover
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "make_fullatom" of type SwitchResidueTypeSetMover
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaConstraintGenerator_rosettascripts/../../../../database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "frlx" of type FastRelax
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following settings
+protocols.rosetta_scripts.ParsedProtocol: Added mover "randomize_bb"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "gen_csts_mover"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "minimize"
+core.simple_metrics.util: Added simple metric RMSDMetric.
+protocols.rosetta_scripts.ParsedProtocol: Added metrics: "measure_rmsd"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "remove_csts"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "make_fullatom"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "gen_csts_mover"
+protocols.rosetta_scripts.ParsedProtocol: Added mover "frlx"
+core.simple_metrics.util: Added simple metric RMSDMetric.
+protocols.rosetta_scripts.ParsedProtocol: Added metrics: "measure_rmsd2"
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER InitializeByBins - randomize_bb=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddConstraints - gen_csts_mover=======================
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Loading trRosetta model version 1.
+protocols.trRosetta.trRosettaProtocol_v1: Running version 1 trRosetta neural network...
+protocols.trRosetta.trRosettaProtocol_v1: Ran version 1 trRosetta protocol in 12904.1 milliseconds.
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER MinMover - minimize=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN METRIC measure_rmsd=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END METRIC measure_rmsd=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER ClearConstraintsMover - remove_csts=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER SwitchResidueTypeSetMover - make_fullatom=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER AddConstraints - gen_csts_mover=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER FastRelax - frlx=======================
+protocols.relax.FastRelax: CMD: repeat  8725.68  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  8725.68  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -23677.4  0  0  0.022
+protocols.relax.FastRelax: CMD: repack  -26841.9  0  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -26709.4  0  0  0.02805
+protocols.relax.FastRelax: CMD: min  -67187  31.6138  31.6138  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67187  31.6138  31.6138  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -65974  31.6138  31.6138  0.14575
+protocols.relax.FastRelax: CMD: repack  -67021.5  31.6138  31.6138  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -66992.3  31.6138  31.6138  0.154
+protocols.relax.FastRelax: CMD: min  -67314.3  31.5761  31.5761  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67314.3  31.5761  31.5761  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67166.8  31.5761  31.5761  0.30745
+protocols.relax.FastRelax: CMD: repack  -67175.7  31.5761  31.5761  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67164.6  31.5761  31.5761  0.31955
+protocols.relax.FastRelax: CMD: min  -67230.4  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67230.4  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67106.5  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: repack  -67107.7  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: min  -67107.7  31.5742  31.5742  0.55
+protocols.relax.FastRelax: MRP: 0  -67107.7  -67107.7  31.5742  31.5742  
+protocols.relax.FastRelax: CMD: accept_to_best  -67107.7  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -67107.7  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67107.7  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67388.4  31.5742  31.5742  0.022
+protocols.relax.FastRelax: CMD: repack  -67419.1  31.5742  31.5742  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67408.7  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: min  -67408.7  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67408.7  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67206  31.5742  31.5742  0.14575
+protocols.relax.FastRelax: CMD: repack  -67245.6  31.5742  31.5742  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: min  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67033.6  31.5742  31.5742  0.30745
+protocols.relax.FastRelax: CMD: repack  -67036.1  31.5742  31.5742  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67020.6  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: min  -67020.6  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67020.6  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -66724.5  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: repack  -66726.3  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: min  -66726.3  31.5742  31.5742  0.55
+protocols.relax.FastRelax: MRP: 1  -66726.3  -67107.7  31.5742  31.5742  
+protocols.relax.FastRelax: CMD: accept_to_best  -66726.3  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -66726.3  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -66726.3  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67400.8  31.5742  31.5742  0.022
+protocols.relax.FastRelax: CMD: repack  -67418.4  31.5742  31.5742  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67407.6  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: min  -67407.6  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67407.6  31.5742  31.5742  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67198.9  31.5742  31.5742  0.14575
+protocols.relax.FastRelax: CMD: repack  -67245.5  31.5742  31.5742  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: min  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67234.7  31.5742  31.5742  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67033.6  31.5742  31.5742  0.30745
+protocols.relax.FastRelax: CMD: repack  -67036.4  31.5742  31.5742  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -67020.9  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: min  -67020.9  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -67020.9  31.5742  31.5742  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -66725.9  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: repack  -66726.2  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: min  -66726.2  31.5742  31.5742  0.55
+protocols.relax.FastRelax: MRP: 2  -66726.2  -67107.7  31.5742  31.5742  
+protocols.relax.FastRelax: CMD: accept_to_best  -66726.2  31.5742  31.5742  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -66726.2  31.5742  31.5742  0.55
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN METRIC measure_rmsd2=======================
+protocols.rosetta_scripts.ParsedProtocol: =======================END METRIC measure_rmsd2=======================
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+rosetta_scripts Application's citation(s):
+Fleishman SJ, Leaver-Fay A, Corn JE, Strauch E-M, Khare SD, Koga N, Ashworth J, Murphy P, Richter F, Lemmon G, Meiler J, and Baker D.  (2011).  RosettaScripts: A Scripting Language Interface to the Rosetta Macromolecular Modeling Suite.  PLoS ONE 6(6):e20161.  doi: 10.1371/journal.pone.0020161.
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+FastRelax Mover's citation(s):
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+
+The following UNPUBLISHED Rosetta modules were used during this run of Rosetta.  Their authors should be included in the author list when this work is published:
+
+RMSDMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+trRosettaConstraintGenerator ConstraintGenerator's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Integrated trRosetta into Rosetta, and wrote the trRosettaConstraintGenerator.)
+
+AddConstraints Mover's author(s):
+Thomas W. Linsky, Neoleukin Therapeutics Inc <tlinsky@gmail.com>  (Created the ConstraintGenerator framework and the AddConstraints mover.)
+
+RosettaTensorflowManager Singleton's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Created the RosettaTensorflowManager.)
+Jack Magure, Menten AI <jack.maguire@menten.ai>  (Expanded RosettaTensorflowManager capabilities for multi-head jobs and wrote tests.)
+Sergey Lyskov, Gray Lab, Department of Chemical & Biomolecular Engineering, Johns Hopkins University <Sergey.Lyskov@jhu.edu>  (Added testing infrastructure and helped to create the Rosetta-Tensorflow linked build.)
+
+

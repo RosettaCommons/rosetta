@@ -50,7 +50,7 @@ public:
 	trRosettaProtocol_v1( trRosettaProtocol_v1 const & ) = default;
 
 	/// @brief Destructor.
-	virtual ~trRosettaProtocol_v1();
+	~trRosettaProtocol_v1() override;
 
 	/// @brief Copy this ojbect and return an owning pointer to the copy.
 	basic::tensorflow_manager::RosettaTensorflowProtocolBaseOP clone() const override;
