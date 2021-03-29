@@ -295,7 +295,7 @@ class PR_UDPServer:
 
 class PR_PyMOLServer:
     def _color_model(self, name, etype, s):
-        if etype == 'X11Colors':
+        if etype == b'X11Colors':
             palette = 'X'
         else:
             palette = 'R'

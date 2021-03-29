@@ -48,7 +48,7 @@ from array import array
 
 from io import BytesIO
 
-DEBUG = True
+DEBUG = False
 
 if not DEBUG:
     import pymol
@@ -311,7 +311,8 @@ class PR_UDPServer:
 
 class PR_PyMOLServer:
     def _color_model(self, name, etype, s):
-        if etype == 'X11Colors':
+        #print(f'_color_model: name:{name}\netype:{etype}\ns:{s}')
+        if etype == b'X11Colors':
             palette = 'X'
         else:
             palette = 'R'
@@ -320,7 +321,7 @@ class PR_PyMOLServer:
             score = ('%s' % s[(i + 6):(i + 8)])
             color = palette + score
             target = '%s and chain %s and resi %s' % (name, s[i], s[(i + 1):(i + 6)])
-            #print 'Color: %s, target:%s' % (color, target)
+            #print( f'Color:{color}, target:{target}' )
             pymol.cmd.color(color, target)
 
     # Code for processing commands from PyRosetta goes here within the if
@@ -1203,10 +1204,9 @@ if not DEBUG:
     pymol.cmd.extend('plot3d', plot3d)
 
     pymol.cmd.extend('set_spectrum', set_spectrum)
-    pymol.cmd.extend('start_rosetta_server', start_rosetta_server)
+    #pymol.cmd.extend('start_rosetta_server', start_rosetta_server)
 
-
-
+    #print('Colors defined! ---------------------------------------------------------------------------------------------------')
 
 
 def tcp_client_main(ip, port, secret, verbose):
