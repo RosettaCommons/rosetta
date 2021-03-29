@@ -161,7 +161,7 @@ GlycopeptideDockingLowResRefinement::apply( core::pose::Pose& pose ){
 
 	core::Real init_MC_temp = 2.0;
 	core::Real final_MC_temp = 0.6;
-	core::Real gamma = pow( (final_MC_temp / init_MC_temp) , 1.0 / (outer_cycles_ - 1.0) );
+	core::Real gamma = pow( (final_MC_temp / init_MC_temp) , 1.0 / (flags_->low_res_outer_cycles() - 1.0) );
 	core::Real MC_temp = init_MC_temp;
 	core::Real torsions_acceptance;
 	core::Real distance_substrate_enzyme(0.0);
@@ -190,14 +190,14 @@ GlycopeptideDockingLowResRefinement::apply( core::pose::Pose& pose ){
 	distance_substrate_enzyme = calculate_sampled_distance(pose,flags_->glycosylation_residue_substrate(),flags_->get_sugar_donor());
 	TR<< "Initial distance "<<distance_substrate_enzyme<<std::endl;
 
-	for ( core::Size cycle_out = 1; cycle_out <= outer_cycles_; cycle_out++ ) {
+	for ( core::Size cycle_out = 1; cycle_out <= flags_->low_res_outer_cycles(); cycle_out++ ) {
 
 		mc_->set_temperature( MC_temp );
 		//pose.fold_tree(*ft_docking_);
 		perturber->apply( pose );
 		jump_minimizer_->apply( pose );
-		sample_torsions( pose, inner_cycles_torsions_, torsions_acceptance,  mm_upstream );
-		sample_torsions( pose, inner_cycles_torsions_, torsions_acceptance,  mm_downstream );
+		sample_torsions( pose, flags_->low_res_inner_cycles(), torsions_acceptance,  mm_upstream );
+		sample_torsions( pose, flags_->low_res_inner_cycles(), torsions_acceptance,  mm_downstream );
 		torsion_minimizer_->apply( pose );
 
 		MC_temp = MC_temp*gamma;
@@ -220,11 +220,11 @@ GlycopeptideDockingLowResRefinement::apply( core::pose::Pose& pose ){
 
 	mc_->set_temperature( final_MC_temp );
 	//Additional sampling at the final MC_temperature
-	for ( core::Size cycle = 1; cycle <= outer_cycles_; cycle++ ) {
+	for ( core::Size cycle = 1; cycle <= flags_->low_res_outer_cycles(); cycle++ ) {
 		perturber->apply( pose );
 		jump_minimizer_->apply( pose );
-		sample_torsions( pose, inner_cycles_torsions_, torsions_acceptance,  mm_upstream );
-		sample_torsions( pose, inner_cycles_torsions_, torsions_acceptance,  mm_downstream );
+		sample_torsions( pose, flags_->low_res_inner_cycles(), torsions_acceptance,  mm_upstream );
+		sample_torsions( pose, flags_->low_res_inner_cycles(), torsions_acceptance,  mm_downstream );
 		torsion_minimizer_->apply( pose );
 		// pymol_mover_->apply(pose);
 	}

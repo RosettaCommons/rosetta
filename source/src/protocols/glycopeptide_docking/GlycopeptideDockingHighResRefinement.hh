@@ -197,17 +197,6 @@ public:
 		return ft_substrate_;
 	}
 
-	/// Getters and Setters for some MC and ramping parameters ///
-	void
-	set_mc_cycles(int n) {
-		n_cycles_ = n;
-	}
-
-	int
-	get_mc_cycles(){
-		return n_cycles_;
-	}
-
 	void
 	set_target_attractive_weight(core::Real w){
 		target_atr_ = w;
@@ -245,8 +234,6 @@ private: // data
 	//////// MC and Sf ramping parameters ///////
 	//////////////////////////
 
-	/// @brief Number of outer cycles
-	core::Size n_cycles_;
 	/// @brief Boltmann sampling temperature
 	core::Real kt_;
 	/// @brief Final weight of the attractive force term

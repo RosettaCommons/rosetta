@@ -188,26 +188,6 @@ public:
 		return ft_substrate_;
 	}
 
-	void
-	set_mc_cycles(int n){
-		outer_cycles_ = n;
-	}
-
-	int
-	get_mc_cycles() {
-		return outer_cycles_;
-	}
-
-	void
-	set_torsions_cycles(int n){
-		inner_cycles_torsions_ = n;
-	}
-
-	int
-	get_torsion_cycles(){
-		return inner_cycles_torsions_;
-	}
-
 private: // methods
 
 	void
@@ -232,8 +212,6 @@ private: // data
 	protocols::minimization_packing::MinMoverOP torsion_minimizer_;
 	/// @brief Min mover for minmizing peptide-enzyme jump
 	protocols::minimization_packing::MinMoverOP jump_minimizer_;
-	core::Size outer_cycles_ = 30;
-	core::Size inner_cycles_torsions_ = 50;
 };
 
 std::ostream &

@@ -2295,13 +2295,25 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
                 ),
             Option('anchor_residue', 'String',
                 desc='Indicates to the Glycosylation Protocol which residue is being glycosylated.'
-                ), 
+                ),
            # Option('residue_to_randomize', 'String',
            #     desc='Indicates to the Glycosylation Protocol which residue is being glycosylated.'
            #     ),
             Option('low_res', 'Boolean',
                 desc='Indicate to the Glycosylation Protocol whether to perform low-resolution refinement of the substrate.',
                 default='false'
+                ),
+            Option('high_res_outer_cycles', 'Integer',
+                desc='How many outer MC cycles to run with the high-resolution refinement.',
+                default='10'
+                ),
+            Option('low_res_outer_cycles', 'Integer',
+                desc='How many outer MC cycles to run with the low-resolution refinement.',
+                default='30'
+                ),
+            Option('low_res_inner_cycles', 'Integer',
+                desc='How many inner torsion sampling cycles to run with the low-resolution refinement.',
+                default='50'
                 ),
             Option('high_res', 'Boolean',
                 desc='Indicate to the Glycosylation Protocol whether to perform high-resolution refinement of the substrate.',
@@ -4343,7 +4355,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				desc='Number of second cycles for high res dock. Default for Full Docking Protocol is 45.',
 				default='2'
 				),
-			
+
 			###### Protocol Rounds
 			Option('outer_cycle_rounds', 'Integer',
 				desc='Rounds for outer loop of the protocol (not for deterministic_graft ).  Each round chooses a CDR and designs. One run of 100 cycles with relax takes about 12 hours.\

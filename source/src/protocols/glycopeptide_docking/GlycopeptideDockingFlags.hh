@@ -166,6 +166,21 @@ public:
 		return glycosylation_high_res_refinement_;
 	}
 
+	/// @brief Get how many outer MC cycles to run for high-res refinement
+	core::Size high_res_outer_cycles(){
+		return high_res_outer_cycles_;
+	}
+
+	/// @brief Get how many outer MC cycles to run for low-res refinement
+	core::Size low_res_outer_cycles(){
+		return low_res_outer_cycles_;
+	}
+
+	/// @brief Get how many inner MC cycles to run for low-res refinement
+	core::Size low_res_inner_cycles(){
+		return low_res_inner_cycles_;
+	}
+
 	/// @brief Get residue index of sugar donor
 	core::Size get_sugar_donor(){
 		return donor_;
@@ -363,6 +378,10 @@ private:
 	bool glycosylation_high_res_refinement_=true; //done
 	bool glycosylation_low_res_refinement_=true;  //done
 	std::string constraints_="";
+
+	core::Size high_res_outer_cycles_=10;
+	core::Size low_res_outer_cycles_=30;
+	core::Size low_res_inner_cycles_=50;
 
 	std::string substrate_type_="peptide"; //done
 	std::string tree_type_="docking"; //done

@@ -1,5 +1,5 @@
 -in:file:s input/ppGalNAc-T2_UDP_glycopeptide.DSTTPAP.ppk.pdb
--in:file:s input/ppGalNAc-T2_UDP_glycopeptide.DSTTPAP.native.pdb
+-in:file:native input/ppGalNAc-T2_UDP_glycopeptide.DSTTPAP.native.pdb
 -include_sugars
 -out:prefix output/
 -nstruct 1
@@ -9,6 +9,8 @@
 -enable_backbone_moves_pp false
 -substrate_type peptide
 -low_res true
+-glycopeptide_docking::low_res_outer_cycles 15 # For testing only -- for production use defaults
+-glycopeptide_docking::low_res_inner_cycles 20 # For testing only -- for production use defaults
 -ntotal_backbone 4
 -nevery_interface 2
 #-mute all

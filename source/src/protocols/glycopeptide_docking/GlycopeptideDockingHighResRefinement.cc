@@ -145,7 +145,6 @@ GlycopeptideDockingHighResRefinement::setup(){
 	//////// Defaults ///////
 	//////////////////////////
 
-	n_cycles_ = 10;
 	target_atr_ = sf_->get_weight( fa_atr );
 	target_rep_ = sf_->get_weight( fa_rep );
 	kt_ = 0.8;
@@ -262,9 +261,11 @@ GlycopeptideDockingHighResRefinement::apply( core::pose::Pose& pose ){
 	sf_->set_weight( scoring::fa_rep, target_atr_ * starting_ramp_up_factor_ );
 	show(cout);
 
-	for ( core::Size cycle = 1; cycle <= n_cycles_; cycle++ ) {
-		if ( cycle % ( n_cycles_ / 10 ) == 0 ) {  // Ramp every ~10% of n_cycles.
-			Real fraction = Real( cycle ) / n_cycles_;
+	for ( core::Size cycle = 1; cycle <= flags_->high_res_outer_cycles(); cycle++ ) {
+		core::Size tenper = flags_->high_res_outer_cycles() / 10;
+		if ( tenper == 0 ) { tenper = 1; }
+		if ( cycle % tenper == 0 ) {  // Ramp every ~10% of n_cycles.
+			Real fraction = Real( cycle ) / flags_->high_res_outer_cycles();
 			ramp_score_weight( scoring::fa_atr, target_atr_, fraction );
 			ramp_score_weight( scoring::fa_rep, target_rep_, fraction );
 			mc_->reset( pose );

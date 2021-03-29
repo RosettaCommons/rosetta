@@ -73,6 +73,18 @@ GlycopeptideDockingFlags::setup_from_options(){
 		glycosylation_low_res_refinement_ = option[ OptionKeys::carbohydrates::glycopeptide_docking::low_res ];
 	}
 
+	if ( option[ OptionKeys::carbohydrates::glycopeptide_docking::high_res_outer_cycles ].user() ) {
+		high_res_outer_cycles_ = option[ OptionKeys::carbohydrates::glycopeptide_docking::high_res_outer_cycles ];
+	}
+
+	if ( option[ OptionKeys::carbohydrates::glycopeptide_docking::low_res_outer_cycles ].user() ) {
+		low_res_outer_cycles_ = option[ OptionKeys::carbohydrates::glycopeptide_docking::low_res_outer_cycles ];
+	}
+
+	if ( option[ OptionKeys::carbohydrates::glycopeptide_docking::low_res_inner_cycles ].user() ) {
+		low_res_inner_cycles_ = option[ OptionKeys::carbohydrates::glycopeptide_docking::low_res_inner_cycles ];
+	}
+
 	/*if ( option[ OptionKeys::rings::idealize_rings ].active() ) {
 	idealize_rings_ = option[ OptionKeys::rings::idealize_rings ];
 	}*/

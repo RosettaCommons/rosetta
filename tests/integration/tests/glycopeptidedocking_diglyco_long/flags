@@ -6,6 +6,9 @@
 -residue_to_glycosylate 540B
 -substrate_type peptide
 -low_res true
+-glycopeptide_docking::high_res_outer_cycles 5 # For testing only -- for production use defaults
+-glycopeptide_docking::low_res_outer_cycles 15 # For testing only -- for production use defaults
+-glycopeptide_docking::low_res_inner_cycles 20 # For testing only -- for production use defaults
 -ntotal_backbone 4
 -nevery_interface 2
 #-mute all
