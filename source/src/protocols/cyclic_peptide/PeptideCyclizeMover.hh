@@ -132,6 +132,7 @@ private:
 	std::string angle2_func_;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_;
+	bool ambiguous_torsion_;
 
 	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res1_bond_selector_;
 	utility::vector1<core::select::residue_selector::ResidueSelectorCOP> res2_bond_selector_;

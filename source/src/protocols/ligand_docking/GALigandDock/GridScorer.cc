@@ -22,6 +22,7 @@
 #include <core/chemical/AtomTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueProperties.hh>
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>
@@ -34,6 +35,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
+#include <core/scoring/disulfides/DisulfideAtomIndices.hh>
+#include <core/scoring/disulfides/FullatomDisulfidePotential.hh>
 #include <core/scoring/etable/Etable.hh>
 #include <core/scoring/elec/FA_ElecEnergy.hh>
 #include <core/energy_methods/CartesianBondedEnergy.hh>
@@ -256,6 +259,12 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 	has_cst_energies_ = (sfxn_cst_->get_nonzero_weighted_scoretypes().size() != 0);
 
 	sfxn_cart_->set_weight( core::scoring::cart_bonded, sfxn_soft_->get_weight( core::scoring::cart_bonded ) );
+	sfxn_cart_->set_weight( core::scoring::cart_bonded_angle, sfxn_soft_->get_weight( core::scoring::cart_bonded_angle ) );
+	sfxn_cart_->set_weight( core::scoring::cart_bonded_length, sfxn_soft_->get_weight( core::scoring::cart_bonded_length ) );
+	sfxn_cart_->set_weight( core::scoring::cart_bonded_torsion, sfxn_soft_->get_weight( core::scoring::cart_bonded_torsion ) );
+	sfxn_cart_->set_weight( core::scoring::cart_bonded_ring, sfxn_soft_->get_weight( core::scoring::cart_bonded_ring ) );
+	sfxn_cart_->set_weight( core::scoring::cart_bonded_improper, sfxn_soft_->get_weight( core::scoring::cart_bonded_improper ) );
+	sfxn_cart_->set_weight( core::scoring::dslf_fa13, sfxn_soft_->get_weight( core::scoring::dslf_fa13 ) );
 
 	bbox_padding_ = 5.0;
 	voxel_spacing_ = 0.5;
@@ -289,15 +298,31 @@ GridScorer::GridScorer( core::scoring::ScoreFunctionOP sfxn ) :
 GridScorer::~GridScorer(){}
 
 void
-GridScorer::prepare_grid( core::pose::Pose const &pose, core::Size const lig_resid ) {
+GridScorer::prepare_grid(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const &lig_resnos
+) {
+
 	// define bounding box
 	lig_com_ = {0,0,0};
 	maxRad_ = 0.0;
-	ligid_ = lig_resid;
-	core::conformation::Residue const &resLig = pose.residue( lig_resid );
-	for ( core::Size i=1; i<=resLig.natoms(); ++i ) lig_com_ += resLig.xyz(i);
-	lig_com_ /= resLig.natoms();
-	for ( core::Size i=1; i<=resLig.natoms(); ++i ) maxRad_ = std::max( maxRad_, lig_com_.distance(resLig.xyz(i)) );
+	ligids_ = lig_resnos;
+	core::Size nAtms = 0;
+	for ( auto lig_resno : lig_resnos ) {
+		core::conformation::Residue const &resLig = pose.residue( lig_resno );
+		for ( core::Size i=1; i<=resLig.natoms(); ++i ) {
+			lig_com_ += resLig.xyz(i);
+		}
+		nAtms += resLig.natoms();
+	}
+	lig_com_ /= nAtms;
+
+	for ( auto lig_resno : lig_resnos ) {
+		core::conformation::Residue const &resLig = pose.residue( lig_resno );
+		for ( core::Size i=1; i<=resLig.natoms(); ++i ) {
+			maxRad_ = std::max( maxRad_, lig_com_.distance(resLig.xyz(i)) );
+		}
+	}
 
 	if ( maxRad_ < bbox_padding_*1.5 ) { maxRad_ = bbox_padding_*1.5; } // modification for very small ligands
 
@@ -334,8 +359,10 @@ GridScorer::set_grid_dim_with_maxRad(core::Real in_maxRad) {
 }
 //// TODO
 void
-GridScorer::get_grid_atomtypes( utility::vector1< core::conformation::Residue > const & rsds )
-{
+GridScorer::get_grid_atomtypes(
+	utility::vector1< core::conformation::Residue > const & rsds,
+	utility::vector1< bool > const & use_sconly
+) {
 	uniq_atoms_.clear();
 
 	// Get list of unique atom types from rsds
@@ -346,7 +373,7 @@ GridScorer::get_grid_atomtypes( utility::vector1< core::conformation::Residue > 
 			bool j_is_backbone = (j<=res_i.last_backbone_atom()
 				|| (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
 
-			if ( j_is_backbone ) continue;
+			if ( j_is_backbone && use_sconly[i] ) continue;
 
 			int atmtype_ij = res_i.atom(j).type();
 			if ( uniq_atoms_.find(atmtype_ij) == uniq_atoms_.end() ) {
@@ -357,6 +384,8 @@ GridScorer::get_grid_atomtypes( utility::vector1< core::conformation::Residue > 
 
 	// Add in hydroxyl & polarH terms as a reference (not lkball, however)
 	core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
+
+	// fd: clash checks use these atoms?
 	int atmtype_OH = ats->atom_type_index("OH"); // hydroxyl as reference
 	if ( uniq_atoms_.find(atmtype_OH) == uniq_atoms_.end() ) {
 		uniq_atoms_[ atmtype_OH ] = core::conformation::Atom(atmtype_OH, 0);
@@ -402,20 +431,29 @@ GridScorer::get_grid_all_atomtypes()
 void
 GridScorer::calculate_grid(
 	core::pose::Pose const &pose,
-	core::Size const lig_resid,
+	utility::vector1< core::Size > const & lig_resids,
 	utility::vector1< core::Size > const &movingSCs
 ) {
 	auto start = std::chrono::steady_clock::now();
 
 	// initialize the grid if it has not been already
-	if ( dims_[2]*dims_[1]*dims_[0] == 0 ) prepare_grid( pose, lig_resid );
+	if ( dims_[2]*dims_[1]*dims_[0] == 0 ) {
+		prepare_grid( pose, lig_resids );
+	}
+
 	if ( uniq_atoms_.size() == 0 ) {
 		utility::vector1< core::conformation::Residue > rsds;
-		rsds.push_back( pose.residue(lig_resid) );
+		utility::vector1< bool > use_scs_only;
+
+		for ( auto lig_resid : lig_resids ) {
+			rsds.push_back( pose.residue(lig_resid) );
+			use_scs_only.push_back( false );
+		}
 		for ( core::Size ires = 1; ires <= movingSCs.size(); ++ires ) {
 			rsds.push_back( pose.residue(movingSCs[ires]) );
+			use_scs_only.push_back( true );
 		}
-		get_grid_atomtypes( rsds );
+		get_grid_atomtypes( rsds, use_scs_only );
 	}
 
 	core::pose::PoseOP trim_pose( new core::pose::Pose(pose) ); // pose with moving sidechains trimmed to GLY (used in grid calcs)
@@ -461,7 +499,7 @@ GridScorer::calculate_grid(
 	hbacceptors_.set_resolution( hash_grid_ );
 
 	for ( core::Size b_res=1; b_res<=pose.total_residue(); ++b_res ) {
-		if ( b_res == lig_resid ) continue;
+		if ( std::find( lig_resids.begin(), lig_resids.end(), b_res ) != lig_resids.end() ) continue;
 
 		bool is_moving = (std::find (movingSCs.begin(),movingSCs.end(), b_res) != movingSCs.end());
 
@@ -1044,7 +1082,13 @@ GridScorer::do_convolution_and_compute_coeffs(
 // score
 core::Real
 GridScorer::score( LigandConformer const &lig, bool soft ) {
-	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
+	bool make_new = false;
+	for ( core::Size i=1; i<=ligids_.size(); ++i ) {
+		if ( lig.ligand_typename(i) != ref_pose_->residue(ligids_[i]).name() ) {
+			make_new = true;
+		}
+	}
+	if ( make_new ) {
 		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
 	}
 	lig.to_pose( ref_pose_ );
@@ -1070,35 +1114,106 @@ GridScorer::score( core::pose::Pose &pose, LigandConformer const &lig, bool soft
 	bool useLKB = ( weightLKb != 0 || weightLKbi != 0 || weightLKbr != 0 || weightLKbru != 0 );
 
 	core::Size nSCs = lig.moving_scs().size();
-	utility::vector1< core::scoring::lkball::LKB_ResidueInfoOP > alllkbrinfo(nSCs+1);
+	core::Size nLigs = lig.ligand_ids().size();
+	utility::vector1< core::scoring::lkball::LKB_ResidueInfoOP > alllkbrinfo(nSCs+nLigs);
 
-	// 1-body energies
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	// [A] 1-body energies
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		if ( useLKB ) {
-			alllkbrinfo[i+1] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
+			alllkbrinfo[i] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
 		}
-		ReweightableRepEnergy score_i = get_1b_energy( res_i, alllkbrinfo[i+1], soft );
+		ReweightableRepEnergy score_i = get_1b_energy( res_i, alllkbrinfo[i], (i<=nLigs), soft );
 		score_grid += score_i.score( w_rep_ );
 	}
 
-	// 2-body energies
+	// [B] 2-body energies
 	//    [brute force calculations for interaction graph ... should be reasonable as long as too many sidechains are not allowed to move]
 	if ( nSCs > 0 ) {
-		for ( core::Size i=0; i<=nSCs; ++i ) {
-			core::Size resid_i = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+			core::Size resid_i = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 			core::conformation::Residue const &res_i = pose.residue( resid_i );
 
-			for ( core::Size j=i+1; j<=nSCs; ++j ) {
-				core::Size resid_j = lig.moving_scs()[j];
+			for ( core::Size j=i+1; j<=nLigs+nSCs; ++j ) {
+				core::Size resid_j = (j<=nLigs ? lig.ligand_ids()[j] : lig.moving_scs()[j-nLigs]);
 				core::conformation::Residue const &res_j = pose.residue( resid_j );
 
-				ReweightableRepEnergy score_ij = get_2b_energy( pose, res_i, alllkbrinfo[i+1], res_j, alllkbrinfo[j+1], soft );
+				ReweightableRepEnergy score_ij = get_2b_energy(
+					pose,
+					res_i, alllkbrinfo[i], (i<=nLigs),
+					res_j, alllkbrinfo[j], (j<=nLigs),
+					soft
+				);
 				score_grid += score_ij.score( w_rep_ );
 			}
 		}
 	}
+
+	// [C] special cases
+	// 1) cart bonded for ligands and cyclic peptides
+	// 2) disulfide for peptides
+	if ( nLigs > 1 ) {
+		core::scoring::EnergyMap emapcart;
+		for ( core::Size i=1; i<=nLigs; ++i ) {
+			core::Size ires = lig.ligand_ids()[i];
+			core::conformation::Residue const & rsd = pose.residue(ires);
+			core::Size nconnected = rsd.n_possible_residue_connections();
+			for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+				if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
+				core::Size other = rsd.residue_connection_partner( ic );
+
+				// if we want to allow ligand->reseptor chemical edges, need to change this logic
+				if ( other < ires ) continue;
+				if ( std::find(lig.ligand_ids().begin(),lig.ligand_ids().end(),other) == lig.ligand_ids().end() ) continue;
+
+				core::scoring::EnergyMap emapcart;
+				cartbonded_->residue_pair_energy(
+					pose.residue( ires ),
+					pose.residue( other ),
+					pose, *sfxn_cart_, emapcart );
+				score_grid += emapcart.dot( sfxn_cart_->weights() );
+			}
+		}
+
+		core::Real sc_dslf = sfxn_->get_weight( core::scoring::dslf_fa13 );
+		if ( sc_dslf != 0 ) {
+			for ( core::Size i=1; i<=nLigs; ++i ) {
+				// find disulf and score
+				core::Size ires = lig.ligand_ids()[i];
+				if ( pose.residue( ires ).has_variant_type( core::chemical::DISULFIDE ) &&
+						pose.residue_type( ires ).has( pose.residue_type( ires ).get_disulfide_atom_name() ) &&
+						pose.residue_type( ires ).get_disulfide_atom_name() != "CEN"
+						) {
+					core::Size const ii_connect_atom = pose.residue( ires ).atom_index(
+						pose.residue_type( ires ).get_disulfide_atom_name() );
+					core::Size other_res( 0 );
+					for ( core::Size jj = pose.residue( ires ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
+						if ( (core::Size) pose.residue( ires ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
+							other_res = pose.residue( ires ).connect_map( jj ).resid();
+							break;
+						}
+					}
+
+					// fd: if we want to consider ligand->receptor dslf, we need to update this logic
+					if ( other_res==0 || other_res<ires ) continue;
+					if ( std::find(lig.ligand_ids().begin(),lig.ligand_ids().end(),other_res) == lig.ligand_ids().end() ) continue;
+
+					core::scoring::disulfides::DisulfideAtomIndices di( pose.residue( ires ) );
+					core::scoring::disulfides::DisulfideAtomIndices dother( pose.residue( other_res ) );
+
+					core::Real score_ij = 0;
+					core::scoring::disulfides::FullatomDisulfidePotential().score_this_disulfide(
+						pose.residue( ires ),
+						pose.residue( other_res ),
+						di, dother, score_ij
+					);
+					score_grid += sc_dslf*score_ij;
+				}
+			}
+		}
+	}
+
 
 	// debugging output
 	if ( debug_ ) {
@@ -1138,56 +1253,6 @@ GridScorer::point_clash_energy(
 
 	return (weightrep*rep+penalty);
 }
-
-// one-body energies
-/*
-core::Real
-GridScorer::point_solvation_energy(
-numeric::xyzVector< core::Real > X,
-bool soft
-) {
-core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
-core::scoring::ScoreFunctionOP sf1b = soft? sfxn_1b_soft_ : sfxn_1b_;
-
-ReweightableRepEnergy score_grid;
-
-// 1 etable grid
-core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-int atmtype_ij = ats->atom_type_index("OH"); // hydroxyl as reference
-
-numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
-core::Real solv( 0.0 );
-solv = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true) ;
-
-return solv;
-}
-
-// one-body energies
-core::Real
-GridScorer::point_LJ_energy(
-numeric::xyzVector< core::Real > X,
-std::string atype_in,
-bool soft
-) {
-core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
-
-core::Real weightatr = sf->get_weight( core::scoring::fa_atr );
-core::Real weightrep = sf->get_weight( core::scoring::fa_rep );
-
-// 1 etable grid
-core::chemical::AtomTypeSetCOP ats = core::chemical::ChemicalManager::get_instance()->atom_type_set("fa_standard");
-int atmtype_ij = ats->atom_type_index("OH"); // hydroxyl as reference
-
-numeric::xyzVector< core::Real > idxX = (X - origin_) / voxel_spacing_;
-core::Real atr( 0.0 ), rep( 0.0 );
-atr = core::scoring::electron_density::interp_spline(coeffs_fasol_[ atmtype_ij ], idxX, true) ;
-rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_ij ], idxX, true) ;
-
-atr = ixform_atr( atr );
-rep = ixform_atr( rep );
-return weightatr*atr+weightrep*rep;
-}
-*/
 
 // fast enumeration w/o hbond & LKball
 core::Real
@@ -1232,6 +1297,7 @@ ReweightableRepEnergy
 GridScorer::get_1b_energy(
 	core::conformation::Residue const &res_i,
 	core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo,
+	bool include_bb,
 	bool soft
 ) {
 	core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
@@ -1255,7 +1321,7 @@ GridScorer::get_1b_energy(
 	for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
 		bool j_is_backbone =
 			( j<=res_i.last_backbone_atom() || (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
-		if ( j_is_backbone ) continue;
+		if ( !include_bb && j_is_backbone ) continue;
 
 		int atmtype_ij = res_i.atom(j).type();
 		numeric::xyzVector< core::Real > idxX = (res_i.xyz(j) - origin_) / voxel_spacing_;
@@ -1324,7 +1390,7 @@ GridScorer::get_1b_energy(
 
 	core::Real maxHbdis = 4.2;
 	for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
-		if ( !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
+		if ( !include_bb && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
 
 		hbdonors_.get_neighbors( res_i.xyz( *anum ), hbdon_neighborlist, maxHbdis );
 		core::Size bnum = res_i.atom_base( *anum );
@@ -1346,7 +1412,7 @@ GridScorer::get_1b_energy(
 		}
 	}
 	for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-		if ( !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
+		if ( !include_bb && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
 
 		core::Size dnum = res_i.atom_base( *hnum );
 		hbacceptors_.get_neighbors( res_i.xyz( dnum ), hbacc_neighborlist, maxHbdis );
@@ -1370,7 +1436,6 @@ GridScorer::get_1b_energy(
 
 	// 3 internal energy for ligands / moving SCs
 	core::pose::Pose pose;
-	//pose.append_residue_by_bond( res_i );
 
 	core::scoring::EnergyMap emap;
 	sf1b->eval_ci_1b( res_i, pose, emap );
@@ -1388,7 +1453,6 @@ GridScorer::get_1b_energy(
 	}
 	intraE += emapcart.dot( sfxn_cart_->weights() );
 
-	//score_grid.energy_ += intraE;
 	score_grid.oneb_wtd_ += intraE;
 
 	return score_grid;
@@ -1401,8 +1465,10 @@ GridScorer::get_2b_energy(
 	core::pose::Pose &pose,
 	core::conformation::Residue const &res_i,
 	core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_i,
+	bool incl_bb_i,
 	core::conformation::Residue const &res_j,
 	core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_j,
+	bool incl_bb_j,
 	bool soft
 ) {
 	core::scoring::ScoreFunctionOP sf = soft? sfxn_soft_ : sfxn_;
@@ -1432,15 +1498,16 @@ GridScorer::get_2b_energy(
 			bool jj_is_backbone =
 				( jj<=res_j.last_backbone_atom() || (jj>res_j.nheavyatoms() && jj<res_j.first_sidechain_hydrogen()) );
 
-			// new version: only skip BB:BB interactions
-			if ( ii_is_backbone && jj_is_backbone ) continue;
+			// only skip BB:BB interactions
+			// that is ... sc/bb interactions of receptor:receptor are scored
+			//         ... bb/bb interactions of ligand:receptor are scored
+			if ( !incl_bb_i && !incl_bb_j && ii_is_backbone && jj_is_backbone ) continue;
 
 			core::Real faatr, farep, fasol1, fasol2;
 			fast_eval_etable_split_fasol( etable_, res_i.atom(ii), res_j.atom(jj), faatr, farep, fasol1, fasol2 );
 			core::Real faelec = coulomb_->eval_atom_atom_fa_elecE(res_i.xyz(ii), res_i.atomic_charge(ii), res_j.xyz(jj), res_j.atomic_charge(jj) );
 
 			score_grid.fa_rep_ += weightrep*farep;
-			//score_grid.energy_ += weightatr*faatr + weightsol*(fasol1+fasol2) + weightelec*faelec;
 			score_grid.fa_atr_wtd_ += weightatr*faatr;
 			score_grid.fa_sol_wtd_ += weightsol*(fasol1+fasol2);
 			score_grid.fa_elec_wtd_ += weightelec*faelec;
@@ -1454,7 +1521,6 @@ GridScorer::get_2b_energy(
 					lkbrinfo_i->n_attached_waters()[ii],
 					lkbrinfo_i->water_offset_for_atom()[ii],
 					lkbrinfo_i->waters() );
-				//score_grid.energy_ += weightLKb*fasol1_lkball + weightLKbi*fasol1;
 				score_grid.lk_ball_wtd_ += weightLKb*fasol1_lkball + weightLKbi*fasol1;
 			}
 
@@ -1465,7 +1531,6 @@ GridScorer::get_2b_energy(
 					lkbrinfo_j->n_attached_waters()[jj],
 					lkbrinfo_j->water_offset_for_atom()[jj],
 					lkbrinfo_j->waters() );
-				//score_grid.energy_ += weightLKb*fasol2_lkball + weightLKbi*fasol2;
 				score_grid.lk_ball_wtd_ += weightLKb*fasol2_lkball + weightLKbi*fasol2;
 			}
 
@@ -1477,7 +1542,6 @@ GridScorer::get_2b_energy(
 					lkbrinfo_i->n_attached_waters()[ii], lkbrinfo_j->n_attached_waters()[jj],
 					lkbrinfo_i->water_offset_for_atom(ii), lkbrinfo_j->water_offset_for_atom(jj),
 					lkbrinfo_i->waters(), lkbrinfo_j->waters() );
-				//score_grid.energy_ += weightLKbr * (fasol1+fasol2) * fasol1_lkbridge + weightLKbru * fasol1_lkbridge;
 				score_grid.lk_ball_wtd_ += weightLKbr * (fasol1+fasol2) * fasol1_lkbridge + weightLKbru * fasol1_lkbridge;
 			}
 		}
@@ -1487,7 +1551,7 @@ GridScorer::get_2b_energy(
 	// donor j->acceptor i
 	for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
 		// keep as is : bb hbonds are in the background grid still
-		if ( !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
+		if ( !incl_bb_i && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
 		core::Size bnum = res_i.atom_base( *anum );
 		core::Size b0num = res_i.abase2( *anum );
 		A = res_i.xyz( *anum );
@@ -1498,7 +1562,7 @@ GridScorer::get_2b_energy(
 		hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
 
 		for ( auto hnum=res_j.Hpos_polar().begin(),hnume=res_j.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-			if ( !(*hnum>res_j.first_sidechain_hydrogen()) ) continue;
+			if ( !incl_bb_j && !(*hnum>res_j.first_sidechain_hydrogen()) ) continue;
 			core::Size dnum = res_j.atom_base( *hnum );
 			H = res_j.xyz( *hnum );
 			D = res_j.xyz( dnum );
@@ -1512,7 +1576,7 @@ GridScorer::get_2b_energy(
 	// donor i->acceptor j
 	for ( auto anum=res_j.accpt_pos().begin(),anume=res_j.accpt_pos().end(); anum!=anume; ++anum ) {
 		// keep as is : bb hbonds are in the background grid still
-		if ( !(*anum>res_j.last_backbone_atom() && *anum<=res_j.nheavyatoms()) ) continue;
+		if ( !incl_bb_j && !(*anum>res_j.last_backbone_atom() && *anum<=res_j.nheavyatoms()) ) continue;
 		core::Size bnum = res_j.atom_base( *anum );
 		core::Size b0num = res_j.abase2( *anum );
 		A = res_j.xyz( *anum );
@@ -1523,7 +1587,7 @@ GridScorer::get_2b_energy(
 		hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_j ));
 
 		for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-			if ( !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
+			if ( !incl_bb_i && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
 			core::Size dnum = res_i.atom_base( *hnum );
 			H = res_i.xyz( *hnum );
 			D = res_i.xyz( dnum );
@@ -1548,48 +1612,6 @@ GridScorer::get_2b_energy(
 	return score_grid;
 }
 
-core::Real
-GridScorer::clash_score( LigandConformer const &lig ) {
-	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
-		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
-	}
-	lig.to_pose( ref_pose_ );
-
-	// exact
-	if ( exact_ ) {
-		core::Real score_exact = (*sfxn_clash_)( *ref_pose_ );
-		return score_exact;
-	}
-
-	core::conformation::Residue const &resLig = ref_pose_->residue( lig.ligand_id() );
-
-	// 1 grid scores
-	core::Real score_grid = 0.0;
-	core::Real weightrep = sfxn_1b_clash_->get_weight( core::scoring::fa_rep );
-	for ( core::Size i=1; i<=resLig.natoms(); ++i ) {
-		int atmtype_i = resLig.atom(i).type();
-		numeric::xyzVector< core::Real > idxX = (resLig.xyz(i) - origin_) / voxel_spacing_;
-
-		core::Real penalty = move_to_boundary(idxX);
-
-		core::Real rep = core::scoring::electron_density::interp_spline(coeffs_farep_[ atmtype_i ], idxX, true);
-
-		rep = ixform_rep( rep ) + penalty;
-		score_grid += weightrep * rep;
-	}
-
-	// 2 internal ligand energy
-	core::scoring::EnergyMap emap;
-	sfxn_1b_clash_->eval_ci_1b( ref_pose_->residue(lig.ligand_id()), *ref_pose_, emap );
-	sfxn_1b_clash_->eval_cd_1b( ref_pose_->residue(lig.ligand_id()), *ref_pose_, emap );
-	sfxn_1b_clash_->eval_ci_intrares_energy( ref_pose_->residue(lig.ligand_id()), *ref_pose_, emap );
-	sfxn_1b_clash_->eval_cd_intrares_energy( ref_pose_->residue(lig.ligand_id()), *ref_pose_, emap );
-	// sum in
-	score_grid += emap.dot( sfxn_1b_clash_->weights() );
-
-	return score_grid;
-}
-
 void
 GridScorer::derivatives(
 	core::pose::Pose &pose,
@@ -1609,37 +1631,39 @@ GridScorer::derivatives(
 
 	// 0 build ligand virtual sites
 	core::Size nSCs = lig.moving_scs().size();
-	utility::vector1< utility::vector1< core::Size > > allNwaters(nSCs+1);
-	utility::vector1< utility::vector1< core::Size > > allwater_offsets(nSCs+1);
-	utility::vector1< core::scoring::lkball::WaterCoords > allwaters(nSCs+1);
-	utility::vector1< core::scoring::lkball::LKB_ResidueInfoOP > alllkbrinfo(nSCs+1);
+	core::Size nLigs = lig.ligand_ids().size();
+
+	utility::vector1< utility::vector1< core::Size > > allNwaters(nLigs+nSCs);
+	utility::vector1< utility::vector1< core::Size > > allwater_offsets(nLigs+nSCs);
+	utility::vector1< core::scoring::lkball::WaterCoords > allwaters(nLigs+nSCs);
+	utility::vector1< core::scoring::lkball::LKB_ResidueInfoOP > alllkbrinfo(nLigs+nSCs);
 	if ( useLKB ) {
-		for ( core::Size i=0; i<=nSCs; ++i ) {
-			core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+			core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 			core::conformation::Residue const &res_i = pose.residue( resid );
-			alllkbrinfo[i+1] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
-			alllkbrinfo[i+1]->build_waters( res_i, true );
-			allNwaters[i+1] = alllkbrinfo[i+1]->n_attached_waters();
-			allwater_offsets[i+1] = alllkbrinfo[i+1]->water_offset_for_atom();
-			allwaters[i+1] = alllkbrinfo[i+1]->waters();
+			alllkbrinfo[i] = utility::pointer::make_shared< core::scoring::lkball::LKB_ResidueInfo > (res_i);
+			alllkbrinfo[i]->build_waters( res_i, true );
+			allNwaters[i] = alllkbrinfo[i]->n_attached_waters();
+			allwater_offsets[i] = alllkbrinfo[i]->water_offset_for_atom();
+			allwaters[i] = alllkbrinfo[i]->waters();
 		}
 	}
 
 	// 1 grid scores
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
 			min_map.atom_derivatives( resid )[j].f2() = 0;
 		}
 	}
 
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 
 		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
-			if ( i>0 && !( (j>res_i.last_backbone_atom() && j<=res_i.nheavyatoms()) || j>=res_i.first_sidechain_hydrogen() ) ) continue;
+			if ( i>nLigs && !( (j>res_i.last_backbone_atom() && j<=res_i.nheavyatoms()) || j>=res_i.first_sidechain_hydrogen() ) ) continue;
 
 			int atmtype_ij = res_i.atom(j).type();
 			numeric::xyzVector< core::Real > idxX = (res_i.xyz(j) - origin_) / voxel_spacing_;
@@ -1676,15 +1700,15 @@ GridScorer::derivatives(
 			min_map.atom_derivatives( resid )[j].f2() += dpenalty + weightatr*datr + weightrep*drep + weightsol*dsol + weightelec*delec + dlk;
 
 			// VRT derivs
-			if ( j > allNwaters[i+1].size() || allNwaters[i+1][j] == 0 ) continue;
+			if ( j > allNwaters[i].size() || allNwaters[i][j] == 0 ) continue;
 
-			utility::vector1< numeric::xyzVector< core::Real > > nums_lk( allNwaters[i+1][j], numeric::xyzVector< core::Real >(0.,0.,0.) );
-			utility::vector1< numeric::xyzVector< core::Real > > nums_lkbr( allNwaters[i+1][j], numeric::xyzVector< core::Real >(0.,0.,0.) );
+			utility::vector1< numeric::xyzVector< core::Real > > nums_lk( allNwaters[i][j], numeric::xyzVector< core::Real >(0.,0.,0.) );
+			utility::vector1< numeric::xyzVector< core::Real > > nums_lkbr( allNwaters[i][j], numeric::xyzVector< core::Real >(0.,0.,0.) );
 			core::Real denom_lk=0.0, denom_lkbr=0.0;
 
-			for ( core::Size k=1; k<=allNwaters[i+1][j]; ++k ) {
-				core::Size k_wat_ind = k + allwater_offsets[i+1][j];
-				numeric::xyzVector< core::Real > idxXj = (allwaters[i+1][k_wat_ind] - origin_) / voxel_spacing_;
+			for ( core::Size k=1; k<=allNwaters[i][j]; ++k ) {
+				core::Size k_wat_ind = k + allwater_offsets[i][j];
+				numeric::xyzVector< core::Real > idxXj = (allwaters[i][k_wat_ind] - origin_) / voxel_spacing_;
 				numeric::xyzVector<core::Real> dpenalty;
 				move_to_boundary(idxXj,dpenalty);
 
@@ -1709,9 +1733,9 @@ GridScorer::derivatives(
 				}
 			}
 
-			core::scoring::lkball::WaterBuilders const & res_i_wb( alllkbrinfo[i+1]->get_water_builder( res_i , j ) );
-			for ( core::Size k=1; k<=allNwaters[i+1][j]; ++k ) {
-				core::Size k_wat_ind = k + allwater_offsets[i+1][j];
+			core::scoring::lkball::WaterBuilders const & res_i_wb( alllkbrinfo[i]->get_water_builder( res_i , j ) );
+			for ( core::Size k=1; k<=allNwaters[i][j]; ++k ) {
+				core::Size k_wat_ind = k + allwater_offsets[i][j];
 				numeric::xyzVector< core::Real > dall_dj(0.,0.,0.);
 
 				if ( denom_lk!=0 ) dall_dj += nums_lk[k]/denom_lk;
@@ -1719,7 +1743,7 @@ GridScorer::derivatives(
 				if ( dall_dj.length_squared() < 1e-9 ) continue;
 
 				core::Size atom1 = res_i_wb[k].atom1();
-				numeric::xyzMatrix< core::Real >const & dwater_datom1 = alllkbrinfo[i+1]->atom1_derivs()[k_wat_ind];
+				numeric::xyzMatrix< core::Real >const & dwater_datom1 = alllkbrinfo[i]->atom1_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom1x ( dwater_datom1(1,1), dwater_datom1(2,1), dwater_datom1(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom1y ( dwater_datom1(1,2), dwater_datom1(2,2), dwater_datom1(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom1z ( dwater_datom1(1,3), dwater_datom1(2,3), dwater_datom1(3,3) );
@@ -1727,7 +1751,7 @@ GridScorer::derivatives(
 				min_map.atom_derivatives( resid )[atom1].f2() +=  (1/voxel_spacing_) * dRdatom1;
 
 				core::Size atom2 = res_i_wb[k].atom2();
-				numeric::xyzMatrix< core::Real >const & dwater_datom2 = alllkbrinfo[i+1]->atom2_derivs()[k_wat_ind];
+				numeric::xyzMatrix< core::Real >const & dwater_datom2 = alllkbrinfo[i]->atom2_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom2x ( dwater_datom2(1,1), dwater_datom2(2,1), dwater_datom2(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom2y ( dwater_datom2(1,2), dwater_datom2(2,2), dwater_datom2(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom2z ( dwater_datom2(1,3), dwater_datom2(2,3), dwater_datom2(3,3) );
@@ -1735,7 +1759,7 @@ GridScorer::derivatives(
 				min_map.atom_derivatives( resid )[atom2].f2() +=  (1/voxel_spacing_) * dRdatom2;
 
 				core::Size atom3 = res_i_wb[k].atom3();
-				numeric::xyzMatrix< core::Real >const & dwater_datom3 = alllkbrinfo[i+1]->atom3_derivs()[k_wat_ind];
+				numeric::xyzMatrix< core::Real >const & dwater_datom3 = alllkbrinfo[i]->atom3_derivs()[k_wat_ind];
 				numeric::xyzVector< core::Real > dwater_datom3x ( dwater_datom3(1,1), dwater_datom3(2,1), dwater_datom3(3,1) );
 				numeric::xyzVector< core::Real > dwater_datom3y ( dwater_datom3(1,2), dwater_datom3(2,2), dwater_datom3(3,2) );
 				numeric::xyzVector< core::Real > dwater_datom3z ( dwater_datom3(1,3), dwater_datom3(2,3), dwater_datom3(3,3) );
@@ -1759,11 +1783,11 @@ GridScorer::derivatives(
 	core::scoring::hbonds::HBondDerivs dhb_dxs;
 
 	core::Real sfwt=0;
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
-			if ( i>0 && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
+			if ( i>nLigs && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
 
 			hbdonors_.get_neighbors( res_i.xyz( *anum ), hbdon_neighborlist, maxHbdis );
 			core::Size bnum = res_i.atom_base( *anum );
@@ -1775,10 +1799,10 @@ GridScorer::derivatives(
 			core::scoring::hbonds::HBEvalTuple hbt;
 			hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
 
-			for ( core::Size i=1; i<=hbdon_neighborlist.size(); ++i ) {
-				D = hbdon_neighborlist[i].D;
-				H = hbdon_neighborlist[i].H;
-				hbt.don_type( hbdon_neighborlist[i].dontype );
+			for ( core::Size j=1; j<=hbdon_neighborlist.size(); ++j ) {
+				D = hbdon_neighborlist[j].D;
+				H = hbdon_neighborlist[j].H;
+				hbt.don_type( hbdon_neighborlist[j].dontype );
 
 				if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
 
@@ -1805,7 +1829,7 @@ GridScorer::derivatives(
 			}
 		}
 		for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-			if ( i>0 && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
+			if ( i>nLigs && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
 
 			core::Size dnum = res_i.atom_base( *hnum );
 			hbacceptors_.get_neighbors( res_i.xyz( dnum ), hbacc_neighborlist, maxHbdis );
@@ -1815,11 +1839,11 @@ GridScorer::derivatives(
 			core::scoring::hbonds::HBEvalTuple hbt;
 			hbt.don_type( core::scoring::hbonds::get_hb_don_chem_type( dnum, res_i ));
 
-			for ( core::Size i=1; i<=hbacc_neighborlist.size(); ++i ) {
-				A = hbacc_neighborlist[i].A;
-				B = hbacc_neighborlist[i].B;
-				B_0 = hbacc_neighborlist[i].B_0;
-				hbt.acc_type( hbacc_neighborlist[i].acctype );
+			for ( core::Size j=1; j<=hbacc_neighborlist.size(); ++j ) {
+				A = hbacc_neighborlist[j].A;
+				B = hbacc_neighborlist[j].B;
+				B_0 = hbacc_neighborlist[j].B_0;
+				hbt.acc_type( hbacc_neighborlist[j].acctype );
 
 				if ( (A-H).length_squared() > core::scoring::hbonds::MAX_R2 ) continue;
 
@@ -1847,8 +1871,8 @@ GridScorer::derivatives(
 	}
 
 	// 3 1b derivs
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		core::scoring::MinimizationGraph g( 1 );
 		core::scoring::EnergyMap fixed_energies;
@@ -1862,8 +1886,8 @@ GridScorer::derivatives(
 	// special case for cart_bonded
 	//   everything is torsion space, so it is not needed for protein
 	//   however, cyclic ligands need this term enabled
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		if ( res_i.is_ligand() ) {
 			cartbonded_->eval_intrares_derivatives(
@@ -1876,27 +1900,91 @@ GridScorer::derivatives(
 		}
 	}
 
+	// more special cases:
+	// 1) cart bonded for cyclic peptides
+	// 2) disulfide for peptides
+	if ( nLigs > 1 ) {
+		for ( core::Size i=1; i<=nLigs; ++i ) {
+			core::Size ires = lig.ligand_ids()[i];
+			core::conformation::Residue const & rsd = pose.residue(ires);
+			core::Size nconnected = rsd.n_possible_residue_connections();
+			for ( core::Size ic=1; ic<=nconnected; ++ic ) {
+				if ( rsd.connected_residue_at_resconn( ic ) == 0 ) continue;
+				core::Size other = rsd.residue_connection_partner( ic );
+				if ( other < ires ) continue;
+				if ( std::find(lig.ligand_ids().begin(),lig.ligand_ids().end(),other) == lig.ligand_ids().end() ) continue;
+
+				cartbonded_->eval_residue_pair_derivatives(
+					pose.residue( ires ),
+					pose.residue( other ),
+					core::scoring::ResSingleMinimizationData(),
+					core::scoring::ResSingleMinimizationData(),
+					core::scoring::ResPairMinimizationData(),
+					pose,
+					sfxn_cart_->weights(),
+					min_map.atom_derivatives( ires ),
+					min_map.atom_derivatives( other ) );
+			}
+		}
+
+		core::Real sc_dslf = sfxn_->get_weight( core::scoring::dslf_fa13 );
+		if ( sc_dslf != 0 ) {
+			for ( core::Size i=1; i<=nLigs; ++i ) {
+				// find disulf and score
+				core::Size ires = lig.ligand_ids()[i];
+				if ( pose.residue( ires ).has_variant_type( core::chemical::DISULFIDE ) &&
+						pose.residue_type( ires ).has( pose.residue_type( ires ).get_disulfide_atom_name() ) &&
+						pose.residue_type( ires ).get_disulfide_atom_name() != "CEN"
+						) {
+					core::Size const ii_connect_atom = pose.residue( ires ).atom_index(
+						pose.residue_type( ires ).get_disulfide_atom_name() );
+					core::Size other_res( 0 );
+					for ( core::Size jj = pose.residue( ires ).type().n_possible_residue_connections(); jj >= 1; --jj ) {
+						if ( (core::Size) pose.residue( ires ).type().residue_connection( jj ).atomno() == ii_connect_atom ) {
+							other_res = pose.residue( ires ).connect_map( jj ).resid();
+							break;
+						}
+					}
+
+					// fd: if we want to consider ligand->receptor dslf, we need to update this logic
+					if ( other_res==0 || other_res<ires ) continue;
+					if ( std::find(lig.ligand_ids().begin(),lig.ligand_ids().end(),other_res) == lig.ligand_ids().end() ) continue;
+
+					core::scoring::disulfides::DisulfideAtomIndices di( pose.residue( ires ) );
+					core::scoring::disulfides::DisulfideAtomIndices dother( pose.residue( other_res ) );
+
+					core::scoring::disulfides::FullatomDisulfidePotential().get_disulfide_derivatives(
+						pose.residue( ires ),
+						pose.residue( other_res ),
+						di, dother,
+						sfxn_cart_->weights(),
+						min_map.atom_derivatives( ires ),
+						min_map.atom_derivatives( other_res ) );
+				}
+			}
+		}
+	}
 
 	// 4 : 2b derivs for ligand : sidechains
 	//      brute force calculations for interaction graph ... should be reasonable as long as too many sidechains are not allowed to move...
 	if ( nSCs > 0 ) {
-		for ( core::Size i=0; i<=nSCs; ++i ) {
-			core::Size resid_i = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+			core::Size resid_i = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 			core::conformation::Residue const &res_i = pose.residue( resid_i );
 
-			for ( core::Size j=i+1; j<=nSCs; ++j ) {
-				core::Size resid_j = lig.moving_scs()[j];
+			for ( core::Size j=i+1; j<=nLigs+nSCs; ++j ) {
+				core::Size resid_j = (j<=nLigs ? lig.ligand_ids()[j] : lig.moving_scs()[j-nLigs]);
 				core::conformation::Residue const &res_j = pose.residue( resid_j );
 
-				// TO DO: interaction check here
+				// Possibly make this faster by performing an interaction check here
 
 				// 4a etable
 				for ( core::Size ii=1; ii<=res_i.natoms(); ++ii ) {
-					bool ii_is_backbone = (i!=0) && (
+					bool ii_is_backbone = (i>nLigs) && (
 						ii<=res_i.last_backbone_atom() || (ii>res_i.nheavyatoms() && ii<res_i.first_sidechain_hydrogen()) );
 
 					for ( core::Size jj=1; jj<=res_j.natoms(); ++jj ) {
-						bool jj_is_backbone = (j!=0) && (
+						bool jj_is_backbone = (j>nLigs) && (
 							jj<=res_j.last_backbone_atom() || (jj>res_j.nheavyatoms() && jj<res_j.first_sidechain_hydrogen()) );
 
 						// new version: only skip BB:BB interactions
@@ -1917,14 +2005,14 @@ GridScorer::derivatives(
 
 						if ( res_i.atom_is_hydrogen( ii ) || res_j.atom_is_hydrogen( jj ) ) continue;
 
-						bool ii_has_waters = (ii<=allNwaters[i+1].size() && allNwaters[i+1][ii]>0);
-						bool jj_has_waters = (jj<=allNwaters[j+1].size() && allNwaters[j+1][jj]>0);
+						bool ii_has_waters = (ii<=allNwaters[i].size() && allNwaters[i][ii]>0);
+						bool jj_has_waters = (jj<=allNwaters[j].size() && allNwaters[j][jj]>0);
 
 						if ( ii_has_waters || jj_has_waters ) {
 							LKBe_->sum_deriv_contributions_for_heavyatom_pair(
 								dis2,
-								ii,res_i,*(alllkbrinfo[i+1]),
-								jj,res_j,*(alllkbrinfo[j+1]),
+								ii,res_i,*(alllkbrinfo[i]),
+								jj,res_j,*(alllkbrinfo[j]),
 								pose, sfxn_->weights(),
 								1.0,
 								min_map.atom_derivatives( resid_i ),
@@ -1936,18 +2024,18 @@ GridScorer::derivatives(
 			}
 		}
 
-		for ( core::Size i=0; i<=nSCs; ++i ) {
-			core::Size resid_i = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+			core::Size resid_i = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 			core::conformation::Residue const &res_i = pose.residue( resid_i );
 
-			for ( core::Size j=i+1; j<=nSCs; ++j ) {
-				core::Size resid_j = lig.moving_scs()[j];
+			for ( core::Size j=i+1; j<=nLigs+nSCs; ++j ) {
+				core::Size resid_j = (j<=nLigs ? lig.ligand_ids()[j] : lig.moving_scs()[j-nLigs]);
 				core::conformation::Residue const &res_j = pose.residue( resid_j );
 
 				// 4b hbond
 				// donor j->acceptor i
 				for ( auto anum=res_i.accpt_pos().begin(),anume=res_i.accpt_pos().end(); anum!=anume; ++anum ) {
-					if ( i>0 && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
+					if ( i>nLigs && !(*anum>res_i.last_backbone_atom() && *anum<=res_i.nheavyatoms()) ) continue;
 					core::Size bnum = res_i.atom_base( *anum );
 					core::Size b0num = res_i.abase2( *anum );
 					A = res_i.xyz( *anum );
@@ -1958,7 +2046,7 @@ GridScorer::derivatives(
 					hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_i ));
 
 					for ( auto hnum=res_j.Hpos_polar().begin(),hnume=res_j.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-						if ( j>0 && !(*hnum>res_j.first_sidechain_hydrogen()) ) continue;
+						if ( j>nLigs && !(*hnum>res_j.first_sidechain_hydrogen()) ) continue;
 						core::Size dnum = res_j.atom_base( *hnum );
 						H = res_j.xyz( *hnum );
 						D = res_j.xyz( dnum );
@@ -1992,7 +2080,7 @@ GridScorer::derivatives(
 
 				// donor i->acceptor j
 				for ( auto anum=res_j.accpt_pos().begin(),anume=res_j.accpt_pos().end(); anum!=anume; ++anum ) {
-					if ( i>0 && !(*anum>res_j.last_backbone_atom() && *anum<=res_j.nheavyatoms()) ) continue;
+					if ( j>nLigs && !(*anum>res_j.last_backbone_atom() && *anum<=res_j.nheavyatoms()) ) continue;
 					core::Size bnum = res_j.atom_base( *anum );
 					core::Size b0num = res_j.abase2( *anum );
 					A = res_j.xyz( *anum );
@@ -2003,7 +2091,7 @@ GridScorer::derivatives(
 					hbt.acc_type( core::scoring::hbonds::get_hb_acc_chem_type( *anum, res_j ));
 
 					for ( auto hnum=res_i.Hpos_polar().begin(),hnume=res_i.Hpos_polar().end(); hnum!=hnume; ++hnum ) {
-						if ( i>0 && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
+						if ( i>nLigs && !(*hnum>res_i.first_sidechain_hydrogen()) ) continue;
 						core::Size dnum = res_i.atom_base( *hnum );
 						H = res_i.xyz( *hnum );
 						D = res_i.xyz( dnum );
@@ -2040,13 +2128,12 @@ GridScorer::derivatives(
 
 	// 5 : cst derivs
 	if ( has_cst_energies_ && !pose.constraint_set()->is_empty() ) {
-		// NOTE NOTE NOTE
-		// only 2b are implemented currently
-		// 1b (and multibody) should be straightforward but currently is not used!
+		// NOTE : only 2b cst energies are implemented currently
+		// 1b (and multibody) should be straightforward but are currently not implemented
 		core::scoring::EnergyMap emap;
 
-		for ( core::Size i=0; i<=nSCs; ++i ) {
-			core::Size resid_i = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+		for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+			core::Size resid_i = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 			core::conformation::Residue const &res_i = pose.residue( resid_i );
 			for ( auto
 					iter = pose.constraint_set()->residue_pair_constraints_begin( resid_i ),
@@ -2079,12 +2166,12 @@ GridScorer::derivatives(
 
 
 	// now convert all to f1/f2s
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 
 		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
-			if ( i>0 && !( (j>res_i.last_backbone_atom() && j<=res_i.nheavyatoms()) || j>=res_i.first_sidechain_hydrogen() ) ) continue;
+			if ( i>nLigs && !( (j>res_i.last_backbone_atom() && j<=res_i.nheavyatoms()) || j>=res_i.first_sidechain_hydrogen() ) ) continue;
 			numeric::xyzVector< core::Real > deriv_ij = min_map.atom_derivatives( resid )[j].f2();
 			min_map.atom_derivatives( resid )[j].f1() = res_i.xyz(j).cross( res_i.xyz(j)-deriv_ij );
 		}
@@ -2121,15 +2208,15 @@ GridScorer::debug_deriv(
 	// first get analytic deriv
 	derivatives( pose, lig, min_map );
 
-	// DEBUG DERIVS
 	core::Size nSCs = lig.moving_scs().size();
+	core::Size nLigs = lig.ligand_ids().size();
 
 	core::pose::Pose posecopy = pose;
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? lig.ligand_id() : lig.moving_scs()[i]);
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? lig.ligand_ids()[i] : lig.moving_scs()[i-nLigs]);
 		core::conformation::Residue const &res_i = pose.residue( resid );
 		for ( core::Size j=1; j<=res_i.natoms(); ++j ) {
-			bool j_is_backbone = (i!=0) && (
+			bool j_is_backbone = (i>nLigs) && (
 				j<=res_i.last_backbone_atom() || (j>res_i.nheavyatoms() && j<res_i.first_sidechain_hydrogen()) );
 
 			if ( j_is_backbone ) continue;
@@ -2167,10 +2254,6 @@ GridScorer::debug_deriv(
 			core::Real nfx( (scpx-scmx)/0.0002 ), nfy( (scpy-scmy)/0.0002 ), nfz((scpz-scmz)/0.0002);
 			printf("DERIV %3d %3d %10.5f %10.5f %10.5f %10.5f %10.5f %10.5f\n",
 				int(resid),int(j), nfx,nfy,nfz,f2[0],f2[1],f2[2]);
-
-			//numeric::xyzVector< core::Real > deriv_ij = numeric::xyzVector<core::Real>(nfx,nfy,nfz);
-			//min_map.atom_derivatives( resid )[j].f1() = res_i.xyz(j).cross( res_i.xyz(j)-deriv_ij );
-			//min_map.atom_derivatives( resid )[j].f2() = deriv_ij;
 		}
 	}
 }
@@ -2211,14 +2294,6 @@ GridScorer::optimize(
 	core::Real wbase = get_w_rep();
 
 	for ( core::Size iramp = 1; iramp <= ramp_schedule.size(); ++iramp ) {
-		//set_w_rep( wbase*ramp_schedule[iramp] );
-		// FD: commented out => always run for maxiter_minimize_
-		//if (iramp < ramp_schedule.size()) {
-		// minopt.max_iter( (core::Size) (maxiter_minimize_*0.25) ); // ? not sure about the 0.25 here
-		//} else {
-		// minopt.max_iter( maxiter_minimize_ );
-		//}
-
 		auto timer1 = std::chrono::system_clock::now();
 		set_w_rep( wbase*ramp_schedule[iramp] );
 		packer_loop( lig, placeable_rotdb, rot_energies );
@@ -2250,6 +2325,7 @@ GridScorer::minimizer_loop(
 ) {
 	core::Real finalscore=0.0;
 	core::Size nSCs = lig.moving_scs().size();
+	core::Size nLigs = lig.ligand_ids().size();
 
 	core::pose::PoseOP minipose( new core::pose::Pose );
 	LigandConformer minilig;
@@ -2257,12 +2333,12 @@ GridScorer::minimizer_loop(
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
-	core::Size lig_jump = minipose->fold_tree().get_jump_that_builds_residue( minilig.ligand_id() );
-	mm->set_jump( lig_jump, true );
-	for ( core::Size i=0; i<=nSCs; ++i ) {
-		core::Size resid = (i==0 ? minilig.ligand_id() : minilig.moving_scs()[i]);
+	mm->set_jump( minilig.get_jumpid(), true );
+	for ( core::Size i=1; i<=nLigs+nSCs; ++i ) {
+		core::Size resid = (i<=nLigs ? minilig.ligand_ids()[i] : minilig.moving_scs()[i-nLigs]);
 		mm->set_chi( resid, true );
-		if ( i==0 ) {
+		if ( i<=nLigs ) {
+			mm->set_bb( resid, true );
 			mm->set_nu( resid, true );
 		}
 	}
@@ -2279,7 +2355,7 @@ GridScorer::minimizer_loop(
 		core::optimization::AtomTreeMinimizer minimizer;
 		minimizer.run( *minipose, *mm, *sfxn_, minopt );
 	} else {
-		GriddedAtomTreeMultifunc f_i( minilig, *minipose, *this, min_map );
+		GriddedAtomTreeMultifunc f_i( minilig, *minipose, *this, min_map, false /*debug*/ );
 		core::optimization::Minimizer min_i( f_i, minopt );
 		min_i.run( dofs );
 		min_map.reset_jump_rb_deltas( *minipose, dofs );
@@ -2299,7 +2375,13 @@ GridScorer::packer_loop(
 	utility::vector1< PlaceableRotamers > &placeable_rotdb, // by non-const ref since we update "in place"
 	RotamerPairEnergies &rotamer_energies                   // by non-const ref since we update "in place"
 ) {
-	if ( lig.ligand_typename() != ref_pose_->residue(ligid_).name() ) {
+	bool make_new = false;
+	for ( core::Size i=1; i<=ligids_.size(); ++i ) {
+		if ( lig.ligand_typename(i) != ref_pose_->residue(ligids_[i]).name() ) {
+			make_new = true;
+		}
+	}
+	if ( make_new ) {
 		ref_pose_ = utility::pointer::make_shared< core::pose::Pose >( *lig.get_ref_pose() );
 	}
 
@@ -2318,7 +2400,7 @@ GridScorer::packer_loop(
 		placeable_rotdb[ii][nrot_i].lkbrinfo =
 			core::scoring::lkball::LKB_ResidueInfoOP(new core::scoring::lkball::LKB_ResidueInfo (ref_pose_->residue( resid_i )) );
 		rotamer_energies.energy1b( ii, nrot_i ) = this->get_1b_energy(
-			ref_pose_->residue( resid_i ), placeable_rotdb[ii][nrot_i].lkbrinfo );
+			ref_pose_->residue( resid_i ), placeable_rotdb[ii][nrot_i].lkbrinfo, false );
 	}
 
 	for ( core::Size ii=1; ii<=npos; ++ii ) {
@@ -2350,16 +2432,14 @@ GridScorer::packer_loop(
 
 				rotamer_energies.energy2b( ii, nrot_i, jj, jrot ) = this->get_2b_energy(
 					*ref_pose_,
-					ref_pose_->residue( resid_i ), placeable_rotdb[ii][nrot_i].lkbrinfo,
-					ref_pose_->residue( resid_j ), placeable_rotdb[jj][jrot].lkbrinfo
+					ref_pose_->residue( resid_i ), placeable_rotdb[ii][nrot_i].lkbrinfo, false,
+					ref_pose_->residue( resid_j ), placeable_rotdb[jj][jrot].lkbrinfo, false
 				);
 			}
 		}
 	}
 
-	// [1] precompute ligand with all other rotamers
-	core::scoring::lkball::LKB_ResidueInfoOP lkbr_lig (
-		new core::scoring::lkball::LKB_ResidueInfo(ref_pose_->residue(lig.ligand_id())) );
+	// [1] precompute ligand residues with all other rotamers
 	for ( core::Size ii=1; ii<=npos; ++ii ) {
 		core::Size nrot_i = placeable_rotdb[ii].size();
 		core::Size resid_i = lig.moving_scs()[ii];
@@ -2372,11 +2452,17 @@ GridScorer::packer_loop(
 			for ( core::Size ichi = 1; ichi <= ref_pose_->residue_type( resid_i ).nchi(); ++ichi ) {
 				ref_pose_->set_chi( ichi, resid_i, placeable_rotdb[ii][irot].chis[ichi] );
 			}
-			rotamer_energies.energyBG( ii, irot ) = this->get_2b_energy(
-				*ref_pose_,
-				ref_pose_->residue( resid_i ), placeable_rotdb[ii][irot].lkbrinfo,
-				ref_pose_->residue( lig.ligand_id() ), lkbr_lig
-			);
+			for ( auto ligid: lig.ligand_ids() ) {
+				// inefficient
+				core::scoring::lkball::LKB_ResidueInfoOP lkbr_lig (
+					new core::scoring::lkball::LKB_ResidueInfo(ref_pose_->residue(ligid)) );
+
+				rotamer_energies.energyBG( ii, irot ) = this->get_2b_energy(
+					*ref_pose_,
+					ref_pose_->residue( resid_i ), placeable_rotdb[ii][irot].lkbrinfo, false,
+					ref_pose_->residue( ligid ), lkbr_lig, true
+				);
+			}
 		}
 	}
 

@@ -23,6 +23,7 @@
 #include <core/select/util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>
@@ -116,6 +117,130 @@ get_residue_mapping_from_selectors(
 	}
 	return residue_map;
 }
+
+
+std::vector < std::map< core::Size, core::Size > >
+get_cyclic_pose_residue_mappings_from_selectors(
+	select::residue_selector::ResidueSelectorCOP residue_selector,
+	select::residue_selector::ResidueSelectorCOP residue_selector_ref,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ref_pose,
+	bool desymmetrize_selectors
+){
+	using namespace utility;
+
+	vector1< core::Size > selector_res;
+	vector1< core::Size > reference_res;
+
+	if ( residue_selector ) {
+		vector1< bool > mask = residue_selector->apply( pose );
+		if ( core::pose::symmetry::is_symmetric( pose ) && desymmetrize_selectors )  {
+			mask = core::select::get_master_subunit_selection(pose, mask);
+		}
+		selector_res = get_residues_from_subset( mask );
+	}
+	if ( residue_selector_ref ) {
+		vector1< bool > mask = residue_selector_ref->apply( ref_pose );
+		if ( core::pose::symmetry::is_symmetric( ref_pose ) && desymmetrize_selectors )  {
+			mask = core::select::get_master_subunit_selection(pose, mask);
+		}
+		reference_res = get_residues_from_subset( mask );
+	}
+
+	//Fail if residue selector selections do not match.
+	if ( residue_selector && residue_selector_ref ) {
+		if ( selector_res.size() != reference_res.size() ) {
+			utility_exit_with_status("Both set residue selectors must select the same number of residues in order to run RMSD calculation!");
+		}
+	}
+
+	//Fail if only reference selector was set.
+	if ( residue_selector_ref && (! residue_selector) ) {
+		utility_exit_with_message("Cannot only set the reference residue selector! If they are both the same, please set the main selector!");
+	}
+
+	//Setup the main residue mapping we will use depending on what is set.
+	std::vector < std::map< core::Size, core::Size > > residue_maps;
+	std::map< core::Size, core::Size > residue_map;
+	bool matched(true);
+
+	if ( residue_selector && residue_selector_ref ) {
+		for ( core::Size i = 1; i <= selector_res.size(); ++i ) {
+			residue_map[ selector_res[ i] ] = reference_res[ i ];
+		}
+		residue_maps.push_back(residue_map);
+		for ( core::Size shift_i = 1; shift_i <= selector_res.size()-1 ; ++shift_i ) {
+			matched = true;
+			residue_map.clear();
+			for ( core::Size i = 1; i <= selector_res.size(); ++i ) {
+				core::Size ndx = (i+shift_i) % selector_res.size();
+				ndx = (ndx==0) ? selector_res.size() : ndx;
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "pose residue name: " << pose.residue(selector_res[ndx]).name()
+						<< ", " << "ref pose residue name: "
+						<< ref_pose.residue(reference_res[i]).name()
+						<< std::endl;
+				}
+				if ( pose.residue(selector_res[ndx]).name() != ref_pose.residue(reference_res[i]).name() ) {
+					matched = false;
+					break;
+				}
+				residue_map[ selector_res[ ndx ] ] = reference_res[ i ];
+			}
+			if ( matched ) residue_maps.push_back(residue_map);
+		}
+	} else if ( residue_selector ) {
+		for ( core::Size res : selector_res ) {
+			residue_map[ res ] = res;
+		}
+		residue_maps.push_back(residue_map);
+		for ( core::Size shift_i = 1; shift_i <= selector_res.size()-1 ; ++shift_i ) {
+			matched = true;
+			residue_map.clear();
+			for ( core::Size i = 1; i <= selector_res.size(); ++i ) {
+				core::Size ndx = (i+shift_i) % selector_res.size();
+				ndx = (ndx==0) ? selector_res.size() : ndx;
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "pose residue name: " << pose.residue(selector_res[ndx]).name() << ", " << "ref pose residue name: "
+						<< ref_pose.residue(selector_res[i]).name()
+						<< std::endl;
+				}
+				if ( pose.residue(selector_res[ndx]).name() != ref_pose.residue(selector_res[i]).name() ) {
+					matched = false;
+					break;
+				}
+				residue_map[ selector_res[ ndx ] ] = selector_res[ i ];
+			}
+			if ( matched ) residue_maps.push_back(residue_map);
+		}
+	} else {
+		for ( core::Size res = 1; res <= pose.size(); ++res ) {
+			residue_map[ res ] = res;
+		}
+		residue_maps.push_back(residue_map);
+		for ( core::Size shift_i = 1; shift_i <= pose.size()-1 ; ++shift_i ) {
+			matched = true;
+			residue_map.clear();
+			for ( core::Size i = 1; i <= pose.size(); ++i ) {
+				core::Size ndx = (i+shift_i) % pose.size();
+				ndx = (ndx==0) ? pose.size() : ndx;
+				if ( TR.Debug.visible() ) {
+					TR.Debug << "pose residue name: " << pose.residue(ndx).name()  << ", " << "ref pose residue name: "
+						<< ref_pose.residue(i).name()
+						<< std::endl;
+				}
+				if ( pose.residue(ndx).name() != ref_pose.residue(i).name() ) {
+					matched = false;
+					break;
+				}
+				residue_map[ ndx ] = i;
+			}
+			if ( matched ) residue_maps.push_back(residue_map);
+		}
+	}
+	return residue_maps;
+}
+
 
 std::string
 complex_type_name_for_residue_selector( std::string const & rs_type )

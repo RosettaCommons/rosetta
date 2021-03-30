@@ -922,6 +922,19 @@ all_atom_rmsd(
 } // CA_rmsd
 
 core::Real
+all_atom_rmsd_nosuper(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2,
+	utility::vector1< core::Size > const & pose1_residues,
+	utility::vector1< core::Size > const & pose2_residues
+) {
+	using namespace core;
+	Real rms = rmsd_no_super( pose1, pose2, pose1_residues, pose2_residues, is_heavyatom);
+	return rms;
+} // all atom rmsd no super
+
+
+core::Real
 nbr_atom_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2

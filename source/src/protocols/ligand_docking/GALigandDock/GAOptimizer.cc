@@ -104,7 +104,7 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 		for ( core::Size j = 1; j <= stage_i.repeats; ++j ) {
 			update_tags( genes );
-			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut, stage_i.rb_maxrank );
+			next_generation( genes, genes_new, stage_i.pool, stage_i.pmut );
 			optimize_generation( genes_new, stage_i.ramp_schedule );
 			show_status( genes_new, "generated in stage "+std::to_string(i)+" iter "+std::to_string(j) );
 
@@ -122,7 +122,6 @@ GAOptimizer::run( LigandConformers & genes ) {
 
 	max_rot_cumulative_prob_ = 0.99;
 	rot_energy_cutoff_ = 1000;
-	altcrossover_= false;
 }
 
 
@@ -217,8 +216,7 @@ GAOptimizer::next_generation(
 	LigandConformers const & genes,
 	LigandConformers & genes_new,
 	core::Size npoolout,
-	core::Real pmut,
-	core::Size rb_maxrank
+	core::Real pmut
 ) {
 	genes_new.clear();
 	core::Size npoolin = genes.size();
@@ -241,21 +239,10 @@ GAOptimizer::next_generation(
 				ipartner = numeric::random::rg().random_range(1, npoolin);
 			}
 
-			if ( altcrossover_ ) {
-				newgene = crossover_ft( newgene, genes[ipartner] );
-			} else {
-				newgene = crossover( newgene, genes[ipartner] );
-			}
+			newgene = crossover( newgene, genes[ipartner] );
 
 			move = "crossover";
 			tag = "cross."+std::to_string(iparent)+"."+std::to_string(ipartner)+" ["+newgene.generation_tag()+"]";
-		}
-
-		// just change RG by superimpose on different subset of atoms in reference structure
-		if ( rb_maxrank > 0 ) {
-			core::Size isuperimpose = numeric::random::rg().random_range(1, std::min(npoolin,rb_maxrank) );
-			newgene.superimpose_to_alternative_frame( genes[isuperimpose] );
-			tag += " rb."+std::to_string(isuperimpose);
 		}
 
 		newgene.set_generation_tag( tag );
@@ -413,7 +400,7 @@ GAOptimizer::initialize_rotamer_set_and_scores(
 					}
 					res_rotamer_i.lkbrinfo =
 						core::scoring::lkball::LKB_ResidueInfoOP(new core::scoring::lkball::LKB_ResidueInfo (pose->residue( resid )) );
-					res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo);
+					res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo, false);
 
 					res_rotamers.push_back( res_rotamer_i );
 				}
@@ -457,7 +444,7 @@ GAOptimizer::initialize_rotamer_set_and_scores(
 		}
 		res_rotamer_i.lkbrinfo =
 			core::scoring::lkball::LKB_ResidueInfoOP(new core::scoring::lkball::LKB_ResidueInfo (pose->residue( resid )) );
-		res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo);
+		res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo, false);
 		res_rotamer_i.score.bonus_wtd_ = -favor_native_; // apply bonus to alternate tautomer
 
 		keptprobsum += res_rotamer_i.prob;
@@ -476,7 +463,7 @@ GAOptimizer::initialize_rotamer_set_and_scores(
 			}
 			res_rotamer_i.lkbrinfo =
 				core::scoring::lkball::LKB_ResidueInfoOP(new core::scoring::lkball::LKB_ResidueInfo (pose->residue( resid )) );
-			res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo);
+			res_rotamer_i.score = scorefxn_->get_1b_energy(pose->residue( resid ), res_rotamer_i.lkbrinfo, false);
 			res_rotamer_i.score.bonus_wtd_ = -favor_native_; // apply bonus to alternate tautomer
 
 			res_rotamer_i.restype = pose->residue(resid).type_ptr();
@@ -577,8 +564,8 @@ GAOptimizer::initialize_rotamer_set_and_scores(
 					rotamer_energies_.energy2b( isc, irot, jsc, jrot ) =
 						scorefxn_->get_2b_energy(
 						*pose,
-						pose->residue( resid_i ), rotamer_data_[isc][irot].lkbrinfo,
-						pose->residue( resid_j ), rotamer_data_[jsc][jrot].lkbrinfo);
+						pose->residue( resid_i ), rotamer_data_[isc][irot].lkbrinfo, false,
+						pose->residue( resid_j ), rotamer_data_[jsc][jrot].lkbrinfo, false);
 				}
 			}
 		}

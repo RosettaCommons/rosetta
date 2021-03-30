@@ -19,6 +19,7 @@
 #include <protocols/ligand_docking/GALigandDock/GAOptimizer.hh>
 #include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 #include <protocols/ligand_docking/GALigandDock/LigandAligner.hh>
+#include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
 
 #include <protocols/ligand_docking/GALigandDock/GALigandDock.fwd.hh>
 #include <core/pose/extra_pose_info_util.hh>
@@ -191,17 +192,17 @@ private:
 	utility::vector1< core::Size >
 	get_movable_scs( core::pose::Pose const &pose,
 		GridScorerCOP gridscore,
-		core::Size const lig_resno ) const;
+		utility::vector1 < core::Size > const &lig_resnos ) const;
 
 	void
 	idealize_and_repack_pose( core::pose::Pose &pose,
 		utility::vector1< core::Size > const &movable_scs,
-		core::Size const lig_resno ) const;
+		utility::vector1< core::Size > const &lig_resnos ) const;
 
 	/// @brief generate object containing binding-motif search results
 	LigandAligner
 	setup_ligand_aligner( core::pose::Pose const & pose,
-		core::Size const lig_resno,
+		utility::vector1< core::Size > const &lig_resnos,
 		utility::vector1< core::Size > movable_scs_in_ref // call by value
 	) const;
 
@@ -244,13 +245,14 @@ private:
 
 	core::Real
 	calculate_free_receptor_score( core::pose::Pose pose, // call by value
-		core::Size const lig_resno,
+		utility::vector1< core::Size > const &lig_resnos,
 		utility::vector1< core::Size > const& moving_scs,
 		bool simple=true
 	) const;
 
 	core::Real
-	calculate_free_ligand_score( core::conformation::Residue const ligand ) const;
+	calculate_free_ligand_score( core::pose::Pose pose, // call by value
+		utility::vector1< core::Size > const &lig_resnos ) const;
 
 	void
 	apply_coord_cst_to_sctip( core::pose::PoseOP pose,
@@ -259,7 +261,9 @@ private:
 
 	/// @brief pre cart-min ligand before docking
 	void
-	premin_ligand( core::pose::Pose &pose, core::Size const lig_resno ) const;
+	premin_ligand(
+		core::pose::Pose &pose,
+		utility::vector1 < core::Size > const &lig_resnos ) const;
 
 	/// @brief  final optimization cycle
 	void
@@ -313,13 +317,14 @@ private:
 
 	// protocol options
 	bool use_pharmacophore_;
-	bool altcrossover_;
 	core::Real max_rot_cumulative_prob_, rot_energy_cutoff_;
 	core::Real random_oversample_, reference_oversample_, reference_frac_;
 	bool reference_frac_auto_;
 	std::string initial_pool_, reference_pool_; // pdbs to include in initial pool
 	bool premin_ligand_;
 	bool sample_ring_conformers_;
+	core::Real torsion_sampler_percentage_;
+	TorsionSampler torsion_sampler_;
 
 	std::string final_exact_minimize_; // do the last iteration exactly?
 	bool cartmin_lig_, min_neighbor_;  // more final relax properties

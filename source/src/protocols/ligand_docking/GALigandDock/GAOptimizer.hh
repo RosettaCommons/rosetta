@@ -25,7 +25,7 @@ namespace ga_ligand_dock {
 /// @brief represent options for a single "phase" of ligand docking
 struct GADockStageParams {
 	GADockStageParams() :
-		repeats(0), pool(0), rmsthreshold(0), pmut(0), maxiter(0), packcycles(0), rb_maxrank(0), smoothing(0), elec_scale(1)
+		repeats(0), pool(0), rmsthreshold(0), pmut(0), maxiter(0), packcycles(0), smoothing(0), elec_scale(1)
 	{}
 
 	GADockStageParams(
@@ -39,7 +39,6 @@ struct GADockStageParams {
 		pmut(pmut_in),
 		maxiter(maxiter_in),
 		packcycles(packcycles_in),
-		rb_maxrank(0),
 		smoothing(smoothing_in),
 		elec_scale(1.0), // let default untouch
 		ramp_schedule(ramp_schedule_in)
@@ -52,7 +51,6 @@ struct GADockStageParams {
 	core::Real pmut;         // mutation probability for this stage
 	core::Real maxiter;      // maximum minimize iterations
 	core::Real packcycles;   // number of packer cycles (x nSCs)
-	core::Size rb_maxrank;   // topN in parents for motif-alignment reference; 0 means not using
 	core::Real smoothing;    // grid smoothing
 	core::Real elec_scale;   // scaling factor on hbond & elec terms
 	utility::vector1<core::Real> ramp_schedule;  // fa_rep ramping schedule in optimization
@@ -88,7 +86,6 @@ public:
 	void set_max_rot_cumulative_prob( core::Real newval ) { max_rot_cumulative_prob_ = newval; }
 	void set_rot_energy_cutoff( core::Real newval ) { rot_energy_cutoff_ = newval; }
 	void set_favor_native( core::Real newval ) { favor_native_ = newval; }
-	void set_altcrossover( bool newval ) { altcrossover_ = newval; }
 
 private:
 	//// HELPER FUNCTIONS
@@ -102,7 +99,7 @@ private:
 	void update_tags( LigandConformers &genes ) const;
 
 	/// @brief generate putative next generation
-	void next_generation( LigandConformers const & genes, LigandConformers & genes_new, core::Size, core::Real, core::Size rb_maxrank );
+	void next_generation( LigandConformers const & genes, LigandConformers & genes_new, core::Size, core::Real );
 
 	/// @brief update our pool
 	void update_pool( LigandConformers & genes, LigandConformers & genes_new, core::Size, core::Real );
@@ -114,7 +111,6 @@ private:
 	// protocol
 	GridScorerOP scorefxn_;
 	utility::vector1< GADockStageParams > protocol_;
-	bool altcrossover_;
 
 	// rotamer data
 	core::Real max_rot_cumulative_prob_;

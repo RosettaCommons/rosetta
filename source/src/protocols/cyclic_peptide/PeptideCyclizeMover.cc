@@ -117,6 +117,7 @@ PeptideCyclizeMover::PeptideCyclizeMover() :
 	bond_assigned_ = false;
 	angle_assigned_ = false;
 	torsion_assigned_ = false;
+	ambiguous_torsion_ = false;
 	//set_rosetta_scripts_tag( utility::pointer::make_shared< utility::tag::Tag >() ); //do I need this?
 }
 
@@ -383,6 +384,7 @@ void PeptideCyclizeMover::apply( core::pose::Pose & pose )
 	}
 
 	protocols::cyclic_peptide::CreateTorsionConstraintOP torsion(new protocols::cyclic_peptide::CreateTorsionConstraint);
+	torsion->ambiguous(ambiguous_torsion_);
 	torsion->set(res1_torsion_,atom1_torsion_,res2_torsion_,atom2_torsion_,res3_torsion_,atom3_torsion_,res4_torsion_,atom4_torsion_,cst_func_torsion_);
 	torsion->apply(pose);
 
@@ -421,6 +423,10 @@ PeptideCyclizeMover::parse_my_tag(
 )
 {
 	std::string const name( tag->getOption<std::string>( "name" ));
+
+	if ( tag->hasOption("ambiguous_torsion") ) {
+		ambiguous_torsion_ = tag->getOption<bool>("ambiguous_torsion");
+	}
 
 	utility::vector1< utility::tag::TagCOP > const branch_tags( tag->getTags() );//enabling addition of multiple user defined tags
 	utility::vector1< utility::tag::TagCOP >::const_iterator tag_it;
@@ -592,6 +598,18 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 					atom3_torsion_.push_back("N");
 					res4_torsion_.push_back(counter);
 					atom4_torsion_.push_back("CA");
+					// add the following back if tests show that it is indeed a better constraint
+					// than the current constraint. GZ.
+					// if ( pose.residue(i).aa() == core::chemical::aa_pro ) {
+					//  ambiguous_torsion_ = true;
+					// }
+				}
+
+				if ( ambiguous_torsion_ && starter==1 ) {
+					res3_torsion_.push_back(counter);
+					atom3_torsion_.push_back("N");
+					res4_torsion_.push_back(counter);
+					atom4_torsion_.push_back("CA");
 				}
 			}
 		}
@@ -600,6 +618,14 @@ void PeptideCyclizeMover::get_all(core::select::residue_selector::ResidueSubset 
 		res2_torsion_.push_back(counter);
 		atom2_torsion_.push_back("C");
 		cst_func_torsion_.push_back("CIRCULARHARMONIC 3.141592654 0.005");
+
+		if ( ambiguous_torsion_ ) {
+			res1_torsion_.push_back(counter);
+			atom1_torsion_.push_back("CA");
+			res2_torsion_.push_back(counter);
+			atom2_torsion_.push_back("C");
+			cst_func_torsion_.push_back("CIRCULARHARMONIC 0.000 0.005");
+		}
 	}
 
 }
@@ -622,6 +648,8 @@ void PeptideCyclizeMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	AttributeList attlist, bond_attributes, distance_attributes, angle_attributes, torsion_attributes;
 
 	XMLSchemaSimpleSubelementList ssl;
+
+	attlist + XMLSchemaAttribute("ambiguous_torsion", xsct_rosetta_bool, "true if use ambigous constraints on torsions");
 
 	bond_attributes + XMLSchemaAttribute( "res1", xsct_non_negative_integer, "Residue one" )
 		+ XMLSchemaAttribute( "res1_sel", xs_string, "Residue one selector" )

@@ -1,0 +1,373 @@
+ATOM
+#Atomname TorsionAtomTypes1 2 3...
+CS     CS*   C*    X
+CS1    CS*   C*    X
+CS2    CS*   C*    X
+CS3    CS*   C*    X
+CSQ    CS*   C*    X
+CD     CD*   C*    X
+CD1    CD*   C*    X
+CD2    CD*   C*    X
+CR     CR*   C*    X
+CT     CT*   C*    X
+CSp    CS*   C*    X
+CDp    CD*   C*    X
+CRp    CR*   C*    X
+CTp    CT*   C*    X
+HC     HC   H*    X
+HR     HR   H*    X
+HO     HO   H*    X
+HN     HN   H*    X
+HS     HS   H*    X
+HG     HG   H*    X
+Nam   NG3*   N*    X
+Nam2  NG2*   N*    X
+Nad   Nad* NG2*   N*    X
+Nad3  Nad* NG2*   N*    X
+Nin   NG2*   N*    X
+Nim   NG2*   N*    X
+Ngu1  NG2*   N*    X
+Ngu2  NG2*   N*    X
+NG3   NG3*   N*    X
+NG2   NG2*   N*    X
+NG21  NG2*   N*    X
+NG22  NG2*   N*    X
+NG1   NG1   N*    X
+Ohx   Ohx   O*    X
+Oet   OG3*   O*    X
+Oal   OG2*   O*    X
+Oad   Oad   O*    X
+Oat   Oat   O*    X
+Ofu   Ofu   O*    X
+Ont   OG2*   O*    X
+OG2   OG2*   O*    X
+OG3   OG3*   O*    X
+OG31  OG3*   O*    X
+Sth   Sth   S*    X
+Ssl   SG3*   S*    X
+SR    SG2*   S*    X
+SG2   SG2*   S*    X
+SG3   SG3*   S*    X
+SG5   SG5   S*    X
+PG3   PG3   P*    X
+PG5   PG5   P*    X
+Br     Br   Halo  Halo* X
+I       I   Halo  Halo* X
+F       F   Halo  Halo* X
+Cl     Cl   Halo  Halo* X
+BrR   BrR   HaloR  Halo* X
+IR     IR   HaloR  Halo* X
+FR     FR   HaloR  Halo* X
+ClR   ClR   HaloR  Halo* X
+
+TORSION
+#NOTE: (fd 10/9)
+#  atom-typing based logic added
+#  bonds types:
+#    ~ any bond
+#    @ ring bond
+#    − single bond
+#    = double bond
+#    # triple bond
+#    ∶ aromatic bond
+#
+
+# Torsion distribution is approximated using gaussian functions. 
+# torsion dist ~= A*exp( - (x-mu)^2/(2*simga^2) ) , multimodal distribution
+# is approximated using multiple guassian function with each corresponding to 
+# one mode. 
+
+# Torsion types are taken from generic_bonded torsion types but 
+# we can define new torsion types here. Torsions without any parameters 
+# will be sampled randomly in TorsionSampler.
+
+# Version 1 parameters are manually curated by looking at the distribution curves using CSD-Mogul
+# Only small molecule torsions are defined.
+
+#a1 a2 bt a3 a4    Ndat   A    mu    sigma  #comment
+CR  CR  -&!@  CD*  X  1940  1.0 0 35 1.0 180 35 #guess 
+X  CR  -  CD*  X    wc    0.25 60  15  0.25 -60  15  0.25 120 15  0.25 -120 15 0.05 90 20 0.05 -90 20 #guess
+CD1  CD  -&!@  CDp  Nad  213 1.0 0 15 0.1 180 15 #guess 
+X  CD*  -  CD*  X    wc   0.25 50 10  0.25 -50 10  0.25 130 10  0.25 -130 10  #guess
+CR  CR  -  Nad  X    wc   0.5  0  20  0.5  180  20  #guess
+X  CR  -  NG2*  X    42    0.25 65 15  0.25 -65 15   0.25 115 15   0.25 -115 15 #guess
+X  CD*  -  NG2*  X    41   0.5  0  20  0.5  180  20  #guess
+X  NG2*  -  NG2*  X    40   0.3  90 10  0.3  -90 10 0.2 60 10 0.2 -60 10 #guess
+# The followings are for 3/4-membered rings. GZ: fit to torsion distribution
+X  CSQ  ~  CSQ  CSQ 108    0.3 20 10 0.3 -20 10 0.2 120 15 0.2 -120 15 0.1 180 5 #guess
+
+CR  Nam2  -&!@  Nad3  CD 1449 1.0 180 5  #guess
+Nad3  Nam2  -&!@  CR  CR  146   0.8 180 10 0.1 30 10 0.1 -30 10 #guess
+CDp  Ssl  -&!@  CR  CR  40  0.5 90 10 0.5 -90 10 #guess
+CS1  NG3  -&!@  NG2  Ont  40 0.25 20 10 0.25 165 10 0.25 -20 10 0.25 -165 10 #guess
+CS2  NG3  -&!@  NG2  Ont  386 0.5 0 10 0.5 180 10 #guess
+CR  Nam2  -&!@  Nad3  CD1  525 1.0 180 10 #guess
+CS1  Nad3  -&!@  NG1  NG1  57 0.05 30 5 0.05 -30 5 0.2 115 20 0.2 -115 20 0.5 180 20 #guess
+CD1  Nim  =&!@  CR  CR  wc 0.2 0 15 0.2 180 15 0.15 35 15 0.15 145 15 0.15 -35 15 0.15 -145 15 #guess
+NG2  CD  -&!@  NG3  CS3  56 0.5 0 10 0.5 180 10 #guess
+CSp  OG3  -&!@  NG2  Ont  432 0.5 0 10 0.5 180 10 #guess
+CR  CR  -&!@  Nam2  CS2  94 0.2 15 10 0.1 90 10 0.2 165 10 0.2 -15 10 0.1 -90 10 0.2 -165 10 #guess
+CS2  NG3  -&!@  CD  Nim  40 0.5 0 10 0.5 180 10 #guess
+CSQ  CSQ  -&!@  CSQ  CSQ  183 0.3 55 15 0.3 -55 15 0.4 175 15 #guess
+CR  CR  -&!@  Oet  CDp  4456 0.1 60 10 0.1 90 10 0.1 120 10 0.1 -60 10 0.1 -90 10 0.1 -120 10 #guess
+CT  CT  -&!@  CDp  Oat  7 1.0 0 3 #consider_dropping_this
+CSQ  CSQ  -&!@  NG2  Ont  296 0.25 40 10 0.25 140 10 0.25 -40 10 0.25 -140 10  #guess
+CSQ  NG3  -&!@  CR  CR  34  0.25 40 10 0.25 140 10 0.25 -40 10 0.25 -140 10  #guess
+CS2  NG3  -&!@  CR  CR  974 0.5 0 10 0.5 180 10 #guess
+CS3  NG3  -&!@  CR  CR  10000 0.5 0 10 0.5 180 10 #guess
+#CD1  CD  -&!@  CT  NG1  wc
+#CS2  Nad3  -&@  CD  CD1  wc
+CDp  CS2  -&!@  Nad  CDp  843 0.3 75 10 0.1 165 15 0.3 -75 10 0.1 -165 15 #guess
+#CS1  Nad3  :&@  CDp  NG2  wc
+#CD  CD  -&@  Nad3  CS2  wc
+CS2  CS2  -&!@  CDp  Oal  361 0.8 180 15 0.1 30 30 0.1 -30 30 #guess
+CR  CR  -&!@  Nam2  CS1  174 0.5 0 15 0.5 180 15 #guess
+#Nad3  CD  =&@  CD  NG2  wc
+CT  CT  -&!@  CT  CT  10000  0.8 180 10 0.1 70 10 0.1 -70 10 #guess
+CD  Nam2  -&!@  CR  CR  1986 0.2 0 15 0.2 180 15 0.15 40 15 0.15 145 15 0.15 -40 15 0.15 -145 15 #guess
+CSQ  CSQ  -&!@  CDp  Oet  60 0.2 25 20 0.3 150 20 0.2 -25 20 0.3 -150 20 #guess
+#Ssl  CS2  -&!@  CDp  Oal  wc
+CR  Nam2  -&!@  CD  CS3  133 1.0 0 15 #guess
+CSp  NG3  -&!@  CR  CR  652 0.5 0 20 0.5 180 20 #guess
+CS2  NG3  -&!@  CR  Nim  1568 0.5 0 20 0.5 180 20 #guess
+Nad3  CD  -&!@  CS2  CS2  129 0.6 180 15 0.2 90 20 0.2 -90 20 #guess
+#CS2  NG3  -&@  SG5  OG2  wc
+#Oal  CDp  -&@  CS  CDp  wc
+Nad3  NG3  -&!@  CR  CR  247 0.15 90 20 0.15 20 20 0.15 160 20 0.15 -90 20 0.15 -20 20 0.15 -160 20 #guess
+CR  NG3  -&!@  CR  CR  174 0.25 45 20 0.25 140 20 0.25 -45 20 0.25 -140 20 #guess
+CD1  CD  -&!@  NG3  CS2  32 0.5 0 10 0.5 180 10 #guess
+CSQ  CSQ  -&!@  CDp  Nad  41 0.5 135 20 0.5 -135 20 #guess
+CR  CR  -&!@  Nim  CD1  5822 0.2 0 20 0.2 180 20 0.15 35 15 0.15 145 15 0.15 -35 15 0.15 -145 15 #guess
+CDp  CD  -&!@  CS  CS3  3430 0.3 60 10 0.3 -60 10 0.4 180 10 #guess
+CD1  Nam2  -&!@  CR  CR  503 0.5 0 20 0.5 180 20 #guess
+CS3  Oet  -&!@  CD  CDp  289 1.0 180 10 #guess
+#Oal  CDp  -&!@  CS1  CS3  wc
+F  CS  -&!@  CDp  Oad  1322 0.4 180 25 0.3 60 25 0.3 -60 25 #guess
+Nim  CD  -&!@  NG3  CS3  123 0.5 0 5 0.5 180 5 #guess
+Nad3  CD  -&!@  NG3  CS3  40 0.25 30 15 0.25 -30 15 0.5 180 10 #guess
+CS1  NG3  -&!@  CR  CR  41 0.25 90 25 0.25 -90 25 0.25 0 10 0.25 180 10 #guess
+CS3  Nam2  -&!@  CR  CR  154 1.0 180 10 #guess
+#OG2  SG3  -&@  CR  CR  wc
+#CR  CS1  -&!@  CDp  Oad  wc
+#CRp  CR  =&@  CDp  CR  wc
+CR  Oet  -&!@  CS2  CDp  1600 0.8 180 15 0.1 75 10 0.1 -75 10 #guess
+CS3  NG3  -&!@  CR  Nim  452 0.5 0 5 0.5 180 5 #guess
+CR  Nam2  -&!@  CD  CD1  64 0.7 180 20 0.3 0 20 #guess
+#CS3  CS2  -&!@  CDp  Oal  wc
+CS2  NG3  -&!@  Nad3  Ont  6 0.5 0 5 0.5 180 5 #maybe_dropping_this
+#Oal  CDp  -&!@  CT  CT  wc
+CD  CD  -&!@  CS  CS3  105 0.25 60 30 0.25 150 30  0.25 -60 30 0.25 -150 30 #guess
+#PG3  Nam2  -&!@  CR  CR  wc
+CS2  Nam2  -&!@  CR  Nim  141 0.5 0 15 0.5 180 15 #guess
+#CS2  Nad3  -&@  CD  SG2  wc
+NG2  CD  -&!@  NG3  CS2  88 0.5 0 10 0.5 180 10 #guess
+#CR  CR  -&!@  NG3  Ont  wc
+NG2  CS  -&!@  NG2  Ont  456 0.1 20 10 0.1 55 10 0.1 90 10 0.1 125 10 0.1 165 10 0.1 -20 10 0.1 -55 10 0.1 -90 10 0.1 -125 10 0.1 -165 10 #guess
+Nad  CDp  -&!@  CS2  CR  369 0.1 20 15 0.4 110 20 0.4 165 20 0.1 -20 15 0.4 -110 20 0.4 -165 20 #guess
+#CD1  CSQ  -&@  NG3  OG3  4
+CS3  NG3  -&!@  NG2  Ont  58 0.5 0 20 0.5 180 20 #guess
+H*  X  ~  X  X  wc #total_random
+C*  CS*  ~  CS*  C*  41 0.3 60 10 0.3 -60 10 0.2 180 10 #guess
+CD*  CS*  ~  CS*  CD*  41 0.3 60 15 0.3 -60 15 0.4 180 15 #guess
+CD*  CS*  ~  CS*  CR*  52 0.7 180 15 0.15 60 5 0.15 -60 5 #guess
+CD*  CS*  ~  CS*  F  42  0.3 60 15 0.3 -60 15 0.4 180 15 #guess
+CS*  CS*  ~  CS*  CD*  52 0.3 60 15 0.3 -60 15 0.4 180 15 #guess
+CS*  CS*  ~  CS*  CR*  310 0.4 65 15 0.4 -65 15 0.1 180 15 #guess
+CS*  CS*  ~  CS*  CS*  40 0.4 65 15 0.4 -65 15 0.3 180 15 #guess
+CS*  CS*  ~  CS*  F  60  0.3 60 15 0.3 -60 15 0.4 180 15 #guess
+#Note: for the next torsion type, 30 degree is not observe in CSD library, but it seems that
+#ligands in pdbs (astex, 1hvy) will adopt this torsion, so I added a small chance for it 
+# to be sampled
+Nad  CS1  -&!@  CS2  CS2  575 1.0 60 10 1.0 -60 10 1.0 180 10 0.2 30 10 0.2 -30 10 #guess
+CS*  CS*  ~  CS*  NG2*  2227 0.2 60 10 0.2 -60 10 0.6 180 10 #guess_
+CS*  CS*  ~  CS*  NG3*  52  0.15 60 20 0.15 -60 20 0.9 180 10 #guess
+CS*  CS*  ~  CS*  OG3*  49 0.35 60 15 0.35 -60 15 0.3 180 15 #guess
+CS*  CS*  ~  CS*  Ohx  1833 0.35 55 10 0.35 -55 10 0.3 180 10 #guess
+CS*  CS*  ~  CS*  SG3*  507 0.2 65 10 0.2 -65 10 0.8 180 10 #guess
+F  CS*  ~  CS*  X       72  0.4 60 10 0.4 -60 10 0.4 180 5 #guess
+#NG2*  CS*  ~  CS*  X   1039 0.4 60 10 0.4 -60 10 0.7 180 5 #guess
+NG2*  CS*  ~  CS*  X  wc  0.4  60.0 10.0  0.4 -60.0 10.0 0.2 180.0 15.0 #guess
+NG3*  CS*  ~  CS*  X   1437 0.4 60 10 0.4 -60 10 0.4 180 10 #guess
+Oet  CS*  -&!@  CS*  Ohx  1961 1.0 60 15 1.0 -60 15 0.4 180 15 #guess
+X  CS*  ~  CS*  X       54  0.4 60 10 0.4 -60 10 0.8 180 10 #guess
+CR*  CS*  -&!@  CD*  CD* 242 1.0 80 20 1.0 -80 20 0.25 120 10 0.25 -120 10 0.25 180 15 #guess
+C*  CS*  ~  CD*  CD*   544  0.2 0 10 0.4 120 10 0.4 -120 10 #guess
+#C*  CS*  ~  CD*  CR*  wc 
+C*  CS*  ~  CD*  C*  41  0.8 180 30 0.1 75 5 0.1 -75 5 #guess
+CD*  CS*  ~  CD*  CD*  46 1.0 70 25 #guess 
+CD*  CS*  ~  CD*  OG2*  19 0.4 150 10 0.2 120 10 0.2 30 10 0.4 -150 10 0.2 -120 10 0.2 -30 10 #guess
+CD*  CS*  ~  CD*  OG3*  62 0.15 65 15 0.1 115 20 0.1 155 20 0.15 -65 15 0.1 -115 20 0.1 -155 20 0.1 180 20 #not_gaussian_like
+#CR*  CS*  ~  CD*  Oad  wc 0.2 90 10 0.2 -90 10 0.8 180 10 #guess
+CS*  CS*  ~  CD*  CD*  40 0.8 180 10. 0.2 90 10 0.2 -90 10 #guess
+CS*  CS*  ~  CD*  CS*  52 0.2 70 20 0.2 -70 20 0.2 180 15 #guess
+CS*  CS*  ~  CD*  NG2*  140 0.3 60 10 0.3 90 10 0.05 130 30 0.3 -60 10 0.3 -90 10 0.05 -130 30 #guess
+# CS*  CS*  ~  CD*  NG2*  wc 0.45 100.0 10.0  0.45 -100.0 10.0 0.1 0.0 10.0 #guess
+#CS*  CS*  ~  CD*  Oad  wc
+CS*  CS*  ~  CD*  OG2*  48 0.4 0 20 0.2 115 20 0.2 -115 20 #guess
+CS*  CS*  ~  CD*  OG3*  56 0.8 180 30 0.2 65 25 0.2 -65 25 #guess
+F  CS*  ~  CD*  X  9 1.0 120 70 #not_guassian_like
+Nad3  CS2  -&!@  CD  NG2 10 #total_random,not_gaussian_like
+#NG2*  CS*  ~  CD*  NG2*  174 0.8 180 25 0.2 20 15 0.2 -20 15 #guess 
+NG2*  CS*  ~  CD*  NG2*   wc 0.3  0.0   20.0  0.2 160.0 15.0 0.2 -160.0 15.0 0.2 180.0 10.0 #guess
+NG2*  CS*  ~  CD*  OG2*  17  0.8 180 10 #guess
+X  CS*  ~  CD*  CD*  6  1.0 115 15 #guess
+X  CS*  ~  CD*  NG2*  6 #not_guassian_like
+X  CS*  ~  CD*  OG3*  671 0.8 180 20 0.1 20 15 0.1 -20 15 #guess 
+CS3  CS -&!@  CDp  Oat  42  1.0 90 15 1.0 -90 15 0.5 20 10 0.5 -20 10 0.2 150 10 0.2 -150 10 #guess
+CS2  CS2  -&!@  CDp  Oat 919 0.8 0 20 0.8 180 20 0.1 45 10 0.1 90 15 0.1 135 10 0.1 -45 10 0.1 -90 15 0.1 -135 10 #guess
+Nad  CS1  -&!@  CDp  Oat 452 0.5 0 25 0.25 35 10 0.25 -35 10 1.0 180 20 0.5 155 20 0.5 -155 20 0.1 90 40 0.1 -90 40 #guess
+X  CS*  ~  CD*  X  695  0.4 65 15 0.4 -65 15 0.5 180 15 0.5 0 20 #guess
+#CD*  CS*  ~  CR*  CR*  wc
+CR*  CS*  ~  CR*  CR*  652 0.4 90 50 0.2 30 20 0.2 150 20 0.4 -90 50 0.2 -30 20 0.2 -150 20 #guess
+#CS*  CS*  ~  CR*  CR*  275 0.5 90 15 0.5 -90 15 #guess
+CS*  CS*  ~  CR*  CR*   wc    0.4  60.0  10.0  0.4 -60.0 10.0 0.2 180.0 15.0 #guess
+F  CS*  ~  CR*  CR*  147 0.2 30 20 0.2 90 15 0.2 140 30 0.2 -30 20 0.2 -90 15 0.2 -140 30 #guess
+NG2*  CS*  ~  CR*  CR*  10000 0.2 50 30 0.2 130 40 0.2 -50 30 0.2 -130 40 #guess
+# NG2*  CS*  ~  CR*  CR*  wc    0.3  120.0 10.0  0.3  -120.0  10.0  0.3 0.0 10.0 #guess
+NG3*  CS*  ~  CR*  CR*  10000 1.0 60 30 1.0 -60 30 1.0 130 40 1.0 -130 40 0.5 20 30 0.5 160 30 0.5 -20 30 0.5 -160 30 #guess
+X  CS*  ~  CR*  CR*  72 0.5 0 30 0.5 180 30 #guess
+X  CS*  ~  CR*  X  554  0.5 0 30 0.5 180 30 0.1 70 20 0.1 -70 20 #not_gaussian_like
+CS*  NG3*  ~  CS*  CS*  44 1.0 100 40 1.0 -100 40 #not_gaussian_like
+CS*  NG3*  ~  CS*  X  43 0.2 70 10 0.2 -70 10 0.4 180 15 #guess 
+CR  NG3*  -&!@  CS*  CS* wc 1.0 70 20 1.0 -70 20 0.1 135 10 0.1 -135 10 #guess 
+X  NG3*  ~  CS*  X  wc #total_random
+CD*  NG2*  -&!@  CSQ  CSQ  40 1.0 115 25 1.0 -115 25 1.0 50 10 1.0 -50 10 #guess
+CDp  Nad  -&!@  CS*  CS*  5019 1.0 180 30 0.25 125 25 0.25 -125 25 0.2 75 15 0.2 -75 15 #guess
+CD*  NG2*  ~  CS*  CS*  40 1.0 115 45 1.0 -115 45 2.0 180.0 15.0 #guess
+#CD*  NG2*  ~  CS*  CS*  40  0.1 120 40 0.1 -120 40 0.8  180.0 15.0 #guess
+# CD*  NG2*  ~  CS*  CS*  wc  1.0  180.0 15.0 #guess
+CDp  CS1  -&!@  Nam2  CD  48 1.0 180 25 0.1 80 15 0.1 -80 15 #guess
+CD*  NG2*  ~  CS*  CD*  115 1.0 85 15 1.0 -85 15 #guess
+CD1  Nad3  -&!@  CS1  Oet  727 1.0 45 20 1.0 20 10 0.15 90 10 1.0 -45 20 1.0 -20 10 0.15 -90 10 #guess
+CD*  NG2*  ~  CS*  X  127  0.2  90.0  15.0  0.2  -90.0  15.0 0.2 120.0 10.0 0.2 -120.0 10.0 0.2 180.0 10.0 #guess
+#CS*  NG2*  ~  CS*  CS*  wc
+CD  CS2  -&!@  Nad3  CS2  89  1.0 70 20 1.0 -70 20 #guess
+CR  Nad3  -&!@  CS2  CS2  1173 1.0 90 15 1.0 -90 15 #guess
+X  NG2*  ~  CS*  X  1178 0.3 75 20 0.3 -75 20 0.3 180 30 #guess
+CS*  CS*  ~  SG3*  CS*  591 0.3 70 10 0.3 -70 10 0.3 180 15 #guess
+X  CS*  ~  SG3*  X  46 0.3 75 15 0.3 -75 15 0.3 180 10 #guess
+X  CS*  ~  PG3  C*  321 0.3 60 20 0.3 -60 20 0.6 180 15 #guess 
+X  CS*  ~  PG3  X  42 0.3 60 15 0.3 -60 15 0.4 180 20 #guess
+C*  CD*  ~  CD*  CR*  10000 0.2 30 15 0.2 150 15 0.2 -30 15 0.2 -150 15 0.3 0 5 0.3 180 5 #guess
+CD*  CD*  ~  CD*  CD*  634 1.0 180 10 #guess
+CD*  CD*  ~  CD*  CR*  48 1.0 180 10 #guess
+CD*  CD*  ~  CD*  NG2*  250 1.0 180 10 #guess
+CD*  CD*  ~  CD*  OG2*  51 0.8 0 10 1.0 180 10 #guess
+CD*  CD*  ~  CD*  OG3*  70 1.0 0 20 1.0 180 10 0.1 95 10 0.1 -95 10 #guess
+CR*  CD*  ~  CD*  NG2*  13 1.0 0 10 1.0 180 10 #guess
+CS*  CD*  ~  CD*  CD*  44 1.0 0 10 1.0 180 10 #guess
+CS*  CD*  ~  CD*  CS*  7 1.0 0 10 1.0 180 10 #guess_maybe_wrong
+CS*  CD*  ~  CD*  NG2*  45 1.0 0 15 0.8 180 5 #guess
+CS*  CD*  ~  CD*  OG2*  65 1.0 0 10 1.0 180 10 #guess
+NG2*  CD*  ~  CD*  NG2*  43 0.5 0 10 1.0 180 10 #guess
+X  CD*  ~  CD*  X        320 1.0 0 20 1.0 180 20 #guess
+CD*  CD*  ~  CR*  CR*  118 1.0 0 15 1.0 180 15 #guess
+CR*  CD*  ~  CR*  X  10000 1.0 50 15 1.0 130 15 1.0 -50 15 1.0 -130 15 #guess
+CS*  CD*  ~  CR*  CR*  2390 1.0 0 20 1.0 180 20 #guess
+NG2*  CD*  ~  CR*  CR*  6431 1.0 0 10 1.0 180 10 #guess
+Nad  CD*  ~  CR*  CR*  4501 1.0 0 35 1.0 180 35 #guess
+NG3*  CD*  ~  CR*  CR*  6077 1.0 50 15 1.0 140 15 1.0 -50 15 1.0 -140 15 #guess
+Oat  CD*  ~  CR*  CR*  10000 1.0 0 10 1.0 180 10 #guess
+X  CD*  ~  CR*  X     10000 1.0 0 10 1.0 180 10 #guess
+CD*  NG2*  ~  CD*  CD*  40 1.0 180 10 #guess
+CD*  NG2*  ~  CD*  CR*  66 1.0 180 10 #guess
+CD*  NG2*  ~  CD*  CS*  15 0.5 0 20 1.0 180 10 #guess
+CD*  NG2*  ~  CD*  NG2*  718 1.0 0 10 0.2 180 10 #guess
+#CD*  NG2*  ~  CD*  Oad  wc
+CD*  NG2*  ~  CD*  X  67 1.0 0 10 #guess
+CR*  NG2*  ~  CD*  CD*  43 1.0 180 5 #guess
+#CR*  NG2*  ~  CD*  Oad  wc
+CR*  NG2*  ~  CD*  X  41 1.0 0 10 1.0 180 10 #guess
+CS*  NG2*  ~  CD*  CS*  22 1.0 0 10 1.0 180 10 #guess
+CS*  NG2*  ~  CD*  Oad  51 1.0 0 10 1.0 180 10 #guess
+CS*  NG2*  ~  CD*  X  767 0.1 0 10 1.0 180 10 #guess
+#NG2*  NG2*  ~  CD*  Oad  wc
+NG2*  NG2*  ~  CD*  X  129 1.0 0 15 0.5 180 10 #guess
+#X  NG2*  ~  CD*  Oad  2 #too_few_data
+X  NG2*  ~  CD*  X  55 1.0 0 15 1.0 180 15 #guess
+OG2*  CD*  ~  OG3*  C*  69 1.0 0 5 #guess
+X  CD*  ~  OG3*  C*  4439 1.0 180 5 #guess
+#C*  CD*  ~  OG2*  X  wc
+#X  CD*  ~  SG3*  X  1 #too_few_data
+#C*  CR*  ~  CR*  C*  wc
+#CD*  CR*  ~  CR*  CR*  wc
+#CD*  CR*  ~  CR*  NG2*  wc
+#CD*  CR*  ~  CR*  O*  wc
+#CD*  CR*  ~  CR*  X  wc
+#CR*  CR*  ~  CR*  BrR  wc
+#CR*  CR*  ~  CR*  ClR  wc
+#CR*  CR*  ~  CR*  CR*  wc
+#CR*  CR*  ~  CR*  FR  wc
+#CR*  CR*  ~  CR*  NG2*  wc
+#CR*  CR*  ~  CR*  OG3*  wc
+#CR*  CR*  ~  CR*  Ohx  wc
+#CR*  CR*  ~  CR*  SG3*  wc
+#CR*  CR*  ~  CR*  X  wc
+#CS*  CR*  ~  CR*  CR*  wc
+#CS*  CR*  ~  CR*  NG2*  wc
+#CS*  CR*  ~  CR*  OG3*  wc
+#FR  CR*  ~  CR*  FR  wc
+#NG2*  CR*  ~  CR*  NG2*  wc
+#O*  CR*  ~  CR*  O*  wc
+#X  CR*  ~  CR*  X  wc
+X  CR*  ~  NG3*  X  58 1.0 90 40 1.0 -90 40 #guess
+CD*  NG2*  ~  CR*  CR*  1256 1.0 0 50 1.0 180 50 #guess
+CR*  NG2*  ~  CR*  CR*  330 1.0 0 10 1.0 180 10 #guess
+CS*  NG2*  ~  CR*  CR*  597 1.0 30 20 1.0 150 20 1.0 -30 20 1.0 -150 20 #guess
+NG2*  NG2*  ~  CR*  CR*  946 1.0 0 10 1.0 180 5 #guess
+X  NG2*  ~  CR*  X  10000 1.0 0 10 1.0 180 10 #guess
+#C*  CR*  ~  OG2*  X  wc
+CR*  CR*  ~  SG5  OG2*  4294 1.0 0 35 1.0 180 35 #guess
+CR*  CR*  ~  SG5  N*  10000 1.0 85 15 1.0 -85 15 1.0 120 20 1.0 -120 20 #guess
+#CD*  CR*  ~  SG5  OG2* wc
+CD*  CR*  ~  SG5  N*  98 1.0 75 10 0.2 170 5 1.0 -75 10 0.2 -170 5#guess
+# CR  Ssl -&!@  CR  CR #this torsion type actually have two different distributions, depending on 
+# whether the 4th atom CR is in a benzene ring or it is a joint atom in fused benzene rings,
+# we need a new atom type (eg. CRd ) to differentiate the two torsions. 
+# For now, we use total randomness from non-fused version, and it is classified as X CR* ~ S* X 
+# For future reference, CR  Ssl -&!@  CR  CRd 119 1.0 80 15 1.0 -80 15 0.2 180 15 #guess
+X  CR*  ~  S*  X  3830 #total_random
+CR*  CR*  ~  PG3  CR*  212 1.0 90 25 1.0 -90 25 1.0 0 25 1.0 180 20 #guess 
+CR*  CR*  ~  PG3  X  268 1.0 45 40 1.0 -45 40 1.0 135 40 1.0 -135 40 #guess 
+X  C*  ~  C*  X  wc #total_random
+X  CD*  ~  CT*  NG1  159 1.0 0 100 #not_gaussian_like
+X  CR*  ~  CT*  NG1  169 1.0 0 20 1.0 180 20 0.4 90 15 0.4 -90 15 #guess
+#X  CS*  ~  CT*  NG1  wc
+CD*  OG3*  ~  CS*  CS*  2446 1.0 180 20 0.15 100 20 0.15 -100 20 #guess
+CS*  OG3*  ~  CS*  CS*  60 1.0 180 20 0.1 145 10 0.1 65 10 0.1 -145 10 0.1 -65 10 #guess
+CS*  OG3*  ~  CR*  CR*  10000 1.0 0 10 1.0 180 10 0.5 90 10 0.5 -90 10 #guess
+X  CD*  ~  O*  X       wc #total_random
+CR  Oet -&!@  CR  CR  1198  1.0 0 20 0.5 45 20 0.5 -45 20 0.5 90 30 0.5 -90 30 0.5 150 30 0.5 -150 30 1.0 180 20 #guess 
+X  CR*  ~  O*  X      673  1.0 0 10 1.0 180 10 #guess
+CR  Oet -&!@  CS  CDp 74 1.0 60 15 1.0 -60 15 #guess
+X  CS*  ~  O*  H*  wc #total_random
+X  CS*  ~  O*  X    192  1.0 60 20 1.0 -60 20 1.0 180 10 #guess
+#X  OG3*  ~  CD*  X  wc #too_few_data
+#X  C*  ~  S*  X  wc #too_few_data
+#X  NG3*  ~  S*  X  wc #no_data
+X  NG3*  ~  PG3  X  1164 1.0 60 30 1.0 165 15 1.0 -60 30 1.0 -165 15 #guess
+CD*  NG2*  ~  NG2*  CD*  2332 1.0 180 10 #guess
+C*  NG2*  ~  NG2*  C*  820 1.0 180 10 #guess
+X  NG2*  -  NG2*  X 40 1.0 90 20 1.0 -90 20 #guess
+X  NG2*  ~  NG2*  X  40 1.0 0 10 1.0 180 10 #guess
+NG2*  NG2*  ~  OG3*  X  41 1.0 180 10 #guess
+C*  NG2*  ~  O*  X  206 1.0 180 10 #guess
+X  N*  ~  SG5  O*  50 0.5 35 15 0.5 -35 15 1.0 180 15 #guess
+X  N*  ~  SG5  X  106 1.0 80 15 1.0 -80 15 #guess
+CD*  NG2*  ~  SG5  X  199 1.0 65 10 1.0 -65 10 #guess 
+CR*  NG2*  ~  SG5  X  1232 1.0 60 15 1.0 -60 15 #guess
+CS*  NG2*  ~  SG5  X  731 1.0 65 15 1.0 -65 15 #guess
+#X  NG2*  ~  S*  X  wc #no_data
+X  NG2*  ~  PG3  X  48 1.0 90 20 0.5 15 15 0.5 165 15 1.0 -90 20 0.5 -15 15 0.5 -165 15 #guess
+#X  OG3*  ~  SG3*  X  wc #too_few_data
+C*  OG3*  ~  SG5  O*  246 1.0 60 10 1.0 -60 10 1.0 180 10 #guess
+X  OG3*  ~  SG5  X  651 1.0 70 15 1.0 -70 15 0.3 180 40 #guess
+X  OG3*  ~  PG3  X  68 1.0 60 30 1.0 -60 30 0.8 150 30 0.8 -150 30 #guess
+X  S*  ~  S*  X  75 1.0 90 15 1.0 -90 15 0.1 180 10 #guess
+X  PG3  ~  PG3  X  36 #total_random
+X  CD*  ~  X  X  54 1.0 100 10 1.0 160 15 1.0 -100 10 1.0 -160 15 #guess
+#X  CT*  ~  X  X  4 #too_few_data
+X  NG3*  ~  X  X  60 1.0 0 10 1.0 180 10 #guess
+X  CR  -  CD*  X        wc    0.3  30.0  5.0  0.3  -30.0  5.0 0.3 180.0 15.0 #guess
+HO  Ohx  ~  CR*  C*     wc    #total_random
+X X ~ X X           wc    #total_random

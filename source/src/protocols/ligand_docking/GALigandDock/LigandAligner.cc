@@ -354,35 +354,46 @@ ConstraintInfo::set_default()
 /////////////////////////////////////////////
 //  initialize from a (possibly different) ligand conformation
 void
-ConstraintInfo::init_from_ligand( core::conformation::Residue const &mylig )
-{
+ConstraintInfo::init_from_ligand(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const &ligids
+) {
 	set_default();
 	is_ligand_ = true;
 
-	// original code
-	for ( core::Size iatm_src=1; iatm_src<=mylig.natoms(); ++iatm_src ) {
-		// not including aliphatic hydrogen... too messy
-		if ( mylig.atom_type(iatm_src).is_hydrogen() &&
-				!mylig.atom_type(iatm_src).is_polar_hydrogen() ) continue;
+	// this handles multi-res reference poses, as long as reference pose has FEWER residues than target
+	// TO DO: handle the opposite case
+	for ( auto ligid : ligids ) {
+		if ( ligid > pose.total_residue() ) {
+			TR << "Warn: ligid " << ligid << " not found in reference pose.  Continuing!" << std::endl;
+			continue;
+		}
+		core::conformation::Residue const &mylig = pose.residue(ligid);
+		for ( core::Size iatm_src=1; iatm_src<=mylig.natoms(); ++iatm_src ) {
+			// not including aliphatic hydrogen... too messy
+			if ( mylig.atom_type(iatm_src).is_hydrogen() &&
+					!mylig.atom_type(iatm_src).is_polar_hydrogen() ) continue;
 
-		coords_.push_back( mylig.xyz(iatm_src) );
+			coords_.push_back( mylig.xyz(iatm_src) );
+			atmids_.push_back( core::id::AtomID( iatm_src, ligid ) ); // resno 0 is ligand
 
-		bool is_halogen = (
-			mylig.atom_type(iatm_src).element() == "F" ||
-			mylig.atom_type(iatm_src).element() == "Cl" ||
-			mylig.atom_type(iatm_src).element() == "Br" ||
-			mylig.atom_type(iatm_src).element() == "I" );
+			bool is_halogen = (
+				mylig.atom_type(iatm_src).element() == "F" ||
+				mylig.atom_type(iatm_src).element() == "Cl" ||
+				mylig.atom_type(iatm_src).element() == "Br" ||
+				mylig.atom_type(iatm_src).element() == "I" );
 
-		properties_.push_back( AtomProperties(
-			mylig.atom_type(iatm_src).is_donor(),
-			mylig.atom_type(iatm_src).is_acceptor(),
-			iatm_src > mylig.nheavyatoms(),    // isH
-			mylig.atom_type(iatm_src).is_polar_hydrogen(),
-			is_halogen,
-			0.0, // non-ambiguous
-			1.0, // score weight; default 1
-			+"L."+utility::strip(mylig.atom_name(iatm_src)) // tag
-			));
+			properties_.push_back( AtomProperties(
+				mylig.atom_type(iatm_src).is_donor(),
+				mylig.atom_type(iatm_src).is_acceptor(),
+				iatm_src > mylig.nheavyatoms(),    // isH
+				mylig.atom_type(iatm_src).is_polar_hydrogen(),
+				is_halogen,
+				0.0, // non-ambiguous
+				1.0, // score weight; default 1
+				+"L."+utility::strip(mylig.atom_name(iatm_src)) // tag
+				));
+		}
 	}
 }
 
@@ -390,49 +401,53 @@ ConstraintInfo::init_from_ligand( core::conformation::Residue const &mylig )
 //  initialize from a (possibly different) ligand conformation
 void
 ConstraintInfo::init_from_ligand_pharmacophore(
-	core::conformation::Residue const &mylig,
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const &ligids,
 	bool report_phore_info
 ) {
 	set_default();
 	is_ligand_ = true;
 
-	for ( core::Size iatm_src=1; iatm_src<=mylig.natoms(); ++iatm_src ) {
-		bool is_acceptor( mylig.atom_type(iatm_src).is_acceptor() );
-		// hard-coded generalization logic to append missing "pseudo-acceptors"...
-		// N or O; No attached polarH; large negative charge
-		if ( iatm_src <= mylig.nheavyatoms() ) {
-			if ( !mylig.heavyatom_has_polar_hydrogens(iatm_src) &&
-					mylig.atomic_charge(iatm_src) < -0.5 &&
-					( mylig.atom_type(iatm_src).element() == "N" || mylig.atom_type(iatm_src).element() == "O" )
-					) {
-				is_acceptor = true;
+	for ( auto resid : ligids ) {
+		core::conformation::Residue const &mylig = pose.residue(resid);
+		for ( core::Size iatm_src=1; iatm_src<=mylig.natoms(); ++iatm_src ) {
+			bool is_acceptor( mylig.atom_type(iatm_src).is_acceptor() );
+			// hard-coded generalization logic to append missing "pseudo-acceptors"...
+			// N or O; No attached polarH; large negative charge
+			if ( iatm_src <= mylig.nheavyatoms() ) {
+				if ( !mylig.heavyatom_has_polar_hydrogens(iatm_src) &&
+						mylig.atomic_charge(iatm_src) < -0.5 &&
+						( mylig.atom_type(iatm_src).element() == "N" || mylig.atom_type(iatm_src).element() == "O" )
+						) {
+					is_acceptor = true;
+				}
 			}
+
+			// just to get estimation of numbers... should be changed if more rules being added
+			bool is_using( mylig.atom_type(iatm_src).is_donor() ||
+				is_acceptor ||
+				mylig.atom_type(iatm_src).is_polar_hydrogen() );
+			if ( !is_using ) continue;
+
+			bool is_halogen = (
+				mylig.atom_type(iatm_src).element() == "F" ||
+				mylig.atom_type(iatm_src).element() == "Cl" ||
+				mylig.atom_type(iatm_src).element() == "Br" ||
+				mylig.atom_type(iatm_src).element() == "I" );
+
+			atmids_.push_back( core::id::AtomID( iatm_src, resid ) ); // resno 0 is ligand
+			coords_.push_back( mylig.xyz(iatm_src) );
+			properties_.push_back( AtomProperties(
+				mylig.atom_type(iatm_src).is_donor(),
+				is_acceptor,
+				iatm_src > mylig.nheavyatoms(),    // isH
+				mylig.atom_type(iatm_src).is_polar_hydrogen(),
+				is_halogen,
+				0.0, // everything non-ambiguous... maybe assign differently for hxl?
+				1.0,
+				+"L."+utility::strip(mylig.atom_name(iatm_src)) // tag
+				));
 		}
-
-		// just to get estimation of numbers... should be changed if more rules being added
-		bool is_using( mylig.atom_type(iatm_src).is_donor() ||
-			is_acceptor ||
-			mylig.atom_type(iatm_src).is_polar_hydrogen() );
-		if ( !is_using ) continue;
-
-		bool is_halogen = (
-			mylig.atom_type(iatm_src).element() == "F" ||
-			mylig.atom_type(iatm_src).element() == "Cl" ||
-			mylig.atom_type(iatm_src).element() == "Br" ||
-			mylig.atom_type(iatm_src).element() == "I" );
-
-		atmids_.push_back( core::id::AtomID( iatm_src, 0 ) ); // resno 0 is ligand
-		coords_.push_back( mylig.xyz(iatm_src) );
-		properties_.push_back( AtomProperties(
-			mylig.atom_type(iatm_src).is_donor(),
-			is_acceptor,
-			iatm_src > mylig.nheavyatoms(),    // isH
-			mylig.atom_type(iatm_src).is_polar_hydrogen(),
-			is_halogen,
-			0.0, // everything non-ambiguous... maybe assign differently for hxl?
-			1.0,
-			+"L."+utility::strip(mylig.atom_name(iatm_src)) // tag
-			));
 	}
 
 	define_all_ligand_phores( 1, report_phore_info );
@@ -536,21 +551,6 @@ ConstraintInfo::define_active_virtual_sites(
 		// non-smoothing version
 		nneigh_res_bb[i] = (core::Real)(nneigh_res_bb_naive[i]);
 		nneigh_res_sc[i] = (core::Real)(nneigh_res_sc_naive[i]);
-
-		/* // smoothing version
-		core::Real wsum( 0 );
-		for ( int k=-2; k <= 2; ++k ){ // 5-res window
-		if( i+k < 1 or i+k > nres ) continue;
-		if( pose.residue( i+k ).is_virtual_residue() ) continue;
-
-		core::Real w = (k==0)?5.0: (std::abs(k) == 1)?2.0:1.0;
-		wsum += w;
-		nneigh_res_bb[i] += w*nneigh_res_bb_naive[i+k];
-		nneigh_res_sc[i] += w*nneigh_res_sc_naive[i+k];
-		}
-		nneigh_res_bb[i] /= wsum;
-		nneigh_res_sc[i] /= wsum;
-		*/
 	}
 
 	std::string rsd_exposed("");
@@ -952,28 +952,6 @@ ConstraintInfo::phore_overlaps_with_existing( Pharmacophore const &phore_i,
 	return false;
 }
 
-/*
-bool
-ConstraintInfo::cluster_overlaps_any( utility::vector1< utility::vector1< core::Size > > const &clusters,
-utility::vector1< core::Size > const &cluster_i,
-core::Size const n,
-core::Real const fraction) const
-{
-core::Real const fi( fraction*cluster_i.size() );
-
-for( core::Size icl = 1; icl <= clusters.size(); ++icl ){
-core::Size nsame( 0 );
-utility::vector1< core::Size > const &cluster_ref = clusters[icl];
-for( core::Size imem = 1; imem <= cluster_i.size(); ++imem ){
-if( cluster_ref.contains( cluster_i[imem] ) ) nsame++;
-}
-if( nsame >= n ) return true;
-if( core::Real(nsame) >= std::min(fraction*cluster_ref.size(),fi) ) return true;
-}
-return false;
-}
-*/
-
 void
 ConstraintInfo::define_receptor_phores( utility::vector1< std::pair< core::Real, core::Size > > &Vdonor_sort,
 	utility::vector1< std::pair< core::Real, core::Size > > &Vacceptor_sort,
@@ -1220,15 +1198,6 @@ ConstraintInfo::map_phores( utility::vector1< Pharmacophore > const &receptor_ph
 			TR << "Match on ligand phore " << phores_[ilig].show() << " (" << ilig << "/ " << phores_.size() << "): "
 				<<  phore_rec.show() << ", score " << it->first
 				<< ", total " << phore_match_.size() << std::endl;
-			/*
-			numeric::xyzVector< core::Real > const &ligcom = phores_[i].com();
-			numeric::xyzVector< core::Real > const &reccom = it->second.com();
-
-			printf ("HETATM %4d LG   MAP  %4d     %7.3f %7.3f %7.3f      %6.2f\n",
-			int(i), int(phore_match_.size()), ligcom[0], ligcom[1], ligcom[2], it->first );
-			printf ("HETATM %4d AA   MAP  %4d     %7.3f %7.3f %7.3f      %6.2f\n",
-			int(i), int(phore_match_.size()), reccom[0], reccom[1], reccom[2], it->first );
-			*/
 		}
 
 		if ( phore_match_.size() > nmax ) break;
@@ -1260,15 +1229,16 @@ ConstraintInfo::select_phore_match( core::Size const run_index )
 void
 ConstraintInfo::align_to_current_phore_match( core::pose::Pose &pose,
 	ConstraintInfo const &, //recinfo,
-	core::Size const ligid,
+	utility::vector1< core::Size > const &ligids,
 	utility::vector1< std::pair< core::Size, core::Size > > &, //marked_pairs,
 	utility::vector1< core::Size > &SrcPriorIDs,
 	utility::vector1< core::Size > &TgtPriorIDs
 )
 {
 	debug_assert( is_ligand_ );
+
 	// update coord in case not synced with pose (like randomize)
-	update_ligand_coord( pose.residue( ligid ) );
+	update_ligand_coord( pose );
 
 	Pharmacophore lig_phore = phores_[ current_phore_match_.first ]; // saved in index
 	Pharmacophore const &rec_phore = current_phore_match_.second;
@@ -1284,30 +1254,21 @@ ConstraintInfo::align_to_current_phore_match( core::pose::Pose &pose,
 	// add slight noise
 	dcom += numeric::random::random_translation<core::Real>( 0.5, numeric::random::rg() );
 
-	/*
-	if( !simple ){
-	utility::vector1< core::Size > const &map_index = rec_phore.map_index();
-	for( core::Size imap = 1; imap <= map_index.size(); ++imap ){
-	core::Size const ligatm = lig_phore.atm(map_index[imap]);
-	core::Size const recatm = rec_phore.atm(imap);
-	marked_pairs.push_back( std::make_pair(ligatm,recatm) );
-	}
-	*/
-
 	// just translate to match phores keeping rotation
-	for ( core::Size iatm=1; iatm<=pose.residue(ligid).natoms(); ++iatm ) {
-		pose.set_xyz( core::id::AtomID(iatm,ligid),
-			pose.xyz(core::id::AtomID(iatm,ligid)) + dcom );
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm=1; iatm<=pose.residue(ligid).natoms(); ++iatm ) {
+			pose.set_xyz( core::id::AtomID(iatm,ligid),
+				pose.xyz(core::id::AtomID(iatm,ligid)) + dcom );
+		}
 	}
 }
 
 void
-ConstraintInfo::update_ligand_coord( core::conformation::Residue const & ligand )
+ConstraintInfo::update_ligand_coord( core::pose::Pose const & pose )
 {
 	coords_.resize(0);
 	for ( core::Size i = 1; i <= atmids_.size(); ++i ) {
-		core::Size atomno = atomid( i ).atomno();
-		coords_.push_back( ligand.xyz( atomno ) );
+		coords_.push_back( pose.xyz( atmids_[i] ) );
 	}
 }
 
@@ -1339,7 +1300,9 @@ LigandAligner::set_pharmacophore_reference( core::pose::Pose const &pose )
 }
 
 void
-LigandAligner::set_constraints( core::pose::Pose & pose, core::Size ligid,
+LigandAligner::set_constraints(
+	core::pose::Pose & pose,
+	utility::vector1<core::Size> ligids,
 	utility::vector1< std::pair< core::Size, core::Size > > &marked_pairs,
 	core::Real const w_prior,
 	utility::vector1< core::Size > const &SrcPriorIDs,
@@ -1353,7 +1316,7 @@ LigandAligner::set_constraints( core::pose::Pose & pose, core::Size ligid,
 	ConstraintSetOP cst_set(new ConstraintSet);
 	core::Size ftroot = pose.fold_tree().root();
 
-	ConstraintInfo cst_source( pose.residue(ligid), use_pharmacophore() );
+	ConstraintInfo cst_source( pose, ligids, use_pharmacophore() );
 
 	core::Size nSrcAtms = cst_source.natoms();//=pose.residue(ligid).natoms();
 	core::Size nTgtAtms = target_.natoms();
@@ -1419,7 +1382,7 @@ LigandAligner::set_constraints( core::pose::Pose & pose, core::Size ligid,
 			cstfunc->add_func( FuncOP( new TopOutFunc(weight_i,0.0,limit_i) ) );
 
 			ConstraintCOP newCST(new CoordinateConstraint(
-				core::id::AtomID(min_idx_i, ligid),
+				cst_source.atomid(min_idx_i),   //core::id::AtomID(min_idx_i, ligid),
 				core::id::AtomID(1, ftroot), // safe! we're guaranteed to have jump upstream of ligand
 				target_.coord(min_idx_j),
 				cstfunc ) );
@@ -1440,7 +1403,8 @@ LigandAligner::set_constraints( core::pose::Pose & pose, core::Size ligid,
 
 void
 LigandAligner::set_hard_constraint_on_marked(
-	core::pose::Pose & pose, core::Size const ligid,
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > ligids,
 	utility::vector1< std::pair< core::Size, core::Size > > const &marked_pairs
 ) const
 {
@@ -1448,7 +1412,7 @@ LigandAligner::set_hard_constraint_on_marked(
 	using namespace core::scoring::func;
 
 	core::Size ftroot = pose.fold_tree().root();
-	ConstraintInfo cst_source( pose.residue(ligid), use_pharmacophore() );
+	ConstraintInfo cst_source( pose, ligids, use_pharmacophore() );
 
 	ConstraintSetOP cst_set(new ConstraintSet);
 	for ( core::Size ipair = 1; ipair <= marked_pairs.size(); ++ipair ) {
@@ -1457,7 +1421,7 @@ LigandAligner::set_hard_constraint_on_marked(
 
 		FuncOP cstfunc( new HarmonicFunc( 0.0, 1.0 ) );
 		ConstraintCOP newCST(new CoordinateConstraint(
-			core::id::AtomID(i_src, ligid),
+			cst_source.atomid(i_src),
 			core::id::AtomID(1, ftroot), // safe! we're guaranteed to have jump upstream of ligand
 			target_.coord(i_tgt),
 			cstfunc ) );
@@ -1472,93 +1436,132 @@ LigandAligner::set_hard_constraint_on_marked(
 void
 LigandAligner::randomize_lig(
 	core::pose::Pose & pose,
-	core::Size ligid,
+	utility::vector1< core::Size > ligids,
 	numeric::xyzVector<core::Real> const &T
 ) {
 
-	// internal torsions
-	core::Size nchi = pose.residue_type(ligid).nchi();
-	for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
-		core::Real angle_i = 360.0 * numeric::random::rg().uniform();
+	for ( auto ligid : ligids ) {
+		core::Size nchi = pose.residue_type(ligid).nchi();
+		for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
+			core::Real angle_i = 360.0 * numeric::random::rg().uniform();
 
-		core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
-		core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
+			core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
+			core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
 
-		if ( bondtype == core::chemical::DoubleBond ) {
-			if ( angle_i < 90.0 || angle_i > 270.0 ) {
-				angle_i = 0.0;
-			} else {
-				angle_i = 180.0;
+			if ( bondtype == core::chemical::DoubleBond ) {
+				if ( angle_i < 90.0 || angle_i > 270.0 ) {
+					angle_i = 0.0;
+				} else {
+					angle_i = 180.0;
+				}
 			}
+			pose.set_chi( ichi_src, ligid, angle_i );
 		}
-		pose.set_chi( ichi_src, ligid, angle_i );
+		if ( pose.residue_type(ligid).is_protein() ) {
+			core::Real phi_i = 360.0 * numeric::random::rg().uniform();
+			core::Real psi_i = 360.0 * numeric::random::rg().uniform();
+			core::Real omega_i = numeric::random::rg().uniform() > 0.5 ? 0.0 : 180.0;
+			pose.set_phi( ligid, phi_i );
+			pose.set_psi( ligid, psi_i );
+			pose.set_omega( ligid, omega_i );
+		}
 	}
 
 	core::Vector Tcom( 0.0,0.0,0.0 );
-	for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
-		Tcom += pose.xyz(core::id::AtomID(iatm_src,ligid));
+	core::Size natm = 0;
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			Tcom += pose.xyz(core::id::AtomID(iatm_src,ligid));
+		}
+		natm += pose.residue_type(ligid).natoms();
 	}
-	Tcom /= pose.residue_type(ligid).natoms();
+	Tcom /= natm;
 
 	core::Real len = trans_step_ * numeric::random::rg().uniform();
 	core::Vector Toff( len*numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
 
 	numeric::xyzMatrix< core::Real > R=numeric::random::random_rotation();
-	for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
-		pose.set_xyz(
-			core::id::AtomID(iatm_src,ligid),
-			R*( pose.xyz(core::id::AtomID(iatm_src,ligid)) - Tcom) + T + Toff
-		);
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			pose.set_xyz(
+				core::id::AtomID(iatm_src,ligid),
+				R*( pose.xyz(core::id::AtomID(iatm_src,ligid)) - Tcom) + T + Toff
+			);
+		}
 	}
 }
 
 
 // perturb
 void
-LigandAligner::perturb_lig( core::pose::Pose & pose, core::Size ligid ) {
+LigandAligner::perturb_lig(
+	core::pose::Pose & pose,
+	utility::vector1< core::Size > ligids
+) {
 	core::Vector Raxis( numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
 	core::Real angle = rot_step_ * numeric::NumericTraits<core::Real>::deg2rad() * numeric::random::rg().gaussian();
 	numeric::xyzMatrix< core::Real > R = numeric::rotation_matrix( Raxis, angle );
 
 	core::Vector Tcom( 0.0,0.0,0.0 );
-	for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
-		Tcom += pose.xyz(core::id::AtomID(iatm_src,ligid));
+	core::Size natm = 0;
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			Tcom += pose.xyz(core::id::AtomID(iatm_src,ligid));
+		}
+		natm += pose.residue_type(ligid).natoms();
 	}
-	Tcom /= pose.residue_type(ligid).natoms();
+	Tcom /= natm;
 
 	core::Real len = trans_step_ * numeric::random::rg().uniform();
 	core::Vector T( len*numeric::random::random_point_on_unit_sphere< core::Real >( numeric::random::rg() ) );
-	for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
-		pose.set_xyz(
-			core::id::AtomID(iatm_src,ligid),
-			R*( pose.xyz(core::id::AtomID(iatm_src,ligid)) - Tcom) + T + Tcom
-		);
+	for ( auto ligid : ligids ) {
+		for ( core::Size iatm_src=1; iatm_src<=pose.residue_type(ligid).natoms(); ++iatm_src ) {
+			pose.set_xyz(
+				core::id::AtomID(iatm_src,ligid),
+				R*( pose.xyz(core::id::AtomID(iatm_src,ligid)) - Tcom) + T + Tcom
+			);
+		}
 	}
 
 	// internal torsions
-	core::Size nchi = pose.residue_type(ligid).nchi();
-	for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
-		core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
-		core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
+	for ( auto ligid : ligids ) {
+		core::Size nchi = pose.residue_type(ligid).nchi();
+		for ( core::Size ichi_src=1; ichi_src<=nchi; ++ichi_src ) {
+			core::chemical::AtomIndices const & chiatoms = pose.residue_type(ligid).chi_atoms( ichi_src );
+			core::chemical::BondName bondtype( pose.residue_type(ligid).bond_type( chiatoms[2], chiatoms[3] ) );
 
-		core::Real angle_i = pose.chi( ichi_src, ligid );
-		if ( bondtype == core::chemical::DoubleBond ) {
-			// keep amide bonds at 0 or 180
-			if ( numeric::random::rg().uniform() < (chi_step_ / 180.0) ) {
-				angle_i = std::fmod( angle_i + 180.0, 360.0);
+			core::Real angle_i = pose.chi( ichi_src, ligid );
+			if ( bondtype == core::chemical::DoubleBond ) {
+				// keep amide bonds at 0 or 180
+				if ( numeric::random::rg().uniform() < (chi_step_ / 180.0) ) {
+					angle_i = std::fmod( angle_i + 180.0, 360.0);
+				}
+			} else {
+				angle_i = std::fmod( angle_i + chi_step_ * numeric::random::rg().gaussian(), 360.0);
 			}
-		} else {
-			angle_i = std::fmod( angle_i + chi_step_ * numeric::random::rg().gaussian(), 360.0);
+			pose.set_chi( ichi_src, ligid, angle_i );
 		}
-		pose.set_chi( ichi_src, ligid, angle_i );
+		if ( pose.residue_type(ligid).is_protein() ) {
+			core::Real phi_i = std::fmod( pose.phi(ligid) + chi_step_ * numeric::random::rg().gaussian(), 360.0);
+			core::Real psi_i = std::fmod( pose.psi(ligid) + chi_step_ * numeric::random::rg().gaussian(), 360.0);
+			core::Real omega_i = pose.omega(ligid);
+			if ( numeric::random::rg().uniform() < (chi_step_ / 180.0) ) {
+				omega_i = std::fmod( omega_i + 0.1 * chi_step_ * numeric::random::rg().gaussian(), 360.0);
+			}
+			pose.set_phi( ligid, phi_i );
+			pose.set_psi( ligid, psi_i );
+			pose.set_omega( ligid, omega_i );
+		}
 	}
 }
 
+
 core::Size
-LigandAligner::estimate_nstruct_sample( core::conformation::Residue const & ligand,
+LigandAligner::estimate_nstruct_sample(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const &ligids,
 	core::Size const ntotal
-)
-{
+) {
 	debug_assert( use_pharmacophore_ ); // make sure this called only with PHdock
 
 	// Initialize and report ligand phores here
@@ -1567,7 +1570,7 @@ LigandAligner::estimate_nstruct_sample( core::conformation::Residue const & liga
 	// TODO
 	// Is this part time consuming? cst_source info is temporary here and needs to be recalculated in apply function
 	// if then, move this to apply function...
-	ConstraintInfo cst_source( ligand, true, true );
+	ConstraintInfo cst_source( pose, ligids, true, true );
 
 	// initialize phore matching
 	cst_source.map_phores( target_.phores(), true ); //force update
@@ -1598,10 +1601,9 @@ LigandAligner::estimate_nstruct_sample( core::conformation::Residue const & liga
 
 // apply
 void
-LigandAligner::apply( LigandConformer & lig
-	/*utility::vector1< core::Size > const &movable_scs*/
-)
-{
+LigandAligner::apply(
+	LigandConformer & lig
+) {
 	bool const debug( TR.Debug.visible() );
 
 	// since we are going to minimize a bunch, we work in the context of a minipose
@@ -1614,13 +1616,13 @@ LigandAligner::apply( LigandConformer & lig
 	lig.to_pose( fullpose );
 
 	// make a working copy having full pose but redefined moving scs consistent with sf_
-	LigandConformer ligwork = LigandConformer( fullpose, lig.ligand_id(), movable_scs_ );
+	LigandConformer ligwork = LigandConformer( fullpose, lig.ligand_ids(), movable_scs_ );
 
 	LigandConformer minilig;
 	core::pose::PoseOP minipose( new core::pose::Pose );
 	ligwork.to_minipose( minipose, minilig );
 
-	core::Size ligid = minilig.ligand_id();
+	utility::vector1< core::Size > ligids = minilig.ligand_ids();
 
 	// align the ligand CoM to the target
 	numeric::xyzVector<core::Real> comTgt(0.0,0.0,0.0);
@@ -1636,9 +1638,14 @@ LigandAligner::apply( LigandConformer & lig
 
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
-	core::Size lig_jump = minipose->fold_tree().get_jump_that_builds_residue( minilig.ligand_id() );
+	core::Size lig_jump = minilig.get_jumpid();
 	mm->set_jump( lig_jump, true );
-	if ( !faster_ ) mm->set_chi( minilig.ligand_id(), true );
+	if ( !faster_ ) {
+		for ( auto ligid : ligids ) {
+			mm->set_chi( ligid, true );
+			mm->set_bb( ligid, true );
+		}
+	}
 
 	core::optimization::MinimizerMap min_map;
 	min_map.setup( *minipose, *mm );
@@ -1670,12 +1677,11 @@ LigandAligner::apply( LigandConformer & lig
 	minopt.max_iter( minsteps1 );
 	core::optimization::Minimizer min_short( f_i, minopt );
 
-	ConstraintInfo cst_source( minipose->residue(ligid), use_pharmacophore(), false );
+	ConstraintInfo cst_source( *minipose, ligids, use_pharmacophore(), false );
 	if ( use_pharmacophore() ) {
 		// Caution: should code in updating logic if ligand changes; currently supporting only PHdock mode
 		cst_source.map_phores( target_.phores(), false/*update*/ );
 		cst_source.select_phore_match( istruct_ );
-
 		// Logic with PHdock:
 		// figure out best match within phores at stage1,
 		// followed by adding more matches + minimization at stage2
@@ -1686,20 +1692,19 @@ LigandAligner::apply( LigandConformer & lig
 	core::Real const w_prior( 3.0 ); // bonus for phore-matches at stage1
 
 	core::pose::Pose minipose0 = *minipose; //copy of input
-	//core::Real score = sf_->score( *minipose, minilig );
 
 	for ( core::Size i=1; i<=cycles1; ++i ) {
 		if ( refine_input_ ) {
 			// recover initial
 			*minipose = minipose0;
-			perturb_lig(*minipose, ligid );
+			perturb_lig(*minipose, ligids );
 		} else {
-			randomize_lig(*minipose, ligid, comTgt);
+			randomize_lig(*minipose, ligids, comTgt);
 		}
 
 		// superimpose b/w phoreCOMs at receptor & ligand
 		if ( use_pharmacophore() ) {
-			cst_source.align_to_current_phore_match( *minipose, target_, ligid, marked_pairs,
+			cst_source.align_to_current_phore_match( *minipose, target_, ligids, marked_pairs,
 				SrcPriorIDs, TgtPriorIDs );
 		}
 
@@ -1707,7 +1712,7 @@ LigandAligner::apply( LigandConformer & lig
 			// multiple cstgen+min cycles
 			for ( core::Size rpt=1; rpt<=repeats1; ++rpt ) {
 				// setup constraints + min; use pharmacophore info if provided for prior match at stage1
-				set_constraints(*minipose, ligid, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
+				set_constraints(*minipose, ligids, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
 
 				// the minimizer call
 				min_map.copy_dofs_from_pose( *minipose, dofs );
@@ -1716,7 +1721,7 @@ LigandAligner::apply( LigandConformer & lig
 				min_map.copy_dofs_to_pose( *minipose, dofs );
 			}
 		} else {
-			set_constraints(*minipose, ligid, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
+			set_constraints(*minipose, ligids, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
 		}
 		core::Real score = sf_->score( *minipose, minilig );
 
@@ -1754,7 +1759,7 @@ LigandAligner::apply( LigandConformer & lig
 	TR << std::endl;
 
 	if ( use_pharmacophore() ) {
-		set_hard_constraint_on_marked( *minipose, ligid, marked_pairs_best );
+		set_hard_constraint_on_marked( *minipose, ligids, marked_pairs_best );
 		min_map.copy_dofs_from_pose( *minipose, dofs );
 		min_med.run( dofs );
 		min_map.reset_jump_rb_deltas( *minipose, dofs );
@@ -1762,7 +1767,7 @@ LigandAligner::apply( LigandConformer & lig
 		//if( debug ) minipose->dump_pdb("stage1."+std::to_string(istruct_)+".min.pdb" );
 
 		// substitute back to top-out cst before moving to stage2
-		set_constraints(*minipose, ligid, marked_pairs );
+		set_constraints(*minipose, ligids, marked_pairs );
 
 		// reporting purpose
 		score_best = sf_->score( *minipose, minilig );
@@ -1774,13 +1779,12 @@ LigandAligner::apply( LigandConformer & lig
 	core::optimization::Minimizer min_long( f_i, minopt );
 
 	for ( core::Size i=1; i<=cycles2; ++i ) {
-		if ( i>1 ) { perturb_lig(*minipose, ligid); }
+		if ( i>1 ) { perturb_lig(*minipose, ligids); }
 
 		// multiple cstgen+min cycles
 		for ( core::Size rpt=1; rpt<=repeats2; ++rpt ) {
 			// setup constraints + min
-			set_constraints(*minipose, ligid, marked_pairs);
-			//set_constraints(*minipose, ligid, marked_pairs, w_prior, SrcPriorIDs, TgtPriorIDs );
+			set_constraints(*minipose, ligids, marked_pairs);
 
 			// the minimizer call
 			min_map.copy_dofs_from_pose( *minipose, dofs );
@@ -1802,7 +1806,7 @@ LigandAligner::apply( LigandConformer & lig
 	cst = sfxn_cst->score( *minipose );
 
 	if ( debug ) minipose->dump_pdb("stage2."+std::to_string(istruct_)+".best.pdb" );
-	set_constraints(*minipose, ligid, marked_pairs_best );
+	set_constraints(*minipose, ligids, marked_pairs_best );
 
 	auto end = std::chrono::steady_clock::now();
 	std::chrono::duration<double> diff = end-start;

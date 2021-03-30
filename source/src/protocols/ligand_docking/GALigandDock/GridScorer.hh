@@ -62,11 +62,16 @@ public:
 
 	/// @brief  calulate the bounding box
 	void
-	prepare_grid( core::pose::Pose const &pose, core::Size const lig_resid );
+	prepare_grid(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const &lig_resnos );
 
 	/// @brief  pass list of residue (acutually rsdtypes) to construct grids for
 	void
-	get_grid_atomtypes( utility::vector1< core::conformation::Residue > const & rsds );
+	get_grid_atomtypes(
+		utility::vector1< core::conformation::Residue > const & rsds,
+		utility::vector1< bool > const & sconly
+	);
 
 	void
 	get_grid_all_atomtypes();
@@ -74,7 +79,7 @@ public:
 	void
 	calculate_grid(
 		core::pose::Pose const &pose,
-		core::Size const lig_resid,
+		utility::vector1< core::Size > const & lig_resnos,
 		utility::vector1< core::Size > const &movingSCs
 	);
 
@@ -103,6 +108,7 @@ public:
 	get_1b_energy(
 		core::conformation::Residue const &res_i,
 		core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo,
+		bool include_bb,
 		bool soft=false
 	);
 
@@ -112,8 +118,10 @@ public:
 		core::pose::Pose &pose,
 		core::conformation::Residue const &res_i,
 		core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_i,
+		bool incl_bb_i,
 		core::conformation::Residue const &res_j,
 		core::scoring::lkball::LKB_ResidueInfoOP lkbrinfo_j,
+		bool incl_bb_j,
 		bool soft=false
 	);
 
@@ -144,9 +152,6 @@ public:
 		LigandConformer const &lig,
 		core::optimization::MinimizerMap &min_map
 	);
-
-	core::Real
-	clash_score( LigandConformer const &lig );
 
 	/// @brief  minimize a ligand conformer
 	core::Real
@@ -373,7 +378,7 @@ private:
 	numeric::xyzVector< core::Real > lig_com_;
 	core::Real maxRad_;
 
-	core::Size ligid_;
+	utility::vector1< core::Size > ligids_;
 };
 
 typedef utility::pointer::shared_ptr< GridScorer > GridScorerOP;

@@ -101,16 +101,22 @@ count_neighbors( core::pose::Pose const &pose,
 }
 
 utility::vector1< core::Size >
-get_atomic_contacting_sidechains( core::pose::Pose const &pose,
-	core::Size const ligid,
-	core::Real const atomic_distance_cut )
-{
+get_atomic_contacting_sidechains(
+	core::pose::Pose const &pose,
+	utility::vector1< core::Size > const &ligids,
+	core::Real const atomic_distance_cut
+) {
 	utility::vector1< core::Size > contact_scs;
-
 	core::Real const D2_COARSE( 225.0 );
 	core::Real const D2_FINE( atomic_distance_cut*atomic_distance_cut );
 
-	core::Vector const &ligcom = pose.residue(ligid).nbr_atom_xyz();
+	utility::vector1< core::Size > flexscs;
+
+	//core::Vector const &ligcom = pose.residue(ligid_).nbr_atom_xyz();
+	utility::vector1< core::Vector > ligCOMs;
+	for ( auto ligid : ligids ) {
+		ligCOMs.push_back ( pose.residue(ligid).nbr_atom_xyz() );
+	}
 	utility::vector1< bool > is_close( pose.size(), false );
 	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
 		if ( !pose.residue(ires).is_protein() ) continue;
@@ -119,40 +125,41 @@ get_atomic_contacting_sidechains( core::pose::Pose const &pose,
 				pose.residue(ires).aa() == core::chemical::aa_pro ) continue;
 
 		core::Vector const & resnbr = pose.residue(ires).nbr_atom_xyz();
-		core::Real d2 = ligcom.distance_squared( resnbr );
-		if ( d2 < D2_COARSE ) is_close[ires] = true;
+
+		core::Real d2min = D2_COARSE+1;
+		for ( auto com : ligCOMs ) {
+			d2min = std::min( d2min, com.distance_squared( resnbr ) );
+		}
+		if ( d2min < D2_COARSE ) is_close[ires] = true;
 	}
 
 	for ( core::Size ires = 1; ires <= pose.size(); ++ires ) {
-		if ( !is_close[ires] || ires == ligid ) continue;
+		if ( !is_close[ires] ) continue;
+		if ( std::find( ligids.begin(), ligids.end(), ires ) != ligids.end() ) continue;
 
 		bool i_is_contacting = false;
 		for ( core::Size iatm = 1; iatm <= pose.residue(ires).nheavyatoms(); ++iatm ) {
 			if ( pose.residue(ires).atom_is_backbone(iatm) ) continue;
 			core::Vector const &xyz_i = pose.residue(ires).xyz(iatm);
 
-			for ( core::Size jatm = 1; jatm <= pose.residue(ligid).nheavyatoms(); ++jatm ) {
-				core::Vector const &xyz_j = pose.residue(ligid).xyz(jatm);
+			for ( auto ligid : ligids ) {
+				for ( core::Size jatm = 1; jatm <= pose.residue(ligid).nheavyatoms(); ++jatm ) {
+					core::Vector const &xyz_j = pose.residue(ligid).xyz(jatm);
 
-				core::Real d2 = xyz_i.distance_squared( xyz_j );
-				if ( d2 < D2_FINE ) {
-					i_is_contacting = true;
-					break;
+					core::Real d2 = xyz_i.distance_squared( xyz_j );
+					if ( d2 < D2_FINE ) {
+						i_is_contacting = true;
+						break;
+					}
+					if ( i_is_contacting ) break;
 				}
+				if ( i_is_contacting ) break;
 			}
 			if ( i_is_contacting ) break;
 		} // iatm
 
 		if ( i_is_contacting ) {
 			contact_scs.push_back( ires );
-			/*
-			for( core::Size ichi = 1; ichi <= pose.residue(ires).nchi(); ++ichi ){
-			if( !pose.residue(ires).type().is_proton_chi(ichi)  ){
-			chidefs.push_back( std::make_pair( ires, ichi ) );
-			std::cout << "chidef: " << chidefs.size() << " " << ires << " " << ichi <<std::endl;
-			}
-			}
-			*/
 		}
 	} // ires
 

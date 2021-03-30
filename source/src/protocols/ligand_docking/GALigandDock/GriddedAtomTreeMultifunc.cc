@@ -22,6 +22,7 @@
 #include <core/id/types.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/AtomTree.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/types.hh>
 
 #include <basic/Tracer.hh>
@@ -40,12 +41,14 @@ GriddedAtomTreeMultifunc::GriddedAtomTreeMultifunc(
 	LigandConformer & conf_in,
 	core::pose::Pose & pose_in,
 	GridScorer & scorefxn_in,
-	core::optimization::MinimizerMap & min_map_in
+	core::optimization::MinimizerMap & min_map_in,
+	bool debug //=false
 ) :
 	conf_( conf_in ),
 	pose_( pose_in ),
 	sf_( scorefxn_in ),
-	min_map_( min_map_in )
+	min_map_( min_map_in ),
+	debug_( debug )
 {
 }
 
@@ -70,11 +73,13 @@ GriddedAtomTreeMultifunc::dfunc( core::optimization::Multivec const & vars, core
 	min_map_.zero_torsion_vectors();
 	min_map_.copy_dofs_to_pose( pose_, vars );
 
-	// get atom derivatives
-	sf_.derivatives( pose_, conf_, min_map_ );
-
 	// DEBUG DERIVS[1]
-	//sf_.debug_deriv( pose_, conf_, min_map_ );
+	if ( debug_ ) {
+		sf_.debug_deriv( pose_, conf_, min_map_ );
+	} else {
+		// get atom derivatives
+		sf_.derivatives( pose_, conf_, min_map_ );
+	}
 
 	// store f1/f2 on DOF nodes
 	for ( auto iter = min_map_.begin(), iter_e = min_map_.end(); iter != iter_e; ++iter ) {
@@ -120,9 +125,11 @@ GriddedAtomTreeMultifunc::dfunc( core::optimization::Multivec const & vars, core
 	}
 
 	// DEBUG DERIVS[2]
-	//core::optimization::NumericalDerivCheckResultOP deriv_check_result( new core::optimization::NumericalDerivCheckResult );
-	//deriv_check_result->send_to_stdout( true );
-	//core::optimization::numerical_derivative_check( min_map_, *this, vars, dE_dvars, deriv_check_result, true );
+	if ( debug_ ) {
+		core::optimization::NumericalDerivCheckResultOP deriv_check_result( new core::optimization::NumericalDerivCheckResult );
+		deriv_check_result->send_to_stdout( true );
+		core::optimization::numerical_derivative_check( min_map_, *this, vars, dE_dvars, deriv_check_result, true );
+	}
 }
 
 void

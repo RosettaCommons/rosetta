@@ -19,10 +19,13 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
+#include <core/id/TorsionID.hh>
 #include <numeric/Quaternion.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 #include <map>
+#include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
+
 
 
 namespace protocols {
@@ -36,6 +39,12 @@ namespace ga_ligand_dock {
 /// Also has functions to tranform back and forth to pose object
 /// Uses friend functions to perform mutation / crossovers with others within gene representation
 
+struct TorsionType{
+	core::chemical::BondName bn;
+	core::chemical::BondRingness br;
+	core::Size at1, at2, at3, at4;
+};
+
 class LigandConformer : public utility::VirtualBase {
 public:
 	friend LigandConformer
@@ -45,18 +54,18 @@ public:
 	friend LigandConformer
 	crossover(LigandConformer const &l1, LigandConformer const &l2);
 
-	// crossover2
-	friend LigandConformer
-	crossover_ft(LigandConformer const &l1, LigandConformer const &l2);
-
+	// distance without equivalent atom substitution
 	friend core::Real
 	distance_fast( LigandConformer &gene1, LigandConformer &gene2 );
 
+	// distance _with_ equivalent atom substitution
+	friend core::Real
+	distance_slow( LigandConformer &gene1, LigandConformer &gene2 );
+
+	// internal coordinate distance
 	friend std::pair< core::Real, core::Real >
 	distance_internal( LigandConformer const &gene1, LigandConformer const &gene2 );
 
-	friend core::Real
-	distance_slow( LigandConformer const &gene1, LigandConformer const &gene2 );
 
 public:
 	LigandConformer();
@@ -64,9 +73,8 @@ public:
 
 	LigandConformer(
 		core::pose::PoseCOP pose,
-		core::Size ligid,
+		utility::vector1 <core::Size > const &ligids,
 		utility::vector1< core::Size > movingscs
-		//std::string runmode="dock"
 	);
 
 	// common pathway for parameter initialization
@@ -77,7 +85,7 @@ public:
 	void
 	initialize(
 		core::pose::PoseCOP pose,
-		core::Size ligid,
+		utility::vector1 <core::Size > const &ligids,
 		utility::vector1< core::Size > movingscs
 	);
 
@@ -115,7 +123,7 @@ public:
 
 	// generate only the ligand residue based on this conformation
 	core::conformation::Residue
-	ligand_residue() const;
+	ligand_residue( core::Size ires ) const;
 
 	// generate only the protein residue based on this conformation
 	core::conformation::Residue
@@ -126,14 +134,22 @@ public:
 	receptor(  ) const;
 
 	// get the id of the ligand
-	core::Size
-	ligand_id() const { return ligid_; }
+	utility::vector1< core::Size >
+	ligand_ids() const { return ligids_; }
 
 	utility::vector1< core::Real > const &
 	get_ligandchis() const { return ligandchis_; }
 
 	core::Real
 	get_ligandchi( core::Size ichi ) const { return ligandchis_[ichi]; }
+
+	void
+	set_ligandchi( core::Size ichi, core::Real value ) {
+		ligandchis_[ichi] = value;
+	}
+
+	core::Size
+	n_ligandchis() const { return ligandchis_.size(); }
 
 	// get the moving sidechains
 	utility::vector1< core::Size > const &
@@ -176,7 +192,11 @@ public:
 	randomize( core::Real transmax );
 
 	void
-	superimpose_to_alternative_frame( LigandConformer const &refconf );
+	sample_conformation( core::Real transmax, TorsionSampler const& sampler);
+
+	// Not defined yet
+	// void
+	// superimpose_to_alternative_frame( LigandConformer const &refconf );
 
 	void set_rotwidth   ( core::Real setting ){ rotmutWidth_ = setting; }
 	void set_transwidth ( core::Real setting ){ transmutWidth_ = setting; }
@@ -209,17 +229,30 @@ public:
 	core::kinematics::FoldTree const &
 	get_reference_ft() const { return ref_pose_->fold_tree(); }
 
+	core::Size
+	get_jumpid() const { return jumpid_; }
+
 	// fd returns true if the ligand is the last residue in the input pose
 	bool
 	is_ligand_terminal() const {
-		return (ref_pose_->total_residue()==ligid_);
+		return (
+			std::find( ligids_.begin(), ligids_.end(), ref_pose_->total_residue() ) != ligids_.end()
+		);
 	}
 
-	void
-	set_typename( std::string name ) { ligand_typename_ = name; }
+	std::string
+	ligand_typename() const {
+		std::string retval = ligand_typenames_[1];
+		for ( core::Size i = 2; i<=ligand_typenames_.size(); ++i ) {
+			retval += "-"+ligand_typenames_[i];
+		}
+		return retval;
+	}
 
 	std::string
-	ligand_typename() const { return ligand_typename_; }
+	ligand_typename(core::Size i) const {
+		return ligand_typenames_[i];
+	}
 
 	void
 	set_negTds( core::Real inval ) { negTdS_ = inval; }
@@ -230,12 +263,24 @@ public:
 	core::pose::PoseCOP
 	get_ref_pose() const { return ref_pose_; }
 
+	// update the ligand chi torsion types
+	void
+	update_ligchi_types( core::conformation::Residue const& ligres);
+
+	TorsionType const&
+	get_ligchi_type( core::Size ndx) const {
+		assert( ndx<=ligandchi_types_.size() );
+		return ligandchi_types_[ndx];
+	}
+	utility::vector1< TorsionType > const&
+	get_ligchi_types() const { return ligandchi_types_; }
+
 private:
 	// reference pose
 	core::pose::PoseCOP ref_pose_;
 
 	// the resid of the ligand
-	core::Size ligid_;
+	utility::vector1< core::Size > ligids_;
 
 	// the sidechains that are allowed to move
 	utility::vector1< core::Size > movingscs_;
@@ -252,25 +297,30 @@ private:
 	// the internal representation of the pose
 	utility::vector1< core::Real > rb_;
 	utility::vector1< core::Real > ligandchis_;
+	utility::vector1< TorsionType > ligandchi_types_;
+	utility::vector1< core::id::TorsionID > ligandtorsionids_;
 	utility::vector1< core::Real > ligandnus_;    // ring torsions
 	utility::vector1< core::Real > ligandtaus_; // ring angles
-	utility::vector1< utility::vector1< core::Size > > ligandchi_downstream_;
+
 
 	// radius of gyration of ligand
 	core::Real rg_;
+
+	// ligand jumpid
+	core::Size jumpid_;
 
 	//
 	bool ligandxyz_synced_;
 	utility::vector1< core::Vector > ligandxyz_;
 
 	// mutation rate parameters
-	core::Real torsmutationRate_, rtmutationRate_, transmutWidth_, rotmutWidth_, ligchimutWidth_, protchimutWidth_;
+	core::Real torsmutationRate_, rtmutationRate_, transmutWidth_, rotmutWidth_, ligchimutWidth_;
 
 	// history of conformation generation
 	std::string generation_tag_;
 
-	// ligand type name, mainly used for competing dock
-	std::string ligand_typename_;
+	// ligand type name
+	utility::vector1<std::string> ligand_typenames_;
 
 	// -Tds
 	core::Real negTdS_;
@@ -286,10 +336,6 @@ mutate(LigandConformer const &l );
 LigandConformer
 crossover(LigandConformer const &l1, LigandConformer const &l2);
 
-// crossover using some foldtree knowledge
-LigandConformer
-crossover_ft(LigandConformer const &l1, LigandConformer const &l2);
-
 core::Real
 distance_fast( LigandConformer &gene1, LigandConformer &gene2 ); // non-const because of sync check
 
@@ -297,7 +343,7 @@ std::pair< core::Real, core::Real >
 distance_internal( LigandConformer const &gene1, LigandConformer const &gene2 );
 
 core::Real
-distance_slow( LigandConformer const &gene1, LigandConformer const &gene2 );
+distance_slow( LigandConformer &gene1, LigandConformer &gene2 );
 
 }
 }

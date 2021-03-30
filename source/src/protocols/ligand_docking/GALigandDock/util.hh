@@ -35,7 +35,7 @@ count_neighbors( core::pose::Pose const &pose,
 
 utility::vector1< core::Size >
 get_atomic_contacting_sidechains( core::pose::Pose const &pose,
-	core::Size const ligid,
+	utility::vector1< core::Size > const &ligids,
 	core::Real const atomic_distance_cut = 4.0 );
 
 }

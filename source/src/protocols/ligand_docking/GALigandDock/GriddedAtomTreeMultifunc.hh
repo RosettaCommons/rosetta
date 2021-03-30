@@ -33,7 +33,8 @@ public:
 		LigandConformer & conf_in,
 		core::pose::Pose & pose_in,
 		GridScorer & scorefxn_in,
-		core::optimization::MinimizerMap & min_map_in
+		core::optimization::MinimizerMap & min_map_in,
+		bool debug=false
 	);
 
 	~GriddedAtomTreeMultifunc() override;
@@ -54,6 +55,7 @@ private: // data
 	core::pose::Pose & pose_;
 	GridScorer & sf_;
 	core::optimization::MinimizerMap & min_map_;
+	bool debug_;
 }; // GriddedAtomTreeMultifunc
 
 

@@ -169,13 +169,17 @@ public:
 		phore_dcut_(4.0), n_match_per_ligand_motif_(3), debug_(false)
 	{ }
 
-	ConstraintInfo( core::conformation::Residue const &lig,
+	ConstraintInfo(
+		//core::conformation::Residue const &lig,
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const &ligids,
 		bool use_pharmacophore,
-		bool report_phore_info=false ){
+		bool report_phore_info=false
+	){
 		if ( use_pharmacophore ) {
-			init_from_ligand_pharmacophore(lig,report_phore_info);
+			init_from_ligand_pharmacophore(pose,ligids,report_phore_info);
 		} else {
-			init_from_ligand(lig);
+			init_from_ligand( pose,ligids );
 		}
 	}
 
@@ -189,11 +193,15 @@ public:
 
 	/// @brief use a (non-identical) target ligand (for reference ligand matching)
 	void
-	init_from_ligand( core::conformation::Residue const &mylig);
+	init_from_ligand(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const &ligids );
 
 	/// @brief defines pharmacophore partners in ligand (for pharmacophore matching)
 	void
-	init_from_ligand_pharmacophore( core::conformation::Residue const &mylig,
+	init_from_ligand_pharmacophore(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const &ligids,
 		bool report_phore_info );
 
 	/// @details build up binding locations from a receptor
@@ -218,10 +226,6 @@ public:
 	utility::vector1< Pharmacophore > const& phores() const { return phores_; }
 
 	core::Size n_phore_match() const { return phore_match_.size(); }
-	//core::Size receptor_vsite_min() const { return RECEPTOR_VSITE_MIN; }
-	//core::Size receptor_vsite_max() const { return RECEPTOR_VSITE_MAX; }
-
-	// below functioned called from LigandAligner instance...
 
 	/// @brief selects a phore_match and updates current_phore_match_
 	void
@@ -231,7 +235,7 @@ public:
 	void
 	align_to_current_phore_match( core::pose::Pose &pose,
 		ConstraintInfo const &recinfo,
-		core::Size const ligid,
+		utility::vector1< core::Size > const &ligids,
 		utility::vector1< std::pair< core::Size, core::Size > > &marked_pairs,
 		utility::vector1< core::Size > &SrcPriorIDs,
 		utility::vector1< core::Size > &TgtPriorIDs
@@ -277,14 +281,6 @@ private:
 	phore_overlaps_with_existing( Pharmacophore const &phore_i,
 		core::Size &jphore ) const;
 
-	/*
-	bool
-	cluster_overlaps_any( utility::vector1< utility::vector1< core::Size > > const &clusters,
-	utility::vector1< core::Size > const &cluster_i,
-	core::Size const n,
-	core::Real const fraction ) const;
-	*/
-
 	/// @brief defines receptor phores
 	void
 	define_receptor_phores( utility::vector1< std::pair< core::Real, core::Size > > &Vdonor_sort,
@@ -294,7 +290,9 @@ private:
 	);
 
 	void
-	update_ligand_coord( core::conformation::Residue const & ligand );
+	update_ligand_coord(
+		core::pose::Pose const & pose
+	);
 
 private:
 	utility::vector1< core::id::AtomID > atmids_;
@@ -343,7 +341,9 @@ public:
 	void set_pharmacophore_reference( core::pose::Pose const &pose );
 
 	/// @brief gets estimate of n-pharmacophore-search considering problem complexity
-	core::Size estimate_nstruct_sample( core::conformation::Residue const & ligand,
+	core::Size estimate_nstruct_sample(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Size > const &ligids,
 		core::Size const ntotal );
 
 	// Setters&getters
@@ -363,7 +363,9 @@ public:
 
 private:
 	/// @brief set constraints to target
-	void set_constraints( core::pose::Pose & pose, core::Size ligid,
+	void set_constraints(
+		core::pose::Pose & pose,
+		utility::vector1<core::Size> ligids,
 		utility::vector1< std::pair< core::Size, core::Size > > &marked_pairs,
 		core::Real const w_prior = 1.0, // default no upper limit
 		utility::vector1< core::Size > const &SrcPriorIDs = utility::vector1< core::Size >(),
@@ -373,15 +375,21 @@ private:
 	/// @brief set stronger constraints on specific constraint set pairs
 	void
 	set_hard_constraint_on_marked(
-		core::pose::Pose & pose, core::Size const ligid,
+		core::pose::Pose & pose,
+		utility::vector1< core::Size > ligid,
 		utility::vector1< std::pair< core::Size, core::Size > > const &marked_pairs
 	) const;
 
 	/// @brief randomize ligand about a new center 'T'
-	void randomize_lig( core::pose::Pose & pose, core::Size ligid, numeric::xyzVector<core::Real> const &T );
+	void randomize_lig(
+		core::pose::Pose & pose,
+		utility::vector1< core::Size > ligid,
+		numeric::xyzVector<core::Real> const &T );
 
 	/// @brief perturb ligand
-	void perturb_lig( core::pose::Pose & pose, core::Size ligid );
+	void perturb_lig(
+		core::pose::Pose & pose,
+		utility::vector1< core::Size > ligid);
 
 private:
 	ConstraintInfo target_; // target pose to which we are aligning

@@ -18,6 +18,7 @@
 #include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 #include <protocols/ligand_docking/GALigandDock/util.hh>
 #include <protocols/ligand_docking/GALigandDock/EntropyEstimator.hh>
+#include <protocols/ligand_docking/GALigandDock/TorsionSampler.hh>
 
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreType.hh>
@@ -115,7 +116,6 @@ GALigandDock::GALigandDock() {
 	debug_ = exact_ = false;
 	sidechains_ = "none";
 	sc_edge_buffer_ = 2.0; // in A
-	altcrossover_= false;
 	optimize_input_H_ = true;
 
 	// final relaxation
@@ -145,6 +145,7 @@ GALigandDock::GALigandDock() {
 	reference_frac_ = 0.5;
 	reference_frac_auto_ = true;
 	use_pharmacophore_ = true; // turn on by default!
+	torsion_sampler_percentage_ = 0.0;
 
 	multiple_ligands_ = utility::vector1< std::string >();
 	multi_ligands_maxRad_ = 0.0;
@@ -163,14 +164,56 @@ void
 GALigandDock::apply( pose::Pose & pose )
 {
 	std::string prefix( basic::options::option[ basic::options::OptionKeys::out::prefix ]() );
-	core::Size lig_resno = pose.total_residue();
+
+	utility::vector1 < core::Size > lig_resids;
 	if ( ligid_.length() > 0 ) {
-		lig_resno = core::pose::parse_resnum( ligid_, pose, false );
+		lig_resids = get_resnum_list_ordered( ligid_, pose );
+
+		// make sure no polymer bonds across interface
+		for ( auto i_lig : lig_resids ) {
+			runtime_assert( pose.residue(i_lig).is_polymer() );
+			if ( pose.residue(i_lig).has_lower_connect() ) {
+				core::Size nextres = pose.residue(i_lig).connected_residue_at_resconn( pose.residue(i_lig).type().lower_connect_id() );
+				runtime_assert( std::find (lig_resids.begin(), lig_resids.end(), nextres) != lig_resids.end() );
+			}
+			if ( pose.residue(i_lig).has_upper_connect() ) {
+				core::Size nextres = pose.residue(i_lig).connected_residue_at_resconn( pose.residue(i_lig).type().upper_connect_id() );
+				runtime_assert( std::find (lig_resids.begin(), lig_resids.end(), nextres) != lig_resids.end() );
+			}
+		}
+	} else {
+		core::Size lastres = pose.total_residue();
+		while ( pose.residue(lastres).is_virtual_residue() && lastres>1 ) lastres--;
+		lig_resids.push_back( lastres );
+		bool extending = true;
+		while ( extending ) {
+			if ( !pose.residue(lastres).is_polymer() ) {
+				extending = false; // ligand not a polymer, we're done
+			} else if ( pose.residue(lastres).has_lower_connect() ) {
+				core::Size nextres = pose.residue(lastres).connected_residue_at_resconn( pose.residue(lastres).type().lower_connect_id() );
+				if ( std::find (lig_resids.begin(), lig_resids.end(), nextres) == lig_resids.end() ) {
+					lastres = nextres;
+					lig_resids.push_back( lastres );
+				} else {
+					extending = false;  // finished a cyclic peptide, we're done
+				}
+			} else {
+				extending = false; // hit n-term
+			}
+		}
+	}
+	std::sort (lig_resids.begin(), lig_resids.end());
+
+	// fd: some of the code assumes lk_ball "interaction centers" are present.
+	//     if disabled, turn on at very low weight (so score is unaffected
+	//     but interaction centers are computed)
+	if ( scfxn_->get_weight( core::scoring::lk_ball ) == 0 && scfxn_->get_weight( core::scoring::lk_ball_wtd ) == 0 ) {
+		scfxn_->set_weight( core::scoring::lk_ball, 1e-9 );
 	}
 
-	// if no cycles are specified, _AND_ final refinement is on,
-	// do not do grid calculations
-	bool no_grid_score = ( exact_ );
+	if ( torsion_sampler_percentage_ > 0 ) {
+		torsion_sampler_ = TorsionSampler();
+	}
 
 	// [[1]] setup grid scoring
 	GridScorerOP gridscore( new GridScorer( scfxn_ ));
@@ -184,19 +227,28 @@ GALigandDock::apply( pose::Pose & pose )
 
 	// prepare the grid but don't calculate scores yet
 	TR << "Preparing grid using input pose " << std::endl;
-	gridscore->prepare_grid( pose, lig_resno );
+	gridscore->prepare_grid( pose, lig_resids );
 
 	// now figure out movable sidechains (using sidechains_ flag)
-	utility::vector1< core::Size > movable_scs = get_movable_scs( pose, gridscore, lig_resno );
+	utility::vector1< core::Size > movable_scs = get_movable_scs( pose, gridscore, lig_resids );
 
 	// pass all the ligand residues for grid construction
 	utility::vector1< core::conformation::Residue > rsds_to_build_grids;
-	rsds_to_build_grids.push_back( pose.residue(lig_resno) );
-	for ( core::Size ires = 1; ires <= movable_scs.size(); ++ires ) {
-		rsds_to_build_grids.push_back( pose.residue(movable_scs[ires]) );
+	utility::vector1< bool > sconly;
+
+	for ( auto i_lig : lig_resids ) {
+		rsds_to_build_grids.push_back( pose.residue(i_lig) );
+		sconly.push_back( false );
+	}
+	for ( auto i_mov : movable_scs ) {
+		rsds_to_build_grids.push_back( pose.residue(i_mov) );
+		sconly.push_back( true );
 	}
 
 	if ( multiple_ligands_.size() > 0 ) {
+		if ( lig_resids.size() > 1 ) {
+			utility_exit_with_message("GALigandDock: multiple_ligands only works with single-res ligands!");
+		}
 		core::Real mean_maxRad = 0.0;
 		std::vector<core::Real> maxRads;
 		use_mean_maxRad_ = use_mean_maxRad_ && ( multiple_ligands_.size()>1 );
@@ -230,31 +282,29 @@ GALigandDock::apply( pose::Pose & pose )
 				" * " << "stdev: " << multi_ligands_maxRad_ << std::endl;
 			gridscore->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
 		}
-
 	}
-	gridscore->get_grid_atomtypes( rsds_to_build_grids );
+	gridscore->get_grid_atomtypes( rsds_to_build_grids, sconly );
 
 	// prepare the input pose
-	idealize_and_repack_pose( pose, movable_scs, lig_resno );
+	idealize_and_repack_pose( pose, movable_scs, lig_resids );
 
 	// compute the grid
-	if ( !no_grid_score ) {
-		TR << "Build grid for ligand and for " << movable_scs.size() << " sidechains" << std::endl;
-		TR << "Residue nums: " << lig_resno;
-		for ( core::Size i=1; i<=movable_scs.size(); ++i ) {
-			TR << "+" << movable_scs[i];
-		}
-		TR << std::endl;
-		gridscore->calculate_grid( pose, lig_resno, movable_scs );
+	if ( !exact_ ) {
+		TR << "Build grid for " << lig_resids.size() << " ligand residues and for "
+			<< movable_scs.size() << " sidechain residues" << std::endl;
 
-	} else {
-		TR << "Skipping grid calculation! (exact=1)" << std::endl;
-		TR << "Mobile sidechains: ";
-		TR << lig_resno;
+		TR << "Mobile sidechains: " << lig_resids[1];
+		for ( core::Size i=2; i<=lig_resids.size(); ++i ) {
+			TR << "+" << lig_resids[i];
+		}
 		for ( core::Size i=1; i<=movable_scs.size(); ++i ) {
 			TR << "+" << movable_scs[i];
 		}
 		TR << std::endl;
+
+		gridscore->calculate_grid( pose, lig_resids, movable_scs );
+	} else {
+		TR << "Skipping grid calculation." << std::endl;
 	}
 
 	// Prepare ligand aligner
@@ -262,18 +312,10 @@ GALigandDock::apply( pose::Pose & pose )
 	if ( reference_pool_ != "" ) {
 		scfxn_->score( pose ); // make sure scored to get neighbor graph
 		TR << "Setting up Ligand aligner." << std::endl;
-		aligner = setup_ligand_aligner( pose, lig_resno, movable_scs );
+		aligner = setup_ligand_aligner( pose, lig_resids, movable_scs );
 	}
 
 	if ( multiple_ligands_.size() > 0 ) {
-		/*
-		core::pose::PoseOP pose_apo( new core::pose::Pose( pose ) );
-		pose_apo->energies().clear();
-		pose_apo->data().clear();
-		core::conformation::Residue const &ligand_ref = pose.residue(lig_resno);
-		pose_apo->delete_residue_slow( lig_resno );
-		lig_resno = pose.size(); // reset it to the last one
-		*/
 		core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()
 			->residue_type_set( "fa_standard" ) );
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
@@ -289,18 +331,18 @@ GALigandDock::apply( pose::Pose & pose )
 			}
 
 			core::pose::PoseOP pose_working =
-				make_starting_pose_for_virtual_screening( pose, lig_resno, multiple_ligands_[ilig] );
-			//pose_working->dump_pdb("start."+multiple_ligands_[ilig]+".pdb");
+				make_starting_pose_for_virtual_screening( pose, lig_resids[1], multiple_ligands_[ilig] );
 
 			if ( premin_ligand_ ) {
 				TR << "Preminimize ligand." << std::endl;
-				premin_ligand( pose, lig_resno );
+				premin_ligand( pose, lig_resids );
 			}
 
-			LigandConformer gene_initial( pose_working, lig_resno, movable_scs );
+			LigandConformer gene_initial( pose_working, lig_resids, movable_scs );
 			gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 
 			OutputStructureStore temporary_outputs;
+
 			// take lowest score pose from each ligand
 			pose = run_docking( gene_initial, gridscore, aligner, temporary_outputs );
 
@@ -325,10 +367,10 @@ GALigandDock::apply( pose::Pose & pose )
 		pose_working->data().clear();
 		if ( premin_ligand_ ) {
 			TR << "Preminimize ligand." << std::endl;
-			premin_ligand( pose, lig_resno );
+			premin_ligand( pose, lig_resids );
 		}
 
-		LigandConformer gene_initial( pose_working, lig_resno, movable_scs );
+		LigandConformer gene_initial( pose_working, lig_resids, movable_scs );
 		gene_initial.set_sample_ring_conformers( sample_ring_conformers_ );
 
 		pose = run_docking( gene_initial, gridscore, aligner, remaining_outputs_ );
@@ -342,8 +384,6 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	LigandAligner &aligner,
 	OutputStructureStore &outputs )
 {
-	core::Size const lig_resno( gene_initial.ligand_id() );
-
 	// load inputs & generate randomized starting points
 	LigandConformers genes = generate_perturbed_structures( gene_initial, gridscore, protocol_[1].pool,
 		aligner );
@@ -370,7 +410,11 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	for ( core::Size i=1; i<=genes.size(); ++i ) {
 		core::pose::PoseOP pose_tmp( new core::pose::Pose );
 		genes[i].to_pose( pose_tmp );
-		//pose_tmp->dump_pdb("premin."+std::to_string(i)+".pdb");
+
+		if ( TR.Debug.visible() ) {
+			pose_tmp->dump_pdb("premin."+std::to_string(i)+".pdb");
+		}
+
 
 		utility::vector1< core::Size > const &movable_scs = genes[i].moving_scs();
 		// idealize again... why do we need this again here?
@@ -390,7 +434,10 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		if ( cartmin_lig_ ) {
 			final_cartligmin(genes[i], *pose_tmp );
 		}
-		//pose_tmp->dump_pdb("cartmin1."+std::to_string(i)+".pdb");
+
+		if ( TR.Debug.visible() ) {
+			pose_tmp->dump_pdb("cartmin1."+std::to_string(i)+".pdb");
+		}
 
 		if ( finalbbscmin ) {
 			core::Size N = 0;
@@ -410,6 +457,9 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 				final_cartligmin(genes[i], *pose_tmp );
 			}
 		}
+		if ( TR.Debug.visible() ) {
+			pose_tmp->dump_pdb("finalmin1."+std::to_string(i)+".pdb");
+		}
 
 		pose_tmp->energies().clear();
 		pose_tmp->data().clear();
@@ -419,19 +469,32 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 
 		core::Real rms = 0.0;
 		if ( pose_native_ ) {
-			//fd  if the input ligand is the last residue, use the last residue of the _native_ as the ligand
-			//fd  otherwise, match residue IDs
-			core::Size native_lig = lig_resno;
-			if ( lig_resno == pose_tmp->total_residue() ) native_lig = pose_native_->total_residue();
-			rms = core::scoring::automorphic_rmsd(
-				pose_native_->residue( native_lig ), pose_tmp->residue( lig_resno ), false );
+			if ( gene_initial.ligand_ids().size() == 1 ) {
+				//fd  if the input ligand is the last residue, use the last residue of the _native_ as the ligand
+				//fd  otherwise, match residue IDs
+				core::Size lig_resno = gene_initial.ligand_ids()[1];
+				core::Size native_lig = lig_resno;
+				if ( lig_resno == pose_tmp->total_residue() ) {
+					native_lig = pose_native_->total_residue();
+				}
+				rms = core::scoring::automorphic_rmsd(
+					pose_native_->residue( native_lig ), pose_tmp->residue( lig_resno ), false );
+			} else {
+				rms = core::scoring::all_atom_rmsd_nosuper(
+					*pose_native_, *pose_tmp,
+					gene_initial.ligand_ids(), gene_initial.ligand_ids()
+				);
+			}
 		}
 
 		// report ligand-only energy
-		core::Real ligscore = calculate_free_ligand_score( pose_tmp->residue( lig_resno ) );
-		core::Real recscore = calculate_free_receptor_score( *pose_tmp, lig_resno, movable_scs, true );
+		core::Real ligscore = calculate_free_ligand_score( *pose_tmp, gene_initial.ligand_ids() );
+		core::Real recscore = calculate_free_receptor_score( *pose_tmp, gene_initial.ligand_ids(), movable_scs, true );
 		core::Real dE( score - recscore - ligscore );
-		std::string ligandname( pose_tmp->residue(lig_resno).name() );
+		std::string ligandname = pose_tmp->residue(gene_initial.ligand_ids()[1]).name();
+		for ( core::Size ires=2; ires <= gene_initial.ligand_ids().size(); ++ires ) {
+			ligandname += "-"+pose_tmp->residue(gene_initial.ligand_ids()[ires]).name();
+		}
 		outputs.push( *pose_tmp, score, rms, ligscore, recscore, i, ligandname );
 
 		dEs.push_back( dE );
@@ -442,10 +505,8 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	core::pose::PoseOP pose = outputs.pop();
 
 	if ( estimate_dG_ ) {
-		EntropyEstimator entropy_estimator( scfxn_relax_, *pose, lig_resno );
-		//entropy_estimator.simple( runmode_=="VSX" ); // TODO
+		EntropyEstimator entropy_estimator( scfxn_relax_, *pose, gene_initial.ligand_ids() );
 		if ( runmode_ == "VSX" ) entropy_estimator.set_niter( 1000 );
-
 		core::Real TdS = entropy_estimator.apply( *pose ); //comes out in energy unit; sign is opposite
 
 		std::sort( dEs.begin(), dEs.end() ); // default comparator
@@ -469,7 +530,7 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 utility::vector1< core::Size >
 GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 	GridScorerCOP gridscore,
-	core::Size const lig_resno ) const
+	utility::vector1 < core::Size > const &lig_resnos ) const
 {
 	utility::vector1< core::Size > movable_scs;
 	std::set< core::Size > frozen_residues;
@@ -484,11 +545,12 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 			<< " edge_buffer=" << sc_edge_buffer_ << std::endl;
 
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			if ( i == lig_resno ) continue;
+			if ( std::find( lig_resnos.begin(), lig_resnos.end(), i ) != lig_resnos.end() ) continue;
+			if ( frozen_residues.find(i) != frozen_residues.end() ) continue;
+
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
-			if ( frozen_residues.count(i) ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), 75.0, sc_edge_buffer_ ) ) { // 75 degree "angle buffer" check
 				movable_scs.push_back( i );
@@ -501,17 +563,23 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 		// model ligand as ellipsoid
 		// first compute mean and covariance of ligand position
 		numeric::xyzVector< core::Real > mean(0.0,0.0,0.0);
-		for ( core::Size iatm=1; iatm<=pose.residue(lig_resno).natoms(); ++iatm ) {
-			mean += pose.residue(lig_resno).xyz(iatm);
+		core::Size nAtms = 0;
+		for ( auto lig_resno : lig_resnos ) {
+			for ( core::Size iatm=1; iatm<=pose.residue(lig_resno).natoms(); ++iatm ) {
+				mean += pose.residue(lig_resno).xyz(iatm);
+			}
+			nAtms += pose.residue(lig_resno).natoms();
 		}
-		mean /= pose.residue(lig_resno).natoms();
+		mean /= nAtms;
 
 		numeric::xyzMatrix< core::Real > covariance(0.0);
-		for ( core::Size iatm=1; iatm<=pose.residue(lig_resno).natoms(); ++iatm ) {
-			numeric::xyzVector< core::Real > diff = pose.residue(lig_resno).xyz(iatm) - mean;
-			covariance += numeric::outer_product( diff , diff );
+		for ( auto lig_resno : lig_resnos ) {
+			for ( core::Size iatm=1; iatm<=pose.residue(lig_resno).natoms(); ++iatm ) {
+				numeric::xyzVector< core::Real > diff = pose.residue(lig_resno).xyz(iatm) - mean;
+				covariance += numeric::outer_product( diff , diff );
+			}
 		}
-		covariance /= pose.residue(lig_resno).natoms();
+		covariance /= nAtms;
 
 		// compute sorted eigenvectors
 		numeric::xyzVector< core::Real > eigval, eigvalS;
@@ -534,19 +602,15 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 		eigvalS[1] = std::max( eigvalS[1], 0.05 );
 
 		TR << "eigenvals = " << "[ " << eigvalS[0] << "," << eigvalS[1] << "," << eigvalS[2] << " ]" << std::endl;
-		//TR << "eigenvecs = " << "[ [ "
-		// << eigvecS.xx() << "," << eigvecS.yx() << "," << eigvecS.zx() << "] ; ["
-		// << eigvecS.xy() << "," << eigvecS.yy() << "," << eigvecS.zy() << "] ; ["
-		// << eigvecS.xz() << "," << eigvecS.yz() << "," << eigvecS.zz() << "] ; ]"
-		// << std::endl;
 
 		// for each residue, look and see if sidechain sphere intersects ellipsoid
 		for ( core::Size i=1; i<=pose.total_residue(); ++i ) {
-			if ( i == lig_resno ) continue;
+			if ( std::find( lig_resnos.begin(), lig_resnos.end(), i ) != lig_resnos.end() ) continue;
+			if ( frozen_residues.find(i) != frozen_residues.end() ) continue;
+
 			if ( pose.residue(i).aa() == core::chemical::aa_ala || pose.residue(i).aa() == core::chemical::aa_gly ) continue;
 			if ( pose.residue(i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue;
 			if ( !pose.residue(i).is_protein() ) continue; //skip anything not amino-acid
-			if ( frozen_residues.count(i) ) continue;
 
 			if ( gridscore->is_residue_in_grid(pose.residue(i), sc_edge_buffer_, eigvalS, eigvecS) ) {
 				movable_scs.push_back( i );
@@ -555,20 +619,20 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 	} else {
 		// parse as residue numbers
 		std::set<core::Size> resnums = core::pose::get_resnum_list( sidechains_, pose );
-		for ( auto res_i=resnums.begin(); res_i!=resnums.end(); ++res_i ) {
-			if ( *res_i == lig_resno ) continue;
-			if ( pose.residue(*res_i).aa() == core::chemical::aa_ala
-					|| pose.residue(*res_i).aa() == core::chemical::aa_gly ) continue; // don't warn
-			if ( pose.residue(*res_i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue; // don't warn
-			if ( frozen_residues.count(*res_i) ) {
-				TR.Warning << "Residue " << *res_i << " is declared as both moving and frozen! Treating as frozen" << std::endl;
+		for ( auto res_i : resnums ) {
+			if ( std::find( lig_resnos.begin(), lig_resnos.end(), res_i ) != lig_resnos.end() ) continue;
+			if ( frozen_residues.find(res_i) != frozen_residues.end() ) {
+				TR.Warning << "Residue " << res_i << " is declared as both moving and frozen! Treating as frozen" << std::endl;
 				continue;
 			}
+			if ( pose.residue(res_i).aa() == core::chemical::aa_ala
+					|| pose.residue(res_i).aa() == core::chemical::aa_gly ) continue; // don't warn
+			if ( pose.residue(res_i).type().has_variant_type( core::chemical::DISULFIDE ) ) continue; // don't warn
 
-			if ( gridscore->is_residue_in_grid(pose.residue(*res_i), 0.0, 0.0 ) ) { // for user-defined, ignore angle/dist checks
-				movable_scs.push_back( *res_i );
+			if ( gridscore->is_residue_in_grid(pose.residue(res_i), 0.0, 0.0 ) ) { // for user-defined, ignore angle/dist checks
+				movable_scs.push_back( res_i );
 			} else {
-				TR.Warning << "Residue " << *res_i << " is not within grid!" << std::endl;
+				TR.Warning << "Residue " << res_i << " is not within grid!" << std::endl;
 				TR.Warning << "Increase grid padding to include it!" << std::endl;
 			}
 		}
@@ -580,7 +644,7 @@ GALigandDock::get_movable_scs( core::pose::Pose const &pose,
 void
 GALigandDock::idealize_and_repack_pose( core::pose::Pose &pose,
 	utility::vector1< core::Size > const &movable_scs,
-	core::Size const lig_resno ) const
+	utility::vector1< core::Size > const &lig_resnos ) const
 {
 	// do this only if flex sc case
 	if ( movable_scs.size() == 0 ) return;
@@ -589,8 +653,10 @@ GALigandDock::idealize_and_repack_pose( core::pose::Pose &pose,
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
 	core::Real score0 = (*scfxn_)(pose);
 
-	for ( core::Size i=1; i<=pose.residue(lig_resno).natoms(); ++i ) {
-		pose.set_xyz( id::AtomID( i,lig_resno ), pose.residue(lig_resno).xyz(i)+250 );
+	for  ( auto lig_resno : lig_resnos ) {
+		for ( core::Size i=1; i<=pose.residue(lig_resno).natoms(); ++i ) {
+			pose.set_xyz( id::AtomID( i,lig_resno ), pose.residue(lig_resno).xyz(i)+250 );
+		}
 	}
 
 	// a. idealize
@@ -626,8 +692,10 @@ GALigandDock::idealize_and_repack_pose( core::pose::Pose &pose,
 	core::Real score2 = (*scfxn_)(pose);
 	TR << "Sidechain idealize score: " << score0 << "->" << score1 << "->" << score2 << std::endl;
 
-	for ( core::Size i=1; i<=pose.residue(lig_resno).natoms(); ++i ) {
-		pose.set_xyz( id::AtomID( i,lig_resno ), pose.residue(lig_resno).xyz(i)-250 );
+	for  ( auto lig_resno : lig_resnos ) {
+		for ( core::Size i=1; i<=pose.residue(lig_resno).natoms(); ++i ) {
+			pose.set_xyz( id::AtomID( i,lig_resno ), pose.residue(lig_resno).xyz(i)-250 );
+		}
 	}
 }
 
@@ -640,12 +708,6 @@ GALigandDock::make_starting_pose_for_virtual_screening( core::pose::Pose const &
 {
 	// will it die here if ligand name not exist in residue type set??
 	core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( ligand_name );
-	/*
-	core::chemical::ResidueTypeSetCOP residue_set( core::chemical::ChemicalManager::get_instance()
-	->residue_type_set( "fa_standard" ) );
-	core::chemical::ResidueTypeCOP rsd_type = residue_set->name_map( name ).get_self_ptr();
-	ligand = conformation::ResidueFactory::create_residue( *rsd_type );
-	*/
 
 	core::Size jumpid = pose.fold_tree().get_jump_that_builds_residue( lig_resno );
 	core::kinematics::Jump ligjump = pose.jump( jumpid );
@@ -653,18 +715,6 @@ GALigandDock::make_starting_pose_for_virtual_screening( core::pose::Pose const &
 
 	core::pose::PoseOP pose_working( new core::pose::Pose( pose ) );
 	pose_working->replace_residue( lig_resno, *ligand, false );
-
-	/*
-	// refine placement by delta com?
-	numeric::xyzVector< core::Real > com_ref( 0.0 ), com( 0.0 );
-	for( core::Size iatm = 1; iatm <= ligand_ref.nheavyatoms(); ++iatm )
-	com_ref += ligand_ref.xyz(iatm);
-	com_ref /= ligand_ref.nheavyatoms();
-
-	for( core::Size iatm = 1; iatm <= ligand->nheavyatoms(); ++iatm )
-	com += ligand->xyz(iatm);
-	com /= ligand->nheavyatoms();
-	*/
 
 	//numeric::xyzVector< core::Real > T2 = ligjump.get_translation();
 	ligjump.set_translation( T ); // no change in orientation; is this line necessary?
@@ -674,8 +724,9 @@ GALigandDock::make_starting_pose_for_virtual_screening( core::pose::Pose const &
 }
 
 Real
-GALigandDock::calculate_free_receptor_score( core::pose::Pose pose, // call by value
-	core::Size const lig_resno,
+GALigandDock::calculate_free_receptor_score(
+	core::pose::Pose pose, // call by value
+	utility::vector1< core::Size > const& lig_resnos,
 	utility::vector1< core::Size > const& moving_scs,
 	bool simple
 ) const
@@ -687,7 +738,9 @@ GALigandDock::calculate_free_receptor_score( core::pose::Pose pose, // call by v
 	pose.data().clear();
 
 	// delete ligand
-	pose.delete_residue_slow( lig_resno );
+	for ( auto ligid = lig_resnos.rbegin(); ligid != lig_resnos.rend(); ++ligid ) {
+		pose.delete_residue_slow( *ligid );
+	}
 
 	if ( simple ) {
 		return (*scfxn_relax_)(pose);
@@ -746,45 +799,44 @@ GALigandDock::calculate_free_receptor_score( core::pose::Pose pose, // call by v
 }
 
 Real
-GALigandDock::calculate_free_ligand_score( core::conformation::Residue const ligand ) const
-{
+GALigandDock::calculate_free_ligand_score(
+	core::pose::Pose pose_ref, // call by value
+	utility::vector1< core::Size > const& lig_resnos
+) const {
 	// make a ligand-only pose; root ligand on virtual if no residues to anchor jump
 	core::pose::PoseOP pose( new core::pose::Pose );
-	pose->append_residue_by_jump( ligand, 0 );
+	pose->append_residue_by_jump( pose_ref.residue(lig_resnos[1]), 0 );
+	for ( core::Size i=2; i<=lig_resnos.size(); ++i ) {
+		pose->append_residue_by_bond( pose_ref.residue(lig_resnos[i]) );
+	}
+	core::pose::initialize_disulfide_bonds( *pose );
 	core::pose::addVirtualResAsRoot(*pose);
 
 	// optimize slightly...
-	{
-		core::scoring::ScoreFunctionOP scfxn_ligmin( scfxn_relax_ );
-		scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 1.0 );
+	core::scoring::ScoreFunctionOP scfxn_ligmin( scfxn_relax_ );
+	scfxn_ligmin->set_weight( core::scoring::coordinate_constraint, 1.0 );
 
-		core::pose::Pose pose_premin( *pose );
-		for ( core::Size iatm = 1; iatm <= ligand.natoms(); ++iatm ) {
-			core::id::AtomID atomid( iatm, 1 );
+	//core::pose::Pose pose_premin( *pose );
+	for ( core::Size ires = 1; ires <pose->total_residue(); ++ires ) {
+		for ( core::Size iatm = 1; iatm <= pose->residue(ires).natoms(); ++iatm ) {
+			core::id::AtomID atomid( iatm, ires );
+			core::id::AtomID anchorid( 1, pose->total_residue() );
 			core::Vector const &xyz = pose->xyz( atomid );
 			core::scoring::func::FuncOP fx( new core::scoring::func::HarmonicFunc( 0.0, 1.0 ) );
 			pose->add_constraint( core::scoring::constraints::ConstraintCOP
 				( core::scoring::constraints::ConstraintOP
-				( new core::scoring::constraints::CoordinateConstraint( atomid, atomid, xyz, fx ) )));
+				( new core::scoring::constraints::CoordinateConstraint( atomid, anchorid, xyz, fx ) )));
 		}
-
-		//Real score0 = scfxn_ligmin->score( *pose );
-
-		core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
-		mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( false );
-
-		protocols::minimization_packing::MinMoverOP min_mover =
-			protocols::minimization_packing::MinMoverOP
-			( new protocols::minimization_packing::MinMover( mm, scfxn_ligmin, "linmin", 0.01, true ) );
-		min_mover->max_iter( 30 );
-		min_mover->apply( *pose );
-
-		// make sure structure hasn't changed much by minimization
-		//core::Real rmsd_by_min = core::scoring::automorphic_rmsd( pose->residue(1), pose_premin.residue(1), false );
-		//Real score = scfxn_ligmin->score( *pose );
-		//std::cout << "RMSD: " << rmsd_by_min << ", score drop" << score0 << " -> " << score
-		//     << std::endl;
 	}
+
+	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
+	mm->set_bb( true ); mm->set_chi( true ); mm->set_jump( true );
+
+	protocols::minimization_packing::MinMoverOP min_mover =
+		protocols::minimization_packing::MinMoverOP
+		( new protocols::minimization_packing::MinMover( mm, scfxn_ligmin, "linmin", 0.01, true ) );
+	min_mover->max_iter( 30 );
+	min_mover->apply( *pose );
 
 	Real ligandscore = scfxn_relax_->score( *pose );
 
@@ -792,11 +844,16 @@ GALigandDock::calculate_free_ligand_score( core::conformation::Residue const lig
 }
 
 void
-GALigandDock::premin_ligand( core::pose::Pose &pose, core::Size const lig_resno ) const
-{
+GALigandDock::premin_ligand(
+	core::pose::Pose &pose, utility::vector1 < core::Size > const &lig_resnos
+) const {
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
-	mm->set_chi( lig_resno, true );
+
+	for ( auto lig_resno : lig_resnos ) {
+		mm->set_chi( lig_resno, true );
+		mm->set_bb( lig_resno, true );
+	}
 
 	core::Real w_cart = (*scfxn_relax_)[ core::scoring::cart_bonded ];
 	core::Real w_proclose = (*scfxn_relax_)[ core::scoring::pro_close ];
@@ -882,6 +939,10 @@ GALigandDock::final_exact_cartmin(
 	core::pose::Pose &pose
 	//bool dualrelax
 ) {
+	std::set< core::Size > frozen_residues;
+	if ( frozen_residues_ != nullptr ) {
+		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+	}
 
 	/////
 	// (1) setup movemap
@@ -890,35 +951,35 @@ GALigandDock::final_exact_cartmin(
 	if ( pose.size() == 1 ) {
 		mm->set_chi( true ); // ligand-only; virtual root
 	} else {
-		core::Size lig_jump = pose.fold_tree().get_jump_that_builds_residue( gene.ligand_id() );
-		mm->set_chi( gene.ligand_id(), true );
+		core::Size lig_jump = gene.get_jumpid();
 		mm->set_jump( lig_jump, true );
+		for ( auto res : gene.ligand_ids() ) {
+			mm->set_chi( res, true );
+			mm->set_bb( res, true );
+		}
+
 		for ( core::Size j=1; j<=gene.moving_scs().size(); ++j ) {
 			int resid = (int)gene.moving_scs()[j];
-			mm->set_chi( resid, true ); // chi on just moving scs to reduce noise
 			for ( int k=-((int)nneigh); k<=((int)nneigh); ++k ) {
 				if ( resid+k < 1 || resid+k >= (int)pose.total_residue() ) continue;
 				if ( !pose.residue(resid+k).is_protein() ) continue;
-				//mm->set_chi( resid+k, true );
-				mm->set_bb( resid+k, true );
+
+				if ( frozen_residues.count(resid+k) == 0 ) {
+					mm->set_bb( resid+k, true );
+					if ( k==0 ) {
+						mm->set_chi( resid+k, true );
+					}
+				}
 			}
 		}
 	}
 
-	core::kinematics::MoveMapOP mm2 = mm->clone(); // for torsion space
-
-	std::set< core::Size > frozen_residues;
-	if ( frozen_residues_ != nullptr ) {
-		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
-	}
 	// waters, hetmol
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
-		if ( (pose.residue_type(j).is_water() && move_water_)
-				|| !pose.residue(j).is_polymer() ) {
+		if ( pose.residue_type(j).is_water() && move_water_ ) {
 			if ( frozen_residues.count(j) == 0 ) {
 				core::Size wjump = pose.fold_tree().get_jump_that_builds_residue( j );
 				mm->set_jump( wjump, true );
-				mm2->set_jump( wjump, true ); // mm2 only jump
 				mm->set_chi( j, true );
 			}
 		}
@@ -1010,8 +1071,6 @@ GALigandDock::final_exact_cartmin(
 	relax.apply( pose );
 	TR << "final_cartmin: score after relax: ";
 	TR << (*scfxn_relax_)(pose) <<std::endl;
-	//scfxn_relax_->show( TR, pose );
-	//pose.dump_pdb("dualcart.pdb");
 }
 
 // final optimziation cycle with sc flexibility only
@@ -1022,28 +1081,32 @@ GALigandDock::final_exact_scmin(
 ) {
 	utility::vector1< core::Size > repack_scs = gene.moving_scs();
 
+	std::set< core::Size > frozen_residues;
+	if ( frozen_residues_ != nullptr ) {
+		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+	}
+
 	// movemap for repacking
 	core::kinematics::MoveMapOP mm( new core::kinematics::MoveMap );
 	mm->set_bb( false ); mm->set_chi( false ); mm->set_jump( false );
 	if ( pose.size() == 1 ) {
 		mm->set_chi( true ); // ligand-only; virtual root
 	} else {
-		core::Size lig_jump = pose.fold_tree().get_jump_that_builds_residue( gene.ligand_id() );
+		core::Size lig_jump = gene.get_jumpid();
 		mm->set_jump( lig_jump, true );
-		for ( core::Size j=0; j<=repack_scs.size(); ++j ) {
-			core::Size resid = (j==0 ? gene.ligand_id() : repack_scs[j]);
+		for ( auto resid : gene.ligand_ids() ) {
 			mm->set_chi( resid, true );
+		}
+		for ( auto resid : repack_scs ) {
+			if ( frozen_residues.count(resid) == 0 ) {
+				mm->set_chi( resid, true );
+			}
 		}
 	}
 
-	std::set< core::Size > frozen_residues;
-	if ( frozen_residues_ != nullptr ) {
-		frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
-	}
 	// waters, hetmol
 	for ( core::Size j=1; j<=pose.total_residue(); ++j ) {
-		if ( (pose.residue_type(j).is_water() && move_water_)
-				|| !pose.residue(j).is_protein() ) {
+		if ( (pose.residue_type(j).is_water() && move_water_) ) {
 			if ( frozen_residues.count(j) == 0 ) {
 				mm->set_chi( j, true );
 			}
@@ -1088,7 +1151,6 @@ GALigandDock::final_exact_scmin(
 	relax.apply( pose );
 
 	TR << "final_scmin: score after relax: " << (*scfxn_relax_)(pose) <<std::endl;
-	//TR << "final_scmin:"; scfxn_relax_->show( TR, pose );
 }
 
 
@@ -1101,7 +1163,7 @@ GALigandDock::final_cartligmin(
 	// Nov08!! (turn this off for pre-Nov08)
 	utility::vector1< core::Size > contact_scs;
 	if ( redefine_flexscs_at_relax_ ) {
-		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_id(), 4.5 );
+		contact_scs = get_atomic_contacting_sidechains( pose, gene.ligand_ids(), 4.5 );
 		TR << "Redefined flexible sidechains: ";
 		for ( core::Size ires = 1; ires < contact_scs.size(); ++ires ) TR << contact_scs[ires] << "+";
 		if ( contact_scs.size() > 0 ) TR << contact_scs[contact_scs.size()];
@@ -1118,15 +1180,22 @@ GALigandDock::final_cartligmin(
 	if ( pose.size() == 1 ) {
 		mmlig->set_chi( true ); // ligand-only; virtual root
 	} else {
-		core::Size lig_jump = pose.fold_tree().get_jump_that_builds_residue( gene.ligand_id() );
-		mmlig->set_jump( lig_jump, true );
-		mmlig->set_chi( gene.ligand_id(), true ); // ligand-chi only
+		for ( auto resid : gene.ligand_ids() ) {
+			mmlig->set_chi( resid, true );
+		}
 		if ( min_neighbor_ ) {
-			for ( core::Size j=1; j<=contact_scs.size(); ++j ) {
-				mmlig->set_chi( contact_scs[j], true );
+			std::set< core::Size > frozen_residues;
+			if ( frozen_residues_ != nullptr ) {
+				frozen_residues = core::select::get_residue_set_from_subset( frozen_residues_->apply(pose) );
+			}
+			for ( auto resid : contact_scs ) {
+				if ( frozen_residues.count(resid) == 0 ) {
+					mmlig->set_chi( resid, true );
+				}
 			}
 		}
 	}
+
 	core::optimization::CartesianMinimizer minimizer;
 	core::optimization::MinimizerOptions options( "lbfgs_armijo", 0.0001, true , false );
 	options.max_iter(50);
@@ -1137,12 +1206,7 @@ GALigandDock::final_cartligmin(
 		scfxn_cartmin->set_weight( core::scoring::cart_bonded_ring, -0.5 );
 		scfxn_cartmin->set_weight( core::scoring::pro_close, 0.0 );
 	}
-	//core::Real scorepremin = scfxn_cartmin->score( pose );
 	minimizer.run( pose, *mmlig, *scfxn_cartmin, options );
-
-	//core::Real scoremin = scfxn_cartmin->score( pose );
-	//TR << "lig-cartmin, " << scorepremin << " -> " << scoremin << std::endl;
-	//scfxn_cartmin->show( TR, pose );
 }
 
 // use ExplicitWaterMover to solvate ligand
@@ -1160,7 +1224,8 @@ GALigandDock::final_solvate(
 
 	for ( core::Size i(1); i <= pose.total_residue(); ++i ) {
 		auto i_it = std::find( gene.moving_scs().begin(), gene.moving_scs().end(), i);
-		if ( i == gene.ligand_id() || i_it != gene.moving_scs().end() ) {
+		auto j_it = std::find( gene.ligand_ids().begin(), gene.ligand_ids().end(), i);
+		if ( j_it != gene.ligand_ids().end() || i_it != gene.moving_scs().end() ) {
 			task_new->nonconst_residue_task(i).restrict_to_repacking();
 		} else {
 			task_new->nonconst_residue_task(i).prevent_repacking();
@@ -1244,7 +1309,7 @@ GALigandDock::load_initial_pool(
 //  we assume the reference pose ligand is the last residue (or should we use _all_ ligands?)
 void
 GALigandDock::load_reference_pool(
-	LigandConformer const &/*gene_initial*/,
+	LigandConformer const &gene_initial,
 	utility::vector1< ConstraintInfo > & ref_ligs
 ) const {
 	utility::vector1<std::string> ref_pdbs = utility::string_split( reference_pool_, ',' );
@@ -1253,22 +1318,18 @@ GALigandDock::load_reference_pool(
 		std::string tag = ref_pdbs[ipdb];
 
 		if ( tag == "input" || tag == "Input" || tag == "INPUT" ) {
-			// MOVED TO ALIGNER setup in order to share VS-info; do nothing in this case
-			/*
-			core::pose::PoseOP pose = gene_initial.receptor();
-			scfxn_->score( *pose ); // make sure scored to get neighbor graph
-			ref_ligs.push_back( ConstraintInfo(*pose, gridscorer, use_pharmacophore_,
-			(ipdb==1) ) // report only at first case
-			);
-			*/
-
+			if ( ! use_pharmacophore_ ) {
+				core::pose::PoseOP pose( new core::pose::Pose );
+				gene_initial.to_pose( pose );
+				ref_ligs.push_back(
+					ConstraintInfo(*pose, gene_initial.ligand_ids(), false, false ) // report only at first case
+				);
+			}
 		} else if ( (tag.length() >= 3) && (tag.substr( tag.length()-3 )=="pdb") ) {
 			core::pose::PoseOP pose = core::import_pose::pose_from_file( tag, false, core::import_pose::PDB_file );
-			core::Size lig = pose->total_residue();
-			if ( !pose->residue(lig).is_ligand() ) {
-				utility_exit_with_message("error!  No ligand found in pdb file "+tag);
-			}
-			ref_ligs.push_back( ConstraintInfo(pose->residue(lig), use_pharmacophore_, (ipdb==1) ) );
+			ref_ligs.push_back(
+				ConstraintInfo(*pose, gene_initial.ligand_ids(), use_pharmacophore_, (ipdb==1) )
+			);
 
 		} else {
 			// silent file
@@ -1279,12 +1340,9 @@ GALigandDock::load_reference_pool(
 			for ( auto iter = sfd.begin(), end = sfd.end(); iter != end; ++iter ) {
 				core::pose::PoseOP pose(new core::pose::Pose);
 				iter->fill_pose( *pose );
-				core::Size lig = pose->total_residue();
-				while ( pose->residue(lig).aa() == core::chemical::aa_vrt ) lig--;
-				if ( !pose->residue(lig).is_ligand() ) {
-					utility_exit_with_message("error!  No ligand found in silent file "+tag);
-				}
-				ref_ligs.push_back( ConstraintInfo(pose->residue(lig), use_pharmacophore_, (ipdb==1) ) );
+				ref_ligs.push_back(
+					ConstraintInfo(*pose, gene_initial.ligand_ids(), use_pharmacophore_, (ipdb==1) )
+				);
 			}
 		}
 	}
@@ -1293,22 +1351,19 @@ GALigandDock::load_reference_pool(
 // LigandAligner
 LigandAligner
 GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
-	core::Size const lig_resno,
+	utility::vector1< core::Size > const &lig_resnos,
 	utility::vector1< core::Size > movable_scs_in_ref // call by value
-) const
-{
+) const {
 	GridScorerOP gridscore_ref(new GridScorer( scfxn_ ));
-	gridscore_ref->set_voxel_spacing( 0.5 ); // hard-coded
+	gridscore_ref->set_voxel_spacing( grid_*2.0 ); // coarse-grained
 
 	// In dockPH mode, 0.02 prefers collapsing inside receptor
 	if ( use_pharmacophore_ ) {
 		gridscore_ref->set_w_rep( 0.1 );
-		movable_scs_in_ref.resize( 0 ); // drop these from grid construction
+		movable_scs_in_ref.clear(); // drop these from grid construction
 	} else {
 		gridscore_ref->set_w_rep( 0.02 ); // softer for reference-docking mode
-		// keep input movable scs
 	}
-
 	gridscore_ref->set_smoothing( 0.75 ); // hard-coded
 	gridscore_ref->set_bbox_padding( padding_ );
 	gridscore_ref->set_hash_gridding( hashsize_ );
@@ -1316,26 +1371,37 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 	gridscore_ref->set_exact( false );
 	gridscore_ref->set_debug( false );
 	gridscore_ref->set_out_of_bound_e( grid_bound_penalty_ );
-	gridscore_ref->prepare_grid( pose, lig_resno );
+	gridscore_ref->prepare_grid( pose, lig_resnos );
 	if ( use_mean_maxRad_ ) {
 		gridscore_ref->set_grid_dim_with_maxRad(multi_ligands_maxRad_);
 	}
 
 	// pass all the ligand residues for grid construction
 	utility::vector1< core::conformation::Residue > rsds_to_build_grids;
-	rsds_to_build_grids.push_back( pose.residue(lig_resno) );
+	utility::vector1< bool > use_sc_only_in_grid;
+
+	for ( auto ligid : lig_resnos ) {
+		rsds_to_build_grids.push_back( pose.residue(ligid) );
+		use_sc_only_in_grid.push_back( false );
+	}
 	if ( multiple_ligands_.size() > 0 ) {
 		for ( core::Size ilig = 1; ilig <= multiple_ligands_.size(); ++ilig ) {
 			TR.Debug << "Building ligand: "<< multiple_ligands_[ilig] << std::endl;
 			core::conformation::ResidueOP ligand = core::conformation::get_residue_from_name( multiple_ligands_[ilig] );
 			rsds_to_build_grids.push_back( *ligand );
+			use_sc_only_in_grid.push_back( false );
 		}
 	}
-	gridscore_ref->get_grid_atomtypes( rsds_to_build_grids );
+	for ( auto scid : movable_scs_in_ref ) {
+		rsds_to_build_grids.push_back( pose.residue(scid) );
+		use_sc_only_in_grid.push_back( true );
+	}
 
-	gridscore_ref->calculate_grid( pose, lig_resno, movable_scs_in_ref );
+	gridscore_ref->get_grid_atomtypes( rsds_to_build_grids, use_sc_only_in_grid );
+	gridscore_ref->calculate_grid( pose, lig_resnos, movable_scs_in_ref );
 
-	LigandAligner aligner( use_pharmacophore_, movable_scs_in_ref, (runmode_ == "VSX"));
+	bool fastmode = (runmode_ == "VSX");
+	LigandAligner aligner( use_pharmacophore_, movable_scs_in_ref, fastmode);
 	aligner.set_sf( gridscore_ref );
 	aligner.refine_input( (runmode_ == "refine") );
 
@@ -1346,7 +1412,9 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 			utility_exit_with_message("error!  pharmacophore docking requires reference_pool to be as 'INPUT'!" );
 		}
 		core::pose::PoseOP receptor( new core::pose::Pose( pose ) );
-		receptor->delete_residue_slow( lig_resno );
+		for ( auto ligid = lig_resnos.rbegin(); ligid != lig_resnos.rend(); ++ligid ) {
+			receptor->delete_residue_slow( *ligid );
+		}
 		scfxn_->score( *receptor ); // for energygraph!!
 		aligner.set_pharmacophore_reference( *receptor );
 	}
@@ -1392,7 +1460,6 @@ GALigandDock::generate_perturbed_structures(
 	/////
 	// 2: (optionally) load reference structures and randomly generate conformers
 	if ( reference_pool_ != "" ) {
-
 		// make a temporary gridscorer for align docking; keep movable scs fixed in grid
 		TR << "Construct a separate grid for LigandAligner, with 0.5 grid step and no movable scs." << std::endl;
 		core::pose::PoseOP pose( new core::pose::Pose );
@@ -1407,13 +1474,17 @@ GALigandDock::generate_perturbed_structures(
 
 		// re-assign numbers based on Nmatches if using pharmacophore
 		if ( reference_frac_auto_ && use_pharmacophore_ ) {
-			nrefgen = aligner.estimate_nstruct_sample( pose->residue( gene_initial.ligand_id() ), nrefgen );
+			//nrefgen = aligner.estimate_nstruct_sample( pose->residue( gene_initial.ligand_id() ), nrefgen );
+			nrefgen = aligner.estimate_nstruct_sample( *pose, gene_initial.ligand_ids(), nrefgen );
 			nstruct_ref = (core::Size)(nrefgen/reference_oversample_);
 
 			TR << "Automatically set nstruct-from-reference to " << nstruct_ref
 				<< " (from " << nrefgen << " trials) of total " << nleft << " left to sample." << std::endl;
 			TR << "Est. time for matching: " << nrefgen << "~" << nrefgen*2 << " seconds..." << std::endl;
 		}
+		core::Size nrefgen_sampler(0);
+		nrefgen_sampler = (int)(nrefgen*torsion_sampler_percentage_);
+		nrefgen = nrefgen - nrefgen_sampler;
 
 		for ( core::Size i=1; i<=nrefgen; ++i ) {
 			LigandConformer gene( gene_initial );
@@ -1432,6 +1503,26 @@ GALigandDock::generate_perturbed_structures(
 			gene.score( score_soft );
 			genes_ref.push_back( gene );
 		}
+
+		for ( core::Size i=1; i<=nrefgen_sampler; ++i ) {
+			LigandConformer gene( gene_initial );
+
+			if ( ref_poses.size() > 0 ) {
+				ConstraintInfo const & selected_ref =
+					ref_poses[ numeric::random::rg().random_range( 1, ref_poses.size() ) ];
+				aligner.set_target( selected_ref ); // random reference from pool
+			}
+
+			gene.sample_conformation( 0.0, torsion_sampler_ );  // for torsion&ring; fix trans
+			aligner.apply( gene );
+
+			// rescore with orignal gridscorer to match scale
+			Real score_soft = gridscorer->score( gene, true );
+			gene.score( score_soft );
+			genes_ref.push_back( gene );
+		}
+
+		TR << "Generate " << nrefgen_sampler << " structures using TorsionSampler for ligand aligner." << std::endl;
 
 		if ( nrefgen > 0 ) {
 			// take best scoring subset
@@ -1453,6 +1544,8 @@ GALigandDock::generate_perturbed_structures(
 	/////
 	// 3: random structures
 	core::Size nrand = debug_? nleft : (int)(nleft*random_oversample_);
+	core::Size nrand_sampler = (int)(nrand*torsion_sampler_percentage_);
+	nrand = nrand - nrand_sampler;
 	for ( core::Size i=1; i<=nrand; ++i ) {
 		LigandConformer gene( gene_initial );
 		if ( runmode_ == "refine" ) {
@@ -1465,6 +1558,21 @@ GALigandDock::generate_perturbed_structures(
 		gene.score( score_soft );
 		genes_rand.push_back( gene );
 	}
+
+	for ( core::Size i=1; i<=nrand_sampler; ++i ) {
+		LigandConformer gene( gene_initial );
+		if ( runmode_ == "refine" ) {
+			gene = mutate( gene_initial ); //mutation parameters are set as small in advance
+		} else {
+			gene.sample_conformation( gridscorer->get_padding() - 1.0, torsion_sampler_ );  // radius of search
+		}
+
+		Real score_soft = gridscorer->score( gene, true ); // score with soft repulsive
+		gene.score( score_soft );
+		genes_rand.push_back( gene );
+	}
+
+	TR << "Generate " << nrand_sampler << " structures using TorsionSampler for random structures." << std::endl;
 
 	// select lowest random structures by energy while ensuring diversity
 	std::sort(genes_rand.begin(), genes_rand.end(),
@@ -1541,7 +1649,6 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("optimize_input_H") ) { optimize_input_H_ = tag->getOption<bool>("optimize_input_H"); }
 
 	if ( tag->hasOption("sample_ring_conformers") ) { sample_ring_conformers_ = tag->getOption<bool>("sample_ring_conformers"); }
-	if ( tag->hasOption("altcrossover") ) { altcrossover_ = tag->getOption<core::Real>("altcrossover"); }
 
 	// input params
 	if ( tag->hasOption("use_pharmacophore") ) { use_pharmacophore_ = tag->getOption<bool>("use_pharmacophore"); }
@@ -1554,6 +1661,7 @@ GALigandDock::parse_my_tag(
 	if ( tag->hasOption("premin_ligand") ) { premin_ligand_ = tag->getOption<bool>("premin_ligand"); }
 	if ( tag->hasOption("use_mean_maxRad") ) { use_mean_maxRad_ = tag->getOption<bool>("use_mean_maxRad"); }
 	if ( tag->hasOption("stdev_multiplier") ) { stdev_multiplier_ = tag->getOption<core::Real>("stdev_multiplier"); }
+	if ( tag->hasOption("torsion_sampler_percentage") ) { torsion_sampler_percentage_ = tag->getOption<core::Real>("torsion_sampler_percentage"); }
 
 	if ( tag->hasOption("frozen_scs") ) {
 		std::string frozen_scs = tag->getOption<std::string>("frozen_scs");
@@ -1685,7 +1793,6 @@ GALigandDock::parse_my_tag(
 				if ( (*tag_it)->hasOption("repeats") ) { stage_i.repeats = (*tag_it)->getOption<core::Size>("repeats"); }
 				if ( (*tag_it)->hasOption("npool") ) { stage_i.pool = (*tag_it)->getOption<core::Size>("npool"); }
 				if ( (*tag_it)->hasOption("pmut") ) { stage_i.pmut = (*tag_it)->getOption<core::Real>("pmut"); }
-				if ( (*tag_it)->hasOption("rb_maxrank") ) { stage_i.rb_maxrank = (*tag_it)->getOption<core::Size>("rb_maxrank"); }
 				if ( (*tag_it)->hasOption("smoothing") ) { stage_i.smoothing = (*tag_it)->getOption<core::Real>("smoothing"); }
 				if ( (*tag_it)->hasOption("elec_scale") ) { stage_i.elec_scale = (*tag_it)->getOption<core::Real>("elec_scale"); }
 				if ( (*tag_it)->hasOption("rmsdthreshold") ) { stage_i.rmsthreshold = (*tag_it)->getOption<core::Real>("rmsdthreshold"); }
@@ -1767,21 +1874,12 @@ GALigandDock::setup_params_for_runmode( std::string runmode )
 		estimate_dG_ = true;
 		reference_frac_auto_ = true;
 		premin_ligand_ = true;
-		//padding_ = 4.5; // follow default for now
 
 		if ( runmode.substr(2) == "H" ) { // VS-Hires
 			sidechains_ = "aniso";
 			nrelax_ = nreport_ = 20;
 			//1-round minimization
 			min_neighbor_ = true;
-			/* // == default
-			fast_relax_lines_.push_back("switch:torsion");
-			fast_relax_lines_.push_back("repeat 3");
-			fast_relax_lines_.push_back("ramp_repack_min 0.02  0.01   1.0 50");
-			fast_relax_lines_.push_back("ramp_repack_min 1.0   0.000001  1.0 50");
-			fast_relax_lines_.push_back("accept_to_best");
-			fast_relax_lines_.push_back("endrepeat");
-			*/
 
 			// repeats, npool, rmsdthreshold, pmut, maxiter, packcycles, smoothing, ramp_schedule
 			GADockStageParams stage1( 5, 100, 2.0, 0.2, 100, 100, 0.75, ramp_schedule );
@@ -1831,11 +1929,7 @@ GALigandDock::get_optimizer(
 ) const {
 	GAOptimizerOP optimizer(new GAOptimizer(gridscorer));
 	if ( pose_native_ ) {
-		//fd  if the input ligand is the last residue, use the last residue of the _native_ as the ligand
-		//fd  otherwise, match residue IDs
-		core::Size native_lig = gene_initial.ligand_id();
-		if ( gene_initial.is_ligand_terminal() ) native_lig = pose_native_->total_residue();
-		LigandConformer gene_native( pose_native_, native_lig, gene_initial.moving_scs() );
+		LigandConformer gene_native( pose_native_, gene_initial.ligand_ids(), gene_initial.moving_scs() );
 		optimizer->set_native( gene_native );
 	}
 
@@ -1843,7 +1937,6 @@ GALigandDock::get_optimizer(
 	optimizer->set_max_rot_cumulative_prob( max_rot_cumulative_prob_ );
 	optimizer->set_rot_energy_cutoff( rot_energy_cutoff_ );  // at some point make this a parameter?
 	optimizer->set_favor_native( favor_native_ );
-	optimizer->set_altcrossover( altcrossover_ );
 	return optimizer;
 }
 
@@ -1868,11 +1961,10 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 	attlist + XMLSchemaAttribute( "runmode", xs_string, "run mode [dock/dockPH/refine/optligand]");
 
-	attlist + XMLSchemaAttribute( "altcrossover", xsct_rosetta_bool, "Use alternate xover.");
 	attlist + XMLSchemaAttribute( "sample_ring_conformers", xsct_rosetta_bool, "Allow ring conformer sampling if defined in params.");
 	attlist + XMLSchemaAttribute( "rotprob", xsct_real, "max cumulative rotamer probability");
 	attlist + XMLSchemaAttribute( "rotEcut", xsct_real, "rotamer 1b energy");
-	attlist + XMLSchemaAttribute( "ligand", xs_string, "ligand residue id (if not specified default to last residue)");
+	attlist + XMLSchemaAttribute( "ligand", xs_string, "ligand residue ids (if not specified default to last residue)");
 	attlist + XMLSchemaAttribute( "nativepdb", xs_string, "name of native pdb");
 	attlist + XMLSchemaAttribute( "favor_native", xsct_real, "give a bonus score to the input rotamer");
 	attlist + XMLSchemaAttribute( "optimize_input_H", xsct_rosetta_bool, "do not optimize H at the begining (which is used for grid construction)");
@@ -1910,6 +2002,7 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	attlist + XMLSchemaAttribute( "estimate_dG", xsct_rosetta_bool, "Estimate dG of binding on lowest-energy docked pose. Default: false");
 	attlist + XMLSchemaAttribute( "use_mean_maxRad", xsct_rosetta_bool, "Use mean maxRad for multi ligands? Default: false");
 	attlist + XMLSchemaAttribute( "stdev_multiplier", xsct_real, "Standard deviation multiplier for mean_maxRad. Default: 1.0");
+	attlist + XMLSchemaAttribute( "torsion_sampler_percentage", xsct_real, "The percentage of the initial gene sampled by torsion sampler.");
 
 	// per-cycle parameters (defaults)
 	attlist + XMLSchemaAttribute( "ngen", xs_integer, "number of generations");
@@ -1929,7 +2022,6 @@ void GALigandDock::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 		+ XMLSchemaAttribute( "smoothing", xsct_real, "Grid smoothing in this stage" )
 		+ XMLSchemaAttribute( "elec_scale", xsct_real, "Scale of elec and hbond terms at this stage")
 		+ XMLSchemaAttribute( "pmut", xsct_real, "Sampling frequency weight for this template" )
-		+ XMLSchemaAttribute( "rb_maxrank", xs_integer, "superimpose sampled pose to motifs of topN parent structures" )
 		+ XMLSchemaAttribute( "rmsdthreshold", xsct_real, "symmdef file associated with this template (only if using symmetry)" )
 		+ XMLSchemaAttribute( "ramp_schedule", xs_string, "comma-seprated list of chains to randomize - not documented" )
 		+ XMLSchemaAttribute( "maxiter", xsct_non_negative_integer, "maxiter for minimizer" )

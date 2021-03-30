@@ -102,6 +102,7 @@ sources = {
 		"WriteLigandMolFile",
 	],
 	"protocols/ligand_docking/GALigandDock": [
+    "TorsionSampler",
 		"LigandConformer",
 		"LigandAligner",
 		"GriddedAtomTreeMultifunc",
@@ -109,8 +110,8 @@ sources = {
 		"GAOptimizer",
 		"GALigandDock",
 		"RotamerData",
-	        "EntropyEstimator",
-	        "util"
+    "EntropyEstimator",
+    "util"
 	],
 	"protocols/ligand_docking/ligand_options": [
 		"Interface",

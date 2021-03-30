@@ -99,10 +99,12 @@ RMSDMetric::~RMSDMetric(){}
 RMSDMetric::RMSDMetric( RMSDMetric const & src ):
 	RealMetric( src ),
 	rmsd_map_(src.rmsd_map_),
+	rmsd_maps_(src.rmsd_maps_),
 	rmsd_type_(src.rmsd_type_),
 	override_atom_names_( src.override_atom_names_ ),
 	robust_( src.robust_),
-	name_mapping_( src.name_mapping_ )
+	name_mapping_( src.name_mapping_ ),
+	cyclic_pose_(src.cyclic_pose_)
 {
 	residue_selector_ = src.residue_selector_;
 	residue_selector_ref_ = src.residue_selector_ref_;
@@ -153,6 +155,11 @@ RMSDMetric::set_residue_selector_super_reference(core::select::residue_selector:
 void
 RMSDMetric::set_residue_mapping(std::map<core::Size, core::Size> const & rmsd_map ){
 	rmsd_map_ = rmsd_map;
+}
+
+void
+RMSDMetric::set_cyclic_residue_mappings(std::vector< std::map<core::Size, core::Size> > const & rmsd_maps ){
+	rmsd_maps_ = rmsd_maps;
 }
 
 void
@@ -217,6 +224,10 @@ RMSDMetric::parse_my_tag(
 	}
 
 	set_corresponding_atoms_robust(tag->getOption< bool >("robust", robust_));
+
+	if ( tag->hasOption("cyclic") ) {
+		cyclic_pose_ = tag->getOption< bool >("cyclic");
+	}
 }
 
 
@@ -254,6 +265,10 @@ RMSDMetric::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd ) {
 		"super", xsct_rosetta_bool, "Run a superposition on the residues in the residue_selector (or all) before RMSD calculation and the atoms selected for RMSD", "false"
 	);
 
+	attlist + XMLSchemaAttribute::attribute_w_default(
+		"cyclic", xsct_rosetta_bool, "if the pose is cyclic, this will compute RMSDs on all equivalent matches and return the smallest rmsd", "false"
+	);
+
 	utility::vector1< std::string > rmsd_type_names = get_rmsd_type_names();
 	utility::tag::add_schema_restrictions_for_strings( xsd, "rmsd_types", rmsd_type_names);
 
@@ -279,40 +294,77 @@ RMSDMetric::calculate(const core::pose::Pose & pose) const {
 	if ( ! ref_pose_ ) {
 		utility_exit_with_message( "Must pass in a reference pose for RMSDMetric.  See RS XSD or use the set_comparison_pose function");
 	}
-
-	per_residue_metrics::PerResidueRMSDMetric core_metric = per_residue_metrics::PerResidueRMSDMetric();
-	core_metric.set_rmsd_type(rmsd_type_);
-	core_metric.set_comparison_pose(ref_pose_);
-	core_metric.set_residue_mapping(rmsd_map_);
-	core_metric.set_corresponding_atoms_robust(robust_);
-	core_metric.set_residue_selector_reference( residue_selector_ref_);
-	core_metric.set_residue_selector( residue_selector_);
-
-	std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
 	core::Real rms = 0.0;
-	if ( superimpose_ ) {
-		core::pose::Pose local_pose;
-		//Patch to align symmetric and non-symmetric poses without re-writing superimpose function.
-		// Warning now added to superimpose function.
-		if ( is_symmetric(pose) && ! is_symmetric(*ref_pose_) ) {
-			extract_asymmetric_unit(pose, local_pose, false);
-		} else {
-			local_pose = pose;
+	if ( cyclic_pose_ ) {
+		TR << "Input structure is set as cyclic pose. Trying to find the minimum rms from all possible alignments."<<std::endl;
+		std::vector< std::map< core::Size, core::Size > > rmsd_maps;
+		per_residue_metrics::PerResidueRMSDMetric core_metric = per_residue_metrics::PerResidueRMSDMetric();
+		std::vector< core::Real > rms_all;
+		rmsd_maps = get_cyclic_pose_residue_mappings_from_selectors(residue_selector_, residue_selector_ref_, pose, *ref_pose_, false);
+		core_metric.set_rmsd_type(rmsd_type_);
+		core_metric.set_comparison_pose(ref_pose_);
+		core_metric.set_corresponding_atoms_robust(robust_);
+		core_metric.set_residue_selector_reference( residue_selector_ref_);
+		core_metric.set_residue_selector( residue_selector_);
+		for ( auto rmsd_map : rmsd_maps ) {
+			rms = 0.0;
+			core_metric.set_residue_mapping(rmsd_map);
+			std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
+			if ( superimpose_ ) {
+				core::pose::Pose local_pose(pose);
+
+				if ( residue_selector_super_ ) {
+					core_metric.set_residue_selector(residue_selector_super_);
+					core_metric.set_residue_selector_reference(residue_selector_super_ref_);
+					std::map< id::AtomID, id::AtomID > super_atom_map = core_metric.create_atom_id_map( pose );
+					scoring::superimpose_pose(local_pose, *ref_pose_, super_atom_map);
+
+				} else {
+					scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
+				}
+				rms =  scoring::rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map);
+
+			} else {
+				rms =  scoring::rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map);
+			}
+			rms_all.push_back(rms);
 		}
-
-		if ( residue_selector_super_ ) {
-			core_metric.set_residue_selector(residue_selector_super_);
-			core_metric.set_residue_selector_reference(residue_selector_super_ref_);
-			std::map< id::AtomID, id::AtomID > super_atom_map = core_metric.create_atom_id_map( pose );
-			scoring::superimpose_pose(local_pose, *ref_pose_, super_atom_map);
-
-		} else {
-			scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
-		}
-		rms =  scoring::rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map);
-
+		if ( TR.Debug.visible() ) TR.Debug << "RMS from all the alignment: " << rms_all << std::endl;
+		rms = *std::min_element( rms_all.begin(), rms_all.end() );
 	} else {
-		rms =  scoring::rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map);
+		per_residue_metrics::PerResidueRMSDMetric core_metric = per_residue_metrics::PerResidueRMSDMetric();
+		core_metric.set_rmsd_type(rmsd_type_);
+		core_metric.set_comparison_pose(ref_pose_);
+		core_metric.set_residue_mapping(rmsd_map_);
+		core_metric.set_corresponding_atoms_robust(robust_);
+		core_metric.set_residue_selector_reference( residue_selector_ref_);
+		core_metric.set_residue_selector( residue_selector_);
+
+		std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
+		if ( superimpose_ ) {
+			core::pose::Pose local_pose;
+			//Patch to align symmetric and non-symmetric poses without re-writing superimpose function.
+			// Warning now added to superimpose function.
+			if ( is_symmetric(pose) && ! is_symmetric(*ref_pose_) ) {
+				extract_asymmetric_unit(pose, local_pose, false);
+			} else {
+				local_pose = pose;
+			}
+
+			if ( residue_selector_super_ ) {
+				core_metric.set_residue_selector(residue_selector_super_);
+				core_metric.set_residue_selector_reference(residue_selector_super_ref_);
+				std::map< id::AtomID, id::AtomID > super_atom_map = core_metric.create_atom_id_map( pose );
+				scoring::superimpose_pose(local_pose, *ref_pose_, super_atom_map);
+
+			} else {
+				scoring::superimpose_pose(local_pose, *ref_pose_, atom_map);
+			}
+			rms =  scoring::rms_at_corresponding_atoms_no_super( local_pose, *ref_pose_, atom_map);
+
+		} else {
+			rms =  scoring::rms_at_corresponding_atoms_no_super( pose, *ref_pose_, atom_map);
+		}
 	}
 	return rms;
 }

@@ -2603,6 +2603,16 @@ settings = {
                 "util"
             ],
         },
+        "removes" : {
+            "flags" : {
+                "warn" : [
+                    # We turn off warnings as errors for Python build
+                    # only because the automatic Python interface wrapping
+                    # can introduce warnings.
+                    "Werror",
+                ],
+            },
+        },
     },
 
     "clang, mysql" : {

@@ -419,6 +419,14 @@ all_atom_rmsd(
 );
 
 core::Real
+all_atom_rmsd_nosuper(
+	const core::pose::Pose & pose1,
+	const core::pose::Pose & pose2,
+	utility::vector1< core::Size > const & pose1_residues,
+	utility::vector1< core::Size > const & pose2_residues
+);
+
+core::Real
 nbr_atom_rmsd(
 	const core::pose::Pose & pose1,
 	const core::pose::Pose & pose2

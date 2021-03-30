@@ -45,7 +45,7 @@ public:
 
 	EntropyEstimator( core::scoring::ScoreFunctionOP sfxn,
 		core::pose::Pose const & pose,
-		core::Size const ligid
+		utility::vector1< core::Size > const &ligids
 	);
 
 	~EntropyEstimator(){}
@@ -62,10 +62,10 @@ private:
 
 	/// @brief torsion entropy calculation function inside estimate_Stors
 	core::Real
-	analyze_trajectory( utility::vector1< ChiInfo > const &chitrj,
+	analyze_trajectory(
+		utility::vector1< ChiInfo > const &chitrj,
 		core::pose::Pose const &pose,
 		utility::vector1< std::pair< core::Size, core::Size > > const &chidefs,
-		core::Size const ligid,
 		core::Real const Emin,
 		core::Real const RT,
 		bool const run_on_ligand,
@@ -75,7 +75,6 @@ private:
 	/// @brief Runs MC and returns torsion entropy change
 	core::Real
 	estimate_Stors( core::pose::Pose pose,
-		core::Size const ligid,
 		utility::vector1< ChiInfo > &chitrj,
 		utility::vector1< core::Size > const &flexscs,
 		utility::vector1< std::pair< core::Size, core::Size > > const &chidefs,
@@ -86,7 +85,6 @@ private:
 	/// @brief main perturb function in MC
 	void
 	perturb( core::pose::Pose &pose,
-		core::Size const ligid,
 		core::Size const nligchi,
 		utility::vector1< core::Size > const &flexscs,
 		bool &pert_ligand
@@ -110,8 +108,10 @@ private:
 
 	/// @brief perturb ligand chis
 	void
-	update_chis( core::conformation::Residue const &rsd,
-		utility::vector1< core::Real > &chis ) const;
+	update_chis(
+		core::pose::Pose const &pose,
+		utility::vector1< core::Real > &chis,
+		bool const& ligonly ) const;
 
 	/// @brief perturb receptor sidechains
 	void
@@ -125,7 +125,7 @@ private:
 
 private:
 	// Basic
-	core::Size ligid_;
+	utility::vector1< core::Size > ligids_;
 	core::scoring::ScoreFunctionOP sfxn_;
 	core::Real run_apostate_;
 	core::Real run_holostate_;
@@ -149,9 +149,12 @@ private:
 
 	// weight on chis
 	bool weighted_;
-	utility::vector1< core::Size > chiweights_;
+	utility::vector1< std::pair< int, int > > chimapping_;
+	utility::vector1< std::pair< int, int > > ligpose_chimapping_;
+	utility::vector1< core::Real > chiweights_;
 
-
+	// ligand jump id
+	core::Size jumpid_;
 }; //class EntropyEstimator
 
 }

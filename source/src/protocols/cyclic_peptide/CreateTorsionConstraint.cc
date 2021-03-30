@@ -27,8 +27,9 @@
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/HarmonicFunc.hh>
 #include <core/scoring/func/Func.hh>
-#include <core/scoring/constraints/Constraint.hh>
+#include <core/scoring/constraints/Constraint.fwd.hh>
 #include <core/scoring/constraints/DihedralConstraint.hh>
+#include <core/scoring/constraints/AmbiguousConstraint.hh>
 
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
@@ -83,26 +84,50 @@ void CreateTorsionConstraint::set(
 
 void CreateTorsionConstraint::apply( core::pose::Pose & pose )
 {
+	core::scoring::constraints::ConstraintCOPs constraints;
+
 	for ( core::Size i_cst=1; i_cst<=cst_func_.size(); ++i_cst ) {
 		if ( cst_func_[i_cst] == "" ) {}
 		else {
-			std::istringstream data(cst_func_[i_cst]);
-			std::string func_type;
-			data >> func_type;
-			core::scoring::func::FuncFactory func_factory;
-			core::scoring::func::FuncOP func = func_factory.new_func( func_type );
-			func->read_data( data );
-			core::Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
-			core::Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
-			core::Size atomno3 = pose.residue_type(res3_[i_cst]).atom_index(atom3_[i_cst]);
-			core::Size atomno4 = pose.residue_type(res4_[i_cst]).atom_index(atom4_[i_cst]);
-			pose.add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(core::id::AtomID(atomno1,res1_[i_cst]),
-				core::id::AtomID(atomno2,res2_[i_cst]),
-				core::id::AtomID(atomno3,res3_[i_cst]),
-				core::id::AtomID(atomno4,res4_[i_cst]),
-				func ) )
-			);
-		}
+			if ( ambiguous_ ) {
+				std::istringstream data(cst_func_[i_cst]);
+				std::string func_type;
+				data >> func_type;
+				core::scoring::func::FuncFactory func_factory;
+				core::scoring::func::FuncOP func = func_factory.new_func( func_type );
+				func->read_data( data );
+				core::Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
+				core::Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
+				core::Size atomno3 = pose.residue_type(res3_[i_cst]).atom_index(atom3_[i_cst]);
+				core::Size atomno4 = pose.residue_type(res4_[i_cst]).atom_index(atom4_[i_cst]);
+				constraints.push_back(core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(core::id::AtomID(atomno1,res1_[i_cst]),
+					core::id::AtomID(atomno2,res2_[i_cst]),
+					core::id::AtomID(atomno3,res3_[i_cst]),
+					core::id::AtomID(atomno4,res4_[i_cst]),
+					func ) )
+				);
+			} else {
+				std::istringstream data(cst_func_[i_cst]);
+				std::string func_type;
+				data >> func_type;
+				core::scoring::func::FuncFactory func_factory;
+				core::scoring::func::FuncOP func = func_factory.new_func( func_type );
+				func->read_data( data );
+				core::Size atomno1 = pose.residue_type(res1_[i_cst]).atom_index(atom1_[i_cst]);
+				core::Size atomno2 = pose.residue_type(res2_[i_cst]).atom_index(atom2_[i_cst]);
+				core::Size atomno3 = pose.residue_type(res3_[i_cst]).atom_index(atom3_[i_cst]);
+				core::Size atomno4 = pose.residue_type(res4_[i_cst]).atom_index(atom4_[i_cst]);
+				pose.add_constraint( core::scoring::constraints::ConstraintCOP( utility::pointer::make_shared< core::scoring::constraints::DihedralConstraint >(core::id::AtomID(atomno1,res1_[i_cst]),
+					core::id::AtomID(atomno2,res2_[i_cst]),
+					core::id::AtomID(atomno3,res3_[i_cst]),
+					core::id::AtomID(atomno4,res4_[i_cst]),
+					func ) )
+				);
+			} //end if
+		} //end if
+	} //end for
+	if ( ambiguous_ ) {
+		pose.add_constraint( core::scoring::constraints::ConstraintCOP ( utility::pointer::make_shared< core::scoring::constraints::AmbiguousConstraint >(constraints) ) );
 	}
 }
 

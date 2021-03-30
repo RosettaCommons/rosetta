@@ -50,6 +50,15 @@ get_residue_mapping_from_selectors(
 	bool desymmetrize_selectors = true
 );
 
+std::vector< std::map< core::Size, core::Size > >
+get_cyclic_pose_residue_mappings_from_selectors(
+	select::residue_selector::ResidueSelectorCOP selector,
+	select::residue_selector::ResidueSelectorCOP selector_ref,
+	core::pose::Pose const & pose,
+	core::pose::Pose const & ref_pose,
+	bool desymmetrize_selectors = true
+);
+
 /// @brief Used to name the xs:complexType for a residue selector that is
 /// created with the "rs_type" tag-name.  Does so by prepending "rs_" and
 /// appending "Type" to the "rs_type".  E.g., "rs_AndType" would be the

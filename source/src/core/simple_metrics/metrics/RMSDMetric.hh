@@ -119,6 +119,10 @@ public:
 	void
 	set_residue_mapping( std::map< core::Size, core::Size> const & rmsd_map );
 
+	///@brief Set maps of cyclic pose to compute the RMSDs on input->reference residue numbers.
+	void
+	set_cyclic_residue_mappings( std::vector< std::map< core::Size, core::Size> > const & rmsd_maps );
+
 	///@brief Run a superimpose on the residues selected in the residue selector (or all)
 	/// default False.
 	void
@@ -181,6 +185,7 @@ private:
 	core::select::residue_selector::ResidueSelectorCOP residue_selector_super_ref_ = nullptr;
 
 	std::map< core::Size, core::Size > rmsd_map_;
+	std::vector< std::map< core::Size, core::Size > > rmsd_maps_;
 
 	core::pose::PoseCOP ref_pose_ = nullptr;
 	scoring::rmsd_atoms rmsd_type_ = scoring::rmsd_all_heavy;
@@ -189,6 +194,7 @@ private:
 
 	std::map< std::string, scoring::rmsd_atoms > name_mapping_;
 	bool superimpose_=false;
+	bool cyclic_pose_ = false;
 
 };
 

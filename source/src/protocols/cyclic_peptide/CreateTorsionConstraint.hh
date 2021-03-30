@@ -46,6 +46,12 @@ public:
 	);
 
 	void
+	ambiguous( bool setting ) { ambiguous_ = setting; }
+
+	bool
+	ambiguous() const { return ambiguous_; }
+
+	void
 	parse_my_tag( TagCOP, basic::datacache::DataMap & ) override;
 
 	std::string
@@ -70,6 +76,7 @@ private:
 	utility::vector1<core::Size> res4_;
 	utility::vector1<std::string> atom4_;
 	utility::vector1<std::string> cst_func_;
+	bool ambiguous_ = false;
 };
 
 } // moves
