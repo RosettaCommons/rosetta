@@ -4374,6 +4374,12 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				default='1'
 				),
 
+			Option('relax_cycle_rounds', 'Integer',
+				desc='Rounds of relax that are run after each inner cycle. The default recommendation is 5 cycles for FastRelax.\
+				If you decrease this number, you will decrease your run time significantly. This has not been benchmarked though.',
+				default='5'
+				),
+
 			##### Distance Detection
 			Option('interface_dis', 'Real',
 				desc='Interface distance cutoff.  Used for repacking of interface, epitope detection, etc.',

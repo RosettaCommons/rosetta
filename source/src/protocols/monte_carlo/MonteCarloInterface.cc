@@ -35,9 +35,12 @@ MonteCarloInterface::MonteCarloInterface(
 	Pose const & init_pose, // PoseCOP init_pose,
 	ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 	Real const temperature,
-	std::string interface):
+	std::string interface,
+	bool detect_disulfide_in_separated_pose
+):
 
-	MonteCarlo( init_pose, scorefxn, temperature)
+	MonteCarlo( init_pose, scorefxn, temperature),
+	detect_disulfide_in_separated_pose_(detect_disulfide_in_separated_pose)
 
 {
 	init_interface_analyzer();
@@ -86,6 +89,8 @@ MonteCarloInterface::init_interface_analyzer() {
 	analyzer_->set_compute_interface_sc( false );
 	analyzer_->set_calc_hbond_sasaE( false );
 	analyzer_->set_use_centroid_dG( false );
+	analyzer_->set_detect_disulfide_in_separated_pose( detect_disulfide_in_separated_pose_ );
+	TR << "Detection of disulfides in the separated pose is set to " << detect_disulfide_in_separated_pose_ << std::endl;
 
 	//Make sure pack separated is set to TRUE!!
 	analyzer_->set_pack_separated( repack_separated_ );

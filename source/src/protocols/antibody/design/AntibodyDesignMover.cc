@@ -170,6 +170,7 @@ AntibodyDesignMover::read_command_line_options(){
 
 	outer_cycles_ = (option [OptionKeys::antibody::design::outer_cycle_rounds]());
 	inner_cycles_ = option [OptionKeys::antibody::design::inner_cycle_rounds]();
+	relax_cycles_ = option [OptionKeys::antibody::design::relax_cycle_rounds]();
 
 	set_keep_top_designs(option [OptionKeys::antibody::design::top_designs]());
 	set_dock_post_graft(option [OptionKeys::antibody::design::do_dock]());
@@ -276,6 +277,7 @@ AntibodyDesignMover::AntibodyDesignMover( AntibodyDesignMover const & src ):
 	overhang_(src.overhang_),
 	outer_cycles_(src.outer_cycles_),
 	inner_cycles_(src.inner_cycles_),
+	relax_cycles_(src.relax_cycles_),
 	dock_cycles_(src.dock_cycles_),
 	num_top_designs_(src.num_top_designs_),
 	interface_dis_(src.interface_dis_),
@@ -413,6 +415,8 @@ AntibodyDesignMover::parse_my_tag(
 	outer_cycles_ = tag->getOption< core::Size >("outer_cycles", outer_cycles_);
 	inner_cycles_ = tag->getOption< core::Size >("inner_cycles", inner_cycles_);
 
+	relax_cycles_ = tag->getOption< core::Size >("relax_cycles", relax_cycles_);
+
 	outer_kt_ = tag->getOption< core::Real >("outer_kt", outer_kt_);
 	inner_kt_ = tag->getOption< core::Real >("inner_kt", inner_kt_);
 
@@ -501,6 +505,11 @@ AntibodyDesignMover::set_dock_rounds(core::Size dock_rounds){
 void
 AntibodyDesignMover::set_outer_cycles(core::Size graft_rounds){
 	outer_cycles_ = graft_rounds;
+}
+
+void
+AntibodyDesignMover::set_relax_cycles(core::Size relax_cycles){
+	relax_cycles_=relax_cycles;
 }
 
 void
@@ -1213,7 +1222,7 @@ AntibodyDesignMover::run_optimization_cycle(core::pose::Pose& pose, protocols::m
 		mc.boltzmann(pose);
 	} else if ( options->mintype() == relax ) {
 		//Relax CDR?
-		modeler_->relax_cdrs(pose, options->min_neighbor_sc(), false, options->min_rb());
+		modeler_->relax_cdrs(pose, options->min_neighbor_sc(), false, options->min_rb(), false, relax_cycles_);
 		mc.boltzmann(pose);
 	} else if ( options->mintype() == dualspace ) {
 		modeler_->relax_cdrs(pose, options->min_neighbor_sc(), false, options->min_rb(), true /*dualspace*/);
@@ -1572,8 +1581,8 @@ AntibodyDesignMover::apply(core::pose::Pose & pose){
 			utility_exit_with_message("RAbD: Cannot optimize dG if there is no antigen present ");
 		}
 
-		mc_ =       utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains() );
-		inner_mc_ = utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains() );
+		mc_ =       utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, outer_kt_, modeler_->get_dock_chains(), false /* detect_disulfide_in_separated_pose */ );
+		inner_mc_ = utility::pointer::make_shared< MonteCarloInterface >( pose, *scorefxn_, inner_kt_, modeler_->get_dock_chains(), false /* detect_disulfide_in_separated_pose */ );
 	} else {
 		mc_ =       utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, outer_kt_);
 		inner_mc_ = utility::pointer::make_shared< MonteCarlo >(pose, *scorefxn_, inner_kt_);
@@ -1672,7 +1681,9 @@ AntibodyDesignMover::finalize_pose(AntibodyInfoCOP ab_info, core::pose::Pose & p
 			scorefxn_,
 			false /* compute_packstat */ ,
 			false /* pack_input */,
-			true /* pack_separated */);
+			true /* pack_separated */,
+			true /* use_jobname*/,
+			false /* detect_disulfide_in_separated_pose*/);
 
 		analyzer.init_on_new_input(pose);
 		analyzer.apply(pose);
@@ -1908,6 +1919,10 @@ void AntibodyDesignMover::provide_xml_schema( utility::tag::XMLSchemaDefinition 
 	attlist + XMLSchemaAttribute(
 		"outer_cycles", xsct_non_negative_integer,
 		"Set the number of outer cycles. Default 25.");
+
+	attlist + XMLSchemaAttribute(
+		"relax_cycles", xsct_non_negative_integer,
+		"Set the number of relax cycles. Default 5.");
 
 	attlist + XMLSchemaAttribute(
 		"inner_cycles", xsct_non_negative_integer,

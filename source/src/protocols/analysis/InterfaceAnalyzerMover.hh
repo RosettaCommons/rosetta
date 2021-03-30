@@ -196,7 +196,8 @@ public:
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
-		bool use_jobname = true
+		bool use_jobname = true,
+		bool detect_disulfide_in_separated_pose = true
 	);
 
 	/// @brief Constructor for poses with >= 1 jump, keeps defined chains together
@@ -208,7 +209,8 @@ public:
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
-		bool use_jobname = true
+		bool use_jobname = true,
+		bool detect_disulfide_in_separated_pose = true
 	);
 
 	/// @brief Constructor for any interface in a pose.  Uses string designation (ex LH_A) to keep the left chain/chains fixed ALA docking.
@@ -221,7 +223,8 @@ public:
 		bool compute_packstat = false,
 		bool pack_input = false,
 		bool pack_separated = false,
-		bool use_jobname = true
+		bool use_jobname = true,
+		bool detect_disulfide_in_separated_pose = true
 	);
 
 	~InterfaceAnalyzerMover() override;
@@ -307,7 +310,8 @@ public:
 	void
 	set_compute_interface_delta_hbond_unsat(bool const IDHU) {compute_interface_delta_hbond_unsat_ = IDHU;}
 
-
+	void
+	set_detect_disulfide_in_separated_pose( bool const detect_disulfide_in_separated_pose) {detect_disulfide_in_separated_pose_ = detect_disulfide_in_separated_pose;}
 
 	/// @brief Repack the interface of the complex before separation.
 	void
@@ -663,6 +667,8 @@ private:
 	bool use_resfile_;
 	/// @brief skip the centroid_dG step, for incoming poses not centroid convertible
 	bool use_centroid_;
+	/// @brief detect disulfide in the separated pose
+	bool detect_disulfide_in_separated_pose_;
 
 	InterfaceData data_;
 	PerResidueInterfaceData per_residue_data_;

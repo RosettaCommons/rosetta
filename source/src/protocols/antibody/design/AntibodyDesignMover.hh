@@ -156,6 +156,11 @@ public:
 	void
 	set_inner_cycles(core::Size inner_cycles);
 
+	/// @brief Set the number of relax cycles to run after each outer cycles.
+	/// Only makes sense with mintype relax.
+	void
+	set_relax_cycles(core::Size relax_cycles);
+
 public:
 	////////////////////////////////////////////////////////////////////////////
 	// Paratope and Epitope constraints
@@ -434,6 +439,7 @@ private:
 	core::Size overhang_;
 	core::Size outer_cycles_;
 	core::Size inner_cycles_;
+	core::Size relax_cycles_;
 	core::Size dock_cycles_;
 	core::Size num_top_designs_; //Number of top designs to keep.
 

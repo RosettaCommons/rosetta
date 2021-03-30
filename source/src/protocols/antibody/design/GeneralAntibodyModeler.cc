@@ -505,7 +505,7 @@ GeneralAntibodyModeler::minimize_cdrs(Pose & pose,
 }
 
 void
-GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true*/,  bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, bool dualspace /*false*/) const {
+GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true*/,  bool starting_coordinate_constraints /*false*/, bool min_interface /* false */, bool dualspace /*false*/, core::Size repeats) const {
 
 	ScoreFunctionOP local_scorefxn = min_scorefxn_->clone();
 
@@ -551,7 +551,7 @@ GeneralAntibodyModeler::relax_cdrs(Pose & pose,  bool include_neighbor_sc /*true
 	MoveMapOP mm = get_cdrs_movemap_with_overhang(pose, true /*BB*/, true/*SC*/, include_neighbor_sc,  false /*neighbor_bb*/);
 
 
-	protocols::relax::FastRelaxOP rel( new protocols::relax::FastRelax() );//Stack construction failed to compile.
+	protocols::relax::FastRelaxOP rel( new protocols::relax::FastRelax( repeats ) );//Stack construction failed to compile.
 
 	if ( dualspace ) {
 		local_scorefxn->set_weight(cart_bonded, .5);

@@ -132,7 +132,7 @@ public:
 	/// @details Cluster Constraints should already be set. Optionally use start_coordinate constraints.
 	/// All coordinate constraints on the pose will then be removed.
 	void
-	relax_cdrs(core::pose::Pose & pose, bool include_neighbor_sc = true,  bool starting_coordinate_constraints = false,  bool min_interface = false, bool dualspace = false) const;
+	relax_cdrs(core::pose::Pose & pose, bool include_neighbor_sc = true,  bool starting_coordinate_constraints = false,  bool min_interface = false, bool dualspace = false, core::Size repeats = 5) const;
 
 
 	void

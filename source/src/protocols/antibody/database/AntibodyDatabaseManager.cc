@@ -105,15 +105,32 @@ AntibodyDatabaseManager::AntibodyDatabaseManager(AntibodyInfoCOP ab_info, bool f
 	use_h3_graft_outliers_ = option[OptionKeys::antibody::design::use_H3_graft_outliers]();
 	use_only_H3_kinked_ = option[ OptionKeys::antibody::design::use_only_H3_kinked]();
 
-	if ( use_north_paper_ab_db || force_north_paper_db ) {
-		create_database_session(north_paper_path);
-	} else if ( utility::file::file_exists(default_path) ) {
-		create_database_session(default_path);
+	// If user specified a database path, use this path and make sure it exists.
+	if ( basic::options::option[ basic::options::OptionKeys::antibody::design::antibody_database ].user() ) {
+		string default_path = basic::options::option[basic::options::OptionKeys::antibody::design::antibody_database]();
+		TR << "The antibody design database path is specified by the user: " << default_path << std::endl;
 
-	} else if ( utility::file::file_exists(north_paper_path) ) {
-		create_database_session(north_paper_path);
+		// If the provided antibody design database does not exist, exit with message.
+		if ( utility::file::file_exists( default_path ) ) {
+			create_database_session(default_path);
+		} else {
+			utility_exit_with_message("The provided antibody design database path does not exist: " + default_path );
+		}
+
+		// IF the user has not specified a database path, use default path or north paper db
 	} else {
-		utility_exit_with_message("Could not locate antibody database.  Please check paths, use the -paper_ab_db option, or pass the class constructor option to force the use of the paper database.");
+		TR << "The antibody design database is not specified by the user." << std::endl;
+
+		if ( use_north_paper_ab_db || force_north_paper_db ) {
+			create_database_session(north_paper_path);
+		} else if ( utility::file::file_exists(default_path) ) {
+			create_database_session(default_path);
+
+		} else if ( utility::file::file_exists(north_paper_path) ) {
+			create_database_session(north_paper_path);
+		} else {
+			utility_exit_with_message("Could not locate antibody database.  Please check paths, use the -paper_ab_db option, or pass the class constructor option to force the use of the paper database.");
+		}
 	}
 
 	cdr_cache_limit_ = option[ OptionKeys::antibody::design::cdr_set_cache_limit]();

@@ -126,7 +126,9 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	bool compute_packstat,
 	bool pack_input,
 	bool pack_separated,
-	bool use_jobname
+	bool use_jobname,
+	bool detect_disulfide_in_separated_pose
+
 ) :
 	Mover(),
 	interface_jump_(interface_jump),
@@ -136,6 +138,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
+	detect_disulfide_in_separated_pose_(detect_disulfide_in_separated_pose),
 	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
@@ -154,7 +157,9 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	bool compute_packstat,
 	bool pack_input,
 	bool pack_separated,
-	bool use_jobname
+	bool use_jobname,
+	bool detect_disulfide_in_separated_pose
+
 ) :
 	Mover(),
 	interface_jump_(1),
@@ -165,6 +170,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
+	detect_disulfide_in_separated_pose_(detect_disulfide_in_separated_pose),
 	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
@@ -183,7 +189,9 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	bool compute_packstat,
 	bool pack_input,
 	bool pack_separated,
-	bool use_jobname
+	bool use_jobname,
+	bool detect_disulfide_in_separated_pose
+
 ):
 	Mover(),
 	interface_jump_(1),
@@ -193,6 +201,7 @@ InterfaceAnalyzerMover::InterfaceAnalyzerMover(
 	pack_input_(pack_input),
 	pack_separated_(pack_separated),
 	use_jobname_(use_jobname),
+	detect_disulfide_in_separated_pose_(detect_disulfide_in_separated_pose),
 	included_nres_(0)
 	//hbond_exposure_ratio_(0),
 	//total_hb_sasa_(0),
@@ -416,7 +425,14 @@ void InterfaceAnalyzerMover::apply_const( core::pose::Pose const & pose){
 	}
 
 	//Redetect disulfides after separation to cleave any that are in the complex pose between the chains.
-	separated_pose.conformation().detect_disulfides();
+	//Causes problems with clashing disulfides during RAbD
+	if ( detect_disulfide_in_separated_pose_ == false ) {
+		TR << "NOT detecting disulfides in the separated pose." << std::endl;
+	} else {
+		TR << "Detecting disulfides in the separated pose." << std::endl;
+		separated_pose.conformation().detect_disulfides();
+	}
+
 
 	//actual computation here
 	if ( compute_separated_sasa_ ) compute_separated_sasa( complexed_pose, separated_pose );

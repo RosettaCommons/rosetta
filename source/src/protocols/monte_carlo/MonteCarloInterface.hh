@@ -44,7 +44,8 @@ public:
 		Pose const & init_pose, // PoseCOP init_pose,
 		ScoreFunction const & scorefxn, // ScoreFunctionCOP scorefxn,
 		Real const temperature,
-		std::string interface
+		std::string interface,
+		bool detect_disulfide_in_separated_pose = false
 	);
 
 	/// @brief Constructor without Pose -- call reset(pose) before first use
@@ -150,6 +151,8 @@ private:
 
 	bool repack_separated_ = true;
 
+	/// @brief detect disulfide in the separated pose in InterfaceAnalyzerMover
+	bool detect_disulfide_in_separated_pose_;
 
 };
 
