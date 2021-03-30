@@ -1,0 +1,246 @@
+protocols.rosetta_scripts.RosettaScriptsParser: dock_design_filename=inputs/trRosetta.xml
+protocols.rosetta_scripts.RosettaScriptsParser: Generating XML Schema for rosetta_scripts...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Initializing schema validator...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Validating input script...
+protocols.rosetta_scripts.RosettaScriptsParser: ...done
+protocols.rosetta_scripts.RosettaScriptsParser: Parsed script:
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015"/>
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS/>
+	<PACKER_PALETTES/>
+	<TASKOPERATIONS/>
+	<MOVE_MAP_FACTORIES/>
+	<SIMPLE_METRICS/>
+	<FILTERS/>
+	<MOVERS>
+		<trRosettaProtocol backbone_randomization_mode="ramachandran" msa_file="inputs/1r6j_msa.a3m" mutate_gly_to_ala="false" name="predict_struct" sequence="GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIMPAF"/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="predict_struct"/>
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15"/>
+</ROSETTASCRIPTS>
+protocols.rosetta_scripts.RosettaScriptsParser: Loading native resource as native_pose to the datamap 
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting native structure in trRosettaProtocol mover.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 0 to trRosetta_cen0.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 1 to trRosetta_cen1.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 2 to trRosetta_cen2.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 3 to trRosetta_cart.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for full-atom refinement to ref2015.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction atom_pair_constraint weight to 5.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction dihedral_constraint weight to 1.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction angle_constraint weight to 1.0 (was 0.0).
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaProtocolMover_rosettascripts/../../../../database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+protocols.rosetta_scripts.RosettaScriptsParser: Defined mover named "predict_struct" of type trRosettaProtocol
+protocols.rosetta_scripts.ParsedProtocol: ParsedProtocol mover with the following settings
+protocols.rosetta_scripts.ParsedProtocol: Added mover "predict_struct"
+protocols.rosetta_scripts.ParsedProtocol: =======================BEGIN MOVER trRosettaProtocol - predict_struct=======================
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Starting trRosetta structure prediction protocol.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Building pose from sequence.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Randomizing backbone dihedrals using protocol "ramachandran".
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Removing clashes.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Initializing constraint generator from multiple sequence alignment file "inputs/1r6j_msa.a3m".
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Generating trRosetta constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Loading trRosetta model version 1.
+protocols.trRosetta.trRosettaProtocol_v1: Running version 1 trRosetta neural network...
+protocols.trRosetta.trRosettaProtocol_v1: Ran version 1 trRosetta protocol in 13074.6 milliseconds.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing centroid-mode backbone optimization protocol "classic2".
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing classic2 minimization protocol
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Adding long-range sequence constraints (all residues).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing torsion-space minimization with scorefunction 0.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing Cartesian minimization with scorefunction 3.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing torsion-space clash removal minimization with scorefunction 1 (validating with scorefunction 2).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Removing clashes.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Computing RMSD to native...
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Carrying out fullatom refinement.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Generating trRosetta constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing all-atom refinement using the FastRelax protocol with DualSpace.
+protocols.relax.FastRelax: CMD: repeat  -185187  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -185187  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -213594  0  0  0.022
+protocols.relax.FastRelax: CMD: repack  -217009  0  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -216959  0  0  0.02805
+protocols.relax.FastRelax: CMD: min  -244817  3.08771  3.08771  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244817  3.08771  3.08771  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244291  3.08771  3.08771  0.14575
+protocols.relax.FastRelax: CMD: repack  -244768  3.08771  3.08771  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244752  3.08771  3.08771  0.154
+protocols.relax.FastRelax: CMD: min  -244752  3.08763  3.08763  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244752  3.08763  3.08763  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244457  3.08763  3.08763  0.30745
+protocols.relax.FastRelax: CMD: repack  -244461  3.08763  3.08763  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244439  3.08763  3.08763  0.31955
+protocols.relax.FastRelax: CMD: min  -244971  3.09734  3.09734  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244971  3.09734  3.09734  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244838  3.09734  3.09734  0.55
+protocols.relax.FastRelax: CMD: repack  -244844  3.09734  3.09734  0.55
+protocols.relax.FastRelax: CMD: min  -244844  3.09734  3.09734  0.55
+protocols.relax.FastRelax: MRP: 0  -244844  -244844  3.09734  3.09734  
+protocols.relax.FastRelax: CMD: accept_to_best  -244844  3.09734  3.09734  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -244844  3.09734  3.09734  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244844  3.09734  3.09734  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245151  3.09734  3.09734  0.022
+protocols.relax.FastRelax: CMD: repack  -245196  3.09734  3.09734  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245187  3.09734  3.09734  0.02805
+protocols.relax.FastRelax: CMD: min  -245248  3.10804  3.10804  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245248  3.10804  3.10804  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245017  3.10804  3.10804  0.14575
+protocols.relax.FastRelax: CMD: repack  -245036  3.10804  3.10804  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245022  3.10804  3.10804  0.154
+protocols.relax.FastRelax: CMD: min  -245022  3.10804  3.10804  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245022  3.10804  3.10804  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244760  3.10804  3.10804  0.30745
+protocols.relax.FastRelax: CMD: repack  -244763  3.10804  3.10804  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244742  3.10804  3.10804  0.31955
+protocols.relax.FastRelax: CMD: min  -244986  3.10858  3.10858  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244986  3.10858  3.10858  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244836  3.10858  3.10858  0.55
+protocols.relax.FastRelax: CMD: repack  -244837  3.10858  3.10858  0.55
+protocols.relax.FastRelax: CMD: min  -244837  3.10858  3.10858  0.55
+protocols.relax.FastRelax: MRP: 1  -244837  -244844  3.09734  3.09734  
+protocols.relax.FastRelax: CMD: accept_to_best  -244837  3.10858  3.10858  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -244837  3.10858  3.10858  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244837  3.10858  3.10858  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245182  3.10858  3.10858  0.022
+protocols.relax.FastRelax: CMD: repack  -245209  3.10858  3.10858  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245200  3.10858  3.10858  0.02805
+protocols.relax.FastRelax: CMD: min  -245262  3.11566  3.11566  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245262  3.11566  3.11566  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245049  3.11566  3.11566  0.14575
+protocols.relax.FastRelax: CMD: repack  -245071  3.11566  3.11566  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245058  3.11566  3.11566  0.154
+protocols.relax.FastRelax: CMD: min  -245058  3.11566  3.11566  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245058  3.11566  3.11566  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244822  3.11566  3.11566  0.30745
+protocols.relax.FastRelax: CMD: repack  -244827  3.11566  3.11566  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244808  3.11566  3.11566  0.31955
+protocols.relax.FastRelax: CMD: min  -244990  3.1124  3.1124  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244990  3.1124  3.1124  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244846  3.1124  3.1124  0.55
+protocols.relax.FastRelax: CMD: repack  -244848  3.1124  3.1124  0.55
+protocols.relax.FastRelax: CMD: min  -244848  3.1124  3.1124  0.55
+protocols.relax.FastRelax: MRP: 2  -244848  -244848  3.1124  3.1124  
+protocols.relax.FastRelax: CMD: accept_to_best  -244848  3.1124  3.1124  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -244848  3.1124  3.1124  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244848  3.1124  3.1124  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245179  3.1124  3.1124  0.022
+protocols.relax.FastRelax: CMD: repack  -245213  3.1124  3.1124  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245203  3.1124  3.1124  0.02805
+protocols.relax.FastRelax: CMD: min  -245278  3.12474  3.12474  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245278  3.12474  3.12474  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245057  3.12474  3.12474  0.14575
+protocols.relax.FastRelax: CMD: repack  -245082  3.12474  3.12474  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245069  3.12474  3.12474  0.154
+protocols.relax.FastRelax: CMD: min  -245069  3.12474  3.12474  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245069  3.12474  3.12474  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244825  3.12474  3.12474  0.30745
+protocols.relax.FastRelax: CMD: repack  -244830  3.12474  3.12474  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244811  3.12474  3.12474  0.31955
+protocols.relax.FastRelax: CMD: min  -244811  3.12474  3.12474  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244811  3.12474  3.12474  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244455  3.12474  3.12474  0.55
+protocols.relax.FastRelax: CMD: repack  -244460  3.12474  3.12474  0.55
+protocols.relax.FastRelax: CMD: min  -244853  3.10637  3.10637  0.55
+protocols.relax.FastRelax: MRP: 3  -244853  -244853  3.10637  3.10637  
+protocols.relax.FastRelax: CMD: accept_to_best  -244853  3.10637  3.10637  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -244853  3.10637  3.10637  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244853  3.10637  3.10637  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245122  3.10637  3.10637  0.022
+protocols.relax.FastRelax: CMD: repack  -245169  3.10637  3.10637  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245160  3.10637  3.10637  0.02805
+protocols.relax.FastRelax: CMD: min  -245255  3.1277  3.1277  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245255  3.1277  3.1277  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245042  3.1277  3.1277  0.14575
+protocols.relax.FastRelax: CMD: repack  -245065  3.1277  3.1277  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -245052  3.1277  3.1277  0.154
+protocols.relax.FastRelax: CMD: min  -245052  3.1277  3.1277  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -245052  3.1277  3.1277  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244817  3.1277  3.1277  0.30745
+protocols.relax.FastRelax: CMD: repack  -244824  3.1277  3.1277  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244807  3.1277  3.1277  0.31955
+protocols.relax.FastRelax: CMD: min  -244807  3.1277  3.1277  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -244807  3.1277  3.1277  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -244469  3.1277  3.1277  0.55
+protocols.relax.FastRelax: CMD: repack  -244473  3.1277  3.1277  0.55
+protocols.relax.FastRelax: CMD: min  -244829  3.10842  3.10842  0.55
+protocols.relax.FastRelax: MRP: 4  -244829  -244853  3.10637  3.10637  
+protocols.relax.FastRelax: CMD: accept_to_best  -244829  3.10842  3.10842  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -244829  3.10842  3.10842  0.55
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Computing RMSD to native...
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Completed trRosetta structure prediction protocol.
+protocols.rosetta_scripts.ParsedProtocol: setting status to success
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+rosetta_scripts Application's citation(s):
+Fleishman SJ, Leaver-Fay A, Corn JE, Strauch E-M, Khare SD, Koga N, Ashworth J, Murphy P, Richter F, Lemmon G, Meiler J, and Baker D.  (2011).  RosettaScripts: A Scripting Language Interface to the Rosetta Macromolecular Modeling Suite.  PLoS ONE 6(6):e20161.  doi: 10.1371/journal.pone.0020161.
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+FastRelax Mover's citation(s):
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+
+The following UNPUBLISHED Rosetta modules were used during this run of Rosetta.  Their authors should be included in the author list when this work is published:
+
+trRosettaProtocol Mover's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Converted the Python trRosetta protocol from Yang et al. (2020) to C++, and implemented it as the trRosettaProtocolMover.)
+
+RMSDMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TotalEnergyMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TimingProfileMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+RosettaTensorflowManager Singleton's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Created the RosettaTensorflowManager.)
+Jack Magure, Menten AI <jack.maguire@menten.ai>  (Expanded RosettaTensorflowManager capabilities for multi-head jobs and wrote tests.)
+Sergey Lyskov, Gray Lab, Department of Chemical & Biomolecular Engineering, Johns Hopkins University <Sergey.Lyskov@jhu.edu>  (Added testing infrastructure and helped to create the Rosetta-Tensorflow linked build.)
+
+

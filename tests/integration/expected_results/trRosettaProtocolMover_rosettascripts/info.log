@@ -1,0 +1,204 @@
+core.init: Checking for fconfig files in pwd and ./rosetta/flags 
+core.init: Rosetta version: 2021.11.post.dev+383.vmullig.trRosettaintoRosetta.4e9e67f764e 4e9e67f764ef6017249fd505938ac1177665a154 git@github.com:RosettaCommons/main.git 2021-03-21T05:16:32
+core.init: command: ../../../../source/bin/rosetta_scripts.tensorflow.macosclangrelease -info trRosettaProtocol
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-1031275321 seed_offset=0 real_seed=-1031275321
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-1031275321 RG_type=mt19937
+core.init: Resolved executable path: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaProtocolMover_rosettascripts/../../../../source/bin/rosetta_scripts.tensorflow.macosclangrelease
+core.init: Looking for database based on location of executable: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaProtocolMover_rosettascripts/../../../../database/
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: No native structure specified.  Not setting native structure in trRosettaProtocol mover.
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_hb_params.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+core.energy_methods.CenHBEnergy: Configured CenHBEnergy to use soft potential based on locally-set options.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 0 to trRosetta_cen0.wts.
+core.energy_methods.CenHBEnergy: Configured CenHBEnergy to use soft potential based on locally-set options.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 1 to trRosetta_cen1.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 2 to trRosetta_cen2.wts.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+core.energy_methods.CartesianBondedEnergy: Initializing IdealParametersDatabase with default Ks=300 , 80 , 80 , 10 , 80
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-lengths.txt
+core.energy_methods.CartesianBondedEnergy: Read 759 bb-independent lengths.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-angles.txt
+core.energy_methods.CartesianBondedEnergy: Read 1434 bb-independent angles.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-torsions.txt
+core.energy_methods.CartesianBondedEnergy: Read 1 bb-independent torsions.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-improper.txt
+core.energy_methods.CartesianBondedEnergy: Read 529 bb-independent improper tors.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 3 to trRosetta_cart.wts.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created 984 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 0.941243 seconds.
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for full-atom refinement to ref2015.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction atom_pair_constraint weight to 5.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction dihedral_constraint weight to 1.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction angle_constraint weight to 1.0 (was 0.0).
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/ref/trRosettaProtocolMover_rosettascripts/../../../../database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+protocols.RosettaScripts.util: 
+The rosetta_scripts application was used with the -parser:info flag.
+Writing options for the indicated movers/filters/task operations/residue selectors/simple metrics/constraint generators/packer palettes:
+--------------------------------------------------------------------------------
+INFORMATION ABOUT MOVER "trRosettaProtocol":
+
+DESCRIPTION:
+
+Implements the full trRosetta protocol, as described in Yang et al. (2020) Improved protein structure prediction using predicted interresidue orientations. Proc. Natl. Acad. Sci. USA 117(3):1496-503. https://doi.org/10.1073/pnas.1914677117.  This mover takes as input a multiple sequence alignment, runs the trRosetta neural network, generates distance and angle constraints between pairs of residues, and carries out energy-minimization to produce a structure.  Note that this mover deletes and replaces the input structure.  If a native structure is provided, the mover tags the output structure with the RMSD to native.
+
+The trRosettaProtocol mover requires compilation with Tensorflow support.  To compile with Tensorflow support:
+
+1.  Download the Tensorflow 1.15 precompiled libraries for your operating system from one of the following.  (Note that GPU versions require CUDA drivers; see https://www.tensorflow.org/install/lang_c for more information.)
+	Linux/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-1.15.0.tar.gz
+	Linux/GPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gpu-linux-x86_64-1.15.0.tar.gz
+	Windows/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-windows-x86_64-1.15.0.zip
+	Windows/GPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-gpu-windows-x86_64-1.15.0.zip
+	MacOS/CPU: https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-darwin-x86_64-1.15.0.tar.gz
+	MacOS/GPU: None available.
+
+2.  Unzip/untar the archive into a suitable directory (~/mydir/ is used here as an example), and add the following environment variables:
+	Linux, Windows:
+		LIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib
+		LD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/mydir/lib
+	MacOS:
+		LIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib
+		DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:~/mydir/lib
+
+3.  Edit your user.settings file (Rosetta/main/source/tools/build/user.settings), and uncomment (i.e. remove the octothorpe from the start of) the following lines:
+	import os
+		'program_path'  : os.environ['PATH'].split(':'),
+		'ENV' : os.environ,
+
+4.  Compile Rosetta, appending extras=tensorflow (for CPU-only) or extras=tensorflow_gpu (for GPU) to your scons command.  For example:
+	./scons.py -j 8 mode=release extras=tensorflow bin
+
+USAGE:
+
+<trRosettaProtocol msa_file=(string) use_distance_constraints=(bool,"true") use_omega_constraints=(bool,"true") use_theta_constraints=(bool,"true") use_phi_constraints=(bool,"true") distance_constraint_prob_cutoff=(real,"0.05") omega_constraint_prob_cutoff=(real,"0.55") theta_constraint_prob_cutoff=(real,"0.55") phi_constraint_prob_cutoff=(real,"0.65") distance_constraint_weight=(real,"1.0") omega_constraint_weight=(real,"1.0") theta_constraint_weight=(real,"1.0") phi_constraint_weight=(real,"1.0") sequence=(string) fasta_file=(string) backbone_randomization_mode=(string,"classic") backbone_minimization_mode=(string,"classic2") cis_peptide_prob_non_prepro=(real,"0.0005") cis_peptide_prob_prepro=(real,"0.05") scorefxn0=(string,"trRosetta_cen0") scorefxn1=(string,"trRosetta_cen1") scorefxn2=(string,"trRosetta_cen2") scorefxn3=(string,"trRosetta_cart") mutate_gly_to_ala=(bool,"true") fullatom_refinement=(bool,"true") scorefxn_fullatom=(string) name=(string)>
+</trRosettaProtocol>
+
+OPTIONS:
+
+"trRosettaProtocol" tag:
+
+	msa_file (string):  Filename for a multiple sequence alignment file, in a3m format.  Dashes indicate gap sequences, and lowercase characters will be removed (and flanking regions ligated).  If not provided, the commandline option -trRosetta:msa_file will be used.  One or the other is required.
+
+	use_distance_constraints (bool,"true"):  Set whether inter-residue distance constraints generated by the trRosetta neural network should be used for structure prediction.  True by default, unless a default is set at the commandline with the -trRosetta:use_distance_constraints flag.
+
+	use_omega_constraints (bool,"true"):  Set whether inter-residue omega dihedral constraints generated by the trRosetta neural network should be used for structure prediction.  Note that this is NOT the omega backbone dihedral angle, but an inter-residue dihedral defined by CA1-CB1-CB2-CA2.  True by default, unless a default is set at the commandline with the -trRosetta:use_omega_constraints flag.
+
+	use_theta_constraints (bool,"true"):  Set whether inter-residue theta dihedral constraints generated by the trRosetta neural network should be used for structure prediction.  Note that this is NOT a backbone dihedral angle, but an inter-residue dihedral defined by N1-CA1-CB1-CB2.  True by default, unless a default is set at the commandline with the -trRosetta:use_theta_constraints flag.
+
+	use_phi_constraints (bool,"true"):  Set whether inter-residue phi angle constraints generated by the trRosetta neural network should be used for structure prediction.  Note that this is NOT the phi backbone dihedral angle, but an inter-residue angle defined by CA1-CB1-CB2.  True by default, unless a default is set at the commandline with the -trRosetta:use_phi_constraints flag.
+
+	distance_constraint_prob_cutoff (real,"0.05"):  Set the probability cutoff below which we omit a distance constraint.  Default 0.05, or whatever is set on the commandline with the -trRosetta::distance_constraint_prob_cutoff commandline option.
+
+	omega_constraint_prob_cutoff (real,"0.55"):  Set the probability cutoff below which we omit a omega dihedral constraint.  Default 0.55, or whatever is set on the commandline with the -trRosetta::omega_constraint_prob_cutoff commandline option.
+
+	theta_constraint_prob_cutoff (real,"0.55"):  Set the probability cutoff below which we omit a theta dihedral constraint.  Default 0.55, or whatever is set on the commandline with the -trRosetta::theta_constraint_prob_cutoff commandline option.
+
+	phi_constraint_prob_cutoff (real,"0.65"):  Set the probability cutoff below which we omit a phi angle constraint.  Default 0.65, or whatever is set on the commandline with the -trRosetta::phi_constraint_prob_cutoff commandline option.
+
+	distance_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated distance constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:distance_constraint_weight commandline option.
+
+	omega_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated omega dihedral constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:omega_constraint_weight commandline option.
+
+	theta_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated theta dihedral constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:theta_constraint_weight commandline option.
+
+	phi_constraint_weight (real,"1.0"):  Set the weight for trRosetta-generated phi angle constraints.  Defaults to 1.0, or whatever was set on the commandline with the -trRosetta:phi_constraint_weight commandline option.
+
+	sequence (string):  The amino acid sequence to predict.  EITHER this OR a FASTA file must be provided. Sequences must be single-letter amino acid codes, and must contain only the 20 canonical amino acids.
+
+	fasta_file (string):  A FASTA file containing a single sequence, the amino acid sequence to predict.  EITHER this OR a sequence must be provided.  Sequences must be single-letter amino acid codes, and must contain only the 20 canonical amino acids.  A FASTA file can also be set with the -in:file:fasta commandline flag, which sets the default for this mover (overrideable either with the fasta_file option or the sequence option).
+
+	backbone_randomization_mode (string,"classic"):  The manner in wihch the polypeptide backbone will be initially randomized.  Options are 'classic' (the manner used in the original Yang et al. PyRosetta protocol, which randomly selects from one of six phi/psi pairs for each residue), 'ramachandran' (randomizing biased by the Ramachandran preferences of each amino acid type), or 'bins' (randomizing biased by the probabilities of residue type i being in backbone bin X and residue type i+1 being in backbone bin Y).  Defaults to 'classic', or whatever is set at the commandline with the -trRosetta::backbone_randomization_mode commandline option.
+
+	backbone_minimization_mode (string,"classic2"):  The manner in wihch the polypeptide backbone will be minimized using the constraints from the trRosetta neural network.  Options are: 'classic0' (minimize using short-range constraints, then minimize using medium-range constraints, then minimize using long-range constraints), 'classic1' (minimize using short- and medium-range constraints, then minimize using long-range constraints), or 'classic2' (minimize using all constraints).  Defaults to 'classic2', or whatever is set at the commandline with the -trRosetta::backbone_minimization_mode commandline option.
+
+	cis_peptide_prob_non_prepro (real,"0.0005"):  The probability of sampling a cis peptide bond at a position that is NOT followed by a proline when 'ramachandran' backbone randomization mode is used.  Defaults to 0.0005 (or a setting provided at the commandline with the -trRosetta:cis_peptide_prob_non_prepro flag).  Ignored for 'classic' or 'bins' modes.
+
+	cis_peptide_prob_prepro (real,"0.05"):  The probability of sampling a cis peptide bond at a position that IS followed by a proline when 'ramachandran' backbone randomization mode is used.  Defaults to 0.05 (or a setting provided at the commandline with the -trRosetta:cis_peptide_prob_prepro flag).  Ignored for 'classic' or 'bins' modes.
+
+	scorefxn0 (string,"trRosetta_cen0"):  The scoring function used for stage 0 energy minimization.  Defaults to trRosetta_cen0 (or to whatever is set on the commandline with the -trRosetta:scorefxn0 commandline option).
+
+	scorefxn1 (string,"trRosetta_cen1"):  The scoring function used for stage 1 energy minimization.  Defaults to trRosetta_cen1 (or to whatever is set on the commandline with the -trRosetta:scorefxn1 commandline option).
+
+	scorefxn2 (string,"trRosetta_cen2"):  The scoring function used for stage 2 (Van der Waals) energy minimization.  Defaults to trRosetta_cen2 (or to whatever is set on the commandline with the -trRosetta:scorefxn2 commandline option).
+
+	scorefxn3 (string,"trRosetta_cart"):  The scoring function used for stage 3 (Cartesian) energy minimization.  Defaults to trRosetta_cart (or to whatever is set on the commandline with the -trRosetta:scorefxn3 commandline option).
+
+	mutate_gly_to_ala (bool,"true"):  If true, glycine residues are mutated to alanine during the initial centroid phases of minimization to match the original PyRosetta trRosetta protocol (then mutated back to glycine for fullatom refinement).  True by default.
+
+	fullatom_refinement (bool,"true"):  If true, we do fullatom refinement at the end with the FastRelax protocol, using the scoring function specified with the scorefxn_fullatom option.  If the atom_pair, dihedral, and angle constraint scoreterms are not on, they are turned on.  True by default.
+
+	scorefxn_fullatom (string):  Weights file for scorefunction used for fullatom refinement with FastRelax.  If atom-pair_constraint, dihedral_constriant, or angle_constraint terms are zero, they will be set to 5.0, 1.0, and 1.0 respectively.  If empty (the default), then the scoring function specified with -score:weights is used instead.
+
+	name (string):  The name given to this instance.
+
+
+
+References and author information for the trRosettaProtocol mover:
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+FastRelax Mover's citation(s):
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+trRosettaProtocol Mover's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Converted the Python trRosetta protocol from Yang et al. (2020) to C++, and implemented it as the trRosettaProtocolMover.)
+
+RMSDMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TotalEnergyMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TimingProfileMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+--------------------------------------------------------------------------------
+
+The rosetta_scripts application will now exit.

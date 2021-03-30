@@ -1,0 +1,790 @@
+core.init: Checking for fconfig files in pwd and ./rosetta/flags 
+core.init: Rosetta version: 2021.11.post.dev+380.vmullig.trRosettaintoRosetta.a52a9e15696 a52a9e156961738b43714b0daed2c0c89e1c420c git@github.com:RosettaCommons/main.git 2021-03-21T05:02:24
+core.init: command: ../../../../source/bin/test_trRosettaProtocolMover.tensorflow.macosclangrelease @inputs/rosetta.flags
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-24664472 seed_offset=0 real_seed=-24664472
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-24664472 RG_type=mt19937
+core.init: Resolved executable path: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/trRosettaProtocolMover/../../../../source/bin/test_trRosettaProtocolMover.tensorflow.macosclangrelease
+core.init: Looking for database based on location of executable: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/trRosettaProtocolMover/../../../../database/
+apps.pilot.vmullig.test_trRosettaProtocolMover: Starting test_trRosettaProtocolMover.
+apps.pilot.vmullig.test_trRosettaProtocolMover: This is a unit test (albeit one in the integration test suite) for the trRosettaProtocolMover.  This mainly tests that the native pose is set properly and retained when the mover is cloned.
+apps.pilot.vmullig.test_trRosettaProtocolMover: Test created 21 March 2021 by Vikram K. Mulligan, Flatiron Institute (vmulligan@flatironinstitute.org).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting native structure in trRosettaProtocol mover.
+core.chemical.GlobalResidueTypeSet: Finished initializing centroid residue type set.  Created 69 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 0.029719 seconds.
+core.import_pose.import_pose: File 'inputs/1r6j.pdb' automatically determined to be of type PDB
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 3 in file inputs/1r6j.pdb. Best match rsd_type:  MET
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 4 in file inputs/1r6j.pdb. Best match rsd_type:  ASP
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 5 in file inputs/1r6j.pdb. Best match rsd_type:  PRO
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 6 atoms at position 6 in file inputs/1r6j.pdb. Best match rsd_type:  ARG
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 7 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 8 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 9 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 10 in file inputs/1r6j.pdb. Best match rsd_type:  MET
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 5 atoms at position 11 in file inputs/1r6j.pdb. Best match rsd_type:  HIS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 12 in file inputs/1r6j.pdb. Best match rsd_type:  LYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 13 in file inputs/1r6j.pdb. Best match rsd_type:  ASP
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 14 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 15 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 5 atoms at position 17 in file inputs/1r6j.pdb. Best match rsd_type:  HIS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 18 in file inputs/1r6j.pdb. Best match rsd_type:  VAL
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 6 atoms at position 20 in file inputs/1r6j.pdb. Best match rsd_type:  PHE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 21 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 6 atoms at position 22 in file inputs/1r6j.pdb. Best match rsd_type:  PHE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 23 in file inputs/1r6j.pdb. Best match rsd_type:  LYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 24 in file inputs/1r6j.pdb. Best match rsd_type:  ASN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 26 in file inputs/1r6j.pdb. Best match rsd_type:  LYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 27 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 28 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 29 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 30 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 31 in file inputs/1r6j.pdb. Best match rsd_type:  VAL
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 32 in file inputs/1r6j.pdb. Best match rsd_type:  LYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 33 in file inputs/1r6j.pdb. Best match rsd_type:  ASP
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 34 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 35 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 6 atoms at position 38 in file inputs/1r6j.pdb. Best match rsd_type:  ARG
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 39 in file inputs/1r6j.pdb. Best match rsd_type:  ASN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 41 in file inputs/1r6j.pdb. Best match rsd_type:  LEU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 42 in file inputs/1r6j.pdb. Best match rsd_type:  LEU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 43 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 44 in file inputs/1r6j.pdb. Best match rsd_type:  GLU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 5 atoms at position 45 in file inputs/1r6j.pdb. Best match rsd_type:  HIS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 46 in file inputs/1r6j.pdb. Best match rsd_type:  ASN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 47 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 48 in file inputs/1r6j.pdb. Best match rsd_type:  CYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 49 in file inputs/1r6j.pdb. Best match rsd_type:  GLU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 50 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 51 in file inputs/1r6j.pdb. Best match rsd_type:  ASN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 53 in file inputs/1r6j.pdb. Best match rsd_type:  GLN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 54 in file inputs/1r6j.pdb. Best match rsd_type:  ASN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 55 in file inputs/1r6j.pdb. Best match rsd_type:  VAL
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 56 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 58 in file inputs/1r6j.pdb. Best match rsd_type:  LEU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 59 in file inputs/1r6j.pdb. Best match rsd_type:  LYS
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 60 in file inputs/1r6j.pdb. Best match rsd_type:  ASP
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 61 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 4 atoms at position 62 in file inputs/1r6j.pdb. Best match rsd_type:  GLN
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 63 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 65 in file inputs/1r6j.pdb. Best match rsd_type:  ASP
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 66 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 67 in file inputs/1r6j.pdb. Best match rsd_type:  LEU
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 68 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 69 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 1 atoms at position 70 in file inputs/1r6j.pdb. Best match rsd_type:  SER
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 72 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 73 in file inputs/1r6j.pdb. Best match rsd_type:  VAL
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 74 in file inputs/1r6j.pdb. Best match rsd_type:  VAL
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 75 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 76 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 77 in file inputs/1r6j.pdb. Best match rsd_type:  THR
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 78 in file inputs/1r6j.pdb. Best match rsd_type:  ILE
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 3 atoms at position 79 in file inputs/1r6j.pdb. Best match rsd_type:  MET
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 2 atoms at position 80 in file inputs/1r6j.pdb. Best match rsd_type:  PRO
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] discarding 7 atoms at position 82 in file inputs/1r6j.pdb. Best match rsd_type:  PHE:CtermProteinFull
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY:NtermProteinFull 1
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ALA 2
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue MET 3
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASP 4
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue PRO 5
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ARG 6
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 7
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 8
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 9
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue MET 10
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue HIS 11
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LYS 12
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASP 13
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 14
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 15
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 16
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue HIS 17
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue VAL 18
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 19
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue PHE 20
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 21
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue PHE 22
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LYS 23
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASN 24
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 25
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LYS 26
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 27
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 28
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 29
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 30
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue VAL 31
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LYS 32
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASP 33
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 34
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 35
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ALA 36
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ALA 37
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ARG 38
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASN 39
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 40
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LEU 41
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LEU 42
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 43
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLU 44
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue HIS 45
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASN 46
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 47
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue CYS 48
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLU 49
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 50
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASN 51
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 52
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLN 53
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASN 54
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue VAL 55
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 56
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 57
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LEU 58
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LYS 59
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASP 60
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 61
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLN 62
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 63
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ALA 64
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ASP 65
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 66
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue LEU 67
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 68
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 69
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue SER 70
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue GLY 71
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 72
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue VAL 73
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue VAL 74
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 75
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 76
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue THR 77
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ILE 78
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue MET 79
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue PRO 80
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue ALA 81
+core.conformation.Conformation: [ WARNING ] missing heavyatom:  CEN on residue PHE:CtermProteinFull 82
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 3 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 3 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 3 atom  SD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 4 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 4 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 4 atom  OD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 5 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 5 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  CZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  NE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  NH1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 6 atom  NH2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 7 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 7 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 8 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 8 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 8 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 9 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 9 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 10 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 10 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 10 atom  SD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 11 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 11 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 11 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 11 atom  ND1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 11 atom  NE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 12 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 12 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 12 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 12 atom  NZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 13 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 13 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 13 atom  OD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 14 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 15 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 15 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 17 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 17 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 17 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 17 atom  ND1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 17 atom  NE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 18 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 18 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 20 atom  CZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 21 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 21 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 21 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 22 atom  CZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 23 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 23 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 23 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 23 atom  NZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 24 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 24 atom  ND2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 24 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 26 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 26 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 26 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 26 atom  NZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 27 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 27 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 27 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 28 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 28 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 29 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 30 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 30 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 30 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 31 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 31 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 32 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 32 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 32 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 32 atom  NZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 33 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 33 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 33 atom  OD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 34 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 35 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  CZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  NE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  NH1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 38 atom  NH2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 39 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 39 atom  ND2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 39 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 41 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 41 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 41 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 42 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 42 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 42 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 43 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 43 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 44 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 44 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 44 atom  OE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 44 atom  OE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 45 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 45 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 45 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 45 atom  ND1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 45 atom  NE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 46 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 46 atom  ND2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 46 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 47 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 47 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 47 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 48 atom  SG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 49 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 49 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 49 atom  OE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 49 atom  OE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 50 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 50 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 50 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 51 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 51 atom  ND2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 51 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 53 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 53 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 53 atom  NE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 53 atom  OE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 54 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 54 atom  ND2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 54 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 55 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 55 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 56 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 56 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 56 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 58 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 58 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 58 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 59 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 59 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 59 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 59 atom  NZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 60 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 60 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 60 atom  OD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 61 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 62 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 62 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 62 atom  NE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 62 atom  OE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 63 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 63 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 63 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 65 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 65 atom  OD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 65 atom  OD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 66 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 66 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 66 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 67 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 67 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 67 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 68 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 69 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 69 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 70 atom  OG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 72 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 72 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 73 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 73 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 74 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 74 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 75 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 75 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 76 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 76 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 76 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 77 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 77 atom  OG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 78 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 78 atom  CG1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 78 atom  CG2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 79 atom  CE  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 79 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 79 atom  SD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 80 atom  CD  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 80 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CD1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CD2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CE1 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CE2 (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CG  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  CZ  (trying to store temperature in PDBInfo)
+core.io.pose_from_sfr.PoseFromSFRBuilder: [ WARNING ] can't find pose atom for file-residue 82 atom  OXT (trying to store temperature in PDBInfo)
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_hb_params.txt
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+core.energy_methods.CenHBEnergy: Configured CenHBEnergy to use soft potential based on locally-set options.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 0 to trRosetta_cen0.wts.
+core.energy_methods.CenHBEnergy: Configured CenHBEnergy to use soft potential based on locally-set options.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 1 to trRosetta_cen1.wts.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 2 to trRosetta_cen2.wts.
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+core.energy_methods.CartesianBondedEnergy: Initializing IdealParametersDatabase with default Ks=300 , 80 , 80 , 10 , 80
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-lengths.txt
+core.energy_methods.CartesianBondedEnergy: Read 759 bb-independent lengths.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-angles.txt
+core.energy_methods.CartesianBondedEnergy: Read 1434 bb-independent angles.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-torsions.txt
+core.energy_methods.CartesianBondedEnergy: Read 1 bb-independent torsions.
+basic.io.database: Database file opened: scoring/score_functions/bondlength_bondangle/default-improper.txt
+core.energy_methods.CartesianBondedEnergy: Read 529 bb-independent improper tors.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for centroid stage 3 to trRosetta_cart.wts.
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created 985 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 0.720672 seconds.
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Set scorefunction for full-atom refinement to ref2015.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction atom_pair_constraint weight to 5.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction dihedral_constraint weight to 1.0 (was 0.0).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Setting full-atom refinement scorefunction angle_constraint weight to 1.0 (was 0.0).
+core.import_pose.import_pose: File 'inputs/1r6j.pdb' automatically determined to be of type PDB
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/trRosettaProtocolMover/../../../../database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+apps.pilot.vmullig.test_trRosettaProtocolMover: Predicting the structure of ubiqutin...
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Starting trRosetta structure prediction protocol.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Building pose from sequence.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Mutating glycine positions to alanine for centroid phase.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Glycine positions found: 1, 16, 19, 25, 40, 52, 57, 71.
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.chemical.AtomICoor: [ WARNING ] IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue ALA 1.  Returning BOGUS ID instead.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue: [ WARNING ]  --> generating it using idealized coordinates.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Randomizing backbone dihedrals using protocol "classic".
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Removing clashes.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Initializing constraint generator from multiple sequence alignment file "inputs/1r6j.a3m".
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Generating trRosetta constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Loading trRosetta model version 1.
+protocols.trRosetta.trRosettaProtocol_v1: Running version 1 trRosetta neural network...
+protocols.trRosetta.trRosettaProtocol_v1: Ran version 1 trRosetta protocol in 13976.5 milliseconds.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing centroid-mode backbone optimization protocol "classic2".
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing classic2 minimization protocol
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Adding long-range sequence constraints (all residues).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing torsion-space minimization with scorefunction 0.
+core.optimization.LineMinimizer: Inaccurate G in step= 4.76837e-09 Deriv= -1782.32 Finite Diff= 5.05769e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 5.47337e-09 Deriv= -1.94299e+06 Finite Diff= 4.38903e+08
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#709
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -1.94015e+06 Finite Diff= 6.28709e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 5.47737e-09 Deriv= -1.94015e+06 Finite Diff= 4.38589e+08
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -1.94015e+06 Finite Diff= 6.28709e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 5.47737e-09 Deriv= -1.94015e+06 Finite Diff= 4.38589e+08
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing Cartesian minimization with scorefunction 3.
+core.energy_methods.CartesianBondedEnergy: Creating new peptide-bonded energy container (82)
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -2.46562e+09 Finite Diff= 3.1115e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 9.83348e-09 Deriv= -2.46562e+09 Finite Diff= 1.20193e+09
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing torsion-space clash removal minimization with scorefunction 1 (validating with scorefunction 2).
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Removing clashes.
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -119479 Finite Diff= 3.78365e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.20721e-08 Deriv= -119479 Finite Diff= 6.54532e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -119479 Finite Diff= 3.78365e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.20721e-08 Deriv= -119479 Finite Diff= 6.54532e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -119479 Finite Diff= 3.78365e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.20721e-08 Deriv= -119479 Finite Diff= 6.54532e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -119479 Finite Diff= 3.78365e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.20721e-08 Deriv= -119479 Finite Diff= 6.54532e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -119479 Finite Diff= 3.78365e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.20721e-08 Deriv= -119479 Finite Diff= 6.54532e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Computing RMSD to native...
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Mutating positions that were formerly glycine back to glycine.
+core.conformation.Residue: [ WARNING ] Residue connection id changed when creating a new residue at seqpos 1
+core.conformation.Residue: [ WARNING ] ResConnID info stored on the connected residue (residue 2) is now out of date!
+core.conformation.Residue: [ WARNING ] Connection atom name (in src):  C  
+core.chemical.AtomICoor: [ WARNING ] IcoorAtomID::atom_id(): Cannot get atom_id for POLYMER_LOWER of residue GLY 1.  Returning BOGUS ID instead.
+core.conformation.Residue: [ WARNING ] missing an atom: 1  H   that depends on a nonexistent polymer connection! 
+core.conformation.Residue: [ WARNING ]  --> generating it using idealized coordinates.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Carrying out fullatom refinement.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Generating trRosetta constraints.
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Performing all-atom refinement using the FastRelax protocol with DualSpace.
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/trRosettaProtocolMover/../../../../database/rotamer/shapovalov/StpDwn_0-0-0/Dunbrack10.lib.bin
+core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file '/Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/trRosettaProtocolMover/../../../../database/rotamer/shapovalov/StpDwn_0-0-0/Dunbrack10.lib.bin'.
+core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.142359 seconds to load from binary
+protocols.relax.FastRelax: CMD: repeat  -93165.9  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -93165.9  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -117493  0  0  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1165 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -120844  0  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -120815  0  0  0.02805
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -85.0449 Finite Diff= 3.23181e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 6.2763e-07 Deriv= -147.765 Finite Diff= 3.83633e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#185
+protocols.relax.FastRelax: CMD: min  -122438  0.671901  0.671901  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122438  0.671901  0.671901  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122105  0.671901  0.671901  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1068 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122201  0.671901  0.671901  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122182  0.671901  0.671901  0.154
+core.optimization.LineMinimizer: Inaccurate G in step= 4.76837e-09 Deriv= -8106.2 Finite Diff= 5.07902e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 5.49701e-08 Deriv= -19263.1 Finite Diff= 4.40393e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#4
+protocols.relax.FastRelax: CMD: min  -122182  0.671908  0.671908  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122182  0.671908  0.671908  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -121837  0.671908  0.671908  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1035 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -121847  0.671908  0.671908  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -121821  0.671908  0.671908  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -50.6427 Finite Diff= 3.23409e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 5.892e-08 Deriv= -16767 Finite Diff= 4.08791e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#94
+protocols.relax.FastRelax: CMD: min  -122228  0.678204  0.678204  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122228  0.678204  0.678204  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122102  0.678204  0.678204  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 974 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122106  0.678204  0.678204  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -148.973 Finite Diff= 2.5229e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 7.28573e-09 Deriv= -63.8251 Finite Diff= 3.30719e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 6.12868e-09 Deriv= -116.057 Finite Diff= 3.92781e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 8.855e-08 Deriv= -7423.41 Finite Diff= 2.71776e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#77
+protocols.relax.FastRelax: CMD: min  -122129  0.679902  0.679902  0.55
+protocols.relax.FastRelax: MRP: 0  -122129  -122129  0.679902  0.679902  
+protocols.relax.FastRelax: CMD: accept_to_best  -122129  0.679902  0.679902  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -122129  0.679902  0.679902  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122129  0.679902  0.679902  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122371  0.679902  0.679902  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1169 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122431  0.679902  0.679902  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122420  0.679902  0.679902  0.02805
+core.optimization.LineMinimizer: Inaccurate G in step= 3.72529e-09 Deriv= -104.385 Finite Diff= 6.45763e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 5.75602e-09 Deriv= -58.2204 Finite Diff= 4.20918e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 1.1267e-07 Deriv= -4585.28 Finite Diff= 2.14991e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#95
+protocols.relax.FastRelax: CMD: min  -122616  0.663258  0.663258  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122616  0.663258  0.663258  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122324  0.663258  0.663258  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1034 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122349  0.663258  0.663258  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122331  0.663258  0.663258  0.154
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -394.982 Finite Diff= 2.52113e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 2.95579e-09 Deriv= -436.743 Finite Diff= 8.13438e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 2.66167e-08 Deriv= -82162.1 Finite Diff= 9.02505e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#56
+protocols.relax.FastRelax: CMD: min  -122357  0.664667  0.664667  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122357  0.664667  0.664667  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122087  0.664667  0.664667  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1006 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122089  0.664667  0.664667  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122068  0.664667  0.664667  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -4756.75 Finite Diff= 2.52104e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -16.3557 Finite Diff= 3.23034e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 3.49771e-07 Deriv= -475.787 Finite Diff= 6.88056e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#94
+protocols.relax.FastRelax: CMD: min  -122317  0.696164  0.696164  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122317  0.696164  0.696164  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122187  0.696164  0.696164  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1012 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122188  0.696164  0.696164  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -5844.81 Finite Diff= 6.30866e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 9.97941e-08 Deriv= -5844.81 Finite Diff= 2.41116e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: min  -122188  0.696164  0.696164  0.55
+protocols.relax.FastRelax: MRP: 1  -122188  -122188  0.696164  0.696164  
+protocols.relax.FastRelax: CMD: accept_to_best  -122188  0.696164  0.696164  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -122188  0.696164  0.696164  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122188  0.696164  0.696164  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122484  0.696164  0.696164  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1151 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122506  0.696164  0.696164  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122497  0.696164  0.696164  0.02805
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -40.6339 Finite Diff= 2.52664e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 7.22205e-09 Deriv= -102.341 Finite Diff= 3.33643e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 9.27376e-07 Deriv= -67.6812 Finite Diff= 2.59821e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#56
+protocols.relax.FastRelax: CMD: min  -122587  0.680899  0.680899  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122587  0.680899  0.680899  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122326  0.680899  0.680899  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1071 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122349  0.680899  0.680899  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122333  0.680899  0.680899  0.154
+protocols.relax.FastRelax: CMD: min  -122446  0.68  0.68  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122446  0.68  0.68  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122303  0.68  0.68  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1042 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122303  0.68  0.68  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122292  0.68  0.68  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -35.0442 Finite Diff= 2.52664e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 4.62315e-07 Deriv= -272.336 Finite Diff= 5.21173e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#46
+protocols.relax.FastRelax: CMD: min  -122313  0.691722  0.691722  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122313  0.691722  0.691722  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122169  0.691722  0.691722  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1014 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122169  0.691722  0.691722  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -5063.06 Finite Diff= 6.31608e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 1.07222e-07 Deriv= -5063.06 Finite Diff= 2.24678e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: min  -122169  0.691722  0.691722  0.55
+protocols.relax.FastRelax: MRP: 2  -122169  -122188  0.696164  0.696164  
+protocols.relax.FastRelax: CMD: accept_to_best  -122169  0.691722  0.691722  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -122169  0.691722  0.691722  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122169  0.691722  0.691722  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122498  0.691722  0.691722  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1158 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122514  0.691722  0.691722  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122505  0.691722  0.691722  0.02805
+protocols.relax.FastRelax: CMD: min  -122629  0.681352  0.681352  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122629  0.681352  0.681352  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122362  0.681352  0.681352  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1051 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122381  0.681352  0.681352  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122364  0.681352  0.681352  0.154
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -851.48 Finite Diff= 2.52478e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 6.06823e-08 Deriv= -15807.2 Finite Diff= 3.96633e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#18
+protocols.relax.FastRelax: CMD: min  -122370  0.675275  0.675275  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122370  0.675275  0.675275  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122076  0.675275  0.675275  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1019 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122081  0.675275  0.675275  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122058  0.675275  0.675275  0.31955
+protocols.relax.FastRelax: CMD: min  -122327  0.69484  0.69484  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122327  0.69484  0.69484  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122196  0.69484  0.69484  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1012 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122196  0.69484  0.69484  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -53.2981 Finite Diff= 2.52115e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 1.81273e-07 Deriv= -1771.38 Finite Diff= 1.32619e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#33
+protocols.relax.FastRelax: CMD: min  -122206  0.701997  0.701997  0.55
+protocols.relax.FastRelax: MRP: 3  -122206  -122206  0.701997  0.701997  
+protocols.relax.FastRelax: CMD: accept_to_best  -122206  0.701997  0.701997  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -122206  0.701997  0.701997  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122206  0.701997  0.701997  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122459  0.701997  0.701997  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1153 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122481  0.701997  0.701997  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122474  0.701997  0.701997  0.02805
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -18.4503 Finite Diff= 3.23177e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 7.23548e-07 Deriv= -111.185 Finite Diff= 3.32773e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#66
+protocols.relax.FastRelax: CMD: min  -122630  0.678567  0.678567  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122630  0.678567  0.678567  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122357  0.678567  0.678567  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1048 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122374  0.678567  0.678567  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122357  0.678567  0.678567  0.154
+protocols.relax.FastRelax: CMD: min  -122447  0.687863  0.687863  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122447  0.687863  0.687863  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122300  0.687863  0.687863  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1024 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122300  0.687863  0.687863  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122288  0.687863  0.687863  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -81.6647 Finite Diff= 2.52823e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 1.05384e-07 Deriv= -5241.19 Finite Diff= 2.28739e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#30
+protocols.relax.FastRelax: CMD: min  -122294  0.690986  0.690986  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -122294  0.690986  0.690986  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -122104  0.690986  0.690986  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 1002 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -122105  0.690986  0.690986  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -14720.9 Finite Diff= 6.31912e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 6.28814e-08 Deriv= -14720.9 Finite Diff= 3.8329e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: min  -122105  0.690986  0.690986  0.55
+protocols.relax.FastRelax: MRP: 4  -122105  -122206  0.701997  0.701997  
+protocols.relax.FastRelax: CMD: accept_to_best  -122105  0.690986  0.690986  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -122105  0.690986  0.690986  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Computing RMSD to native...
+protocols.trRosetta_protocols.movers.trRosettaProtocolMover: Completed trRosetta structure prediction protocol.
+apps.pilot.vmullig.test_trRosettaProtocolMover: GDT = 0.880488
+apps.pilot.vmullig.test_trRosettaProtocolMover: RMSD = 1.83468 A
+apps.pilot.vmullig.test_trRosettaProtocolMover: Testing clone...
+apps.pilot.vmullig.test_trRosettaProtocolMover: Test PASSED!
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+FastRelax Mover's citation(s):
+Khatib F, Cooper S, Tyka MD, Xu K, Makedon I, Popovic Z, Baker D, and Players F.  (2011).  Algorithm discovery by protein folding game players.  Proc Natl Acad Sci USA 108(47):18949-53.  doi: 10.1073/pnas.1115898108.
+
+Maguire JB, Haddox HK, Strickland D, Halabiya SF, Coventry B, Griffin JR, Pulavarti SVSRK, Cummins M, Thieker DF, Klavins E, Szyperski T, DiMaio F, Baker D, and Kuhlman B.  (2020).  Perturbing the energy landscape for improved packing during computational protein design..  Proteins "in press".  doi: 10.1002/prot.26030.
+
+
+The following UNPUBLISHED Rosetta modules were used during this run of Rosetta.  Their authors should be included in the author list when this work is published:
+
+trRosettaProtocol Mover's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Converted the Python trRosetta protocol from Yang et al. (2020) to C++, and implemented it as the trRosettaProtocolMover.)
+
+RMSDMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TotalEnergyMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+TimingProfileMetric SimpleMetric's author(s):
+Jared Adolf-Bryfogle, Scripps Research Institute <jadolfbr@gmail.com>
+
+RosettaTensorflowManager Singleton's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Created the RosettaTensorflowManager.)
+Jack Magure, Menten AI <jack.maguire@menten.ai>  (Expanded RosettaTensorflowManager capabilities for multi-head jobs and wrote tests.)
+Sergey Lyskov, Gray Lab, Department of Chemical & Biomolecular Engineering, Johns Hopkins University <Sergey.Lyskov@jhu.edu>  (Added testing infrastructure and helped to create the Rosetta-Tensorflow linked build.)
+
+

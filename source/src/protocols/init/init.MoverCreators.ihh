@@ -643,4 +643,6 @@
 
 #include <protocols/testing/BenchmarkBuildRotamersMoverCreator.hh>
 
+#include <protocols/trRosetta_protocols/movers/trRosettaProtocolMoverCreator.hh>
+
 #include <protocols/vardist_solaccess/LoadVarSolDistSasaCalculatorMover.hh>

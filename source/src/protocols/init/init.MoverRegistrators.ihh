@@ -669,5 +669,7 @@ static MoverRegistrator< task_operations::StoreTaskMoverCreator > reg_StoreTaskM
 
 static MoverRegistrator< testing::BenchmarkBuildRotamersMoverCreator > reg_BenchmarkBuildRotamersMoverCreator;
 
+static MoverRegistrator< trRosetta_protocols::movers::trRosettaProtocolMoverCreator > reg_trRosettaProtocolMoverCreator;
+
 static MoverRegistrator< vardist_solaccess::LoadVarSolDistSasaCalculatorMoverCreator > reg_LoadVarSolDistSasaCalculatorMoverCreator;
 } //namespace protocols

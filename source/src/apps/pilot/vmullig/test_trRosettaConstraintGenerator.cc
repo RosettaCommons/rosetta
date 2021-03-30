@@ -291,7 +291,7 @@ do_test(
 							TR.Error << errmsg << "Comparison failed between distance constraints!" << std::endl;
 							success = false;
 						}
-						TR << summarize_csts( distcst, dist_csts.at(respair) ) << std::endl;
+						TR.Debug << summarize_csts( distcst, dist_csts.at(respair) ) << std::endl;
 						++distcounter;
 					}
 					continue;
@@ -306,7 +306,7 @@ do_test(
 							TR.Error << errmsg << "Comparison failed between angle constraints!" << std::endl;
 							success = false;
 						}
-						TR << summarize_csts( angcst, phi_csts.at(respair) ) << std::endl;
+						TR.Debug << summarize_csts( angcst, phi_csts.at(respair) ) << std::endl;
 						++phicounter;
 					}
 					continue;
@@ -322,7 +322,7 @@ do_test(
 								TR.Error << errmsg << "Comparison failed between omega dihedral constraints!" << std::endl;
 								success = false;
 							}
-							TR << summarize_csts( dihedcst, omega_csts.at(respair) ) << std::endl;
+							TR.Debug << summarize_csts( dihedcst, omega_csts.at(respair) ) << std::endl;
 							++omegacounter;
 						}
 					} else {
@@ -331,7 +331,7 @@ do_test(
 								TR.Error << errmsg << "Comparison failed between theta dihedral constraints!" << std::endl;
 								success = false;
 							}
-							TR << summarize_csts( dihedcst, theta_csts.at(respair) ) << std::endl;
+							TR.Debug << summarize_csts( dihedcst, theta_csts.at(respair) ) << std::endl;
 							++thetacounter;
 						}
 					}

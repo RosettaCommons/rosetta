@@ -1124,6 +1124,7 @@ sources = {
 		"test_tensorflow_graph_convolutional_nn",
 		"test_trRosetta",
 		"test_trRosettaConstraintGenerator",
+		"test_trRosettaProtocolMover",
 	],
 
 	# Z ######################################################################

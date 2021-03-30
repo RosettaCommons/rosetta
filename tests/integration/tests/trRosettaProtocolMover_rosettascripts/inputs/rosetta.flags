@@ -1,0 +1,5 @@
+-in:file:native inputs/1r6j.pdb
+-in:file:fasta inputs/1r6j.fasta
+-parser:protocol inputs/trRosetta.xml
+-mute all
+-unmute apps basic.citation_manager protocols.parser protocols.rosetta_scripts protocols.relax protocols.trRosetta protocols.trRosetta_protocols basic.tensorflow_manager core.simple_metrics

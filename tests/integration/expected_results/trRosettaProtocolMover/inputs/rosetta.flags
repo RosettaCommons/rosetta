@@ -1,0 +1,3 @@
+-trRosetta:msa_file inputs/1r6j.a3m
+-in:file:native inputs/1r6j.pdb
+-in:file:fasta inputs/1r6j.fasta
