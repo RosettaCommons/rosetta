@@ -39,6 +39,7 @@
 #include <basic/database/open.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/extra_pose_info_util.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/BasicDataCache.hh>
@@ -783,11 +784,22 @@ MembranePotential::compute_membrane_embedding(pose::Pose & pose) const
 		}
 
 		using namespace ObjexxFCL::format;
-		TR << "MembraneCenter " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
-		TR << "MembraneNormal " << F(8,3,best_normal.x())<< F(8,3,best_normal.y())<< F(8,3,best_normal.z()) << std::endl;
-		TR << "ATOM   9999  X   MEM A 999    " << F(8,3,best_center.x())<< F(8,3,best_center.y())<< F(8,3,best_center.z()) << std::endl;
-		TR << "ATOM   9999  Y   MEM A 999    " << F(8,3,best_center.x()+15.*best_normal.x())<< F(8,3,best_center.y()+15.*best_normal.y())<< F(8,3,best_center.z()+15.*best_normal.z()) << std::endl;
-		TR << "ATOM   9999  Z   MEM A 999    " << F(8,3,best_center.x()-15.*best_normal.x())<< F(8,3,best_center.y()-15.*best_normal.y())<< F(8,3,best_center.z()-15.*best_normal.z()) << std::endl;
+		utility::vector1< std::string > membrane_info;
+		membrane_info.push_back( "MembraneCenter " + F(8,3,best_center.x()) + F(8,3,best_center.y()) + F(8,3,best_center.z()) );
+		membrane_info.push_back( "MembraneNormal " + F(8,3,best_normal.x()) + F(8,3,best_normal.y()) + F(8,3,best_normal.z()) );
+		membrane_info.push_back( "ATOM   9999  X   MEM A 999    " + F(8,3,best_center.x()) + F(8,3,best_center.y()) + F(8,3,best_center.z()) );
+		membrane_info.push_back( "ATOM   9999  Y   MEM A 999    " + F(8,3,best_center.x()+15.*best_normal.x()) + F(8,3,best_center.y()+15.*best_normal.y()) + F(8,3,best_center.z()+15.*best_normal.z()) );
+		membrane_info.push_back( "ATOM   9999  Z   MEM A 999    " + F(8,3,best_center.x()-15.*best_normal.x()) + F(8,3,best_center.y()-15.*best_normal.y()) + F(8,3,best_center.z()-15.*best_normal.z()) );
+
+		for ( core::Size ii(1); ii <= membrane_info.size(); ++ii ) {
+			core::pose::add_comment(pose, "MembraneInfo"+ std::to_string(ii), membrane_info[ii]);
+		}
+
+		if ( TR.Debug.visible() ) {
+			for ( auto const & line: membrane_info ) {
+				TR.Debug << line << std::endl;
+			}
+		}
 	}
 }
 

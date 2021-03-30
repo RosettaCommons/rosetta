@@ -1430,11 +1430,6 @@ PoseToStructFileRepConverter::grab_pose_energies_table( core::pose::Pose const &
 void
 PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose){
 
-
-
-
-	//JAB - replaced calls to cache with calls to ScoreMap to reduce code duplication
-
 	//FLOAT DATA and SimpleMetric Data
 	std::map< std::string, Real >  float_data = raw_data::ScoreMap::get_arbitrary_score_data_from_pose( pose);
 
@@ -1443,7 +1438,6 @@ PoseToStructFileRepConverter::grab_pose_cache_data(const core::pose::Pose &pose)
 
 	sfr_->pose_cache_string_data() = string_data;
 	sfr_->pose_cache_real_data() =  float_data;
-
 }
 
 void

@@ -190,7 +190,6 @@ ScoreMap::add_arbitrary_score_data_from_pose(core::pose::Pose const & pose, std:
 			score_map[it.first] = it.second;
 		}
 	}
-	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) ) {}
 
 	//Simple Metric Data
 	if ( pose.data().has( core::pose::datacache::CacheableDataType::SIMPLE_METRIC_DATA) ) {
