@@ -11,10 +11,11 @@
 ## @file  docking/3.plot.py
 ## @brief this script is part of docking scientific test
 ## @author Sergey Lyskov
-## @author Shourya S. Roy Burman
+## @author Shourya S. Roy Burman, Ameya Harmalkar
 
 import os, sys, subprocess, math
 import matplotlib
+import numpy as np
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import benchmark
@@ -26,11 +27,13 @@ config = benchmark.config()
 # => it figures out the column numbers from there
 x_label = "Irms"
 y_label = "I_sc"
+z_label = "CAPRI_rank"
 outfile = "plot_results.png"
 
 # get column numbers from labels, 1-indexed
 x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
 y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+z_index = str( subprocess.getoutput( "grep " + z_label + " " + scorefiles[0] ).split().index( z_label ) + 1 )
 
 #number of subplots
 ncols = 4
@@ -48,37 +51,65 @@ nfields = len( subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[0] + " | g
 
 # go through scorefiles
 for i in range( 0, len( scorefiles ) ):
-
+	
 	# read in score file
-	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
-
+	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + y_index + "}'" ).splitlines()
+	z = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + z_index + "}'" ).splitlines()
+    
 	# map all values to floats
 	x = list( map( float, x ) )
 	y = list( map( float, y ) )
+	z = list( map( float, z ) )
+
+	# containers to store the type of target
+	incorrect = []
+	acceptable = []
+	medium = []
+	high = []
 	
-	# create subplot
+	for j in range(len(x)):
+		score_terms = [x[j], y[j]]
+		if z[j] == 0.0:
+			incorrect.append( score_terms )
+		elif z[j] == 1.0:
+			acceptable.append( score_terms )
+		elif z[j] == 2.0:
+			medium.append( score_terms )
+		elif z[j] == 3.0:
+			high.append( score_terms )
+
+	incorrect = list(map( list, zip(*incorrect) ))
+	if len(acceptable) > 0:
+		acceptable = list( map( list, zip(*acceptable) ))
+	if len(medium) > 0:
+		medium = list(map( list, zip(*medium) ))
+	if len(high) > 0:
+		high = list(map( list, zip(*high) ))
+		
+	# common settings for the subplots
+	s = 25
+
 	plt.subplot( nrows, ncols, i+1 )
 	
-	# x and y labels
-	plt.xlabel( x_label )
-	plt.ylabel( y_label )
-	
-	# set title
-	plt.title( targets[i] )
+	if( len(incorrect) > 0 ):
+		plt.scatter( incorrect[0], incorrect[1], c='black', zorder=3, s=s )
+	if( len(acceptable) > 0 ):
+		plt.scatter( acceptable[0], acceptable[1], c='orange', zorder=3, s=s )
+	if( len(medium) > 0 ):
+		plt.scatter( medium[0], medium[1], c='red', zorder=3, s=s )
+	if( len(high) > 0 ):
+		plt.scatter( high[0], high[1], c='green', zorder=3, s=s )
 
-	# scatterplot of the data
-	plt.plot(x, y, 'ko')
-	
+	plt.xlim([0,20])
+	plt.ylim([min(y)- 0.5, 0.5])
+	plt.title( targets[i] )
+	plt.xlabel("Irms")
+	plt.ylabel("Interface Score (REU)")
+
 	# add horizontal and vertical lines for cutoff
 	plt.axvline(x=float(cutoffs_rmsd_dict[targets[i]]), color='b', linestyle='-')
-	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
-	
-	# x axis limits
-	if targets[i] in failures:
-		plt.xlim( left=0 )
-	else:
-		plt.xlim( 0, 20 )
+#	plt.axhline(y=float(cutoffs_score_dict[targets[i]]), color='b', linestyle='-')
 	
 #save figure
 plt.tight_layout()

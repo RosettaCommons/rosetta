@@ -75,15 +75,27 @@ def get_test_ids():
 	# note: tests in txt file are ordered from newest to oldest, so only add to list if not already in there
 	relevant_ids = []
 	relevant_name = []
+
+	# if testID given
+	if (Options.id != "None"):
+		testid = [ Options.id ]
+		name = [ "undefined" ]
+
 	for i in range(0, len(testid)):
 	
 		# if test not already in list and is not debug test
 		# OTHER FILTERING CRITERIA: ADD HERE
 		if name[i] not in relevant_name and not name[i].endswith("debug"):
-			if (Options.id != "None" and testid[i] == Options.id) or (Options.sb == "True" and "sb_" in name[i]) or (Options.sb == "False" and "sb_" not in name[i]):
-
+			if Options.id == testid[i]:
 				relevant_ids.append( testid[i])
 				relevant_name.append( name[i] )
+			if (Options.sb == "True" and "sb_" in name[i]):
+				relevant_ids.append( testid[i])
+				relevant_name.append( name[i] )
+			if (Options.sb == "False" and "sb_" not in name[i]):
+				relevant_ids.append( testid[i])
+				relevant_name.append( name[i] )
+				
 
 	# turn lists into list of dicts
 	tests = []
@@ -176,11 +188,14 @@ def download_test_files(prefix):
 				if "data" in fn:
 					continue
 				
-#				if fn.endswith(".pdb"):
-#					continue
+				if fn.endswith(".pdb"):
+					continue
 
-#				if fn.endswith(".pdb.gz"):
-#					continue
+				if fn.endswith(".pdb.gz"):
+					continue
+
+				if fn.endswith(".out"):
+					continue
 
 				if fn.endswith(".in_progress"):
 					continue
@@ -194,10 +209,10 @@ def download_test_files(prefix):
 				
 #				cmd = f'cd {path} && wget --user {user} --password {password} --recursive --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
 
-				if Options.pdbid.upper() in fn:
-					cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
-					print (cmd)
-					os.system( cmd )
+#				if Options.pdbid.upper() in fn:
+				cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+				print (cmd)
+				os.system( cmd )
 
 				# to PDF files, use weasyprint outside of python
 				# > weasyprint index.html out.pdf

@@ -207,15 +207,20 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         sb_ligand_docking	= 'numpy matplotlib==3.2',
 
-        sb_ref2015_docking      = 'numpy matplotlib==3.2',
-        sb_talaris14_docking    = 'numpy matplotlib==3.2',
-        sb_talaris13_docking    = 'numpy matplotlib==3.2',
-        sb_score12_docking      = 'numpy matplotlib==3.2',
+        sb_ref2015_docking      = 'numpy matplotlib==3.2 pandas==0.24.2',
+        sb_talaris14_docking    = 'numpy matplotlib==3.2 pandas==0.24.2',
+        sb_talaris13_docking    = 'numpy matplotlib==3.2 pandas==0.24.2',
+        sb_score12_docking      = 'numpy matplotlib==3.2 pandas==0.24.2',
 
         sb_ref2015_fast_design   = 'numpy matplotlib==3.2',
         sb_talaris14_fast_design = 'numpy matplotlib==3.2',
         sb_talaris13_fast_design = 'numpy matplotlib==3.2',
         sb_score12_fast_design   = 'numpy matplotlib==3.2',
+
+        sb_ref2015_mpddg         = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_ref2015mem_mpddg      = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_mpframework2012_mpddg = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
+        sb_franklin2019_mpddg    = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
 
         self   = '',
     )

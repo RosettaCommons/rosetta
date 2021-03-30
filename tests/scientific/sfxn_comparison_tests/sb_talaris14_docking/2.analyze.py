@@ -17,6 +17,7 @@ import os, sys, subprocess, math
 import numpy as np
 import benchmark
 from benchmark.util import quality_measures as qm
+from benchmark.util import bootstrap as bs
 
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into 	s
 config = benchmark.config()
@@ -24,14 +25,15 @@ config = benchmark.config()
 results = {}
 scorefiles = []
 #logfiles = []
+cutoffs_rank_dict = {}
 cutoffs_rmsd_dict = {}
-cutoffs_score_dict = {}
 failures = []
 
 # inputs are header labels from the scorefile, for instance "total_score" and "rmsd"
 # => it figures out the column numbers from there
 x_label = "Irms"
 y_label = "I_sc"
+z_label = "CAPRI_rank"
 outfile = "result.txt"
 cutoffs = "cutoffs"
 
@@ -42,18 +44,19 @@ scorefiles.extend( [ f'{working_dir}/output/{t}/{t}.score' for t in targets ] )
 # get column numbers from labels, 1-indexed
 x_index = str( subprocess.getoutput( "grep " + x_label + " " + scorefiles[0] ).split().index( x_label ) + 1 )
 y_index = str( subprocess.getoutput( "grep " + y_label + " " + scorefiles[0] ).split().index( y_label ) + 1 )
+z_index = str( subprocess.getoutput( "grep " + z_label + " " + scorefiles[0] ).split().index( z_label ) + 1 )
 
 # get number of fields in scorefile
 nfields = len( subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[0] + " | grep " + y_label + " | head -n1" ).split())
 
 # read cutoffs
 protein = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $1}'" ).splitlines()
-cutoffs_rmsd = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
-cutoffs_score = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
+cutoffs_rank = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $2}'" ).splitlines()
+cutoffs_rmsd = subprocess.getoutput( "grep -v '#' " + cutoffs + " | awk '{print $3}'" ).splitlines()
+cutoffs_rank = map( float, cutoffs_rank )
 cutoffs_rmsd = map( float, cutoffs_rmsd )
-cutoffs_score = map( float, cutoffs_score )
+cutoffs_rank_dict.update( dict( zip ( protein, cutoffs_rank )))
 cutoffs_rmsd_dict.update( dict( zip ( protein, cutoffs_rmsd )))
-cutoffs_score_dict.update( dict( zip ( protein, cutoffs_score )))
 
 # open results output file
 f = open( outfile, "w" )
@@ -63,42 +66,42 @@ for i in range( 0, len( scorefiles ) ):
 
 	target_results = {}
 
-	# read in score file, scores are sorted, first one is lowest
-	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk2 | awk '{print $" + x_index + "}'" ).splitlines()
-	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk2 | awk '{print $" + y_index + "}'" ).splitlines()
+	# read in score file, scores are sorted by I_sc, first one is lowest
+	x = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + x_index + "}'" ).splitlines()
+	y = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + y_index + "}'" ).splitlines()
+	z = subprocess.getoutput( "awk '{if(NF==" + str(nfields) + ") print}' " + scorefiles[i] + " | grep -v SEQUENCE | grep -v " + y_label + " |  sort -nk6 | awk '{print $" + z_index + "}'" ).splitlines()
+	nscore, nstd = bs.bootstrap_NX( scorefiles[i], 5, 1000)
 
 	# map values to floats (were strings)
 	x = list( map( float, x ))
 	y = list( map( float, y ))
+	z = list( map( float, z ))
 
-	# check for RMSDs below cutoff
+	# check for CAPRI bins
+	# bin of highest CAPRI score should be better (>= rank cutoff)
+	rank = True
+	if max(z) < cutoffs_rank_dict[targets[i]]:
+		failures.append( targets[i] )
+		rank = False
+	f.write( targets[i] + "\t" + "highest CAPRI rank >= cutoff:\t" + str(rank) + "\n" )
+		
+	# check lowest Isc scoring model has low RMSD
 	f.write( targets[i] + "\t" )
-	if debug:
-		val_cutoff = qm.check_xpercent_values_below_cutoff( x, 50.0, "Irms", f, 100 )
-	else:
-		val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "Irms", f, 0.5 )
+	val_topscoring = qm.check_rmsd_of_topscoring( x, cutoffs_rmsd_dict[targets[i]], f )
+	target_results.update( val_topscoring )
+	
+	if val_topscoring["RMSD <= cutoff"] == False and targets[i] not in failures:
+		failures.append( targets[i] )
+	
+	#check for N5 above cutoff
+	f.write( targets[i] + "\t" )
+	val_cutoff = qm.check_avgNX_above_cutoff(nscore, 3.0, "N5", f)
 	target_results.update( val_cutoff )
 
-    # add to failues
-	if val_cutoff['All Irmss < cutoff'] == False:
-		failures.append( targets[i] )
-
-	# check for scores below cutoff
+	# check for N5 range
 	f.write( targets[i] + "\t" )
-	if debug:
-		val_cutoff = qm.check_xpercent_values_below_cutoff( y, 0, "I_sc", f, 100 )
-	else:
-		val_cutoff = qm.check_xpercent_values_below_cutoff( y, cutoffs_score_dict[targets[i]], "I_sc", f, 0.5 )
-	target_results.update( val_cutoff )
-
-    # add to failures
-	if val_cutoff['All I_scs < cutoff'] == False:
-		failures.append( targets[i] )
-
-	# check lowest scoring model has low RMSD
-#		f.write( targets[i] + "\t" )
-#		val_topscoring = check_rmsd_of_topscoring( x, cutoffs_rmsd_dict[targets[i]], f )
-#		target_results.update( val_topscoring )
+	val_N5 = qm.get_N5_spread(nscore, nstd, "N5", f)
+	target_results.update( val_N5 )
 
 	# check for RMSD range
 	f.write( targets[i] + "\t" )
@@ -109,23 +112,6 @@ for i in range( 0, len( scorefiles ) ):
 	f.write( targets[i] + "\t" )
 	val_score = qm.check_range( y, "I_sc", f )
 	target_results.update( val_score )
-
-	# check runtime
-	# runtime = subprocess.getoutput( "grep \"reported success\" " + logfiles[i] + " | awk '{print $6}'" ).splitlines()
-	# runtime = list( map( float, runtime ))
-	# if len(runtime) > 0:
-	# 	print (targets[i], "\t"),
-	# 	val_runtime = check_range( runtime, "runtime" )
-	# 	target_results.update( val_runtime )
-
-	# TODO: check discrimination score
-	# discrimination score is likely better for abinitio sampling + refinement
-	# few options:
-	# 1) ff_metric script in this directory: easy + simple but need to test the metric
-	# 2) discrimination score script in https://github.com/RosettaCommons/bakerlab_scripts/tree/master/boinc/scoring_methods
-	# => gives me 0, a little too complicated
-	# 3) https://github.com/RosettaCommons/bakerlab_scripts/blob/master/boinc/score_energy_landscape.py
-	# => requires lots of dependent scripts, even more complicated
 
 	results.update( {targets[i] : target_results} )
 	f.write( "\n" )

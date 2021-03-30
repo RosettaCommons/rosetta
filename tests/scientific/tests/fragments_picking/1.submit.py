@@ -91,7 +91,7 @@ n_candidates = 1000
 # ndecoys = (nstruct) x (jobs_to_queue) = 6 x 50 = 300
 # add in a little wiggle room, make n=struct 8
 #nstruct = 2 if debug else 300
-nstruct = 2 if debug else 8
+nstruct = 2 if debug else 20
 
 #==> EDIT HERE
 targets = '1ptqA 1urnA 1tulA 1bkrA 1r69A 1vlsA 1tenA 1bk2A 5croA 2vikA'.split(" ")
