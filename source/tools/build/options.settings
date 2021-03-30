@@ -31,6 +31,7 @@ options = {
         "amd"     : [ "32", "64", "*" ],
         "ppc"     : [ "32", "64", "*" ],
         "ppc64"     : [ "64" ],
+        "arm" : ["64", "*"],
         "power4"  : [ "32", "64", "*" ],
         "*"       : [ "*" ],
     },
@@ -49,7 +50,7 @@ options = {
         "tsan",   # Mode adding special instrumentation to check for (sanitize) thread safety issues
         "ubsan",  # Mode adding special instrumentation to check for (sanitize) undefined behavior
 
-        #"pyrosetta", # PyRosetta is no longer built with scons -- see src/python/PyRosetta/build.py instead for settings 
+        #"pyrosetta", # PyRosetta is no longer built with scons -- see src/python/PyRosetta/build.py instead for settings
         #"pyrosetta_debug", # PyRosetta is no longer built with scons -- see src/python/PyRosetta/build.py instead for setting
     ],
 

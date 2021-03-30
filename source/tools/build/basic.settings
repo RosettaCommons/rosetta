@@ -301,7 +301,6 @@ settings = {
         },
     },
 
-
     "gcc, amd" : {
         "appends" : {
             "flags" : {
@@ -2185,6 +2184,14 @@ settings = {
                 "link" : [ "$__RPATH", "stdlib=libstdc++", ],
                 "shlink" : [ "$LINKFLAGS", "stdlib=libstdc++", ],
                 "link"   : [ "stdlib=libstdc++", ],
+            },
+        },
+    },
+
+    "clang, macos, arm" : {
+        "removes" : {
+            "flags" : {
+                "compile" : [ "march=native", "march=core2", ],
             },
         },
     },
