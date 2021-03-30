@@ -336,6 +336,7 @@ setup_foldtree(
 		for ( auto const & jump_edge : jump_edges ) {
 			if ( jump_edge.stop() == chemical_edge.stop() ) {
 				ft.replace_edge( jump_edge, chemical_edge );
+				ft.renumber_jumps();  // since we just replaced one
 				break;
 			}
 		}
