@@ -236,6 +236,22 @@ public:
 	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
 };
 
+class ShapeSimilarityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	std::string
+	keyname() const override;
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
+
 } //metric
 
 //////////////////// Composite Metrics /////////////////////////////
@@ -258,6 +274,22 @@ public:
 };
 
 class ElectrostaticComplementarityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
+public:
+
+
+	/// @brief Instantiate a particular SimpleMetric
+	core::simple_metrics::SimpleMetricOP
+	create_simple_metric() const override;
+
+	/// @brief Return a string that will be used to instantiate the particular SimpleMetric
+	std::string
+	keyname() const override;
+
+	void
+	provide_xml_schema( utility::tag::XMLSchemaDefinition &) const override;
+};
+
+class ElectrostaticSimilarityMetricCreator : public core::simple_metrics::SimpleMetricCreator {
 public:
 
 

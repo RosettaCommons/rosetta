@@ -49,6 +49,8 @@ static SimpleMetricRegistrator< core::simple_metrics::metrics::SequenceSimilarit
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TimingProfileMetricCreator          > reg_TimingProfileMetricCreator;
 static SimpleMetricRegistrator< core::simple_metrics::metrics::TotalEnergyMetricCreator      > reg_TotalEnergyMetricCreator;
 
+static SimpleMetricRegistrator< core::simple_metrics::metrics::ShapeSimilarityMetricCreator  > reg_ShapeSimilarityMetricCreator;
+
 
 static SimpleMetricRegistrator< core::simple_metrics::per_residue_metrics::SidechainNeighborCountMetricCreator >
 	reg_SidechainNeighborCountMetricCreator;
@@ -70,6 +72,8 @@ static SimpleMetricRegistrator< core::simple_metrics::TestPerResidueStringMetric
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::CompositeEnergyMetricCreator  > reg_CompositeEnergyMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ElectrostaticComplementarityMetricCreator  > reg_ElectrostaticComplementarityMetricCreator;
+
+static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ElectrostaticSimilarityMetricCreator  > reg_ElectrostaticSimilarityMetricCreator;
 
 static SimpleMetricRegistrator< core::simple_metrics::composite_metrics::ProtocolSettingsMetricCreator  > reg_ProtocolSettingsMetricCreator;
 

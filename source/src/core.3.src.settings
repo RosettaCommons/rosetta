@@ -230,10 +230,12 @@ sources = {
 		"SequenceMetric",
 		"TimingProfileMetric",
 		"TotalEnergyMetric",
+		"ShapeSimilarityMetric",
 	],
 	"core/simple_metrics/composite_metrics": [
 		"CompositeEnergyMetric",
 		"ElectrostaticComplementarityMetric",
+		"ElectrostaticSimilarityMetric",
 		"ProtocolSettingsMetric",
 	],
 
@@ -794,7 +796,9 @@ sources = {
 	"core/scoring/sc": [
 		"ContactMolecularSurfaceCalculator",
 		"ElectrostaticComplementarityCalculator",
+		"ElectrostaticSimilarityCalculator",
 		"ShapeComplementarityCalculator",
+		"ShapeSimilarityCalculator",
 		"MolecularSurfaceCalculator",
 	],
 	"core/scoring/solid_surface" : [
