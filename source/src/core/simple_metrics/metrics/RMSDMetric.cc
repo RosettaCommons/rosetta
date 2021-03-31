@@ -307,7 +307,6 @@ RMSDMetric::calculate(const core::pose::Pose & pose) const {
 		core_metric.set_residue_selector_reference( residue_selector_ref_);
 		core_metric.set_residue_selector( residue_selector_);
 		for ( auto rmsd_map : rmsd_maps ) {
-			rms = 0.0;
 			core_metric.set_residue_mapping(rmsd_map);
 			std::map< id::AtomID, id::AtomID > atom_map = core_metric.create_atom_id_map( pose );
 			if ( superimpose_ ) {

@@ -161,7 +161,6 @@ LigandConformer::update_conf( core::pose::PoseCOP pose ) {
 	ligandchi_types_.clear();
 	ligandtorsionids_.clear();
 	TorsionType torsion_type;
-	TorsionID torid;
 	AtomID atid1, atid2, atid3, atid4;
 	for ( core::Size i : ligids_ ) {
 		core::conformation::Residue const & ligres = pose->residue(i);
