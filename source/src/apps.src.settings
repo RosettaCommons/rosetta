@@ -360,6 +360,9 @@ sources = {
 	"public/tcr": [
 	"tcrmodel",
 	],
+	"public/trRosetta" : [
+		"trRosetta",
+	],
 	"public/weight_optimization": [
 		"optE_parallel",
 		"torsional_potential_corrections",

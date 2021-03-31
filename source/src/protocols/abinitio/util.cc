@@ -28,6 +28,9 @@
 #include <protocols/abinitio/IterativeAbrelax.hh>
 // AUTO-REMOVED #include <numeric/random/random.hh>
 
+//trRosetta
+#include <protocols/trRosetta_protocols/movers/trRosettaProtocolMover.hh>
+
 // Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
@@ -90,6 +93,10 @@ void register_common_options() {
 	option.add_relevant(OptionKeys::abinitio::rerun);
 	option.add_relevant(OptionKeys::abinitio::jdist_rerun);
 	option.add_relevant(OptionKeys::abinitio::cyclic_peptide);
+
+	// trRosetta:
+	option.add_relevant(OptionKeys::abinitio::use_trRosetta_constraints );
+	protocols::trRosetta_protocols::movers::trRosettaProtocolMover::register_options( true );
 
 	// starting conditions
 	option.add_relevant(OptionKeys::abinitio::start_native);

@@ -1,0 +1,9 @@
+-trRosetta:msa_file inputs/1qys.a3m
+-in:file:native inputs/1qys.pdb
+-in:file:fasta inputs/1qys.fasta
+-trRosetta:distance_constraint_weight 0.1
+-trRosetta:omega_constraint_weight 0.1
+-trRosetta:theta_constraint_weight 0.1
+-trRosetta:phi_constraint_weight 0.1
+-mute all
+-unmute apps basic.citation_manager protocols.relax protocols.trRosetta protocols.trRosetta_protocols basic.tensorflow_manager core.simple_metrics

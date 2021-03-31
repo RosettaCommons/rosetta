@@ -1,0 +1,12 @@
+-use_trRosetta_constraints
+-trRosetta:msa_file inputs/1r6j_msa.aln
+-in:file:fasta inputs/1r6j.fasta
+-in:file:native inputs/1r6j.pdb
+-in:file:frag3 inputs/frags.200.3mers
+-in:file:frag9 inputs/frags.200.9mers
+-out:nstruct 1
+-fastrelax
+#-ex1
+#-ex2
+-out:pdb true
+-mute core.io.database

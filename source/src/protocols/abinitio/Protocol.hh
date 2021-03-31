@@ -16,6 +16,7 @@
 /// @author Oliver Lange
 /// @author James Thompson
 /// @author Mike Tyka
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org) -- Added support for trRosetta constraints.
 
 
 #ifndef INCLUDED_protocols_abinitio_Protocol_hh
@@ -30,6 +31,9 @@
 #include <protocols/evaluation/PoseEvaluator.hh>
 #include <core/io/silent/silent.fwd.hh>
 #include <protocols/abinitio/KinematicControl.hh>
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.fwd.hh>
+#endif
 #include <core/scoring/ScoreFunction.hh>
 
 // Project Headers
@@ -117,6 +121,9 @@ public:
 		silentout_file_name_ = str;
 	}
 
+	/// @brief Set whether we're using trRosetta constraints.
+	void set_use_trRosetta_constraints( bool const setting );
+
 	core::scoring::ScoreFunctionOP fullatom_scorefxn() {
 		return scorefxn_fa_;
 	}
@@ -127,11 +134,40 @@ public:
 
 	static void register_options();
 
+	/// @brief Report whether this protocol supports trRosetta constraints.  The base
+	/// class returns false; derived classes can override this and return true.
+	virtual bool supports_trRosetta_constraints() const;
+
 private:
 	checkpoint::CheckPointer checkpoints_;
 
 public:
 	virtual checkpoint::CheckPointer &get_checkpoints() { return checkpoints_; }
+
+	/// @brief Get whether we're using trRosetta constraints.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	inline bool use_trRosetta_constraints() const { return use_trRosetta_constraints_; }
+
+#ifdef USE_TENSORFLOW
+	/// @brief Provide an trRosetta constraint generator as input.  Owning pointer is stored
+	/// directly, not cloned!
+	/// @details Must set use_trRosetta_constraints to true before calling this!
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_trRosetta_cst_generator(
+		protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorOP cst_gen_in
+	);
+#endif
+
+protected:
+
+#ifdef USE_TENSORFLOW
+	/// @brief Allow derived classes to access the constraint generator:
+	inline
+	protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorCOP
+	trRosetta_cst_generator() const {
+		return trRosetta_cst_generator_;
+	}
+#endif
 
 
 private:
@@ -149,6 +185,16 @@ private:
 
 	//fast fix until the new JobDist/Mover is introduced:
 	std::string silentout_file_name_;
+
+	/// @brief Decide whether to use trRosetta constraints.
+	/// @details Requires extras=tensorflow or extras=tensorflow_gpu.
+	bool use_trRosetta_constraints_ = false;
+
+#ifdef USE_TENSORFLOW
+	/// @brief trRosetta constraint generator.  Only used if use_trRosetta_constraints_ is true.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorOP trRosetta_cst_generator_;
+#endif
 
 };
 

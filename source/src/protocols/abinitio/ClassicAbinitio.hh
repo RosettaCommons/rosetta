@@ -224,6 +224,11 @@ protected:
 	//@brief register cmd-line options in option system ( call before core::init::init )
 public:
 	static void register_options();
+
+	/// @brief This overrides the default and indicates that the ClassicAbInitio protocol DOES support
+	/// trRosetta constraints.
+	bool supports_trRosetta_constraints() const override;
+
 protected:
 	//@brief construct default monto-carlo object
 	virtual void set_default_mc(

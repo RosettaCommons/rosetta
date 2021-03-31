@@ -1,0 +1,657 @@
+core.init: Checking for fconfig files in pwd and ./rosetta/flags 
+core.init: Rosetta version: 2021.07.post.dev+534.vmullig.trRosettamembrane.006d4e28562 006d4e28562639ee242212275ff56133c7a52582 git@github.com:RosettaCommons/main.git 2021-03-18T00:53:59
+core.init: command: ../../../../source/bin/minirosetta.tensorflow.macosclangrelease @flags
+basic.random.init_random_generator: 'RNG device' seed mode, using '/dev/urandom', seed=-1823960528 seed_offset=0 real_seed=-1823960528
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=-1823960528 RG_type=mt19937
+core.init: Resolved executable path: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../source/bin/minirosetta.tensorflow.macosclangrelease
+core.init: Looking for database based on location of executable: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../database/
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+core.chemical.GlobalResidueTypeSet: Finished initializing fa_standard residue type set.  Created 985 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 0.673667 seconds.
+core.import_pose.import_pose: File 'inputs/1r6j.pdb' automatically determined to be of type PDB
+core.chemical.GlobalResidueTypeSet: Finished initializing centroid residue type set.  Created 69 residue types
+core.chemical.GlobalResidueTypeSet: Total time to initialize 0.02066 seconds.
+protocols.abinitio.AbrelaxApplication: read fasta sequence: 82 residues
+GAMDPRTITMHKDSTGHVGFIFKNGKITSIVKDSSAARNGLLTEHNICEINGQNVIGLKDSQIADILSTSGTVVTITIMPAF
+core.import_pose.import_pose: File 'inputs/1r6j.pdb' automatically determined to be of type PDB
+protocols.evaluation.ChiWellRmsdEvaluatorCreator: Evaluation Creator active ... 
+core.io.fragments: reading fragments from file: inputs/frags.200.9mers ... 
+core.io.fragments: rosetta++ fileformat detected! Calling legacy reader... 
+core.fragments.ConstantLengthFragSet: finished reading top 25 9mer fragments from file inputs/frags.200.9mers
+core.io.fragments: reading fragments from file: inputs/frags.200.3mers ... 
+core.io.fragments: rosetta++ fileformat detected! Calling legacy reader... 
+core.fragments.ConstantLengthFragSet: finished reading top 200 3mer fragments from file inputs/frags.200.3mers
+core.fragment: compute strand/loop fractions for 82 residues... 
+protocols.abinitio.AbrelaxApplication: run ClassicAbinitio.....
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/env_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cbeta_den.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/pair_log.txt
+basic.io.database: Database file opened: scoring/score_functions/EnvPairPotential/cenpack_log.txt
+basic.io.database: Database file opened: scoring/score_functions/SecondaryStructurePotential/phi.theta.36.HS.resmooth
+basic.io.database: Database file opened: scoring/score_functions/SecondaryStructurePotential/phi.theta.36.SS.resmooth
+core.scoring.ScoreFunction: ATOM_VDW set to CENTROID_ROT_MIN
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBPoly1D.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBFadeIntervals.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/HBEval.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/DonStrength.csv
+basic.io.database: Database file opened: scoring/score_functions/hbonds/ref2015_params/AccStrength.csv
+core.scoring.ramachandran: shapovalov_lib::shap_rama_smooth_level of 4( aka highest_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/rama/shapovalov/kappa25/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.all.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.gly.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.pro.txt
+basic.io.database: Database file opened: scoring/score_functions/omega/omega_ppdep.valile.txt
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_rot_pair_params.txt
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_rot_env_params.txt
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_rot_cbeta_params.txt
+basic.io.database: Database file opened: scoring/score_functions/centroid_smooth/cen_rot_pair_ang_params.txt
+core.scoring.AtomVDW: Openning alternative vdw file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../database/chemical/atom_type_sets/centroid_rot//min.txt
+core.scoring.ScoreFunction: ATOM_VDW set to CENTROID_ROT_MIN
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+core.scoring.etable: Starting energy table calculation
+core.scoring.etable: smooth_etable: changing atr/rep split to bottom of energy well
+core.scoring.etable: smooth_etable: spline smoothing lj etables (maxdis = 6)
+core.scoring.etable: smooth_etable: spline smoothing solvation etables (max_dis = 6)
+core.scoring.etable: Finished calculating energy tables.
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/all.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/rama/fd/prepro.ramaProb
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/P_AA_n
+core.scoring.P_AA: shapovalov_lib::shap_p_aa_pp_smooth_level of 1( aka low_smooth ) got activated.
+basic.io.database: Database file opened: scoring/score_functions/P_AA_pp/shapovalov/10deg/kappa131/a20.prop
+protocols.jobdist.JobDistributors: Looking for an available job: 1 1  1
+protocols.relax.ClassicRelax: Setting up default relax setting
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Loading trRosetta model version 1.
+protocols.trRosetta.trRosettaProtocol_v1: Running version 1 trRosetta neural network...
+protocols.trRosetta.trRosettaProtocol_v1: Ran version 1 trRosetta protocol in 12462.9 milliseconds.
+protocols.abinitio: 
+===================================================================
+   Added constraints from the trRosetta neural network.              
+
+===================================================================
+   Stage 1                                                         
+   Folding with score0 for max of 2000
+protocols.abinitio: Replaced extended chain after 117 cycles.
+protocols.abinitio: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          0.100      54.482       5.448
+ atom_pair_constraint         5.000   -6933.718   -34668.592
+ angle_constraint             1.000   -19714.139   -19714.139
+ dihedral_constraint          1.000   -10410.407   -10410.407
+---------------------------------------------------
+ Total weighted score:                    -64787.691
+protocols.moves.TrialCounter: ClassicFragmentM trials=    117;  accepts= 0.2222;  energy_drop/trial= -213.90400
+protocols.abinitio: 
+===================================================================
+   Stage 2                                                         
+   Folding with score1 for 2000
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.abinitio: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          1.000     376.071     376.071
+ pair                         1.000      -6.013      -6.013
+ atom_pair_constraint         5.000   -11155.328   -55776.640
+ angle_constraint             1.000   -21792.000   -21792.000
+ dihedral_constraint          1.000   -15579.817   -15579.817
+ env                          1.000     -20.191     -20.191
+ hs_pair                      1.000       0.396       0.396
+ ss_pair                      0.300      -1.493      -0.448
+ sheet                        1.000       7.894       7.894
+---------------------------------------------------
+ Total weighted score:                    -92790.750
+protocols.moves.TrialCounter: ClassicFragmentM trials=   2000;  accepts= 0.0210;  energy_drop/trial= -14.12768
+protocols.abinitio: 
+===================================================================
+   Stage 3                                                         
+   Folding with score2 and score5 for 2000
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 7
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 8
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 9
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 10
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 7
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 8
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 9
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 10
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 11
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 12
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 13
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 14
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 7
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 8
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 7
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 8
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.abinitio: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          1.000     348.262     348.262
+ cenpack                      0.500      22.572      11.286
+ pair                         1.000      -4.679      -4.679
+ atom_pair_constraint         5.000   -11305.363   -56526.816
+ angle_constraint             1.000   -21891.696   -21891.696
+ dihedral_constraint          1.000   -15870.509   -15870.509
+ env                          1.000     -19.604     -19.604
+ cbeta                        0.250      30.114       7.529
+ hs_pair                      1.000      -0.065      -0.065
+ ss_pair                      1.000      -0.167      -0.167
+ sheet                        1.000       4.119       4.119
+---------------------------------------------------
+ Total weighted score:                    -93942.328
+protocols.moves.TrialCounter: ClassicFragmentM trials=  20000;  accepts= 0.0026;  energy_drop/trial=  -0.07839
+protocols.abinitio: 
+===================================================================
+   Stage 4                                                         
+   Folding with score3 for 4000
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 7
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 5
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 6
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 3
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 4
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.moves.MonteCarlo: autotemp_reject -- heat: 150 2
+protocols.moves.MonteCarlo: autotemp_accept: reset temperature_ = 2
+protocols.abinitio: 
+------------------------------------------------------------
+ Scores                       Weight   Raw Score Wghtd.Score
+------------------------------------------------------------
+ vdw                          1.000     255.316     255.316
+ cenpack                      1.000      17.260      17.260
+ pair                         1.000     -11.850     -11.850
+ atom_pair_constraint         5.000   -11854.569   -59272.847
+ angle_constraint             1.000   -22497.447   -22497.447
+ dihedral_constraint          1.000   -16853.213   -16853.213
+ env                          1.000     -18.796     -18.796
+ cbeta                        1.000      31.632      31.632
+ rg                           3.000      12.539      37.618
+ hs_pair                      1.000       1.308       1.308
+ ss_pair                      1.000      -8.734      -8.734
+ rsigma                       1.000      -4.501      -4.501
+ sheet                        1.000       7.894       7.894
+---------------------------------------------------
+ Total weighted score:                    -98316.367
+protocols.moves.TrialCounter: ClassicFragmentM trials=   4000;  accepts= 0.0060;  energy_drop/trial=  -0.71049
+protocols.moves.TrialCounter: SmoothFragmentMo trials=   8000;  accepts= 0.0044;  energy_drop/trial=  -0.29108
+protocols.abinitio: 
+===================================================================
+   Finished Abinitio                                                 
+
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+basic.io.database: Database file opened: scoring/score_functions/elec_cp_reps.dat
+core.scoring.elec.util: Read 40 countpair representative atoms
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib_fixes_enable option is true.
+core.pack.dunbrack.RotamerLibrary: shapovalov_lib::shap_dun10_smooth_level of 1( aka lowest_smooth ) got activated.
+core.pack.dunbrack.RotamerLibrary: Binary rotamer library selected: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../database/rotamer/shapovalov/StpDwn_0-0-0/Dunbrack10.lib.bin
+core.pack.dunbrack.RotamerLibrary: Using Dunbrack library binary file '/Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../database/rotamer/shapovalov/StpDwn_0-0-0/Dunbrack10.lib.bin'.
+core.pack.dunbrack.RotamerLibrary: Dunbrack 2010 library took 0.127097 seconds to load from binary
+core.pack.pack_rotamers: built 923 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.abinitio.AbrelaxApplication: [ ERROR ] Using DEPRECATED OPTION fastrelax ! 
+protocols.abinitio.AbrelaxApplication: Reapplying trRosetta constraints for final FastRelax.
+core.scoring.ScoreFunctionFactory: SCOREFUNCTION: ref2015
+protocols.relax.RelaxScriptManager: Reading relax scripts list from database.
+protocols.relax.RelaxScriptManager: Looking for MonomerRelax2019.txt
+protocols.relax.RelaxScriptManager: ================== Reading script file: /Users/vmulligan/rosetta_devcopy2/Rosetta/main/tests/integration/new/abinitio_with_trRosetta/../../../../database/sampling/relax_scripts/MonomerRelax2019.txt ==================
+protocols.relax.RelaxScriptManager: repeat %%nrepeats%%
+protocols.relax.RelaxScriptManager: coord_cst_weight 1.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.040
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.051
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.5
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.265
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.280
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.559
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: scale:fa_rep 0.581
+protocols.relax.RelaxScriptManager: min 0.01
+protocols.relax.RelaxScriptManager: coord_cst_weight 0.0
+protocols.relax.RelaxScriptManager: scale:fa_rep 1
+protocols.relax.RelaxScriptManager: repack
+protocols.relax.RelaxScriptManager: min 0.00001
+protocols.relax.RelaxScriptManager: accept_to_best
+protocols.relax.RelaxScriptManager: endrepeat
+protocols.relax.FastRelax: CMD: repeat  -14567  0  0  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -14567  0  0  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -30859.4  0  0  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2806 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -30976.1  0  0  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -30775.5  0  0  0.02805
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -31.0246 Finite Diff= 1.45441e+09
+protocols.relax.FastRelax: CMD: min  -40611.7  4.11153  4.11153  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40611.7  4.11153  4.11153  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -39777.2  4.11153  4.11153  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2323 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40695.4  4.11153  4.11153  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40686.6  4.11153  4.11153  0.154
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -4.94168 Finite Diff= 6.45501e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.86919e-09 Deriv= -4.09789 Finite Diff= 1.68358e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 9.57807e-07 Deriv= -63.4488 Finite Diff= 504268
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#91
+protocols.relax.FastRelax: CMD: min  -40761.5  4.0977  4.0977  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40761.5  4.0977  4.0977  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40696.1  4.0977  4.0977  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2301 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40697.9  4.0977  4.0977  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40692.7  4.0977  4.0977  0.31955
+protocols.relax.FastRelax: CMD: min  -40711.4  4.10747  4.10747  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40711.4  4.10747  4.10747  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40647.4  4.10747  4.10747  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2093 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40647.9  4.10747  4.10747  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -28.8563 Finite Diff= 5.04568e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 4.8173e-09 Deriv= -353.805 Finite Diff= 9.98863e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 2.56757e-07 Deriv= -882.952 Finite Diff= 1.8732e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#39
+protocols.relax.FastRelax: CMD: min  -40648.9  4.10769  4.10769  0.55
+protocols.relax.FastRelax: MRP: 0  -40648.9  -40648.9  4.10769  4.10769  
+protocols.relax.FastRelax: CMD: accept_to_best  -40648.9  4.10769  4.10769  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -40648.9  4.10769  4.10769  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40648.9  4.10769  4.10769  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40790.8  4.10769  4.10769  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2410 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40811.1  4.10769  4.10769  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40805.7  4.10769  4.10769  0.02805
+protocols.relax.FastRelax: CMD: min  -40839.8  4.09145  4.09145  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40839.8  4.09145  4.09145  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40692  4.09145  4.09145  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2471 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40720.8  4.09145  4.09145  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40713.2  4.09145  4.09145  0.154
+protocols.relax.FastRelax: CMD: min  -40759.3  4.11155  4.11155  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40759.3  4.11155  4.11155  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40690.8  4.11155  4.11155  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2379 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40692.1  4.11155  4.11155  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40686.9  4.11155  4.11155  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -2.10076 Finite Diff= 6.49158e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 3.56454e-08 Deriv= -45811.4 Finite Diff= 1.35229e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#52
+protocols.relax.FastRelax: CMD: min  -40707.2  4.10536  4.10536  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40707.2  4.10536  4.10536  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40643.2  4.10536  4.10536  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2077 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40643.6  4.10536  4.10536  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 3.8147e-08 Deriv= -46867.9 Finite Diff= 1.26321e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 3.52413e-08 Deriv= -46867.9 Finite Diff= 1.36774e+07
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#1
+protocols.relax.FastRelax: CMD: min  -40643.6  4.10536  4.10536  0.55
+protocols.relax.FastRelax: MRP: 1  -40643.6  -40648.9  4.10769  4.10769  
+protocols.relax.FastRelax: CMD: accept_to_best  -40643.6  4.10536  4.10536  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -40643.6  4.10536  4.10536  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40643.6  4.10536  4.10536  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40788.4  4.10536  4.10536  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2418 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40808.7  4.10536  4.10536  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40803.4  4.10536  4.10536  0.02805
+protocols.relax.FastRelax: CMD: min  -40854.9  4.09758  4.09758  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40854.9  4.09758  4.09758  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40692.2  4.09758  4.09758  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2316 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40713.8  4.09758  4.09758  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40705.1  4.09758  4.09758  0.154
+protocols.relax.FastRelax: CMD: min  -40765.4  4.09379  4.09379  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40765.4  4.09379  4.09379  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40700.2  4.09379  4.09379  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2384 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40700.5  4.09379  4.09379  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40695.4  4.09379  4.09379  0.31955
+protocols.relax.FastRelax: CMD: min  -40707  4.08443  4.08443  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40707  4.08443  4.08443  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40638.8  4.08443  4.08443  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2199 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40639.1  4.08443  4.08443  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -2.62387 Finite Diff= 6.50565e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 3.05215e-07 Deriv= -624.837 Finite Diff= 1.58748e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#85
+protocols.relax.FastRelax: CMD: min  -40669.9  4.10706  4.10706  0.55
+protocols.relax.FastRelax: MRP: 2  -40669.9  -40669.9  4.10706  4.10706  
+protocols.relax.FastRelax: CMD: accept_to_best  -40669.9  4.10706  4.10706  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -40669.9  4.10706  4.10706  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40669.9  4.10706  4.10706  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40775.9  4.10706  4.10706  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2748 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40798.8  4.10706  4.10706  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40794.9  4.10706  4.10706  0.02805
+protocols.relax.FastRelax: CMD: min  -40853.5  4.09597  4.09597  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40853.5  4.09597  4.09597  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40714.1  4.09597  4.09597  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2428 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40730.2  4.09597  4.09597  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40722.1  4.09597  4.09597  0.154
+core.optimization.LineMinimizer: Inaccurate G in step= 7.45058e-09 Deriv= -1.93224 Finite Diff= 6.46864e+07
+protocols.relax.FastRelax: CMD: min  -40776.7  4.10243  4.10243  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40776.7  4.10243  4.10243  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40713.5  4.10243  4.10243  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2369 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40713.7  4.10243  4.10243  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40708.8  4.10243  4.10243  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 4.76837e-09 Deriv= -1888.57 Finite Diff= 1.01048e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 1.75559e-07 Deriv= -1888.57 Finite Diff= 2.74273e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#6
+protocols.relax.FastRelax: CMD: min  -40708.8  4.10242  4.10242  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40708.8  4.10242  4.10242  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40614.9  4.10242  4.10242  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2267 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40617  4.10242  4.10242  0.55
+core.optimization.LineMinimizer: Inaccurate G in step= 3.72529e-09 Deriv= -7.3128 Finite Diff= 1.30113e+08
+core.optimization.LineMinimizer: Inaccurate G in step= 7.04062e-08 Deriv= -11742.4 Finite Diff= 6.87273e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#103
+protocols.relax.FastRelax: CMD: min  -40671.3  4.11078  4.11078  0.55
+protocols.relax.FastRelax: MRP: 3  -40671.3  -40671.3  4.11078  4.11078  
+protocols.relax.FastRelax: CMD: accept_to_best  -40671.3  4.11078  4.11078  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -40671.3  4.11078  4.11078  0.55
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40671.3  4.11078  4.11078  0.55
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40775  4.11078  4.11078  0.022
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2791 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40798.5  4.11078  4.11078  0.022
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40794.8  4.11078  4.11078  0.02805
+protocols.relax.FastRelax: CMD: min  -40854.6  4.10339  4.10339  0.02805
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40854.6  4.10339  4.10339  0.02805
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40720.1  4.10339  4.10339  0.14575
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2418 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40733.3  4.10339  4.10339  0.14575
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40725.5  4.10339  4.10339  0.154
+protocols.relax.FastRelax: CMD: min  -40773.9  4.10197  4.10197  0.154
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40773.9  4.10197  4.10197  0.154
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40713.6  4.10197  4.10197  0.30745
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2368 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40713.7  4.10197  4.10197  0.30745
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40709  4.10197  4.10197  0.31955
+core.optimization.LineMinimizer: Inaccurate G in step= 9.53674e-09 Deriv= -107.776 Finite Diff= 5.05556e+07
+core.optimization.LineMinimizer: Inaccurate G in step= 1.92129e-07 Deriv= -1576.87 Finite Diff= 2.50787e+06
+core.optimization.Minimizer: Line search failed even after resetting Hessian; aborting at iter#18
+protocols.relax.FastRelax: CMD: min  -40711.9  4.11089  4.11089  0.31955
+protocols.relax.FastRelax: CMD: coord_cst_weight  -40711.9  4.11089  4.11089  0.31955
+protocols.relax.FastRelax: CMD: scale:fa_rep  -40634.3  4.11089  4.11089  0.55
+core.pack.task: Packer task: initialize from command line() 
+core.pack.pack_rotamers: built 2032 rotamers at 82 positions.
+core.pack.interaction_graph.interaction_graph_factory: Instantiating DensePDInteractionGraph
+protocols.relax.FastRelax: CMD: repack  -40635.5  4.11089  4.11089  0.55
+protocols.relax.FastRelax: CMD: min  -40664.9  4.11081  4.11081  0.55
+protocols.relax.FastRelax: MRP: 4  -40664.9  -40671.3  4.11078  4.11078  
+protocols.relax.FastRelax: CMD: accept_to_best  -40664.9  4.11081  4.11081  0.55
+protocols.relax.FastRelax: CMD: endrepeat  -40664.9  4.11081  4.11081  0.55
+protocols::checkpoint: Deleting checkpoints of FastRelax
+protocols.abinitio.AbrelaxApplication: Finished _0001 in 357 seconds.
+protocols::checkpoint: Deleting checkpoints of ClassicAbinitio
+protocols::checkpoint: Deleting checkpoints of Abrelax
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  distance constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  omega dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  theta dihedral constraints.
+protocols.trRosetta_protocols.constraint_generators.trRosettaConstraintGenerator: Configuring trRosettaConstraintGenerator  to set  phi angle constraints.
+basic.citation_manager.CitationManager: 
+The following Rosetta modules were used during this run of Rosetta, and should be cited:
+
+AbinitioRelax Application's citation(s):
+Simons KT, Bonneau R, Ruczinski I, and Baker D.  (1999).  Ab initio protein structure prediction of CASP III targets using ROSETTA..  Proteins Suppl 3:171-6.  doi: 10.1002/(sici)1097-0134(1999)37:3+<171::aid-prot21>3.3.co;2-q.
+
+Bonneau R, Tsai J, Ruczinski I, Chivian D, Rohl C, Strauss CE, and Baker D.  (2001).  Rosetta in CASP4: progress in ab initio protein structure prediction..  Proteins Suppl 5:119-26.  doi: 10.1002/prot.1170.
+
+Raman S, Vernon R, Thompson J, Tyka M, Sadreyev R, Pei J, Kim D, Kellogg E, DiMaio F, Lange O, Kinch L, Sheffler W, Kim BH, Das R, Grishin NV, and Baker D.  (2009).  Structure prediction for CASP8 with all-atom refinement using Rosetta..  Proteins 77 Suppl 9:89-99.  doi: 10.1002/prot.22540.
+
+trRosetta Neural Network's citation(s):
+Yang J, Anishchenko I, Park H, Peng Z, Ovchinnikov S, and Baker D.  (2020).  Improved protein structure prediction using predicted interresidue orientations.  Proc Natl Acad Sci USA 117(3):1496-503.  doi: 10.1073/pnas.1914677117.
+
+
+The following UNPUBLISHED Rosetta modules were used during this run of Rosetta.  Their authors should be included in the author list when this work is published:
+
+RosettaTensorflowManager Singleton's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Created the RosettaTensorflowManager.)
+Jack Magure, Menten AI <jack.maguire@menten.ai>  (Expanded RosettaTensorflowManager capabilities for multi-head jobs and wrote tests.)
+Sergey Lyskov, Gray Lab, Department of Chemical & Biomolecular Engineering, Johns Hopkins University <Sergey.Lyskov@jhu.edu>  (Added testing infrastructure and helped to create the Rosetta-Tensorflow linked build.)
+
+trRosettaConstraintGenerator ConstraintGenerator's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Integrated trRosetta into Rosetta, and wrote the trRosettaConstraintGenerator.)
+
+

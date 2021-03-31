@@ -121,6 +121,8 @@
 #include <basic/options/keys/templates.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
+#include <basic/options/keys/trRosetta.OptionKeys.gen.hh>
+#include <basic/tensorflow_manager/util.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FrameIteratorWorker_.hh>
 #include <core/fragment/util.hh>
@@ -167,6 +169,8 @@
 #include <protocols/simple_moves/RepulsiveOnlyMover.hh>
 #include <protocols/forge/methods/util.hh>
 
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
+
 //numeric headers
 #include <numeric/random/random.hh>
 
@@ -176,6 +180,10 @@
 #include <basic/Tracer.hh>
 #include <utility/io/util.hh>
 #include <utility/exit.hh>
+
+// Citation manager
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // C++ headers
 #include <cstdlib>
@@ -337,6 +345,11 @@ void AbrelaxApplication::setup() {
 		/// WARNING WARNING WARNING. THREAD UNSAFE. DO NOT USE SINGLETONS THIS WAY.
 		core::scoring::constraints::ConstraintFactory::get_instance()->replace_creator(
 			utility::pointer::make_shared< constraints_additional::NamedAtomPairConstraintCreator >() );
+	}
+
+	if ( option[ basic::options::OptionKeys::abinitio::use_trRosetta_constraints ]() ) {
+		set_use_trRosetta_constraints( option[ basic::options::OptionKeys::abinitio::use_trRosetta_constraints ]() );
+		runtime_assert_string_msg( option[ basic::options::OptionKeys::trRosetta::msa_file ].user() && !option[ basic::options::OptionKeys::trRosetta::msa_file ]().empty(), "Error in AbelaxApplication::setup(): If the -use_trRosetta_constraints option is used, a multiple sequence alignment file must be provided with the -trRosetta:msa_file option." );
 	}
 
 	silent_score_file_ = utility::pointer::make_shared< io::silent::SilentFileData >( *silent_options_ );
@@ -1283,7 +1296,11 @@ void AbrelaxApplication::setup_membrane_topology( pose::Pose & pose, std::string
 ///    extended_pose to run A) with ( might actually contain native starting structure (option!) )
 ///    prot_ptr: an initialized instance of ClassicAbinitio, FoldConstraints or JumpingFoldConstraints depending on
 ///   user settings.
-void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot_ptr ) {
+void
+AbrelaxApplication::setup_fold(
+	pose::Pose& extended_pose,
+	ProtocolOP& prot_ptr //Passed by reference because the owning pointer is set by this function.
+) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	// ==========================================================================
@@ -1541,6 +1558,20 @@ void AbrelaxApplication::setup_fold( pose::Pose& extended_pose, ProtocolOP& prot
 
 	Protocol& abinitio_protocol( *prot_ptr ); // hide the fact that protocol is a pointer
 
+	/// Decide whether to use trRosetta:
+	abinitio_protocol.set_use_trRosetta_constraints( use_trRosetta_constraints_ );
+	if ( use_trRosetta_constraints_ ) {
+#ifdef USE_TENSORFLOW
+		runtime_assert( trRosetta_cst_generator_ != nullptr );
+		abinitio_protocol.set_trRosetta_cst_generator( trRosetta_cst_generator_ );
+#else // !USE_TENSORFLOW
+		utility_exit_with_message(
+			"Error: the trRosetta constraint option is only available when Rosetta is compiled with Tensorflow support."
+			+ basic::tensorflow_manager::get_tensorflow_compilation_instructions( "trRosettaConstraintGenerator" )
+		);
+#endif // USE_TENSORFLOW
+	}
+
 	/// initialize protocol
 	abinitio_protocol.init( extended_pose );
 	if ( option[ OptionKeys::loopfcst::use_general_protocol ] ) {
@@ -1587,6 +1618,53 @@ bool AbrelaxApplication::check_filters( core::pose::Pose & pose ) {
 
 	tr.Info << " passed all filters " << std::endl;
 	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @brief Set whether we're using trRosetta.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+AbrelaxApplication::set_use_trRosetta_constraints(
+	bool const setting
+) {
+#ifndef USE_TENSORFLOW
+	if ( setting == true ) {
+		utility_exit_with_message( "Error in AbrelaxApplication::set_use_trRosetta_constraints():  Cannot use trRosetta without compiling with Tensorflow support!  " + basic::tensorflow_manager::get_tensorflow_compilation_instructions( "trRosettaConstraintGenerator" ) );
+	}
+#endif //ifndef USE_TENSORFLOW
+	use_trRosetta_constraints_ = setting;
+
+#ifdef USE_TENSORFLOW
+	if ( setting ) {
+		trRosetta_cst_generator_ = utility::pointer::make_shared< protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGenerator >();
+	} else {
+		trRosetta_cst_generator_ = nullptr;
+	}
+#endif //USE_TENSORFLOW
+}
+
+/// @brief Get citation information for the AbinitioRelaxApplication.
+/// @details Includes trRosetta information if this is set.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+AbrelaxApplication::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citation_list
+) const {
+	basic::citation_manager::CitationCollectionOP citationcollection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"AbinitioRelax", basic::citation_manager::CitedModuleType::Application
+		)
+	);
+	basic::citation_manager::CitationManager * cm( basic::citation_manager::CitationManager::get_instance() );
+	citationcollection->add_citation( cm->get_citation_by_doi( "10.1002/(sici)1097-0134(1999)37:3+<171::aid-prot21>3.3.co;2-q" ) );
+	citationcollection->add_citation( cm->get_citation_by_doi( "10.1002/prot.1170" ) );
+	citationcollection->add_citation( cm->get_citation_by_doi( "10.1002/prot.22540" ) );
+
+	citation_list.add(citationcollection);
+
+	if ( use_trRosetta_constraints_ ) {
+		protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGenerator::provide_citation_info_static(citation_list);
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1650,12 +1728,12 @@ void AbrelaxApplication::fold( core::pose::Pose &init_pose, ProtocolOP prot_ptr 
 
 		// create jobs
 		for ( TagList::const_iterator it = input_tags.begin(), eit = input_tags.end(); it!=eit; ++it ) {
-			BasicJobOP job( new BasicJob( *it, "resample", nstruct) );
+			BasicJobOP job( utility::pointer::make_shared< BasicJob >( *it, "resample", nstruct) );
 			tr.Debug << "create resample job" << *it << std::endl;
 			input_jobs.push_back( job );
 		}
 	} else { //default behaviour
-		BasicJobOP job( new BasicJob("" /*no input tag*/, "abinitio_relax", nstruct) );
+		BasicJobOP job( utility::pointer::make_shared< BasicJob >("" /*no input tag*/, "abinitio_relax", nstruct) );
 		input_jobs.push_back( job );
 	}
 
@@ -1995,7 +2073,35 @@ void AbrelaxApplication::relax( pose::Pose& pose, core::scoring::ScoreFunctionOP
 	}
 	if ( option[ OptionKeys::abinitio::relax ]() ) {
 		if ( !abrelax_checkpoints_.recover_checkpoint( pose, tag, "relax", true, true) ) {
+#ifdef USE_TENSORFLOW
+			utility::vector1< core::scoring::constraints::ConstraintCOP > trRosetta_csts;
+			core::scoring::ScoreFunctionOP scorefxn_copy;
+			if( use_trRosetta_constraints_ ) {
+				debug_assert( trRosetta_cst_generator_ != nullptr );
+				tr << "Reapplying trRosetta constraints for final FastRelax." << std::endl;
+				trRosetta_csts = trRosetta_cst_generator_->apply( pose ); //Should be inexpensive.  The trRosetta constraint generator caches the result from the last run, and doesn't re-run the neural network.
+				pose.add_constraints(trRosetta_csts);
+
+				scorefxn_copy = scorefxn->clone();
+				if( scorefxn_copy->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
+					scorefxn_copy->set_weight( core::scoring::atom_pair_constraint, 1.0 );
+				}
+				if( scorefxn_copy->has_zero_weight( core::scoring::angle_constraint ) ) {
+					scorefxn_copy->set_weight( core::scoring::angle_constraint, 0.5 );
+				}
+				if( scorefxn_copy->has_zero_weight( core::scoring::dihedral_constraint ) ) {
+					scorefxn_copy->set_weight( core::scoring::dihedral_constraint, 0.5 );
+				}
+			}
+			relax::relax_pose( pose, use_trRosetta_constraints_ ? scorefxn_copy : scorefxn, tag );
+
+			//Remove the trRosetta constraints:
+			if( !trRosetta_csts.empty() ) {
+				runtime_assert( pose.remove_constraints( trRosetta_csts, true ) );
+			}
+#else
 			relax::relax_pose( pose, scorefxn, tag );
+#endif
 			abrelax_checkpoints_.checkpoint( pose, tag, "relax", true ); //since relax_protocol throws away its checkpoints right here
 		}
 		abrelax_checkpoints_.debug( tag, "relax", (*scorefxn)( pose ) );

@@ -23,6 +23,10 @@
 #include <protocols/checkpoint/Checkpoint.hh>
 #include <utility/excn/Exceptions.hh>
 
+// Citation manager:
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+
 // option key includes
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 
@@ -50,7 +54,18 @@ main( int argc, char * argv [] )
 
 		//YL, create abrelax application then run it.
 		protocols::abinitio::AbrelaxApplication abrelax;
+
+		// Call fun before citation manager, since settings are set in run call:
 		abrelax.run();
+
+		{
+			//Citation manager registration:
+			basic::citation_manager::CitationCollectionList citations;
+			abrelax.provide_citation_info( citations );
+			basic::citation_manager::CitationManager::get_instance()->add_citations( citations );
+		}
+
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 	} catch (utility::excn::Exception& excn ) {
 		excn.display();
 		return -1;

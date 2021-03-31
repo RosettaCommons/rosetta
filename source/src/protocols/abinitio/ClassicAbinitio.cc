@@ -53,6 +53,10 @@
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 //#include <protocols/simple_moves/BackboneMover.hh>
 
+// For trRosetta:
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.hh>
+#endif
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/string.functions.hh>
@@ -206,9 +210,9 @@ ClassicAbinitio::ClassicAbinitio(
 	using namespace core::pack::task;
 	//init the packer
 	pack_rotamers_ = utility::pointer::make_shared< protocols::minimization_packing::PackRotamersMover >();
-	TaskFactoryOP main_task_factory( new TaskFactory );
+	TaskFactoryOP main_task_factory( utility::pointer::make_shared<  TaskFactory >() );
 	main_task_factory->push_back( utility::pointer::make_shared< operation::RestrictToRepacking >() );
-	//main_task_factory->push_back( new operation::PreserveCBeta );
+	//main_task_factory->push_back( utility::pointer::make_shared< operation::PreserveCBeta >() );
 	pack_rotamers_->task_factory(main_task_factory);
 
 	bSkipStage1_ = false;
@@ -298,6 +302,19 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 	bool success( true );
 	total_trials_ = 0;
 
+#ifdef USE_TENSORFLOW
+	utility::vector1< core::scoring::constraints::ConstraintCOP > trRosetta_csts;
+
+	if(  use_trRosetta_constraints() ) {
+		// Add trRosetta constraints ----------------------------------------
+		tr.Info <<  "\n===================================================================\n";
+		tr.Info <<  "   Added constraints from the trRosetta neural network.              \n";
+		debug_assert( trRosetta_cst_generator() != nullptr ); //Should be true.
+		trRosetta_csts = trRosetta_cst_generator()->apply(pose);
+		pose.add_constraints( trRosetta_csts );
+	}
+#endif
+
 	if ( !bSkipStage1_ ) {
 		PROF_START( basic::STAGE1 );
 		clock_t starttime = clock();
@@ -306,6 +323,7 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 			set_last_move_status( moves::FAIL_RETRY );
 			return;
 		}
+
 		// part 1 ----------------------------------------
 		tr.Info <<  "\n===================================================================\n";
 		tr.Info <<  "   Stage 1                                                         \n";
@@ -520,6 +538,13 @@ void ClassicAbinitio::apply( pose::Pose & pose ) {
 
 	}
 
+#ifdef USE_TENSORFLOW
+	if( use_trRosetta_constraints() ) {
+		//Remove the added constraints here.
+		runtime_assert_string_msg( pose.remove_constraints( trRosetta_csts, true ), "Program error in ClassicAbinitio::apply(): Something went wrong when trying to remove trRosetta constraints." );
+		tr << "Removed centroid-mode constraints from the trRosetta neural network." << std::endl;
+	}
+#endif
 
 	get_checkpoints().flush_checkpoints();
 
@@ -628,15 +653,23 @@ void ClassicAbinitio::set_trials() {
 	smooth_trial_small_->keep_stats_type( moves::accept_reject );
 
 	//build trial_pack mover
-	moves::SequenceMoverOP combo_small( new moves::SequenceMover() );
+	moves::SequenceMoverOP combo_small( utility::pointer::make_shared< moves::SequenceMover >() );
 	combo_small->add_mover(brute_move_small_);
 	combo_small->add_mover(pack_rotamers_);
 	trial_small_pack_ = utility::pointer::make_shared< moves::TrialMover >(combo_small, mc_);
-	moves::SequenceMoverOP combo_smooth( new moves::SequenceMover() );
+	moves::SequenceMoverOP combo_smooth( utility::pointer::make_shared< moves::SequenceMover >() );
 	combo_smooth->add_mover(smooth_move_small_);
 	combo_smooth->add_mover(pack_rotamers_);
 	smooth_trial_small_pack_ = utility::pointer::make_shared< moves::TrialMover >(combo_smooth, mc_);
 }
+
+/// @brief This overrides the default and indicates that the ClassicAbInitio protocol DOES support
+/// trRosetta constraints.
+bool
+ClassicAbinitio::supports_trRosetta_constraints() const {
+	return true;
+}
+
 
 //@detail sets Monto-Carlo object to default
 void ClassicAbinitio::set_default_mc(
@@ -749,6 +782,22 @@ scoring::ScoreFunction const& ClassicAbinitio::current_scorefxn() const {
 
 //@brief set current scorefunction
 void ClassicAbinitio::current_scorefxn( scoring::ScoreFunction const& scorefxn ) {
+#ifdef USE_TENSORFLOW
+	if( use_trRosetta_constraints() ) {
+		core::scoring::ScoreFunctionOP sfxn_copy( scorefxn.clone() );
+		if( sfxn_copy->has_zero_weight( core::scoring::atom_pair_constraint ) ) {
+			sfxn_copy->set_weight( core::scoring::atom_pair_constraint, 5.0 );
+		}
+		if( sfxn_copy->has_zero_weight( core::scoring::angle_constraint ) ) {
+			sfxn_copy->set_weight( core::scoring::angle_constraint, 1.0 );
+		}
+		if( sfxn_copy->has_zero_weight( core::scoring::dihedral_constraint ) ) {
+			sfxn_copy->set_weight( core::scoring::dihedral_constraint, 1.0 );
+		}
+		mc().score_function( *sfxn_copy );
+		return;
+	}
+#endif
 	mc().score_function( scorefxn );
 }
 
@@ -890,12 +939,12 @@ bool ClassicAbinitio::do_stage1_cycles( pose::Pose &pose ) {
 bool ClassicAbinitio::do_stage2_cycles( pose::Pose &pose ) {
 
 	//setup cycle
-	moves::SequenceMoverOP cycle( new moves::SequenceMover() );
+	moves::SequenceMoverOP cycle( utility::pointer::make_shared< moves::SequenceMover >() );
 	if ( apply_large_frags_   ) cycle->add_mover( trial_large_->mover() );
 	if ( short_insert_region_ ) cycle->add_mover( trial_small_->mover() );
 
 	core::Size nr_cycles = stage2_cycles() / ( short_insert_region_ ? 2 : 1 );
-	moves::TrialMoverOP trials( new moves::TrialMover( cycle, mc_ptr() ) );
+	moves::TrialMoverOP trials( utility::pointer::make_shared< moves::TrialMover >( cycle, mc_ptr() ) );
 	moves::RepeatMover( stage2_mover( pose, trials ), nr_cycles ).apply(pose);
 
 	//is there a better way to find out how many steps ? for instance how many calls to scoring?
@@ -1070,13 +1119,13 @@ bool ClassicAbinitio::do_stage4_cycles( pose::Pose &pose ) {
 bool ClassicAbinitio::do_stage5_cycles( pose::Pose &pose ) {//vats
 
 	core::Size nmoves = 1;
-	core::kinematics::MoveMapOP mm_temp( new core::kinematics::MoveMap( *movemap() ) );
-	simple_moves::SmallMoverOP small_mover( new simple_moves::SmallMover( mm_temp, temperature_, nmoves) );
+	core::kinematics::MoveMapOP mm_temp( utility::pointer::make_shared< core::kinematics::MoveMap >( *movemap() ) );
+	simple_moves::SmallMoverOP small_mover( utility::pointer::make_shared<  simple_moves::SmallMover >( mm_temp, temperature_, nmoves) );
 	small_mover->angle_max( 'H', 2.0 );
 	small_mover->angle_max( 'E', 2.0 );
 	small_mover->angle_max( 'L', 5.0 );
 
-	moves::TrialMoverOP trials( new moves::TrialMover( small_mover, mc_ptr() ) );
+	moves::TrialMoverOP trials( utility::pointer::make_shared<  moves::TrialMover >( small_mover, mc_ptr() ) );
 	moves::RepeatMover( stage5_mover( pose, trials ), stage5_cycles() ).apply( pose );
 
 	// moves::MoverOP trial( stage5_mover( pose, small_mover ) );
@@ -1189,7 +1238,7 @@ bool ClassicAbinitio::prepare_stage3( core::pose::Pose &pose ) {
 	replace_scorefxn( pose, STAGE_3a, 0 );
 	//score for this stage is changed in the do_stage3_cycles explicitly
 	if ( option[ templates::change_movemap ].user() && option[ templates::change_movemap ] == 3 ) {
-		kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
+		kinematics::MoveMapOP new_mm( utility::pointer::make_shared<  kinematics::MoveMap >( *movemap() ) );
 		new_mm->set_bb( true );
 		set_movemap( new_mm ); // --> store it in movemap_ --> original will be reinstated at end of apply()
 	}
@@ -1203,7 +1252,7 @@ bool ClassicAbinitio::prepare_stage4( core::pose::Pose &pose ) {
 	/// Now handled automatically.  score_stage4_->accumulate_residue_total_energies( pose ); // fix this
 
 	if ( option[ templates::change_movemap ].user() && option[ templates::change_movemap ] == 4 ) {
-		kinematics::MoveMapOP new_mm( new kinematics::MoveMap( *movemap() ) );
+		kinematics::MoveMapOP new_mm( utility::pointer::make_shared<  kinematics::MoveMap >( *movemap() ) );
 		new_mm->set_bb( true );
 		tr.Debug << "option: templates::change_movemap ACTIVE: set_movemap" << std::endl;
 		set_movemap( new_mm ); // --> store it in movemap_ --> original will be reinstated at end of apply()

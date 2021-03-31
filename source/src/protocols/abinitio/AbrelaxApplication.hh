@@ -43,6 +43,10 @@
 #include <protocols/evaluation/PoseEvaluator.fwd.hh>
 #include <protocols/evaluation/PCA.fwd.hh>
 
+#ifdef USE_TENSORFLOW
+#include <protocols/trRosetta_protocols/constraint_generators/trRosettaConstraintGenerator.fwd.hh>
+#endif
+
 #include <protocols/abinitio/Protocol.fwd.hh>
 #include <protocols/abinitio/Templates.fwd.hh>
 
@@ -55,6 +59,8 @@
 #include <protocols/jumping/JumpSetup.fwd.hh>
 #include <protocols/jumping/MembraneJump.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
+
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 
 // ObjexxFCL Headers
 
@@ -149,6 +155,15 @@ public:
 
 	/// @brief check if the given pose passes the set of abinitio filters.
 	bool check_filters( core::pose::Pose & pose );
+
+	/// @brief Set whether we're using trRosetta.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_use_trRosetta_constraints( bool const setting );
+
+	/// @brief Get citation information for the AbinitioRelaxApplication.
+	/// @details Includes trRosetta information if this is set.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & citation_list ) const;
 
 private:
 	/// @brief create score-functions for centroid and fullatom level
@@ -245,6 +260,14 @@ private:
 
 	// checkpoints for close_loop
 	checkpoint::CheckPointer abrelax_checkpoints_;
+
+	/// @brief Are we adding trRosetta constraints?
+	bool use_trRosetta_constraints_ = false;
+
+#ifdef USE_TENSORFLOW
+	/// @brief A constraint generator for trRosetta constraints.
+	protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorOP trRosetta_cst_generator_;
+#endif
 
 };
 

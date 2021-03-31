@@ -43,6 +43,9 @@
 #include <protocols/frag_picker/nonlocal/NonlocalFragsMain.hh>
 #include <protocols/star/StarAbinitioMain.hh>
 
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+
 #ifdef BOINC
 #include <protocols/boinc/boinc.hh>
 #include <devel/init.hh>
@@ -210,9 +213,11 @@ main( int argc, char * argv [] )
 		// RUN PROTOCOL
 		// catch *any* exception.
 		try{
+			basic::citation_manager::CitationCollectionList citations;
 			if ( option[ run::protocol ]() == "abrelax" ) {
 				protocols::abinitio::AbrelaxApplication abrelax;
 				abrelax.run();
+				abrelax.provide_citation_info(citations); //After run since settings are set in run() call.
 			} else if ( option[run::protocol]() == "simple_cycpep_predict" ) {
 				protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication peppredict;
 				peppredict.run();
@@ -243,7 +248,7 @@ main( int argc, char * argv [] )
 			} else if ( option[ run::protocol ]() == "flxbb" ) {
 				protocols::flxbb::FlxbbDesign_main();
 			} else if ( option[ run::protocol ]() == "jd2_scripting" ) {
-				protocols::moves::MoverOP mover( new DummyMover );
+				protocols::moves::MoverOP mover( utility::pointer::make_shared< DummyMover >() );
 				option[ jd2::dd_parser ].value( true ); // This option MUST be set true if we're using rosetta_scripts.
 				// To avoid accidental crashes, we'll do so programatically
 				protocols::jd2::BOINCJobDistributor::get_instance()->go( mover );
@@ -259,6 +264,9 @@ main( int argc, char * argv [] )
 				);
 				return 0; // makes compiler happy
 			}
+			basic::citation_manager::CitationManager * cm = basic::citation_manager::CitationManager::get_instance();
+			cm->add_citations( citations );
+			cm->write_all_citations_and_unpublished_author_info();
 			//---code to do a in spot score cut necessary for running centroid abinitio through boinc
 #ifdef BOINC
 	double runtime = protocols::boinc::Boinc::get_boinc_wu_cpu_time();
