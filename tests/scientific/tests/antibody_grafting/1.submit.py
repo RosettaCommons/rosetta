@@ -59,7 +59,7 @@ targets = targets[:6] if debug else targets
 # this is usually done by the grafting executable, but when multiple
 # processes are run there is a bit of a collision, so let's unzip now
 cwd = os.getcwd()
-os.chdir(f'{rosetta_dir}/../tools/antibody/antibody_database/')
+os.chdir(f'{rosetta_dir}/tools/antibody/antibody_database/')
 for f in os.listdir("./"):
     # only extract if it is a bz2 and an unzipped version is not present
     if f.endswith('.bz2') and not os.path.isfile(f[:-4]):
