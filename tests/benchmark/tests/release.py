@@ -12,7 +12,7 @@
 ## @brief  Rosetta and PyRosetta release scripts
 ## @author Sergey Lyskov
 
-import os, os.path, json, shutil, tarfile, distutils.dir_util, datetime
+import os, os.path, json, shutil, tarfile, distutils.dir_util, datetime, re as re_module
 import codecs
 
 import imp
@@ -79,7 +79,25 @@ def release(name, package_name, package_dir, working_dir, platform, config, rele
         files.sort(key=lambda f: os.path.getmtime(release_path+'/'+f))
         for f in files[:-_number_of_archive_files_to_keep_]: os.remove(release_path+'/'+f)
         if files:
-            with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=files[-1]))
+            package_file = files[-1]
+
+            with open(release_path+'/'+_latest_html_, 'w') as h: h.write(download_template.format(distr=name, link=package_file))
+
+            htaccess_file_path = f'{release_path}/.htaccess'
+
+            if os.path.isfile(htaccess_file_path):
+                with open(htaccess_file_path) as f: htaccess = f.read()
+            else:
+                htaccess = ''
+
+            redirect_start = 'RedirectMatch 302 (.*).latest$'
+            redirect_line = redirect_start + ' $1' + package_file
+            htaccess = re_module.sub(re_module.escape(redirect_start) + '(.*)', redirect_line, htaccess)
+            print(f'htaccess: {htaccess}')
+
+            if redirect_line not in htaccess: htaccess += '\n' + redirect_line + '\n'
+
+            with open(htaccess_file_path, 'w') as f: f.write(htaccess)
 
 
     # Creating git repository
@@ -941,6 +959,37 @@ def ui_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verb
     return results
 
 
+def self_release(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    ''' self, - do a minimal release procedure to perform a self-test of release system
+    '''
+    TR = Tracer(True)
+    TR('Running self_release test: at working_dir={working_dir!r} with rosetta_dir={rosetta_dir}, platform={platform}, jobs={config[cpu_count]}, memory={config[memory]}GB, hpc_driver={hpc_driver}...'.format( **vars() ) )
+
+    platform_suffix = platform_to_pretty_string(platform)
+
+    release_name = 'self.{platform}.python-{python_version}'.format(platform='.'.join([platform['os']]), python_version=platform['python'][:3].replace('.', '') )
+
+    package_dir = f'{working_dir}/self'
+    release_whl  = f'{working_dir}/self.whl'
+
+    os.makedirs(package_dir)
+    for i in range(8):
+        with open(f'{package_dir}/{i}', 'w') as f: f.write(f'i={i}\n')
+
+    with open(release_whl, 'w') as f: f.write('dummy')
+
+    release('self', release_name, package_dir, working_dir, platform, config, release_as_git_repository = False)
+
+    release('self-wheel', 'self.whl', package_dir=None, working_dir=working_dir, platform=platform, config=config, release_as_git_repository=False, file=release_whl, use_rosetta_versioning=False)
+
+    res_code = _S_passed_
+    results = {_StateKey_ : res_code,  _ResultsKey_ : {},  _LogKey_ : 'Done!' }
+    with open(working_dir+'/output.json', 'w') as f: json.dump({_ResultsKey_:results[_ResultsKey_], _StateKey_:results[_StateKey_]}, f, sort_keys=True, indent=2)  # makeing sure that results could be serialize in to json, but ommiting logs because they could take too much space
+
+    return results
+
+
+
 
 def py_rosetta4_conda_release(*args, **kwargs): return native_libc_py_rosetta4_conda_release(*args, **kwargs)
 #def py_rosetta4_conda_release(*args, **kwargs): return conda_libc_py_rosetta4_conda_release(*args, **kwargs)
@@ -970,5 +1019,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
     elif test =='PyRosetta.documentation':  return py_rosetta4_documentaion('MinSizeRel', rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     elif test =='ui': return ui_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+
+    elif test =='self': return self_release(rosetta_dir, working_dir, platform, config=config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
 
     else: raise BenchmarkError('Unknow release test: {}!'.format(test))
