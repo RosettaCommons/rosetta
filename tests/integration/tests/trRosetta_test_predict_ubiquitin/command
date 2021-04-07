@@ -36,7 +36,8 @@ cd %(workdir)s
 
 test "${PIPESTATUS[0]}" == '0' && exit 1 || true  # Confirm that a suitable error was raised.
 
-sed -i '/BACKTRACE:/,$d' log_should_contain_error
+sed '/BACKTRACE:/,$d' log_should_contain_error > temp.txt
+mv temp.txt log_should_contain_error
 rm ROSETTA_CRASH.log
 
 sleep 10 #To avoid short test errors

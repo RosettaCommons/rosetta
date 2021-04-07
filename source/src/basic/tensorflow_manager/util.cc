@@ -47,7 +47,7 @@ get_tensorflow_compilation_instructions(
 		"\tLinux, Windows:\n\t\tLIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib\n\t\tLD_LIBRARY_PATH=$LD_LIBRARY_PATH:~/mydir/lib\n"
 		"\tMacOS:\n\t\tLIBRARY_PATH=$LIBRARY_PATH:~/mydir/lib\n\t\tDYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:~/mydir/lib\n\n"
 		"3.  Edit your user.settings file (Rosetta/main/source/tools/build/user.settings), and uncomment (i.e. remove the "
-		"octothorpe from the start of) the following lines:\n"
+		"octothorp from the start of) the following lines:\n"
 		"\timport os\n"
 		"\t\t'program_path'  : os.environ['PATH'].split(':'),\n"
 		"\t\t'ENV' : os.environ,\n\n"
