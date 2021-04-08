@@ -30,7 +30,7 @@ cd %(workdir)s
 
 [ -x %(bin)s/rosetta_scripts.%(binext)s ] || exit 1
 
-%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST -info trRosettaProtocol \
+%(bin)s/rosetta_scripts.%(binext)s %(additional_flags)s -database %(database)s -testing:INTEGRATION_TEST -info trRosettaProtocol 2>&1 \
     | egrep -vf ../../ignore_list \
     >info.log 
 
