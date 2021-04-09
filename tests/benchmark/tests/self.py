@@ -120,7 +120,7 @@ def run_python_test(rosetta_dir, working_dir, platform, config):
     if platform['python'][0] == '2': pass
     else:
 
-        if platform['os'] == 'mac' and int( platform['python'].partition('.')[2] ) > 6 :
+        if platform['os'] == 'mac' and int( platform['python'].split('.')[1] ) > 6 :
             # SSL certificate test
             import urllib.request; urllib.request.urlopen('https://benchmark.graylab.jhu.edu')
 
@@ -134,7 +134,7 @@ def run_python_test(rosetta_dir, working_dir, platform, config):
                 'import colr, dice, xdice, pdp11games',
             ]
 
-            if platform['os'] == 'mac' and int( platform['python'].partition('.')[2] ) > 6 :
+            if platform['os'] == 'mac' and int( platform['python'].split('.')[1] ) > 6 :
                 # SSL certificate test
                 commands.append('import urllib.request; urllib.request.urlopen("https://benchmark.graylab.jhu.edu/queue")')
 

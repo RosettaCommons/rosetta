@@ -535,10 +535,14 @@ def install_llvm_tool(name, source_location, platform, config, clean=True):
 
 
 def get_python_include_and_lib(python):
-    ''' calculate python include dir and lib dir from given python executable executable
+    ''' calculate python include dir and lib dir from given python executable path
     '''
+    #python = os.path.realpath(python)
     python_bin_dir = python.rpartition('/')[0]
     python_config = f'{python} {python}-config' if python.endswith('2.7') else f'{python}-config'
+
+    #if not os.path.isfile(python_config): python_config = python_bin_dir + '/python-config'
+
     info = execute('Getting python configuration info...', f'unset __PYVENV_LAUNCHER__ && cd {python_bin_dir} && PATH=.:$PATH && {python_config} --prefix --includes', return_='output').replace('\r', '').split('\n')  # Python-3 only: --abiflags
     python_prefix = info[0]
     python_include_dir = info[1].split()[0][len('-I'):]
@@ -591,6 +595,22 @@ def local_python_install(platform, config):
     compiler, cpp_compiler = ('clang', 'clang++') if platform['os'] == 'mac' else ('gcc', 'g++')  # disregarding platform compiler setting and instead use default compiler for platform
 
     python_version = platform.get('python', '3.6')
+
+    if python_version.endswith('.s'):
+        assert python_version == f'{sys.version_info.major}.{sys.version_info.minor}.s'
+        #root = executable.rpartition('/bin/python')[0]
+        h = hashlib.md5(); h.update( (sys.executable + sys.version).encode('utf-8', errors='backslashreplace') ); hash = h.hexdigest()
+        return NT(
+            python = sys.executable,
+            root = None,
+            python_include_dir = None,
+            python_lib_dir = None,
+            version = python_version,
+            url = None,
+            platform = platform,
+            config = config,
+            hash = hash,
+        )
 
     # deprecated, no longer needed
     # python_version = {'python2'   : '2.7',
@@ -699,15 +719,15 @@ def local_python_install(platform, config):
     il = get_python_include_and_lib(executable)
 
     return NT(
-        python=executable,
-        root=root,
-        python_include_dir=il.python_include_dir,
-        python_lib_dir=il.python_lib_dir,
-        version=python_version,
-        url=url,
-        platform=platform,
-        config=config,
-        hash=hash,
+        python = executable,
+        root = root,
+        python_include_dir = il.python_include_dir,
+        python_lib_dir = il.python_lib_dir,
+        version = python_version,
+        url = url,
+        platform = platform,
+        config = config,
+        hash = hash,
     )
 
 

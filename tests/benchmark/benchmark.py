@@ -336,7 +336,8 @@ def main(args):
 
     parser.add_argument('--compiler', default=Platform['compiler'], help="Compiler to use")
 
-    parser.add_argument('--python', default=('3.9' if Platform['os'] == 'mac' else '3.6'), help="Python interpreter to use")
+    #parser.add_argument('--python', default=('3.9' if Platform['os'] == 'mac' else '3.6'), help="Python interpreter to use")
+    parser.add_argument('--python', default=f'{sys.version_info.major}.{sys.version_info.minor}.s', help="Specify version of Python interpreter to use, for example '3.9'. If '.s' added to end of version string then use the same interpreter that was used to start this script. Default: '?.?.s'")
 
     parser.add_argument("--extras", default='', help="Specify scons extras separated by ',': like --extras=mpi,static" )
 
