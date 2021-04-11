@@ -25,6 +25,7 @@
 #include <utility/vector0.hh>
 
 #include <cstring> //memcpy
+#include <sstream> //ostringstream
 
 namespace basic {
 namespace tensorflow_manager {
@@ -286,15 +287,30 @@ RosettaTensorflowTensorContainer< T >::combine_tensors(
 	}
 
 #ifndef NDEBUG
-	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
-		platform::Size const offset = (t-1) * n_elements_per_tensor;
+	{
+		bool failed(false);
+		std::ostringstream errormsgs;
+		for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+			//Note: this loop is expensive, but the cost is only incurred in
+			//debug builds.  This check is skipped in release builds. --VKM
+			platform::Size const offset = (t-1) * n_elements_per_tensor;
 
-		//We want to check that all of the values are what they should be
-		//This is really messy when the dimension count is unknown,
-		// so we're just going to treat each tensor as if it were 1D
-		//This should work as of March 2020
-		for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
-			debug_assert( tensor_vector[ t ]( element ) == combined_tensor( offset + element ) );
+			//We want to check that all of the values are what they should be
+			//This is really messy when the dimension count is unknown,
+			//so we're just going to treat each tensor as if it were 1D
+			//This should work as of March 2020.
+			//VKM: Revisited April 2021: this should still work, though debugging
+			//output is now more verbose.
+			for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
+				if( tensor_vector[ t ]( element ) != combined_tensor( offset + element ) ) {
+					errormsgs << "MISMATCH!!!\tOriginal[" << t << "](" << element << "):\t" << tensor_vector[t](element) << "\t";
+					errormsgs << "Combined(" << offset << "+" << element << "):\t" << combined_tensor(offset + element) << std::endl;
+					failed = true;
+				}
+			}
+		}
+		if(failed) {
+			utility_exit_with_message( errormsgs.str() + "\n\n" + "Error in RosettaTensorflowTensorContainer< T >::combine_tensors(): Failed to copy tensor properly!  See error messages above." );
 		}
 	}
 #endif
@@ -321,15 +337,30 @@ RosettaTensorflowTensorContainer< T >::split_combined_tensors(
 	}
 
 #ifndef NDEBUG
-	for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
-		platform::Size const offset = (t-1) * n_elements_per_tensor;
+	{
+		bool failed(false);
+		std::ostringstream errormsgs;
+		for( platform::Size t = 1; t <= tensor_vector.size(); ++t ){
+			//Note: this loop is expensive, but the cost is only incurred in
+			//debug builds.  This check is skipped in release builds. --VKM
+			platform::Size const offset = (t-1) * n_elements_per_tensor;
 
-		//We want to check that all of the values are what they shoudl be
-		//This is really messy when the dimension count is unknown,
-		// so we're just going to treat each tensor as if it were 1D
-		//This should work as of March 2020
-		for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
-			debug_assert( tensor_vector[ t ]( element ) == combined_tensors( offset + element ) );
+			//We want to check that all of the values are what they should be
+			//This is really messy when the dimension count is unknown,
+			//so we're just going to treat each tensor as if it were 1D
+			//This should work as of March 2020.
+			//VKM: Revisited April 2021: this should still work, though debugging
+			//output is now more verbose.
+			for( platform::Size element = 1; element <= n_elements_per_tensor; ++element ){
+				if( tensor_vector[ t ]( element ) != combined_tensors( offset + element ) ) {
+					errormsgs << "MISMATCH!!!\tcombined(" << offset << "+" << element << "):\t" << combined_tensors( offset + element ) << "\t";
+					errormsgs << "split[" << t << "](" << element << "):\t" << tensor_vector[ t ]( element ) << std::endl;
+					failed = true;
+				}
+			}
+		}
+		if(failed) {
+			utility_exit_with_message( errormsgs.str() + "\n\n" + "Error in RosettaTensorflowTensorContainer< T >::split_combined_tensors(): Failed to split tensor properly!  See error messages above." );
 		}
 	}
 #endif
