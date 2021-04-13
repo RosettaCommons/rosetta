@@ -44,6 +44,12 @@ o.write( "pdb\tresnum\tmut\tAA\tddGexp\tddGpred\n" )
 # go through targets and get all data
 for t in targets:
 	
+	# remove low and last pdbs as they're not needed
+	low = f'{working_dir}/output/{t}/{t}_*low.pdb'
+	last = f'{working_dir}/output/{t}/{t}_*last.pdb'
+	os.system( "rm " + low )
+	os.system( "rm " + last )
+	
 	ddg_dict = {}
 	ddg_pred = []
 	

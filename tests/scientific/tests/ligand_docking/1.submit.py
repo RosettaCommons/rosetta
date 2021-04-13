@@ -28,7 +28,8 @@ working_dir = config['working_dir']
 hpc_driver = benchmark.hpc_driver()
 extension  = benchmark.calculate_extension()
 
-sfxns = ['ligand', 'talaris', 'ref2015', 'betanov16']
+#sfxns = ['ligand', 'talaris', 'ref2015', 'betanov16']
+sfxns = ['ligand', 'ref2015']
 for sfxn in sfxns:
     command_line = '''
     @ {rosetta_dir}/tests/scientific/data/{testname}/flags_{sfxn}
@@ -43,13 +44,15 @@ for sfxn in sfxns:
     -ex1
     -ex2
     -ignore_zero_occupancy false
-    -out:pdb_gz
     -overwrite
     -nstruct {nstruct}
     '''.replace('\n', ' ').replace('  ', ' ')
 
+#    -out:pdb_gz
+
+
     nstruct = 1 if debug else 200
-    targets = '3FKL 4QMQ 2VTS 4MCC 3U5K 4BQH 5D7C 3R5N 5AOJ 3K5V 4CHN 5FQV 5D7P 4CJF 5AM0 4A9N 4XT2 4CCU 4GB2 3ZXZ 3PE2 1EYQ 4UWC 5CTU 4GV0 3FLY 3BLL 2HK5 4F1L 4FA2 4J93 3P0Q 4W7T 1ZZL 3TLL 4KTN 2ZC9 4FPJ 4WUA 3T96 3UWK 4I4F 2ZDT 2WXG 4UAL 3WYP 3ZO4 4ZBQ 2BR1 3VRI'.split()
+    targets = '1EYQ 1ZZL 2BR1 2HK5 2VTS 2WXG 2ZC9 2ZDT 3BLL 3FKL 3FLY 3K5V 3P0Q 3PE2 3R5N 3T96 3TLL 3U5K 3UWK 3VRI 3WYP 3ZO4 3ZXZ 4A9N 4BQH 4CCU 4CHN 4CJF 4F1L 4FA2 4FPJ 4GB2 4GV0 4I4F 4J93 4KTN 4MCC 4QMQ 4UAL 4UWC 4W7T 4WUA 4XT2 4ZBQ 5AM0 5AOJ 5CTU 5D7C 5D7P 5FQV'.split()
     targets = targets[:2] if debug else targets
 
     hpc_logs = f'{working_dir}/hpc-logs'

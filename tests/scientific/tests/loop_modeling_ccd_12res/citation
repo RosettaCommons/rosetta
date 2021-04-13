@@ -1,3 +1,18 @@
-#==> EDIT HERE
-1. Mandell, DJ, Coutsias, EA, Kortemme, T. Sub-angstrom accuracy in protein loop reconstruction by robotics-inspired conformational sampling. 2009.
+Benchmark sets
+1. Wang, C., Bradley, P. & Baker, D. Protein-protein docking with backbone flexibility. J Mol Biol 373, 503–19 (2007).
+2. Sellers BD, Zhu K, Zhao S, Friesner RA, Jacobson MP. Toward better refinement of comparative models: predicting loops in inexact environments. Proteins. 2008 Aug 15;72(3):959-71. doi: 10.1002/prot.21990. PMID: 18300241; PMCID: PMC2764870.
+
+CCD / benchmark sets
+3. Canutescu, A. A. & Dunbrack, R. L. Cyclic coordinate descent: A robotics algorithm for protein loop closure. Protein Sci. 12, 963–72 (2003).
+4. Wang, C., Bradley, P. & Baker, D. Protein-protein docking with backbone flexibility. J Mol Biol 373, 503–19 (2007).
+
+KIC
+5. Mandell, DJ, Coutsias, EA, Kortemme, T. Sub-angstrom accuracy in protein loop reconstruction by robotics-inspired conformational sampling. 2009.
 Nat Methods 6(8):551-2. doi: 10.1038/nmeth0809-551.
+
+KIC with fragments
+6. Fernandez, A. J., Daniel, E. J. P., Mahajan, S. P., Gray, J. J., Gerken, T. A., Tabak, L. A. & Samara, N. L. The structure of the colorectal cancer-associated enzyme GalNAc-T12 reveals how nonconserved residues dictate its function. Proc. Natl. Acad. Sci. U. S. A. 116, 20404–20410 (2019).
+
+NGK
+7. Kapp, G. T., Liu, S., Stein, A., Wong, D. T., Remenyi, A., Yeh, B. J., Fraser, J. S., Taunton, J., Lim, W. A. & Kortemme, T. Control of protein signaling using a computationally designed GTPase/GEF orthogonal pair. Proc. Natl. Acad. Sci. 109, 5277–5282 (2012).
+8. Stein, A. & Kortemme, T. Improvements to robotics-inspired conformational sampling in rosetta. PLoS One 8, e63090 (2013).

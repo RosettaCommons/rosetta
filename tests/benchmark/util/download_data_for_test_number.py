@@ -20,7 +20,7 @@ from argparse import ArgumentParser
 from configparser import ConfigParser
 
 import requests
-#import pdfkit
+import pdfkit
 #import weasyprint
 #from weasyprint import HTML
 from datetime import datetime
@@ -77,7 +77,7 @@ def get_test_ids():
 	relevant_name = []
 
 	# if testID given
-	if (Options.id != "None"):
+	if (Options.id != None):
 		testid = [ Options.id ]
 		name = [ "undefined" ]
 
@@ -85,7 +85,21 @@ def get_test_ids():
 	
 		# if test not already in list and is not debug test
 		# OTHER FILTERING CRITERIA: ADD HERE
-		if name[i] not in relevant_name and not name[i].endswith("debug"):
+
+		if name[i] not in relevant_name and not name[i].endswith("debug") and teststatus[i] == "passed":
+
+			# for log files only
+			if bool(Options.log) == True:
+				if Options.id == testid[i]:
+					relevant_ids.append( testid[i])
+					relevant_name.append( name[i] )
+				elif "sb_" not in name[i]:
+					relevant_ids.append( testid[i])
+					relevant_name.append( name[i] )
+				else:
+					continue
+					
+			# for any files
 			if Options.id == testid[i]:
 				relevant_ids.append( testid[i])
 				relevant_name.append( name[i] )
@@ -95,7 +109,6 @@ def get_test_ids():
 			if (Options.sb == "False" and "sb_" not in name[i]):
 				relevant_ids.append( testid[i])
 				relevant_name.append( name[i] )
-				
 
 	# turn lists into list of dicts
 	tests = []
@@ -115,6 +128,11 @@ def get_test_ids():
 
 ################################################
 def download_test_files(prefix):
+
+	# for PDFkit to work!!!
+	wkhtmltopdf_options = {
+	    'enable-local-file-access': None
+	}
 
 #	s = get_url('/summaries/master').json()
 
@@ -176,59 +194,71 @@ def download_test_files(prefix):
 
 			# read file list
 			for fn in files:
-				
-				# download each of those files
-			
-				if "benchmark" in fn:
-					continue
-				
-				if "log" in fn:
-					continue
 
-				if "data" in fn:
-					continue
-				
-				if fn.endswith(".pdb"):
-					continue
-
-				if fn.endswith(".pdb.gz"):
-					continue
-
-				if fn.endswith(".out"):
-					continue
-
-				if fn.endswith(".in_progress"):
-					continue
-
-				if fn.endswith(".condor"):
-					continue
-
-				if fn.endswith("index.html") or fn.endswith(".png"):
+				if bool(Options.log) == True:
+					if fn.endswith("index.html") or fn.endswith(".png"):
+						cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+						print (cmd)
+						os.system( cmd )
 					
-					print ("===", fn, flush=True)
+						if fn.endswith("index.html"):
+							summary = f'{path}/' + fn.split("/")[-1]
+							outfile = 'log_' + test["name"] + '.pdf'
+							pdfkit.from_file( summary , outfile, options = wkhtmltopdf_options)
+					
+				else:
 				
-#				cmd = f'cd {path} && wget --user {user} --password {password} --recursive --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+					# download each of those files
+					if "benchmark" in fn:
+						continue
+				
+					if "log" in fn:
+						continue
 
-#				if Options.pdbid.upper() in fn:
-				cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
-				print (cmd)
-				os.system( cmd )
+					if "data" in fn:
+						continue
+				
+					if fn.endswith(".pdb"):
+						continue
 
-				# to PDF files, use weasyprint outside of python
-				# > weasyprint index.html out.pdf
-#				if fn.endswith("index.html"):
-#					print (file)
-#					summary = f'{path}/' + f.split("/")[-1]
-#					outfile = 'log_' + test["name"] + '.pdf'
-#					os.system( "weasyprint index.html " + outfile )
-#					pdfkit.from_file(summary, outfile)
-#					HTML( summary ).write_pdf( outfile )
+					if fn.endswith(".pdb.gz"):
+						continue
+
+					if fn.endswith(".out"):
+						continue
+
+					if fn.endswith(".in_progress"):
+						continue
+
+					if fn.endswith(".condor"):
+						continue
+
+					if fn.endswith("index.html") or fn.endswith(".png"):
+					
+						print ("===", fn, flush=True)
+				
+	#				cmd = f'cd {path} && wget --user {user} --password {password} --recursive --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+
+	#				if Options.pdbid.upper() in fn:
+					cmd = f'cd {path} && wget --user {user} --password {password} --directory-prefix={path} --no-parent --no-check-certificate --cut-dirs=5 -nH {url.scheme}://{url.hostname}/' + fn
+					print (cmd)
+					os.system( cmd )
+
+					# to PDF files, use weasyprint outside of python
+					# > weasyprint index.html out.pdf
+					if fn.endswith("index.html"):
+						print (fn)
+						summary = f'{path}/' + f.split("/")[-1]
+						outfile = 'log_' + test["name"] + '.pdf'
+	#					os.system( "weasyprint index.html " + outfile )
+						pdfkit.from_file(summary, outfile, options = wkhtmltopdf_options)
+	#					HTML( summary ).write_pdf( outfile )
 
 			# write revisions file
 			with open( path + '/revision', 'w' ) as fr:
 				if ("revision" in test):
 					fr.write( test["revision"] + "\n" )
-				fr.write( "test_id:" + test["test_id"] + "\n" )
+				fr.write( "test_id:" + str(test["test_id"]) + "\n" )
 			fr.close()
 			
 			# add revision and test number to end of readme
@@ -249,6 +279,8 @@ def main(args) -> None:
 	parser.add_argument("--id", default=None, action="store", help="Test id to get files for. This is the last number in the URL https://b3.graylab.jhu.edu/test/555956 that you can get from the Benchmark server.")
 	parser.add_argument("--pdbid", default=None, action="store", help="PDBID to get files for.")
 	parser.add_argument("--sb", default=False, action="store", help="Download scorefunction comparison tests, yes or no. They start with sb_, therefore the flag.")
+	parser.add_argument("--log", default=False, action="store", help="Download only index.html's and figure files to create logs. Skip sb_ tests but take all others except if --id is given.")
+
 	
 	global Options
 	Options = parser.parse_args()

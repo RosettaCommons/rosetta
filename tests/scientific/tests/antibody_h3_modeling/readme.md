@@ -15,8 +15,8 @@ Briefly, this protocol has three stages (1) de novo CDR-H3 loop modeling, (2) VH
 ## PERFORMANCE METRICS
 To consider a run successful, for antibody_h3 run, we would like to produce a low energy, low rmsd model. Thus we need to assess two measures: (1) minimum rmsd achieved (do we sample a native like state) and (2) discrimination (do low rmsd models have low scores) We use discrimintaiton (typically lower is better, ideally negative values) as defined by Conway et al. <a href=https://www.ncbi.nlm.nih.gov/pubmed/24265211> Prot. Sci 2014</a>, although our rmsd bins have adjusted spacing at min(rmsd) + (0, 0.5, 1, 1.5, 2, 4). We derive cutoffs for these metric from bootstrap resampling previous simulations (see below). The discrimnation or minimum rmsd test for each antibody is "passed" if the value is lower than that observed in the 99th percentile of our resampled simulations.
 
-<img src="h3_discrim.png" width="600" height="400">
-<img src="h3_min_rmsd.png" width="600" height="400">
+<img src="h3_discrim.png" style="max-width: 75%">
+<img src="h3_min_rmsd.png" style="max-width: 75%">
 
 The exception is 3m8o whose discrimination score cutoff was adjusted after changes to the antibody code by Jeliazko in revision 61279 created a permanent scientific failure for this target. The cutoff was adjusted to 3.5 after looking at the discrimination score in the 12 consecutive failures of this test. 
 

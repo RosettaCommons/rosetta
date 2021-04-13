@@ -43,10 +43,11 @@ for sfxn in sfxns:
     -ex1
     -ex2
     -ignore_zero_occupancy false
-    -out:pdb_gz
     -overwrite
     -nstruct {nstruct}
     '''.replace('\n', ' ').replace('  ', ' ')
+
+#    -out:pdb_gz
 
     nstruct = 1 if debug else 1000
     targets = '3FKL 4QMQ 2VTS 4MCC 3U5K 4BQH 5D7C 3R5N 5AOJ 3K5V 4CHN 5FQV 5D7P 4CJF 5AM0 4A9N 4XT2 4CCU 4GB2 3ZXZ 3PE2 1EYQ 4UWC 5CTU 4GV0 3FLY 3BLL 2HK5 4F1L 4FA2 4J93 3P0Q 4W7T 1ZZL 3TLL 4KTN 2ZC9 4FPJ 4WUA 3T96 3UWK 4I4F 2ZDT 2WXG 4UAL 3WYP 3ZO4 4ZBQ 2BR1 3VRI'.split()

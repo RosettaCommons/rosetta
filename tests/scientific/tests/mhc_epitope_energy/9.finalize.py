@@ -49,8 +49,8 @@ _index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
 #List of results
 for result in subtest_dict.keys():
     _index_html_template_ += "</p>\n<h4>" + result + "</h4>\n"
-    _index_html_template_ += '<img src="plot_results_' + result + '.png" alt="alternative text" style="max-width: 100%">\n'
-
+    _index_html_template_ += '<img src="plot_results_' + result + '_1.png" alt="alternative text" style="max-width: 80%">\n'
+    _index_html_template_ += '<img src="plot_results_' + result + '_2.png" alt="alternative text" style="max-width: 80%">\n'
 
 # add text from readme
 for l in readme:

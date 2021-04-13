@@ -5,7 +5,8 @@ Vikram K. Mulligan (vmulligan@flatironinstitute.org), Center for Computational B
 
 When designing peptides to bind to targets, the flexibility of the peptide is a major impediment to binding.  This is because there is an entropic cost associated with ordering a disordered molecule on binding.  A rigidly-structured peptide that is pre-organized in the binding-competent conformation has a lower entropic cost and can bind more tightly.  When interactions between peptide and target have been optimized with Rosetta, peptide rigidity becomes the major determininant of binding affinity.  Rosetta predictions of peptide folding propensity, carried out with the simple\_cycpep\_predict application, correlate strongly with experimentally-measured binding affinity, at least with the ref2015 energy function.  This correlation has improved from talaris2013 through talaris2014 to ref2015 due to improved training of the energy function against physical properties of fluids and against fluid MD  simulation (see image below).  This test exists to ensure that this correlation between prediction and experiment is maintained with future versions of the energy function and with future releases of Rosetta.
 
-![Improvements from talaris2013 through ref2015](inputs/Mulligan_2020_SuppFig_comparing_sfxns.png)
+Improvements from talaris2013 through ref2015:
+![Improvements from talaris2013 through ref2015](Mulligan_2020_SuppFig_comparing_sfxns.png)
 
 #### What does the benchmark test and why?
 

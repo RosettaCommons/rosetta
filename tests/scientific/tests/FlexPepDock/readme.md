@@ -43,7 +43,7 @@ Running this benchmark takes approximately 70 CPU hours.
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
 
-A passing test means that at least 8 out of the top10-scoring points are below the interface RMSD cutoff. The cutoff was determined as the maximum of the top10-scoring points in revision 61451 from 2020-Oct-12. The interface RMSD is represented by the rmsBB_if tag in the score file. 
+A passing test means that at least 5 out of the top10-scoring points are below the interface RMSD cutoff of 2A, the same as in the paper (as per Ora's request). The interface RMSD is represented by the rmsBB_if tag in the score file. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

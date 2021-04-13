@@ -5,8 +5,8 @@ Date test first added to Scientific Benchmark: February 2019
 
 ## PURPOSE OF THE TEST
 #### What does the benchmark test and why?
-Evolutionary sequence alignments for seven naturally occurring protein families that each bind a specific cofactor the Cofactor binding site dataset, which is made up of sequence profiles resulting from natural evolution evolutionary sequence profiles of cofactor-binding protein families has the advantage of clearly identifying consensus binding positions. 
 
+This benchmark describes the ability of the Rosetta protocol CoupledMoves to recapitulate sequence profiles of naturally evolved proteins. The benchmark set consists of evolutionary sequence alignments for seven naturally occurring protein families that each bind a specific cofactor. Using sequence profiles has the advantage of clearly identifying consensus binding positions. 
 
 ## BENCHMARK DATASET
 #### How many proteins are in the set?
@@ -24,7 +24,13 @@ This dataset that does not involve experimental characterization of binding affi
 #### Is there a publication that describes the protocol?
 #### How many CPU hours does this benchmark take approximately?
 
+Coupled Moves is a flexible backbone design method meant to be used for designing small-molecule binding sites, protein-protein interfaces, and protein-peptide binding sites. It handles ligands and waters. It was originally developed for designing enzyme active sites.
+
 The CoupledMoves protocol is described at <a href="https://www.rosettacommons.org/docs/wiki/coupled-moves">https://www.rosettacommons.org/docs/wiki/coupled-moves</a>.
+
+A publication describing the Coupled Moves is (Loshbaugh, A. L. & Kortemme, T. Comparison of Rosetta flexible-backbone computational protein design methods on binding interactions. Proteins Struct. Funct. Bioinforma. 88, 206–226 (2020))
+
+The test runs for about 170 CPU hours. 
 
 ## PERFORMANCE METRICS
 #### What are the performance metrics used and why were they chosen?
@@ -58,6 +64,6 @@ Sequence profiles in the cofactor dataset result from natural evolution, rather 
 More data, in the form of more natural ligand binding protein families, would improve this benchmark.
 
 ## REFERENCES
-[1] Loshbaugh, A. L. and Kortemme, T. Comparison of Rosetta flexible-backbone computational protein design methods on binding interactions. Manuscript in preparation. 2019.
+[1] Loshbaugh, A. L. & Kortemme, T. Comparison of Rosetta flexible-backbone computational protein design methods on binding interactions. Proteins Struct. Funct. Bioinforma. 88, 206–226 (2020)
 [2] Humphris, E.L. and T. Kortemme, Prediction of protein-protein interface sequence diversity using flexible backbone computational protein design. Structure, 2008. 16(12): p. 1777-88.
 [3] Ollikainen, N., de Jong, R. M., and Kortemme, T. Coupling protein side-chain and backbone flexibility improves the re-design of protein-ligand specificity. PLoS Comput Biol, 2015.

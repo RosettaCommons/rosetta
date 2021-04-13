@@ -21,7 +21,8 @@ from benchmark import *
 benchmark.load_variables()  # Python black magic: load all variables saved by previous script into globals
 config = benchmark.config()
 
-cutoff = 1.0 ## Due to change once we run things a couple of times.
+cutoff = {'ligand': 33, 'talaris':28, 'ref2015':29, 'betanov16':34}
+
 # read readme
 with open('readme.md') as f: readme = f.read().splitlines()
 
@@ -50,7 +51,13 @@ if len( scoring_failures ) > 0:
             _index_html_template_ += str(target) + "\t"
         _index_html_template_ += "<br>\n"
 _index_html_template_ += "</p>\n<h3>RESULTS</h3>\n"
-_index_html_template_ += '<img src="plot_results.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results1.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results2.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results3.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results4.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results5.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results6.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results7.png" alt="alternative text" style="max-width: 100%">\n'
 
 # add text from readme
 for l in readme:
@@ -70,17 +77,17 @@ for l in readme:
 _index_html_template_ += "</body></html>\n"
 
 ## Looking at worst performing score function to compare to cutoff value.
-scoring_failures_by_sfxn = []
+number_of_sfxn_failures = 0
 for sfxn in sfxns:
-    scoring_failures_by_sfxn.append(len(scoring_failures[sfxn]))
-for_cutoff = float(max(scoring_failures_by_sfxn)/len(targets))
+	if scoring_failures[sfxn] > cutoff[sfxn]:
+		number_of_sfxn_failures += 1
 
 # write the html
 def write_html( sampling_failures , scoring_failures ) :
     with open(f'{working_dir}/index.html', 'w') as f:
         f.write( _index_html_template_.format( sampling_failures ) )
 
-    if for_cutoff <= cutoff or config['debug']:
+    if number_of_sfxn_failures == 0 or config['debug']:
         return _S_passed_
     else:
         return _S_failed_

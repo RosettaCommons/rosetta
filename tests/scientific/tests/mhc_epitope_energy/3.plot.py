@@ -23,6 +23,7 @@ benchmark.load_variables()  # Python black magic: load all variables saved by pr
 config = benchmark.config()
 
 ###Distribution plot section
+# outfile, x-axis label, cutoffs dictionary
 plotlist = [
 	("plot_results_mhc_epitope.png", "mhc_epitope", cutoffs_mhc_epitope_dict),
 	("plot_results_delta_mhc_epitope.png", "delta_mhc_epitope", cutoffs_delta_mhc_epitope_dict)
@@ -31,7 +32,6 @@ plotlist = [
 for plot in plotlist:
 	# inputs are header labels from the scorefile to plot, for instance "total_score" and "rmsd"
 	# take these from plot
-	outfile = plot[0]
 	var_label = plot[1]
 
 	# get column numbers from labels, 1-indexed
@@ -39,47 +39,57 @@ for plot in plotlist:
 	
 	#number of subplots
 	ncols = 4
-	nrows = 1
-	if len( targets ) < 4:
-		ncols = len( targets )
-	else:
-		nrows = math.ceil( len( targets ) / 4 )
+	nrows = 7
 
 	# figure size
 	width = 7.5 * ncols
 	height = 6 * nrows
 
-	plt.rc("font", size=20)
-	plt.rcParams['figure.figsize'] = width, height #width, height
+	cnt = 1
+	nsubplot = 0
+	nfig = math.ceil( len(scorefiles)/28 )
+	# go through number of figures to make
+	while cnt < nfig:
 
-	# go through scorefiles
-	for i in range( 0, len( scorefiles ) ):
-		# read in score file
-		var = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + var_label + " | awk '{print $" + var_index + "}'" ).splitlines()
-		
-		# map all values to floats
-		var = list( map( float, var ) )
-		
-		# create subplot
-		plt.subplot( nrows, ncols, i+1 )
-		
-		# labels
-		plt.xlabel( var_label )
-		#plt.ylabel( y_label )
-		
-		# set title
-		plt.title( targets[i] )
+		plt.rc("font", size=20)
+		plt.rcParams['figure.figsize'] = width, height #width, height
 
-		# scatterplot of the data
-		plt.hist(var)
+		# go through scorefiles
+		for i in range( 0, len( scorefiles ) ):
+
+			nsubplot += 1
+			
+			# read in score file
+			var = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + var_label + " | awk '{print $" + var_index + "}'" ).splitlines()
 		
-		# add vertical line for cutoff
-		plt.axvline(x=float( plot[2].get(targets[i]) ), color='tab:orange', linestyle='-')
+			# map all values to floats
+			var = list( map( float, var ) )
 		
-	#save figure
-	plt.tight_layout()
-	plt.savefig( outfile )
-	plt.close()
+			# create subplot
+			plt.subplot( nrows, ncols, nsubplot )
+		
+			# labels
+			plt.xlabel( var_label )
+			#plt.ylabel( y_label )
+		
+			# set title
+			plt.title( targets[i] )
+
+			# scatterplot of the data
+			plt.hist(var)
+		
+			# add vertical line for cutoff
+			plt.axvline(x=float( plot[2].get(targets[i]) ), color='tab:orange', linestyle='-')
+		
+			#save figure
+			if i % 28 == 27 or i == len(scorefiles)-1:
+				outfile = plot[0].replace( ".png", "_" + str(cnt) + ".png" )
+				print (outfile)
+				plt.tight_layout()
+				plt.savefig(outfile)
+				plt.close()
+				cnt += 1
+				nsubplot = 0
 
 ###2D plot section
 plotlist = [ #(outfile, x_label, y_label, result_key)
@@ -94,7 +104,6 @@ plotlist = [ #(outfile, x_label, y_label, result_key)
 for plot in plotlist:
 	# inputs are header labels from the scorefile to plot, for instance "total_score" and "rmsd"
 	# take these from plot
-	outfile = plot[0]
 	x_label = plot[1]
 	y_label = plot[2]
 
@@ -109,61 +118,71 @@ for plot in plotlist:
 	
 	#number of subplots
 	ncols = 4
-	nrows = 1
-	if len( targets ) < 4:
-		ncols = len( targets )
-	else:
-		nrows = math.ceil( len( targets ) / 4 )
+	nrows = 7
 
 	# figure size
 	width = 7.5 * ncols
 	height = 6 * nrows
 
-	plt.rc("font", size=20)
-	plt.rcParams['figure.figsize'] = width, height #width, height
+	cnt = 1
+	nsubplot = 0
+	nfig = math.ceil( len(scorefiles)/28 )
+	# go through number of figures to make
+	while cnt < nfig:
 
-	# go through scorefiles
-	for i in range( 0, len( scorefiles ) ):
-		# read in score file
-		if x_label == "pct_drop_mhc":
-			mhc = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + mhc_index + "}'" ).splitlines()
-			mhc = list( map( float, mhc ) )
-			delta_mhc = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + delta_mhc_index + "}'" ).splitlines()
-			delta_mhc = list( map( float, delta_mhc ) )
+		plt.rc("font", size=20)
+		plt.rcParams['figure.figsize'] = width, height #width, height
+
+		# go through scorefiles
+		for i in range( 0, len( scorefiles ) ):
+
+			nsubplot += 1
+
+			# read in score file
+			if x_label == "pct_drop_mhc":
+				mhc = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + mhc_index + "}'" ).splitlines()
+				mhc = list( map( float, mhc ) )
+				delta_mhc = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + delta_mhc_index + "}'" ).splitlines()
+				delta_mhc = list( map( float, delta_mhc ) )
 			
-			x = []
-			for idx in range( 0, len(mhc) ):
-				x.append( 100 * (mhc[idx] - (mhc[idx] - delta_mhc[idx]) ) / (mhc[idx] - delta_mhc[idx]) )
+				x = []
+				for idx in range( 0, len(mhc) ):
+					x.append( 100 * (mhc[idx] - (mhc[idx] - delta_mhc[idx]) ) / (mhc[idx] - delta_mhc[idx]) )
 
-		else:
-			x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
-			x = list( map( float, x ) )
+			else:
+				x = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'" ).splitlines()
+				x = list( map( float, x ) )
 			
-		y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
-		y = list( map( float, y ) )
+			y = subprocess.getoutput( "grep -v SEQUENCE " + scorefiles[i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'" ).splitlines()
+			y = list( map( float, y ) )
 		
-		# create subplot
-		plt.subplot( nrows, ncols, i+1 )
+			# create subplot
+			plt.subplot( nrows, ncols, nsubplot )
 		
-		# x and y labels
-		plt.xlabel( x_label )
-		plt.ylabel( y_label )
+			# x and y labels
+			plt.xlabel( x_label )
+			plt.ylabel( y_label )
 		
-		# set title
-		plt.title( targets[i] )
+			# set title
+			plt.title( targets[i] )
 
-		# scatterplot of the data
-		plt.plot(x, y, 'ko')
+			# scatterplot of the data
+			plt.plot(x, y, 'ko')
 		
-		# add horizontal and vertical lines for cutoff
-		plt.axvline(x=float(results.get(targets[i]).get(plot[3])[1]), color='r', linestyle='-')
-		plt.axhline(y=float(results.get(targets[i]).get(plot[3])[2]), color='g', linestyle='-')
-		if plot[0] == "plot_results_delta_netcharge_vs_mhc_epitope.png":	#Add a line at -1*cutoff too for delta netcharge, since we look at the absolute value
-			plt.axhline(y=-float(results.get(targets[i]).get(plot[3])[2]), color='g', linestyle='-')
+			# add horizontal and vertical lines for cutoff
+			plt.axvline(x=float(results.get(targets[i]).get(plot[3])[1]), color='r', linestyle='-')
+			plt.axhline(y=float(results.get(targets[i]).get(plot[3])[2]), color='g', linestyle='-')
+			if plot[0] == "plot_results_delta_netcharge_vs_mhc_epitope.png":	#Add a line at -1*cutoff too for delta netcharge, since we look at the absolute value
+				plt.axhline(y=-float(results.get(targets[i]).get(plot[3])[2]), color='g', linestyle='-')
 		
-	#save figure
-	plt.tight_layout()
-	plt.savefig( outfile )
-	plt.close()
+			#save figure
+			if i % 28 == 27 or i == len(scorefiles)-1:
+				outfile = plot[0].replace( ".png", "_" + str(cnt) + ".png" )
+				print (outfile)
+				plt.tight_layout()
+				plt.savefig(outfile)
+				plt.close()
+				cnt += 1
+				nsubplot = 0
 
 benchmark.save_variables('debug targets nstruct working_dir testname results outfile cutoffs_mhc_epitope_dict cutoffs_delta_mhc_epitope_dict failures failures_dict')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

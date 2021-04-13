@@ -76,8 +76,8 @@ else:
 _index_html_template_ += "<h3>RESULTS SUMMARY</h3>\n<p>\n"
 
 # add image for results
-_index_html_template_ += 'Analysis of correlation of predicted folding propensity with experimentally-measured inhibition values (which should be linear):<br/>\n<img src="fitcurve.png" width="600" alt="Correlation of delta-G of folding (computed from the funnels above) with IC50 values (measured experimentally).  This should be roughly linear." style="max-width: 100%" /><br/><br/>\n'
-_index_html_template_ += 'Folding funnels:<br/>\n<img src="e_vs_rmsd_plots.png" width="800" alt="Energy landscapes computed for peptide to designed structure (left) or to lowest-energy structure sampled (right).  These should look funnel-shaped." style="max-width: 100%" /><br/><br/>\n'
+_index_html_template_ += 'Analysis of correlation of predicted folding propensity with experimentally-measured inhibition values (which should be linear):<br/>\n<img src="fitcurve.png" alt="Correlation of delta-G of folding (computed from the funnels above) with IC50 values (measured experimentally).  This should be roughly linear." style="max-width: 50%" /><br/><br/>\n'
+_index_html_template_ += 'Folding funnels:<br/>\n<img src="e_vs_rmsd_plots.png" alt="Energy landscapes computed for peptide to designed structure (left) or to lowest-energy structure sampled (right).  These should look funnel-shaped." style="max-width: 80%" style="max-height: 100%" /><br/><br/>\n'
 
 for i in range(len(suffices)) :
     suffix = suffices[i]
@@ -106,8 +106,8 @@ for l in readme:
 
     # correct the image
 
-    elif l == "![Improvements from talaris2013 through ref2015](inputs/Mulligan_2020_SuppFig_comparing_sfxns.png)" :
-        _index_html_template_ += '<img src="inputs/Mulligan_2020_SuppFig_comparing_sfxns.png" width="800" alt="Improvements from talaris2013 through ref2015." style="max-width: 100%" /><br/><br/>\n'
+    elif l == "![Improvements from talaris2013 through ref2015](Mulligan_2020_SuppFig_comparing_sfxns.png)" :
+        _index_html_template_ += '<img src="Mulligan_2020_SuppFig_comparing_sfxns.png" alt="Improvements from talaris2013 through ref2015." style="max-width: 100%" /><br/><br/>\n'
         
     # insert the actual text as a paragraph
     else:

@@ -8,7 +8,7 @@ This test assesses the stability of the FARFAR algorithm's performance. FARFAR s
 The benchmark set contains the 12 loop modeling problems from favorites.txt, a benchmark first established in Watkins et al., Science Advances 2018. The input files are ideal A-form RNA helices and fasta files; the FARFAR algorithm takes these input pieces of PDB structure and attempts to predict the remaining residues defined by the FASTA file; 'correctness' is defined as similarity to portions of crystal structures.
 
 ## PROTOCOL
-See Das et al., Nat. Methods 2010 for a description of the FARFAR protocol. The benchmark takes 6 hours on the test server (~120 CPU-hours).
+See (Das, R., Karanicolas, J. & Baker, D. Atomic accuracy in predicting and designing noncanonical RNA structure. Nat. Methods 7, 291–294 (2010)) for a description of the FARFAR protocol. The benchmark takes 6 hours on the test server (~120 CPU-hours).
 
 ## PERFORMANCE METRICS
 Benchmark performance is based on the minimum RMSD sampled and minimum energy sampled; each case has a separate threshold. Since sampling is limited for each test, cutoffs are determined conservatively through repeated runs. A superior measure, at least in theory, might be to compute pnear and compare it to some threshold value.

@@ -28,67 +28,75 @@ config = benchmark.config()
 # => it figures out the column numbers from there
 x_label = "ligand_rms_no_super_X"
 y_label = "interface_delta_X"
-outfile = "plot_results.png"
+#outfile = "plot_results.png"
 
 # number of subplots
 ncols = 4
-nrows = 1
-
-if len(scorefiles) < 4:
-    ncols = len(scorefiles)
-else:
-    nrows = math.ceil(len(scorefiles) / 4)
+nrows = 7
 
 # figure size
 width = 7.5 * ncols
 height = 6 * nrows
 
-plt.rc("font", size=20)
-plt.rcParams['figure.figsize'] = width, height  # width, height
+cnt = 1
+nsubplot = 0
+nfig = math.ceil( len(scorefiles)/28 )
+# go through number of figures to make
+while cnt < nfig:
 
-# go through scorefiles
+	plt.rc("font", size=20)
+	plt.rcParams['figure.figsize'] = width, height  # width, height
 
-for i in range(0, len(scorefiles)):
+	# go through scorefiles
+	for i in range(0, len(scorefiles)):
 
-    sfxn = str(scorefiles[i]).split('/')[-3]
-    target = str(scorefiles[i]).split('/')[-2]
+		nsubplot += 1
 
-    # get column numbers from labels, 1-indexed
-    x_index = str(subprocess.getoutput("grep " + x_label + " " + scorefiles[i]).split().index(x_label) + 1)
-    y_index = str(subprocess.getoutput("grep " + y_label + " " + scorefiles[i]).split().index(y_label) + 1)
+		sfxn = str(scorefiles[i]).split('/')[-3]
+		target = str(scorefiles[i]).split('/')[-2]
 
-    # read in score file
-    x = subprocess.getoutput("grep -v SEQUENCE " + scorefiles[
-        i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'").splitlines()
-    y = subprocess.getoutput("grep -v SEQUENCE " + scorefiles[
-        i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'").splitlines()
+		# get column numbers from labels, 1-indexed
+		x_index = str(subprocess.getoutput("grep " + x_label + " " + scorefiles[i]).split().index(x_label) + 1)
+		y_index = str(subprocess.getoutput("grep " + y_label + " " + scorefiles[i]).split().index(y_label) + 1)
 
-    # map all values to floats
-    x = list(map(float, x))
-    y = list(map(float, y))
+		# read in score file
+		x = subprocess.getoutput("grep -v SEQUENCE " + scorefiles[
+			i] + " | grep -v " + y_label + " | awk '{print $" + x_index + "}'").splitlines()
+		y = subprocess.getoutput("grep -v SEQUENCE " + scorefiles[
+			i] + " | grep -v " + y_label + " | awk '{print $" + y_index + "}'").splitlines()
 
-    # create subplot
-    plt.subplot(nrows, ncols, i + 1)
+		# map all values to floats
+		x = list(map(float, x))
+		y = list(map(float, y))
 
-    # x and y labels
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+		# create subplot
+		plt.subplot(nrows, ncols, nsubplot)
 
-    # set title
-    plt.title(str(target) + " using " + str(sfxn))
+		# x and y labels
+		plt.xlabel(x_label)
+		plt.ylabel(y_label)
 
-    # scatterplot of the data
-    plt.plot(x, y, 'ko')
+		# set title
+		plt.title(str(target) + " using " + str(sfxn))
 
-    # x axis limits
-    plt.xlim(0, 10)
-    plt.ylim(min(y) * 1.2, 0)
+		# scatterplot of the data
+		plt.plot(x, y, 'ko')
 
-    # add horizontal and vertical lines for cutoff
-    plt.axvline(x=2, color='b', linestyle='-')
-        
-plt.tight_layout()
-plt.savefig(outfile)
+		# x axis limits
+		plt.xlim(0, 10)
+		plt.ylim(min(y) * 1.2, 0)
 
+		# add horizontal and vertical lines for cutoff
+		plt.axvline(x=2, color='b', linestyle='-')
+
+		if i % 28 == 27 or i == len(scorefiles)-1:
+			outfile = "plot_results" + str(cnt) + ".png"
+			print (outfile)
+			plt.tight_layout()
+			plt.savefig(outfile)
+			plt.close()
+			cnt += 1
+			nsubplot = 0
+		
 benchmark.save_variables(
-    'working_dir testname results outfile targets sampling_failures scoring_failures sfxns')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)
+	'working_dir testname results outfile targets sampling_failures scoring_failures sfxns')  # Python black magic: save all listed variable to json file for next script use (save all variables if called without argument)

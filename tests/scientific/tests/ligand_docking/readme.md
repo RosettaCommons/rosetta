@@ -43,11 +43,12 @@ Each test takes ~8 CPU hours x 50 tests = ~400 CPU hours.
 #### How do you define a pass/fail for this test?
 #### How were any cutoffs defined?
 
-**Need to run several tests to see what we think should be the cutoff.
-The big question that this benchmark intends to test is how well we discriminate native versus non-native binding poses. A run is determined successful if there is an near-native (<2A) structure within the top 1percent of models based on the interface_delta_X score. 
+The big question that this benchmark intends to test is how well we discriminate native versus non-native binding poses. A run is determined successful if there is an near-native (<2A) structure within the top 1 percent of models based on the interface_delta_X score. 
 
 Sampling failure is defined as having no sub-2A output structures. 
 Scoring failure is defined as not having a sub-2A output structure within the top 10% ranked by interface score (this is a pretty large margin and may adjust accordingly).
+
+A pass/fail is defined in the following way: Each score function has a number of allowed failures, i.e. for how many targets a scoring failure exists, out of 50 targets. The cutoffs for these were derived by looking at 10 runs, taking the maximum number of targets that fail, plus 2. The cutoffs for these are defined in the 9.finalize.py step. If any scorefunction has more targets failing than this cutoff, the entire test fails. 
 
 ## KEY RESULTS
 #### What is the baseline to compare things to - experimental data or a previous Rosetta protocol?

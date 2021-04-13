@@ -74,7 +74,7 @@ for i in range( 0, len( scorefiles ) ):
 
 	# check for RMSDs below cutoff - 80% of the top10-scoring points should be below cutoff
 	f.write( targets[i] + "\t" )
-	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f, 80)
+	val_cutoff = qm.check_xpercent_values_below_cutoff( x, cutoffs_rmsd_dict[targets[i]], "rmsd", f, 50)
 	target_results.update( val_cutoff )
 
     # add to failues

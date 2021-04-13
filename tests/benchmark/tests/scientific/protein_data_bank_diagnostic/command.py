@@ -86,6 +86,19 @@ def download_all_input_files(kind, config):
 
 _index_html_template_ = '''\
 <html>
+<H2>Scientific test: Protein Data Bank diagnostic</H2>
+<h3>## AUTHOR AND DATE
+</h3>
+<p>Steven M Lewis, smlewi@gmail.com, Cyrus Biotechnology, Oct 2018</p>
+<p>Sergey Lyskov, sergey.lyskov@gmail.com, Gray lab, Johns Hopkins University, Oct 2018</p>
+<p>
+</p>
+
+<h3>FAILURES</h3>
+<p>
+The PDB diagnostic was run on <b>{len_pdbs:,}</b> PDB files. <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!
+</p>
+
 <head>
     <meta charset="utf-8"/>
     <title>Protein Data Bank Diagnostic test results</title>
@@ -95,11 +108,12 @@ _index_html_template_ = '''\
   </style>
 </head>
 <body>
+
+<h3>## PURPOSE OF THE TEST</h3>
 <p>
-    The PDB diagnostic was run on <b>{len_pdbs:,}</b> PDB files. <b>{len_passed:,}</b> files passed the test and <b>{len_failed:,}</b> failed!
-    This test tries to load every PDB file in the PDB database and classifies the failures that occur.
-    The command line below shows what was done; broadly all versions of this test examine load-time problems and more expensive versions
-    (<fixed>-PDB_diagnostic::skip_pack_and_min&nbsp;false</fixed>) also check for errors during scoring, packing, and minimization.
+This test tries to load every PDB file in the PDB database and classifies the failures that occur.
+The command line below shows what was done; broadly all versions of this test examine load-time problems and more expensive versions
+(<fixed>-PDB_diagnostic::skip_pack_and_min&nbsp;false</fixed>) also check for errors during scoring, packing, and minimization.
 </p>
 
 <p><i>"Hunting down these bugs is the most fun thing you can do on a Thursday morning"</i> - Andy Watkins, probably.</p>
