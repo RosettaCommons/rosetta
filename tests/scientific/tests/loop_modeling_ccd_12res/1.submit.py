@@ -39,7 +39,7 @@ command_line = '''
 -loops:refine refine_kic
 -refine_outer_cycles 5
 -loops:frag_sizes 9 3 1
--loops:frag_files {rosetta_dir}/tests/scientific/data/{testname}/{target}.200.9mers {rosetta_dir}/tests/scientific/data/{testname}/{target}.200.3mers none
+-loops:frag_files {rosetta_dir}/tests/scientific/data/{testname}/nohoms/{target}.200.9mers {rosetta_dir}/tests/scientific/data/{testname}/nohoms/{target}.200.3mers none
 -ex1
 -ex2
 -score:weights ref2015

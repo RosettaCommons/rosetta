@@ -36,7 +36,7 @@ gen_command_line = '''
 -parser:script_vars loop={rosetta_dir}/tests/scientific/data/{testname}/{target}.loop fast=0 loop_res=loop_res_holder
 -loops:extended true
 -loops:frag_sizes 9 3 1
--loops:frag_files {rosetta_dir}/tests/scientific/data/{testname}/{target}.200.9mers {rosetta_dir}/tests/scientific/data/{testname}/{target}.200.3mers none
+-loops:frag_files {rosetta_dir}/tests/scientific/data/{testname}/nohoms/{target}.200.9mers {rosetta_dir}/tests/scientific/data/{testname}/nohoms/{target}.200.3mers none
 -ex1
 -ex2
 -refine_outer_cycles 5

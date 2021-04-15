@@ -162,7 +162,7 @@ def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbo
 
         FlexPepDock            = 'numpy matplotlib==3.2',
         docking                = 'numpy matplotlib==3.2 pandas==0.24.2',
-        docking_ensemble       = 'numpy matplotlib==3.2 pandas==1.2.3',
+        docking_ensemble       = 'numpy matplotlib==3.2 pandas==0.24.2',
         ddg_ala_scan           = 'numpy matplotlib==3.2 pandas==0.24.2 scipy==1.1.0',
         glycan_structure_prediction  = 'numpy matplotlib==3.2 pandas==0.24.2 seaborn',
         RosettaCM              = 'numpy matplotlib==3.2',

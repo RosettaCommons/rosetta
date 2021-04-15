@@ -55,9 +55,9 @@ _index_html_template_ += '<img src="plot_results1.png" alt="alternative text" st
 _index_html_template_ += '<img src="plot_results2.png" alt="alternative text" style="max-width: 100%">\n'
 _index_html_template_ += '<img src="plot_results3.png" alt="alternative text" style="max-width: 100%">\n'
 _index_html_template_ += '<img src="plot_results4.png" alt="alternative text" style="max-width: 100%">\n'
-_index_html_template_ += '<img src="plot_results5.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<!--<img src="plot_results5.png" alt="alternative text" style="max-width: 100%">\n'
 _index_html_template_ += '<img src="plot_results6.png" alt="alternative text" style="max-width: 100%">\n'
-_index_html_template_ += '<img src="plot_results7.png" alt="alternative text" style="max-width: 100%">\n'
+_index_html_template_ += '<img src="plot_results7.png" alt="alternative text" style="max-width: 100%">-->\n'
 
 # add text from readme
 for l in readme:
@@ -79,7 +79,7 @@ _index_html_template_ += "</body></html>\n"
 ## Looking at worst performing score function to compare to cutoff value.
 number_of_sfxn_failures = 0
 for sfxn in sfxns:
-	if scoring_failures[sfxn] > cutoff[sfxn]:
+	if len(scoring_failures[sfxn]) > cutoff[sfxn]:
 		number_of_sfxn_failures += 1
 
 # write the html

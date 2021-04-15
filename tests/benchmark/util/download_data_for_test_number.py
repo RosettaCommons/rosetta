@@ -86,18 +86,20 @@ def get_test_ids():
 		# if test not already in list and is not debug test
 		# OTHER FILTERING CRITERIA: ADD HERE
 
-		if name[i] not in relevant_name and not name[i].endswith("debug") and teststatus[i] == "passed":
+#		if name[i] not in relevant_name and not name[i].endswith("debug") and teststatus[i] == "passed":
+		if name[i] not in relevant_name and not name[i].endswith("debug"):
 
 			# for log files only
 			if bool(Options.log) == True:
 				if Options.id == testid[i]:
 					relevant_ids.append( testid[i])
 					relevant_name.append( name[i] )
-				elif "sb_" not in name[i]:
+#				elif "sb_" not in name[i]:
+				else:
 					relevant_ids.append( testid[i])
 					relevant_name.append( name[i] )
-				else:
-					continue
+#				else:
+#					continue
 					
 			# for any files
 			if Options.id == testid[i]:
@@ -201,10 +203,10 @@ def download_test_files(prefix):
 						print (cmd)
 						os.system( cmd )
 					
-						if fn.endswith("index.html"):
-							summary = f'{path}/' + fn.split("/")[-1]
-							outfile = 'log_' + test["name"] + '.pdf'
-							pdfkit.from_file( summary , outfile, options = wkhtmltopdf_options)
+#						if fn.endswith("index.html"):
+#							summary = f'{path}/' + fn.split("/")[-1]
+#							outfile = 'log_' + test["name"] + '.pdf'
+#							pdfkit.from_file( summary , outfile, options = wkhtmltopdf_options)
 					
 				else:
 				
@@ -253,6 +255,13 @@ def download_test_files(prefix):
 	#					os.system( "weasyprint index.html " + outfile )
 						pdfkit.from_file(summary, outfile, options = wkhtmltopdf_options)
 	#					HTML( summary ).write_pdf( outfile )
+
+			print (test["name"])
+			print ("<h3>## REVISION</h3>")
+			print ("<p></p>")
+			print ("<p>", test["revision"], "</p>")
+			print ("<p> test_id:", test["test_id"], "</p>")
+			print ("<p> status:", test["status"], "</p>")
 
 			# write revisions file
 			with open( path + '/revision', 'w' ) as fr:

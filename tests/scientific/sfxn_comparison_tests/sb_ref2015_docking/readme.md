@@ -38,10 +38,10 @@ The benchmark takes ~150 hours. The debug mode takes ~4 mins.
 
 Usually, to assess the performance of a docking simulation, the number of structures with a CAPRI-acceptable or better ranking are analyzed. CAPRI model rankings are based on a combination of factors like fraction of native contacts, ligand RMSD, and interface RMSD and are described in detail in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/prot.25870"> Lensink, Wodak et al. 2019 PSFBI</a> - Table 3. The protocol computes the CAPRI rankings for each model (as well as some of the metrics it is based on), which are written into the score file ("CAPRI_rank"). Rankings are the following:
 
-0 - incorrect model
-1 - acceptable model
-2 - medium quality model
-3 - high quality model
+0 - incorrect model (black)
+1 - acceptable model (yellow)
+2 - medium quality model (red)
+3 - high quality model (green)
 
 The output models are resampled via bootstrap to remove possible sampling biases. Docking complexes can also be classified via the N5 metric, classifying N5 >= 3 as successful. N5 >= 3 means that at least 3 out of the top 5 scoring models should be acceptable or better according to CAPRI metrics. In this test, we report this metric in the result.txt file but don't use it for a pass/fail criterion because most targets would fail according to it. This scientific test passes if all targets pass the following metrics:
 
