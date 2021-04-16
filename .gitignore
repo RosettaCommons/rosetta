@@ -16,6 +16,10 @@
 \#*\#
 .\#*
 .Rproj.user
+*.RData
+cscope.po.out
+cscope.out
+source/tags
 source/Makefile
 source/xcode/Rosetta.xcodeproj/project.pbxproj
 source/xcode/DerivedData/
