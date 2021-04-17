@@ -398,7 +398,15 @@ EntropyEstimator::estimate_Stors(
 	//min_mover->max_iter( 30 );  // fd: linmin is always just 1 step...
 
 	// skip MC if there is only "rigid" ligand
-	if ( nligchi == 0 && ligids_.size() == 1 && ligids_[1] == 1 ) return 0.0;
+	if ( run_on_ligand && run_on_receptor && nligchi == 0 && ligids_.size() == 1 && flexscs.size() == 0 ) {
+		return 0.0;
+	} else if ( run_on_ligand && !run_on_receptor && nligchi == 0 && ligids_.size() == 1 ) {
+		return 0.0;
+	} else if ( !run_on_ligand && run_on_receptor && flexscs.size() == 0 ) {
+		return 0.0;
+	} else if ( !run_on_ligand && !run_on_receptor ) {
+		return 0.0;
+	}
 
 	// MC initialize
 	core::Size const nsamples( niter_/sample_every_iter_ );
@@ -466,6 +474,9 @@ EntropyEstimator::perturb(
 	bool &pert_ligand
 ) const
 {
+	// gz: if there is nothing to perturb, this function
+	// shoudn't be called. throw exception
+	runtime_assert( nligchi >= 1 || flexscs.size() >= 1 );
 	// ligand part
 	if ( nligchi >= 1 && flexscs.size() >= 1 ) {
 		core::Real Plig = core::Real(nligchi)/core::Real(nligchi+2*flexscs.size()); // assume average 2 chis per aa

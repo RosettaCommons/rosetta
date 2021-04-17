@@ -262,7 +262,8 @@ private:
 		std::string bondtype,
 		std::string const atm3, std::string const atm4,
 		core::Real k1_in, core::Real k2_in, core::Real k3_in, core::Real k4_in,
-		core::Real f1_in=0.0, core::Real f2_in=0.0, core::Real f3_in=0.0, core::Real f4_in=0.0
+		core::Real f1_in=0.0, core::Real f2_in=0.0, core::Real f3_in=0.0, core::Real f4_in=0.0,
+		core::Real offset=0.0
 	);
 
 	/// @brief read database file located at database/scoring/score_function/generic_potential

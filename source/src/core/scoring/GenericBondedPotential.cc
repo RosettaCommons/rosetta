@@ -472,7 +472,12 @@ GenTorsionParams const &
 GenericBondedPotential::lookup_tors_params(
 	core::chemical::BondName bn, core::chemical::BondRingness br, Size type1, Size type2, Size type3, Size type4
 ) const {
-	if ( !defined_atom_types_[type1] || !defined_atom_types_[type2] || !defined_atom_types_[type3]|| !defined_atom_types_[type4] ) return null_tors_param;
+	if ( !defined_atom_types_[type1] || !defined_atom_types_[type2] || !defined_atom_types_[type3]|| !defined_atom_types_[type4] ) {
+		TR.Debug << "One of the atom types is not defined: "
+			<< type1 << "," << type2 << ","
+			<< type3 << "," << type4 << std::endl;
+		return null_tors_param;
+	}
 
 	core::Size btidx = bin_from_bond(bn, br);
 
@@ -526,7 +531,11 @@ GenericBondedPotential::lookup_tors_params(
 			(it == tors_lookup_.end() || tors_pot_[it2->second].multiplicity() < tors_pot_[it->second].multiplicity()) ) it = it2;
 
 	// Final sanity check... (this should never get triggered)
-	if ( it == tors_lookup_.end() ) it = tors_lookup_.find( get_parameter_hash(0, 0, 0, 0, 0) );
+	if ( it == tors_lookup_.end() ) {
+		it = tors_lookup_.find( get_parameter_hash(0, 0, 0, 0, 0) );
+		TR.Warning << " Not able to find a torsion match, use get_parameter_hash(0, 0, 0, 0, 0)" << std::endl;
+	}
+
 
 	return tors_pot_[it->second];
 }
@@ -684,7 +693,7 @@ GenericBondedPotential::read_database(
 
 			for ( auto i1 : indices1_loop ) {
 				for ( auto i2 : indices2_loop ) {
-					int64_t hashval = get_parameter_hash( 0, i1, i2 );
+					uint64_t hashval = get_parameter_hash( 0, i1, i2 );
 					auto it = bond_lookup_.find( hashval );
 					// use the MOST SPECIFIC potential
 					if ( it == bond_lookup_.end() ) {
@@ -721,7 +730,7 @@ GenericBondedPotential::read_database(
 			for ( auto i1 : indices1_loop ) {
 				for ( auto i2 : indices2_loop ) {
 					for ( auto i3 : indices3_loop ) {
-						int64_t hashval = get_parameter_hash( 0, i1, i2, i3 );
+						uint64_t hashval = get_parameter_hash( 0, i1, i2, i3 );
 						auto it = angle_lookup_.find( hashval );
 						// use the MOST SPECIFIC potential
 						if ( it == angle_lookup_.end() ) {
@@ -800,7 +809,7 @@ GenericBondedPotential::read_database(
 						for ( auto i3 : indices3_loop ) {
 							for ( auto i4 : indices4_loop ) {
 
-								int64_t hashval = get_parameter_hash( i0, i1, i2, i3, i4 );
+								uint64_t hashval = get_parameter_hash( i0, i1, i2, i3, i4 );
 								auto it = tors_lookup_.find( hashval );
 
 								// use the MOST SPECIFIC potential
@@ -837,7 +846,7 @@ GenericBondedPotential::read_database(
 				for ( auto i2 : indices2 ) {
 					for ( auto i3 : indices3 ) {
 						for ( auto i4 : indices4 ) {
-							int64_t hashval = get_parameter_hash( 0, i1, i2, i3, i4 );
+							uint64_t hashval = get_parameter_hash( 0, i1, i2, i3, i4 );
 
 							auto it = improper_lookup_.find( hashval );
 
@@ -898,6 +907,7 @@ GenericBondedPotential::modify_torsion_params_from_cmd_line() {
 
 		core::Real k1=0,k2=0,k3=0,k4=0;
 		core::Real f1=0,f2=0,f3=0,f4=0;
+		core::Real offset=0;
 		for ( core::Size i=7; i<tags.size(); i+=2 ) {
 			if ( tags[i] == "k1" ) {
 				k1 = double_of( tags[i+1] );
@@ -915,6 +925,8 @@ GenericBondedPotential::modify_torsion_params_from_cmd_line() {
 				f3 = double_of( tags[i+1] );
 			} else if ( tags[i] == "f4" ) {
 				f4 = double_of( tags[i+1] );
+			} else if ( tags[i] == "offset" ) {
+				offset = double_of(tags[i+1]);
 			} else {
 				utility_exit_with_message( "Error parsing tag "+mod );
 			}
@@ -922,13 +934,14 @@ GenericBondedPotential::modify_torsion_params_from_cmd_line() {
 
 		modify_tors_params(
 			tags[2], tags[3], tags[4], tags[5], tags[6],
-			k1,k2,k3,k4,f1,f2,f3,f4
+			k1,k2,k3,k4,f1,f2,f3,f4,offset
 		);
 
 		TR << "modify_torsion_params_from_cmd_line: setting "
 			<< "fa_standard" << ' ' << tags[2] << " " << tags[3] << " " << tags[4] << " " << tags[5] << " " << tags[6]
 			<< " k=" << k1 << '/' << k2 << '/' << k3 << '/' << k4
-			<< " f=" << f1 << '/' << f2 << '/' << f3 << '/' << f4 << endl;
+			<< " f=" << f1 << '/' << f2 << '/' << f3 << '/' << f4
+			<<" offset=" << offset << endl;
 	}// end for
 }
 
@@ -2210,7 +2223,8 @@ GenericBondedPotential::modify_tors_params(
 	std::string bondtype,
 	std::string atm3, std::string atm4,
 	core::Real k1, core::Real k2, core::Real k3, core::Real k4,
-	core::Real f1, core::Real f2, core::Real f3, core::Real f4
+	core::Real f1, core::Real f2, core::Real f3, core::Real f4,
+	core::Real offset
 ) {
 
 	int n_tor_changed(0);
@@ -2238,11 +2252,16 @@ GenericBondedPotential::modify_tors_params(
 	//   if the torsion specified is _more specific_ than any in the input, it still should apply
 	// we will simply add the new torsion to the database
 	//   the overwritten torsion still exists in tors_pot_ but might not be pointed at by anything
-	tors_pot_.push_back( GenTorsionParams( k1, k2, k3, k4, f1, f2, f3, f4, multiplicity, torsion_type_in ) );
+	GenTorsionParams params( k1, k2, k3, k4, f1, f2, f3, f4, multiplicity, torsion_type_in );
+	if ( std::abs(offset) > 1.0e-6 ) params.set_offset(offset);
+	tors_pot_.push_back( params );
+
 	core::Size tgt_pot_idx1 = tors_pot_.size();
 	core::Size tgt_pot_idx2 = tgt_pot_idx1;
 	if ( f1 != 0 || f2 != 0 || f3 != 0 || f4 != 0 ) {
-		tors_pot_.push_back( GenTorsionParams( k1, k2, k3, k4, -f1, -f2, -f3, -f4, multiplicity, torsion_type_in ) );
+		GenTorsionParams params2(k1, k2, k3, k4, -f1, -f2, -f3, -f4, multiplicity, torsion_type_in);
+		if ( std::abs(offset) > 1.0e-6 ) params2.set_offset(offset);
+		tors_pot_.push_back( params2 );
 		tgt_pot_idx2 = tors_pot_.size();
 	}
 
@@ -2251,7 +2270,7 @@ GenericBondedPotential::modify_tors_params(
 			for ( auto i2 : indices2_loop ) {
 				for ( auto i3 : indices3_loop ) {
 					for ( auto i4 : indices4_loop ) {
-						int64_t hashval = get_parameter_hash( 0, i1, i2, i3, i4 );
+						uint64_t hashval = get_parameter_hash( i0, i1, i2, i3, i4 );
 						auto it = tors_lookup_.find( hashval );
 
 						if ( it == tors_lookup_.end() ) {
