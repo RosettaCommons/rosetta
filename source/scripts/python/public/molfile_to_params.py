@@ -674,7 +674,7 @@ def build_fragment_trees(molfile, options): #{{{
     '''Assigns a root atom for each fragment and parents and children.'''
     # Assign root and nbr atoms based on instructions in the molfile or the command line
     if options.root_atom is not None:
-        if 0 < options.root_atom < len(molfile.atoms):
+        if 0 < options.root_atom <= len(molfile.atoms):
             molfile.atoms[options.root_atom - 1].is_root = True
         else:
             raise ValueError("--root_atom option must be from 1 to the number "
