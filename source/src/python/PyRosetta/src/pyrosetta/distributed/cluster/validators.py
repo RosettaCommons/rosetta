@@ -9,6 +9,7 @@
 __author__ = "Jason C. Klima"
 __email__ = "klima.jason@gmail.com"
 
+import logging
 import os
 
 from typing import (

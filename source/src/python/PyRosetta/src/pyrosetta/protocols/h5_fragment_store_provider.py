@@ -64,13 +64,12 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
     ):
         with h5py.File(self._target_filename, "r") as dfile:
             logging.info(
-                "Reopening: ",
-                self._target_filename,
-                "/fragments/",
-                store_name,
-                " for group ",
-                group_field,
-                sep="",
+                "Reopening: "
+                + self._target_filename
+                + "/fragments/"
+                + store_name
+                + " for group "
+                + group_field
             )
             indb = dfile["fragments"][store_name]
             if group_type == "int64":
@@ -129,7 +128,7 @@ class H5PyFragmentStoreProvider(FragmentStoreProvider):
 
         # Open the HDF5 File
         with h5py.File(self._target_filename, "r") as dfile:
-            logging.info("Opened file: ", self._target_filename)
+            logging.info("Opened file: " + self._target_filename)
             # extract the relevent dataset and attributes
             indb = dfile["fragments"][store_name]
             for atom in indb.attrs["fragment_atoms"].decode("UTF-8").split(","):

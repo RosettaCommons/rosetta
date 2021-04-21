@@ -82,19 +82,24 @@ def setup_target_logging(func: L) -> L:
     ):
         """Wrapper function to setup_target_logging."""
 
-        logging.basicConfig(
-            filename=logging_file,
-            level=logging_level,
-            format=":".join(
-                [
-                    "%(levelname)s",
-                    str(protocol.__name__),
-                    "%(name)s",
-                    "%(asctime)s",
-                    " %(message)s",
-                ]
-            ),
+        logger = logging.getLogger()
+        logger.setLevel(logging_level)
+        logger.handlers = []
+        fh = logging.FileHandler(logging_file)
+        fh.setFormatter(
+            logging.Formatter(
+                ":".join(
+                    [
+                        "%(levelname)s",
+                        str(protocol.__name__),
+                        "%(name)s",
+                        "%(asctime)s",
+                        " %(message)s",
+                    ]
+                )
+            )
         )
+        logger.addHandler(fh)
 
         return func(
             protocol,
