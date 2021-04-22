@@ -24,9 +24,10 @@
 
 // Class headers
 #include <core/id/AtomID.hh>
+#include <core/kinematics/MoveMap.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/types.hh>
-#include <core/kinematics/jacobian/ModuleType1.fwd.hh>
+#include <core/kinematics/jacobian/ModuleType1.hh>
 
 namespace core {
 namespace kinematics {
@@ -34,9 +35,9 @@ namespace jacobian {
 
 ///@brief List of supported residue types in the loop that is to be represented by a series Jacobian
 enum class SeriesJacobianTypeEnum {
-	CANONICAL_AA = 1,
-	NONCANONICAL_AA, // probably supported, but not yet. Already added to allow enum
-	num_types = NONCANONICAL_AA
+	ALPHA_AA = 1,
+	OTHER = 2, // placeholder for potential future variations
+	num_types = OTHER
 };
 
 /// @brief The SeriesJacobians class is the mid-level of the Jacobian analysis of a protein's kinematics relations.
@@ -67,13 +68,23 @@ public: //FUNCTIONS
 
 	///@brief get residues that make up the chain
 	utility::vector1< core::Size >
-	get_residues(){
-		return residue_set_;
-	}
+	get_residues() const{ return residue_set_; };
+
+	///@brief get amount of DoFs of the chain
+	core::Size
+	num_dofs() const{ return number_dofs_; };
+
+	///@brief get pointer to movemap
+	core::kinematics::MoveMapOP
+	move_map() const{ return move_map_; };
+
+	///@brief get reference atom used to express all vectors in all modules
+	core::id::AtomID
+	get_ref_atom_ID() const{ return ref_atom_ID_; };
 
 	///@brief update all Jacobian matrices in the chain
-	void
-	update_Jacobian_matrices(core::conformation::Conformation const & conformation);
+	utility::vector1< ModuleType1::jacobian_struct >
+	get_Jacobian_matrices(core::conformation::Conformation const & conformation) const;
 
 private: //FUNCTIONS
 
@@ -87,7 +98,7 @@ private: //FUNCTIONS
 
 public: // VARIABLES
 
-	/// @brief vector with Jacobian modules
+	/// @brief vector with pointers to Jacobian modules
 	utility::vector1< core::kinematics::jacobian::ModuleType1OP > modules_;
 
 private: //VARIABLES
@@ -98,7 +109,10 @@ private: //VARIABLES
 	core::Size number_dofs_;
 
 	/// @brief reference atom in which all vectors are expressed
-	core::id::AtomID ref_atom_;
+	core::id::AtomID ref_atom_ID_;
+
+	/// @brief movemap of the series
+	core::kinematics::MoveMapOP move_map_{nullptr};
 };
 
 } //jacobian

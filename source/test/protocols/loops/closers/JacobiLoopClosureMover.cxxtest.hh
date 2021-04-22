@@ -139,9 +139,9 @@ public:
 		// apply mover
 		jacobi_mover.apply(pose);
 
-		// assert that protocol finished successfully after 7 cycles (verified number)
+		// assert that protocol finished successfully after 2 cycles (algorithm is iterative, but deterministic)
 		TS_ASSERT( jacobi_mover.last_closure_success() == true );
-		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 5);
+		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 2);
 	}
 
 	// Test a simple loop closure with few DoFs, but cutpoint in the middle of the loop
@@ -164,9 +164,9 @@ public:
 		// apply mover
 		jacobi_mover.apply(pose);
 
-		// assert that protocol finished successfully after 10 cycles (verified number)
+		// assert that protocol finished successfully after 2 cycles (algorithm is iterative, but deterministic)
 		TS_ASSERT( jacobi_mover.last_closure_success() == true );
-		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 7);
+		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 2);
 	}
 
 	// Test a more advanced loop closure with many DoFs, of which part is fixed via a MoveMap
@@ -190,15 +190,14 @@ public:
 
 		// initialize Jacobi Loop Closure Mover for complex move
 		protocols::loops::loop_closure::jacobi::JacobiLoopClosureMover jacobi_mover (loop, mm);
-		jacobi_mover.set_dq_max_allowed(numeric::constants::d::pi_over_2);
 
 		protocols::loops::set_single_loop_fold_tree( pose, loop );
 		protocols::loops::add_single_cutpoint_variant( pose, loop );
 
-		// disrupt loop. N.B. all torsion angles are reset, including those fixed in the mover using the MoveMap
+		// disrupt loop. N.B. all torsion angles are distorted, including those fixed in the mover using the MoveMap
 		for ( core::Size i = loop.start(); i < loop.stop(); ++i ) {
-			pose.set_phi( i, 50 );
-			pose.set_psi( i, 100 );
+			pose.set_phi( i, pose.phi(i)+5 );
+			pose.set_psi( i, pose.psi(i)-5 );
 		}
 
 		// store pose before mover is applied
@@ -207,9 +206,9 @@ public:
 		// apply mover
 		jacobi_mover.apply(pose);
 
-		// assert that protocol finished successfully after 18 cycles (verified number)
+		// assert that protocol finished successfully after 2 cycles (algorithm is iterative, but deterministic)
 		TS_ASSERT( jacobi_mover.last_closure_success() );
-		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 27);
+		TS_ASSERT_EQUALS (jacobi_mover.last_closure_cycles(), 2);
 
 		// assert that torsion have changed as expected
 		for ( core::Size i = 1; i < pose.size(); ++i ) { // check all residues
@@ -249,18 +248,15 @@ public:
 		TS_ASSERT_EQUALS( mover1.get_max_cycles(), mover2.get_max_cycles() );
 		TS_ASSERT_EQUALS( mover1.get_allowed_norm_lin(), mover2.get_allowed_norm_lin() );
 		TS_ASSERT_EQUALS( mover1.get_allowed_norm_rot(), mover2.get_allowed_norm_rot() );
-		TS_ASSERT_EQUALS( mover1.get_dq_max_allowed(), mover2.get_dq_max_allowed() );
 
 		// change the values in m2
 		mover2.set_max_cycles( 34 );
 		mover2.set_error_norms(4e-3, 3.4e-3);
-		mover2.set_dq_max_allowed(1.0);
 
 		// Make sure they are different now
 		TS_ASSERT( mover1.get_max_cycles() != mover2.get_max_cycles() );
 		TS_ASSERT( mover1.get_allowed_norm_lin() != mover2.get_allowed_norm_lin() );
 		TS_ASSERT( mover1.get_allowed_norm_rot() != mover2.get_allowed_norm_rot() );
-		TS_ASSERT( mover1.get_dq_max_allowed() != mover2.get_dq_max_allowed() );
 	}
 
 	// test the MoverFactory to make sure we can create the mover and down cast appropriately
@@ -303,8 +299,8 @@ public:
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_max_cycles(), 0 );
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_allowed_norm_lin(), 0 );
 		TS_ASSERT_EQUALS( configured_jacobi_mover->get_allowed_norm_rot(), 0 );
-		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop().start(), 10 );
-		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop().stop(), 13 );
+		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop()->start(), 10 );
+		TS_ASSERT_EQUALS( configured_jacobi_mover->get_loop()->stop(), 13 );
 	}
 
 	void tearDown(){

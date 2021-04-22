@@ -23,6 +23,7 @@
 
 // Protocol headers
 #include <core/id/AtomID.hh>
+#include <core/id/TorsionID.hh>
 #include <core/conformation/Conformation.fwd.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <numeric/MathMatrix.hh>
@@ -76,7 +77,7 @@ public:
 	ModuleType1() = delete;
 
 	/// @brief Constructor for module with 1, 2 or 3 sets of two AtomIDs whose X-axes represent intersecting torsion axes.
-	ModuleType1(core::Size const & dofs_module, utility::vector1< core::Size > const & res_numbers, core::id::AtomID const & ref_atom);
+	ModuleType1(core::Size const & dofs_module, utility::vector1< core::id::TorsionID > const & torsion_ids, core::id::AtomID const & ref_atom);
 
 	/// @brief Copy constructor.
 	ModuleType1(ModuleType1 const & src);
@@ -87,33 +88,41 @@ public:
 	/// @brief Clone operation: make a copy of this object, and return an owning pointer to the copy.
 	ModuleType1OP clone() const;
 
-	/// @brief Returns the residues that make up the Jacobian module
-	utility::vector1< core::Size >
-	get_residues(){
-		return res_numbers_;
+	/// @brief Returns the residues that make up the Jacobian module. N.B. this vector always contains six residue numbers,
+	/// but only the first < number_dofs_ > torsion IDs are free to move. The remaining torsions represent constrained motions
+	utility::vector1< core::id::TorsionID >
+	get_torsion_ids(){
+		return torsion_ids_;
 	}
 
 	/// @brief Returns the number of DoFs of which this module represents the differential equations
 	core::Size
-	get_number_dofs_(){
+	get_number_dofs(){
 		return number_dofs_;
 	}
 
-	/// @brief Returns the AtomID of the atom whose reference frame (expressed by its stub) is used to express all
-	/// vectors and matrices of the module
-	core::id::AtomID const &
-	get_ref_atom_ID() {
-		return ref_atom_ID_;
+	/// @brief Returns the number of DoFs of which this module represents the differential equations
+	utility::vector1<core::Size>
+	free_residues(){
+		return free_residues_;
 	}
 
 	/// @brief calculate all Jacobian matrices for the instantaneous conformation
 	ModuleType1::jacobian_struct
-	update_jacobian_matrices(core::conformation::Conformation const & conformation);
+	get_jacobian_matrices(core::conformation::Conformation const & conformation);
+
+	/// @brief Get variables that are associated to this instance
+	numeric::MathVector<core::Real>
+	get_torsion_values(core::conformation::Conformation const & conformation);
+
+	/// @brief Set the variables that are associated to this module
+	void
+	set_torsion_values(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & vars);
 
 	/// @brief apply vector of delta angles to the torsion angles that are associated to this instance
 	/// @param[in] vector dq must have dimension 6 and all delta angles must be in radians
 	void
-	apply_delta_torsions_angles(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & dq);
+	apply_delta_torsion_values(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & dq);
 
 private: // FUNCTIONS
 	/// @brief Updates the screw axes and moment arm vectors of the object
@@ -133,8 +142,11 @@ private: // VARIABLES
 	/// @brief number of dofs of the module
 	core::Size number_dofs_;
 
-	/// @brief residue numbers of the module
-	utility::vector1<core::Size> res_numbers_;
+	/// @brief torsion IDs of the dofs used in this module
+	utility::vector1<core::id::TorsionID> torsion_ids_;
+
+	/// @brief torsion IDs of the dofs used in this module
+	utility::vector1<core::Size> free_residues_;
 
 	/// @brief the atom which acts as the reference frame for all vectors
 	core::id::AtomID ref_atom_ID_;

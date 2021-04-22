@@ -246,6 +246,7 @@ sources = {
         "JacobianStructure",
         "SeriesJacobians",
         "ModuleType1",
+        "util",
     ],
 }
 include_path = [

@@ -940,9 +940,6 @@ sources = {
 	"pilot/thermo" : [
 		#"metropolis_hastings"
 	],
-	"pilot/thoevenaars" : [
-		#"test_jacobi_loop_closure",
-	],
 	"pilot/tjacobs" : [
 		#"ModelTrimmer",
 	],

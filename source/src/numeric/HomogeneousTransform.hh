@@ -485,6 +485,69 @@ public:
 		return euler;
 	}
 
+	/// @brief Return the three euler angles (in radians) that describe this HomogeneousTransform as the series
+	/// of a Z axis rotation by the angle psi (returned in position 1 of the output vector), followed by
+	/// an Y axis rotation by the angle theta (returned in position 2 of the output vector), followed by
+	/// an X axis rotation by the angle phi (returned in position 3 of the output vector).
+	/// This convention of Euler angles is added for use in iterative algorithms that aim to minimize Euler angle errors.
+	/// When Euler angle error between two vectors approaches zero, the three Euler axes of that error become increasingly
+	/// orthogonal, which benefits stability and speed of conversion
+	/// Equations adopted from http://web.mit.edu/2.05/www/Handout/HO2.PDF (by Olivier Chocron)
+
+	/// @details
+	/// The range of psi is [ -pi, pi ];
+	/// The range of theta is [ -pi/2, pi/2 ];
+	/// The range of phi is [ -pi, pi ];
+	///
+	/// FIGURE 1:
+	/// R = [
+	///     cos(psi)cos(theta)        cos(psi)sin(theta)sin(phi)-sin(psi)cos(phi)        cos(psi)sin(theta)cos(phi)+sin(psi)sin(phi)
+	///     sin(psi)cos(theta)         sin(psi)sin(theta)sin(phi)+cos(psi)cos(phi)       sin(psi)sin(theta)cos(phi)-cos(psi)sin(phi)
+	///         -sin(theta)                         cos(theta)sin(phi)                                  cos(theta)cos(phi)
+	/// ]
+	///
+	/// xz_ gives away theta.
+	/// Theta may be computed as -asin( xz_ ), or, as done by Olivier Choocron, as atan2(-xz_,sqrt(xx_^2+xy_^2))
+	/// where atan2 is considered to be more computationally efficient
+	///
+	/// Since xx_ and xy_ contain only psi terms and a shared cos( theta ) term,
+	/// psi is given by atan2( cos_theta*sin_psi, cos_theta*cos_psi ) = atan2( c*sin_psi, c*cos_psi ) = atan2( xy_, xx_ )
+	/// for c positive and non-zero. If cos_theta is zero, or very close to zero, we're at gimbal lock.
+	///
+	/// There are 2 degenerate cases (gimbal lock)
+	/// 1. theta close to -pi/2  (North Pole singularity), or
+	/// 2. theta close to pi/2 (South Pole singularity)
+	/// For these, we take: psi = 0, and detect whether theta = -pi/2 or pi/2
+	/// phi can be calculated as usual, because cos(theta) will be -1 or 1.
+
+	xyzVector< T >
+	euler_angles_ZYX_rad() const {
+		xyzVector< T > euler;
+
+		T const FLOAT_PRECISION( 1e-5 );
+
+		// WARNING: Gimbal Lock!
+		if ( xx_ <= FLOAT_PRECISION && xy_ <= FLOAT_PRECISION ) {
+			euler(1) = 0.0;
+			// theta can be -pi/2 (xz_=1) or pi/2 (xz_=-1)
+			if ( xz_ > 0  ) {
+				euler(2) = -numeric::constants::d::pi_over_2;
+			} else {
+				euler(2) = numeric::constants::d::pi_over_2;
+			}
+			euler(3) = std::atan2( yz_, zz_);
+			return euler;
+		}
+
+		euler(1) = std::atan2(xy_, xx_);
+
+		euler(2) = std::atan2(-xz_, std::sqrt(xx_*xx_ + xy_*xy_));
+
+		euler(3) = std::atan2(yz_, zz_);
+
+		return euler;
+	}
+
 	xyzVector< T >
 	euler_angles_deg() const {
 		return numeric::constants::d::radians_to_degrees * euler_angles_rad();

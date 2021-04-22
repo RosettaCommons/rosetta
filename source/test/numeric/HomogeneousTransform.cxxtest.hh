@@ -27,8 +27,8 @@ using namespace numeric;
 
 class HomogenousTransformTests : public CxxTest::TestSuite {
 
-	public:
-		typedef xyzVector< double > Vector;
+public:
+	typedef xyzVector< double > Vector;
 
 	// --------------- Fixtures --------------- //
 
@@ -110,9 +110,9 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( z_ht.rotation_matrix().zz(), 1.0, 1e-14 );
 
 		xyzMatrix< double > full_rotation = (
-				z_rotation_matrix_degrees( 30 ) *
-				y_rotation_matrix_degrees( 20 ) *
-				x_rotation_matrix_degrees( 10 ));
+			z_rotation_matrix_degrees( 30 ) *
+			y_rotation_matrix_degrees( 20 ) *
+			x_rotation_matrix_degrees( 10 ));
 
 		HTD full_ht( zrotation, point );
 
@@ -124,7 +124,7 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().yx(), full_rotation.yx(), 1e-14 );
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().yy(), full_rotation.yy(), 1e-14 );
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().yz(), full_rotation.yz(), 1e-14 );
-		
+
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().zx(), full_rotation.zx(), 1e-14 );
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().zy(), full_rotation.zy(), 1e-14 );
 		TS_ASSERT_DELTA( full_ht.rotation_matrix().zz(), full_rotation.zz(), 1e-14 );
@@ -364,13 +364,13 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( frame.zy(), frame4.zy(), 1e-14 );
 		TS_ASSERT_DELTA( frame.zz(), frame4.zz(), 1e-14 );
 
-//-0.240611 0.94392 -0.226098 -4.55621
-//0.968712 0.218927 -0.116912 3.92414
-//-0.0608565 -0.247154 -0.967063 -8.92507
+		//-0.240611 0.94392 -0.226098 -4.55621
+		//0.968712 0.218927 -0.116912 3.92414
+		//-0.0608565 -0.247154 -0.967063 -8.92507
 
-	//  -0.240611328009 0.943920428956 -0.226098236687 -4.55621442642
-	//  0.968711862901 0.218926806763 -0.11691184694 3.92414326226
-	//  -0.0608565157406 -0.247154358811 -0.967063186877 -8.92507068448
+		//  -0.240611328009 0.943920428956 -0.226098236687 -4.55621442642
+		//  0.968711862901 0.218926806763 -0.11691184694 3.92414326226
+		//  -0.0608565157406 -0.247154358811 -0.967063186877 -8.92507068448
 
 		xyzVector< double > xaxis( -0.240611328009, 0.968711862901, -0.0608565157406 );
 		xyzVector< double > yaxis( 0.943920428956, 0.218926806763, -0.247154358811 );
@@ -433,6 +433,67 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 		TS_ASSERT_DELTA( 180 + euler_deg2( 1 ), euler_deg1( 1 ), 1e-6 );
 		TS_ASSERT_DELTA( 180 + euler_deg2( 2 ), 360 + euler_deg1( 2 ), 1e-6 );
 
+	}
+
+	// test that the ZYX Euler convention gives expected results
+	void test_euler_angle_measurement_ZYX() {
+
+		HTD rot1a, rot1b, rot2, rot3;
+
+		// rotations to test computed values
+		rot1a.set_zaxis_rotation_deg( -178 ); //150
+		rot1b.set_zaxis_rotation_deg( 182 ); //182
+		rot2.set_yaxis_rotation_deg( -70 ); //-70
+		rot3.set_xaxis_rotation_deg( 150 ); //-178
+
+		HTD frame1 = rot1a * rot2 * rot3;
+		HTD frame2 = rot1b * rot2 * rot3;
+
+		xyzVector< double > euler1 = frame1.euler_angles_ZYX_rad();
+		xyzVector< double > euler2 = frame2.euler_angles_ZYX_rad();
+
+		xyzVector< double > euler_deg1( euler1 ), euler_deg2( euler2 );
+		euler_deg1 *= numeric::constants::d::radians_to_degrees;
+		euler_deg2 *= numeric::constants::d::radians_to_degrees;
+
+		/// The Z-rotation larger than 180 deg in frame2 compared to frame1 should wrap to -178
+		/// so all angles end up the same
+		TS_ASSERT_DELTA( euler_deg2( 1 ), euler_deg1( 1 ), 1e-6 );
+		TS_ASSERT_DELTA( euler_deg2( 2 ), euler_deg1( 2 ), 1e-6 );
+		TS_ASSERT_DELTA( euler_deg2( 3 ), euler_deg1( 3 ), 1e-6 );
+	}
+
+	// test gimbal locks for ZYX Euler angles
+	void test_gimbal_lock_ZYX() {
+
+		HTD rot1, rot2a, rot2b, rot3;
+
+		// rotations to test North- and South-pole gimbal lock
+		double x_angle = 113.0;
+		rot1.set_zaxis_rotation_deg(0);
+		rot2a.set_yaxis_rotation_deg(-90);
+		rot2b.set_yaxis_rotation_deg(90);
+		rot3.set_xaxis_rotation_deg(x_angle);
+
+		HTD frame1 = rot1 * rot2a * rot3;
+		HTD frame2 = rot1 * rot2b * rot3;
+
+		xyzVector< double > euler1 = frame1.euler_angles_ZYX_rad();
+		xyzVector< double > euler2 = frame2.euler_angles_ZYX_rad();
+
+		xyzVector< double > euler_deg1( euler1 ), euler_deg2( euler2 );
+		euler_deg1 *= numeric::constants::d::radians_to_degrees;
+		euler_deg2 *= numeric::constants::d::radians_to_degrees;
+
+		/// confirm that North-pole gimbal lock has been properly handled
+		TS_ASSERT_DELTA( euler_deg1( 1 ), 0, 1e-6 );
+		TS_ASSERT_DELTA( euler_deg1( 2 ), -90, 1e-6 );
+		TS_ASSERT_DELTA( euler_deg1( 3 ), x_angle, 1e-6 );
+
+		/// confirm that South-pole gimbal lock has been properly handled
+		TS_ASSERT_DELTA( euler_deg2( 1 ), 0, 1e-6 );
+		TS_ASSERT_DELTA( euler_deg2( 2 ), 90, 1e-6 );
+		TS_ASSERT_DELTA( euler_deg2( 3 ), x_angle, 1e-6 );
 	}
 
 
@@ -507,19 +568,19 @@ class HomogenousTransformTests : public CxxTest::TestSuite {
 	}
 
 	/*void sini_match_frame() {
-		Vector p1( 5.912,   4.303,   6.525 );
-		Vector p2( 7.049,   4.868,   7.060 );
-		Vector p3( 7.513,   4.486,   8.322 );
+	Vector p1( 5.912,   4.303,   6.525 );
+	Vector p2( 7.049,   4.868,   7.060 );
+	Vector p3( 7.513,   4.486,   8.322 );
 
-		HTD frame( p1, p2, p3 );
-		std::cout << "Global frame" << std::endl;
-		std::cout << "  " << frame.xx() << " " << frame.yx() << " " << frame.zx() << " " << frame.px() << std::endl;
-		std::cout << "  " << frame.xy() << " " << frame.yy() << " " << frame.zy() << " " << frame.py() << std::endl;
-		std::cout << "  " << frame.xz() << " " << frame.yz() << " " << frame.zz() << " " << frame.pz() << std::endl;
+	HTD frame( p1, p2, p3 );
+	std::cout << "Global frame" << std::endl;
+	std::cout << "  " << frame.xx() << " " << frame.yx() << " " << frame.zx() << " " << frame.px() << std::endl;
+	std::cout << "  " << frame.xy() << " " << frame.yy() << " " << frame.zy() << " " << frame.py() << std::endl;
+	std::cout << "  " << frame.xz() << " " << frame.yz() << " " << frame.zz() << " " << frame.pz() << std::endl;
 
-		Vector euler = frame.euler_angles_deg();
-		std::cout << "Euler angles:";
-		for ( int ii = 1; ii <= 3; ++ii ) std::cout << euler( ii ) << " "; std::cout << std::endl;
+	Vector euler = frame.euler_angles_deg();
+	std::cout << "Euler angles:";
+	for ( int ii = 1; ii <= 3; ++ii ) std::cout << euler( ii ) << " "; std::cout << std::endl;
 	}*/
 
 };

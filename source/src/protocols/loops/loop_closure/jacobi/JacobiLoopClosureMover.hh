@@ -19,13 +19,13 @@
 #include <protocols/moves/Mover.hh>
 
 // Protocol headers
-#include <protocols/loops/Loop.hh>
+#include <protocols/loops/Loop.fwd.hh>
 
 // Core headers
 #include <core/chemical/AtomICoor.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
-#include <core/kinematics/RT.fwd.hh>
+#include <core/kinematics/RT.hh>
 #include <core/kinematics/jacobian/SeriesJacobians.fwd.hh>
 #include <numeric/HomogeneousTransform.fwd.hh>
 #include <numeric/MathMatrix.hh>
@@ -63,9 +63,6 @@ public:
 	/// @brief Constructor based on a loop and a MoveMap
 	JacobiLoopClosureMover( protocols::loops::Loop const & loop, core::kinematics::MoveMapCOP const & mm );
 
-	/// @brief Constructor based on a Jacobian serial chain
-	JacobiLoopClosureMover( core::kinematics::jacobian::SeriesJacobiansOP const jacobian_chain );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~JacobiLoopClosureMover() override;
 
@@ -79,12 +76,25 @@ public:
 	void
 	set_loop( protocols::loops::Loop const & new_loop );
 
-	protocols::loops::Loop
-	get_loop(){ return loop_; };
+	/// @brief Get the loop to be closed
+	protocols::loops::LoopCOP
+	get_loop() { return loop_; };
 
 	/// @brief Set the MoveMap
 	void
-	set_movemap( core::kinematics::MoveMapOP const new_mm );
+	set_movemap( core::kinematics::MoveMapOP const & new_mm );
+
+	/// @brief Get the MoveMap
+	core::kinematics::MoveMapCOP
+	get_movemap() { return movemap_; };
+
+	/// @brief Get pointer to SeriesJacobian object
+	core::kinematics::jacobian::SeriesJacobiansOP
+	get_jacobian_chain() {return jacobian_chain_; };
+
+	/// @brief Initializes private parameters of the Jacobi mover that depend on the pose
+	void
+	init_apply( core::pose::Pose & pose);
 
 	/// @brief Execute the loop closure
 	void
@@ -122,17 +132,13 @@ public:
 	core::Real
 	get_allowed_norm_lin() { return err_lin_allowed_; }
 
-	/// @brief Set maximum change in dihedral angle in each cycle
-	void
-	set_dq_max_allowed(core::Real dq_max_allowed){ dq_max_allowed_ = dq_max_allowed; }
-
-	/// @brief Get value for maximum change applied to a torsion angle during a single cycle [rad]
-	core::Real
-	get_dq_max_allowed() { return dq_max_allowed_; }
-
 	/// @brief Set whether or not to output non-critical information.
 	/// @details Default is false
 	void set_verbose( bool setting ) { verbose_ = setting; }
+
+	/// @brief Set current loop connection with subsequent residue as target connection.
+	void
+	current_closed_as_target( core::pose::Pose const & pose );
 
 public:
 
@@ -176,35 +182,21 @@ private: // METHODS
 	void
 	init_constructor(protocols::loops::Loop const & loop, core::kinematics::MoveMapCOP const & mm);
 
-	/// @brief Initializes private parameters of the Jacobi mover that depend on the pose and are only set when apply() is called.
-	void
-	init_apply( core::pose::Pose & pose);
-
 	/// @brief Function that checks and adjusts the fold tree as part of the init_apply method
 	void
 	prepare_foldtree(core::pose::Pose & pose);
 
 	/// @brief extract internal coordinates of the upper loop connection (between the final residue of the loop and the first residue that follows)
 	void
-	store_target_icoors( core::pose::Pose const & pose );
+	default_target_icoors( core::pose::Pose const & pose );
 
-	/// @brief Calculate the target position and Euler angles of the final C-atom in the loop w.r.t the reference frame connected to ref_bb_atom_id_
-	std::pair < numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real> >
-	update_target( core::pose::Pose const & pose);
+	/// @brief Set the target based on residue defaults
+	void
+	store_target( core::pose::Pose const & pose);
 
-	/// @brief Calculate the current position and Euler angles of the final C-atom in the loop w.r.t the reference frame connected to ref_bb_atom_id_
-	std::pair < numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real> >
+	/// @brief Calculate the current position and Euler angles of the final C-atom in the loop w.r.t the reference frame connected to ref_atom_id_
+	core::kinematics::RT
 	update_current(core::pose::Pose const & pose);
-
-	/// @brief Extract the error twist (linearized rotations) from the current and target position and orientation (in Euler angles)
-	std::pair < numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real> >
-	calculate_error_twist( std::pair < numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real> > target,
-		std::pair < numeric::xyzVector<core::Real>, numeric::xyzVector<core::Real> > current );
-
-	/// @brief method that gives weights to different columns (that all represent that same error twist in their respective torsion space),
-	/// inversely proptional to the norm of the required torsion changes
-	numeric::MathMatrix<core::Real>
-	weigh_columns_inversely_squared(numeric::MathMatrix<core::Real> const &);
 
 private: // USER-MANAGED PARAMETERS
 	/// @brief number of iterations before closure is aborted
@@ -214,22 +206,15 @@ private: // USER-MANAGED PARAMETERS
 	core::Real err_rot_allowed_ = 5 * numeric::constants::d::degrees_to_radians; // [rad]
 	core::Real err_lin_allowed_ = 0.1; // [Ang]
 
-private: // ADVANCED PARAMETERS
-	/// @brief maximum Euler angle error that is projected onto torsion angles during each cycle [rad]
-	core::Real delta_euler_angle_max_ = numeric::constants::d::pi / 4;
-	/// @brief maximum change applied to a torsion angle during an individual cycle [rad]
-	/// @details increasing this value potentially increases speed of closure (number of cycles needed),
-	/// but also increases risk of erratic behavior. Decreasing will reduce erratic behavior, but slows down speed of closure
-	core::Real dq_max_allowed_ = 45 * numeric::constants::d::degrees_to_radians;
 	/// @brief setting that determines whether non-critical information is printed to tracer. Errors/warnings are always printed
 	bool verbose_ = false;
 
 private: // INTERNALLY-MANAGED OBJECTS AND VARIABLES
 	/// @brief copy of the input loop
-	protocols::loops::Loop loop_;
+	protocols::loops::LoopOP loop_{nullptr};
 
 	/// @brief copy of the pointer to the movemap
-	core::kinematics::MoveMapCOP movemap_;
+	core::kinematics::MoveMapCOP movemap_{nullptr};
 
 	/// @brief vector1 with the numbers of the residues whose phi and psi angles are allowed to be adjusted by the mover
 	utility::vector1<core::Size> free_residues_;
@@ -246,16 +231,21 @@ private: // INTERNALLY-MANAGED OBJECTS AND VARIABLES
 	/// @brief atom id of the first CA atom in the loop, which is fixed to the preceding backbone residue and whose stub is the
 	/// reference frame for all vectors and matrices
 	/// @details this member variable is set when the apply() function is called because it relies on the conformation
-	core::id::AtomID ref_bb_atom_id_{0,0};
+	core::id::AtomID ref_atom_id_{0,0};
 
 	/// @brief atom ids of the backbone atoms of the last residue of the loop and the first residue following
 	/// @details this member variable is set when the apply() function is called because it relies on the conformation
 	utility::vector1<core::id::AtomID> target_bb_atom_ids_{6};
 
+	/// @ brief target vectors for the loop closure. Are either initialized based on residuetype defaults, or can be set
+	/// via current_closed_as_target, before calling apply()
+	core::kinematics::RT target_;
+	bool target_initialized_ = false;
+
 	/// @brief internal coordinates of the target residue, which determine how the loop must be connected to the backbone.
 	/// Stored in this form, and not as homogeneous matrix, because maybe a user in the future would like to change individual values manually
 	/// @details this member variable is set when the apply() function is called because it relies on the conformation
-	utility::vector1< core::chemical::AtomICoor > icoor_targets_{3};
+	utility::vector1< core::chemical::AtomICoor > icoor_targets_;
 };
 
 std::ostream &

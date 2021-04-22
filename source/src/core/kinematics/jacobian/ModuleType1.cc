@@ -17,9 +17,9 @@
 /// where each ModuleTypeX class is a derived class.
 
 // Project headers:
+#include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
-#include <core/id/TorsionID.hh>
+#include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/jacobian/ModuleType1.hh>
 #include <core/types.hh>
 #include <core/kinematics/AtomTree.hh>
@@ -48,15 +48,43 @@ constexpr core::Real ModuleType1::pos_singular_bound_;
 
 /// @brief Constructor for module with 1, 2 or 3 sets of two AtomIDs whose X-axes represent intersecting torsion axes.
 /// @details Stores the basic information needed to perform the Jacobian analysis for this module for any conformation
-/// @param[in] key_atoms Must have exactly six AtomIDs, whose associated stubs' X-axes identify the torsion axes
-ModuleType1::ModuleType1(core::Size const & dofs_module, utility::vector1< core::Size > const & res_numbers, core::id::AtomID const & ref_atom){
-	if ( res_numbers.size() != 3 ) {
-		utility_exit_with_message("the res_numbers input vectors does not contain exactly three residues");
+ModuleType1::ModuleType1(core::Size const & dofs_module, utility::vector1< core::id::TorsionID > const & torsion_ids, core::id::AtomID const & ref_atom){
+	if ( torsion_ids.size() != 6 ) {
+		utility_exit_with_message("the torsion_ids input vectors does not contain exactly six torsion IDs");
 	}
 
 	number_dofs_ = dofs_module;
-	res_numbers_ = res_numbers;
+	for ( core::Size i=1; i <= torsion_ids.size(); ++i ) {
+		if ( torsion_ids[i].type() != core::id::TorsionType::BB || torsion_ids[i].torsion() > 2 ) {
+			utility_exit_with_message("the torsion_ids input vector can only contain phi and psi angles");
+		}
+	}
+	torsion_ids_ = torsion_ids;
 	ref_atom_ID_ = ref_atom;
+	// extract the free residues from the torsion_ids
+	free_residues_.clear();
+	for ( core::Size i=1; i <= dofs_module; ++i ) {
+		if ( i == 1 ) {
+			free_residues_.push_back(torsion_ids_[i].rsd()); // start by appending the residue belonging to first torsion ID
+		} else if ( torsion_ids_[i].rsd() != free_residues_.back() ) { // append subsequent residues if torsion ID is part of new residue
+			free_residues_.push_back(torsion_ids_[i].rsd());
+		}
+	}
+
+	// verify that torsion IDs were from 3 residues
+	utility::vector1<core::Size> check_residues;
+	for ( core::Size i=1; i <= torsion_ids.size(); ++i ) {
+		if ( i == 1 ) {
+			check_residues.push_back(torsion_ids_[i].rsd()); // start by appending the residue belonging to first torsion ID
+		} else if ( torsion_ids_[i].rsd() != check_residues.back() ) { // append subsequent residues if torsion ID is part of new residue
+			check_residues.push_back(torsion_ids_[i].rsd());
+		}
+	}
+	if ( check_residues.size() > 3 ) { // this is not a full test to determine whether torsion axes are intersection,
+		// but it at least catches obvious bad input. Other bad input will be caught later by the Jacobian matrix checks
+		utility_exit_with_message("the torsion_ids need to be pairs of 2 intersecting axes, and therefore can "
+			"originate from max 3 residues.");
+	}
 }
 
 /// @brief Copy constructor.  Keep default unless deep copying is needed (and in that case,
@@ -79,7 +107,7 @@ ModuleType1::clone() const {
 /// See Huang et al. (2011) Generalized Jacobian analysis of lower mobility manipulators for details on the definition
 /// of twists and wrenches and their relations.
 ModuleType1::jacobian_struct
-ModuleType1::update_jacobian_matrices(core::conformation::Conformation const & conformation) {
+ModuleType1::get_jacobian_matrices(core::conformation::Conformation const & conformation) {
 	// update the vectors that are used in the Jacobian construction
 	screw_construct_struct screw_construct = update_screw_vectors(conformation);
 
@@ -178,18 +206,22 @@ ModuleType1::update_jacobian_matrices(core::conformation::Conformation const & c
 				if ( jac_denominators(i,j) == 0 ) { // true singularity
 					jac_denominators(i,j) = 1; // then take default value of 1
 				} else { // ill-defined
-					// get sign of the value by check for >0 and set denominator to either -0.01 or +0.01
-					jac_denominators(i, j) = numeric::sign(jac_denominators(i, j)) * denom_singular_bound_; // ensure that denominators are not singular
-					TR.Debug << "jacobian of module including residue " << res_numbers_[1]
-						<< " is in a singular position and Jacobian has been capped to avoid large values"
+					// get sign of the value by check for >0 and set denominator to singular bound
+					// ensure that denominators are not singular
+					jac_denominators(i, j) = numeric::sign(jac_denominators(i, j)) * denom_singular_bound_;
+					TR.Debug << "jacobian of module including residue " << torsion_ids_[1].rsd() << " at " << i
+						<< " is in a singular position (denominator = " << std::abs(jac_denominators(i, j))
+						<< "), and Jacobian has been capped to avoid large values"
 						<< std::endl;
 				}
 				// ... but approximately zero values for the off-diagonal terms
 			} else if ( i != j ) {
-				runtime_assert_string_msg(std::abs(jac_denominators(i, j)) < denom_orthogonal_bound_, "Jacobian analysis failed"); // verify that all non-diagonal values are roughly zero
+				runtime_assert_string_msg(std::abs(jac_denominators(i, j)) < denom_orthogonal_bound_,
+					"Jacobian analysis failed"); // verify that all non-diagonal values are roughly zero
 			}
 			// the values in the jac_denominators_check matrix should all be approximately zero
-			runtime_assert_string_msg(std::abs(jac_denominators_check(i, j)) < denom_orthogonal_bound_, "Jacobian analysis failed"); // verify orthogonality of twists and wrenches
+			runtime_assert_string_msg(std::abs(jac_denominators_check(i, j)) < denom_orthogonal_bound_,
+				"Jacobian analysis failed"); // verify orthogonality of twists and wrenches
 		}
 	}
 
@@ -221,19 +253,51 @@ ModuleType1::update_jacobian_matrices(core::conformation::Conformation const & c
 	return jacs;
 }
 
-/// @brief Apply vector of delta angles to the torsion angles that are associated to this instance
-/// @param[in] vector dq must have dimension 6 and all delta angles must be in radians
+/// @brief Get torsion angle values that belong to this instance
+/// @param[out] vector dq is has dimension number_dofs of this modules and all delta are in degrees
+numeric::MathVector<core::Real>
+ModuleType1::get_torsion_values(core::conformation::Conformation const & conformation ){
+	// create vector of
+	numeric::MathVector<core::Real> vars( number_dofs_, core::Real(0));
+	// loop over dofs of the module
+	for ( core::Size i=0; i < number_dofs_; ++i ) {
+		// apply torsion
+		vars(i) = conformation.torsion( torsion_ids_[i+1] ); // in [deg]
+	}
+	// return vector
+	return vars;
+}
+
+/// @brief Apply vector of values to the torsion angles that are associated to this instance
+/// @param[in] vector dq must have dimension number_dofs and all delta angles must be in degrees
 void
-ModuleType1::apply_delta_torsions_angles(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & dq){
-	// Assert that the provided vector has size 6
-	runtime_assert_string_msg(dq.size() == 6, "input vector 'dq' is not of size six, check input");
+ModuleType1::set_torsion_values(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & vars){
+	// Assert that the provided vector has size number_dofs_
+	runtime_assert_string_msg(vars.size() == number_dofs_,
+		"input vector 'vars' has different size than number_dofs_, check input");
 
 	// loop over dofs of the module
 	for ( core::Size i=0; i < number_dofs_; ++i ) {
-		// get torsion ID ('+ 1' because first two dofs are related to first residue)
-		core::id::TorsionID torsion_id(res_numbers_[i / 2 + 1], core::id::BB, i % 2 + 1 );
 		// apply torsion
-		conformation.set_torsion( torsion_id, conformation.torsion(torsion_id) + dq(i) * numeric::constants::d::radians_to_degrees ); // in [deg]
+		conformation.set_torsion( torsion_ids_[i+1], vars(i) ); // in [deg]
+	}
+}
+
+/// @brief Apply vector of delta angles to the torsion angles that are associated to this instance
+/// @param[in] vector dq must have dimension 6 and all delta angles must be in radians
+void
+ModuleType1::apply_delta_torsion_values(core::conformation::Conformation & conformation, numeric::MathVector<core::Real> const & dq){
+	// Assert that the provided vector has size 6
+	runtime_assert_string_msg(dq.size() == 6, "input vector 'dq' is not of size six, check input");
+	// Assert that all values are real
+	for ( core::Size i=0; i < number_dofs_; ++i ) {
+		runtime_assert_string_msg(!std::isnan(dq(i)), "One of the values in dq is NaN!");
+	}
+	// loop over dofs of the module
+	for ( core::Size i=0; i < number_dofs_; ++i ) {
+		// apply torsion
+		conformation.set_torsion( torsion_ids_[i+1], conformation.torsion(torsion_ids_[i+1]) + dq(i) *
+			numeric::constants::d::radians_to_degrees ); // in [deg]
 	}
 }
 
@@ -241,10 +305,10 @@ ModuleType1::apply_delta_torsions_angles(core::conformation::Conformation & conf
 /// @detail For the Jacobian analysis axis vectors and arm vectors are required
 /// Handles to the six torsion axes are provided by means of AtomIDs. AtomID uniquely points to a Stub, whose X-axes
 /// correspond to torsion axes. Thus, to identify the axes of the phi and psi torsions the stubs associated to respectively
-/// the mainchain CA- and C-atoms needs to be provided.
+/// the mainchain CA- and C-atoms are needed.
 ModuleType1::screw_construct_struct
 ModuleType1::update_screw_vectors(core::conformation::Conformation const & conformation) {
-	// Create temporary variables:
+	// STEP 1: create temporary variables:
 	// create empty vector of homogeneous matrices
 	utility::vector1< numeric::HomogeneousTransform<core::Real> > Hmatrices;
 	// the moment arm vectors are all initialized as zero vectors
@@ -256,30 +320,26 @@ ModuleType1::update_screw_vectors(core::conformation::Conformation const & confo
 	// create empty homogeneous transformation matrix instance
 	numeric::HomogeneousTransform<core::Real> H_temp;
 
-	// STEP 1: extract key atoms from these residues. There are always six key_atom_IDs in each module, but only the
-	// first 'number_dofs_' are associated to DoFs, while the rest of the key_atom_IDs represent constraints
-	utility::vector1< core::id::AtomID > key_atom_IDs;
-	for ( core::Size i = 1; i <= 3; ++i ) {
-		key_atom_IDs.push_back(core::id::AtomID(conformation.residue(res_numbers_[i]).mainchain_atom(2), res_numbers_[i]));
-		key_atom_IDs.push_back(core::id::AtomID(conformation.residue(res_numbers_[i]).mainchain_atom(3), res_numbers_[i]));
-	}
+	// STEP 2: update homogeneous matrices between all stubs that hold the torsion angle axes. These homogeneous matrices are
+	// used to define the axis vectors and arm vectors of the screws. Start from reference atom
+	core::id::AtomID atom_lower(ref_atom_ID_);
+	core::id::AtomID atom_upper;
+	for ( core::Size i = 1; i <= 6; ++i ) {
+		// the atom whose stub holds the torsion axis reference frame, is the next mainchain atom
+		atom_upper = core::id::AtomID(
+			conformation.residue(torsion_ids_[i].rsd()).mainchain_atom(torsion_ids_[i].torsion() + 1),
+			torsion_ids_[i].rsd());
 
-
-	// STEP 2: define the homogeneous matrices that ares used to define the axis vectors and arm vectors
-	// start with homogeneous matrix between global reference atom and first atom of the key_atoms
-	RT_temp = core::kinematics::RT(conformation.atom_tree().atom(ref_atom_ID_).get_stub(),
-		conformation.atom_tree().atom(key_atom_IDs[1]).get_stub());
-	Hmatrices.push_back( numeric::HomogeneousTransform<core::Real>(RT_temp.get_rotation(), RT_temp.get_translation()) );
-
-	// update homogeneous matrices between all key atoms
-	for ( core::Size i=1; i < key_atom_IDs.size(); ++i ) {
-		// homogeneous matrix between two subsequent key atoms
-		RT_temp = core::kinematics::RT(conformation.atom_tree().atom(key_atom_IDs[i]).get_stub(),
-			conformation.atom_tree().atom(key_atom_IDs[i+1]).get_stub());
-		Hmatrices.push_back ( numeric::HomogeneousTransform<core::Real>(RT_temp.get_rotation(), RT_temp.get_translation()) );
+		// homogeneous matrix between the previous and the current atom is extracted from the stubs using an RT as intermediate step
+		RT_temp = core::kinematics::RT(conformation.atom_tree().atom(atom_lower).get_stub(),
+			conformation.atom_tree().atom(atom_upper).get_stub());
+		Hmatrices.push_back(
+			numeric::HomogeneousTransform<core::Real>(RT_temp.get_rotation(), RT_temp.get_translation()));
+		// update atom_lower for next homogeneous transform
+		atom_lower = atom_upper;
 	}
 	// check that size of Hmatrices is again 6, as expected
-	runtime_assert_string_msg(Hmatrices.size() == 6, "attempt to update vectors while number of key atoms is (no longer) exactly six");
+	runtime_assert_string_msg(Hmatrices.size() == 6, "attempt to update vectors for Jacobian analysis failed, not exactly six homogeneous matrices were created");
 
 	// STEP 3: use the homogeneous matrices to construct the position vectors of the twist axes (r_vectors), as well as
 	// axis vectors of the twist axes, expressed in global reference frame
@@ -288,7 +348,7 @@ ModuleType1::update_screw_vectors(core::conformation::Conformation const & confo
 		H_temp = H_temp * Hmatrices[i];
 		// define screw vector 's', which is local torison axis projected on defined global reference frame, i.e. R * [1;0;0]
 		s_vectors[i] = H_temp.rotation_matrix().col_x();
-		// moment arm from global reference frame to the CA-atom corresponds to the 'point' of the homogeneous matrix
+		// moment arm from global reference frame to the 'point' of the homogeneous matrix
 		r_vectors[i] = H_temp.point();
 	}
 
@@ -331,8 +391,9 @@ ModuleType1::get_orthogonal_wrenches_from_twists(Screw const & twist_1,
 	if ( std::abs(H_Ca_CAb.xz()) > pos_singular_bound_ ) {
 		cx_phi_b = -H_Ca_CAb.pz() / H_Ca_CAb.xz();
 	} else {
-		cx_phi_b = -H_Ca_CAb.pz() / (numeric::sign( H_Ca_CAb.xz() ) * pos_singular_bound_); // ensure that denominator is not singular
-		TR.Warning << "Jacobian module containing residue " << res_numbers_[1] << " is near a singularity: atom temporarily moved " << pos_singular_bound_ << " Ang. to continue analysis." << std::endl;
+		core::Real correct = numeric::sign( H_Ca_CAb.xz() ) * pos_singular_bound_;
+		cx_phi_b = -H_Ca_CAb.pz() / correct; // ensure that denominator is not singular
+		TR.Warning << "Jacobian module containing residue " << torsion_ids_[1].rsd() << " is near singularity (H_Ca_CAb.xz = " << H_Ca_CAb.xz() << "), changed to " << correct << " Ang. to continue analysis." << std::endl;
 	}
 	// Above constant is used to construct a homogeneous transform, which goes from CA-atom of the b-residue to this construction point 'Pc1'
 	numeric::HomogeneousTransform<core::Real> const H_CAb_Pc1(numeric::xyzMatrix<core::Real>::identity(),
@@ -344,8 +405,9 @@ ModuleType1::get_orthogonal_wrenches_from_twists(Screw const & twist_1,
 	if ( std::abs(H_Ca_Cb.xz()) > pos_singular_bound_ ) {
 		cx_psi_b = -H_Ca_Cb.pz() / H_Ca_Cb.xz();
 	} else {
-		cx_psi_b = -H_Ca_Cb.pz() / (numeric::sign( H_Ca_Cb.xz() ) * pos_singular_bound_); // ensure that denominator is not singular
-		TR.Warning << "Jacobian module containing residue " << res_numbers_[1] << " is near a singularity: atom temporarily moved " << pos_singular_bound_ << " Ang. to continue analysis." << std::endl;
+		core::Real correct = numeric::sign( H_Ca_Cb.xz() ) * pos_singular_bound_;
+		cx_psi_b = -H_Ca_Cb.pz() / correct; // ensure that denominator is not singular
+		TR.Warning << "Jacobian module containing residue " << torsion_ids_[1].rsd() << " is near a singularity (H_Ca_Cb.xz = " << H_Ca_Cb.xz() << "), changed to " << correct << " Ang. to continue analysis." << std::endl;
 	}
 	// Above constant is used to construct a homogeneous transform, which goes from C-atom of the b-residue to this construction point 'Pc2'
 	numeric::HomogeneousTransform<core::Real> const H_Cb_Pc2(numeric::xyzMatrix<core::Real>::identity(),
