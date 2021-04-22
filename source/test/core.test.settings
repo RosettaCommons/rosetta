@@ -629,6 +629,7 @@ sources = {
 	"select/jump_selector" : [
 		"AndJumpSelector",
 		"InterchainJumpSelector",
+		"JumpForResidue",
 		"JumpIndexSelector",
 		"NotJumpSelector",
 		"OrJumpSelector",

@@ -332,6 +332,7 @@
 #include <core/select/jump_selector/NotJumpSelectorCreator.hh>
 #include <core/select/jump_selector/JumpIndexSelectorCreator.hh>
 #include <core/select/jump_selector/InterchainJumpSelectorCreator.hh>
+#include <core/select/jump_selector/JumpForResidueCreator.hh>
 
 #endif
 
@@ -831,6 +832,7 @@ static JumpSelectorRegistrator< OrJumpSelectorCreator > reg_OrJumpSelectorCreato
 static JumpSelectorRegistrator< NotJumpSelectorCreator > reg_NotJumpSelectorCreator;
 static JumpSelectorRegistrator< JumpIndexSelectorCreator > reg_JumpIndexSelectorCreator;
 static JumpSelectorRegistrator< InterchainJumpSelectorCreator > reg_InterchainJumpSelectorCreator;
+static JumpSelectorRegistrator< JumpForResidueCreator > reg_JumpForResidueCreator;
 
 // register PackerPaletteCreators
 using namespace core::pack::palette;

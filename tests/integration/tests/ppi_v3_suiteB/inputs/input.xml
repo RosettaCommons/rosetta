@@ -34,6 +34,10 @@
 
 </RESIDUE_SELECTORS>
 
+<JUMP_SELECTORS>
+  <JumpForResidue name="chainb_jump" residue_selector="chainB"/>
+</JUMP_SELECTORS>
+
 <TASKOPERATIONS>
   ### prevent the chain not wanted for the mutations filter (sequence recovery) from repacking
   <PreventChainFromRepacking name="chainA" chain="2" />
