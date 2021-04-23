@@ -1404,6 +1404,7 @@ GALigandDock::setup_ligand_aligner( core::pose::Pose const & pose,
 	LigandAligner aligner( use_pharmacophore_, movable_scs_in_ref, fastmode);
 	aligner.set_sf( gridscore_ref );
 	aligner.refine_input( (runmode_ == "refine") );
+	aligner.set_sample_ring_conformers( sample_ring_conformers_ );
 
 	if ( use_pharmacophore_ ) {
 		// make sure reference_pool is not set to something else

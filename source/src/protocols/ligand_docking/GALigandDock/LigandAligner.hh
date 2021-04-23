@@ -361,6 +361,9 @@ public:
 
 	void refine_input( bool setting ){ refine_input_ = setting; }
 
+	void set_sample_ring_conformers( bool const setting ) { sample_ring_conformers_ = setting; }
+	bool sample_ring_conformers() const { return sample_ring_conformers_; }
+
 private:
 	/// @brief set constraints to target
 	void set_constraints(
@@ -412,6 +415,10 @@ private:
 
 	// faster version (support for VSX mode in GAdock)
 	bool faster_;
+
+	/// @brief Should ring conformers be sampled?  Default true.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	bool sample_ring_conformers_ = true;
 
 };
 

@@ -1612,14 +1612,17 @@ LigandAligner::apply(
 	// store how many structures has been passed through here for biased sampling
 	istruct_++;
 
-	core::pose::PoseOP fullpose( new core::pose::Pose );
+	core::pose::PoseOP fullpose( utility::pointer::make_shared< core::pose::Pose >() );
 	lig.to_pose( fullpose );
 
 	// make a working copy having full pose but redefined moving scs consistent with sf_
 	LigandConformer ligwork = LigandConformer( fullpose, lig.ligand_ids(), movable_scs_ );
+	ligwork.set_sample_ring_conformers( sample_ring_conformers_ );
 
 	LigandConformer minilig;
-	core::pose::PoseOP minipose( new core::pose::Pose );
+	minilig.set_sample_ring_conformers( sample_ring_conformers_ );
+
+	core::pose::PoseOP minipose( utility::pointer::make_shared< core::pose::Pose >() );
 	ligwork.to_minipose( minipose, minilig );
 
 	utility::vector1< core::Size > ligids = minilig.ligand_ids();
