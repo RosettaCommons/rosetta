@@ -186,9 +186,12 @@ det3( ObjexxFCL::FArray2A< double > m );
 /// @references
 ///
 /// @author charlie strauss 2001
+/// @author Modified by VKM, April 2021, to return failure status.
+///
+/// @returns FALSE for success, TRUE for error/failure.
 ///
 /////////////////////////////////////////////////////////////////////////////////
-void
+bool
 rmsfitca2(
 	int npoints,
 	ObjexxFCL::FArray2A< double > xx,

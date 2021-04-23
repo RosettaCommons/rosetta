@@ -603,8 +603,25 @@ HelicalBundlePredictApplication::align_to_native_pose(
 			amap[ core::id::AtomID(prediction_atindex,prediction_resindex) ] = core::id::AtomID(native_atindex,native_resindex);
 		}
 	}
-
-	return core::scoring::superimpose_pose( pose, *native_pose_, amap ); //Superimpose the pose and return the RMSD.
+	core::Real rms_val;
+	core::Real offset_val( 1.0e-7 );
+	bool failed = true;
+	for ( core::Size i(1); i<=3; ++i ) {
+		try {
+			rms_val = core::scoring::superimpose_pose( pose, *native_pose_, amap, offset_val, false, true ); //Superimpose the pose and return the RMSD.
+		} catch ( ... ) {
+			TR.Warning << "Warning in protocols::helical_bundle_predict::HelicalBundlePredictApplication::align_and_calculate_rmsd(): RMSD calculation failed with offset = " << offset_val << std::endl;
+			offset_val *= 10.0;
+			continue;
+		}
+		failed = false;
+		break;
+	}
+	if ( failed ) {
+		TR.Warning << "Warning in protocols::helical_bundle_predict::HelicalBundlePredictApplication::align_and_calculate_rmsd(): RMSD calculation failed!  Returning -1.0 to indicate failure." << std::endl;
+		rms_val = -1.0;
+	}
+	return rms_val;
 }
 
 /// @brief Create a new move generator.  Static, so this can be called from other classes (e.g.

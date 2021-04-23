@@ -61,6 +61,7 @@ PNearCalculator::add_data_point(
 	core::Real const energy,
 	core::Real const rmsd
 ) {
+	if ( rmsd < 0 ) return; //Do nothing for negative rmsd values.
 	core::Real const P( std::exp( -energy/kbt_ ) );
 	numerator_ += std::exp( -std::pow( rmsd/lambda_, 2 ) )*P;
 	denominator_ += P;

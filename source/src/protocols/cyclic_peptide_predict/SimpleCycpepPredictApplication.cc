@@ -1554,8 +1554,25 @@ SimpleCycpepPredictApplication::align_and_calculate_rmsd(
 	if ( !skip_seq_comparison ) {
 		runtime_assert_string_msg( res_counter == nres - exclude_residues_from_rms_.size(), "Error in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): The native pose has fewer residues than the input sequence." );
 	}
-
-	return core::scoring::superimpose_pose( pose, native_pose, amap ); //Superimpose the pose and return the RMSD.
+	core::Real rms_val;
+	core::Real offset_val( 1.0e-7 );
+	bool failed = true;
+	for ( core::Size i(1); i<=3; ++i ) {
+		try {
+			rms_val = core::scoring::superimpose_pose( pose, native_pose, amap, offset_val, false, true ); //Superimpose the pose and return the RMSD.
+		} catch ( ... ) {
+			TR.Warning << "Warning in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): RMSD calculation failed with offset = " << offset_val << std::endl;
+			offset_val *= 10.0;
+			continue;
+		}
+		failed = false;
+		break;
+	}
+	if ( failed ) {
+		TR.Warning << "Warning in protocols::cyclic_peptide_predict::SimpleCycpepPredictApplication::align_and_calculate_rmsd(): RMSD calculation failed!  Returning -1.0 to indicate failure." << std::endl;
+		rms_val = -1.0;
+	}
+	return rms_val;
 }
 
 /// @brief Actually run the application.

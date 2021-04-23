@@ -779,9 +779,7 @@ rms_fit(
 } // rms_fit
 
 
-
-
-void
+bool
 rmsfitca2(
 	int npoints,
 	ObjexxFCL::FArray2A< double > xx,
@@ -844,7 +842,7 @@ rmsfitca2(
 		//     // might think about returning a zero rms, to avoid any chance of Floating Point Errors?
 
 		esq = 0.0;
-		return;
+		return true; //VKM April 2021 -- return error status
 
 	}
 	handedness = numeric::sign_transfered(det, 1.0);
@@ -901,7 +899,7 @@ rmsfitca2(
 			}
 		}
 		esq = 0.0;
-		return;
+		return true; //VKM April 2021 -- error status again.
 	}
 
 	//$$$             for ( i = 1; i <= npoints; ++i ) {
@@ -954,6 +952,8 @@ rmsfitca2(
 	//  //  (the std::abs() just saves us a headache when the roundoff error accidantally makes the sum negative)
 
 	esq = std::sqrt( std::abs( rms_sum - ( 2.0 * rms_ctx ) ) / natsel );
+
+	return false; //VKM April 2021 -- no error.
 
 } // rmsfitca2
 
