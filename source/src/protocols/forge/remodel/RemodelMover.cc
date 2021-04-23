@@ -41,6 +41,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <core/pose/datacache/CacheableDataType.hh> // for silent file tags
 #include <basic/datacache/CacheableString.hh> // for silent file tags
 #include <core/pose/symmetry/util.hh>
@@ -2253,6 +2255,24 @@ bool RemodelMover::confirm_sequence( core::pose::Pose & pose ) {
 	} else {
 		return true; //for now CHANGE IT BACK!!
 	}
+
+}
+
+/// @brief Provide the citation.
+void
+RemodelMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"RemodelMover",
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pone.0024109") );
+
+	citations.add( collection );
+
+	citations.add( centroid_sfx_ );
+	citations.add( fullatom_sfx_ );
 
 }
 

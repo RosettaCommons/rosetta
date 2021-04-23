@@ -24,6 +24,7 @@
 #include <utility/vector1.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 #include <utility/options/keys/OptionKeyList.fwd.hh>
+#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // Utility Headers
 
@@ -63,6 +64,8 @@ public:
 		basic::datacache::DataMap &data
 	) override;
 
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
 
 	// setter
 	void slide_into_contact(bool val) { slide_ = val; }
@@ -159,6 +162,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 
 private:
 	/// @brief if keep_virtual_residues is true, virtual residues will remain in the pose, otherwise
@@ -200,6 +206,9 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
 
 private:
 	/// @brief if true, clears symmetry_definition option from pose.

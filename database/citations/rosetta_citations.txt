@@ -115,6 +115,33 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "Barak" "Raveh" "B"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Nir" "London" "N"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Ora" "Schueler-Furman" "O"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2010
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Sub-angstrom modeling of complexes between flexible peptides and globular proteins.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        78(9):2029-40
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/prot.22716
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Steven M" "Lewis" "SM"
     [END_PRIMARY_AUTHORS]
     [BEGIN_SENIOR_AUTHORS]
@@ -207,6 +234,94 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "Po-Ssu" "Huang" "PS"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Yin-En Andrew" "Ban" "YE"
+        "Florian" "Richter" "F"
+        "Ingemar" "Andre" "I"
+        "Robert" "Vernon" "R"
+        "William R" "Schief" "WR"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2011
+    [END_YEAR]
+    [BEGIN_TITLE]
+        RosettaRemodel: a generalized framework for flexible backbone protein design.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS One
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        6(8):e24109
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pone.0024109
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Frank" "DiMaio" "F"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Andrew" "Leaver-Fay" "A"
+        "Phil" "Bradley" "P"
+        "David" "Baker" "D"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Ingemar" "André" "I"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2011
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Modeling symmetric macromolecular structures in Rosetta3.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS One
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        6(6):e20450
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pone.0020450
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Barak" "Raveh" "B"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Nir" "London" "N"
+        "Lior" "Zimmerman" "L"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Ora" "Schueler-Furman" "O"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2011
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Rosetta FlexPepDock ab-initio: simultaneous folding, docking and refinement of peptides onto their receptors.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS One
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        6(4):e18934
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pone.0018934
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Gordon" "Lemmon" "G"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
@@ -274,6 +389,65 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
+        "Yifan" "Song" "Y"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Frank" "DiMaio" "F"
+        "Ray Yu-Ruei" "Wang" "RY"
+        "David" "Kim" "D"
+        "Chris" "Miles" "C"
+        "TJ" "Brunette" "T"
+        "James" "Thompson" "J"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2013
+    [END_YEAR]
+    [BEGIN_TITLE]
+        High-resolution comparative modeling with RosettaCM.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Structure
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        21(10):1735-42
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1016/j.str.2013.08.005
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Karen R" "Khar" "KR"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Luki" "Goldschmidt" "L"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "John" "Karanicolas" "J"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2013
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Fast docking on graphics processing units via Ray-Casting.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS One
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        8(8):e70661
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pone.0070661
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
         "Samuel" "DeLuca" "S"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
@@ -296,6 +470,33 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1371/journal.pone.0132508
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Ragul" "Gowthaman" "R"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Sergey" "Lyskov" "S"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "John" "Karanicolas" "J"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2015
+    [END_YEAR]
+    [BEGIN_TITLE]
+        DARC 2.0: Improved Docking and Virtual Screening at Protein Interaction Sites.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        PLoS One
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        10(7):e0131612
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1371/journal.pone.0131612
     [END_DOI]
 [END_CITATION]
 
@@ -352,24 +553,61 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
-        "" "Boyken" "SE"
+        "Ragul" "Gowthaman" "R"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
-        "" "Chen" "Z"
-        "" "Groves" "B"
-        "" "Langan" "RA"
-        "" "Oberdorfer" "G"
-        "" "Ford" "A"
-        "" "Gilmore" "JM"
-        "" "Xu" "C"
-        "" "DiMaio" "F"
-        "" "Pereira" "JH"
-        "" "Sankaran" "B"
-        "" "Seelig" "G"
-        "" "Zwart" "PH"
+        "Sven A" "Miller" "SA"
+        "Steven" "Rogers" "S"
+        "Jittasak" "Khowsathit" "J"
+        "Lan" "Lan" "L"
+        "Nan" "Bai" "N"
+        "David K" "Johnson" "DK"
+        "Chunjing" "Liu" "C"
+        "Liang" "Xu" "L"
+        "Asokan" "Anbanandam" "A"
+        "Jeffrey" "Aubé" "J"
+        "Anuradha" "Roy" "A"
     [END_COAUTHORS]
     [BEGIN_SENIOR_AUTHORS]
-        "" "Baker" "D"
+        "John" "Karanicolas" "J"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2016
+    [END_YEAR]
+    [BEGIN_TITLE]
+        DARC: Mapping Surface Topography by Ray-Casting for Effective Virtual Screening at Protein Interaction Sites.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        J Med Chem
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        59(9):4152-70
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1021/acs.jmedchem.5b00150
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Scott E" "Boyken" "SE"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Zibo" "Chen" "Z"
+        "Benjamin" "Groves" "B"
+        "Robert A" "Langan" "RA"
+        "Gustav" "Oberdorfer" "G"
+        "Alex" "Ford" "A"
+        "Jason M" "Gilmore" "JM"
+        "Chunfu" "Xu" "C"
+        "Frank" "DiMaio" "F"
+        "Jose Henrique" "Pereira" "JH"
+        "Banumathi" "Sankaran" "B"
+        "Georg" "Seelig" "G"
+        "Peter H" "Zwart" "PH"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
     [END_SENIOR_AUTHORS]
     [BEGIN_YEAR]
         2016
@@ -643,14 +881,72 @@
 
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
-        "" "Maguire" "JB"
+        "Kristen M" "Blacklock" "KM"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
-        "" "Boyken" "SE"
-        "" "Baker" "D"
+        "Lu" "Yang" "L"
+        "Vikram Khipple" "Mulligan" "VK"
     [END_COAUTHORS]
     [BEGIN_SENIOR_AUTHORS]
-        "" "Kuhlman" "B"
+        "Sagar D" "Khare" "SD"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2018
+    [END_YEAR]
+    [BEGIN_TITLE]
+        A computational method for the design of nested proteins by loop-directed domain insertion.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proteins
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        86(3):354-369
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1002/prot.25445
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Andrew M" "Watkins" "AM"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Caleb" "Geniesse" "C"
+        "Wipapat" "Kladwang" "W"
+        "Paul" "Zakrevsky" "P"
+        "Luc" "Jaeger" "L"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Rhiju" "Das" "R"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2018
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Blind prediction of noncanonical RNA structure at atomic accuracy.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Sci Adv
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        4(5):eaar5316
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1126/sciadv.aar5316
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Jack B" "Maguire" "JB"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Scott E" "Boyken" "SE"
+        "David" "Baker" "D"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Brian" "Kuhlman" "B"
     [END_SENIOR_AUTHORS]
     [BEGIN_YEAR]
         2018
@@ -666,6 +962,33 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1021/acs.jctc.8b00033
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Andrew M" "Watkins" "AM"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Ramya" "Rangan" "R"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Rhiju" "Das" "R"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2019
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Using Rosetta for RNA homology modeling.
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Methods Enzymol
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        623:177-207
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1016/bs.mie.2019.05.026
     [END_DOI]
 [END_CITATION]
 
@@ -745,7 +1068,7 @@
         "Samer F" "Halabiya" "SF"
         "Brian" "Coventry" "B"
         "Jermel R" "Griffin" "JR"
-        "Surya V S R K" "Pulavarti" "SVSRK"
+        "Surya VSRK" "Pulavarti" "SVSRK"
         "Matthew" "Cummins" "M"
         "David F" "Thieker" "DF"
         "Eric" "Klavins" "E"
@@ -757,7 +1080,7 @@
         "Brian" "Kuhlman" "B"
     [END_SENIOR_AUTHORS]
     [BEGIN_YEAR]
-        2020
+        2021
     [END_YEAR]
     [BEGIN_TITLE]
         Perturbing the energy landscape for improved packing during computational protein design.
@@ -766,7 +1089,7 @@
         Proteins
     [END_JOURNAL]
     [BEGIN_VOLUME_ISSUE_PAGES]
-        "in press"
+        89(4):436-449
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1002/prot.26030

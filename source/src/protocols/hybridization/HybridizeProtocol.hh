@@ -32,6 +32,8 @@
 #include <utility/file/FileName.hh>
 #include <utility/pointer/owning_ptr.hh>
 
+#include <basic/citation_manager/CitationCollection.fwd.hh>
+
 namespace protocols {
 namespace hybridization {
 
@@ -172,6 +174,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 	// parsible options

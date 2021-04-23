@@ -25,6 +25,9 @@
 #include <core/io/raw_data/ScoreFileData.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/options/keys/flexPepDocking.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <basic/datacache/CacheableString.hh>
@@ -85,16 +88,31 @@ main( int argc, char * argv [] )
 
 		devel::init(argc, argv);
 
+		////////// Register with Citation Manager //////////
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"FlexPepDocking", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1002/prot.22716") );
+			if ( option[basic::options::OptionKeys::flexPepDocking::lowres_abinitio]() ) {
+				collection->add_citation( cm->get_citation_by_doi("10.1371/journal.pone.0018934") );
+			}
+			cm->add_citation( collection );
+		}
+
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// end of setup
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		MoverOP fpDock( new flexpep_docking::FlexPepDockingProtocol(1,true, true) );
+		MoverOP fpDock( utility::pointer::make_shared< flexpep_docking::FlexPepDockingProtocol >(1,true, true) );
 
 		// read native pose: (TODO: look how this should be handled in Job Distributor 2)
 		// protocols::jd2::set_native_in_mover(*fpDock);
 		if ( option[ in::file::native ].user() ) {
-			core::pose::PoseOP native_pose( new core::pose::Pose );
+			core::pose::PoseOP native_pose( utility::pointer::make_shared< core::pose::Pose >() );
 			core::chemical::ResidueTypeSetCAP rsd_set;
 			if ( option[ in::file::centroid_input ].user() ) {
 				core::import_pose::centroid_pose_from_pdb( *native_pose, option[ in::file::native ]() , core::import_pose::PDB_file);

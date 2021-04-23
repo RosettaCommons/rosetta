@@ -24,6 +24,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/loodo.OptionKeys.gen.hh>
 #include <basic/prof.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <core/conformation/Residue.hh>
 #include <core/fragment/ConstantLengthFragSet.hh>
@@ -692,6 +694,15 @@ int main(int argc, char *argv[])
 		// setup
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+		////////// Register with Citation Manager //////////
+
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection( utility::pointer::make_shared< basic::citation_manager::CitationCollection >( "LooDo", basic::citation_manager::CitedModuleType::Application ) );
+			collection->add_citation( cm->get_citation_by_doi("10.1002/prot.25445") );
+			cm->add_citation( collection );
+		}
+
 		////////// Gathering User Input //////////
 
 		// The ins_begin input variable denote the beginning of the insertion site (pose numbering) in the parent domain).
@@ -1128,6 +1139,9 @@ int main(int argc, char *argv[])
 		// Close Output Files
 		caphitRTs.close();
 		DebugRTs.close();
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

@@ -36,6 +36,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
 #include <basic/options/keys/cryst.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility Headers
 #include <utility>
@@ -344,6 +346,20 @@ void SetupForSymmetryMover::provide_xml_schema( utility::tag::XMLSchemaDefinitio
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Given a symmetry definition file that describes configuration and scoring of a symmetric system, this mover 'symmetrizes' an asymmetric pose.", attlist );
 }
 
+/// @brief Provide the citation.
+void
+SetupForSymmetryMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pone.0020450") );
+
+	citations.add( collection );
+}
+
 void
 SetupForSymmetryMover::options_read_in_ctor( utility::options::OptionKeyList & opts )
 {
@@ -436,6 +452,20 @@ void ExtractAsymmetricUnitMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "The inverse of SetupForSymmetry: given a symmetric pose, make a nonsymmetric pose that contains only the asymmetric unit.", attlist );
 }
 
+/// @brief Provide the citation.
+void
+ExtractAsymmetricUnitMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pone.0020450") );
+
+	citations.add( collection );
+}
+
 std::string ExtractAsymmetricUnitMoverCreator::keyname() const {
 	return ExtractAsymmetricUnitMover::mover_name();
 }
@@ -509,6 +539,20 @@ void ExtractAsymmetricPoseMover::provide_xml_schema( utility::tag::XMLSchemaDefi
 	attlist + XMLSchemaAttribute( "clear_sym_def", xsct_rosetta_bool, "If true, the symmetry_definition option key will be cleared." );
 
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(), "Similar to ExtractAsymmetricUnit: given a symmetric pose, make a nonsymmetric pose that contains the entire system (all monomers). Can be used to run symmetric and asymmetric moves in the same trajectory.", attlist );
+}
+
+/// @brief Provide the citation.
+void
+ExtractAsymmetricPoseMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pone.0020450") );
+
+	citations.add( collection );
 }
 
 std::string ExtractAsymmetricPoseMoverCreator::keyname() const {

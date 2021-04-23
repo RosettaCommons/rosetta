@@ -109,6 +109,16 @@ public:
 	void
 	clear();
 
+	/// @brief How many TaskOperations does this TaskFactory contain?
+	core::Size
+	n_task_operations() const;
+
+	/// @brief Does this TaskFactory contain TaskOperations?
+	/// @details Returns true if and only if the number of task operations is
+	/// greater than or equal to one.
+	bool
+	has_task_operations() const;
+
 	/// @brief return the size of the operations_ list
 	core::Size size() const;
 

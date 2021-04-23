@@ -161,6 +161,10 @@
 #include <basic/options/keys/evaluation.OptionKeys.gen.hh>
 #include <basic/options/keys/mistakes.OptionKeys.gen.hh> // check pre talaris
 
+//citations
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+
 //docking
 #include <protocols/docking/DockingLowRes.hh>
 #include <protocols/symmetric_docking/SymDockingLowRes.hh>
@@ -2225,6 +2229,20 @@ void HybridizeProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & 
 	subelements.add_simple_subelement( "DetailedControls", DetailedControls_subelement_attributes, "Used to prevent regions from being sampled extensively (meaning, don't remodel regions where the model is already correct)");
 
 	protocols::moves::xsd_type_definition_w_attributes_and_repeatable_subelements( xsd, mover_name(), "This is the Hybridize mover at the core of comparative modeling (RosettaCM).  Typically its XML is written by a script rather than manually.", attlist, subelements );
+}
+
+/// @brief Provide the citation.
+void
+HybridizeProtocol::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1016/j.str.2013.08.005") );
+
+	citations.add( collection );
 }
 
 std::string HybridizeProtocolCreator::keyname() const {

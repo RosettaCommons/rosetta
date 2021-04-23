@@ -55,6 +55,8 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/cm.OptionKeys.gen.hh>
 #include <basic/options/keys/partial_thread.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <core/import_pose/import_pose.hh>
 
@@ -96,6 +98,18 @@ main( int argc, char* argv [] ) {
 	try{
 		// options, random initialization
 		devel::init( argc, argv );
+
+		////////// Register with Citation Manager //////////
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"partial_thread", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1016/j.str.2013.08.005") );
+			cm->add_citation( collection );
+		}
 
 		using std::map;
 		using std::string;
@@ -164,6 +178,9 @@ main( int argc, char* argv [] ) {
 				} // template pdb check
 			} // alns
 		} // for ( it in aligns )
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 		tr.Debug << "finished building partial models." << std::endl;
 		tr.flush_all_channels();

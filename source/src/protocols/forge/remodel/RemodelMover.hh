@@ -36,6 +36,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <basic/datacache/DataMap.fwd.hh> //parser
+#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 // utility headers
 #include <utility/vector1.hh>
@@ -331,6 +332,10 @@ public: // virtual main methods
 
 	bool confirm_sequence(core::pose::Pose & pose );
 
+public: //Methods needed for the citation manager:
+
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private: // protocol methods
 	forge::remodel::RemodelData setup_remodel_data_for_loop_btw_parametric_components(core::pose::Pose & pose);

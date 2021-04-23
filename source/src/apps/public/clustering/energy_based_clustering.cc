@@ -66,6 +66,8 @@
 #include <devel/init.hh>
 #include <protocols/energy_based_clustering/EnergyBasedClusteringProtocol.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <utility/excn/Exceptions.hh>
 
 // C++ headers:
@@ -87,9 +89,24 @@ int main( int argc, char * argv [] ) {
 		TR << "It was upgraded to a public application on 18 July 2017." << std::endl;
 		TR << "\n************************************************************************************\nIF YOU USE THIS APPLICATION, PLEASE CITE:\nHosseinzadeh P., Bhardwaj G., Mulligan V.K., et al.  (2017).  Comprehensive computational design of ordered peptide macrocycles.  Science 358(6369):1461-6.\n************************************************************************************" << std::endl;
 
+		////////// Register with Citation Manager //////////
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"energy_based_clustering", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1126/science.aap7577") );
+			cm->add_citation( collection );
+		}
+
 		EnergyBasedClusteringOptions options(true);
 		EnergyBasedClusteringProtocol cluster_protocol( options );
 		cluster_protocol.go();
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 		TR << "Terminating energy_based_clustering application with exit code 0 (no errors)." << std::endl;
 	} catch (utility::excn::Exception& excn ) {

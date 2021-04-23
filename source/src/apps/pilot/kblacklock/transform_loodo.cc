@@ -42,6 +42,8 @@
 #include <utility/io/izstream.hh>
 
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
@@ -87,6 +89,15 @@ int main( int argc, char * argv [] ) {
 
 		// Devel init factories
 		devel::init(argc, argv);
+
+		////////// Register with Citation Manager //////////
+
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection( utility::pointer::make_shared< basic::citation_manager::CitationCollection >( "Transform_LooDo", basic::citation_manager::CitedModuleType::Application ) );
+			collection->add_citation( cm->get_citation_by_doi("10.1002/prot.25445") );
+			cm->add_citation( collection );
+		}
 
 		// Import native insert domain PDB & center.
 		std::string pdbfile = option[ OptionKeys::loodo::cap ]();
@@ -137,6 +148,9 @@ int main( int argc, char * argv [] ) {
 
 		}
 		stream.close();
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

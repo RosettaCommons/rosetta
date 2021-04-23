@@ -32,6 +32,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.fwd.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <basic/citation_manager/CitationCollection.fwd.hh>
 
 namespace protocols {
 namespace flexpep_docking {
@@ -78,6 +79,11 @@ public:
 	static
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
+
+public: //Methods needed for the citation manager:
+
+	/// @brief Provide the citation.
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const override;
 
 private:
 

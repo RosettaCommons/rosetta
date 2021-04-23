@@ -88,6 +88,8 @@
 #include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Numeric Headers
 #include <numeric/random/random.hh>
@@ -1899,6 +1901,42 @@ void FlexPepDockingProtocol::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 	attlist + XMLSchemaAttribute( "smove_angle_range", xsct_real, "Maximum angle value used for small and shear moves on the peptide" );
 	protocols::moves::xsd_type_definition_w_attributes( xsd, mover_name(),
 		"Protocol for docking flexible peptides onto globular proteins.", attlist );
+}
+
+/// @brief Provide the citation.
+void
+FlexPepDockingProtocol::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	basic::citation_manager::CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		mover_name(),
+		basic::citation_manager::CitedModuleType::Mover
+		)
+	);
+	collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1002/prot.22716") );
+	if ( flags_.lowres_abinitio ) {
+		collection->add_citation( basic::citation_manager::CitationManager::get_instance()->get_citation_by_doi("10.1371/journal.pone.0018934") );
+	}
+
+	citations.add( collection );
+
+	if ( scorefxn_ != nullptr ) {
+		scorefxn_->provide_citation_info( citations );
+	}
+	if ( scorefxn_lowres_ != nullptr ) {
+		scorefxn_lowres_->provide_citation_info( citations );
+	}
+
+	if ( allprotein_tf_ != nullptr && allprotein_tf_->has_task_operations() ) {
+		for ( core::pack::task::TaskFactory::const_iterator it( allprotein_tf_->begin() ); it!=allprotein_tf_->end(); ++it ) {
+			(*it)->provide_citation_info( citations );
+		}
+	}
+
+	if ( interface_tf_ != nullptr && interface_tf_->has_task_operations() ) {
+		for ( core::pack::task::TaskFactory::const_iterator it( interface_tf_->begin() ); it!=interface_tf_->end(); ++it ) {
+			(*it)->provide_citation_info( citations );
+		}
+	}
 }
 
 std::string FlexPepDockingProtocolCreator::keyname() const {

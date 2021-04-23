@@ -158,6 +158,19 @@ TaskFactory::clear()
 	operations_.clear();
 }
 
+/// @brief How many TaskOperations does this TaskFactory contain?
+core::Size
+TaskFactory::n_task_operations() const {
+	return operations_.size();
+}
+
+/// @brief Does this TaskFactory contain TaskOperations?
+/// @details Returns true if and only if the number of task operations is
+/// greater than or equal to one.
+bool
+TaskFactory::has_task_operations() const {
+	return !(operations_.empty());
+}
 
 /// @brief Static construction of a task
 /// @details Returns a new PackerTask with NO TaskOperations, and a default PackerPalette applied.

@@ -46,6 +46,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/numbers.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #include <fstream>
 
@@ -116,6 +118,20 @@ int main( int argc, char * argv [] ) {
 		using utility::file::file_exists;
 
 		devel::init(argc, argv);
+
+		////////// Register with Citation Manager //////////
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"DARC", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1371/journal.pone.0070661") );
+			collection->add_citation( cm->get_citation_by_doi("10.1371/journal.pone.0131612") );
+			collection->add_citation( cm->get_citation_by_doi("10.1021/acs.jmedchem.5b00150") );
+			cm->add_citation( collection );
+		}
 
 		std::string const input_protein = option[ protein ];
 		//std::string const input_ligand = "temp";//change this
@@ -630,6 +646,9 @@ int main( int argc, char * argv [] ) {
 			}
 		}
 		darc_score_file.close();
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 	} catch (utility::excn::Exception const & e ) {
 		e.display();

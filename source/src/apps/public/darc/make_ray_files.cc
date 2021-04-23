@@ -43,6 +43,8 @@
 #include <basic/options/keys/pocket_grid.OptionKeys.gen.hh>
 #include <basic/options/keys/fingerprint.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <numeric/random/random.hh>
 #include <numeric/conversions.hh>
 #include <numeric/xyz.functions.hh>
@@ -112,6 +114,21 @@ int main( int argc, char * argv [] ) {
 
 
 		devel::init(argc, argv);
+
+
+		////////// Register with Citation Manager //////////
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"make_ray_files", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1371/journal.pone.0070661") );
+			collection->add_citation( cm->get_citation_by_doi("10.1371/journal.pone.0131612") );
+			collection->add_citation( cm->get_citation_by_doi("10.1021/acs.jmedchem.5b00150") );
+			cm->add_citation( collection );
+		}
 
 		std::string const resid(option[ OptionKeys::pocket_grid::central_relax_pdb_num ]);
 		std::string const input_protein = option[ protein ];
@@ -383,6 +400,10 @@ int main( int argc, char * argv [] ) {
 		npf.print_to_file(eggshell_triplet_tag);
 		std::cout<< "Written ray's to pdb file : "<< eggshell_pdb_tag << std::endl;
 		std::cout<< "Written ray's to triplet file: "<< eggshell_triplet_tag << std::endl;
+
+		// Final citation manager output:
+		basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
+
 		std::cout<< "DONE!"<< std::endl;
 
 	}

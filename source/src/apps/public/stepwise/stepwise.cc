@@ -58,6 +58,8 @@
 #include <protocols/jd3/JobResult.fwd.hh>
 
 //////////////////////////////////////////////////
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/option.hh>
 #include <basic/options/option_macros.hh>
@@ -369,6 +371,9 @@ my_main()
 		stepwise_monte_carlo();
 	}
 	protocols::viewer::clear_conformation_viewers();
+	// Final citation manager output:
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
+
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	exit( 0 );
 }
@@ -389,6 +394,9 @@ my_main( void* )
 		stepwise_monte_carlo();
 	}
 	protocols::viewer::clear_conformation_viewers();
+	// Final citation manager output:
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
+
 	std::cout << "Total time to run " << static_cast<Real>( clock() - my_main_time_start ) / CLOCKS_PER_SEC << " seconds." << std::endl;
 	exit( 0 );
 }
@@ -470,6 +478,20 @@ main( int argc, char * argv [] )
 
 		devel::init(argc, argv);
 
+		////////// Register with Citation Manager //////////
+
+		{
+			basic::citation_manager::CitationManager * cm ( basic::citation_manager::CitationManager::get_instance() );
+			basic::citation_manager::CitationCollectionOP collection(
+				utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+				"Stepwise", basic::citation_manager::CitedModuleType::Application
+				)
+			);
+			collection->add_citation( cm->get_citation_by_doi("10.1126/sciadv.aar5316") );
+			collection->add_citation( cm->get_citation_by_doi("10.1016/bs.mie.2019.05.026") );
+			cm->add_citation( collection );
+		}
+
 		if ( option[ OptionKeys::stepwise::superimpose_over_all ].user() ) {
 			std::cout << "The use of -superimpose_over_all is deprecated. The behavior in question now defaults to TRUE and is turned off by providing a particular residue that is part of an anchoring input domain as -alignment_anchor_res." << std::endl;
 		}
@@ -489,7 +511,6 @@ main( int argc, char * argv [] )
 			protocols::network::CommandLineArguments{argc, argv} );
 
 		return 0;
-
 
 #else
 		protocols::viewer::viewer_main( my_main );
