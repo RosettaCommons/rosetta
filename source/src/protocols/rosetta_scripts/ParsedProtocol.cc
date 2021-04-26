@@ -45,6 +45,8 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>
+#include <basic/options/keys/parser.OptionKeys.gen.hh>
+#include <basic/options/option.hh>
 
 // JD2 headers
 #include <protocols/jd2/Job.hh>
@@ -84,6 +86,39 @@ using Pose = core::pose::Pose;
 using namespace core;
 using namespace std;
 
+ParsedProtocol::ParsedProtocolStep::ParsedProtocolStep(){
+	never_rerun_filters_ = basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]();
+}
+
+ParsedProtocol::ParsedProtocolStep::ParsedProtocolStep (
+	moves::MoverOP mover_in,
+	std::string const & mover_name,
+	filters::FilterOP filter_in,
+	FilterReportTime frt
+) :
+	mover( mover_in ),
+	mover_user_name( mover_name ),
+	filter( filter_in ),
+	report_time_( frt ),
+	never_rerun_filters_( basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]() )
+{}
+
+bool
+ParsedProtocol::ParsedProtocolStep::report_at_end() const {
+	if ( never_rerun_filters_ ) return false;
+
+	return report_time_ == FilterReportTime::AT_END;
+}
+
+bool
+ParsedProtocol::ParsedProtocolStep::report_after_apply() const {
+	if ( never_rerun_filters_ ) return false;
+
+	return report_time_ == FilterReportTime::AFTER_APPLY;
+}
+
+
+
 ParsedProtocol::ParsedProtocol() :
 	protocols::moves::Mover( "ParsedProtocol" ),
 	final_scorefxn_( /* 0 */ ), // By default, don't rescore with any scorefunction.
@@ -104,11 +139,12 @@ ParsedProtocol::apply( Pose & pose )
 {
 	n_steps_passed_in_previous_run_ = 0;
 
-	ParsedProtocolAP this_weak_ptr(
-		utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
-	);
-
 	if ( protocols::jd2::jd2_used() ) {
+		//Please only call get_self_ptr() inside checks for jd2_used().
+		//get_self_ptr() may crash in other instances, like the case where ParsedProtocol is allocated on the stack.
+		ParsedProtocolAP this_weak_ptr(
+			utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+		);
 		protocols::jd2::JobDistributor::get_instance()->current_job()->add_output_observer( this_weak_ptr );
 	}
 
@@ -142,6 +178,9 @@ ParsedProtocol::apply( Pose & pose )
 					if ( ! apply_step( pose, *rmover_it, true) ) {
 						//      final_score(pose);
 						if ( protocols::jd2::jd2_used() ) {
+							ParsedProtocolAP this_weak_ptr(
+								utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+							);
 							protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 						}
 						return;
@@ -172,12 +211,18 @@ ParsedProtocol::apply( Pose & pose )
 		}
 
 		if ( protocols::jd2::jd2_used() ) {
+			ParsedProtocolAP this_weak_ptr(
+				utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+			);
 			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
 	} catch( utility::excn::Exception & excn ) {
 		TR.Error << "Exception while processing procotol: " << excn.msg() << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
+			ParsedProtocolAP this_weak_ptr(
+				utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+			);
 			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
@@ -186,6 +231,9 @@ ParsedProtocol::apply( Pose & pose )
 	} catch( ... ) { /*To handle other exceptions*/
 		TR.Error << "Exception while processing procotol:" << std::endl;
 		if ( protocols::jd2::jd2_used() ) {
+			ParsedProtocolAP this_weak_ptr(
+				utility::pointer::dynamic_pointer_cast< ParsedProtocol >( get_self_ptr() )
+			);
 			protocols::jd2::JobDistributor::get_instance()->current_job()->remove_output_observer( this_weak_ptr );
 		}
 
@@ -216,7 +264,7 @@ ParsedProtocol::final_score(core::pose::Pose & pose) const {
 void
 ParsedProtocol::report_all( Pose const & pose ) const {
 	for ( ParsedProtocolStep const & step : steps_ ) {
-		if ( step.report_filter_at_end_ && step.filter != nullptr ) {
+		if ( step.report_at_end() && step.filter != nullptr ) {
 			TR_report<<"============Begin report for "<<step.filter->get_user_defined_name()<<"=================="<<std::endl;
 			step.filter->report( TR_report, pose );
 			TR_report<<"============End report for "<<step.filter->get_user_defined_name()<<"=================="<<std::endl;
@@ -228,7 +276,7 @@ ParsedProtocol::report_all( Pose const & pose ) const {
 void
 ParsedProtocol::add_values_to_job( Pose const & pose, protocols::jd2::Job & job ) const {
 	for ( auto const & step : steps_ ) {
-		if ( step.report_filter_at_end_ && step.filter != nullptr ) {
+		if ( step.report_at_end() && step.filter != nullptr ) {
 			core::Real const filter_value( step.filter->report_sm( pose ) );
 			if ( filter_value > -9999 ) {
 				job.add_string_real_pair(step.filter->get_user_defined_name(), filter_value);
@@ -242,7 +290,7 @@ ParsedProtocol::report_filters_to_pose( Pose & pose ) const {
 	for ( auto const & step : steps_ ) {
 		if ( step.filter == nullptr ) { continue; }
 		protocols::filters::Filter const & filter( *step.filter );
-		if ( step.report_filter_at_end_ ) {
+		if ( step.report_at_end() ) {
 			core::Real const filter_value( filter.report_sm( pose ) );
 			if ( filter_value > -9999 ) {
 				setPoseExtraScore(pose, filter.get_user_defined_name(), (float)filter_value);
@@ -282,11 +330,16 @@ ParsedProtocol::add_step(
 	bool const report_filter_at_end
 ) {
 	protocols::moves::MoverOP mover_to_add = nullptr;
-	if ( mover ) mover_to_add = mover->clone();
+	if ( mover != nullptr ) mover_to_add = mover->clone();
 	protocols::filters::FilterOP filter_to_add = nullptr;
-	if ( filter ) filter_to_add = filter; //I don't know why the mover is cloned while the filter is not, but I'm keeping this consistent with the parse_my_tag function. VKM 17 Sept 2015.
-	steps_.push_back( ParsedProtocolStep( mover_to_add, mover_name, filter_to_add, report_filter_at_end ) );
-	return;
+	if ( filter != nullptr ) filter_to_add = filter; //I don't know why the mover is cloned while the filter is not, but I'm keeping this consistent with the parse_my_tag function. VKM 17 Sept 2015.
+
+
+	//maintaining old behavior - predating FilterReportTime enum
+	FilterReportTime const report_setting = ( report_filter_at_end ? FilterReportTime::AT_END : FilterReportTime::AFTER_APPLY );
+
+	steps_.push_back( ParsedProtocolStep( mover_to_add, mover_name, filter_to_add, report_setting ) );
+
 }
 
 void
@@ -475,11 +528,26 @@ ParsedProtocol::parse_my_tag(
 		}
 		count++;
 
-		bool const report_at_end( tag_ptr->getOption< bool >( "report_at_end", true ) );
+		//Maintaining legacy behavior! Default is AT_END, second default is AFTER_APPLY, need to opt out of both to get NONE.
+		//Not saying this is perfect, but it matches legacy
+		FilterReportTime filter_report_setting = FilterReportTime::AT_END;
+		if ( tag_ptr->hasOption( "report_at_end" ) ) {
+			if ( ! tag_ptr->getOption< bool >( "report_at_end" ) ) {
+				filter_report_setting = FilterReportTime::AFTER_APPLY;
+			}
+		}
+		if ( tag_ptr->hasOption( "never_rerun_filter" ) ) {
+			if ( tag_ptr->getOption< bool >( "never_rerun_filter" ) ) {
+				runtime_assert_string_msg( !tag_ptr->hasOption( "report_at_end" ) || !tag_ptr->getOption< bool >( "report_at_end" ),
+					"The filter options 'never_rerun_filter' and 'report_at_end' are mutually exclusive!");
+				filter_report_setting = FilterReportTime::NONE;
+			}
+		}
+
 		if ( mover_to_add != nullptr ) {
 			mover_to_add = mover_to_add->clone();
 		}
-		ParsedProtocolStep step( mover_to_add, mover_name, filter_to_add, report_at_end );
+		ParsedProtocolStep step( mover_to_add, mover_name, filter_to_add, filter_report_setting );
 		step.metrics = metrics_to_add;
 		step.metric_labels = metric_labels;
 		steps_.push_back( step );
@@ -641,9 +709,10 @@ ParsedProtocol::apply_filter( Pose & pose, ParsedProtocolStep const & step ) {
 	// Since filters get const poses, they don't necessarily have an opportunity to update neighbors themselves
 	pose.update_residue_neighbors();
 	bool pass = step.filter->apply( pose );
-	if ( !step.report_filter_at_end_ ) { //report filter now
+	if ( step.report_after_apply() ) {
 		core::Real const filter_value( step.filter->report_sm( pose ) );
 		setPoseExtraScore(pose, step.filter->get_user_defined_name(), (float)filter_value);
+
 		TR_report << "============Begin report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
 		step.filter->report( TR_report, pose );
 		TR_report << "============End report for " << step.filter->get_user_defined_name() << "==================" << std::endl;
@@ -850,6 +919,10 @@ void ParsedProtocol::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd
 		"conclusion of protocol. Otherwise report filter value as evaluated "
 		"mid-protocol.",
 		"true");
+	add_subattlist + XMLSchemaAttribute::attribute_w_default(
+		"never_rerun_filter", xsct_rosetta_bool,
+		"Never run this filter after the original apply-time run. Use this option to avoid expensive re-runs when reporting",
+		"false");
 
 
 	ssl.add_simple_subelement( "Add", add_subattlist, "The steps to be applied."/*, 0 minoccurs*/ )

@@ -51,27 +51,41 @@ public:
 	typedef core::Real Real;
 	typedef core::pose::Pose Pose;
 
+	//@brief This enum is used by ParsedProtocolStep to label filter behavior for rerunning checks
+	enum class FilterReportTime
+	{
+		AT_END,      //rerun the filter at the end of ParsedProtocol
+		AFTER_APPLY, //rerun the filter immediately after applying the filter
+		NONE         //never rerun the filter after filter::apply
+	};
+
 	/// @brief Represents a step in the ParsedProtocol
 	/// Note that one or more of mover/filter/metrics may be null/empty.
 	struct ParsedProtocolStep {
+		ParsedProtocolStep();
+		ParsedProtocolStep( ParsedProtocolStep const & ) = default;
+
 		ParsedProtocolStep (
 			moves::MoverOP mover_in,
 			std::string const & mover_name,
 			filters::FilterOP filter_in = nullptr,
-			bool report_filter_at_end = false
-		) :
-			mover( mover_in ),
-			mover_user_name( mover_name ),
-			filter( filter_in ),
-			report_filter_at_end_( report_filter_at_end )
-		{}
+			FilterReportTime frt = FilterReportTime::AT_END
+		);
 
 		protocols::moves::MoverOP mover;
 		std::string mover_user_name;
 		protocols::filters::FilterOP filter;
 		utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics;
 		utility::vector1< std::string > metric_labels;
-		bool report_filter_at_end_;
+
+		//Interpret report_time_ to decide when to report filters
+		bool report_at_end() const;
+		bool report_after_apply() const;
+
+	private:
+		//Making report_time private so that commandline options can intervene
+		FilterReportTime report_time_;
+		bool never_rerun_filters_; //local cache of basic::options::option[ basic::options::OptionKeys::parser::never_rerun_filters ]()
 	};
 
 	typedef utility::vector1< ParsedProtocolStep > ParsedProtocolStepVector;

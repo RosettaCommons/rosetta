@@ -650,6 +650,7 @@ sources = {
 
 	"rosetta_scripts" : [
 		"MultiplePoseMover",
+		"ParsedProtocol",
 		"RosettaScriptsJobQueen",
 		"RosettaScriptsParser",
 		"XmlObjects",

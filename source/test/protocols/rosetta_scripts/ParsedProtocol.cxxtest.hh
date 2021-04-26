@@ -1,0 +1,195 @@
+// -*- mode:c++;tab-width:2;indent-tabs-mode:t;show-trailing-whitespace:t;rm-trailing-spaces:t -*-
+// vi: set ts=2 noet:
+//
+// (c) Copyright Rosetta Commons Member Institutions.
+// (c) This file is part of the Rosetta software suite and is made available under license.
+// (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
+// (c) For more information, see http://www.rosettacommons.org. Questions about this can be
+// (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
+/// @file protocols/rosetta_scripts/ParsedProtocol.cxxtest.hh
+/// @brief test suite for protocols::rosetta_scripts::ParsedProtocol
+/// @author Jack Maguire, jackmaguire1444@gmail.com
+
+// Test headers
+#include <cxxtest/TestSuite.h>
+#include <test/protocols/init_util.hh>
+
+// Package headers
+#include <core/pose/Pose.fwd.hh>
+
+#include <protocols/filters/Filter.hh>
+#include <protocols/filters/BasicFilters.hh>
+#include <protocols/filters/FilterFactory.hh>
+#include <protocols/moves/MoverFactory.hh>
+#include <protocols/rosetta_scripts/MultiplePoseMover.hh>
+#include <protocols/rosetta_scripts/ParsedProtocol.hh>
+#include <protocols/rosetta_scripts/RosettaScriptsParser.hh>
+#include <protocols/simple_moves/MutateResidue.hh>
+#include <protocols/moves/NullMover.hh>
+
+#include <core/pose/annotated_sequence.hh>
+
+// Basic headers
+#include <basic/options/option.hh>
+
+// Utility headers
+#include <util/pose_funcs.hh>
+#include <utility/excn/Exceptions.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/tag/Tag.hh>
+#include <utility/exit.hh>
+#include <basic/Tracer.hh>
+
+// Numberic headers
+
+// C++ headers
+#include <string>
+
+static basic::Tracer TR("protocols.rosetta_scripts.ParsedProtocol.cxxtest");
+
+using namespace protocols;
+using namespace protocols::moves;
+using namespace protocols::filters;
+
+class ReportCounter : public protocols::filters::Filter {
+	//Not 100% best practices here...
+public:
+	ReportCounter( core::Size * report_count ):
+		report_count_( report_count )
+	{}
+
+	void report( std::ostream &, core::pose::Pose const & ) const override {
+		++(*report_count_);
+	}
+
+	core::Real report_sm( core::pose::Pose const & ) const override {
+		++(*report_count_);
+		return 0;
+	}
+
+	bool apply( core::pose::Pose const & ) const override {
+		++(*report_count_);
+		return true;
+	}
+
+	core::Real score( core::pose::Pose & ) override {
+		++(*report_count_);
+		return 0;
+	}
+
+
+	FilterOP clone() const override {
+		return FilterOP( new ReportCounter( *this ) );
+	};
+
+	FilterOP fresh_instance() const override {
+		//return FilterOP( new ReportCounter() );
+		runtime_assert( false );
+		return nullptr;
+	};
+
+	//mutable core::Size report_count_ = 0;
+	mutable core::Size * report_count_ = nullptr;
+};
+
+class ParsedProtocolTests : public CxxTest::TestSuite {
+
+public:
+
+	void setUp() {}
+
+	void test_filter_reporting() {
+
+		protocols_init();
+
+		using namespace protocols::rosetta_scripts;
+		using PP = ParsedProtocol; //for scoping
+
+		core::Size step1_count = 0;
+		core::Size step2_count = 0;
+		core::Size step3_count = 0;
+
+		PP::ParsedProtocolStep const step1(
+			NullMoverOP( new NullMover() ), //mover
+			"step1", //name
+			FilterOP( new ReportCounter( &step1_count ) ), //filter
+			PP::FilterReportTime::AT_END
+		);
+
+		PP::ParsedProtocolStep const step2(
+			NullMoverOP( new NullMover() ), //mover
+			"step2", //name
+			FilterOP( new ReportCounter( &step2_count ) ), //filter
+			PP::FilterReportTime::AFTER_APPLY
+		);
+
+		PP::ParsedProtocolStep const step3(
+			NullMoverOP( new NullMover() ), //mover
+			"step3", //name
+			FilterOP( new ReportCounter( &step3_count ) ), //filter
+			PP::FilterReportTime::NONE
+		);
+
+		ParsedProtocol pp;
+		pp.add_step( step1 );
+		pp.add_step( step2 );
+		pp.add_step( step3 );
+
+		core::pose::Pose test_pose;
+		core::pose::make_pose_from_sequence(test_pose, "MENTENAI", "fa_standard", false);
+		pp.apply( test_pose );
+
+		TS_ASSERT_EQUALS( step1_count, 2 );
+		TS_ASSERT_EQUALS( step2_count, 3 ); //Apply + report_sm + report. Wasteful if you ask me
+		TS_ASSERT_EQUALS( step3_count, 1 );
+	}
+
+	void test_filter_reporting_commandline() {
+
+		protocols_init_with_additional_options( "-parser:never_rerun_filters true" );
+
+		using namespace protocols::rosetta_scripts;
+		using PP = ParsedProtocol; //for scoping
+
+		core::Size step1_count = 0;
+		core::Size step2_count = 0;
+		core::Size step3_count = 0;
+
+		PP::ParsedProtocolStep const step1(
+			NullMoverOP( new NullMover() ), //mover
+			"step1", //name
+			FilterOP( new ReportCounter( &step1_count ) ), //filter
+			PP::FilterReportTime::AT_END
+		);
+
+		PP::ParsedProtocolStep const step2(
+			NullMoverOP( new NullMover() ), //mover
+			"step2", //name
+			FilterOP( new ReportCounter( &step2_count ) ), //filter
+			PP::FilterReportTime::AFTER_APPLY
+		);
+
+		PP::ParsedProtocolStep const step3(
+			NullMoverOP( new NullMover() ), //mover
+			"step3", //name
+			FilterOP( new ReportCounter( &step3_count ) ), //filter
+			PP::FilterReportTime::NONE
+		);
+
+		ParsedProtocol pp;
+		pp.add_step( step1 );
+		pp.add_step( step2 );
+		pp.add_step( step3 );
+
+		core::pose::Pose test_pose;
+		core::pose::make_pose_from_sequence(test_pose, "MENTENAI", "fa_standard", false);
+		pp.apply( test_pose );
+
+		// commandline option should result in all of these effectively being PP::FilterReportTime::NONE
+		TS_ASSERT_EQUALS( step1_count, 1 );
+		TS_ASSERT_EQUALS( step2_count, 1 );
+		TS_ASSERT_EQUALS( step3_count, 1 );
+	}
+
+};
