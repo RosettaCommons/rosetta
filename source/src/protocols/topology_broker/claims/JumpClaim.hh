@@ -43,9 +43,6 @@
 #include <iosfwd>
 
 
-// option key includes
-
-
 namespace protocols {
 namespace topology_broker {
 namespace claims {

@@ -26,8 +26,6 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <utility/vector1.hh>
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 
 #ifdef    SERIALIZATION
 #include <cereal/types/polymorphic.fwd.hpp>

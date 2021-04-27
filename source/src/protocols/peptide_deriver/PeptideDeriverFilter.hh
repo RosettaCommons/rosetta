@@ -21,7 +21,6 @@
 #include <protocols/peptide_deriver/PeptideDeriverFilter.fwd.hh>
 
 // Project headers
-#include <basic/options/keys/OptionKeys.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/filters/Filter.hh>
 #include <utility/io/orstream.hh>
@@ -33,6 +32,7 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+#include <set>
 
 namespace protocols {
 namespace peptide_deriver {

@@ -21,6 +21,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/after_opts.hh>
 

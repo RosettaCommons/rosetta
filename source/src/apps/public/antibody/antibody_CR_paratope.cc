@@ -31,6 +31,8 @@
 #include <utility/excn/Exceptions.hh>
 #include <utility/file/FileName.hh>
 
+#include <basic/options/option.hh>
+
 
 static basic::Tracer TR("");
 

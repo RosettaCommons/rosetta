@@ -46,8 +46,6 @@
 #include <string>
 #include <utility/vector1.hh>
 
-// option key includes
-
 
 namespace protocols {
 namespace environment {

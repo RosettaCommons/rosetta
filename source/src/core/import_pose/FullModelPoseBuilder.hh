@@ -32,7 +32,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/sequence/Sequence.fwd.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <tuple>
 
 #include <utility/vector1.fwd.hh>
@@ -45,7 +45,7 @@ public:
 	FullModelPoseBuilder();
 	~FullModelPoseBuilder() {}
 
-	void set_options( utility::options::OptionCollection const & options ) { options_ = options; }
+	void set_options( utility::options::OptionCollection const & options );
 	void set_input_poses( utility::vector1< pose::PoseOP > input_poses ) { input_poses_ = input_poses; }
 	void set_input_resnum_and_chain_and_segid( std::tuple< utility::vector1< Size >, utility::vector1< char >, utility::vector1< std::string > > const & input_resnum_and_chain_and_segid ) { input_resnum_and_chain_and_segid_ = input_resnum_and_chain_and_segid; }
 	void set_cutpoint_open_in_full_model( utility::vector1< Size > const & cutpoint_open_in_full_model ) { cutpoint_open_in_full_model_ = cutpoint_open_in_full_model; }
@@ -97,7 +97,7 @@ private:
 	fill_full_model_info( utility::vector1< core::pose::Pose * > & pose_pointers );
 
 
-	utility::options::OptionCollection options_;// = basic::options::option;
+	utility::options::OptionCollectionCOP options_;
 	utility::vector1< pose::PoseOP > input_poses_;
 	std::tuple< utility::vector1< Size >, utility::vector1< char >, utility::vector1< std::string > > input_resnum_and_chain_and_segid_;
 	utility::vector1< Size > cutpoint_open_in_full_model_;

@@ -34,14 +34,6 @@
 //possibily duplicate includes here
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
-#include <basic/options/after_opts.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/option.hh>
 
 #include <core/conformation/symmetry/util.hh>
 #include <core/pose/Pose.hh>

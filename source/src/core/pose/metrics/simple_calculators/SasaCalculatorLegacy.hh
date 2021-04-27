@@ -21,14 +21,10 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <basic/options/option.hh>
-
 #include <utility/vector1.hh>
 
-
-// option key includes
-
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+//Auto Headers
+#include <utility/vector0.hh>
 
 
 #ifdef    SERIALIZATION
@@ -45,7 +41,9 @@ class SasaCalculatorLegacy : public core::pose::metrics::StructureDependentCalcu
 
 public:
 
-	SasaCalculatorLegacy( core::Real probe_r = basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] ) : probe_radius_(probe_r) {}
+
+	SasaCalculatorLegacy(); // Initialize radius from options.
+	SasaCalculatorLegacy( core::Real probe_r ) : probe_radius_(probe_r) {}
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override { return utility::pointer::make_shared< core::pose::metrics::simple_calculators::SasaCalculatorLegacy >(); };
 

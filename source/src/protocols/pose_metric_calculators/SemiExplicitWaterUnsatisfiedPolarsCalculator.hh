@@ -25,16 +25,12 @@
 #include <core/conformation/Residue.fwd.hh>
 
 
-#include <basic/options/option.hh>
 
 #include <utility/vector1.hh>
 
 #include <set>
 
 
-// option key includes
-
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
 #ifdef    SERIALIZATION
@@ -52,16 +48,26 @@ public:
 
 	SemiExplicitWaterUnsatisfiedPolarsCalculator(
 		std::string const & hbond_calc,
-		core::scoring::ScoreFunctionOP scorefxn,
-		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]
+		core::scoring::ScoreFunctionOP scorefxn
 	);
 
+	SemiExplicitWaterUnsatisfiedPolarsCalculator(
+		std::string const & hbond_calc,
+		core::scoring::ScoreFunctionOP scorefxn,
+		core::Real semiexpl_water_cutoff
+	);
+
+	SemiExplicitWaterUnsatisfiedPolarsCalculator(
+		std::string const & hbond_calc,
+		core::scoring::ScoreFunctionOP scorefxn,
+		std::set< core::Size > const & special_region
+	);
 
 	SemiExplicitWaterUnsatisfiedPolarsCalculator(
 		std::string const & hbond_calc,
 		core::scoring::ScoreFunctionOP scorefxn,
 		std::set< core::Size > const & special_region,
-		core::Real semiexpl_water_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff]
+		core::Real semiexpl_water_cutoff
 	);
 
 
@@ -96,13 +102,13 @@ private:
 
 
 	core::scoring::hbonds::HBondDatabaseCOP hb_database_;
-	core::Size all_unsat_polars_;
-	core::Size special_region_unsat_polars_;
+	core::Size all_unsat_polars_ = 0;
+	core::Size special_region_unsat_polars_ = 0;
 	core::id::AtomID_Map< bool > atom_unsat_;
 	utility::vector1< core::Size > residue_unsat_polars_;
 	utility::vector1< core::Real > residue_semiexpl_score_;
 	core::id::AtomID_Map< core::Real > atom_semiexpl_score_;
-	core::Real semiexpl_water_cutoff_;
+	core::Real semiexpl_water_cutoff_; //Always set with constructor?
 
 	//holds the atom hbonds calculators necessary for this calculator
 	std::string name_of_hbond_calc_;

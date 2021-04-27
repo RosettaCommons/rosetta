@@ -23,7 +23,7 @@
 
 //project headers
 #include <core/pose/Pose.fwd.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 #include <utility/vector1.hh>
 
@@ -70,7 +70,7 @@ private:
 	void check_batch();
 	std::string current_batch_;
 	JobInputterOP this_batch_job_inputter_;
-	utility::options::OptionCollection const vanilla_options_; //options before batch-options were added
+	utility::options::OptionCollectionCOP vanilla_options_; //options before batch-options were added
 }; // BatchJobInputter
 
 } // namespace jd2

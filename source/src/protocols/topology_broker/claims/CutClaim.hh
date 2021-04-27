@@ -36,11 +36,8 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 //#include <basic/Tracer.hh>
-//#include <basic/options/option.hh>
 #include <utility/exit.hh>
 #include <utility/VirtualBase.hh>
-
-//#include <basic/options/option_macros.hh>
 
 #include <utility/vector1.hh>
 
@@ -49,9 +46,6 @@
 #include <utility>
 #include <string>
 #include <iosfwd>
-
-
-// option key includes
 
 
 namespace protocols {

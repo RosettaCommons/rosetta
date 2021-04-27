@@ -21,7 +21,6 @@
 
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
-#include <basic/options/keys/OptionKeys.hh>
 
 #include <utility/vector1.hh>
 
@@ -38,10 +37,7 @@ namespace simple_filters {
 class RGFilter : public AbinitioBaseFilter {
 public:
 	/// c-tor and d-tor
-	RGFilter() {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-	}
+	RGFilter() {}
 	~RGFilter() override = default;
 
 	filters::FilterOP clone() const override {

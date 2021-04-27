@@ -31,7 +31,9 @@
 #include <utility/string_util.hh>
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
@@ -66,6 +68,10 @@ using parent = core::pose::metrics::StructureDependentCalculator;
 using one_group = std::set<core::Size>;
 typedef std::pair< one_group, one_group > group_pair;
 using group_set = utility::vector1<group_pair>;
+
+InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & groups )
+: InterGroupNeighborsCalculator( groups, basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff] ) // delegating constructor
+{}
 
 InterGroupNeighborsCalculator::InterGroupNeighborsCalculator( group_set const & groups, core::Real dist_cutoff )
 : parent()

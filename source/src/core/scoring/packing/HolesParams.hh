@@ -23,8 +23,6 @@
 #include <utility/io/izstream.hh>
 #include <utility/exit.hh>
 
-// option key includes
-
 
 #include <utility/vector1.hh>
 #include <map>

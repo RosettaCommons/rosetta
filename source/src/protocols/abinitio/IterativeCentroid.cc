@@ -38,7 +38,7 @@
 
 //// C++ headers
 #include <string>
-
+#include <iostream>
 
 static basic::Tracer tr( "protocols.iterative" );
 

@@ -34,7 +34,6 @@
 #include <utility>
 #include <utility/VirtualBase.hh>
 
-// option key includes
 #include <utility/vector1.hh>
 
 

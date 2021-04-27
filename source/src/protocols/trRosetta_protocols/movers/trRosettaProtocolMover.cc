@@ -57,6 +57,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/trRosetta.OptionKeys.gen.hh>
@@ -101,9 +102,9 @@ trRosettaProtocolMover::trRosettaProtocolMover():
 /// @details Initializes from a local options collection.
 trRosettaProtocolMover::trRosettaProtocolMover(
 #ifdef USE_TENSORFLOW
-	basic::options::OptionCollection const & options
+	utility::options::OptionCollection const & options
 #else // !USE_TENSORFLOW
-	basic::options::OptionCollection const &
+	utility::options::OptionCollection const &
 #endif // USE_TENSORFLOW
 ) :
 	protocols::moves::Mover( trRosettaProtocolMover::mover_name() )

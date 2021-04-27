@@ -96,6 +96,7 @@
 #include <utility/DereferenceIterator.hh>
 
 // Option Headers
+#include <utility/options/OptionCollection.hh>
 #include <basic/options/keys/abinitio.OptionKeys.gen.hh>
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>
 #include <basic/options/keys/jumps.OptionKeys.gen.hh>
@@ -393,7 +394,7 @@ IterativeBase::IterativeBase(std::string name_in )
 	rdc_data_( /* NULL */ ),
 	cst_data_( /* NULL */ ),
 	cst_fa_data_( /* NULL */ ),
-	vanilla_options_( basic::options::option )
+	vanilla_options_( utility::pointer::make_shared< utility::options::OptionCollection >(basic::options::option) )
 {
 	never_switched_noe_filter_=true;
 	warn_obsolete_flags();
@@ -1573,7 +1574,7 @@ void IterativeBase::reassign_noesy_data( jd2::archive::Batch& batch ) {
 	//manipulate params if we have some "SCHEME"
 
 	bool use_hardwired_phaseII_params( false );
-	option=vanilla_options_;
+	option=*vanilla_options_; // TODO BAD - why are we overwriting the global options?
 	std::string const& option_file( option[ iterative::staged_auto_noe_flags ][ stage() ] );
 	if ( option_file != "NONE" ) {
 		tr.Info << "Loading Auto-NOE options for stage " << stage() << " from @" << option_file << std::endl;
@@ -2071,6 +2072,17 @@ void IterativeBase::setup_default_evaluators() {
 	add_evaluation( utility::pointer::make_shared< simple_filters::JumpNrEvaluator >() );
 }
 
+///OBSOLET cores are computed by compute_cores() in idle()
+loops::Loops const&
+IterativeBase::core( core::Size i ) {
+	if ( i == 1 ) { return core15_; };
+	if ( i == 2 ) { return core2_; };
+	if ( i == 3 ) { return core3_; };
+	if ( i == 4 ) { return core4_; };
+	std::cerr << "Cannot handle a value of " << i << " in IterativeBase::core(). Must be 1-4." << std::endl;
+	utility_exit_with_message("Improper value passed to IterativeBase::core().");
+	return core2_; //happy compiler
+}
 
 void IterativeBase::cluster() {
 	///OBSOLET

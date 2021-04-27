@@ -70,7 +70,6 @@
 #include <basic/options/option.hh>
 
 // option key includes
-
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 

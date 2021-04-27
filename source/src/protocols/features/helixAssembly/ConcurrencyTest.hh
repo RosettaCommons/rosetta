@@ -43,7 +43,6 @@
 
 //Basic
 #include <basic/Tracer.hh>
-#include <basic/options/util.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

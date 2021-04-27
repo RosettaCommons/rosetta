@@ -27,16 +27,11 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <basic/options/option.hh>
-
 #include <numeric/random/random_xyz.hh>
 
 #include <utility/vector1.hh>
 
 #include <set>
-
-// option key includes
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 
 #ifdef    SERIALIZATION

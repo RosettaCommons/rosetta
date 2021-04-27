@@ -87,8 +87,13 @@ static basic::Tracer TR( "core.import_pose.import_pose" );
 using utility::vector1;
 
 FullModelPoseBuilder::FullModelPoseBuilder():
-	options_( basic::options::option )
+	options_( utility::pointer::make_shared< utility::options::OptionCollection >(basic::options::option) )
 {}
+
+void
+FullModelPoseBuilder::set_options( utility::options::OptionCollection const & options ) {
+	options_ = utility::pointer::make_shared< utility::options::OptionCollection >(options);
+}
 
 void
 FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::ResidueTypeSetCOP rsd_set ) {
@@ -99,8 +104,8 @@ FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::Resid
 	using namespace core::pose;
 	using namespace utility;
 
-	utility::vector1< std::string > const & input_pdb_files    = options_[ in::file::s ]();
-	utility::vector1< std::string > const & input_silent_files = options_[ in::file::silent ]();
+	utility::vector1< std::string > const & input_pdb_files    = (*options_)[ in::file::s ]();
+	utility::vector1< std::string > const & input_silent_files = (*options_)[ in::file::silent ]();
 
 	for ( Size n = 1; n <= input_pdb_files.size(); n++ ) {
 		input_poses_.push_back( get_pdb_and_cleanup( input_pdb_files[ n ], rsd_set ) );
@@ -115,8 +120,8 @@ FullModelPoseBuilder::initialize_input_poses_from_options( core::chemical::Resid
 		input_poses_.push_back( pose );
 	}
 
-	if ( options_[ basic::options::OptionKeys::full_model::other_poses ].user() ) {
-		get_other_poses( input_poses_, options_[ basic::options::OptionKeys::full_model::other_poses ](), rsd_set );
+	if ( (*options_)[ basic::options::OptionKeys::full_model::other_poses ].user() ) {
+		get_other_poses( input_poses_, (*options_)[ basic::options::OptionKeys::full_model::other_poses ](), rsd_set );
 	}
 }
 
@@ -132,8 +137,8 @@ FullModelPoseBuilder::initialize_full_model_parameters() {
 	if ( fasta_file_ != "" ) {
 		full_model_parameters_ = get_sequence_information( fasta_file_, cutpoint_open_in_full_model_ );
 		// Could also have set fasta_file_ earlier.
-	} else if ( options_[ in::file::fasta ].user() ) {
-		fasta_file_ = options_[ in::file::fasta ]()[1];
+	} else if ( (*options_)[ in::file::fasta ].user() ) {
+		fasta_file_ = (*options_)[ in::file::fasta ]()[1];
 		full_model_parameters_ = get_sequence_information( fasta_file_, cutpoint_open_in_full_model_ );
 	} else {
 		// guess sequence, chain, resnum from pose; not specified in fasta.
@@ -156,51 +161,51 @@ FullModelPoseBuilder::initialize_further_from_options() {
 	using namespace core::pose;
 	using namespace utility;
 
-	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = options_[ in::file::input_res ].resnum_and_chain();
+	std::tuple< vector1< Size >, vector1< char >, vector1< std::string > > const & input_resnum_and_chain_and_segid = (*options_)[ in::file::input_res ].resnum_and_chain();
 
 	set_input_resnum_and_chain_and_segid( input_resnum_and_chain_and_segid );
-	set_cutpoint_open_in_full_model( options_[ full_model::cutpoint_open ]() );
+	set_cutpoint_open_in_full_model( (*options_)[ full_model::cutpoint_open ]() );
 
 
 	initialize_full_model_parameters();
 
-	set_extra_minimize_res( full_model_parameters_->conventional_to_full( options_[ full_model::extra_min_res ].resnum_and_chain() ) );
-	set_sample_res( full_model_parameters_->conventional_to_full( options_[ full_model::sample_res ].resnum_and_chain() ) ); //stuff that can be resampled.
-	set_working_res( full_model_parameters_->conventional_to_full( options_[ full_model::working_res ].resnum_and_chain() ) ); //all working stuff
-	set_terminal_res( full_model_parameters_->conventional_to_full( options_[ full_model::rna::terminal_res ].resnum_and_chain() ) );
-	set_block_stack_above_res( full_model_parameters_->conventional_to_full( options_[ full_model::rna::block_stack_above_res ].resnum_and_chain() ) );
-	set_block_stack_below_res( full_model_parameters_->conventional_to_full( options_[ full_model::rna::block_stack_below_res ].resnum_and_chain() ) );
-	set_preferred_root_res( full_model_parameters_->conventional_to_full( options_[ full_model::root_res ].resnum_and_chain() ) );
-	set_jump_res( full_model_parameters_->conventional_to_full( options_[ full_model::jump_res ].resnum_and_chain() ) );
-	set_cutpoint_closed( full_model_parameters_->conventional_to_full( options_[ full_model::cutpoint_closed ].resnum_and_chain() ) );
+	set_extra_minimize_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::extra_min_res ].resnum_and_chain() ) );
+	set_sample_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::sample_res ].resnum_and_chain() ) ); //stuff that can be resampled.
+	set_working_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::working_res ].resnum_and_chain() ) ); //all working stuff
+	set_terminal_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::terminal_res ].resnum_and_chain() ) );
+	set_block_stack_above_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::block_stack_above_res ].resnum_and_chain() ) );
+	set_block_stack_below_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::block_stack_below_res ].resnum_and_chain() ) );
+	set_preferred_root_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::root_res ].resnum_and_chain() ) );
+	set_jump_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::jump_res ].resnum_and_chain() ) );
+	set_cutpoint_closed( full_model_parameters_->conventional_to_full( (*options_)[ full_model::cutpoint_closed ].resnum_and_chain() ) );
 	set_cyclize_res( full_model_parameters_->conventional_to_full( option[ full_model::cyclize ].resnum_and_chain() ) );
 	set_twoprime_res( full_model_parameters_->conventional_to_full( option[ full_model::twoprime ].resnum_and_chain() ) );
-	set_fiveprime_res( full_model_parameters_->conventional_to_full( options_[ full_model::fiveprime_cap ].resnum_and_chain() ) );
-	set_bulge_res( full_model_parameters_->conventional_to_full( options_[ full_model::rna::bulge_res ].resnum_and_chain() ) );
-	set_extra_minimize_jump_res( full_model_parameters_->conventional_to_full( options_[ full_model::extra_min_jump_res ].resnum_and_chain() ) );
-	set_virtual_sugar_res( full_model_parameters_->conventional_to_full( options_[ full_model::virtual_sugar_res ].resnum_and_chain() ) );
-	set_alignment_anchor_res( full_model_parameters_->conventional_to_full( options_[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() ) );
+	set_fiveprime_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::fiveprime_cap ].resnum_and_chain() ) );
+	set_bulge_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::bulge_res ].resnum_and_chain() ) );
+	set_extra_minimize_jump_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::extra_min_jump_res ].resnum_and_chain() ) );
+	set_virtual_sugar_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::virtual_sugar_res ].resnum_and_chain() ) );
+	set_alignment_anchor_res( full_model_parameters_->conventional_to_full( (*options_)[ OptionKeys::stepwise::alignment_anchor_res ].resnum_and_chain() ) );
 
-	set_calc_rms_res( full_model_parameters_->conventional_to_full( options_[ full_model::calc_rms_res ].resnum_and_chain() ) );
-	set_rna_syn_chi( full_model_parameters_->conventional_to_full( options_[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
-	set_rna_anti_chi( full_model_parameters_->conventional_to_full( options_[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
-	set_rna_north_sugar( full_model_parameters_->conventional_to_full( options_[ full_model::rna::force_north_sugar_list ].resnum_and_chain() ) );
-	set_rna_south_sugar( full_model_parameters_->conventional_to_full( options_[ full_model::rna::force_south_sugar_list ].resnum_and_chain() ) );
-	set_rna_sample_sugar( full_model_parameters_->conventional_to_full( options_[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
+	set_calc_rms_res( full_model_parameters_->conventional_to_full( (*options_)[ full_model::calc_rms_res ].resnum_and_chain() ) );
+	set_rna_syn_chi( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::force_syn_chi_res_list ].resnum_and_chain() ) );
+	set_rna_anti_chi( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::force_anti_chi_res_list ].resnum_and_chain() ) );
+	set_rna_north_sugar( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::force_north_sugar_list ].resnum_and_chain() ) );
+	set_rna_south_sugar( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::force_south_sugar_list ].resnum_and_chain() ) );
+	set_rna_sample_sugar( full_model_parameters_->conventional_to_full( (*options_)[ full_model::rna::sample_sugar_res ].resnum_and_chain() ) );
 
 	// earlier had set this based on
-	if ( options_[ full_model::cutpoint_open ].user() ) {
-		set_cutpoint_open_in_full_model( full_model_parameters_->conventional_to_full( options_[ full_model::cutpoint_open ].resnum_and_chain() ) );
+	if ( (*options_)[ full_model::cutpoint_open ].user() ) {
+		set_cutpoint_open_in_full_model( full_model_parameters_->conventional_to_full( (*options_)[ full_model::cutpoint_open ].resnum_and_chain() ) );
 	}
 
 	//set_full_model_parameters( full_model_parameters_ );
-	set_global_seq_file( options_[ full_model::global_seq_file ].value() );
-	set_disulfide_file( options_[ OptionKeys::stepwise::protein::disulfide_file ]() );
+	set_global_seq_file( (*options_)[ full_model::global_seq_file ].value() );
+	set_disulfide_file( (*options_)[ OptionKeys::stepwise::protein::disulfide_file ]() );
 	// AMW: We actually have to use a somewhat different cst_file here, because otherwise
 	// we risk alerting other Rosetta machinery to the existence of these constraints.
 	// Application of constraints to a Pose whose length will be regularly changing during
 	// the simulation is very risky!
-	if ( options_[ OptionKeys::stepwise::monte_carlo::full_model_constraints ].user() ) set_constraint_file( options_[ OptionKeys::stepwise::monte_carlo::full_model_constraints ]()[ 1 ] );
+	if ( (*options_)[ OptionKeys::stepwise::monte_carlo::full_model_constraints ].user() ) set_constraint_file( (*options_)[ OptionKeys::stepwise::monte_carlo::full_model_constraints ]()[ 1 ] );
 }
 
 PoseOP FullModelPoseBuilder::build() { // can't be const because it can change input_poses_
@@ -291,7 +296,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 	std::string const & desired_sequence = full_model_parameters_->full_sequence();
 
 	// calebgeniesse: setup for edensity scoring, if map is provided via cmd-line
-	if ( options_[ edensity::mapfile ].user() ) {
+	if ( (*options_)[ edensity::mapfile ].user() ) {
 		// update pose
 		if ( pose_pointers[1]->total_residue() > 0 ) {
 			setup_for_density_scoring( *pose_pointers[1] );
@@ -300,7 +305,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 
 
 	// calebgeniesse: override preferred_root_res if mapfile provided via cmd-line (hacky)
-	if ( options_[ edensity::mapfile ].user() ) {
+	if ( (*options_)[ edensity::mapfile ].user() ) {
 		preferred_root_res_ = full_model_parameters_->conventional_to_full(
 			std::make_tuple(
 			utility::tools::make_vector1< int >(1),
@@ -333,7 +338,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 
 	// PLACEMENT?
 	// Should figure_out_motif_mode be a method?
-	if ( options_[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res_, terminal_res_, working_res_, input_domain_map, cutpoint_open_in_full_model_ );
+	if ( (*options_)[ full_model::motif_mode ]() ) figure_out_motif_mode( extra_minimize_res_, terminal_res_, working_res_, input_domain_map, cutpoint_open_in_full_model_ );
 
 	// Assumes motif mode has already been figured out
 	add_block_stack_variants( pose_pointers, pose_res_lists, block_stack_above_res_, block_stack_below_res_ );
@@ -402,7 +407,7 @@ FullModelPoseBuilder::fill_full_model_info( vector1< Pose * > & pose_pointers ) 
 
 	// AMW: can't figure out how to move this yet.
 	// move this code block somewhere else when ready.
-	if ( options_[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
+	if ( (*options_)[ basic::options::OptionKeys::stepwise::monte_carlo::vary_loop_length_frequency ] > 0.0 ) {
 		// placeholder -- testing if loops can be 'evaporated'.
 		vector1< Size > full_model_res_no_loops;
 		for ( Size n = 1; n <= desired_nres; ++n ) {

@@ -24,9 +24,6 @@
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/CartesianMinimizer.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-
 #include <numeric/random/random.hh>
 #include <utility/vector1.hh>
 

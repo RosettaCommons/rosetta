@@ -39,8 +39,6 @@
 #include <iosfwd>
 
 
-// option key includes
-
 namespace protocols {
 namespace docking {
 

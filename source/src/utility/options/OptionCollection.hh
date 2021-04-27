@@ -133,6 +133,11 @@ public: // Creation
 	/// @details Needed because the mutext can't be copied.
 	OptionCollection & operator=( OptionCollection const & src );
 
+	OptionCollectionOP
+	clone() const {
+		return utility::pointer::make_shared< OptionCollection >( *this );
+	}
+
 public: // Methods
 
 

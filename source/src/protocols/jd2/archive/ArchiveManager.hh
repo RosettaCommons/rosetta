@@ -27,7 +27,7 @@
 
 
 #include <protocols/moves/Mover.fwd.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/excn/Exceptions.hh>
 
 // Utility headers
@@ -56,34 +56,14 @@ extern void report_batch_inconsistency( Batch& new_batch, std::string const &tag
 class Batch {
 private:
 	//do not use the default constructor
-	Batch() {};
+	Batch() = delete;
 public:
 
 	//c'stor
-	Batch( utility::options::OptionCollection const& options, bool intermediate_structs, bool has_silent_in, core::Size nstruct )
-	: nstruct_( nstruct ),
-		intermediate_structs_( intermediate_structs ),
-		has_silent_in_( has_silent_in ),
-		has_finished_( false ),
-		is_cancelled_( false ),
-		allow_reading_cancelled_decoys_( true ),
-		invalid_( false ),
-		options_( options ),
-		decoys_returned_to_archive_( 0 )
-	{};
+	Batch( utility::options::OptionCollection const& options, bool intermediate_structs, bool has_silent_in, core::Size nstruct );
 
 	///c'stor
-	Batch( core::Size id ) : batch_id_( id ),
-		nstruct_( 0 ),
-		intermediate_structs_( false ),
-		has_silent_in_( false ),
-		has_finished_( false ),
-		is_cancelled_( false ),
-		allow_reading_cancelled_decoys_( true ),
-		invalid_( false ),
-		decoys_returned_to_archive_( 0 )
-
-	{};
+	Batch( core::Size id );
 
 	///some useful file- and directory names
 	std::string batch() const;
@@ -107,8 +87,8 @@ public:
 	std::string score_file() const;
 
 	// the options defined in this batch, that are not controlled directly by Batch, as, e.g., silent-in/out , or nstruct
-	utility::options::OptionCollection const& user_options() const { return options_; };
-	utility::options::OptionCollection& user_options() { return options_; };
+	utility::options::OptionCollection const& user_options() const { return *options_; };
+	utility::options::OptionCollection& user_options() { return *options_; };
 
 	///Getters
 
@@ -182,15 +162,15 @@ public:
 	void read_info_file();
 private:
 	core::Size batch_id_;
-	core::Size nstruct_;
-	bool intermediate_structs_;
-	bool has_silent_in_;
-	bool has_finished_;
-	bool is_cancelled_;
-	bool allow_reading_cancelled_decoys_;
-	bool invalid_;
-	utility::options::OptionCollection options_;
-	core::Size decoys_returned_to_archive_;
+	core::Size nstruct_ = 0;
+	bool intermediate_structs_ = false;
+	bool has_silent_in_ = false;
+	bool has_finished_ = false;
+	bool is_cancelled_ = false;
+	bool allow_reading_cancelled_decoys_ = true;
+	bool invalid_ = false;
+	utility::options::OptionCollectionOP options_;
+	core::Size decoys_returned_to_archive_ = 0;
 	std::string rosetta_script_file_;
 };
 

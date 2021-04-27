@@ -23,8 +23,6 @@
 
 // Utility headers
 
-// option key includes
-
 
 #include <utility/vector1_bool.hh>
 

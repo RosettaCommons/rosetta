@@ -60,7 +60,6 @@
 #endif
 
 
-// option key includes
 /* Topology Broker is the central class for the broking mechanism. The broker maintains a list of ToplogyClaimers. These Claimers
 will be asked what kind of things they want to do (i.e., they return a list of DofClaims )
 then the Broker asks each Claimer if foreign claims are acceptable. A claim can be disallowed. For instance, the RigidChunkClaimer,

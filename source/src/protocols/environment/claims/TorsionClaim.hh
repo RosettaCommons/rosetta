@@ -41,8 +41,6 @@
 #include <utility/VirtualBase.hh>
 #include <utility/tag/Tag.fwd.hh>
 
-//#include <basic/options/option_macros.hh>
-
 //// C++ headers
 #include <string>
 #include <iosfwd>

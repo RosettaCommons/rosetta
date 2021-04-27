@@ -68,6 +68,7 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 #include <basic/MetricValue.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 #include <basic/options/keys/bunsat_calc2.OptionKeys.gen.hh>

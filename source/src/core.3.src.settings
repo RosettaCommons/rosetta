@@ -735,6 +735,7 @@ sources = {
 		"compute_holes_score",
 		"compute_holes_score_res",
 		"HolesEnergyRes",
+		"HolesParamsRes",
 		"PoseBalls",
 		"PoseBallsLite",
 		"surf_vol",

@@ -24,16 +24,12 @@
 #include <basic/MetricValue.fwd.hh>
 
 //Utility headers
-#include <basic/options/option.hh>
 #include <core/types.hh>
 //#include <utility/vector1.hh>
 
 //C++ headers
 #include <set>
 #include <utility> //pair
-
-// option key includes
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #include <utility/vector1.hh>
 
@@ -63,11 +59,13 @@ public:
 	typedef std::pair< one_group, one_group > group_pair;
 	typedef utility::vector1< group_pair > group_set;
 
+	InterGroupNeighborsCalculator(
+		group_set const & groups );
+
 	/// @brief
 	InterGroupNeighborsCalculator(
 		group_set const & groups,
-		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::inter_group_neighbors_cutoff]
-	);
+		core::Real dist_cutoff );
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;
 

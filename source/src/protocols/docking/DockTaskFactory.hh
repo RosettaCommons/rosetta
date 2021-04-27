@@ -32,8 +32,6 @@
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
 
-//Auto Headers
-// option key includes
 #ifdef WIN32
 #include <core/pack/task/operation/TaskOperation.hh>
 #endif

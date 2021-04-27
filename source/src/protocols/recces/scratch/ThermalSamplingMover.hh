@@ -26,8 +26,6 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 
 // Basic/Utility headers
-#include <basic/options/option.hh>
-#include <basic/options/keys/rna.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.fwd.hh>
 
 namespace protocols {

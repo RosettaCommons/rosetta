@@ -16,8 +16,6 @@
 #ifndef INCLUDED_core_scoring_etable_count_pair_CountPairCrossover3full_hh
 #define INCLUDED_core_scoring_etable_count_pair_CountPairCrossover3full_hh
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 #include <core/types.hh>
@@ -47,8 +45,6 @@ public:
 		Real & //weight
 	)
 	{
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
 		if ( path_distance < 3 ) return false;
 		else if ( path_distance > 3 ) return true;
 

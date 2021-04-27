@@ -43,21 +43,15 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 //#include <basic/Tracer.hh>
-//#include <basic/options/option.hh>
 
 #include <utility/VirtualBase.hh>
 #include <set>
-
-//#include <basic/options/option_macros.hh>
 
 //// C++ headers
 //#include <iosfwd>
 #include <string>
 
 #include <utility/vector1.hh>
-
-
-// option key includes
 
 
 namespace protocols {

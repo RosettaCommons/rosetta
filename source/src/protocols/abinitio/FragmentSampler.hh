@@ -48,7 +48,7 @@
 
 // Utility headers
 #include <utility/VirtualBase.hh>
-#include <basic/prof.hh>
+#include <basic/prof.fwd.hh>
 #include <utility/exit.hh>
 
 //// C++ headers

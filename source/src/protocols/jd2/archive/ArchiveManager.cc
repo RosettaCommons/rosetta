@@ -112,6 +112,20 @@ using namespace basic::options;
 using namespace basic::options::OptionKeys;
 using namespace core;
 
+//c'stor
+Batch::Batch( utility::options::OptionCollection const& options, bool intermediate_structs, bool has_silent_in, core::Size nstruct )
+: nstruct_( nstruct ),
+	intermediate_structs_( intermediate_structs ),
+	has_silent_in_( has_silent_in ),
+	options_( utility::pointer::make_shared< utility::options::OptionCollection>( options ) )
+{}
+
+///c'stor
+Batch::Batch( core::Size id ) :
+	batch_id_( id ),
+	options_( utility::pointer::make_shared< utility::options::OptionCollection>() )
+{}
+
 
 std::string
 Batch::batch() const {

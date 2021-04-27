@@ -34,7 +34,9 @@
 #include <utility/string_util.hh>
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //C++ headers
 //#include <set>
@@ -53,6 +55,11 @@ static basic::Tracer TR( "protocols.toolbox.PoseMetricCalculators.NeighborsByDis
 
 namespace protocols {
 namespace pose_metric_calculators {
+
+NeighborsByDistanceCalculator::NeighborsByDistanceCalculator(
+	core::Size central_residue
+) : NeighborsByDistanceCalculator( central_residue, basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff] ) // delegating constructor
+{}
 
 NeighborsByDistanceCalculator::NeighborsByDistanceCalculator( core::Size central_residue, core::Real dist_cutoff )
 : parent(), central_residue_(central_residue), dist_cutoff_(dist_cutoff), num_neighbors_(0)

@@ -28,14 +28,14 @@ namespace myspace {
 using namespace core;
 
 utility::vector1< Size >
-get_touched_res( pose::Pose const pose, 
+get_touched_res( pose::Pose const pose,
 		 utility::vector1< Size > const loopres
 		 )
 {
 
   utility::vector1< Size > touched_res = loopres;
   Real const dist_cut( 6.0 );
-  
+
   for( Size i = 1; i <= loopres.size(); ++i ){
     Size const ires( loopres[i] );
     Vector const Cb_crd_i = pose.residue( ires ).nbr_atom_xyz();
@@ -71,7 +71,7 @@ get_movemap( pose::Pose const pose,
   mm->set_jump( true );
   for( Size ires = 1; ires <= touched_residue.size(); ++ires ){
     Size const resno( touched_residue[ ires ] );
-    
+
     if( loopres.contains( ires ) ) mm->set_bb  ( resno, true );
     mm->set_chi ( resno, true );
     if( nonideal ){
@@ -121,7 +121,7 @@ setup_packer( pose::Pose const &pose,
     }
   }
   local_tf->push_back( turn_off_packing );
-  
+
   //Include current rotamer by default
   local_tf->push_back( new IncludeCurrent() );
 
@@ -147,7 +147,7 @@ ramp_repack_min( pose::Pose &pose,
   protocols::minimization_packing::PackRotamersMoverOP packer = setup_packer( pose, mm, sfxn );
 
   packer->apply( pose );
-  
+
   scoring::ScoreFunction sfxn_loc = *sfxn;
   optimization::MinimizerOptions minoptions_loc = *minoptions;
 
@@ -159,9 +159,9 @@ ramp_repack_min( pose::Pose &pose,
 
   for( int i = 0; i< 4; ++i ){
     minoptions_loc.max_iter( (Size)(max_iter[i]) );
-    sfxn_loc.set_weight( scoring::fa_rep, 
+    sfxn_loc.set_weight( scoring::fa_rep,
 			 full_weights[ scoring::fa_rep ] * (Real)(w_ramp[i]) );
-    
+
     if( cartesian ){
       optimization::CartesianMinimizer minimizer;
       minimizer.run( pose, mm, sfxn_loc, minoptions_loc );
@@ -182,16 +182,16 @@ get_resmap( pose::Pose const &pose,
 
   for ( Size ii = 1; ii <= pose.size(); ++ii ) {
     Size ii_pdb( pose.pdb_info()->number( ii ) );
-    
+
     for ( Size jj = 1; jj <= ref_pose.size(); ++jj ) {
       Size jj_pdb( ref_pose.pdb_info()->number( jj ) );
-      
+
       if( ii_pdb == jj_pdb ){
 	resmap[ii] = jj;
 	break;
       }
     }
-    
+
   }
   return resmap;
 }
@@ -229,7 +229,7 @@ evaluate_and_write( scoring::ScoreFunctionCOP sfxn,
     rmsd  = scoring::CA_rmsd ( native_pose, pose_work, resmap );
 
     irmsd = scoring::CA_rmsd( pose0, pose_work );
-    
+
     printf( "%4d %8.3f %8.3f %8.4f %8.4f\n", i_pose, irmsd, rmsd, gdtmm, gdtha );
 
     std::stringstream pdbname("");

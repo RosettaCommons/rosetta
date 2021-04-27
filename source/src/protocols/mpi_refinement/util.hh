@@ -10,9 +10,6 @@
 #ifndef INCLUDED_protocols_mpi_refinement_utils_hh
 #define INCLUDED_protocols_mpi_refinement_utils_hh
 
-#include <basic/options/keys/lh.OptionKeys.gen.hh>
-#include <basic/options/option.hh>
-
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

@@ -38,9 +38,6 @@
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/keys/OptionKeys.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 #include <boost/unordered/unordered_map.hpp>

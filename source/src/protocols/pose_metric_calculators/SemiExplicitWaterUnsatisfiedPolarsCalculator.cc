@@ -68,6 +68,9 @@
 #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
 
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #include <utility/assert.hh>
 
@@ -108,24 +111,23 @@ namespace pose_metric_calculators {
 
 SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
 	std::string const & hbond_calc,
+	scoring::ScoreFunctionOP scorefxn ) :
+	SemiExplicitWaterUnsatisfiedPolarsCalculator( hbond_calc, scorefxn,  basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff] ) // delegating constructor
+{}
+
+SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
+	std::string const & hbond_calc,
 	scoring::ScoreFunctionOP scorefxn,
 	core::Real semiexpl_water_cutoff
-) :
-	hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
-	all_unsat_polars_( 0 ),
-	special_region_unsat_polars_(0),
-	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
-	name_of_hbond_calc_( hbond_calc ),
-	scorefxn_(std::move( scorefxn ))
-{
-	atom_unsat_.clear();
-	residue_unsat_polars_.clear();
-	atom_semiexpl_score_.clear();
-	residue_semiexpl_score_.clear();
-	special_region_.clear();
-	assert_calculators();
+) : SemiExplicitWaterUnsatisfiedPolarsCalculator( hbond_calc, scorefxn, std::set< core::Size >{}, semiexpl_water_cutoff ) // delegating constructor
+{}
 
-}
+SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
+	std::string const & hbond_calc,
+	scoring::ScoreFunctionOP scorefxn,
+	std::set< core::Size > const & special_region
+) : SemiExplicitWaterUnsatisfiedPolarsCalculator( hbond_calc, scorefxn, special_region, basic::options::option[basic::options::OptionKeys::pose_metrics::semiex_water_burial_cutoff] ) // delegating constructor
+{}
 
 SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolarsCalculator(
 	std::string const & hbond_calc,
@@ -134,17 +136,11 @@ SemiExplicitWaterUnsatisfiedPolarsCalculator::SemiExplicitWaterUnsatisfiedPolars
 	core::Real semiexpl_water_cutoff
 ) :
 	hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) ),
-	all_unsat_polars_(0),
-	special_region_unsat_polars_(0),
 	semiexpl_water_cutoff_( semiexpl_water_cutoff ),
 	name_of_hbond_calc_( hbond_calc ),
 	scorefxn_(std::move( scorefxn )),
 	special_region_( special_region )
 {
-	atom_unsat_.clear();
-	residue_unsat_polars_.clear();
-	atom_semiexpl_score_.clear();
-	residue_semiexpl_score_.clear();
 	assert_calculators();
 }
 

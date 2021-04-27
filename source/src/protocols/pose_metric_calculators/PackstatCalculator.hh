@@ -20,16 +20,12 @@
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
 
-#include <basic/options/option.hh>
 
 #include <utility/vector1.hh>
 
 #include <set>
 
 
-// option key includes
-
-#include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
 
 #ifdef    SERIALIZATION
@@ -44,15 +40,18 @@ class PackstatCalculator : public core::pose::metrics::StructureDependentCalcula
 
 public:
 
+	PackstatCalculator();
+
 	PackstatCalculator(
-		core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
+		core::Size oversample,
 		bool remove_nonprotein_res = false
 	);
 
+	PackstatCalculator( std::set< core::Size > const & special_region );
 
 	PackstatCalculator(
 		std::set< core::Size > const & special_region,
-		core::Size oversample = basic::options::option[basic::options::OptionKeys::packstat::oversample],
+		core::Size oversample,
 		bool remove_nonprotein_res = false
 	);
 
@@ -69,12 +68,12 @@ protected:
 
 private:
 
-	core::Real total_packstat_;
-	core::Real special_region_packstat_;
+	core::Real total_packstat_ = 0;
+	core::Real special_region_packstat_ = 0;
 	utility::vector1< core::Real > residue_packstat_;
 
 	core::Size oversample_;
-	bool remove_nonprotein_res_;
+	bool remove_nonprotein_res_ = false;
 
 	std::set< core::Size > special_region_;
 

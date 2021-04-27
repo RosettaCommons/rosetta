@@ -48,6 +48,7 @@
 #include <protocols/pose_metric_calculators/PackstatCalculator.hh>
 
 // Utility Headers
+#include <basic/options/option.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/run.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>

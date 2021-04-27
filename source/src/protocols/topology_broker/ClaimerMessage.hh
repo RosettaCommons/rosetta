@@ -37,10 +37,7 @@
 //#include <utility/io/ozstream.hh>
 //#include <utility/io/util.hh>
 //#include <basic/Tracer.hh>
-//#include <basic/options/option.hh>
 //#include <utility/fix_boinc_read.hh>
-
-//#include <basic/options/option_macros.hh>
 
 //// C++ headers
 //#include <iosfwd>
@@ -48,9 +45,6 @@
 #include <typeinfo>
 
 #include <utility/vector1_bool.hh>
-
-
-// option key includes
 
 
 namespace protocols {

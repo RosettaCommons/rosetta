@@ -28,6 +28,9 @@
 #include <utility/string_util.hh>
 #include <basic/MetricValue.hh>
 
+// option key includes
+#include <basic/options/option.hh>
+#include <basic/options/keys/packstat.OptionKeys.gen.hh>
 
 #include <utility/assert.hh>
 
@@ -53,33 +56,30 @@ static basic::Tracer TR( "protocols/toolbox/PoseMetricCalculators/PackstatCalcul
 namespace protocols {
 namespace pose_metric_calculators {
 
+PackstatCalculator::PackstatCalculator():
+	PackstatCalculator( basic::options::option[basic::options::OptionKeys::packstat::oversample], false ) // delegating constructor
+{}
 
 PackstatCalculator::PackstatCalculator(
 	core::Size oversample,
 	bool remove_nonprotein_res
-) : total_packstat_(0),
-	special_region_packstat_(0),
-	oversample_(oversample),
-	remove_nonprotein_res_(remove_nonprotein_res)
-{
-	special_region_.clear();
-	residue_packstat_.clear();
-}
+) :
+	PackstatCalculator( std::set< core::Size >{}, oversample, remove_nonprotein_res ) // delegating constructor
+{}
 
+PackstatCalculator::PackstatCalculator( std::set< core::Size > const & special_region ) :
+	PackstatCalculator( special_region, basic::options::option[basic::options::OptionKeys::packstat::oversample], false ) // delegating constructor
+{}
 
 PackstatCalculator::PackstatCalculator(
 	std::set< core::Size > const & special_region,
 	core::Size oversample,
 	bool remove_nonprotein_res
-) : total_packstat_(0),
-	special_region_packstat_(0),
+) :
 	oversample_(oversample),
 	remove_nonprotein_res_(remove_nonprotein_res),
 	special_region_( special_region )
-{
-	residue_packstat_.clear();
-}
-
+{}
 
 void
 PackstatCalculator::lookup(

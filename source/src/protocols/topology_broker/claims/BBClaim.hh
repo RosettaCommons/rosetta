@@ -37,14 +37,9 @@
 #include <utility/exit.hh>
 #include <utility/VirtualBase.hh>
 
-//#include <basic/options/option_macros.hh>
-
 //// C++ headers
 #include <string>
 #include <iosfwd>
-
-
-// option key includes
 
 
 namespace protocols {

@@ -37,11 +37,6 @@
 #include <core/types.hh>
 #include <utility/vector1.hh>
 
-// option key includes
-#include <basic/options/option.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-
 #include <core/kinematics/Jump.hh>
 #include <numeric/random/random.hh>
 #include <core/scoring/ScoreFunction.hh>

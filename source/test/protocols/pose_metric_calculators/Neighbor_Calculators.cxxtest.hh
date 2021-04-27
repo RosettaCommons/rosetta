@@ -32,6 +32,7 @@
 #include <basic/MetricValue.hh>
 
 // option key includes
+#include <basic/options/option.hh>
 #include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 //Auto Headers

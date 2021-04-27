@@ -22,7 +22,6 @@
 // Project Headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
-#include <basic/options/keys/OptionKeys.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.fwd.hh>
@@ -45,10 +44,7 @@ class SheetFilter : public AbinitioBaseFilter {
 public:
 
 	/// c-tor and d-tor
-	SheetFilter() {
-		using namespace basic::options;
-		using namespace basic::options::OptionKeys;
-	}
+	SheetFilter() {}
 	~SheetFilter() override = default;
 
 	filters::FilterOP clone() const override {

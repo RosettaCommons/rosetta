@@ -24,6 +24,9 @@
 #include <basic/MetricValue.hh>
 #include <core/scoring/sasa.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
+
 #include <utility/assert.hh>
 
 #include <utility/vector1.hh>
@@ -49,6 +52,10 @@ namespace core {
 namespace pose {
 namespace metrics {
 namespace simple_calculators {
+
+SasaCalculatorLegacy::SasaCalculatorLegacy() :
+	probe_radius_( basic::options::option[basic::options::OptionKeys::pose_metrics::sasa_calculator_probe_radius] )
+{}
 
 void SasaCalculatorLegacy::lookup( std::string const & key, basic::MetricValueBase * valptr ) const {
 

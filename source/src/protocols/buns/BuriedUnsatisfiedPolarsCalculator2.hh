@@ -24,14 +24,10 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/conformation/Residue.hh>
 
-#include <basic/options/option.hh>
-
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 
 #include <set>
-
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

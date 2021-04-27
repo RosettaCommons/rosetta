@@ -92,6 +92,7 @@
 #include <basic/options/keys/optimization.OptionKeys.gen.hh>
 #include <basic/options/keys/relax.OptionKeys.gen.hh>
 #include <basic/options/keys/symmetry.OptionKeys.gen.hh>
+#include <basic/options/keys/cryst.OptionKeys.gen.hh>
 #include <basic/options/option_macros.hh>
 #include <basic/options/option.hh>
 #include <basic/Tracer.hh>
@@ -1016,6 +1017,13 @@ void DockLatticeMoverCreator::provide_xml_schema( utility::tag::XMLSchemaDefinit
 
 
 ////////////////////////////////////////////////////
+
+MakeLatticeMover::MakeLatticeMover() {
+	using namespace basic::options;
+	refinable_lattice_ = option[ OptionKeys::cryst::refinable_lattice]();
+	contact_dist_ = option[ OptionKeys::cryst::interaction_shell]();
+	validate_lattice_ = false;
+}
 
 void
 MakeLatticeMover::apply( core::pose::Pose & pose ) {

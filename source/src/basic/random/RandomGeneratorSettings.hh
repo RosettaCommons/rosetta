@@ -20,7 +20,10 @@
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
+
+#include <string>
 
 namespace basic {
 namespace random {

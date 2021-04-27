@@ -23,14 +23,7 @@
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
 
-#include <basic/options/option.hh>
-
 #include <utility/vector1.hh>
-
-
-// option key includes
-
-#include <basic/options/keys/sasa.OptionKeys.gen.hh>
 
 
 #ifdef    SERIALIZATION

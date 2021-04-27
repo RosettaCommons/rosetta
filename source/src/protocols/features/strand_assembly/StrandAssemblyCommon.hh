@@ -21,8 +21,6 @@
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/options/util.hh>
-#include <basic/options/keys/strand_assembly.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 
 //C library

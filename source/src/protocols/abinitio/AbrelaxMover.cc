@@ -59,6 +59,7 @@
 #include <basic/options/keys/abrelax.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/MemTracer.hh>
+#include <basic/prof.hh>
 #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>

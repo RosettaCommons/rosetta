@@ -23,14 +23,10 @@
 #include <basic/MetricValue.fwd.hh>
 
 //Utility headers
-#include <basic/options/option.hh>
 #include <core/types.hh>
 
 //C++ headers
 #include <set>
-
-// option key includes
-#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers
@@ -49,8 +45,13 @@ public:
 
 	/// @brief central_residue is the residue whose neighbors we find
 	NeighborsByDistanceCalculator(
+		core::Size central_residue
+	);
+
+	/// @brief central_residue is the residue whose neighbors we find
+	NeighborsByDistanceCalculator(
 		core::Size central_residue,
-		core::Real dist_cutoff = basic::options::option[basic::options::OptionKeys::pose_metrics::neighbor_by_distance_cutoff]
+		core::Real dist_cutoff
 	);
 
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override;

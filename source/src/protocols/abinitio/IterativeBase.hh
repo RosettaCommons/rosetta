@@ -31,12 +31,12 @@
 #include <core/fragment/FragSet.fwd.hh>
 
 
-#include <utility/options/OptionCollection.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 
 
 // Utility headers
 //for dynamic patching
-#include <utility/options/keys/FileVectorOptionKey.hh>
+#include <utility/options/keys/FileVectorOptionKey.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 
 // Third-party Headers
@@ -216,15 +216,7 @@ protected:
 	}
 
 	///OBSOLET cores are computed by compute_cores() in idle()
-	loops::Loops const& core( core::Size i ) {
-		if ( i == 1 ) { return core15_; };
-		if ( i == 2 ) { return core2_; };
-		if ( i == 3 ) { return core3_; };
-		if ( i == 4 ) { return core4_; };
-		std::cerr << "Cannot handle a value of " << i << " in IterativeBase::core(). Must be 1-4." << std::endl;
-		utility_exit_with_message("Improper value passed to IterativeBase::core().");
-		return core2_; //happy compiler
-	}
+	loops::Loops const& core( core::Size i );
 
 	/// @brief current stage?
 	IterationStage stage() const {
@@ -374,7 +366,7 @@ private:
 	mutable core::scoring::constraints::ConstraintSetOP cst_fa_data_;
 	/// ------------------ register cmdline options ---------------------------
 
-	utility::options::OptionCollection const vanilla_options_; //options before stage-dpd auto-noe-options were added
+	utility::options::OptionCollectionCOP vanilla_options_; //options before stage-dpd auto-noe-options were added
 
 
 private:

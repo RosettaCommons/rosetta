@@ -34,6 +34,7 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/hydrate.OptionKeys.gen.hh>
+#include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/multithreading.OptionKeys.gen.hh>
 #include <basic/datacache/BasicDataCache.hh>
 

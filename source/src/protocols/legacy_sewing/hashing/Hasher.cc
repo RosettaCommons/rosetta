@@ -33,6 +33,9 @@
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 
+#include <basic/options/option.hh>
+#include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
+
 //External headers
 #include <boost/unordered_map.hpp>
 #include <boost/math/special_functions/round.hpp>

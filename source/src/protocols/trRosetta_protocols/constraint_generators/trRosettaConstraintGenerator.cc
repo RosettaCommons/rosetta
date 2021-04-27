@@ -78,9 +78,9 @@ trRosettaConstraintGenerator::trRosettaConstraintGenerator() :
 /// @brief OptionsCollection constructor.
 trRosettaConstraintGenerator::trRosettaConstraintGenerator(
 #ifdef USE_TENSORFLOW
-	basic::options::OptionCollection const & opts
+	utility::options::OptionCollection const & opts
 #else
-	basic::options::OptionCollection const &
+	utility::options::OptionCollection const &
 #endif
 ) :
 	protocols::constraint_generator::ConstraintGenerator( trRosettaConstraintGenerator::class_name() )

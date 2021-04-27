@@ -33,9 +33,9 @@
 #include <core/id/AtomID.hh>
 
 // Basic headers
-#include <basic/options/option.hh>
 
 // Utility headers
+#include <utility/options/OptionCollection.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
@@ -56,7 +56,7 @@ public:
 #endif //USE_TENSORFLOW
 
 	/// @brief OptionsCollection constructor.
-	trRosettaConstraintGenerator( basic::options::OptionCollection const & opts );
+	trRosettaConstraintGenerator( utility::options::OptionCollection const & opts );
 
 	~trRosettaConstraintGenerator() override;
 

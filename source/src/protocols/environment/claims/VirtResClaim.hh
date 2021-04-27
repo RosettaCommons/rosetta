@@ -35,8 +35,6 @@
 
 //// C++ headers
 
-// option key includes
-
 
 namespace protocols {
 namespace environment {

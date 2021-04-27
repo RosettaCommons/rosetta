@@ -33,7 +33,7 @@
 
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
-#include <basic/options/option.hh>
+#include <utility/options/OptionCollection.fwd.hh>
 //#include <utility/tag/XMLSchemaGeneration.fwd.hh> //transcluded from Mover
 
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
@@ -83,7 +83,7 @@ public:
 
 	/// @brief Options constructor.
 	/// @details Initializes from a local options collection.
-	trRosettaProtocolMover( basic::options::OptionCollection const & options );
+	trRosettaProtocolMover( utility::options::OptionCollection const & options );
 
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~trRosettaProtocolMover() override;

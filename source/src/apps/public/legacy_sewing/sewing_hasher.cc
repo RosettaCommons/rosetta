@@ -37,6 +37,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/inout.OptionKeys.gen.hh>
+#include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 #include <basic/Tracer.hh>
 #include <basic/database/sql_utils.hh>
 

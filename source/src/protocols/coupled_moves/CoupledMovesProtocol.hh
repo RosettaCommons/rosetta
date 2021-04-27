@@ -33,7 +33,6 @@
 
 //fragment
 #include <core/fragment/FragSet.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
 #include <protocols/loops/loops_main.hh>
 
 //KIC

@@ -69,7 +69,9 @@
 #include <core/types.hh>
 #include <basic/Tracer.hh>
 #include <basic/MetricValue.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/packstat.OptionKeys.gen.hh>
+#include <basic/options/keys/pose_metrics.OptionKeys.gen.hh>
 //#include <utility/exit.hh>
 #include <utility>
 #include <utility/file/FileName.hh>

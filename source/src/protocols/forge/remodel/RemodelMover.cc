@@ -32,6 +32,7 @@
 #include <protocols/toolbox/match_enzdes_util/EnzdesCacheableObserver.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <protocols/toolbox/match_enzdes_util/EnzdesCstCache.hh>
+#include <basic/options/option.hh>
 #include <basic/options/keys/enzdes.OptionKeys.gen.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 #include <basic/options/keys/remodel.OptionKeys.gen.hh>

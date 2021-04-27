@@ -39,7 +39,6 @@
 #include <core/init/init.hh>
 #include <core/conformation/Residue.hh>
 ////#include <core/io/pdb/pose_io.hh>
-#include <basic/options/util.hh>//option.hh>
 #include <protocols/relax/loop/LoopRelaxMover.fwd.hh>
 #include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -52,12 +51,6 @@
 #include <core/scoring/rms_util.hh>
 #include <protocols/loops/loops_main.hh>
 #include <protocols/loops/Loop.hh>
-#include <basic/options/keys/out.OptionKeys.gen.hh>
-#include <basic/options/keys/loops.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/cm.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>

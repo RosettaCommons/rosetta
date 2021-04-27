@@ -36,8 +36,6 @@
 
 #include <string>
 
-// option key includes
-
 
 #include <utility/vector1.hh>
 #include <iosfwd>

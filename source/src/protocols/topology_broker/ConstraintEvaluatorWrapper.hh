@@ -32,9 +32,6 @@
 
 //// C++ headers
 
-// option key includes
-
-
 namespace protocols {
 namespace topology_broker {
 

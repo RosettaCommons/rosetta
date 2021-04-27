@@ -40,7 +40,7 @@ std::string const BatchJobInputter::BOGUS_BATCH_ID( "NO_BATCH" );
 
 BatchJobInputter::BatchJobInputter( std::string batch1 ) :
 	current_batch_( batch1 ),
-	vanilla_options_( basic::options::option )
+	vanilla_options_( basic::options::option.clone() )
 {
 	if ( batch1 != BOGUS_BATCH_ID ) {
 		tr.Debug << "Instantiate BatchJobInputter with batch" << current_batch_ << std::endl;
@@ -51,7 +51,7 @@ BatchJobInputter::BatchJobInputter( std::string batch1 ) :
 }
 
 BatchJobInputter::~BatchJobInputter() {
-	basic::options::option=vanilla_options_;
+	basic::options::option=*vanilla_options_; // TODO: BAD! Why are we smashing the options?
 }
 
 /// @brief Return the type of input source that the BatchJobInputter is currently
@@ -71,7 +71,7 @@ void BatchJobInputter::check_batch() {
 
 void BatchJobInputter::read_batch() {
 	using namespace basic::options;
-	option=vanilla_options_;
+	option=*vanilla_options_; // TODO: BAD! Why are we smashing the options?
 	option.load_options_from_file(current_batch_);
 	//unfortunately I have to copy code from the JobDistributor factory unless I can remove "in:file:batch" from options...
 	this_batch_job_inputter_ = JobDistributorFactory::create_job_inputter();

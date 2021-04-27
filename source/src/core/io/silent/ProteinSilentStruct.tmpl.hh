@@ -83,7 +83,6 @@
 #include <ObjexxFCL/format.hh>
 #include <ObjexxFCL/string.functions.hh>
 
-// option key includes
 namespace core {
 namespace io {
 namespace silent {

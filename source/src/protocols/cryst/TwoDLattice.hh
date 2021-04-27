@@ -39,9 +39,6 @@
 
 #include <core/scoring/electron_density/util.hh>
 
-#include <basic/options/option.hh>
-#include <basic/options/after_opts.hh>
-
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 #include <protocols/symmetry/SetupForSymmetryMover.hh>
@@ -64,16 +61,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/format.hh>
-
-#include <basic/options/option.hh>
-#include <basic/options/option_macros.hh>
-#include <basic/options/keys/constraints.OptionKeys.gen.hh>
-#include <basic/options/keys/symmetry.OptionKeys.gen.hh>
-#include <basic/options/keys/edensity.OptionKeys.gen.hh>
-#include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/options/keys/relax.OptionKeys.gen.hh>
-#include <basic/options/keys/optimization.OptionKeys.gen.hh>
-
 
 namespace protocols {
 namespace cryst {

@@ -26,7 +26,6 @@
 #include <utility/VirtualBase.hh>
 
 // basic headers
-#include <basic/options/option.hh>
 
 // c++ headers
 #include <string>
