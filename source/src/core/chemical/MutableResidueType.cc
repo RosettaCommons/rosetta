@@ -1708,7 +1708,7 @@ MutableResidueType::add_orbital(
 	Size type( orbital_types->orbital_type_index( orbital_type_name ) );
 
 	// store the name
-	get_orbitals().push_back(Orbital(orbital_name, type, Vector(0.0)));
+	get_orbitals().push_back(utility::pointer::make_shared< Orbital >(orbital_name, type, Vector(0.0)));
 
 	get_orbitals_index()[ orbital_name ] = n_orbitals();
 	get_orbitals_index()[ utility::stripped_whitespace( orbital_name ) ] = n_orbitals();
@@ -1751,7 +1751,7 @@ MutableResidueType::set_orbital_icoor_id(
 	Size orb_indx(orbital_index(orbital));
 	orbitals::ICoorOrbitalData new_icoor( phi, theta, d, s1, s2, s3 );
 
-	get_orbitals()[ orb_indx ].new_icoor( new_icoor );
+	get_orbitals()[ orb_indx ]->new_icoor( new_icoor );
 }
 
 

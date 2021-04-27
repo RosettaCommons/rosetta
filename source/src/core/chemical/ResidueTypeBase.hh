@@ -38,7 +38,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/chemical/orbitals/OrbitalType.fwd.hh>
-#include <core/chemical/Orbital.hh>
+#include <core/chemical/Orbital.fwd.hh>
 #include <core/chemical/rotamers/RotamerLibrarySpecification.fwd.hh>
 #include <core/chemical/orbitals/OrbitalTypeSet.fwd.hh>
 #include <core/chemical/VariantType.hh>
@@ -49,6 +49,7 @@
 // Utility headers
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+#include <utility/deep_copy_vector1.hh>
 #include <utility/pointer/deep_copy.hh>
 
 // C++ headers
@@ -335,7 +336,7 @@ public:
 
 protected: // Modifiable accessors
 
-	utility::vector1< Orbital > &
+	utility::vector1< OrbitalOP > &
 	get_orbitals() { return orbitals_; }
 
 	std::map< std::string, int > &
@@ -922,7 +923,7 @@ private:
 	utility::vector1< Adduct > defined_adducts_;
 
 	/// @brief The orbitals on the ResidueTypeBase, if any.
-	utility::vector1< Orbital > orbitals_;
+	utility::deep_copy_vector1< OrbitalOP > orbitals_;
 
 	/// @brief index lookup for orbitals based on atom name
 	/// Updated in add_orbital()

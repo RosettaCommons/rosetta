@@ -140,19 +140,19 @@ ResidueTypeBase::n_orbitals() const {
 
 Orbital const &
 ResidueTypeBase::orbital(Size const orbital_index) const{
-	return orbitals_[orbital_index];
+	return *orbitals_[orbital_index];
 }
 
 Orbital const &
 ResidueTypeBase::orbital(std::string const & orbital_name) const{
-	return orbitals_[ orbital_index(orbital_name) ];
+	return *orbitals_[ orbital_index(orbital_name) ];
 }
 
 orbitals::OrbitalType const &
 ResidueTypeBase::orbital_type(Size const orbital_index) const
 {
 	orbitals::OrbitalTypeSetCOP orbital_types( orbital_types_ );
-	return ( *orbital_types )[ orbitals_[ orbital_index ].orbital_type_index() ];
+	return ( *orbital_types )[ orbitals_[ orbital_index ]->orbital_type_index() ];
 }
 
 core::Size

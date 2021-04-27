@@ -22,7 +22,6 @@
 // Utility headers
 #include <numeric/xyzVector.hh>
 
-
 namespace core {
 namespace conformation {
 namespace orbitals {
@@ -47,6 +46,10 @@ public:
 	/// @brief destructor
 	~OrbitalXYZCoords() {}
 
+	OrbitalXYZCoordsOP
+	clone() const {
+		return utility::pointer::make_shared< OrbitalXYZCoords >( *this );
+	}
 
 	Vector const &
 	xyz() const

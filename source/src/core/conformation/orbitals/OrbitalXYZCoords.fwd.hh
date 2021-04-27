@@ -15,10 +15,9 @@
 #define INCLUDED_core_conformation_orbitals_OrbitalXYZCoords_FWD_HH
 
 // Project headers
-#include <core/types.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 
 namespace core {
@@ -26,6 +25,9 @@ namespace conformation {
 namespace orbitals {
 
 class OrbitalXYZCoords;
+
+typedef  utility::pointer::shared_ptr< OrbitalXYZCoords >  OrbitalXYZCoordsOP;
+typedef  utility::pointer::shared_ptr< OrbitalXYZCoords const >  OrbitalXYZCoordsCOP;
 
 }
 }

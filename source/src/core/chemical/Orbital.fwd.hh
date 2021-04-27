@@ -27,6 +27,8 @@ typedef  utility::pointer::shared_ptr< Orbital const >  OrbitalCOP;
 typedef  utility::vector1< OrbitalOP >  OrbitalOPs;
 typedef  utility::vector1< OrbitalCOP >  OrbitalCOPs;
 
+OrbitalOP deep_copy( Orbital const & source);
+
 } // chemical
 } // core
 

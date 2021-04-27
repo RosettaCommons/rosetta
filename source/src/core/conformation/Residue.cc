@@ -34,6 +34,7 @@
 #include <core/chemical/rings/RingConformerSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomICoor.hh>
+#include <core/chemical/Orbital.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/packing.OptionKeys.gen.hh>
 
@@ -297,7 +298,9 @@ Residue::init_residue_from_other(
 	Residue const &src
 ) {
 	atoms_ = src.atoms_;
-	orbitals_ = src.orbitals_;
+	for ( auto & orbital: src.orbitals_ ) {
+		orbitals_.push_back( orbital->clone() );
+	}
 	seqpos_ = src.seqpos_;
 	mirrored_relative_to_type_ = src.mirrored_relative_to_type_;
 	chain_ = src.chain_;
@@ -1779,6 +1782,47 @@ Residue::get_hydrogens_bonded_to_ring_atom( uint const atom_index ) const
 	return hydrogens;
 }
 
+//////////////////////////////////////////////////////////////////////
+/////////////////         Orbital Functions     //////////////////////
+//////////////////////////////////////////////////////////////////////
+
+Vector
+Residue::build_orbital_xyz( Size const orbital_index ) const
+{
+	core::chemical::orbitals::ICoorOrbitalData orb_icoor(rsd_type_.new_orbital_icoor_data(orbital_index));
+	Vector stub1_xyz(this->atom(orb_icoor.get_stub1()).xyz());
+	Vector stub2_xyz(this->atom(orb_icoor.get_stub2()).xyz());
+	Vector stub3_xyz(this->atom(orb_icoor.get_stub3()).xyz());
+
+	Vector orbital_vector(orb_icoor.build(stub1_xyz, stub2_xyz, stub3_xyz));
+	return orbital_vector;
+}
+
+Vector const &
+Residue::orbital_xyz( Size const orbital_index ) const
+{
+	return orbitals_[orbital_index]->xyz();
+}
+
+void
+Residue::set_orbital_xyz( core::Size const orbital_index, Vector const & xyz_in )
+{
+	orbitals_[ orbital_index ]->xyz( xyz_in );
+	orbitals_[orbital_index]->type(rsd_type_.orbital(orbital_index).orbital_type_index() );
+}
+
+std::string const &
+Residue::orbital_name( Size const orbital_index ) const {
+	return rsd_type_.orbital( orbital_index ).name();
+}
+
+Size
+Residue::orbital_type_index( Size const orbital_index ) const
+{
+	return orbitals_[ orbital_index ]->type();
+}
+
+
 
 PseudoBondCollectionCOP
 Residue::get_pseudobonds_to_residue( Size resid ) const
@@ -2198,7 +2242,7 @@ void Residue::assign_orbitals() {
 		for ( core::Size const orbital_index : orbital_indices ) {
 			Vector orb_xyz(this->build_orbital_xyz(orbital_index));
 			core::Size type = rsd_type_.orbital(orbital_index).orbital_type_index();
-			orbitals_.push_back(orbitals::OrbitalXYZCoords(orb_xyz, type));
+			orbitals_.push_back(utility::pointer::make_shared< orbitals::OrbitalXYZCoords >(orb_xyz, type));
 		}
 	}
 }
