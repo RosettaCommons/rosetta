@@ -982,7 +982,7 @@ trRosettaProtocolMover::provide_citation_info(basic::citation_manager::CitationC
 /// @note Read from disk of MSA file is deferred to apply time.
 void
 trRosettaProtocolMover::init_from_options(
-	basic::options::OptionCollection const & opts
+	utility::options::OptionCollection const & opts
 ) {
 	using namespace basic::options::OptionKeys;
 

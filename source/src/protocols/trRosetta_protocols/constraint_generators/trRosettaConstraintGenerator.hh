@@ -211,7 +211,7 @@ private: //Functions
 #ifdef USE_TENSORFLOW
 	/// @brief Initialize this constraint generator from an options collection.
 	/// @details Called once by constructor.
-	void init_from_commandline( basic::options::OptionCollection const & opts );
+	void init_from_commandline( utility::options::OptionCollection const & opts );
 
 	/// @brief Load the multiple sequence alignment file and run the neural network.
 	/// @details Assumes that trRosetta_outputs_ is nullptr; throws if msa_file_ is empty.

@@ -365,7 +365,7 @@ private: // methods
 	/// @details Intended to be called once and once only, from the
 	/// constructor for this mover.
 	/// @note Can trigger read from disk!
-	void init_from_options( basic::options::OptionCollection const & options );
+	void init_from_options( utility::options::OptionCollection const & options );
 
 	/// @brief Create the trRosettaConstraintGenerator, apply it to the pose, and return a vector
 	/// of constraint objects.

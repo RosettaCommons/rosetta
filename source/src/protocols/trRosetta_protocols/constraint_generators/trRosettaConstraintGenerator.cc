@@ -449,7 +449,7 @@ trRosettaConstraintGenerator::set_constraint_weights(
 /// @details Called once by constructor.
 void
 trRosettaConstraintGenerator::init_from_commandline(
-	basic::options::OptionCollection const & opts
+	utility::options::OptionCollection const & opts
 ) {
 	set_msa_file( opts[basic::options::OptionKeys::trRosetta::msa_file]() );
 	set_prob_cutoffs(
