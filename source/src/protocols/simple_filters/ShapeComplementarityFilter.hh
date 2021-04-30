@@ -25,6 +25,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
+#include <core/select/jump_selector/JumpSelector.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -81,7 +82,6 @@ public:// mutator
 	void filtered_sc( Real const & filtered_sc );
 	void filtered_area( Real const & filtered_area );
 	void filtered_median_distance( Real const & filtered_d_median );
-	void jump_id( core::Size const & jump_id );
 	void quick( bool const quick );
 	void verbose( bool const verbose );
 	void use_rosetta_radii( bool const use_rosetta_radii );
@@ -95,6 +95,14 @@ public:// mutator
 	bool write_median_distance( ) const;
 	void multicomp( bool multicomp );
 	bool multicomp( ) const;
+
+	//Jump
+	void jump_id( core::Size jump_id );
+
+	void
+	set_jump_selector( core::select::jump_selector::JumpSelectorCOP sele ){
+		jump_selector_ = sele;
+	}
 
 public:// parser
 	void parse_my_tag( TagCOP tag,
@@ -184,7 +192,6 @@ private:
 	Real filtered_sc_;
 	Real filtered_area_;
 	Real filtered_d_median_;
-	core::Size jump_id_;
 	bool quick_ = false;
 	bool verbose_ = false;
 	bool use_rosetta_radii_ = false;
@@ -192,6 +199,11 @@ private:
 	core::select::residue_selector::ResidueSelectorCOP selector2_;
 	bool write_int_area_;
 	bool write_d_median_;
+
+	//Jump
+	core::Size jump_id_ = 1; //this is used iff jump_selector_ == nullptr
+	core::select::jump_selector::JumpSelectorCOP jump_selector_ = nullptr;
+
 
 	// symmetry-specific
 	bool multicomp_;

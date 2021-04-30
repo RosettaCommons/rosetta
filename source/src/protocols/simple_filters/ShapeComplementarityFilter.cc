@@ -25,6 +25,8 @@
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/select/jump_selector/JumpSelector.hh>
+#include <core/select/jump_selector/util.hh>
 
 // Utility headers
 #include <utility/vector1.fwd.hh>
@@ -63,7 +65,6 @@ ShapeComplementarityFilter::ShapeComplementarityFilter():
 	filtered_sc_( 0.50 ),
 	filtered_area_( 250 ),
 	filtered_d_median_( 1000.0f ),  // off by default
-	jump_id_( 1 ),
 	quick_( false ),
 	verbose_( false ),
 	use_rosetta_radii_( false ),
@@ -82,19 +83,19 @@ ShapeComplementarityFilter::ShapeComplementarityFilter( Real const & filtered_sc
 	filtered_sc_( filtered_sc ),
 	filtered_area_( filtered_area ),
 	filtered_d_median_( filtered_median_distance ),
-	jump_id_( jump_id ),
 	quick_( quick ),
 	verbose_( verbose ),
 	use_rosetta_radii_( use_rosetta_radii ),
 	selector1_(),
 	selector2_(),
+	jump_id_( jump_id ),
 	sym_dof_name_("")
 {}
 
 void ShapeComplementarityFilter::filtered_sc( Real const & filtered_sc ) { filtered_sc_ = filtered_sc; }
 void ShapeComplementarityFilter::filtered_area( Real const & filtered_area ) { filtered_area_ = filtered_area; }
 void ShapeComplementarityFilter::filtered_median_distance( Real const & filtered_median_distance ) { filtered_d_median_ = filtered_median_distance; }
-void ShapeComplementarityFilter::jump_id( core::Size const & jump_id ) { jump_id_ = jump_id; }
+void ShapeComplementarityFilter::jump_id( core::Size jump_id ) { jump_id_ = jump_id; }
 void ShapeComplementarityFilter::quick( bool const quick ) { quick_ = quick; }
 void ShapeComplementarityFilter::verbose( bool const verbose ) { verbose_ = verbose; }
 void ShapeComplementarityFilter::use_rosetta_radii( bool const use_rosetta_radii ) { use_rosetta_radii_ = use_rosetta_radii; }
@@ -142,6 +143,24 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 	}
 	scc.Reset(); // this may not be needed anymore, but I'm leaving it here for safety
 
+	core::Size jump_id = jump_id_;
+	if ( jump_selector_ != nullptr ) {
+		core::select::jump_selector::JumpSubset const jump_subset =
+			jump_selector_->apply( pose );
+
+		core::Size njumps_found = 0;
+		for ( core::Size ii = 1; ii <= jump_subset.size(); ++ii ) {
+			if ( jump_subset[ ii ] ) {
+				jump_id = ii;//hopefully this only happens once - checks are below
+				++njumps_found;
+			}
+		}
+
+		if ( njumps_found == 0 ) utility_exit_with_message( "Error! Jump selector in ShapeComplementarityFilter was unable to find any jumps!" );
+		else if ( njumps_found > 1 ) utility_exit_with_message( "Error! Jump selector in ShapeComplementarityFilter selects more than one jump!" );
+	}
+
+
 	bool symm = core::pose::symmetry::is_symmetric( pose );
 	core::Real nsubs_scalefactor = 1.0;
 
@@ -153,7 +172,7 @@ ShapeComplementarityFilter::compute( Pose const & pose ) const
 		}
 	} else if ( !symm ) {
 		// jump-based
-		if ( !scc.Calc( pose, jump_id_ ) ) {
+		if ( !scc.Calc( pose, jump_id ) ) {
 			throw CREATE_EXCEPTION(EXCN_CalcFailed, "");
 		}
 	} else if ( multicomp_ ) {
@@ -304,12 +323,20 @@ ShapeComplementarityFilter::parse_my_tag(
 	filtered_d_median_ = tag->getOption<Real>( "max_median_dist", 0.0 );
 	verbose_ = tag->getOption<bool>( "verbose", false );
 	quick_ = tag->getOption<bool>( "quick", false );
-	jump_id_ = tag->getOption<core::Size>( "jump", 1 );
 	write_int_area_ = tag->getOption<bool>( "write_int_area", false );
 	write_d_median_ = tag->getOption<bool>( "write_median_dist", false );
 	sym_dof_name(tag->getOption<std::string>( "sym_dof_name", "" ));
 	multicomp( tag->getOption< bool >("multicomp", false) );
 	use_rosetta_radii_ = tag->getOption<bool>( "use_rosetta_radii", false );
+
+	jump_id( tag->getOption<core::Size>( "jump", 1 ) );
+	std::string const jump_selector_name =
+		tag->getOption< std::string >( "jump_selector", "" );
+	if ( ! jump_selector_name.empty() ) {
+		set_jump_selector( core::select::jump_selector::get_jump_selector( jump_selector_name, data ) );
+	} else {
+		set_jump_selector( nullptr );
+	}
 
 	if ( tag->hasOption("residues1") ) {
 		residues1( tag->getOption< std::string >( "residues1" ) );
@@ -341,7 +368,9 @@ ShapeComplementarityFilter::parse_my_tag(
 	if ( !selector1_ || !selector2_ ) {
 		tr.Info << "Ignoring residue range selection since residues" << (selector2_ ? 1 : 2) << " is empty." << std::endl;
 	}
-	if ( jump_id_ != 1 ) {
+	if ( jump_selector_ == nullptr ) {
+		tr.Info << "Using Jump Selector to define surfaces." << std::endl;
+	} else if ( jump_id_ != 1 ) {
 		tr.Info << "Using Jump ID " << jump_id_ << " to define surfaces." << std::endl;
 	}
 }
@@ -533,7 +562,8 @@ void ShapeComplementarityFilter::provide_xml_schema( utility::tag::XMLSchemaDefi
 		// The default value for min_interface is strange. I feel like it should be '9999' so that things do not automatically fail if the user does not specificy the filter.
 		+ XMLSchemaAttribute::attribute_w_default( "verbose" , xsct_rosetta_bool , "If true, print extra calculation details to the tracer." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "quick" , xsct_rosetta_bool , "If true, do a quicker, less accurate calculation by reducing the density." , "false" )
-		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "For non-symmetric poses, which jump over which to calculate the interface." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xs_integer , "For non-symmetric poses, which jump over which to calculate the interface. This option is overidden by jump_selector." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_selector", xs_string, "Jump selector to be used as an alternative to the 'jump' option. This selector should only select one jump." , "" )
 		+ XMLSchemaAttribute::attribute_w_default( "write_int_area" , xsct_rosetta_bool , "If true, write interface area to scorefile." , "false" )
 		+ XMLSchemaAttribute::attribute_w_default( "write_median_dist" , xsct_rosetta_bool , "If true, write interface median distance to scorefile." , "false" )
 		+ XMLSchemaAttribute( "sym_dof_name" , xs_string , "For symmetric poses, which dof over which to calculate the interface." )

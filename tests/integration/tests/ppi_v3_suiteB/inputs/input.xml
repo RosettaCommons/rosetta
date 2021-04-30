@@ -35,7 +35,8 @@
 </RESIDUE_SELECTORS>
 
 <JUMP_SELECTORS>
-  <JumpForResidue name="chainb_jump" residue_selector="chainB"/>
+  <!-- Root is in chain B so we're selecting chain A -->
+  <JumpForResidue name="chainAB_jump" residue_selector="chainA"/>
 </JUMP_SELECTORS>
 
 <TASKOPERATIONS>
@@ -171,12 +172,12 @@
   # COMPLEX FILTERS
   ###############################################
     ### ddG w/ and w/o repack/min NOV15 score function
-    <Ddg name="ddg"  threshold="-10" jump="1" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="NOV15" />
-    <Ddg name="ddg_norepack"  threshold="-10" jump="1" repeats="1" repack="0" confidence="0" scorefxn="NOV15"/>
+    <Ddg name="ddg"  threshold="-10" jump_selector="chainAB_jump" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="NOV15" />
+    <Ddg name="ddg_norepack"  threshold="-10" jump_selector="chainAB_jump" repeats="1" repack="0" confidence="0" scorefxn="NOV15"/>
 
     ### ddG w/ and w/o repack VDW score function
-    <Ddg name="ddg_fa_atr"  threshold="-10" jump="1" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="VDW" />
-    <Ddg name="ddg_fa_atr_norepack"  threshold="-10" jump="1" repeats="1" repack="0" confidence="0" scorefxn="VDW"/>
+    <Ddg name="ddg_fa_atr"  threshold="-10" jump_selector="chainAB_jump" repeats="5" repack="1" relax_mover="min" confidence="0" scorefxn="VDW" />
+    <Ddg name="ddg_fa_atr_norepack"  threshold="-10" jump_selector="chainAB_jump" repeats="1" repack="0" confidence="0" scorefxn="VDW"/>
     
     ### determine holes across the interface
     InterfaceHoles name="interface_holes" confidence=0 jump=1/>
@@ -257,7 +258,7 @@
 
 
     ### interface shape complementarity
-    <ShapeComplementarity name="interface_sc" verbose="0" min_sc="0.55" write_int_area="1" jump="1" confidence="0"/>
+    <ShapeComplementarity name="interface_sc" verbose="0" min_sc="0.55" write_int_area="1" jump_selector="chainAB_jump" confidence="0"/>
     ### normal interface atomic contact count
     <AtomicContactCount name="interface_contactcount" task_operations="restrict_to_interface" confidence="0" />
 

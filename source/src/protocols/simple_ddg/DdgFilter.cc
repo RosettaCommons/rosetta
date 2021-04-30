@@ -28,6 +28,8 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
+#include <core/select/jump_selector/JumpSelector.hh>
+#include <core/select/jump_selector/util.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <utility/tag/Tag.hh>
@@ -52,7 +54,6 @@ DdgFilter::DdgFilter() :
 	ddg_threshold_( -15.0 ),
 	ddg_threshold_min_( -999999.0 ),
 	scorefxn_( /* NULL */ ),
-	rb_jump_( 1 ),
 	use_custom_task_(false),
 	repack_bound_(true),
 	repack_unbound_(true),
@@ -78,7 +79,6 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	ddg_threshold_(ddg_threshold),
 	ddg_threshold_min_( -999999.0 ),
 	scorefxn_(scorefxn->clone()),
-	rb_jump_(rb_jump),
 	use_custom_task_( false ),
 	repack_bound_( true ),
 	repack_unbound_( true ),
@@ -87,6 +87,7 @@ DdgFilter::DdgFilter( core::Real const ddg_threshold,
 	repeats_(repeats),
 	repack_( true ),
 	relax_mover_( /* NULL */ ),
+	rb_jump_(rb_jump),
 	pb_enabled_(false),
 	translate_by_(1000),
 	extreme_value_removal_( false ),
@@ -125,7 +126,8 @@ DdgFilter::repack() const
 }
 
 void
-DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
+DdgFilter::parse_my_tag(
+	utility::tag::TagCOP tag,
 	basic::datacache::DataMap & data
 )
 {
@@ -134,7 +136,6 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	scorefxn_ = protocols::rosetta_scripts::parse_score_function( tag, data )->clone();
 	ddg_threshold_ = tag->getOption<core::Real>( "threshold", -15.0 );
 	ddg_threshold_min_ = tag->getOption<core::Real>( "threshold_min", -999999.0 );
-	rb_jump_ = tag->getOption< core::Size >( "jump", 1 );
 	repeats( tag->getOption< core::Size >( "repeats", 1 ) );
 	repack( tag->getOption< bool >( "repack", true ) );
 	if ( tag->hasOption( "symmetry" ) ) {
@@ -147,6 +148,16 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 	relax_bound( tag->getOption<bool>( "relax_bound", false ) );
 	relax_unbound( tag->getOption<bool>( "relax_unbound", true ) );
 	translate_by_ = tag->getOption<core::Real>( "translate_by", 1000.0 );
+
+	set_rb_jump( tag->getOption< core::Size >( "jump", 1 ) );
+	std::string const jump_selector_name =
+		tag->getOption< std::string >( "jump_selector", "" );
+	if ( ! jump_selector_name.empty() ) {
+		set_jump_selector( core::select::jump_selector::get_jump_selector( jump_selector_name, data ) );
+	} else {
+		set_jump_selector( nullptr );
+	}
+
 
 	if ( tag->hasOption( "relax_mover" ) ) {
 		relax_mover( protocols::rosetta_scripts::parse_mover( tag->getOption< std::string >( "relax_mover" ), data ) );
@@ -174,8 +185,8 @@ DdgFilter::parse_my_tag( utility::tag::TagCOP tag,
 		<< " and threshold_min " << ddg_threshold_min_
 		<< " repeats=" << repeats()
 		<< " and scorefxn " << rosetta_scripts::get_score_function_name(tag)
-		<< " over jump " << rb_jump_
-		<< "extreme_value_removal: " << extreme_value_removal()
+		//<< " over jump " << rb_jump_ //we don't know this yet
+		<< " extreme_value_removal: " << extreme_value_removal()
 		<< " and repack " << repack() << std::endl;
 
 	// Determine if this PB enabled.
@@ -250,8 +261,27 @@ DdgFilter::translate_by( core::Real const translate_by )
 core::Real
 DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 	core::pose::Pose pose(pose_in);
+
+	core::Size rb_jump = rb_jump_;
+	if ( jump_selector_ != nullptr ) {
+		core::select::jump_selector::JumpSubset const jump_subset =
+			jump_selector_->apply( pose_in );
+
+		core::Size njumps_found = 0;
+		for ( core::Size ii = 1; ii <= jump_subset.size(); ++ii ) {
+			if ( jump_subset[ ii ] ) {
+				rb_jump = ii;//hopefully this only happens once - checks are below
+				++njumps_found;
+			}
+		}
+
+		if ( njumps_found == 0 ) utility_exit_with_message( "Error! Jump selector in DdgFilter was unable to find any jumps!" );
+		else if ( njumps_found > 1 ) utility_exit_with_message( "Error! Jump selector in DdgFilter selects more than one jump!" );
+	}
+
 	if ( repack() ) {
-		protocols::simple_ddg::ddG ddg( scorefxn_, rb_jump_, chain_ids_ );
+
+		protocols::simple_ddg::ddG ddg( scorefxn_, rb_jump, chain_ids_ );
 		if ( use_custom_task() ) {
 			ddg.use_custom_task( use_custom_task() );
 			ddg.task_factory( task_factory() );
@@ -305,10 +335,10 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 		}
 		//JBB This is not handling symmetric poses properly. This needs to be fixed.
 		core::pose::Pose split_pose( pose );
-		if ( chain_ids_.size() > 0 ) {
+		if ( ! chain_ids_.empty() ) {
 			//We want to translate each chain the same direction, though it doesnt matter much which one
 			core::Vector translation_axis(1,0,0);
-			for ( core::Size current_chain_id : chain_ids_ ) {
+			for ( core::Size const current_chain_id : chain_ids_ ) {
 				core::Size current_jump_id = core::pose::get_jump_id_from_chain_id(current_chain_id,split_pose);
 				rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, current_jump_id) );
 				translate->step_size( translate_by_ );
@@ -316,7 +346,8 @@ DdgFilter::compute( core::pose::Pose const & pose_in ) const {
 				translate->apply( split_pose );
 			}
 		} else {
-			rigid::RigidBodyTransMoverOP translate( new rigid::RigidBodyTransMover( split_pose, rb_jump_ ) );
+			rigid::RigidBodyTransMoverOP translate =
+				utility::pointer::make_shared< rigid::RigidBodyTransMover >( split_pose, rb_jump );
 			translate->step_size( translate_by_ );
 			translate->apply( split_pose );
 		}
@@ -365,7 +396,8 @@ void DdgFilter::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 	AttributeList attlist;
 	attlist + XMLSchemaAttribute::attribute_w_default( "threshold" , xsct_real , "If ddG value is lower than this value, filter returns True (passes)." , "-15" )
 		+ XMLSchemaAttribute::attribute_w_default( "threshold_min" , xsct_real , "If ddG value is higher than this value, filter returns True (passes)." , "-999999" )
-		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_positive_integer , "Specifies which chains to separate. Jump=1 would separate the chains interacting across the first chain termination, jump=2, second etc." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump" , xsct_positive_integer , "Specifies which chains to separate. Jump=1 would separate the chains interacting across the first chain termination, jump=2, second etc. This option is overriden by the jump_selector option." , "1" )
+		+ XMLSchemaAttribute::attribute_w_default( "jump_selector", xs_string, "Jump selector to be used as an alternative to the 'jump' option. This selector should only select one jump." , "" )
 		+ XMLSchemaAttribute::attribute_w_default( "repeats" , xsct_positive_integer , "Averages the calculation over the number of repeats. Note that ddg calculations show noise of about 1-1.5 energy units, so averaging over 3-5 repeats is recommended for many applications." , "1" )
 		+ XMLSchemaAttribute::attribute_w_default( "repack" , xsct_rosetta_bool , "Should the complex be repacked in the bound and unbound states prior to taking the energy difference? If false, the filter turns to a dG evaluator. If repack=false repeats should be turned to 1, b/c the energy evaluations converge very well with repack=false." , "1" )
 		+ XMLSchemaAttribute( "symmetry" , xs_string , "Note: DdgFilter autodetermines symmetry from input pose - symmetry option has no effect." ) //seems like this could be removed

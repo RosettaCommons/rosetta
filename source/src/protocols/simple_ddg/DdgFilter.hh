@@ -24,6 +24,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.hh>
+#include <core/select/jump_selector/JumpSelector.hh>
 
 namespace protocols {
 namespace simple_ddg {
@@ -85,6 +86,23 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+public: //setters
+
+	void
+	set_rb_jump( core::Size const setting ) {
+		rb_jump_ = setting;
+	}
+
+	void
+	set_jump_selector( core::select::jump_selector::JumpSelectorCOP sele ){
+		jump_selector_ = sele;
+	}
+
+	core::select::jump_selector::JumpSelectorCOP
+	get_jump_selector() const {
+		return jump_selector_;
+	}
+
 private:
 
 	// initialize PB related features
@@ -93,7 +111,6 @@ private:
 	core::Real ddg_threshold_; //dflt -15
 	core::Real ddg_threshold_min_; //dflt -999999.0
 	core::scoring::ScoreFunctionOP scorefxn_; //dflt NULL
-	core::Size rb_jump_; // dflt 1
 	core::pack::task::TaskFactoryOP task_factory_;
 	bool use_custom_task_;
 	bool repack_bound_; //dflt true; Do you want to repack in the bound state (ddG). Avoid redundant packing if already packed beforing calling the filter.
@@ -105,6 +122,10 @@ private:
 	bool repack_; //dflt true; Do you want to repack in the bound and unbound states (ddG) or merely compute the dG
 	protocols::moves::MoverOP relax_mover_; //dflt NULL; in the unbound state, prior to taking the energy, should we do any relaxation
 	protocols::filters::FilterOP filter_; //dflt NULL; use a filter instead of the scorefunction
+
+	//Jumps
+	core::Size rb_jump_ = 1; //this is used iff jump_selector_ == nullptr
+	core::select::jump_selector::JumpSelectorCOP jump_selector_ = nullptr;
 
 	/// is PB enabled?
 	bool pb_enabled_;
