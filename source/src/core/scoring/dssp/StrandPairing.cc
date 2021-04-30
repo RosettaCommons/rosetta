@@ -272,8 +272,8 @@ bool StrandPairingSet::check_pleat() const {
 }
 
 bool StrandPairing::check_pleat() const {
-	for ( Size i = 1; i < (Size)pleating1.size(); i++ ) {
-		if ( pleating1[i] == pleating1[i-1] && pleating1[i] != 0 ) {
+	for ( Size i = 1; i < (Size)pleating1_.size(); i++ ) {
+		if ( pleating1_[i] == pleating1_[i-1] && pleating1_[i] != 0 ) {
 			return false;
 		}
 	}
@@ -325,9 +325,9 @@ bool StrandPairing::extend( Size res1, Size res2, bool antiparallel, Size pleati
 		begin1_ = end1_ = res1;
 		begin2_ = end2_ = res2;
 		antipar_ = antiparallel;
-		pairing1.push_back( antipar_ ? end2_ : begin2_);
-		pairing2.push_back( antipar_ ? end1_ : begin1_ );
-		pleating1.push_back(pleating);
+		pairing1_.push_back( antipar_ ? end2_ : begin2_);
+		pairing2_.push_back( antipar_ ? end1_ : begin1_ );
+		pleating1_.push_back(pleating);
 	}
 
 	const Size SMALL_BULGE_LIMIT( basic::options::option[ basic::options::OptionKeys::jumps::max_strand_gap_allowed] );
@@ -336,7 +336,7 @@ bool StrandPairing::extend( Size res1, Size res2, bool antiparallel, Size pleati
 	bool cando = false;
 	if ( res1 >= begin1_ && res1 <= end1_ ) { // trivial--already in our strand
 		tr.Trace <<"trivial case " << std::endl;
-		cando = (pairing1[res1 - begin1_] == res2);
+		cando = (pairing1_[res1 - begin1_] == res2);
 	} else if ( res1 > end1_ && res1 <= end1_ + BIG_BULGE_LIMIT ) {
 		tr.Trace << "case1 " << std::endl;
 		if ( antiparallel ) {
@@ -376,34 +376,34 @@ bool StrandPairing::extend( Size res1, Size res2, bool antiparallel, Size pleati
 		tr.Trace << "extend " << *this << "   to residues " << res1 << " " << res2 << std::endl;
 		if ( res1 < begin1_ ) {
 			if ( res1 + 1 < begin1_ ) {
-				pairing1.insert(pairing1.begin(),begin1_ - res1 - 1, 0);
-				pleating1.insert(pleating1.begin(),begin1_ - res1 - 1, 0);
+				pairing1_.insert(pairing1_.begin(),begin1_ - res1 - 1, 0);
+				pleating1_.insert(pleating1_.begin(),begin1_ - res1 - 1, 0);
 			}
-			pairing1.insert(pairing1.begin(), res2);
-			pleating1.insert(pleating1.begin(), pleating);
+			pairing1_.insert(pairing1_.begin(), res2);
+			pleating1_.insert(pleating1_.begin(), pleating);
 			begin1_ = res1;
 		} else if ( res1 > end1_ ) {
 			if ( res1 > end1_ + 1 ) {
 				//add res1-end1_-1 0 to vector
-				pairing1.insert(pairing1.end(), res1 - end1_ - 1, 0);
-				pleating1.insert(pleating1.end(), res1 - end1_ - 1, 0);
+				pairing1_.insert(pairing1_.end(), res1 - end1_ - 1, 0);
+				pleating1_.insert(pleating1_.end(), res1 - end1_ - 1, 0);
 			}
-			pairing1.push_back( res2 );
-			pleating1.push_back( pleating );
+			pairing1_.push_back( res2 );
+			pleating1_.push_back( pleating );
 			end1_ = res1;
 		}
 
 		if ( res2 < begin2_ ) {
 			if ( res2 + 1 < begin2_ ) {
-				pairing2.insert(pairing2.begin(),begin2_ - res2 - 1, 0);
+				pairing2_.insert(pairing2_.begin(),begin2_ - res2 - 1, 0);
 			}
-			pairing2.insert(pairing2.begin(), res1);
+			pairing2_.insert(pairing2_.begin(), res1);
 			begin2_ = res2;
 		} else if ( res2 > end2_ ) {
 			if ( res2 > end2_ + 1 ) {
-				pairing2.insert(pairing2.end(), res2 - end2_ - 1, 0);
+				pairing2_.insert(pairing2_.end(), res2 - end2_ - 1, 0);
 			}
-			pairing2.insert(pairing2.end(), res1);
+			pairing2_.insert(pairing2_.end(), res1);
 			end2_ = res2;
 		}
 	} else {
@@ -422,8 +422,8 @@ void StrandPairing::extend_to(Size res) {
 	Size res1, res2, pleat, diff = (antipar_ ? -1 : 1);
 	if ( res < begin1_ ) {
 		res1 = begin1_ - 1;
-		res2 = pairing1[0] - diff;
-		pleat = 3 - pleating1[0];
+		res2 = pairing1_[0] - diff;
+		pleat = 3 - pleating1_[0];
 		while ( res1 >= res ) {
 			extend(res1, res2, antipar_, pleat);
 			res1 = res1 - 1;
@@ -432,8 +432,8 @@ void StrandPairing::extend_to(Size res) {
 		}
 	} else if ( res > end1_ ) {
 		res1 = end1_ + 1;
-		res2 = pairing1[end1_ - begin1_] + diff;
-		pleat = 3 - pleating1[end1_ - begin1_];
+		res2 = pairing1_[end1_ - begin1_] + diff;
+		pleat = 3 - pleating1_[end1_ - begin1_];
 		while ( res1 <= res ) {
 			extend(res1, res2, antipar_, pleat);
 			res1 += 1;
@@ -444,16 +444,16 @@ void StrandPairing::extend_to(Size res) {
 }
 
 void StrandPairing::show_internals( std::ostream& out ) const {
-	out << "pairing1: ";
-	for ( unsigned long i : pairing1 ) {
+	out << "pairing1_: ";
+	for ( unsigned long i : pairing1_ ) {
 		out << i << " ";
 	}
-	out <<"\npairing2: ";
-	for ( unsigned long i : pairing2 ) {
+	out <<"\npairing2_: ";
+	for ( unsigned long i : pairing2_ ) {
 		out << i << " ";
 	}
-	out <<"\npairing2: ";
-	for ( unsigned long i : pleating1 ) {
+	out <<"\npairing2_: ";
+	for ( unsigned long i : pleating1_ ) {
 		out << i << " ";
 	}
 	out << std::endl;
@@ -515,8 +515,8 @@ bool StrandPairing::mergeable( const StrandPairing &other ) const {
 		}
 	}
 
-	runtime_assert( end1_ - begin1_ < pleating1.size() );
-	runtime_assert( end2_ - begin2_ < pairing2.size() );
+	runtime_assert( end1_ - begin1_ < pleating1_.size() );
+	runtime_assert( end2_ - begin2_ < pairing2_.size() );
 	StrandPairing myex(*this);
 	myex.extend_to(other.begin1_);
 	myex.extend_to(other.end1_);
@@ -532,21 +532,21 @@ bool StrandPairing::mergeable( const StrandPairing &other ) const {
 
 	// Make sure pairings, bulges, and pleats match up.
 	for ( Size i = 0; i <= myex.end1_ - myex.begin1_; i++ ) {
-		runtime_assert( i < myex.pleating1.size() && i < otherex.pleating1.size() );
-		if ( myex.pleating1[i] != otherex.pleating1[i] && myex.pleating1[i] > 0 && otherex.pleating1[i] > 0 ) {
+		runtime_assert( i < myex.pleating1_.size() && i < otherex.pleating1_.size() );
+		if ( myex.pleating1_[i] != otherex.pleating1_[i] && myex.pleating1_[i] > 0 && otherex.pleating1_[i] > 0 ) {
 			tr.Trace << " wrong pleating " << std::endl;
 			return false;
 		}
-		runtime_assert( i < myex.pairing1.size() && i < otherex.pairing1.size() );
-		if ( myex.pairing1[i] != otherex.pairing1[i] && myex.pairing1[i] > 0 && otherex.pairing1[i] > 0 ) {
-			tr.Trace << "wrong pairing1 " << std::endl;
+		runtime_assert( i < myex.pairing1_.size() && i < otherex.pairing1_.size() );
+		if ( myex.pairing1_[i] != otherex.pairing1_[i] && myex.pairing1_[i] > 0 && otherex.pairing1_[i] > 0 ) {
+			tr.Trace << "wrong pairing1_ " << std::endl;
 			return false;
 		}
 	}
 	for ( Size i = 0; i <= myex.end2_ - myex.begin2_; i++ ) {
-		runtime_assert( i < myex.pairing2.size() && i < otherex.pairing2.size() );
-		if ( myex.pairing2[i] != otherex.pairing2[i] && myex.pairing2[i] > 0 && otherex.pairing2[i] > 0 ) {
-			tr.Trace << "wrong pairing2 :" << myex.pairing2[i] << " " << otherex.pairing2[i] << std::endl;
+		runtime_assert( i < myex.pairing2_.size() && i < otherex.pairing2_.size() );
+		if ( myex.pairing2_[i] != otherex.pairing2_[i] && myex.pairing2_[i] > 0 && otherex.pairing2_[i] > 0 ) {
+			tr.Trace << "wrong pairing2_ :" << myex.pairing2_[i] << " " << otherex.pairing2_[i] << std::endl;
 			return false;
 		}
 	}
@@ -571,21 +571,21 @@ bool StrandPairing::merge(const StrandPairing &other, bool domerge) {
 	// Add in holes in myex extension that are present in otherex
 	for ( Size res = myex.begin1_; res <= myex.end1_; res++ ) {
 		Size i = res - myex.begin1_;
-		if ( (res < begin1_ || res > end1_) && otherex.pairing1[i] == 0 ) {
-			if ( myex.pairing1[i] == 0 || otherex.pairing2[myex.pairing1[i] - otherex.begin2_] > 0 ) {
+		if ( (res < begin1_ || res > end1_) && otherex.pairing1_[i] == 0 ) {
+			if ( myex.pairing1_[i] == 0 || otherex.pairing2_[myex.pairing1_[i] - otherex.begin2_] > 0 ) {
 				std::cout << "SERIOUS PROBLEM.\n";
 			}
-			myex.pairing2[myex.pairing1[i] - myex.begin2_] = 0;
-			myex.pairing1[i] = myex.pleating1[i] = 0;
+			myex.pairing2_[myex.pairing1_[i] - myex.begin2_] = 0;
+			myex.pairing1_[i] = myex.pleating1_[i] = 0;
 		}
 		// Fill in holes in myex overlap with values from otherex
-		if ( res >= std::max(begin1_,other.begin1_) && res <= std::min(end1_,other.end1_) && myex.pairing1[i] == 0 && otherex.pairing1[i] > 0 ) {
-			if ( myex.pairing2[otherex.pairing1[i]-myex.begin2_] > 0 ) {
+		if ( res >= std::max(begin1_,other.begin1_) && res <= std::min(end1_,other.end1_) && myex.pairing1_[i] == 0 && otherex.pairing1_[i] > 0 ) {
+			if ( myex.pairing2_[otherex.pairing1_[i]-myex.begin2_] > 0 ) {
 				std::cout << "ANOTHER SERIOUS PROBLEM.\n";
 			}
-			myex.pairing1[i] = otherex.pairing1[i];
-			myex.pleating1[i] = otherex.pleating1[i];
-			myex.pairing2[otherex.pairing1[i] - myex.begin2_] = res;
+			myex.pairing1_[i] = otherex.pairing1_[i];
+			myex.pleating1_[i] = otherex.pleating1_[i];
+			myex.pairing2_[otherex.pairing1_[i] - myex.begin2_] = res;
 			//changed = true;  // set but never used ~Labonte
 		}
 	}
@@ -597,10 +597,10 @@ bool StrandPairing::merge(const StrandPairing &other, bool domerge) {
 
 Size StrandPairing::get_pleating( Size res ) const {
 	if ( res >= begin1_ && res <= end1_ ) {
-		return pleating1[res - begin1_];
+		return pleating1_[res - begin1_];
 	} else if ( res >= begin2_ && res <= end2_ ) {
-		if ( pairing2[res - begin2_] != 0 ) {
-			return pleating1[pairing2[res-begin2_]];
+		if ( pairing2_[res - begin2_] != 0 ) {
+			return pleating1_[pairing2_[res-begin2_]];
 		} else {
 			return 0;
 		}
@@ -697,9 +697,9 @@ StrandPairing::StrandPairing(Size res1, Size res2, bool antiparallel, Size pleat
 	begin2_( std::max( res1, res2 ) ), end2_(begin2_),
 	antipar_(antiparallel)
 {
-	pairing1.push_back( antipar_ ? end2_ : begin2_ );
-	pairing2.push_back( antipar_ ? begin1_ : end1_ );
-	pleating1.push_back(pleating);
+	pairing1_.push_back( antipar_ ? end2_ : begin2_ );
+	pairing2_.push_back( antipar_ ? begin1_ : end1_ );
+	pleating1_.push_back(pleating);
 }
 
 StrandPairing::StrandPairing() :
@@ -714,29 +714,29 @@ StrandPairing::~StrandPairing() = default;
 
 Size StrandPairing::get_register() const {
 	if ( antipar_ ) {
-		return begin1_ + pairing1[0];
+		return begin1_ + pairing1_[0];
 	} else {
-		return pairing1[0] - begin1_;
+		return pairing1_[0] - begin1_;
 	}
 }
 
 void StrandPairing::get_all_register_and_bulges( SizeList& regs, SizeList& bulges ) const {
 	if ( antipar_ ) {
-		Size reg = begin1_ + pairing1[0];
+		Size reg = begin1_ + pairing1_[0];
 		regs.push_back( reg );
-		for ( Size i = 1; ( Size)i < pairing1.size(); i++ ) {
-			if ( pairing1[i] != 0 && begin1_ + i + pairing1[i] != reg ) {
-				reg = begin1_ + i + pairing1[i];
+		for ( Size i = 1; ( Size)i < pairing1_.size(); i++ ) {
+			if ( pairing1_[i] != 0 && begin1_ + i + pairing1_[i] != reg ) {
+				reg = begin1_ + i + pairing1_[i];
 				regs.push_back( reg );
 				bulges.push_back( begin1_ + i - 1 );
 			}
 		}
 	} else {
-		Size reg = pairing1[0] - begin1_;
+		Size reg = pairing1_[0] - begin1_;
 		regs.push_back( reg );
-		for ( Size i = 1; ( Size)i < pairing1.size(); i++ ) {
-			if ( pairing1[i] != 0 && pairing1[i] - begin1_ - i != reg ) {
-				reg = pairing1[i] - begin1_ - i;
+		for ( Size i = 1; ( Size)i < pairing1_.size(); i++ ) {
+			if ( pairing1_[i] != 0 && pairing1_[i] - begin1_ - i != reg ) {
+				reg = pairing1_[i] - begin1_ - i;
 				regs.push_back( reg );
 				bulges.push_back( begin1_ + i - 1 );
 			}
@@ -745,7 +745,7 @@ void StrandPairing::get_all_register_and_bulges( SizeList& regs, SizeList& bulge
 }
 
 bool StrandPairing::range_check() const {
-	return (end1_-begin1_ + 1 == pairing1.size() ) && ( end2_-begin2_ + 1 == pairing2.size() );
+	return (end1_-begin1_ + 1 == pairing1_.size() ) && ( end2_-begin2_ + 1 == pairing2_.size() );
 }
 
 std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
@@ -838,15 +838,15 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 			pos2 = sp.antipar_ ? sp.end2_ : sp.begin2_; pos1 <= sp.end1_; pos1++ ) {
 		Size pleat;
 		is >> pleat;
-		runtime_assert( ( sp.antipar_ ? sp.end2_ - pos2 : pos2 - sp.begin2_ ) == sp.pairing2.size() );
+		runtime_assert( ( sp.antipar_ ? sp.end2_ - pos2 : pos2 - sp.begin2_ ) == sp.pairing2_.size() );
 		Size reg = *regit;
 		if ( bulgeit != ebulgeit ) bulge = *bulgeit;
 		else bulge = 0;
 		tr.Trace << " pos1 " << pos1 << " next bulge " << bulge << " pos2 " << pos2 << std::endl;
 
 		if ( pleat == 0 ) {  //unsatisfied residue is in strand 1
-			sp.pairing1.push_back( 0 );
-			sp.pleating1.push_back( 0 );
+			sp.pairing1_.push_back( 0 );
+			sp.pleating1_.push_back( 0 );
 			//work out if we have a bulge on strand1, ie. their is no corresponding pairing on strand2
 			bool bulge2( false );
 			{
@@ -858,13 +858,13 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 				}
 			}
 			if ( !bulge2 && !bulge ) {
-				sp.pairing2.insert( sp.antipar_ ? sp.pairing2.begin() : sp.pairing2.end(), 0 );
+				sp.pairing2_.insert( sp.antipar_ ? sp.pairing2_.begin() : sp.pairing2_.end(), 0 );
 				pos2+=dir;
 			}
 		} else { //
-			sp.pairing1.push_back( pos2 );
-			sp.pleating1.push_back( pleat );
-			sp.pairing2.insert( sp.antipar_ ? sp.pairing2.begin() : sp.pairing2.end(), pos1 );
+			sp.pairing1_.push_back( pos2 );
+			sp.pleating1_.push_back( pleat );
+			sp.pairing2_.insert( sp.antipar_ ? sp.pairing2_.begin() : sp.pairing2_.end(), pos1 );
 			pos2+=dir;
 		}
 
@@ -879,9 +879,9 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 			Size new_pos2 = sp.antipar_ ? ( *regit - pos1 - 1 ) : ( *regit + pos1 + 1);
 			tr.Trace << "jump to " << new_pos2 << " in strand2 due to new register " << *regit << " after bulge at " << bulge << std::endl;
 			if ( sp.antipar_ && new_pos2 < pos2 ) {
-				sp.pairing2.insert( sp.pairing2.begin(), pos2 - new_pos2, 0 );
+				sp.pairing2_.insert( sp.pairing2_.begin(), pos2 - new_pos2, 0 );
 			} else if ( !sp.antipar_ && new_pos2 > pos2 ) {
-				sp.pairing2.insert( sp.pairing2.end(), new_pos2 - pos2, 0 );
+				sp.pairing2_.insert( sp.pairing2_.end(), new_pos2 - pos2, 0 );
 			}
 			pos2 = new_pos2;
 		}
@@ -901,7 +901,7 @@ std::istream & operator>>( std::istream &is, StrandPairing &sp ) {
 std::ostream & operator<<(std::ostream & out, const StrandPairing &sp) {
 	runtime_assert( sp.begin1_ <= sp.end1_ );
 	runtime_assert( sp.begin2_ <= sp.end2_ );
-	out << (sp.antipar_ ? 'A' : 'P') << ' ' << sp.begin1_ << '-' << sp.pairing1[0] << " to " << sp.end1_ << '-' << sp.pairing1[sp.pairing1.size()-1] << " reg: ";
+	out << (sp.antipar_ ? 'A' : 'P') << ' ' << sp.begin1_ << '-' << sp.pairing1_[0] << " to " << sp.end1_ << '-' << sp.pairing1_[sp.pairing1_.size()-1] << " reg: ";
 
 	StrandPairing::SizeList regs,bulges;
 	sp.get_all_register_and_bulges( regs, bulges );
@@ -926,7 +926,7 @@ std::ostream & operator<<(std::ostream & out, const StrandPairing &sp) {
 		out << " ";
 	}
 	out << " pleating: ";
-	for ( unsigned long i : sp.pleating1 ) {
+	for ( unsigned long i : sp.pleating1_ ) {
 		out << i << ' ';
 	}
 	return out;
@@ -937,8 +937,8 @@ Size StrandPairing::operator<( StrandPairing const& other) const {
 		return antipar_;
 	}
 
-	Size reg = antipar_ ? pairing1[0] + begin1_ : pairing1[0] - begin1_;
-	Size otherreg = antipar_ ? other.pairing1[0] + other.begin1_ : other.pairing1[0] - other.begin1_;
+	Size reg = antipar_ ? pairing1_[0] + begin1_ : pairing1_[0] - begin1_;
+	Size otherreg = antipar_ ? other.pairing1_[0] + other.begin1_ : other.pairing1_[0] - other.begin1_;
 	if ( reg == otherreg ) {
 		if ( end1_ <= other.begin1_ ) {
 			return true;
@@ -957,13 +957,13 @@ Size StrandPairing::operator<( StrandPairing const& other) const {
 
 bool StrandPairing::has_common_pairing( const StrandPairing &other ) const {
 	for ( Size i = begin1_; i <= end1_; i++ ) {
-		if ( pairing1[ i - begin1_ ] == 0 )  continue;
+		if ( pairing1_[ i - begin1_ ] == 0 )  continue;
 
 		Pairing pair;
 		pair.Pos1(i);
-		pair.Pos2(pairing1[ i - begin1_ ]);
+		pair.Pos2(pairing1_[ i - begin1_ ]);
 		pair.Orientation(antipar_ ? 1 : 2);
-		pair.Pleating(pleating1[ i - begin1_ ]);
+		pair.Pleating(pleating1_[ i - begin1_ ]);
 		if ( other.has_pairing( pair ) ) return true;
 	}
 	return false;
@@ -972,8 +972,8 @@ bool StrandPairing::has_common_pairing( const StrandPairing &other ) const {
 Size StrandPairing::operator==(const StrandPairing &other) const {
 	return (begin1_ == other.begin1_ && begin2_ == other.begin2_ &&
 		end1_ == other.end1_ && end2_ == other.end2_ &&
-		pairing1 == other.pairing1 && pairing2 == other.pairing2 &&
-		pleating1 == other.pleating1);
+		pairing1_ == other.pairing1_ && pairing2_ == other.pairing2_ &&
+		pleating1_ == other.pleating1_);
 }
 
 // Return true if the given residue is part of a beta bulge
@@ -994,9 +994,9 @@ bool StrandPairing::contains(Size res) const {
 // is not contained in the pairing at all)
 Size StrandPairing::get_pair(Size res) const {
 	if ( res >= begin1_ && res <= end1_ ) {
-		return pairing1[res-begin1_];
+		return pairing1_[res-begin1_];
 	} else if ( res >= begin2_ && res <= end2_ ) {
-		return pairing2[res-begin2_];
+		return pairing2_[res-begin2_];
 	} else {
 		return 0;
 	}
@@ -1013,25 +1013,25 @@ bool StrandPairing::antiparallel() const {
 
 void StrandPairing::get_beta_pairs( core::scoring::dssp::PairingList& beta_pairs ) const {
 	for ( Size i = begin1_; i <= end1_; i++ ) {
-		if ( pairing1[ i - begin1_ ] == 0 ) continue;
+		if ( pairing1_[ i - begin1_ ] == 0 ) continue;
 
 		core::scoring::dssp::Pairing pair;
 		pair.Pos1(i);
-		pair.Pos2(pairing1[ i - begin1_ ]);
+		pair.Pos2(pairing1_[ i - begin1_ ]);
 		pair.Orientation(antipar_ ? 1 : 2);
-		pair.Pleating(pleating1[ i - begin1_ ]);
+		pair.Pleating(pleating1_[ i - begin1_ ]);
 		beta_pairs.push_back( pair );
 	}
 }
 
 bool StrandPairing::valid_ends() const {
 	if ( antipar_ ) { ///bad pairing don't write
-		Size end2( pairing1[ 0 ] );
-		Size begin2( pairing1[ pairing1.size()-1 ] );
+		Size end2( pairing1_[ 0 ] );
+		Size begin2( pairing1_[ pairing1_.size()-1 ] );
 		if ( begin2 > end2 ) return false;
 	} else {
-		Size begin2( pairing1[ 0 ] );
-		Size end2( pairing1[ pairing1.size()-1 ] );
+		Size begin2( pairing1_[ 0 ] );
+		Size end2( pairing1_[ pairing1_.size()-1 ] );
 		if ( begin2 > end2 ) return false;
 	}
 	return true;

@@ -73,6 +73,26 @@ public:
 		return end1_;
 	}
 
+	core::Size get_begin2() const {
+		return begin2_;
+	}
+
+	core::Size get_end2() const {
+		return end2_;
+	}
+
+	std::vector<core::Size> const & get_pairing1_() const {
+		return pairing1_;
+	}
+
+	std::vector<core::Size> const & get_pairing2_() const {
+		return pairing2_;
+	}
+
+	std::vector<core::Size> const & get_pleating() const {
+		return pleating1_;
+	}
+
 	bool range_check() const;
 
 	core::Size contact_order() const;
@@ -111,10 +131,10 @@ private:
 	// vector listing which residues are paired to the residues
 	// in strand 1.  0 indicates beta bulge (unpaired).
 	// one entry for pos begin1_...end1_
-	std::vector<core::Size> pairing1;
-	std::vector<core::Size> pleating1;
-	// similar to pairing1 but for strand 2.
-	std::vector<core::Size> pairing2;
+	std::vector<core::Size> pairing1_;
+	std::vector<core::Size> pleating1_;
+	// similar to pairing1_ but for strand 2.
+	std::vector<core::Size> pairing2_;
 	//bool pleat_weird;
 	bool antipar_;
 };
