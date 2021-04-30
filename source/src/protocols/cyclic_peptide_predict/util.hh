@@ -44,6 +44,10 @@ enum HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE {
 	SORT_BY_CIS_PEPTIDE_BONDS
 };
 
+/// @brief Registers the simple_cycpep_predict application with the CitationManager.
+/// @details Cites Bhardwaj et al. 2016, Hosseinzadeh et al. 2017, Mulligan et al. 2021.
+void register_with_citation_manager();
+
 #ifdef USEMPI
 /// @brief If rank > 0, wait for a message from proc 0 to continue.  If rank
 /// is zero, send the message.

@@ -16,6 +16,7 @@
 // Project headers:
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication_MPI.hh>
 #include <protocols/cyclic_peptide_predict/SimpleCycpepPredictApplication.hh>
+#include <protocols/cyclic_peptide_predict/util.hh>
 
 // Basic headers:
 #include <basic/Tracer.hh>
@@ -71,7 +72,9 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI():
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
 	abba_bins_("")
-{}
+{
+	register_with_citation_manager(); //Defined in util.hh/util.cc.
+}
 
 /// @brief Constructor with options
 SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
@@ -109,10 +112,14 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
 	abba_bins_("")
-{}
+{
+	register_with_citation_manager(); //Defined in util.hh/util.cc.
+}
 
 /// @brief Copy constructor.
-SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI( SimpleCycpepPredictApplication_MPI const &src ) :
+SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
+	SimpleCycpepPredictApplication_MPI const &src
+) :
 	HierarchicalHybridJDApplication( src ),
 	allowed_canonicals_(src.allowed_canonicals_),
 	allowed_noncanonicals_(src.allowed_noncanonicals_),

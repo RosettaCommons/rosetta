@@ -27,7 +27,7 @@
 //Basic includes
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 //Utility includes
 #include <utility/tag/Tag.hh>
@@ -240,15 +240,15 @@ PeptideInternalHbondsFilter::residue_selector() const {
 /// @brief Provide the citation.
 void
 PeptideInternalHbondsFilter::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
-	citations.add(
-		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+	using namespace basic::citation_manager;
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
 		class_name(),
-		basic::citation_manager::CitedModuleType::Filter,
-		"Vikram K. Mulligan",
-		"Systems Biology, Center for Computational Biology, Flatiron Institute",
-		"vmulligan@flatironinstitute.org"
+		CitedModuleType::Filter
 		)
 	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.2012800118") );
+	citations.add( citation );
 
 	debug_assert( hbond_metric_ != nullptr );
 	citations.add( hbond_metric_->residue_selector() );

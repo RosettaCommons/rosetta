@@ -60,6 +60,7 @@
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/scoring/Energies.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 //Application-specific includes
 #ifdef USEMPI
@@ -148,6 +149,8 @@ main( int argc, char * argv [] )
 		excn.display();
 		return -1;
 	}
+
+	basic::citation_manager::CitationManager::get_instance()->write_all_citations_and_unpublished_author_info();
 
 	if ( TR.visible() ) {
 		TR << "Finished simple_cycpep_predict.cc.  Exiting." << std::endl;

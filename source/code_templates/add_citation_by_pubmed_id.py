@@ -89,6 +89,10 @@ class Citation:
 
     def init_from_pmid( self, pmid ):
         publication = Publication( PubMedLookup( pmid, '' ), resolve_doi=False )
+        if publication.title.endswith(".") :
+            title_minus_trailing_full_stop = publication.title[:-1]
+        else :
+            title_minus_trailing_full_stop = publication.title
         self.year = int(publication.year)
         self.doi = publication.url.replace( "http://dx.doi.org/", "" )
         self.lines = ["[BEGIN_CITATION]\n", "    [BEGIN_PRIMARY_AUTHORS]\n"]
@@ -110,7 +114,7 @@ class Citation:
         self.lines.append( '        ' + str(self.year) + "\n" )
         self.lines.append( '    [END_YEAR]\n' )
         self.lines.append( '    [BEGIN_TITLE]\n' )
-        self.lines.append( '        ' + publication.title + "\n" )
+        self.lines.append( '        ' + title_minus_trailing_full_stop + "\n" )
         self.lines.append( '    [END_TITLE]\n' )
         self.lines.append( '    [BEGIN_JOURNAL]\n' )
         self.lines.append( '        ' + publication.journal + "\n" )  

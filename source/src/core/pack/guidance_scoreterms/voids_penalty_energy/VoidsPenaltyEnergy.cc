@@ -41,7 +41,8 @@
 // Options system
 #include <basic/options/option.hh>
 #include <basic/options/keys/score.OptionKeys.gen.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // File I/O
 #include <basic/database/open.hh>
@@ -268,16 +269,18 @@ VoidsPenaltyEnergy::finalize_after_minimizing(
 
 /// @brief Provide the citation.
 void
-VoidsPenaltyEnergy::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+VoidsPenaltyEnergy::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
 	using namespace basic::citation_manager;
-	citations.add(
-		utility::pointer::make_shared< UnpublishedModuleInfo >(
-		"VoidsPenaltyEnergy", CitedModuleType::EnergyMethod,
-		"Vikram K. Mulligan",
-		"Systems Biology, Center for Computational Biology, Flatiron Institute",
-		"vmulligan@flatironinstitute.org"
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
+		"VoidsPenaltyEnergy",
+		CitedModuleType::EnergyMethod
 		)
 	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.2012800118") );
+	citations.add( citation );
 }
 
 //////////////////PRIVATE FUNCTIONS////////////////////////////////////

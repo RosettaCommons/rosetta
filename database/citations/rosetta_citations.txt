@@ -29,7 +29,7 @@
         1999
     [END_YEAR]
     [BEGIN_TITLE]
-        Ab initio protein structure prediction of CASP III targets using ROSETTA.
+        Ab initio protein structure prediction of CASP III targets using ROSETTA
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -60,7 +60,7 @@
         2001
     [END_YEAR]
     [BEGIN_TITLE]
-        Rosetta in CASP4: progress in ab initio protein structure prediction.
+        Rosetta in CASP4: progress in ab initio protein structure prediction
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -100,7 +100,7 @@
         2009
     [END_YEAR]
     [BEGIN_TITLE]
-        Structure prediction for CASP8 with all-atom refinement using Rosetta.
+        Structure prediction for CASP8 with all-atom refinement using Rosetta
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -127,7 +127,7 @@
         2010
     [END_YEAR]
     [BEGIN_TITLE]
-        Sub-angstrom modeling of complexes between flexible peptides and globular proteins.
+        Sub-angstrom modeling of complexes between flexible peptides and globular proteins
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -250,7 +250,7 @@
         2011
     [END_YEAR]
     [BEGIN_TITLE]
-        RosettaRemodel: a generalized framework for flexible backbone protein design.
+        RosettaRemodel: a generalized framework for flexible backbone protein design
     [END_TITLE]
     [BEGIN_JOURNAL]
         PLoS One
@@ -279,7 +279,7 @@
         2011
     [END_YEAR]
     [BEGIN_TITLE]
-        Modeling symmetric macromolecular structures in Rosetta3.
+        Modeling symmetric macromolecular structures in Rosetta3
     [END_TITLE]
     [BEGIN_JOURNAL]
         PLoS One
@@ -307,7 +307,7 @@
         2011
     [END_YEAR]
     [BEGIN_TITLE]
-        Rosetta FlexPepDock ab-initio: simultaneous folding, docking and refinement of peptides onto their receptors.
+        Rosetta FlexPepDock ab-initio: simultaneous folding, docking and refinement of peptides onto their receptors
     [END_TITLE]
     [BEGIN_JOURNAL]
         PLoS One
@@ -406,7 +406,7 @@
         2013
     [END_YEAR]
     [BEGIN_TITLE]
-        High-resolution comparative modeling with RosettaCM.
+        High-resolution comparative modeling with RosettaCM
     [END_TITLE]
     [BEGIN_JOURNAL]
         Structure
@@ -433,7 +433,7 @@
         2013
     [END_YEAR]
     [BEGIN_TITLE]
-        Fast docking on graphics processing units via Ray-Casting.
+        Fast docking on graphics processing units via Ray-Casting
     [END_TITLE]
     [BEGIN_JOURNAL]
         PLoS One
@@ -487,7 +487,7 @@
         2015
     [END_YEAR]
     [BEGIN_TITLE]
-        DARC 2.0: Improved Docking and Virtual Screening at Protein Interaction Sites.
+        DARC 2.0: Improved Docking and Virtual Screening at Protein Interaction Sites
     [END_TITLE]
     [BEGIN_JOURNAL]
         PLoS One
@@ -503,8 +503,8 @@
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
         "Gaurav" "Bhardwaj" "G"
-	    "Vikram Khipple" "Mulligan" "VK"
-	    "Christopher D." "Bahl" "G"
+        "Vikram Khipple" "Mulligan" "VK"
+        "Christopher D." "Bahl" "G"
     [END_PRIMARY_AUTHORS]
     [BEGIN_COAUTHORS]
         "Jason M." "Gilmore" "JM"
@@ -575,7 +575,7 @@
         2016
     [END_YEAR]
     [BEGIN_TITLE]
-        DARC: Mapping Surface Topography by Ray-Casting for Effective Virtual Screening at Protein Interaction Sites.
+        DARC: Mapping Surface Topography by Ray-Casting for Effective Virtual Screening at Protein Interaction Sites
     [END_TITLE]
     [BEGIN_JOURNAL]
         J Med Chem
@@ -613,7 +613,7 @@
         2016
     [END_YEAR]
     [BEGIN_TITLE]
-        De novo design of protein homo-oligomers with modular hydrogen-bond network-mediated specificity.
+        De novo design of protein homo-oligomers with modular hydrogen-bond network-mediated specificity
     [END_TITLE]
     [BEGIN_JOURNAL]
         Science
@@ -894,7 +894,7 @@
         2018
     [END_YEAR]
     [BEGIN_TITLE]
-        A computational method for the design of nested proteins by loop-directed domain insertion.
+        A computational method for the design of nested proteins by loop-directed domain insertion
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -924,7 +924,7 @@
         2018
     [END_YEAR]
     [BEGIN_TITLE]
-        Blind prediction of noncanonical RNA structure at atomic accuracy.
+        Blind prediction of noncanonical RNA structure at atomic accuracy
     [END_TITLE]
     [BEGIN_JOURNAL]
         Sci Adv
@@ -952,7 +952,7 @@
         2018
     [END_YEAR]
     [BEGIN_TITLE]
-        Rapid Sampling of Hydrogen Bond Networks for Computational Protein Design.
+        Rapid Sampling of Hydrogen Bond Networks for Computational Protein Design
     [END_TITLE]
     [BEGIN_JOURNAL]
         J Chem Theory Comput
@@ -979,7 +979,7 @@
         2019
     [END_YEAR]
     [BEGIN_TITLE]
-        Using Rosetta for RNA homology modeling.
+        Using Rosetta for RNA homology modeling
     [END_TITLE]
     [BEGIN_JOURNAL]
         Methods Enzymol
@@ -1083,7 +1083,7 @@
         2021
     [END_YEAR]
     [BEGIN_TITLE]
-        Perturbing the energy landscape for improved packing during computational protein design.
+        Perturbing the energy landscape for improved packing during computational protein design
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proteins
@@ -1093,6 +1093,47 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1002/prot.26030
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Vikram Khipple" "Mulligan" "VK"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Sean" "Workman" "S"
+        "Tianjun" "Sun" "T"
+        "Stephen" "Rettie" "S"
+        "Xinting" "Li" "X"
+        "Liam J" "Worrall" "LJ"
+        "Timothy W" "Craven" "TW"
+        "Dustin T" "King" "DT"
+        "Parisa" "Hosseinzadeh" "P"
+        "Andrew M" "Watkins" "AM"
+        "P Douglas" "Renfrew" "PD"
+        "Sharon" "Guffy" "S"
+        "Jason W" "Labonte" "JW"
+        "Rocco" "Moretti" "R"
+        "Richard" "Bonneau" "R"
+        "Natalie CJ" "Strynadka" "NCJ"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2021
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Computationally designed peptide macrocycle inhibitors of New Delhi metallo-β-lactamase 1
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proc Natl Acad Sci USA
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        118(12)
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1073/pnas.2012800118
     [END_DOI]
 [END_CITATION]
 

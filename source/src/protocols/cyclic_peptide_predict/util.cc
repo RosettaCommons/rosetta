@@ -30,6 +30,8 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/cyclic_peptide.OptionKeys.gen.hh>
 #include <basic/options/keys/out.OptionKeys.gen.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Utility headers
 #include <utility/io/izstream.hh>
@@ -42,6 +44,23 @@ static basic::Tracer TR( "protocols.cyclic_peptide_predict.util" );
 
 namespace protocols {
 namespace cyclic_peptide_predict {
+
+/// @brief Registers the simple_cycpep_predict application with the CitationManager.
+/// @details Cites Bhardwaj et al. 2016, Hosseinzadeh et al. 2017, Mulligan et al. 2021.
+void
+register_with_citation_manager() {
+	using namespace basic::citation_manager;
+	CitationManager * cm( CitationManager::get_instance() );
+	CitationCollectionOP citations(
+		utility::pointer::make_shared< CitationCollection >(
+		"simple_cycpep_predict", CitedModuleType::Application
+		)
+	);
+	citations->add_citation( cm->get_citation_by_doi("10.1038/nature19791") );
+	citations->add_citation( cm->get_citation_by_doi("10.1126/science.aap7577") );
+	citations->add_citation( cm->get_citation_by_doi("10.1073/pnas.2012800118") );
+	cm->add_citation( citations );
+}
 
 #ifdef USEMPI
 /// @brief If rank > 0, wait for a message from proc 0 to continue.  If rank

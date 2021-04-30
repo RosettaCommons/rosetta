@@ -22,7 +22,7 @@
         2009
     [END_YEAR]
     [BEGIN_TITLE]
-        Caterpillars evolved from onychophorans by hybridogenesis.
+        Caterpillars evolved from onychophorans by hybridogenesis
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proc Natl Acad Sci U S A
@@ -46,7 +46,7 @@
         2009
     [END_YEAR]
     [BEGIN_TITLE]
-        Caterpillars did not evolve from onychophorans by hybridogenesis.
+        Caterpillars did not evolve from onychophorans by hybridogenesis
     [END_TITLE]
     [BEGIN_JOURNAL]
         Proc Natl Acad Sci U S A

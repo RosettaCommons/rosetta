@@ -424,6 +424,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	sidechain_isopeptide_indices_(std::pair<core::Size, core::Size>(0,0))
 	//TODO -- initialize variables here.
 {
+	register_with_citation_manager(); //Defined in util.hh/util.cc.
 	initialize_from_options();
 }
 

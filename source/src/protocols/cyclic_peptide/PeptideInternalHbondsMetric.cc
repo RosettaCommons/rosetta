@@ -42,7 +42,7 @@
 #include <utility/pointer/memory.hh>
 #include <utility/graph/Graph.hh>
 #include <basic/citation_manager/CitationCollection.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Ugh.  ObjexxFCL headers
 #include <ObjexxFCL/FArray2D.hh>
@@ -248,16 +248,18 @@ PeptideInternalHbondsMetric::set_residue_selector(
 
 /// @brief Provide the citation.
 void
-PeptideInternalHbondsMetric::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
-	citations.add(
-		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
+PeptideInternalHbondsMetric::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
 		name_static(),
-		basic::citation_manager::CitedModuleType::SimpleMetric,
-		"Vikram K. Mulligan",
-		"Systems Biology, Center for Computational Biology, Flatiron Institute",
-		"vmulligan@flatironinstitute.org"
+		CitedModuleType::SimpleMetric
 		)
 	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.2012800118") );
+	citations.add( citation );
 
 	citations.add( residue_selector_ );
 	citations.add( scorefxn_ );

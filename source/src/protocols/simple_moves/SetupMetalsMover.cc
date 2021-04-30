@@ -30,7 +30,7 @@
 //Basic headers
 #include <basic/options/option.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 // Utility Headers
 #include <utility/tag/XMLSchemaGeneration.hh>
@@ -372,15 +372,18 @@ SetupMetalsMover::set_defaults_from_command_line(){
 
 /// @brief Provide the citation.
 void
-SetupMetalsMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
-	citations.add(
-		utility::pointer::make_shared< basic::citation_manager::UnpublishedModuleInfo >(
-		"SetupMetalsMover", basic::citation_manager::CitedModuleType::Mover,
-		"Sharon Guffy",
-		"Pairwise, Durham NC (formerly UNC Chapel Hill)",
-		"guffy@email.unc.edu"
+SetupMetalsMover::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
+		"SetupMetalsMover",
+		CitedModuleType::Mover
 		)
 	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.2012800118") );
+	citations.add( citation );
 	citations.add( metal_selector_ );
 	citations.add( contact_selector_ );
 }

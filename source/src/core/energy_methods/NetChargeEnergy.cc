@@ -46,7 +46,8 @@
 
 // Other Headers
 #include <basic/Tracer.hh>
-#include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 
@@ -266,14 +267,14 @@ NetChargeEnergy::set_up_residuearrayannealableenergy_for_packing (
 void
 NetChargeEnergy::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
 	using namespace basic::citation_manager;
-	citations.add(
-		utility::pointer::make_shared< UnpublishedModuleInfo >(
-		"NetChargeEnergy", CitedModuleType::EnergyMethod,
-		"Vikram K. Mulligan",
-		"Systems Biology, Center for Computational Biology, Flatiron Institute",
-		"vmulligan@flatironinstitute.org"
+	CitationCollectionOP citation(
+		utility::pointer::make_shared< CitationCollection >(
+		"NetChargeEnergy",
+		CitedModuleType::EnergyMethod
 		)
 	);
+	citation->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.2012800118") );
+	citations.add( citation );
 }
 
 /// @brief Given a pose, pull out the core::scoring::netcharge_energy::NetChargeEnergySetup objects stored in SequenceConstraints in the pose and
