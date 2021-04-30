@@ -192,38 +192,6 @@ void from_json(const json& j, SequenceSpecification & ss) {
 }
 
 
-
-/////////////////////
-/// Constructors  ///
-/////////////////////
-
-/// @brief Default constructor
-AlignPDBInfoToSequences::AlignPDBInfoToSequences():
-	protocols::moves::Mover( AlignPDBInfoToSequences::mover_name() ),
-	mode_(AlignPDBInfoToSequencesMode::unset), throw_on_fail_(false)
-{
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-AlignPDBInfoToSequences::AlignPDBInfoToSequences( AlignPDBInfoToSequences const & src ):
-	protocols::moves::Mover( src ), target_sequences_(src.target_sequences_),
-	mode_(src.mode_), throw_on_fail_(src.throw_on_fail_)
-{}
-
-/// @brief = operator
-AlignPDBInfoToSequences&
-AlignPDBInfoToSequences::operator=( AlignPDBInfoToSequences const & src ) {
-	this->set_mode(src.get_mode());
-	this->set_target_sequences(src.get_target_sequences());
-	this->set_throw_on_fail(src.get_throw_on_fail());
-	return *this;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-AlignPDBInfoToSequences::~AlignPDBInfoToSequences(){}
-
 ////////////////////////////////////////////////////////////////////////////////
 /// Mover Methods ///
 /////////////////////

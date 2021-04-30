@@ -107,24 +107,6 @@ class AlignPDBInfoToSequences : public protocols::moves::Mover {
 public:
 
 	/////////////////////
-	/// Constructors  ///
-	/////////////////////
-
-	/// @brief Default constructor
-	AlignPDBInfoToSequences();
-
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	AlignPDBInfoToSequences( AlignPDBInfoToSequences const & src );
-
-	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
-	~AlignPDBInfoToSequences() override;
-
-	/// @brief = operator
-	AlignPDBInfoToSequences& operator=( AlignPDBInfoToSequences const & src );
-
-public:
-
-	/////////////////////
 	/// Mover Methods ///
 	/////////////////////
 
@@ -229,7 +211,7 @@ private: // methods
 
 private: // data
 	utility::vector1<SequenceSpecification> target_sequences_;
-	AlignPDBInfoToSequencesMode mode_;
+	AlignPDBInfoToSequencesMode mode_ = AlignPDBInfoToSequencesMode::unset;
 	bool throw_on_fail_ = false;
 	core::Size sequence_alignment_cut_max_ = 10;
 };

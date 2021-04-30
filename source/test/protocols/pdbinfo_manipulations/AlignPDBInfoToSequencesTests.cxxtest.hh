@@ -409,6 +409,24 @@ public:
 		protocols::pdbinfo_manipulations::AlignPDBInfoToSequences apts2;
 		apts2.set_mode_from_string("single");
 		TS_ASSERT_EQUALS(apts2.get_mode(), protocols::pdbinfo_manipulations::AlignPDBInfoToSequencesMode::single);
+
+		apts2.set_throw_on_fail(true);
+		apts2.set_sequence_alignment_cut_max(20);
+
+		{  // = operator
+			protocols::pdbinfo_manipulations::AlignPDBInfoToSequences apts3;
+			apts3 = apts2;
+			TS_ASSERT_EQUALS(apts2.get_throw_on_fail(), apts3.get_throw_on_fail());
+			TS_ASSERT_EQUALS(apts2.get_sequence_alignment_cut_max(), apts3.get_sequence_alignment_cut_max());
+			TS_ASSERT_EQUALS(apts2.get_mode(), apts3.get_mode());
+		}
+
+		{  // copy constructor
+			protocols::pdbinfo_manipulations::AlignPDBInfoToSequences apts4(apts2);
+			TS_ASSERT_EQUALS(apts2.get_throw_on_fail(), apts4.get_throw_on_fail());
+			TS_ASSERT_EQUALS(apts2.get_sequence_alignment_cut_max(), apts4.get_sequence_alignment_cut_max());
+			TS_ASSERT_EQUALS(apts2.get_mode(), apts4.get_mode());
+		}
 	}
 
 	void test_parse_target_tag() {
