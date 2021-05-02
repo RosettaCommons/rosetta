@@ -88,7 +88,7 @@ FilterFactory::provide_xml_schema(
 			TR << filt_it.first << ", ";
 		}
 		TR << std::endl;
-		utility_exit_with_message( filter_name + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( filter_name + " is not known to the FilterFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.FilterCreators.ihh and src/protocols/init/init.FilterRegistrators.ihh)??" );
 	}
 }
 
@@ -113,7 +113,7 @@ const
 			TR<<filt_it->first<<", ";
 		}
 		TR<<std::endl;
-		utility_exit_with_message( filter_type + " is not known to the FilterFactory. Was it registered via a FilterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( filter_type + " is not known to the FilterFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.FilterCreators.ihh and src/protocols/init/init.FilterRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

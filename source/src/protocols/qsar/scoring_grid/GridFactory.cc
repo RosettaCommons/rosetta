@@ -73,7 +73,7 @@ GridBaseOP GridFactory::new_grid(utility::tag::TagCOP tag) const
 		}
 		return iter->second->create_grid(tag);
 	} else {
-		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
+		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered in the appropriate initialization files (src/protocols/init/init.GridCreators.ihh and src/protocols/init/init.GridRegistrators.ihh)?");
 		return nullptr;
 	}
 
@@ -106,7 +106,7 @@ GridBaseOP GridFactory::new_grid(utility::json_spirit::mObject data ) const
 		}
 		new_grid = iter->second->create_grid();
 	} else {
-		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered via a GridRegistrator in one of the init.cc files");
+		utility_exit_with_message(type + " is not known to the GridFactory.  Was it registered in the appropriate initialization files (src/protocols/init/init.GridCreators.ihh and src/protocols/init/init.GridRegistrators.ihh)?");
 	}
 
 	//deserialize object into new grid and return

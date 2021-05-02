@@ -118,7 +118,7 @@ TaskOperationFactory::provide_xml_schema(
 			TR << to_iter.first << ", ";
 		}
 		TR << std::endl;
-		utility_exit_with_message( task_operation_name + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
+		utility_exit_with_message( task_operation_name + " is not known to the TaskOperationFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.TaskOperationCreators.ihh and src/protocols/init/init.TaskOperationRegistrators.ihh)?" );
 	}
 }
 
@@ -171,7 +171,7 @@ TaskOperationFactory::newTaskOperation(
 			TR<<to_iter.first<<", ";
 		}
 		TR<<std::endl;
-		utility_exit_with_message( type + " is not known to the TaskOperationFactory. Was its taskOperationCreator class registered at initialization?" );
+		utility_exit_with_message( type + " is not known to the TaskOperationFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.TaskOperationCreators.ihh and src/protocols/init/init.TaskOperationRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

@@ -70,7 +70,7 @@ JobOutputterFactory::get_JobOutputter_from_string( std::string const & job_outpu
 			TR << mover_it->first<<", ";
 		}
 		TR << std::endl;
-		utility_exit_with_message( job_outputter_type + " is not known to the JobOutputterFactory. Was it registered via a JobOutputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( job_outputter_type + " is not known to the JobOutputterFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.JobOutputterCreators.ihh and src/protocols/init/init.JobOutputterRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

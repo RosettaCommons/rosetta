@@ -103,7 +103,7 @@ MoverFactory::provide_xml_schema(
 			TR << filt_it.first << ", ";
 		}
 		TR << std::endl;
-		utility_exit_with_message( mover_name + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( mover_name + " is not known to the MoverFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.MoverCreators.ihh and src/protocols/init/init.MoverRegistrators.ihh)?" );
 	}
 }
 
@@ -146,7 +146,7 @@ MoverFactory::newMover( std::string const & mover_type ) const
 			TR << mover_it->first << ", ";
 		}
 		TR << std::endl;
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  mover_type + " is not known to the MoverFactory. Was it registered via a MoverRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  mover_type + " is not known to the MoverFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.MoverCreators.ihh and src/protocols/init/init.MoverRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

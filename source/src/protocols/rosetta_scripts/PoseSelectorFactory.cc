@@ -69,7 +69,7 @@ PoseSelectorFactory::newPoseSelector( std::string const & pose_selector_type )
 			TR<<it->first<<", ";
 		}
 		TR<<std::endl;
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_selector_type + " is not known to the PoseSelectorFactory. Was it registered via a PoseSelectorRegistrator in one of the init.cc files?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_selector_type + " is not known to the PoseSelectorFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.PoseSelectorCreators.ihh and src/protocols/init/init.PoseSelectorRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

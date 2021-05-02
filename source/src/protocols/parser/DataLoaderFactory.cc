@@ -60,7 +60,7 @@ DataLoaderFactory::newDataLoader( std::string const & loader_type ) const
 		}
 		return iter->second->create_loader();
 	} else {
-		utility_exit_with_message( loader_type + " is not known to the DataLoaderFactory. Was it registered via a DataLoaderRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( loader_type + " is not known to the DataLoaderFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.DataLoaderCreators.ihh and src/protocols/init/init.DataLoaderRegistrators.ihh)?" );
 		return nullptr;
 	}
 

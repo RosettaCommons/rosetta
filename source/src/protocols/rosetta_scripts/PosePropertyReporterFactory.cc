@@ -68,7 +68,7 @@ PosePropertyReporterFactory::newPosePropertyReporter( std::string const & pose_s
 			TR<<it->first<<", ";
 		}
 		TR<<std::endl;
-		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered via a PosePropertyReporterRegistrator in one of the init.cc files?" );
+		throw CREATE_EXCEPTION(utility::excn::RosettaScriptsOptionError,  pose_selector_type + " is not known to the PosePropertyReporterFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.PosePropertyReporterCreators.ihh and src/protocols/init/init.PosePropertyReporterRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

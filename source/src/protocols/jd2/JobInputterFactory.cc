@@ -70,7 +70,7 @@ JobInputterFactory::get_JobInputter_from_string( std::string const & job_inputte
 			TR << creator_elem.first << ", ";
 		}
 		TR << std::endl;
-		utility_exit_with_message( job_inputter_type + " is not known to the JobInputterFactory. Was it registered via a JobInputterRegistrator in one of the init.cc files (devel/init.cc or protocols/init.cc)?" );
+		utility_exit_with_message( job_inputter_type + " is not known to the JobInputterFactory. Was it registered in the appropriate initialization files (src/protocols/init/init.JobInputterCreators.ihh and src/protocols/init/init.JobInputterRegistrators.ihh)?" );
 		return nullptr;
 	}
 }

@@ -110,7 +110,7 @@ PackerPaletteFactory::newPackerPalette(
 			TR<<to_iter->first<<", ";
 		}
 		TR<<std::endl;
-		utility_exit_with_message( type + " is not known to the PackerPaletteFactory. Was its PackerPaletteCreator class registered at initialization?" );
+		utility_exit_with_message( type + " is not known to the PackerPaletteFactory. Was it registered in the appropriate initialization file (src/core/init/init.cc)?" );
 		return nullptr;
 	}
 }
