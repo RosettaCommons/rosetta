@@ -15,6 +15,7 @@
 
 // Unit header
 #include <core/pose/variant_util.hh>
+#include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 // Package headers

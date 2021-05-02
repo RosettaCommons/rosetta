@@ -104,15 +104,15 @@ public:
 
 	///@brief Set the simple metrics we will run.
 	void
-	set_simple_metrics( utility::vector1< core::simple_metrics::SimpleMetricCOP > metrics );
+	set_simple_metrics( utility::vector1< core::simple_metrics::SimpleMetricCOP > const & metrics );
 
 	///@brief Set extra columns, prefix and suffix, for each data added to the database.  Used for multiple runs of the features.
 	/// Also used for matching cached data from the pose.
 	void
-	set_prefix_suffix( std::string prefix="", std::string suffix="");
+	set_prefix_suffix( std::string const & prefix="", std::string const & suffix="");
 
 	void
-	set_table_name( std::string = "simple_metrics");
+	set_table_name( std::string const & = "simple_metrics");
 
 public:
 

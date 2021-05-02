@@ -24,7 +24,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/pose/PDBInfo.hh>
 //#include <core/pose/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <protocols/enzdes/AddorRemoveCsts.hh>
 

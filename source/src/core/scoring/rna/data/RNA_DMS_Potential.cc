@@ -30,6 +30,7 @@
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/id/AtomID.hh>
 
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>

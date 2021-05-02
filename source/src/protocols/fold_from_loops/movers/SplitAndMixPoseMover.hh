@@ -15,8 +15,6 @@
 #ifndef INCLUDED_protocols_fold_from_loops_movers_SplitAndMixPoseMover_hh
 #define INCLUDED_protocols_fold_from_loops_movers_SplitAndMixPoseMover_hh
 
-#include <basic/Tracer.hh>
-
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.fwd.hh>

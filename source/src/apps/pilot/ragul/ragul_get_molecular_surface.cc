@@ -61,7 +61,6 @@ using namespace core;
 using namespace basic::options;
 using namespace std;
 using namespace core::scoring;
-using namespace core::optimization;
 using namespace basic::options::OptionKeys;
 using namespace core::scoring::sc;
 

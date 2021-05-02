@@ -40,6 +40,8 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
+
 static basic::Tracer TR( "core.scoring.methods.NMerPSSMEnergy" );
 
 namespace core {

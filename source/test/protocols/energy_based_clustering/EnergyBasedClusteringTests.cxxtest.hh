@@ -25,6 +25,7 @@
 // Core Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 

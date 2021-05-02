@@ -35,6 +35,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/VirtualBase.hh>
 
+#include <basic/Tracer.hh>
 
 
 #include <iostream>

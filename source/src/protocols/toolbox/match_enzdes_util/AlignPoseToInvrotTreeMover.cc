@@ -29,11 +29,13 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>
 #include <core/util/SwitchResidueTypeSet.hh>

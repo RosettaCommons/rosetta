@@ -22,6 +22,7 @@
 #include <core/pose/util.hh>
 #include <utility/vector1.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/scoring/dssp/Dssp.hh>

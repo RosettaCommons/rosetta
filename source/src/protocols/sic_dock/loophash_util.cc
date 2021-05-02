@@ -12,6 +12,7 @@
 #include <protocols/sic_dock/RigidScore.hh>
 #include <protocols/sic_dock/SICFast.hh>
 #include <core/pose/util.hh>
+#include <core/kinematics/RT.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/HomogeneousTransform.hh>
 #include <core/chemical/ChemicalManager.hh>

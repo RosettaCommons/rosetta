@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>

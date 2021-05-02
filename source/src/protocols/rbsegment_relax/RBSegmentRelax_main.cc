@@ -22,6 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
+#include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
 
 #include <core/import_pose/import_pose.hh>

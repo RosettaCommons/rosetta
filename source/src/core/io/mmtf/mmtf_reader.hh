@@ -47,7 +47,6 @@
 #include <core/types.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 
 // Numeric headers
 #include <numeric/xyzVector.hh>

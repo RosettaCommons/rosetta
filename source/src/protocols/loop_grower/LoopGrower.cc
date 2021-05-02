@@ -140,6 +140,8 @@
 namespace protocols {
 namespace loop_grower {
 
+static basic::Tracer TR("protocols.loop_grower.LoopGrower");
+
 using namespace core;
 
 //static numeric::random::RandomGenerator RG(8403179);
@@ -208,7 +210,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		fragset = fragments_[1];
 		maxfrag = fragset->max_frag_length();
 		update_fragment_library_pointers();
-		TRACER << "using shortloop logic" << std::endl;
+		TR << "using shortloop logic" << std::endl;
 	}
 	maxfrag_ = maxfrag;
 
@@ -238,7 +240,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	if ( !is_nterm ) {
 		int i=1;
 		while ( i<(int)totalmelt && !pose.fold_tree().is_cutpoint(resstart_-i) ) {
-			if ( pose.fold_tree().is_cutpoint(resstart_-i) ) TRACER << " hit cutpoint melt left " << std::endl;
+			if ( pose.fold_tree().is_cutpoint(resstart_-i) ) TR << " hit cutpoint melt left " << std::endl;
 			i++;
 		}
 
@@ -252,7 +254,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	if ( !is_cterm ) {
 		int i=1;
 		while ( i<=(int)fragmelt_ && !pose.fold_tree().is_cutpoint(resstop_+i-1) ) {
-			if ( pose.fold_tree().is_cutpoint(resstop_+i-1) ) TRACER << " hit cutpoint melt right " << std::endl;
+			if ( pose.fold_tree().is_cutpoint(resstop_+i-1) ) TR << " hit cutpoint melt right " << std::endl;
 			i++;
 		}
 		initial_melt_right = i;
@@ -341,7 +343,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		if ( int(fjumps(2,i)) >resstart_ && int(fjumps(2,i))<resstart_+(int)minmelt_right+1 ) fjumps(2,i)=resstart_+(int)minmelt_right;
 
 		// fcuts(i) = f_in.cutpoint(i);
-		TRACER << "fjumps and fcuts " << i << " " << fjumps(1,i) << "," << fjumps(2,i) << "," << fcuts(i) << std::endl;
+		TR << "fjumps and fcuts " << i << " " << fjumps(1,i) << "," << fjumps(2,i) << "," << fcuts(i) << std::endl;
 	}
 	bool valid_tree = f_new.tree_from_jumps_and_cuts( pose.total_residue(), ncuts, fjumps, fcuts );
 	runtime_assert( valid_tree );
@@ -350,7 +352,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		core::conformation::symmetry::symmetrize_fold_tree( pose.conformation(), f_new );
 	}
 	pose.fold_tree( f_new );
-	TRACER << pose.fold_tree() << std::endl;
+	TR << pose.fold_tree() << std::endl;
 
 	int tgt_jump = 0;
 	if ( !is_nterm && !is_cterm ) {
@@ -632,7 +634,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 						constraint_weight = cen_sf_->get_weight(core::scoring::atom_pair_constraint);
 					}
 					if ( constraint_weight  ==  0 ) {
-						TRACER << "WARNING::Constraints on closure are turned off when you need them!" << std::endl;
+						TR << "WARNING::Constraints on closure are turned off when you need them!" << std::endl;
 					}
 				}
 				// loop is complete
@@ -733,7 +735,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 			storehi_ = 0;
 		}
 		if ( upper_fasta_ < lower_fasta_ ) {
-			TRACER << "last grow" <<std::endl;
+			TR << "last grow" <<std::endl;
 			done = true;
 		}
 
@@ -798,7 +800,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 				write_to_disk( solutionset, cycle-1, added_lower, added_upper, false, acceptlower);
 			}
 			if ( ((int)steps_ !=0) && (stepcount-1 >= steps_) ) {
-				TRACER << "all steps complete" << std::endl;
+				TR << "all steps complete" << std::endl;
 				exit(0);
 			}
 
@@ -920,7 +922,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 		}
 
 
-		TRACER << pose.fold_tree() << std::endl;
+		TR << pose.fold_tree() << std::endl;
 		if ( !is_nterm && !is_cterm ) {
 			core::kinematics::FoldTree ft_closed = pose.fold_tree();
 			if ( !dont_cut_jump ) ft_closed.delete_jump_and_intervening_cutpoint(tgt_jump);
@@ -934,7 +936,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 			sf_->set_weight( core::scoring::chainbreak, 0.0 );
 			cen_sf_->set_weight( core::scoring::chainbreak, 0.0 );
 		}
-		TRACER << "beam score = " << score << std::endl;
+		TR << "beam score = " << score << std::endl;
 
 		//calculate RMS of loop to native. If native and loop have different numbering number will be junk
 		if ( native_ ) {
@@ -942,7 +944,7 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 			Real RMS = RMStonative(pose, rmsrangelo_, rmsrangehi_, 0, 0, torsionrangelo, 0, 0, torsionrangehi);
 			if ( RMS <= bestRMS ) bestRMS = RMS;
 			if ( GDT >= bestGDT ) bestGDT = GDT;
-			TRACER << "The RMS is ====================================== " << RMS << " GDT is " << GDT << std::endl;
+			TR << "The RMS is ====================================== " << RMS << " GDT is " << GDT << std::endl;
 		}
 		finalpose->conformation().chains_from_termini();
 		core::pose::PDBInfo newpdbinfo(*finalpose, false);
@@ -966,14 +968,14 @@ LoopGrower::apply( core::pose::Pose & pose ) {
 	solutionset_.set_cutpoint(cutpoint_fasta);
 
 	pose = best_pose;
-	TRACER << "the best score is " << score_best << std::endl;
+	TR << "the best score is " << score_best << std::endl;
 
 	//calculate RMS of loop to native.
 	if ( native_ ) {
 		Real RMS = RMStonative(pose, rmsrangelo_, rmsrangehi_, 0, 0, torsionrangelo, 0, 0, torsionrangehi);
 		Real GDT = GDThatonative(pose, rmsrangelo_, rmsrangehi_, 0, 0, torsionrangelo, 0, 0, torsionrangehi);
-		TRACER << "The best scoring  RMS is ====================================== " << RMS << " GDT == " << GDT << std::endl;
-		TRACER << "The best RMS is =============================================== " << bestRMS << " GDT == " << GDT << std::endl;
+		TR << "The best scoring  RMS is ====================================== " << RMS << " GDT == " << GDT << std::endl;
+		TR << "The best RMS is =============================================== " << bestRMS << " GDT == " << GDT << std::endl;
 		if ( dumprms_ ) {
 			solutionset.report_rms_and_scores(loop_.start(), loop_.stop());
 		}
@@ -1031,7 +1033,7 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 		cen_pose.dump_pdb("aftercopyfromnative.pdb");
 	}
 	Real prerms = GDThatonative(cen_pose, rmsrangelo_, rmsrangehi_, lower_fasta_-1, upper_fasta_+1, torsionrangelo, lower_pose, lower_pose, torsionrangehi);
-	TRACER << "rms before refine is " << prerms << std::endl;
+	TR << "rms before refine is " << prerms << std::endl;
 	refine_cycle( fa_pose, cen_pose, torsionrangelo, torsionrangehi, false, 0, 0, 0, 0);
 	Real modscore = modifiedscore(fa_pose, cen_pose, torsionrangelo, torsionrangehi);
 	LoopPartialSolution nativelps= LoopPartialSolution( fa_pose, torsionrangelo, torsionrangehi, modscore );
@@ -1052,7 +1054,7 @@ LoopGrower::addnativesolution(LoopPartialSolutionStore& solutionset, core::pose:
 	}
 	nativelps.set_rms(RMS);
 	nativelps.set_gdt(GDT);
-	TRACER << " native solution rms is " << RMS << " and the score is " << modscore << std::endl;
+	TR << " native solution rms is " << RMS << " and the score is " << modscore << std::endl;
 	solutionset.store(nativelps);
 }
 void
@@ -1492,6 +1494,32 @@ LoopPartialSolution::write_beam(std::ostream &outbeam){
 }
 
 void
+LoopPartialSolution::apply( core::pose::Pose &pose, int range1lo, int range1hi, int range2lo, int range2hi ) {
+	int ctr = 0;
+
+	calphas_.clear();
+	for ( int i=range1lo; i<=range2hi; ++i ) {
+		if ( i < range2lo && i> range1hi ) continue;
+		ctr++;
+		ResTorsions const &res_i = residues_[ctr];
+		pose.set_phi( i, res_i.phi_ );
+		pose.set_psi( i, res_i.psi_ );
+		pose.set_omega( i, res_i.omega_ );
+		if ( !pose.is_centroid() && pose.conformation().residue_typeset_mode( true ) != core::chemical::CENTROID_ROT_t ) {
+			if ( res_i.nchi_ > 0 ) pose.set_chi( 1, i, res_i.chi1_ );
+			if ( res_i.nchi_ > 1 ) pose.set_chi( 2, i, res_i.chi2_ );
+			if ( res_i.nchi_ > 2 ) pose.set_chi( 3, i, res_i.chi3_ );
+			if ( res_i.nchi_ > 3 ) pose.set_chi( 4, i, res_i.chi4_ );
+		}
+	}
+
+	if ( ctr != (int)residues_.size() ) {
+		TR << "ctr and number of residues " << ctr << " " << residues_.size() << std::endl;
+	}
+	runtime_assert( ctr == (int)residues_.size() );
+}
+
+void
 LoopPartialSolution::apply_sheets( core::pose::Pose & pose ){
 	for ( core::Size i=1; i<= sheets_.size(); i++ ) {
 		core::Size numjumps = pose.num_jump();
@@ -1588,7 +1616,7 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 		rmswindowlower = lowercount;
 		if ( rmswindowlower < 1 ) rmswindowlower=1;
 	}
-	//TRACER << "total lower " << total_lower << std::endl;
+	//TR << "total lower " << total_lower << std::endl;
 	for ( int i=1; i<=lowercount-rmswindowlower+1; i++ ) {
 		Real err = 0;
 		core::Size atmcount=0;
@@ -1602,10 +1630,10 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 				atmcount++;
 				j++;
 			}
-			//TRACER << "using resi " << resi << " for lower " << std::endl;
+			//TR << "using resi " << resi << " for lower " << std::endl;
 		}
 		Real windowRMS = sqrt(err/atmcount);
-		//TRACER << " window rms " << windowRMS << std::endl;
+		//TR << " window rms " << windowRMS << std::endl;
 		if ( windowRMS>worstresrms ) {
 			worstresrms=windowRMS;
 		}
@@ -1623,7 +1651,7 @@ Real LoopPartialSolution::partialrms(const LoopPartialSolution & newlps, int fra
 				atmcount++;
 				j++;
 			}
-			//TRACER << "using resi " << resi << " for upper " << std::endl;
+			//TR << "using resi " << resi << " for upper " << std::endl;
 		}
 		Real windowRMS = sqrt(err/atmcount);
 		if ( windowRMS>worstresrms ) {
@@ -1799,7 +1827,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 				post_best_RMS = storedRMS;
 			}
 		}
-		TRACER << "pre best is " << pre_best_RMS << " post best is " << post_best_RMS << std::endl;
+		TR << "pre best is " << pre_best_RMS << " post best is " << post_best_RMS << std::endl;
 		if ( pre_best_RMS <= 2.0 && post_best_RMS >= 2.0 ) {
 			pose.conformation().chains_from_termini();
 			core::pose::PDBInfo newpdbinfo(pose, false);
@@ -1813,7 +1841,7 @@ void LoopPartialSolutionStore::push( core::pose::Pose& pose, LoopPartialSolution
 			LoopPartialSolution new_entry_dump = new_entry;
 			new_entry_dump.apply(pose, (int)lower_res, (int)upper_res );
 			pose.dump_pdb("after_error_new_"+utility::to_string(newscore)+"_"+utility::to_string(nativeRMS)+".pdb");
-			TRACER << " Near natives reject dumping beam " << std::endl;
+			TR << " Near natives reject dumping beam " << std::endl;
 		}
 	}
 }
@@ -1913,7 +1941,7 @@ LoopPartialSolutionStore::diversityfilter(core::Size maxbeamsize, core::Size tot
 			core::Size masterbeamcount = 0;
 			if ( filteredsolutions.size() >= maxbeamsize ) {
 				done = true;
-				TRACER << "hit max beam " << std::endl;
+				TR << "hit max beam " << std::endl;
 				break;
 			}
 			for ( core::Size j=1; j<=filteredsolutions.size(); j++ ) {
@@ -1976,7 +2004,7 @@ LoopPartialSolutionStore::diversityfilter(core::Size maxbeamsize, core::Size tot
 				Real beamscore = lps.get_score();
 				Real absolutebestscore = std::abs(bestscore);
 				Real standardizedscore = absolutebestscore/(absolutebestscore + std::abs(bestscore-beamscore));
-				//TRACER << "absolutebestscore is " << absolutebestscore << std::endl;
+				//TR << "absolutebestscore is " << absolutebestscore << std::endl;
 				if ( standardizedscore < beamscorecutoff_ ) {
 					//if ( !reported ) {
 					// reported = true;
@@ -1990,7 +2018,7 @@ LoopPartialSolutionStore::diversityfilter(core::Size maxbeamsize, core::Size tot
 					if ( masterbeamrms < master_beam_cutoff_ ) {
 						masterbeamcount++;
 					}
-					//TRACER << " looping over filteredsolutions " << std::endl;
+					//TR << " looping over filteredsolutions " << std::endl;
 					if ( masterbeamcount >= filtermasterbeamwidth ) {
 						addlps=false;
 						break;
@@ -2001,7 +2029,7 @@ LoopPartialSolutionStore::diversityfilter(core::Size maxbeamsize, core::Size tot
 					}
 				}
 				if ( addlps ) {
-					//TRACER << "adding filteronly lps " << std::endl;
+					//TR << "adding filteronly lps " << std::endl;
 					filteredsolutions.store(lps);
 				}
 			}
@@ -2116,10 +2144,10 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, core::Size maxbeam, co
 		}
 
 		std::string nearnativeid = nearnativelps.get_id();
-		TRACER << "best score is " << solutions_[1].get_score();
-		TRACER << " pre best RMS, GDT, and score " << nearnativeid << " " << pre_best_RMS << " " << post_best_GDT << " " << nearnativelps.get_score() << " post_best_RMS " << post_best_RMS <<
+		TR << "best score is " << solutions_[1].get_score();
+		TR << " pre best RMS, GDT, and score " << nearnativeid << " " << pre_best_RMS << " " << post_best_GDT << " " << nearnativelps.get_score() << " post_best_RMS " << post_best_RMS <<
 			" post best_GDT " << post_best_GDT << " post_best ranked " << rank << std::endl;
-		TRACER << " 1.5RMS rank is " << ranknat << " 1.5 score is " << scorenearnat << " natrms " << natrms << " total beams " << solutions_.size()
+		TR << " 1.5RMS rank is " << ranknat << " 1.5 score is " << scorenearnat << " natrms " << natrms << " total beams " << solutions_.size()
 			<< std::endl;
 		if ( dump_errors_ ) {
 			std::ofstream outbeam;
@@ -2151,7 +2179,7 @@ LoopPartialSolutionStore::filter( core::pose::Pose& pose, core::Size maxbeam, co
 				pose.dump_pdb("after_error_new_"+nearnativeid+"_"+utility::to_string(pre_best_RMS)+".pdb");
 				pose = scpose;
 			}
-			TRACER << " Near natives rejected dumping beam " << std::endl;
+			TR << " Near natives rejected dumping beam " << std::endl;
 		}
 		if ( writebeams_ && ((pre_best_RMS < 1.2 && post_best_RMS > 1.2 ) || ( pre_best_RMS < 1.5 && post_best_RMS > 1.5)) ) {
 			std::ofstream writeerrors;
@@ -2219,7 +2247,7 @@ LoopGrower::check_auto_stop(core::pose::Pose & pose, core::Size lower_res, core:
 	for ( core::Size i=1; i<=dens_scores.size(); i++ ) {
 		Real score = dens_scores[i];
 		Real zscore = (score - mean)/stddev;
-		TRACER << "zscore of residue " << lower_res+i-1 << " is " << zscore << " dens score is " << score << std::endl;
+		TR << "zscore of residue " << lower_res+i-1 << " is " << zscore << " dens score is " << score << std::endl;
 	}
 
 	return false;
@@ -2239,11 +2267,11 @@ LoopPartialSolutionStore::zscoretransform(){
 	}
 	Real mean = sum/N + minE;
 	Real stddev = std::sqrt(N*sum2 - sum*sum)/N;
-	TRACER << "mean and stddev" << mean << " " << stddev << " sum 2 " << sum2 << std::endl;
+	TR << "mean and stddev" << mean << " " << stddev << " sum 2 " << sum2 << std::endl;
 	for ( core::Size i=1; i<=solutions_.size(); i++ ) {
 		Real score = solutions_[i].get_score();
 		Real zscore = (score - mean)/stddev;
-		TRACER << "zscore of  " << i << " is " << zscore << std::endl;
+		TR << "zscore of  " << i << " is " << zscore << std::endl;
 		solutions_[i].set_score(zscore);
 	}
 }
@@ -2279,7 +2307,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 	LoopPartialSolutionStore filteredsolutions;
 	sort();
 	Real bestscore = solutions_[1].get_score();
-	TRACER << "The best score is " << bestscore << std::endl;
+	TR << "The best score is " << bestscore << std::endl;
 
 	Real pre_best_RMS = solutions_[1].get_rms();
 	LoopPartialSolution nearnativelps = solutions_[1];
@@ -2318,7 +2346,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 		if ( rmsdist <= rmscutoff_ ) {
 			rank = i;
 			nativeranklps = solutions_[i];
-			TRACER << "rmsdist " << rmsdist << std::endl;
+			TR << "rmsdist " << rmsdist << std::endl;
 			if ( dump_beam ) {
 				nearnativelps.apply(pose, (int)lower_res, (int)upper_res );
 				pose.dump_pdb("after_natonly_" + nearnativelps.get_id()+".pdb");
@@ -2331,7 +2359,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 	if ( master_beam_width_ == 1337 ) {
 		solutions_.clear();
 		solutions_.push_back(nativeranklps);
-		TRACER << "accepting only the nearnative. pre_best_RMS is " << pre_best_RMS << " nr rms is " << nativeranklps.get_rms() << " it's rank is " << rank << std::endl;
+		TR << "accepting only the nearnative. pre_best_RMS is " << pre_best_RMS << " nr rms is " << nativeranklps.get_rms() << " it's rank is " << rank << std::endl;
 		if ( dump_beam ) {
 			nearnativelps.apply(pose, (int)lower_res, (int)upper_res );
 			pose.dump_pdb("after_natonly_" + nearnativelps.get_id()+".pdb");
@@ -2347,7 +2375,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 	rank += 30;
 	if ( rank > solutions_.size() ) rank = solutions_.size();
 
-	TRACER << "master beam width " << master_beam_width_ << std::endl;
+	TR << "master beam width " << master_beam_width_ << std::endl;
 	for ( core::Size i=1; i<=rank; i++ ) {
 		LoopPartialSolution lps = solutions_[i];
 		bool addlps = true;
@@ -2358,7 +2386,7 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 			Real masterbeamrms = lps.partialrms(filteredlps, fragmelt, total_lower, false, rmswindow );
 			if ( partialrms < rmscutoff_ ) {
 				addlps = false;
-				TRACER << lps.get_id() << " is rejected " << filteredlps.get_id() << " is too similar with a distance of " << partialrms << std::endl;
+				TR << lps.get_id() << " is rejected " << filteredlps.get_id() << " is too similar with a distance of " << partialrms << std::endl;
 				break;
 			}
 			if ( masterbeamrms <= master_beam_cutoff_ ) {
@@ -2366,14 +2394,14 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 			}
 			if ( maxbeamcount >= master_beam_width_ ) {
 				addlps = false;
-				TRACER << lps.get_id() << " is rejected. Master beam width reached " << std::endl;
+				TR << lps.get_id() << " is rejected. Master beam width reached " << std::endl;
 				break;
 			}
 		}
 		if ( i==rank ) reqmaxbeam = maxbeamcount;
 		if ( addlps ) {
 			filteredsolutions.store(lps);
-			TRACER << "adding " << lps.get_id() << std::endl;
+			TR << "adding " << lps.get_id() << std::endl;
 		}
 	}
 	solutions_ = filteredsolutions.get_solutions();
@@ -2418,12 +2446,12 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 	if ( totalreqscorecut < scorecutoff ) totalreqscorecut = scorecutoff;
 
 	Real nativerankrms = nativeranklps.get_rms();
-	TRACER << "pre_best_RMS " << nearnativeid << " " << pre_best_RMS << " nativerankrms " << nativerankrms << " post_best_RMS " << post_best_RMS << std::endl;
-	TRACER << "The necessary parameters for this step are: " <<  std::endl;
-	//TRACER << "rmscutoff = " << reqdist << " overall = " << totalreqdist << std::endl;
-	TRACER << "masterbeamwidth = " << reqmaxbeam << " overall = " << totalreqmaxbeam << std::endl;
-	TRACER << "score cutoff = " << scorecutoff << " overall = " << totalreqscorecut << std::endl;
-	TRACER << "totalbeam = " << filteredsolutions.size() << " overall = " << totalreqbeam << std::endl;
+	TR << "pre_best_RMS " << nearnativeid << " " << pre_best_RMS << " nativerankrms " << nativerankrms << " post_best_RMS " << post_best_RMS << std::endl;
+	TR << "The necessary parameters for this step are: " <<  std::endl;
+	//TR << "rmscutoff = " << reqdist << " overall = " << totalreqdist << std::endl;
+	TR << "masterbeamwidth = " << reqmaxbeam << " overall = " << totalreqmaxbeam << std::endl;
+	TR << "score cutoff = " << scorecutoff << " overall = " << totalreqscorecut << std::endl;
+	TR << "totalbeam = " << filteredsolutions.size() << " overall = " << totalreqbeam << std::endl;
 	if ( dump_errors_ ) {
 		std::ofstream outbeam;
 		outbeam.open("rank.txt", std::ofstream::app);
@@ -2447,10 +2475,10 @@ LoopPartialSolutionStore::parametercheck_filter(core::pose::Pose& pose, core::Si
 			Real nativerankrms = nativeranklps.get_rms();
 			pose.dump_pdb("after_error_nr_"+nativerankid+"_"+utility::to_string(nativerankrms)+".pdb");
 		}
-		TRACER << " Near natives rejected dumping beam " << std::endl;
+		TR << " Near natives rejected dumping beam " << std::endl;
 	}
 	if ( (post_best_RMS >= 3.0 && !writebeams) || solutions_.size()>maxelts_ ) {
-		TRACER << "no natives remain exiting protocol or they score too poorly" << std::endl;
+		TR << "no natives remain exiting protocol or they score too poorly" << std::endl;
 		if ( writebeams ) {
 			std::ofstream outbeam;
 			outbeam.open("finished.txt", std::ofstream::app);
@@ -2478,14 +2506,14 @@ void LoopGrower::read_coordfile(){
 	std::ifstream coordstream;
 	coordstream.precision(8);
 	if ( coordfile_ == "" ) {
-		TRACER << " No coordfile name provided " << std::endl;
+		TR << " No coordfile name provided " << std::endl;
 		return;
 	}
 	coordstream.open(coordfile_.c_str());
 	core::Real scoreweight;
 	bool firstline = true;
 	if ( coordstream.peek() == std::ifstream::traits_type::eof() ) {
-		TRACER << "THE COORDINATE FILE YOU SPECIFIED IS EMPTY OR DOES NOT EXIST. EITHER PROVIDE CORRECT COORDINATES OR REMOVE THE FILENAME FROM THE OPTIONS TO RUN WITHOUT THEM" << std::endl;
+		TR << "THE COORDINATE FILE YOU SPECIFIED IS EMPTY OR DOES NOT EXIST. EITHER PROVIDE CORRECT COORDINATES OR REMOVE THE FILENAME FROM THE OPTIONS TO RUN WITHOUT THEM" << std::endl;
 		exit(0);
 	}
 	while ( coordstream.peek() != std::ifstream::traits_type::eof() ) {
@@ -2504,7 +2532,7 @@ void LoopGrower::read_coordfile(){
 			numeric::xyzVector<core::Real> position(0,0,0);
 			coordstream >> position[0] >> position[1] >> position[2];
 			positions.push_back(position);
-			//TRACER << res << "." << atom << " " << i << " " << position[0] << " " << position[1] << " " << position[2] << std::endl;
+			//TR << res << "." << atom << " " << i << " " << position[0] << " " << position[1] << " " << position[2] << std::endl;
 			if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
 		}
 		if ( coordstream.peek() == std::ifstream::traits_type::eof() ) break;
@@ -2516,7 +2544,7 @@ void LoopGrower::read_coordfile(){
 	for( iter = scoringcoords_.begin(); iter != scoringcoords_.end(); iter++){
 	count++;
 	for( core::Size i=1; i<=iter->second.size(); i++){
-	TRACER << " setting " << iter->first.first << "." << iter->first.second << " " << iter->second.size() << " " << iter->second[i][0] << " " << iter->second[i][1] << " " << iter->second[i][2] << std::endl;
+	TR << " setting " << iter->first.first << "." << iter->first.second << " " << iter->second.size() << " " << iter->second[i][0] << " " << iter->second[i][1] << " " << iter->second[i][2] << std::endl;
 	}
 	}*/
 }
@@ -2558,11 +2586,11 @@ LoopGrower::coordinate_filter(LoopPartialSolutionStore& solutionset, core::pose:
 		fasta_start = upper_fasta+1;
 	}
 	if ( lowerrange < rangelo ) {
-		TRACER << " setting lower range to torsionrangelo " << std::endl;
+		TR << " setting lower range to torsionrangelo " << std::endl;
 		lowerrange = rangelo;
 	}
 	if ( upperrange > rangehi ) {
-		TRACER << " setting upper range to torsionrangehi " << std::endl;
+		TR << " setting upper range to torsionrangehi " << std::endl;
 		upperrange = rangehi;
 	}
 	LoopPartialSolutionStore matchingsolutions = solutionset;
@@ -2616,10 +2644,10 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 	}
 	beamread.open(beamfile.c_str());
 	if ( beamread.peek() == std::ifstream::traits_type::eof() ) {
-		TRACER << " The beam file " << beamfile << " is empty exiting the protocol " << std::endl;
+		TR << " The beam file " << beamfile << " is empty exiting the protocol " << std::endl;
 		runtime_assert( beamread.peek() != std::ifstream::traits_type::eof() );
 	}
-	TRACER << "reading beams from " << beamfile << std::endl;
+	TR << "reading beams from " << beamfile << std::endl;
 	// core::Size countertest = 0;
 	while ( !beamread.eof() ) {
 		core::Size rescount;
@@ -2697,7 +2725,7 @@ void LoopGrower::read_from_disk(LoopPartialSolutionStore & solutionset, int & cy
 		storedbeam.set_score(score);
 		solutionset.store(storedbeam);
 	}
-	TRACER << "finished reading" << beamfile << std::endl;
+	TR << "finished reading" << beamfile << std::endl;
 	beamread.close();
 
 }
@@ -2718,7 +2746,7 @@ Real
 LoopGrower::GDThatonative( core::pose::Pose const &pose, int natlow, int nathi, int natstoplow, int natstarthi, int startlow, int stoplow, int starthi, int stophi){
 
 	if ( !native_ ) {
-		TRACER << "no native exists cannot determine GDTha " << std::endl;
+		TR << "no native exists cannot determine GDTha " << std::endl;
 		runtime_assert( native_);
 	}
 
@@ -2762,7 +2790,7 @@ Real
 LoopGrower::RMStonative( core::pose::Pose const &pose, int natlow, int nathi, int natstoplow, int natstarthi, int startlow, int stoplow, int starthi, int stophi){
 
 	if ( !native_ ) {
-		TRACER << "no native exists cannot determine RMS " << std::endl;
+		TR << "no native exists cannot determine RMS " << std::endl;
 		runtime_assert( !native_ );
 	}
 
@@ -2931,7 +2959,7 @@ void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core
 			rescoredset.store(lps);
 		}
 
-		TRACER << " score for " << lps.get_id() << " " << lps.get_rms() << " is " << score << std::endl;
+		TR << " score for " << lps.get_id() << " " << lps.get_rms() << " is " << score << std::endl;
 		if ( debug_ && fafilter_ ) fa_pose.dump_pdb("afterfafilter_"+utility::to_string(lps.get_score())+"_"+utility::to_string(RMS)+".pdb");
 		lps.set_score(score);
 		if ( dumpbeam_ ) {
@@ -2961,7 +2989,7 @@ void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core
 			lps = rescoredset[i];
 			Real rms = lps.get_rms();
 			if ( !reportednn && rms <=1.5 ) {
-				TRACER << " the nnrms is " << rms << " scoring " << lps.get_score() << " rank " << i << std::endl;
+				TR << " the nnrms is " << rms << " scoring " << lps.get_score() << " rank " << i << std::endl;
 				reportednn = true;
 			}
 			if ( rms < bestrms ) {
@@ -2970,7 +2998,7 @@ void LoopGrower::rescoresolutionset( LoopPartialSolutionStore& solutionset, core
 				bestscore = lps.get_score();
 			}
 		}
-		TRACER << "the best rms after rescore is " << bestrms << " and it's rank is " << rank << " with a score of " << bestscore << std::endl;
+		TR << "the best rms after rescore is " << bestrms << " and it's rank is " << rank << " with a score of " << bestscore << std::endl;
 	}
 	solutionset = rescoredset;
 }
@@ -3142,7 +3170,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 					basescore += worst_atom;
 				}
 			}
-			//TRACER << " basescore fullscore " << basescore << " " << fullscore << " " << std::endl;
+			//TR << " basescore fullscore " << basescore << " " << fullscore << " " << std::endl;
 			core::Real residue_dens = basescore + continuous_weight_*(fullscore-basescore);
 			mod_dens += residue_dens;
 		} else if ( addresforfast ) {
@@ -3161,7 +3189,7 @@ LoopGrower::modifieddensity( core::pose::Pose& pose, core::Size rangelo, core::S
 			mod_dens += residue_dens;
 		}
 	}
-	TRACER.Debug << " mod dens is " << mod_dens << " total fast dens " << total_fast_dens << " sc dens is " << sc_dens << std::endl;
+	TR.Debug << " mod dens is " << mod_dens << " total fast dens " << total_fast_dens << " sc dens is " << sc_dens << std::endl;
 
 	Real adjusted_dens = 0;
 	if ( windowdensweight_ != 0 ) {
@@ -3286,9 +3314,9 @@ Real LoopGrower::modifiedscore( core::pose::Pose& fapose, core::pose::Pose& cen_
 			score -= nton3hbonds*hbond_weight*.7;
 		}
 	}
-	TRACER.Debug << "pre subtraction score is " << score << " basescore is " << basescore << std::endl;
+	TR.Debug << "pre subtraction score is " << score << " basescore is " << basescore << std::endl;
 	score -= basescore;
-	if ( !rescorebeams_ ) TRACER << " score is " << score << std::endl;
+	if ( !rescorebeams_ ) TR << " score is " << score << std::endl;
 	return score;
 }
 void
@@ -3377,7 +3405,7 @@ LoopGrower::add_fragment_csts( core::pose::Pose &pose, core::Size startfasta, co
 		char fastaseq = seq_->at(i);
 		char poseseq = pose.residue(pos).name1();
 		if ( fastaseq != poseseq ) {
-			TRACER << " the fragment constraint you are trying to apply does not match the correct sequence" << std::endl;
+			TR << " the fragment constraint you are trying to apply does not match the correct sequence" << std::endl;
 			runtime_assert( fastaseq == poseseq );
 		}
 
@@ -3403,7 +3431,7 @@ void
 LoopGrower::add_user_csts(core::pose::Pose & pose){
 	if ( (basic::options::option[ basic::options::OptionKeys::constraints::cst_file ].user()) || (basic::options::option[ basic::options::OptionKeys::constraints::cst_fa_file ].user()) ) {
 		//map sequence
-		TRACER << " applying csts " << std::endl;
+		TR << " applying csts " << std::endl;
 		core::sequence::SequenceOP t_pdb_seq( new core::sequence::Sequence( pose.sequence(), "pose_seq" ));
 		core::sequence::SWAligner sw_align;
 		core::sequence::ScoringSchemeOP ss(  new core::sequence::SimpleScoringScheme(120, 0, -100, 0));
@@ -3476,8 +3504,8 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 		}
 
 		insert_pose = lower_pose+n_to_insert-((int)maxfrag-1);
-		TRACER << "insert " << n_to_insert << " lower at " << insert_pose << std::endl;
-		TRACER << "lower_fasta = " << lower_fasta << std::endl;
+		TR << "insert " << n_to_insert << " lower at " << insert_pose << std::endl;
+		TR << "lower_fasta = " << lower_fasta << std::endl;
 		lower_pose += n_to_insert;
 		lower_fasta += n_to_insert;
 		upper_pose += n_to_insert;
@@ -3489,10 +3517,10 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 			growpose_cen.conformation().safely_prepend_polymer_residue_before_seqpos(*newres_cen, lower_pose+1, true);
 		}
 		insert_pose = upper_term;
-		TRACER << "lower pose & upper pose " << lower_pose << " " << upper_pose << std::endl;
+		TR << "lower pose & upper pose " << lower_pose << " " << upper_pose << std::endl;
 		upper_pose += n_to_insert;
 		upper_fasta -= n_to_insert;
-		TRACER << "insert " << n_to_insert << " upper at " << insert_pose << std::endl;
+		TR << "insert " << n_to_insert << " upper at " << insert_pose << std::endl;
 	}
 
 	// loop is complete
@@ -3537,7 +3565,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	core::Size ctr=1;
 	torsionrangehi += n_to_insert;
 	if ( is_cterm ) torsionrangehi  = upper_pose;
-	TRACER << " the current solution set size is " << solutionset.size() << std::endl;
+	TR << " the current solution set size is " << solutionset.size() << std::endl;
 	core::Size total_lower;
 	if ( !is_nterm ) {
 		total_lower = lower_pose-torsionrangelo+1;
@@ -3589,7 +3617,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 			constraint_weight = cen_sf_->get_weight(core::scoring::atom_pair_constraint);
 		}
 		if ( constraint_weight  ==  0 ) {
-			TRACER << "WARNING::Constraints on closure are turned off when you need them!" << std::endl;
+			TR << "WARNING::Constraints on closure are turned off when you need them!" << std::endl;
 			//cen_sf_->show(std::cout, growpose_cen);
 		}
 	}
@@ -3636,9 +3664,9 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 				continue;
 			}
 
-			//TRACER << "insert pose " << insert_pose << " torsion range lo and hi " << torsionrangelo << " " << torsionrangehi << " fraglength " << fraglength << std::endl;
+			//TR << "insert pose " << insert_pose << " torsion range lo and hi " << torsionrangelo << " " << torsionrangehi << " fraglength " << fraglength << std::endl;
 			if ( (int)insert_pose < (int)torsionrangelo || (int)insert_pose + fraglength - 1 > (int)torsionrangehi ) {
-				//TRACER << "iskipping " << fraglength << "mers for being outside the torsionranges " << std::endl;
+				//TR << "iskipping " << fraglength << "mers for being outside the torsionranges " << std::endl;
 				continue;
 			}
 			core::fragment::Frame frame=library_[fraglistitr][insert_fasta];
@@ -3676,7 +3704,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 					nativeloop.apply (growpose_cen, insert_pose, insert_pose+maxfrag-1);
 
 					if ( fragtrials_ == 0 ) {
-						TRACER << "frag trials 0 " << std::endl;
+						TR << "frag trials 0 " << std::endl;
 						finished = true;
 					}
 					if ( debug_ ) growpose_cen.dump_pdb("afternative_beforesheets_"+utility::to_string( cycle )+"_"+utility::to_string( ctr )+"_"+utility::to_string( is_lower )+".pdb" );
@@ -3722,7 +3750,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 				//calculate RMS of loop to native.
 				if ( native_ ) {
 					Real RMS = RMStonative(growpose_cen, rmsrangelo_, rmsrangehi_, lower_fasta-1, upper_fasta+1, torsionrangelo, lower_pose-fragmelt_+1, lower_pose+fragmelt_-1, torsionrangehi);
-					//TRACER << "The RMS before refinement ===== " << RMS << std::endl;
+					//TR << "The RMS before refinement ===== " << RMS << std::endl;
 					if ( debug_ ) growpose_cen.dump_pdb("afterfrag_"+utility::to_string(RMS)+"_"+utility::to_string( cycle )+"."+utility::to_string( ctr )+"."+utility::to_string( i )+"_"+utility::to_string( is_lower )+".pdb" );
 				}
 
@@ -3788,8 +3816,8 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 					if ( RMS < bestrms ) {
 						bestrms = RMS;
 					}
-					TRACER << "The RMS after refinement ===== " << RMS << " GDT == " << GDT << std::endl;
-					TRACER << "The best rms for this grow cycle = " << bestrms << " best GDT = " << bestgdt << std::endl;
+					TR << "The RMS after refinement ===== " << RMS << " GDT == " << GDT << std::endl;
+					TR << "The best rms for this grow cycle = " << bestrms << " best GDT = " << bestgdt << std::endl;
 					newlps.set_rms(RMS);
 					newlps.set_gdt(GDT);
 					std::string id = utility::to_string(cycle)+"."+ utility::to_string(ctr)+"."+utility::to_string(fragtracker);
@@ -3815,7 +3843,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 
 				solutionsetnew.store(newlps);
 
-				TRACER << "beamscoring " << cycle << "." << ctr << "." << i << "." << is_lower << " " << modscore << " dens only " << dens_only << " original score " << originalscore << std::endl;
+				TR << "beamscoring " << cycle << "." << ctr << "." << i << "." << is_lower << " " << modscore << " dens only " << dens_only << " original score " << originalscore << std::endl;
 
 				if ( debug_ ) {
 					if ( pack_min_cycles_ !=0 ) growpose.dump_pdb("fullatomafterrefine_"+utility::to_string( cycle )+"_"+utility::to_string( ctr )+"_"+utility::to_string( i )+"_"+utility::to_string( is_lower )+".pdb" );
@@ -3867,12 +3895,12 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 		for ( core::Size i=1; i<=solutionsetnew.size(); i++ ) {
 			LoopPartialSolution lps = solutionsetnew[i];
 			utility::vector1< std::pair<core::Size,Size> > newhistory = lps.get_history();
-			TRACER << " The fragments required to make " << lps.get_rms() << " were: ";
+			TR << " The fragments required to make " << lps.get_rms() << " were: ";
 			for ( core::Size j=1; j<=newhistory.size(); j++ ) {
-				TRACER << newhistory[j].first << "." << newhistory[j].second << " ";
+				TR << newhistory[j].first << "." << newhistory[j].second << " ";
 
 			}
-			TRACER << std::endl;
+			TR << std::endl;
 		}
 	}
 	// loop is complete
@@ -3892,7 +3920,7 @@ Real LoopGrower::single_grow( core::pose::Pose& growpose, core::pose::Pose& grow
 	//  solutionsetnew.skeleton_filter( growpose_cen, skeleton_, torsionrangelo, torsionrangehi, lower_pose, num_missing);
 	//}
 	solutionset = solutionsetnew;
-	//TRACER << "the range of starting beams for cycle " << utility::to_string(cycle) << " was " << beam_maximum << " " << beam_minimum << std::endl;
+	//TR << "the range of starting beams for cycle " << utility::to_string(cycle) << " was " << beam_maximum << " " << beam_minimum << std::endl;
 	growpose.remove_constraints();
 	growpose_cen.remove_constraints();
 	return bestdensity;

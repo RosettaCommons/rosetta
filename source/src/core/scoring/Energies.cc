@@ -34,11 +34,13 @@
 
 
 // Project Headers
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/find_neighbors.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <core/id/AtomID.hh>
 

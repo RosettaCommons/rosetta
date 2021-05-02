@@ -32,7 +32,6 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
-#include <basic/Tracer.fwd.hh>
 
 
 namespace basic {

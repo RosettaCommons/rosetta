@@ -53,7 +53,7 @@ using xyzVec = numeric::xyzVector<core::Real>;
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 using namespace core;
 using namespace conformation;

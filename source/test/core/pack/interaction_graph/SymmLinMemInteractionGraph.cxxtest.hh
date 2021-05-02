@@ -47,6 +47,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/make_symmetric_task.hh>
 
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

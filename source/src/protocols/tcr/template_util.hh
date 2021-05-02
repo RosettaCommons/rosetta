@@ -36,7 +36,7 @@ utility::vector1<std::string> update_template_files(utility::vector1<std::string
 void initialize_template_ignore_list(TCRseqInfo::tcrsegs const &atcr, TCRseqInfo::tcrsegs const &btcr, std::list< std::set< std::string > > &ignore_lists, core::Real const &blast_cutoff, std::string const &tcr_seq_db);
 
 /// @brief create template blacklist by runing blast with cut-off value
-std::set< std::string > create_ignore_list(std::string const query, std::string const blast_db, core::Real const &blast_cutoff);
+std::set< std::string > create_ignore_list(std::string const & query, std::string const & blast_db, core::Real const &blast_cutoff);
 
 /// @brief find best scoring template from a fasta sequence file
 /// @details template choosen by best alignment score b/w input query and seq from template file

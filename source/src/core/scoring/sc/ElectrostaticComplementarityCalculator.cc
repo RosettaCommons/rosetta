@@ -16,8 +16,10 @@
 
 
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-
+#include <core/pose/init_id_map.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <numeric/statistics/functions.hh>
 #include <basic/Tracer.hh>

@@ -23,6 +23,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/Mover.fwd.hh>

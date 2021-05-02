@@ -22,6 +22,7 @@
 // Package headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/pose/selection.hh>
 #include <core/pose/chains_util.hh>

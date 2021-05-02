@@ -33,6 +33,7 @@
 #include <protocols/jd2/util.hh>
 
 // Core headers
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/id/NamedAtomID.hh>

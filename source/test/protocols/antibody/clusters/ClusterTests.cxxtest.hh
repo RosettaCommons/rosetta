@@ -25,6 +25,7 @@
 #include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/clusters/CDRClusterFeatures.hh>
 #include <protocols/antibody/clusters/CDRCluster.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/antibody/constraints/util.hh>
 #include <protocols/features/StructureFeatures.hh>
 #include <protocols/features/FeaturesReporter.hh>

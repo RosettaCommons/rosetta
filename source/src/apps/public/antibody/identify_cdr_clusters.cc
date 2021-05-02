@@ -22,6 +22,7 @@
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/clusters/util.hh>
+#include <protocols/antibody/clusters/CDRCluster.hh>
 
 #include <protocols/moves/Mover.hh>
 

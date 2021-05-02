@@ -106,6 +106,8 @@
 namespace protocols {
 namespace loop_grower {
 
+static basic::Tracer TR("protocols.loop_grower.SheetSampler");
+
 using namespace core;
 using namespace protocols::moves;
 using namespace protocols::loops;

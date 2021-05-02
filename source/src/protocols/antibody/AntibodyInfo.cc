@@ -17,6 +17,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 
@@ -30,7 +31,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 // Protocol Headers
 #include <protocols/antibody/util.hh>

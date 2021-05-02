@@ -43,6 +43,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 
@@ -99,7 +100,7 @@ template <class T>
 void
 ProteinSilentStruct_Template<T>::fill_struct(
 	core::pose::Pose const & pose,
-	std::string tag
+	std::string const & tag
 ) {
 	basic::ProfileThis doit( basic::SILENT_FILL_STRUCT );
 	if ( !core::pose::is_ideal_pose(pose) ) {

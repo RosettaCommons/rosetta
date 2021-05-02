@@ -42,7 +42,7 @@
 #include <cppdb/frontend.h>
 
 //Basic
-#include <basic/Tracer.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

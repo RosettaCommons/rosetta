@@ -41,8 +41,6 @@
 #include <numeric/model_quality/maxsub.hh>
 #include <numeric/random/WeightedSampler.hh>
 
-#include <basic/Tracer.hh>
-
 #include <boost/unordered/unordered_map.hpp>
 
 namespace protocols {

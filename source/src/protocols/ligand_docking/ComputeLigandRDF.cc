@@ -28,6 +28,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
 
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>

@@ -46,6 +46,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>
+#include <core/pose/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/io/Remarks.hh> //reading remarks
 #include <core/id/SequenceMapping.hh>

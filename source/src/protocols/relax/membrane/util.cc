@@ -19,6 +19,7 @@
 // Package Headers
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/chemical/ResidueType.hh>
 
 // Utility Headers
 #include <utility/vector1.hh>

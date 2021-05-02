@@ -22,6 +22,8 @@
 #include <basic/options/keys/out.OptionKeys.gen.hh> // for option[ out::file::silent  ] and etc.
 #include <basic/options/keys/in.OptionKeys.gen.hh> // for option[ in::file::tags ] and etc.
 #include <basic/options/keys/OptionKeys.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <utility/file/FileName.hh>
 #include <utility/io/izstream.hh>

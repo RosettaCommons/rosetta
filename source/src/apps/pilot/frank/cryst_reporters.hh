@@ -21,6 +21,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>

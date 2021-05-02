@@ -22,7 +22,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>

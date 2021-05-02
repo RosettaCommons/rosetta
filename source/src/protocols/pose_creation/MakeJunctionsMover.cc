@@ -29,6 +29,7 @@
 
 #include <core/chemical/AA.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/MinimizerOptions.hh>

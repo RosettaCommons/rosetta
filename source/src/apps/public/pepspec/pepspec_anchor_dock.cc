@@ -139,7 +139,7 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/EnergyGraph.hh>
 #include <utility/vector0.hh>
 #include <utility/excn/Exceptions.hh>

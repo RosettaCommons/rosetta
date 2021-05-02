@@ -49,6 +49,7 @@
 #include <utility/sort_predicates.hh>
 
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <utility/vector0.hh>

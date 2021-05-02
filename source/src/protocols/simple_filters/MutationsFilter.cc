@@ -13,6 +13,9 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/ref_pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>

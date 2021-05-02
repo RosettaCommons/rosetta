@@ -27,7 +27,6 @@
 #include <core/types.hh>
 
 // Basic/Utility headers
-#include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>

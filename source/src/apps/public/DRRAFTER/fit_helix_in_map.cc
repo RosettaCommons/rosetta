@@ -31,7 +31,8 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 
 // C++ headers

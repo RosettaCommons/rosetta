@@ -26,6 +26,7 @@
 #include <core/scoring/disulfides/DisulfideMatchingPotential.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/conformation/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/io/Remarks.hh>

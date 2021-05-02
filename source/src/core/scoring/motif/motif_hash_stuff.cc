@@ -23,6 +23,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/symmetry/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/io/silent/SilentFileData.hh>
@@ -2099,7 +2100,7 @@ bool XformScore::read_binary(XformScoreOP & xs, vector1<string> const & fnames, 
 	return true;
 }
 
-void XformScore::print_scores(ostream & out, std::string const tag) const {
+void XformScore::print_scores(ostream & out, std::string const & tag) const {
 	for ( auto score : scores_ ) {
 		Key key = score.first;
 		// Real6 center = hasher_.bin_center_point(hasher_.bin_from_index(key));
@@ -2108,7 +2109,7 @@ void XformScore::print_scores(ostream & out, std::string const tag) const {
 	}
 }
 
-void XformScore::print_scores_norm(ostream & out, std::string const tag) const {
+void XformScore::print_scores_norm(ostream & out, std::string const & tag) const {
 	for ( auto score : scores_ ) {
 		Key key = score.first;
 		Real6 center = hasher_.bin_center_point(hasher_.bin_from_index(key));

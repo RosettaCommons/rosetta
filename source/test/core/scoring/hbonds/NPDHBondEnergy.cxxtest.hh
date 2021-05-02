@@ -40,6 +40,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

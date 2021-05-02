@@ -24,7 +24,7 @@
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/AtomID.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 
 namespace protocols {

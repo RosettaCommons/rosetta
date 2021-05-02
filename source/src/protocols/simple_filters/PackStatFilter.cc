@@ -20,6 +20,7 @@
 #include <core/types.hh>
 #include <core/scoring/packstat/compute_sasa.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 // Utility headers

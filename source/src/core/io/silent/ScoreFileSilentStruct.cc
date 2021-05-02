@@ -65,7 +65,7 @@ ScoreFileSilentStruct::ScoreFileSilentStruct(
 
 void ScoreFileSilentStruct::fill_struct(
 	core::pose::Pose const & pose,
-	std::string tag
+	std::string const & tag
 ) {
 	basic::ProfileThis doit( basic::SILENT_FILL_STRUCT );
 	energies_from_pose( pose );

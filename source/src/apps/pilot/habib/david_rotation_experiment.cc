@@ -63,6 +63,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/simple_moves/SuperimposeMover.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 
 //Auto Headers
 #include <core/import_pose/import_pose.hh>

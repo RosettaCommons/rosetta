@@ -21,7 +21,6 @@
 #include <basic/database/schema_generator/PrimaryKey.hh>
 #include <basic/database/schema_generator/Schema.hh>
 #include <basic/database/sql_utils.hh>
-#include <basic/Tracer.hh>
 
 //C library
 #include <math.h> // for round, floor, ceil, trunc, sqrt

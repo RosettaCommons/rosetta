@@ -17,11 +17,13 @@
 // Project Headers
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/sasa.hh>
 #include <core/types.hh>
 #include <core/id/AtomID_Map.hh>

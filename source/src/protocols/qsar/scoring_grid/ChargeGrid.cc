@@ -20,6 +20,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/UltraLightResidue.hh>
 
 #include <utility/tag/Tag.hh>

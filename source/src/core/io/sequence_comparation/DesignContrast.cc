@@ -76,14 +76,6 @@ using utility::vector1;
 /// Tracer instance for this file
 static basic::Tracer TR( "core.io.sequence_comparation.DesignContrast" );
 
-DesignContrast::DesignContrast(DesignContrast const & dc) {
-	list_file_names_ = dc.getListNames();
-	pdb_file_names_ = dc.getPdbNames();
-	nneighbs_ = dc.getNeighbors();
-	secstructs_ = dc.getSecStruct();
-	pdb_codes_ = dc.getPdbCodes();
-}
-
 /// @details go through residues in the pose, count the number of neighbors of each residue.
 /// currently using tenA neighbor graph to # neighbors within 10 Angstroms
 void DesignContrast::setNeighbors(pose::Pose & pose) {

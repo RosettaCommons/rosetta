@@ -45,9 +45,6 @@ public :
 	/// @brief default constructor
 	DesignContrast (){ }
 
-	// @brief copy constructor
-	DesignContrast (DesignContrast const & dc);
-
 	/// @brief default de-constructor
 	virtual ~DesignContrast(){
 		clear();

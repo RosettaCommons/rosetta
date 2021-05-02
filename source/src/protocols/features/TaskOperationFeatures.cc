@@ -22,7 +22,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/Energies.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.hh>

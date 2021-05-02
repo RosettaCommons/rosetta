@@ -16,7 +16,9 @@
 #include <protocols/magnesium/MgWaterHydrogenPacker.hh>
 #include <protocols/magnesium/util.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
@@ -61,7 +63,6 @@ MgWaterHydrogenPacker::apply( pose::Pose & pose )
 	using namespace core::conformation;
 	using namespace core::chemical;
 	using namespace core::kinematics;
-	using namespace core::chemical::rna;
 
 	// go over all Mg(2+)-bound waters:
 	vector1< core::Size > mg_res_list( mg_res_list_ );

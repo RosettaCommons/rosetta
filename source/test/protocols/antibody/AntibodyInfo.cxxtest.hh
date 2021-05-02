@@ -23,6 +23,7 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRCluster.hh>
 #include <protocols/antibody/AntibodyNumberingConverterMover.hh>
 
 // Core Headers

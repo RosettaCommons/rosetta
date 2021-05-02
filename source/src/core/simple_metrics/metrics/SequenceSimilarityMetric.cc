@@ -65,16 +65,6 @@ SequenceSimilarityMetric::SequenceSimilarityMetric( select::residue_selector::Re
 
 SequenceSimilarityMetric::~SequenceSimilarityMetric(){}
 
-SequenceSimilarityMetric::SequenceSimilarityMetric( SequenceSimilarityMetric const & src):
-	RealMetric( src )
-{
-	selector_ = src.selector_;
-	native_pose_ = src.native_pose_;
-	apply_selector_to_native_ = src.apply_selector_to_native_;
-	normalize_ = src.normalize_;
-}
-
-
 std::string
 SequenceSimilarityMetric::name() const {
 	return name_static();

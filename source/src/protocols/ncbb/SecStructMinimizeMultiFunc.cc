@@ -36,7 +36,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 /// Utility headers
 #include <cmath>

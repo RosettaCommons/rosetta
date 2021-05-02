@@ -17,6 +17,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/id/AtomID_Map.hh>
 
 #include <platform/types.hh>

@@ -73,6 +73,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 
 #include <utility/vector1.hh>
 #include <utility/io/ozstream.hh>

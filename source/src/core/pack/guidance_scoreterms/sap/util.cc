@@ -19,7 +19,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>
 #include <core/pack/task/TaskFactory.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/packing/surf_vol.hh>
 #include <core/scoring/sasa.hh>
 #include <utility/pointer/memory.hh>

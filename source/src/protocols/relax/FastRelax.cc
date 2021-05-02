@@ -144,6 +144,7 @@ endrepeat
 
 //Core Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
 #include <core/io/silent/SilentStruct.hh>

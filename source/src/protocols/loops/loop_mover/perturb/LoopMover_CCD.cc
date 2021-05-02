@@ -25,6 +25,7 @@
 // Rosetta Headers
 #include <core/chemical/VariantType.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/id/TorsionID.hh>
 #include <core/kinematics/FoldTree.hh>

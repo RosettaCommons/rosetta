@@ -44,7 +44,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 // term specific headers
 #include <numeric/conversions.hh>

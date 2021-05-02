@@ -37,6 +37,7 @@
 #include <core/pose/selection.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>

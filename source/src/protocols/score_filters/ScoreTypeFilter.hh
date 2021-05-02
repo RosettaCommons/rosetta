@@ -27,6 +27,7 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/scoring/ScoreType.hh>
+#include <utility/pointer/deep_copy.hh>
 
 //Auto Headers
 
@@ -40,10 +41,6 @@ public:
 	/// @brief Constructor
 	///
 	ScoreTypeFilter();
-
-	/// @brief Copy constructor
-	///
-	ScoreTypeFilter( ScoreTypeFilter const &src );
 
 	/// @brief Constructor with parameters
 	///
@@ -92,7 +89,7 @@ public:
 private:
 	core::Real score_type_threshold_;
 	core::scoring::ScoreType score_type_;
-	core::scoring::ScoreFunctionOP scorefxn_;
+	utility::pointer::DeepCopyOP< core::scoring::ScoreFunction > scorefxn_;
 };
 
 }

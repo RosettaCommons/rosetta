@@ -26,6 +26,7 @@
 #include <protocols/loops/Loops.hh>
 
 // Core headers
+#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>

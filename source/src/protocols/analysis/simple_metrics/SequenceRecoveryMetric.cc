@@ -23,7 +23,9 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/select/util.hh>
 #include <core/sequence/SequenceProfile.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/ref_pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pack/task/xml_util.hh>
 
 #include <protocols/residue_selectors/TaskSelector.hh>

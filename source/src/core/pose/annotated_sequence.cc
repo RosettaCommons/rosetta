@@ -17,6 +17,7 @@
 #include <core/pose/annotated_sequence.hh>
 
 // Package Headers
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>

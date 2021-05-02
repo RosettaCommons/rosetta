@@ -36,7 +36,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/chemical/VariantType.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>

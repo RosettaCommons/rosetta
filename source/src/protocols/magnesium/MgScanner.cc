@@ -19,7 +19,9 @@
 #include <protocols/magnesium/minimize_util.hh>
 #include <protocols/magnesium/util.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>

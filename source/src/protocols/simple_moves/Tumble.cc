@@ -29,6 +29,7 @@
 #include <core/pose/selection.hh>
 #include <core/pose/ResidueIndexDescription.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/id/AtomID.hh>
 
 // task operation
 #include <core/pack/task/TaskFactory.hh>

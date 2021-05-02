@@ -57,7 +57,7 @@
 //Auto Headers
 #include <core/conformation/PointGraphData.hh>
 #include <utility/graph/UpperEdgeGraph.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <utility/thread/threadsafe_creation.hh>
 
 // Boost headers

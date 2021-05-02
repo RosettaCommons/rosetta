@@ -34,8 +34,6 @@
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 
-#include <basic/Tracer.hh>
-
 #include <boost/unordered/unordered_map.hpp>
 
 //possibily duplicate includes here
@@ -52,8 +50,6 @@
 
 namespace protocols {
 namespace loop_grower {
-
-static basic::Tracer TR("protocols.loop_grower.SheetSampler");
 
 class SheetSampler: public protocols::moves::Mover {
 	protocols::jumping::PairingLibraryOP instance_;

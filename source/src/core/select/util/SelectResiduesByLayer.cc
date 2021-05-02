@@ -36,7 +36,7 @@
 #include <fstream>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

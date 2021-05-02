@@ -15,6 +15,7 @@
 #include <protocols/hotspot_hashing/HotspotStubSet.hh>
 #include <protocols/hotspot_hashing/HotspotStub.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/PDBInfo.hh>
 

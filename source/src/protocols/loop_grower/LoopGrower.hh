@@ -51,8 +51,6 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzVector.io.hh>
 
-#include <basic/Tracer.hh>
-
 #include <boost/unordered/unordered_map.hpp>
 #include <core/id/SequenceMapping.hh>
 
@@ -62,8 +60,6 @@
 
 namespace protocols {
 namespace loop_grower {
-
-static basic::Tracer TRACER("protocols.loop_grower.LoopGrower");
 
 // 56 bytes
 struct ResTorsions {
@@ -163,30 +159,7 @@ public:
 
 	void write_beam(std::ostream &outbeam);
 
-	void apply( core::pose::Pose &pose, int range1lo, int range1hi, int range2lo, int range2hi ) {
-		int ctr = 0;
-
-		calphas_.clear();
-		for ( int i=range1lo; i<=range2hi; ++i ) {
-			if ( i < range2lo && i> range1hi ) continue;
-			ctr++;
-			ResTorsions const &res_i = residues_[ctr];
-			pose.set_phi( i, res_i.phi_ );
-			pose.set_psi( i, res_i.psi_ );
-			pose.set_omega( i, res_i.omega_ );
-			if ( !pose.is_centroid() && pose.conformation().residue_typeset_mode( true ) != core::chemical::CENTROID_ROT_t ) {
-				if ( res_i.nchi_ > 0 ) pose.set_chi( 1, i, res_i.chi1_ );
-				if ( res_i.nchi_ > 1 ) pose.set_chi( 2, i, res_i.chi2_ );
-				if ( res_i.nchi_ > 2 ) pose.set_chi( 3, i, res_i.chi3_ );
-				if ( res_i.nchi_ > 3 ) pose.set_chi( 4, i, res_i.chi4_ );
-			}
-		}
-
-		if ( ctr != (int)residues_.size() ) {
-			TRACER << "ctr and number of residues " << ctr << " " << residues_.size() << std::endl;
-		}
-		runtime_assert( ctr == (int)residues_.size() );
-	}
+	void apply( core::pose::Pose &pose, int range1lo, int range1hi, int range2lo, int range2hi );
 
 	void
 	apply_sheets(core::pose::Pose & pose);

@@ -29,6 +29,7 @@
 #include <core/id/PartialAtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoringManager.hh>

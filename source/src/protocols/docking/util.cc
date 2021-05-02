@@ -26,6 +26,7 @@
 #include <core/select/residue_selector/ChainSelector.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/types.hh>
 
 // Basic headers

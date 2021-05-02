@@ -26,7 +26,6 @@
 #include <core/conformation/Residue.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 
 // Utility headers
 #include <core/types.hh>

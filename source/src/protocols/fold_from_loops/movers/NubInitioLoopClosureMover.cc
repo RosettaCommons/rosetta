@@ -36,6 +36,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/ResConnID.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

@@ -13,7 +13,6 @@
 #include <core/types.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/util.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -52,7 +51,6 @@
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 
-#include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>

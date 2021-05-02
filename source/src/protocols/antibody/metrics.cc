@@ -29,10 +29,12 @@
 // Core
 //#include <core/pose/metrics/simple_calculators/SasaCalculator2.hh>
 #include <core/id/SequenceMapping.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/sequence/Sequence.hh>
 #include <core/sequence/util.hh>
 #include <core/scoring/sasa.hh>

@@ -28,6 +28,7 @@
 #include <core/io/silent/util.hh>
 #include <core/io/raw_data/DecoyFileData.hh>
 #include <core/io/raw_data/ScoreFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.fwd.hh>

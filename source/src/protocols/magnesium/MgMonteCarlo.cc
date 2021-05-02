@@ -18,6 +18,8 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

@@ -142,7 +142,7 @@ void SilentStruct::fill_pose(
 }
 
 void SilentStruct::fill_struct( core::pose::Pose const & pose,
-	std::string tag ) {
+	std::string const & tag ) {
 	decoy_tag( tag );
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );
 

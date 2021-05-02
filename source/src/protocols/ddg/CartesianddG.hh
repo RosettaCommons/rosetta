@@ -30,7 +30,6 @@
 
 //Auto Headers
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace ddg {
@@ -208,11 +207,11 @@ optimize_native(
 ///@brief Separates the two interfaces and then runs the optimazation calcuations and writes the results.
 void
 interface_separate_and_score(
-    MutationSet mutations, 
-    core::pose::Pose & work_pose, 
+    MutationSet mutations,
+    core::pose::Pose & work_pose,
     core::scoring::ScoreFunctionOP score_fxn,
     utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
+    const core::Size bbnbrs,
     const core::Size interface_ddg,
     bool flex_bb,
     bool cartesian,
@@ -222,13 +221,13 @@ interface_separate_and_score(
 ///@brief Runs a single mutation optimization and reporting iteration.
 void
 run_single_iteration(
-    MutationSet mutations, 
-    core::pose::Pose & work_pose, 
+    MutationSet mutations,
+    core::pose::Pose & work_pose,
     core::scoring::ScoreFunctionOP score_fxn,
     const core::Size round,
     utility::vector1< core::Size > neighbors,
-    const core::Size bbnbrs, 
-    const core::Size ncycles, 
+    const core::Size bbnbrs,
+    const core::Size ncycles,
     const core::Size interface_ddg,
     bool flex_bb,
     bool cartesian,

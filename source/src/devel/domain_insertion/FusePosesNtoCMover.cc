@@ -23,6 +23,7 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/import_pose/import_pose.hh>
@@ -34,6 +35,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/scoring/Energies.hh>

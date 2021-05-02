@@ -25,6 +25,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AA.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pack/rotamer_set/RotamerSet_.hh>

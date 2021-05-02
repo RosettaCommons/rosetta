@@ -59,9 +59,11 @@
 #include <core/fragment/ConstantLengthFragSet.hh>
 
 #include <core/import_pose/import_pose.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/scoring/rms_util.hh>
@@ -1029,7 +1031,7 @@ core::Real FragmentPicker::total_score(scores::FragmentScoreMapOP f, core::Size 
 }
 
 
-void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) {
+void FragmentPicker::read_ss_files(utility::vector1<std::string> const & sec_str_input) {
 	tr.Debug << sec_str_input.size() / 2 << " secondary structure assignment(s):\n";
 	for ( core::Size i = 1; i <= sec_str_input.size(); i += 2 ) {
 		tr.Debug << i / 2 << " " << sec_str_input[i]
@@ -1040,7 +1042,7 @@ void FragmentPicker::read_ss_files(utility::vector1<std::string> sec_str_input) 
 }
 
 void FragmentPicker::read_ss_file(std::string const & file_name,
-	std::string prediction_name) {
+	std::string const & prediction_name) {
 
 	utility::io::izstream data( file_name.c_str() );
 	if ( !data ) {

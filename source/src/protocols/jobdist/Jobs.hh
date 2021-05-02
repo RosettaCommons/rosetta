@@ -18,12 +18,11 @@
 
 #include <protocols/jobdist/Jobs.fwd.hh>
 
-#include <basic/Tracer.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <map>
 #include <iosfwd>
-
+#include <sstream>
 
 namespace protocols {
 namespace jobdist {

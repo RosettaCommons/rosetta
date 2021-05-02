@@ -41,7 +41,6 @@
 #include <ObjexxFCL/FArray2D.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
 #include <utility/VirtualBase.hh>
 
 //// C++ headers
@@ -49,9 +48,6 @@
 #include <string>
 
 #include <utility/vector1.hh>
-
-// Named oddly to prevent name conflicts with including .cc files (who may wish to define their own tracer).
-static basic::Tracer hh_tr( "protocols.jumping", basic::t_info );
 
 namespace protocols {
 namespace jumping {
@@ -178,11 +174,7 @@ public:
 	{ return jump_sample_; }
 
 	JumpSample
-	clean_jumps( JumpSample const& js ) const override
-	{
-		hh_tr.Error << "JumpSetup::clean_jumps() not implemented" << std::endl;
-		return js;
-	}
+	clean_jumps( JumpSample const& js ) const override;
 
 	void set_jump_sample( JumpSample const& jump_sample ) {
 		jump_sample_ = jump_sample;
@@ -307,10 +299,7 @@ public:
 	create_jump_sample( ) const override;
 
 	JumpSample
-	clean_jumps( JumpSample const& js ) const override {
-		hh_tr.Error << "JumpSelector::clean_jumps() is NOT IMPLEMENTED." << std::endl;
-		return js;
-	};
+	clean_jumps( JumpSample const& js ) const override;
 
 	void
 	set_secstruct( std::string ss ) {

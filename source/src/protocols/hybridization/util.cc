@@ -16,6 +16,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pack/task/PackerTask.hh>

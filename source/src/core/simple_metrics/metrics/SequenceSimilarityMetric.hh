@@ -37,8 +37,6 @@ public:
 
 	SequenceSimilarityMetric( select::residue_selector::ResidueSelectorCOP selector );
 
-	SequenceSimilarityMetric(SequenceSimilarityMetric const & src);
-
 	~SequenceSimilarityMetric() override;
 
 	core::Real

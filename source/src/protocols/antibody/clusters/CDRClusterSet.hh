@@ -20,7 +20,7 @@
 #include <protocols/antibody/clusters/CDRClusterMatcher.hh>
 
 #include <protocols/antibody/AntibodyEnum.hh>
-#include <protocols/antibody/AntibodyInfo.hh>
+#include <protocols/antibody/AntibodyInfo.fwd.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/types.hh>

@@ -300,25 +300,25 @@ private:
 	parse_perturber( utility::tag::TagCOP tag, basic::datacache::DataMap & data );
 
 	static std::string
-	build_denovo_backbone_ct_naming_func( std::string );
+	build_denovo_backbone_ct_naming_func( std::string const & );
 
 	static std::string
-	prefold_ct_naming_func( std::string );
+	prefold_ct_naming_func( std::string const & );
 
 	static std::string
-	postfold_ct_naming_func( std::string );
+	postfold_ct_naming_func( std::string const & );
 
 	static std::string
-	filters_ct_naming_func( std::string );
+	filters_ct_naming_func( std::string const & );
 
 	static std::string
-	connections_ct_naming_func( std::string );
+	connections_ct_naming_func( std::string const & );
 
 	static std::string
-	folder_ct_namer( std::string );
+	folder_ct_namer( std::string const & );
 
 	static std::string
-	perturber_ct_namer( std::string );
+	perturber_ct_namer( std::string const & );
 
 	static void
 	define_folder_group( utility::tag::XMLSchemaDefinition & );

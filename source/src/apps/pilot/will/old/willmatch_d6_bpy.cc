@@ -60,7 +60,7 @@
 
 //Auto Headers
 #include <platform/types.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <apps/pilot/will/will_util.ihh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

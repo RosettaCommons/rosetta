@@ -7,16 +7,15 @@
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
-/// @file   core/pose/util.hh
-/// @brief  Pose utilities
+/// @file   core/pose/init_id_map.hh
+/// @brief  Utilities to initialize ID Maps
 /// @author Phil Bradley
 /// @author Modified by Sergey Lyskov
 
-#ifndef INCLUDED_core_pose_util_TMPL_HH
-#define INCLUDED_core_pose_util_TMPL_HH
+#ifndef INCLUDED_core_pose_init_id_map_HH
+#define INCLUDED_core_pose_init_id_map_HH
 
 // Unit headers
-#include <core/pose/util.hh>
 
 // C/C++ headers
 #include <map>
@@ -213,4 +212,4 @@ inline void initialize_atomid_map_AtomID( id::AtomID_Map< id::AtomID > & atom_ma
 } // pose
 } // core
 
-#endif // INCLUDED_core_pose_util_HH
+#endif // INCLUDED_core_pose_init_id_map_HH

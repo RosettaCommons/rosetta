@@ -29,8 +29,6 @@
 
 #include <utility/vector1.hh>
 
-#include <basic/Tracer.hh>
-
 //possibily duplicate includes here
 #include <basic/basic.hh>
 #include <basic/database/open.hh>

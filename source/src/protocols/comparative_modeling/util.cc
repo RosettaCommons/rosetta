@@ -20,6 +20,7 @@
 #include <core/chemical/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
@@ -55,6 +56,7 @@
 
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/id/AtomID.hh>
 #include <core/sequence/Aligner.hh>
 #include <core/sequence/SWAligner.hh>
 #include <core/sequence/ScoringScheme.hh>

@@ -24,6 +24,7 @@
 
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/import_pose/import_pose.hh>
 #include <core/sequence/util.hh>

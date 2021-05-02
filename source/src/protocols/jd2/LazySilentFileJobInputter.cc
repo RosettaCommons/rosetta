@@ -19,6 +19,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/io/silent/SilentFileOptions.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <utility/file/FileName.hh>

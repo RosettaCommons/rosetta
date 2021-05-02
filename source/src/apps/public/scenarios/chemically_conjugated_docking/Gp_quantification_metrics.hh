@@ -18,7 +18,6 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
 
 #include <core/chemical/ResidueType.hh>
 

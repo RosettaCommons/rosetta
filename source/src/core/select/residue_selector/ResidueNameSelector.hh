@@ -48,9 +48,6 @@ public:
 	// derived from base class
 	ResidueNameSelector();
 
-	/// @brief Copy constructor
-	ResidueNameSelector( ResidueNameSelector const &src);
-
 	ResidueNameSelector( std::string const & res_name_str );
 	ResidueNameSelector( std::string const & res_name3_str, bool dummy );
 	~ResidueNameSelector() override;

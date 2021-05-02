@@ -19,7 +19,7 @@
 #include <basic/options/option.hh>
 #include <basic/options/keys/sasa.OptionKeys.gen.hh>
 
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.scoring.sasa.SasaCalc" );

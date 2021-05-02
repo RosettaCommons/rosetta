@@ -28,6 +28,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/VariantType.hh>

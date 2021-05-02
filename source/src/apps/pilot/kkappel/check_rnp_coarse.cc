@@ -39,6 +39,7 @@
 #include <core/io/silent/SilentFileData.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 //Utility Headers
 #include <basic/options/option.hh>

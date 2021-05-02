@@ -116,7 +116,7 @@ public:
 	) const override;
 
 	/// @brief opposite of fill_pose
-	void fill_struct( core::pose::Pose const & pose, std::string tag ) override;
+	void fill_struct( core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief for stepwise modeling, setup other_poses inside full_model_info
 	void

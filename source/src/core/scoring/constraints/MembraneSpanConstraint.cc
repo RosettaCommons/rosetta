@@ -19,6 +19,7 @@
 #include <core/scoring/constraints/MembraneSpanConstraint.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 //  -- REALLY?
 #include <core/scoring/ScoreType.hh>
 #include <basic/Tracer.hh>

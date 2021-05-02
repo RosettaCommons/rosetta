@@ -22,7 +22,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/types.hh>

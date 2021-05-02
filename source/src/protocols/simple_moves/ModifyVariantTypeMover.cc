@@ -23,6 +23,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/select/residue_selector/util.hh>

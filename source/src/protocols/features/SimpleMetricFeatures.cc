@@ -109,17 +109,17 @@ SimpleMetricFeatures::add_simple_metric( SimpleMetricCOP metric ){
 }
 
 void
-SimpleMetricFeatures::set_simple_metrics( vector1< SimpleMetricCOP > metrics ){
+SimpleMetricFeatures::set_simple_metrics( vector1< SimpleMetricCOP > const & metrics ){
 	metrics_ = metrics;
 }
 
 void
-SimpleMetricFeatures::set_table_name( std::string table_name ){
+SimpleMetricFeatures::set_table_name( std::string const & table_name ){
 	table_name_ = table_name;
 }
 
 void
-SimpleMetricFeatures::set_prefix_suffix( std::string prefix, std::string suffix){
+SimpleMetricFeatures::set_prefix_suffix( std::string const & prefix, std::string const & suffix){
 	prefix_ = prefix;
 	suffix_ = suffix;
 }

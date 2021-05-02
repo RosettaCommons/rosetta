@@ -45,6 +45,8 @@
 #include <numeric/alignment/QCPKernel.hh>
 #include <numeric/xyzVector.hh>
 
+#include <basic/Tracer.hh>
+
 #include <iostream>
 #include <sstream>
 #include <map>

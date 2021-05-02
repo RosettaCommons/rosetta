@@ -36,7 +36,6 @@
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
-#include <basic/Tracer.hh>
 #include <utility/string_util.hh>
 #include <numeric/xyzVector.hh>
 

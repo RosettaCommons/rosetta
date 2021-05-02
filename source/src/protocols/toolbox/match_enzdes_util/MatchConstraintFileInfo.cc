@@ -28,6 +28,7 @@
 #include <core/chemical/Patch.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/pose/variant_util.hh>
+#include <core/pose/Pose.hh>
 
 // Basic headers
 #include <basic/basic.hh>
@@ -121,19 +122,6 @@ GeomSampleInfo::GeomSampleInfo(
 	num_steps_(num_steps),
 	step_size_(0.0)
 { if ( num_steps_ != 0 ) step_size_ = tolerance_ / num_steps_; }
-
-// copy ctor
-GeomSampleInfo::GeomSampleInfo( GeomSampleInfo const & gsi ) :
-	VirtualBase( gsi ),
-	tag_(gsi.tag_),
-	function_tag_(gsi.function_tag_),
-	ideal_val_(gsi.ideal_val_),
-	tolerance_(gsi.tolerance_),
-	periodicity_(gsi.periodicity_),
-	force_const_(gsi.force_const_),
-	num_steps_(gsi.num_steps_),
-	step_size_(gsi.step_size_)
-{}
 
 GeomSampleInfo::~GeomSampleInfo() = default;
 

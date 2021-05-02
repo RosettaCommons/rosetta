@@ -65,7 +65,7 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/ncbb/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/cryst/util.hh>
 

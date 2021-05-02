@@ -22,6 +22,8 @@
 
 #include <core/chemical/VariantType.hh>
 #include <core/pose/variant_util.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 // Utility header
 #include <utility/tag/XMLSchemaGeneration.hh>

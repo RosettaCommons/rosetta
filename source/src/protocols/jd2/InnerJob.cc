@@ -53,18 +53,6 @@ InnerJob::InnerJob( core::pose::PoseCOP pose, std::string const & input_tag, cor
 	//TR.Trace << "Using InnerJob (base class) for JobDistributor" << std::endl;
 }
 
-/// @brief Copy constructor.
-///
-InnerJob::InnerJob( InnerJob const &src ) :
-	utility::VirtualBase(),
-	input_tag_(src.input_tag_),
-	optional_output_name_(""),
-	nstruct_max_(src.nstruct_max_),
-	pose_(src.pose_->clone()),
-	bad_( src.bad_ )
-{
-}
-
 InnerJob::~InnerJob()= default;
 
 /// @brief Return an owning pointer to a copy of this object.

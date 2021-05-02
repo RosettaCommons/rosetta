@@ -46,7 +46,6 @@
 #include <protocols/loops/loops_main.hh>
 
 #include <utility/VirtualBase.hh>
-#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace hybridization {

@@ -34,7 +34,6 @@
 
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 #include <map>
 
 // Utility headers

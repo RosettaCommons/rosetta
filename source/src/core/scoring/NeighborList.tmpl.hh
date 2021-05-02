@@ -28,6 +28,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <basic/prof.hh>
 #include <core/conformation/find_neighbors.hh>
 #include <core/conformation/PointGraph.hh>

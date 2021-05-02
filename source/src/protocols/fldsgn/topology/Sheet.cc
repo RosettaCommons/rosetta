@@ -36,7 +36,7 @@
 #include <utility/options/IntegerVectorOption.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <numeric/NumericTraits.hh>
 

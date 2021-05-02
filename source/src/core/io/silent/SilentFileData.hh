@@ -22,7 +22,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>
-#include <core/io/silent/SilentStruct.hh>
+#include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/io/silent/SharedSilentData.hh>
 #include <core/pose/full_model_info/FullModelParameters.hh>
 

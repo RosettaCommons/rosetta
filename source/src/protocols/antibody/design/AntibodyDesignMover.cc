@@ -16,6 +16,7 @@
 #include <protocols/antibody/design/AntibodyDesignMoverCreator.hh>
 
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/antibody/clusters/util.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/AntibodyEnum.hh>

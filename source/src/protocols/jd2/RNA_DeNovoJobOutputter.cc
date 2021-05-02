@@ -24,6 +24,7 @@
 #include <protocols/jd2/util.hh>
 #include <protocols/jd2/internal_util.hh>
 
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStructFactory.hh>

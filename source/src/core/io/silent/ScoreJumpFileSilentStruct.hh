@@ -70,7 +70,7 @@ public:
 	/// terms of conformation. Doesn't check energies.
 	ScoreJumpFileSilentStruct & operator= (
 		ScoreJumpFileSilentStruct const & src
-	);
+	) = delete; // Not sure why it's an error to use.
 
 	/// @brief Tells this ScoreJumpFileSilentStruct object to initialize itself from the given set of lines.
 	/// Only initializes energies.
@@ -91,7 +91,7 @@ public:
 	/// @brief opposite of fill_pose
 	void fill_struct(
 		core::pose::Pose const & pose,
-		std::string tag
+		std::string const & tag
 	) override;
 
 	/// @brief Prints the conformation information within this ScoreJumpFileSilentStruct
@@ -118,7 +118,7 @@ public:
 		return jumps_[ jump_num ];
 	}
 
-	void fold_tree( kinematics::FoldTree f ) {
+	void fold_tree( kinematics::FoldTree const & f ) {
 		fold_tree_ = f;
 	}
 

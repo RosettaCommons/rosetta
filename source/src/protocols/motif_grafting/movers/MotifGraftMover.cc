@@ -38,13 +38,17 @@
 #include <utility/exit.hh>
 
 //Include Rosetta Core Stuff
+#include <core/id/AtomID.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/xyzStripeHashPose.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

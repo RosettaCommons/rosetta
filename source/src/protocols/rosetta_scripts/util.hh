@@ -42,7 +42,6 @@
 #include <utility/vector1.hh>
 
 // Basic headers
-#include <basic/Tracer.hh>
 #include <basic/datacache/DataMap.hh>
 
 // C++ headers

@@ -48,6 +48,7 @@
 #include <core/fragment/Frame.fwd.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>

@@ -18,7 +18,7 @@
 
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
-#include <protocols/pockets/Fingerprint.hh>
+#include <protocols/pockets/Fingerprint.fwd.hh>
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>

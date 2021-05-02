@@ -35,6 +35,7 @@
 #include <protocols/rosetta_scripts/ParsedProtocol.hh>
 
 // Project Headers
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>

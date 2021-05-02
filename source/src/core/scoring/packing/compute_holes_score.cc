@@ -15,6 +15,7 @@
 #include <basic/options/option.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>  // REQUIRED FOR WINDOWS
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/packing/compute_holes_score.hh>
 #include <core/scoring/packing/PoseBalls.hh>
 #include <basic/database/open.hh>
@@ -33,14 +34,9 @@
 #ifndef WIN32
 #ifndef  __native_client__
 #include <pstream.h>
-
-//Auto Headers
-#include <core/pose/util.tmpl.hh>
-#include <boost/math/special_functions/fpclassify.hpp>
-
-
 #endif
 #endif
+
 
 static basic::Tracer TR( "core.scoring.packing.compute_holes_score" );
 

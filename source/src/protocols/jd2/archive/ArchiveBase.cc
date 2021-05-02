@@ -15,6 +15,7 @@
 #include <protocols/jd2/archive/ArchiveBase.hh>
 #include <protocols/jd2/archive/ArchiveManager.hh>
 
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

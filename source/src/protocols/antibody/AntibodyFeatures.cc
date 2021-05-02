@@ -20,7 +20,9 @@
 
 //Core Headers
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/PointGraph.hh>
 #include <core/conformation/PointGraphData.hh>
 #include <core/conformation/find_neighbors.hh>

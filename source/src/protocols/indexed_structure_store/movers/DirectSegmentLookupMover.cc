@@ -33,6 +33,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <basic/Tracer.hh>
+
 static basic::Tracer TR( "protocols::indexed_structure_store::movers::DirectSegmentLookupMover" );
 
 namespace protocols { namespace indexed_structure_store { namespace  movers {

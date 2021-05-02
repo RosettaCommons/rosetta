@@ -20,6 +20,7 @@
 #include <core/scoring/dssp/PairingsList.hh>
 #include <core/scoring/dssp/StrandPairing.hh>
 
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/silent.fwd.hh>

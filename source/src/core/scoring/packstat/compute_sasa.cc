@@ -53,7 +53,7 @@
 #include <ObjexxFCL/format.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 //Auto using namespaces
 #ifdef    SERIALIZATION
 // Utility serialization headers

@@ -12,7 +12,7 @@
 #include <core/kinematics/Stub.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/dssp/Dssp.hh>

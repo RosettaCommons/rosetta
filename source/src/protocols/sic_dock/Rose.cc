@@ -26,6 +26,7 @@
 #include <core/scoring/sasa.hh>
 #include <core/pose/util.hh>
 #include <core/pose/xyzStripeHashPose.hh>
+#include <core/chemical/ResidueType.hh>
 
 namespace protocols {
 namespace sic_dock {

@@ -23,6 +23,7 @@
 ///Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

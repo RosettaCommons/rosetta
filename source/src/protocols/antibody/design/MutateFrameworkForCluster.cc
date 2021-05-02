@@ -19,6 +19,7 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/clusters/util.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>

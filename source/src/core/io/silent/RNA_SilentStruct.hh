@@ -135,7 +135,7 @@ public:
 	//) const;
 
 	/// @brief opposite of fill_pose
-	void fill_struct( core::pose::Pose const & pose, std::string tag ) override;
+	void fill_struct( core::pose::Pose const & pose, std::string const & tag ) override;
 
 	/// @brief print header information
 	void print_header( std::ostream& out ) const override;

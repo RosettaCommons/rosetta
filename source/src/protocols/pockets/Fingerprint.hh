@@ -18,7 +18,7 @@
 #include <protocols/pockets/Fingerprint.fwd.hh>
 #include <protocols/pockets/PocketGrid.fwd.hh>
 #include <protocols/pockets/PocketGrid.hh>
-#include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
+#include <protocols/pockets/DarcParticleSwarmMinimizer.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>

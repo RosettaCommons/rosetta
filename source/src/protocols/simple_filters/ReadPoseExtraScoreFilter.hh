@@ -36,11 +36,8 @@ public:
 	/// @brief Constructor
 	ReadPoseExtraScoreFilter();
 
-	/// @brief Copy constructor
-	ReadPoseExtraScoreFilter( ReadPoseExtraScoreFilter const & src );
-
 	/// @brief Constructor with parameters
-	ReadPoseExtraScoreFilter( std::string term, core::Real threshold );
+	ReadPoseExtraScoreFilter( std::string const & term, core::Real threshold );
 
 	~ReadPoseExtraScoreFilter() override;
 

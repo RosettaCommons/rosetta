@@ -913,11 +913,11 @@ std::string FoldArchitectMover::mover_name() {
 	return "FoldArchitect";
 }
 
-std::string FoldArchitectMover::folder_ct_namer( std::string folder_name ){
+std::string FoldArchitectMover::folder_ct_namer( std::string const & folder_name ){
 	return "denovo_folder_" + folder_name + "_complex_type";
 }
 
-std::string FoldArchitectMover::perturber_ct_namer( std::string perturber_name ){
+std::string FoldArchitectMover::perturber_ct_namer( std::string const & perturber_name ){
 	return "denovo_perturber_" + perturber_name + "_complex_type";
 }
 
@@ -930,19 +930,19 @@ std::string FoldArchitectMover::perturber_group_name(){
 }
 
 
-std::string FoldArchitectMover::build_denovo_backbone_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::build_denovo_backbone_ct_naming_func( std::string const & subelement_name ){
 	return "build_denovo_backbone_" + subelement_name + "_complex_type";
 }
 
-std::string FoldArchitectMover::prefold_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::prefold_ct_naming_func( std::string const & subelement_name ){
 	return "denovo_prefold_" + subelement_name + "_complex_type";
 }
 
-std::string FoldArchitectMover::postfold_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::postfold_ct_naming_func( std::string const & subelement_name ){
 	return "denovo_postfold_" + subelement_name + "_complex_type";
 }
 
-std::string FoldArchitectMover::filters_ct_naming_func( std::string subelement_name ){
+std::string FoldArchitectMover::filters_ct_naming_func( std::string const & subelement_name ){
 	return "denovo_filters_" + subelement_name + "_complex_type";
 }
 

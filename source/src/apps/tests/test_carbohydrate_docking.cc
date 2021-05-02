@@ -45,7 +45,7 @@ std::string const PATH( "input/" );
 
 void
 setup_docking_ft_with_randomization( core::pose::Pose & prot_glyc_complex,
-	std::string const interface /*A_X*/ )
+	std::string const & interface /*A_X*/ )
 {
 	std::cout << " FoldTree before setup_foldtree:" << std::endl;
 	std::cout << prot_glyc_complex.fold_tree() << std::endl;

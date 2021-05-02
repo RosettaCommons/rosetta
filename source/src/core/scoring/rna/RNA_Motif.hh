@@ -22,7 +22,9 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/rna/RNA_BasePairClassifier.hh>
-#include <core/pose/util.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
+
 #include <core/pose/rna/RNA_FilteredBaseBaseInfo.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/rna/RNA_LowResolutionPotential.hh>

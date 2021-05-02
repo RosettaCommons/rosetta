@@ -123,7 +123,7 @@
 //Auto Headers
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <protocols/relax/FastRelax.hh>
 #include <protocols/relax/MiniRelax.hh>

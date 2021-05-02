@@ -22,7 +22,6 @@
 #include <utility/pointer/owning_ptr.hh>
 
 // #include <ObjexxFCL/format.hh>
-// #include <basic/Tracer.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

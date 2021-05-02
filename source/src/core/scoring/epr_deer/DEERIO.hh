@@ -25,7 +25,6 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <numeric/xyzVector.hh>
-#include <basic/Tracer.hh>
 #include <utility/fixedsizearray1.hh>
 #include <iosfwd>
 #include <string>

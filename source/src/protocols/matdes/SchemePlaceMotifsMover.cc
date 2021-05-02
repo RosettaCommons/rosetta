@@ -16,7 +16,10 @@
 #include <protocols/matdes/SchemePlaceMotifsMoverCreator.hh>
 #include <core/scoring/motif/motif_hash_stuff.hh>
 #include <utility/tag/Tag.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <basic/Tracer.hh>
 #include <numeric/random/random.hh>
 #include <ObjexxFCL/string.functions.hh>

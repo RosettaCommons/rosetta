@@ -75,14 +75,6 @@ Filter::Filter( std::string const & type )
 	scorename_("defaultscorename")
 {}
 
-Filter::Filter( Filter const & init )
-: utility::VirtualBase(),
-	type_( init.type_ ),
-	user_defined_name_( init.user_defined_name_ ),
-	scorename_("defaultscorename")
-
-{}
-
 Filter::~Filter() = default;
 
 void

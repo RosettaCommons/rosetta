@@ -43,6 +43,7 @@
 
 #include <basic/options/keys/holes.OptionKeys.gen.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/scoring/packing/PoseBalls.hh>

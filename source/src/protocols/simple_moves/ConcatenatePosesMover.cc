@@ -64,14 +64,6 @@ ConcatenatePosesMover::ConcatenatePosesMover():
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-ConcatenatePosesMover::ConcatenatePosesMover( ConcatenatePosesMover const & src ):
-	protocols::moves::Mover( src )
-{
-	component_file_ = src.get_component_file();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 ConcatenatePosesMover::~ConcatenatePosesMover(){}
 
@@ -284,7 +276,7 @@ std::string ConcatenatePosesMover::mover_name() {
 std::string ConcatenatePosesMover::get_component_file() const {
 	return component_file_;
 }
-void ConcatenatePosesMover::set_component_file( std::string new_component_file ) {
+void ConcatenatePosesMover::set_component_file( std::string const & new_component_file ) {
 	component_file_ = new_component_file;
 }
 

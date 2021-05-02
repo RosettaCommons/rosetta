@@ -86,9 +86,6 @@ public:
 		core::Size num_steps = 0
 	);
 
-	// copy ctor
-	GeomSampleInfo( GeomSampleInfo const & gsi );
-
 	~GeomSampleInfo() override;
 
 	/// @brief data reading routine

@@ -21,7 +21,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 // Utility headers
-#include <basic/Tracer.hh>
+#include <basic/Tracer.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

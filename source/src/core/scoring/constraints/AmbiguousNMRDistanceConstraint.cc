@@ -21,6 +21,8 @@
 #include <core/scoring/func/FuncFactory.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
+#include <core/conformation/Residue.hh>
+
 // Project Headers
 #include <core/chemical/ResidueType.hh>
 #include <core/id/NamedAtomID.hh>

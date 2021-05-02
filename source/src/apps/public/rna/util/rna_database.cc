@@ -620,7 +620,6 @@ create_base_pair_step_database_test( ){
 		pose::Pose pose;
 		core::import_pose::pose_from_file( pose, *rsd_set, std::string( option[ in::path::pdb ](1) ) + infile , core::import_pose::PDB_file);
 		core::pose::rna::figure_out_reasonable_rna_fold_tree( pose );
-		std::string const sequence = pose.sequence();
 
 		if ( option[ general_bps ]() ) {
 			output_general_base_pair_steps( pose, intag );

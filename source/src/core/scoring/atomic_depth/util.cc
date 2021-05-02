@@ -14,7 +14,7 @@
 
 #include <core/scoring/atomic_depth/util.hh>
 
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 
 namespace core {

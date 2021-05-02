@@ -23,7 +23,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-
+#include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>

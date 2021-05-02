@@ -47,7 +47,6 @@
 
 #include <utility/excn/Exceptions.hh>
 
-#include <basic/Tracer.hh>
 #include <basic/basic.hh>
 #include <basic/database/open.hh>
 

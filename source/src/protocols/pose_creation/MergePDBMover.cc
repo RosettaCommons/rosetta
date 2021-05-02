@@ -59,6 +59,7 @@ static basic::Tracer TR( "protocols.pose_creation.MergePDBMover" );
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/init_id_map.hh>
 #include <protocols/simple_moves/SwitchResidueTypeSetMover.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/selection.hh>

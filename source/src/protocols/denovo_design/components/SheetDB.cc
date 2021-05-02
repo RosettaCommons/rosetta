@@ -25,12 +25,14 @@
 #include <protocols/toolbox/pose_manipulation/pose_manipulation.hh>
 
 // Core Headers
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <utility/graph/Graph.hh>
 #include <utility/graph/graph_util.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/PDBInfo.hh>

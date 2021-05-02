@@ -29,6 +29,8 @@
 #include <core/chemical/AA.hh>
 
 // Package Headers
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/types.hh>

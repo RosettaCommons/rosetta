@@ -21,7 +21,10 @@
 #include <core/scoring/sc/ElectrostaticSimilarityCalculator.hh>
 #include <core/select/residue_selector/ResidueVector.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
+#include <core/conformation/Residue.hh>
 
 #include <numeric/statistics/functions.hh>
 #include <ObjexxFCL/FArray1D.hh>

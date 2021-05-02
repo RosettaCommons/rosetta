@@ -24,6 +24,7 @@
 #include <protocols/antibody/util.hh>
 #include <protocols/grafting/util.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
 #include <core/scoring/rms_util.tmpl.hh>

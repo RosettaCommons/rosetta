@@ -17,6 +17,7 @@
 
 // Project headers
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/Conformation.hh>
 #include <protocols/scoring/Interface.fwd.hh>
 #include <protocols/scoring/Interface.hh>
 #include <core/scoring/sc/ShapeComplementarityCalculator.hh>

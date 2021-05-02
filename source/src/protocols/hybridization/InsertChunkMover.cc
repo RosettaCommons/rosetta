@@ -17,7 +17,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

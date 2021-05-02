@@ -42,6 +42,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/chains_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/symmetry/util.hh>

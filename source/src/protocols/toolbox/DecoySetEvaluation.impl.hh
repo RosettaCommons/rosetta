@@ -20,6 +20,7 @@
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>
+#include <core/io/silent/SilentStruct.hh>
 
 #include <utility/vector1.hh>
 

@@ -31,6 +31,8 @@
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
 
+#include <core/conformation/Residue.hh>
+
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/VariantType.hh>
 

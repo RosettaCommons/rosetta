@@ -27,6 +27,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/Conformation.hh>
 \
 	// Protocols headers
 	#include <protocols/simple_moves/MutateResidue.hh> //To let me introduce a mutation easily

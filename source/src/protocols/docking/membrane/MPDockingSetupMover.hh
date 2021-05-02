@@ -35,7 +35,6 @@
 // Utility Headers
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
-#include <basic/Tracer.hh>
 
 // C++ Headers
 #include <cstdlib>

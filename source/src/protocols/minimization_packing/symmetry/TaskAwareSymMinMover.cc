@@ -39,6 +39,7 @@
 
 #include <utility>
 #include <utility/tag/Tag.hh>
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

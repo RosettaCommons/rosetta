@@ -18,6 +18,7 @@
 #include <core/pose/toolbox/AtomLevelDomainMap.hh>
 #include <core/pose/toolbox/AtomID_Mapper.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/copydofs/util.hh>
 #include <core/kinematics/Jump.hh>

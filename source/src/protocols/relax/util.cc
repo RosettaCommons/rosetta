@@ -29,6 +29,7 @@
 #include <core/scoring/electron_density/util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>

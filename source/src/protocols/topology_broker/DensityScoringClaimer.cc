@@ -17,6 +17,7 @@
 
 // Package Headers
 #include <protocols/topology_broker/claims/DofClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.hh>
 #include <protocols/topology_broker/claims/BBClaim.hh>
 #include <protocols/topology_broker/claims/LegacyRootClaim.hh>
 #include <protocols/topology_broker/claims/JumpClaim.hh>

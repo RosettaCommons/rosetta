@@ -57,6 +57,8 @@
 #include <protocols/minimization_packing/RotamerTrialsMinMover.hh>
 #include <protocols/simple_moves/RandomTorsionMover.hh>
 
+#include <basic/Tracer.hh>
+
 //#include <protocols/moves/PyMOLMover.hh>
 
 // C++ headers

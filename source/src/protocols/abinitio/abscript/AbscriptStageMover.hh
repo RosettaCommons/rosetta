@@ -18,7 +18,7 @@
 
 // Package headers
 #include <protocols/abinitio/abscript/StageID.hh>
-#include <protocols/abinitio/abscript/AbscriptMover.hh>
+#include <protocols/abinitio/abscript/AbscriptMover.fwd.hh>
 #include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 #include <protocols/environment/ClientMover.hh>

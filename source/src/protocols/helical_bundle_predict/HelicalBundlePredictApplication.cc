@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -31,6 +32,7 @@
 #include <core/scoring/Energies.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/import_pose/import_pose.hh>

@@ -24,10 +24,12 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/rna/RNA_FittedTorsionInfo.hh>
 #include <core/chemical/rna/RNA_Info.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/id/TorsionID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/tree/Atom.hh>

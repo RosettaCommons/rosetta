@@ -21,6 +21,7 @@
 
 #include <protocols/antibody/database/CDRSetOptions.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
 #include <protocols/antibody/design/util.hh>
 #include <protocols/antibody/design/CDRSeqDesignOptions.hh>

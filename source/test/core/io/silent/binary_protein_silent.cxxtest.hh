@@ -18,6 +18,7 @@
 #include <test/core/init_util.hh>
 #include <test/UTracer.hh>
 
+#include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>

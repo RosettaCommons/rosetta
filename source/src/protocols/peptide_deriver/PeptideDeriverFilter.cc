@@ -37,6 +37,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/util.hh>
 #include <core/pose/metrics/simple_calculators/InterfaceNeighborDefinitionCalculator.hh>
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/select/residue_selector/ChainSelector.hh>

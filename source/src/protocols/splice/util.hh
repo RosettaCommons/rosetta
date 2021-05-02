@@ -31,7 +31,7 @@
 #include <set>
 
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
+
 namespace protocols {
 namespace splice {
 core::Size nearest_to_entry_stop_on_pose (core::pose::Pose const & pose,core::pose::Pose const & template_pose,core::Size residue,std::string tail_segment, std::string protein_family,core::Size chain,std::string segment);

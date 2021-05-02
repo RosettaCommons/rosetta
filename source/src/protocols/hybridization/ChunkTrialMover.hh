@@ -35,8 +35,6 @@
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 
-#include <basic/Tracer.hh>
-
 #include <set>
 
 namespace protocols {

@@ -47,7 +47,6 @@ public:
 
 	/// @brief Constructor.
 	NativeSelector();
-	NativeSelector( NativeSelector const & src);
 
 	/// @brief Constructor that calls set_residue_selector()
 	NativeSelector( core::select::residue_selector::ResidueSelectorCOP inner_selector );

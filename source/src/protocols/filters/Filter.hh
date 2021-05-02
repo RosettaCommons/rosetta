@@ -50,7 +50,6 @@ class Filter : public utility::VirtualBase {
 public:
 	Filter();
 	Filter( std::string const & );
-	Filter( Filter const & );
 	~Filter() override;
 	// allows reporting of filter values to a stream
 	virtual void report( std::ostream &, core::pose::Pose const & ) const {}

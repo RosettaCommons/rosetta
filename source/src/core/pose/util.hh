@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.tmpl.hh>
 #include <core/pose/MiniPose.fwd.hh>
 
 // Project headers
@@ -36,15 +35,15 @@
 #include <core/id/SequenceMapping.fwd.hh>
 #include <core/io/StructFileRep.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
-#include <core/kinematics/Jump.hh>
+#include <core/kinematics/Jump.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/kinematics/RT.fwd.hh>
 #include <core/kinematics/tree/Atom.fwd.hh>
 #include <core/scoring/ScoreType.hh>
 
 // Utility headers
-#include <numeric/xyzVector.hh>
-#include <utility/vector1.hh>
+#include <numeric/xyzVector.fwd.hh>
+#include <utility/vector1.fwd.hh>
 
 // C/C++ headers
 #include <map>
@@ -259,60 +258,6 @@ mass(
 	core::Size const end,
 	core::pose::Pose const & pose
 );
-
-/// @brief Initialize a DOF_ID_Map for a given Pose using the DOF_ID_Map's current default fill values
-template< typename T >
-void
-initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose );
-
-/// @brief Initialize a DOF_ID_Map for a given Pose using a specified fill value
-template< typename T >
-void
-initialize_dof_id_map( id::DOF_ID_Map< T > & dof_map, Pose const & pose, T const & value );
-
-/// @brief returns a Distance
-core::Real
-pose_max_nbr_radius( pose::Pose const & pose );
-
-/// @brief Initialize an AtomID_Map for a given Pose using the AtomID_Map's current default fill values
-template< typename T >
-void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose );
-
-/// @brief Initialize an AtomID_Map for a given Pose using a specified fill value
-template< typename T >
-void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value );
-
-/// @brief Initialize an AtomID_Map for a given Conformation using the AtomID_Map's current default fill values
-template< typename T >
-void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation );
-
-/// @brief Initialize an AtomID_Map for a given Conformation using a specified fill value
-template< typename T >
-void
-initialize_atomid_map( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
-
-/// @brief Initialize an AtomID_Map for a given Pose using the AtomID_Map's current default fill values
-template< typename T >
-void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose );
-
-/// @brief Initialize an AtomID_Map for a given Pose using a specified fill value
-template< typename T >
-void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, pose::Pose const & pose, T const & value );
-
-/// @brief Initialize an AtomID_Map for a given Conformation using the AtomID_Map's current default fill values
-template< typename T >
-void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation );
-
-/// @brief Initialize an AtomID_Map for a given Conformation using a specified fill value
-template< typename T >
-void
-initialize_atomid_map_heavy_only( id::AtomID_Map< T > & atom_map, conformation::Conformation const & conformation, T const & value );
 
 /// @brief detect and fix disulfide bonds
 void

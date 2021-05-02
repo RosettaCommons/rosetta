@@ -32,7 +32,7 @@
 //#include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
 #include <string>
-#include <basic/Tracer.hh>
+#include <sstream>
 
 #ifdef    SERIALIZATION
 // Cereal headers

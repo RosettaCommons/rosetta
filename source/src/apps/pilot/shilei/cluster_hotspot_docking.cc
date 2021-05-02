@@ -36,6 +36,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <protocols/docking/metrics.hh>
 
 #include <utility/exit.hh>

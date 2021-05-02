@@ -23,6 +23,7 @@
 #include <core/pose/Pose.hh>
 //#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Conformation.hh>
 
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

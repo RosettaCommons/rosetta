@@ -48,7 +48,7 @@
 #include <utility/vector1.hh>
 
 // Basic Headers
-#include <basic/Tracer.hh>
+#include <basic/Tracer.fwd.hh>
 
 // C++ headers
 #include <stdio.h>
@@ -164,11 +164,11 @@ public:
 	/// ------------- Public Methods ---------------------
 
 	/// @brief Set the sort type, by string.
-	///	
+	///
 	void set_sort_type( std::string const &sort_type );
 
 	/// @brief Set the sort type, by enum.
-	///	
+	///
 	void set_sort_type( HIERARCHICAL_HYBRID_JD_MPI_SORT_TYPE const sort_type );
 
 	/// @brief Set the ouput fraction.
@@ -193,7 +193,7 @@ protected:
 		utility::vector1 < core::io::silent::SilentStructOP > &all_output,
 		core::scoring::ScoreFunctionOP sfxn,
 		core::pose::PoseCOP native,
-		std::string const &sequence	
+		std::string const &sequence
 	) const = 0;
 
 	/// @brief Compute the RMSD between a pose and a reference pose.
@@ -343,7 +343,7 @@ private:
 
 	/// @brief Send the number of jobs attempted by this nodes or all of the nodes below this node.
 	///
-	void send_jobs_attempted_count( core::Size const total_jobs_attempted,	int const target_node) const;	
+	void send_jobs_attempted_count( core::Size const total_jobs_attempted,	int const target_node) const;
 
 	/// @brief Recieve a sorted list of job summaries, and merge them with an existing sorted list to make a combined sorted list.
 	/// @details To be used in conjunction with send_job_summaries().  Sending and receiving procs must send messages to synchronize, first.
@@ -600,7 +600,7 @@ private:
 	void
 	worker_compute_pnear_to_lowest_fract(
 		utility::vector1< HierarchicalHybridJD_JobResultsSummaryCOP > const & jobsummaries,
-		utility::vector1 < core::io::silent::SilentStructCOP > const & all_output 
+		utility::vector1 < core::io::silent::SilentStructCOP > const & all_output
 	) const;
 
 	/// @brief Given a list of jobs that have been requested from above, send the corresponding poses up the hierarchy.
@@ -645,7 +645,7 @@ private:
 	mutable core::Size worker_job_count_;
 
 	/// @brief The default scorefunction to use.
-	/// @details The high-hbond version is constructed from this one. 
+	/// @details The high-hbond version is constructed from this one.
 	/// If necessary, the aa_composition score term will be turned on
 	/// in that one; it needn't be turned on in this one.
 	core::scoring::ScoreFunctionOP scorefxn_;
@@ -667,7 +667,7 @@ private:
 	core::Size batchsize_;
 
 	/// @brief The process indices of the children of the current process.
-	/// @details Will be empty for worker processes.	
+	/// @details Will be empty for worker processes.
 	utility::vector1 < int > my_children_;
 
 	/// @brief The process index of the parent of the current process.

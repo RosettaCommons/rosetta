@@ -22,6 +22,7 @@
 #include <core/select/residue_selector/ResidueRanges.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/select/residue_selector/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/variant_util.hh>
 

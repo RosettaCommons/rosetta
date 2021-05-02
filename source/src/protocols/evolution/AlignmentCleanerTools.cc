@@ -19,7 +19,7 @@
 #include <protocols/minimization_packing/PackRotamersMover.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/ScoreFunction.hh>
-
+#include <basic/Tracer.hh>
 
 
 namespace protocols {
@@ -115,7 +115,6 @@ short_ss_loop_filter( std::string ss, core::Size min_loop_length)
 	}
 
 	// Mutate ss where loop is short (<=min_loop_dist) to R
-	std::string const min_loop(min_loop_length, min_loop_length);
 	for ( core::Size i=0; i < ss.size() - window_size + 1; ++i ) {
 		std::string window_ss = ss.substr(i, window_size);
 

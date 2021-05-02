@@ -16,6 +16,7 @@
 #include <protocols/stepwise/monte_carlo/mover/TransientCutpointHandler.hh>
 
 #include <core/types.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/scoring/ScoreFunction.hh>
@@ -141,7 +142,7 @@ TransientCutpointHandler::prepare_fold_tree_for_erraser( core::pose::Pose & pose
 void
 TransientCutpointHandler::take_out_cutpoints(
 #ifdef GL_GRAPHICS
-	core::pose::Pose & viewer_pose 
+	core::pose::Pose & viewer_pose
 #else
 	core::pose::Pose & pose
 #endif

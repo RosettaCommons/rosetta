@@ -19,6 +19,8 @@
 //Project Headers
 #include <basic/Tracer.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/conformation/Residue.hh>
 //#include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/util.hh>
 

@@ -15,7 +15,7 @@
 #define INCLUDED_core_fragment_rna_RNA_FragmentHomologyExclusion_HH
 
 #include <core/fragment/rna/RNA_Fragments.fwd.hh>
-#include <core/fragment/rna/FullAtomRNA_Fragments.hh>
+#include <core/fragment/rna/FullAtomRNA_Fragments.fwd.hh>
 #include <core/types.hh>
 #include <set>
 

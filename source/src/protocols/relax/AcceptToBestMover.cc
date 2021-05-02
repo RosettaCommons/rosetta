@@ -38,7 +38,7 @@
 #include <cereal/types/map.hpp>
 #include <cereal/types/utility.hpp>
 #include <cereal/details/helpers.hpp>
-
+#include <basic/datacache/BasicDataCache.hh>
 #endif
 
 static  basic::Tracer TR( "protocols.relax.AcceptToBestMover" );

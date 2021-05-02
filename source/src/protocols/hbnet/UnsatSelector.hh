@@ -24,9 +24,6 @@
 // Basic Headers
 #include <basic/datacache/DataMap.hh>
 
-//Tracer headers
-#include <basic/Tracer.hh>
-
 // Package headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
@@ -35,7 +32,6 @@
 // Utility Headers
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
-#include <basic/Tracer.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

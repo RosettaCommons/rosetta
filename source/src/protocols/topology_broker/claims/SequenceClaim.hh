@@ -20,7 +20,6 @@
 #include <protocols/topology_broker/claims/SequenceClaim.fwd.hh>
 
 // Package Headers
-#include <protocols/topology_broker/TopologyClaimer.hh>
 #include <protocols/topology_broker/TopologyClaimer.fwd.hh>
 #include <protocols/topology_broker/claims/DofClaim.hh>
 

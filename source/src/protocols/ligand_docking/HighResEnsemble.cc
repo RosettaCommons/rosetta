@@ -33,7 +33,7 @@
 #include <basic/options/keys/docking.OptionKeys.gen.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>

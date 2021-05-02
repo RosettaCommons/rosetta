@@ -19,6 +19,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/kinematics/MoveMap.hh>

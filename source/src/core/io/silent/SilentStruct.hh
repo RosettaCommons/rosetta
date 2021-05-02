@@ -22,7 +22,7 @@
 #include <core/io/silent/SilentEnergy.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 
-#include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentFileData.fwd.hh>
 
 // mini headers
 #include <core/types.hh>
@@ -117,7 +117,7 @@ public:
 	/// protein SilentStructs
 	virtual void fill_struct(
 		core::pose::Pose const & pose,
-		std::string tag = "empty_tag"
+		std::string const & tag = "empty_tag"
 	);
 
 	/// @brief calls optH if command line requests optH.

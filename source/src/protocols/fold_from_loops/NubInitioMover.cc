@@ -58,6 +58,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/util/disulfide_util.hh>
 #include <core/conformation/util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/kinematics/MoveMap.hh>

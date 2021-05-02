@@ -90,7 +90,7 @@ void PDBSilentStruct::print_header( std::ostream & out ) {
 
 void PDBSilentStruct::fill_struct(
 	core::pose::Pose const & pose,
-	std::string tag
+	std::string const & tag
 ) {
 	decoy_tag( tag );
 	if ( tag == "empty_tag" ) set_tag_from_pose( pose );

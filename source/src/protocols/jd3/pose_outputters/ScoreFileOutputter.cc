@@ -36,6 +36,8 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/options/keys/OptionKeyList.hh>
 
+#include <sstream>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/vector1.srlz.hh>

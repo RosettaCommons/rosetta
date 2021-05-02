@@ -55,6 +55,7 @@
 #include <core/fragment/picking_old/FragmentLibraryManager.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/scoring/Energies.hh>

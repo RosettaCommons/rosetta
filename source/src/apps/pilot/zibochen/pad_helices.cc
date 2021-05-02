@@ -69,7 +69,7 @@
 #include <core/pose/Pose.hh>
 //#include <core/pose/Remarks.hh>
 #include <core/pose/symmetry/util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/util.hh>
 
 //#include <core/scoring/EnergyGraph.hh>

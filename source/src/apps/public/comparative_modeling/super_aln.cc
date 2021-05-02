@@ -49,7 +49,7 @@ using utility::vector1;
 #include <core/pose/util.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 int
 main( int argc, char * argv [] ) {

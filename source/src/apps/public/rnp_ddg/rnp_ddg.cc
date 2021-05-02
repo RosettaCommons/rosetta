@@ -16,6 +16,7 @@
 //Package Headers
 //Project Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.hh>
 #include <core/import_pose/pose_stream/PoseInputStream.fwd.hh>
 #include <core/import_pose/pose_stream/PDBPoseInputStream.hh>

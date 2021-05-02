@@ -83,7 +83,7 @@ public:
 	/// @brief opposite of fill_pose
 	void fill_struct(
 		core::pose::Pose const & pose,
-		std::string tag
+		std::string const & tag
 	) override;
 
 	/// @brief Prints the conformation information within this ScoreFileSilentStruct

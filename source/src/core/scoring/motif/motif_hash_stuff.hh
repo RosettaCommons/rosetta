@@ -13,8 +13,8 @@
 
 #include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 
-#include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.hh>
 #include <numeric/geometry/hashing/xyzStripeHash.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/fixedsizearray1.hh>
@@ -83,8 +83,8 @@ public:
 	Size num_bins() const;
 	Size num_possible_bins() const;
 	Score tot_score() const;
-	void print_scores(std::ostream & out, std::string const tag="XH ") const;
-	void print_scores_norm(std::ostream & out, std::string const tag="XH ") const;
+	void print_scores(std::ostream & out, std::string const & tag="XH ") const;
+	void print_scores_norm(std::ostream & out, std::string const & tag="XH ") const;
 	void clear();
 	Real cart_size() const { return cart_size_; }
 	Key bin_index(Real6 const & rt) const;

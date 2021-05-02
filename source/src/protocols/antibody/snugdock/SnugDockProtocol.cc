@@ -39,6 +39,7 @@
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>

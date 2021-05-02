@@ -37,7 +37,7 @@
 #include <core/id/AtomID_Map.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>

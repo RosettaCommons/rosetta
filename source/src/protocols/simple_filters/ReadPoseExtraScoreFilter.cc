@@ -36,14 +36,8 @@ ReadPoseExtraScoreFilter::ReadPoseExtraScoreFilter() :
 	threshold_( 0 )
 {}
 
-ReadPoseExtraScoreFilter::ReadPoseExtraScoreFilter( ReadPoseExtraScoreFilter const & src ) :
-	Filter( "ReadPoseExtraScoreFilter" ),
-	term_name_( src.term_name_ ),
-	threshold_( src.threshold_ )
-{}
-
 ReadPoseExtraScoreFilter::ReadPoseExtraScoreFilter(
-	std::string term_name,
+	std::string const & term_name,
 	core::Real threshold
 ) :
 	Filter( "ReadPoseExtraScoreFilter" ),

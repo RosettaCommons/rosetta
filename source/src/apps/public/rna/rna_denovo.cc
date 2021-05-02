@@ -117,6 +117,8 @@
 
 #include <utility/options/keys/OptionKeyList.hh>
 
+#include <basic/Tracer.hh>
+
 
 using namespace core;
 using namespace pose;

@@ -44,6 +44,8 @@
 
 #include <utility/exit.hh>
 
+#include <basic/Tracer.hh>
+
 static basic::Tracer TR( "core.scoring.methods.NMerSVMEnergy" );
 
 namespace core {

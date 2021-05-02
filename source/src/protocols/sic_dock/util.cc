@@ -10,7 +10,9 @@
 #include <protocols/sic_dock/util.hh>
 #include <protocols/sic_dock/RigidScore.hh>
 #include <protocols/sic_dock/SICFast.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/kinematics/Stub.hh>
 #include <numeric/xyz.functions.hh>
 #include <ObjexxFCL/FArray3D.hh>

@@ -82,19 +82,6 @@ DihedralDistanceMetric::DihedralDistanceMetric( ResidueSelectorCOP selector ):
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 DihedralDistanceMetric::~DihedralDistanceMetric(){}
 
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-DihedralDistanceMetric::DihedralDistanceMetric( DihedralDistanceMetric const & src ):
-	RealMetric( src ),
-	include_protein_omega_(src.include_protein_omega_),
-	res_map_(src.res_map_)
-{
-	residue_selector_ = src.residue_selector_;
-	residue_selector_ref_ = src.residue_selector_ref_;
-	ref_pose_ = src.ref_pose_;
-}
-
-
 core::simple_metrics::SimpleMetricOP
 DihedralDistanceMetric::clone() const {
 	return utility::pointer::make_shared< DihedralDistanceMetric >( *this );

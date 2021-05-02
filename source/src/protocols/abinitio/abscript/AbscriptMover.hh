@@ -21,7 +21,7 @@
 #include <protocols/environment/claims/EnvClaim.hh>
 
 #include <protocols/abinitio/abscript/StageID.hh>
-#include <protocols/abinitio/abscript/AbscriptStageMover.hh>
+#include <protocols/abinitio/abscript/AbscriptStageMover.fwd.hh>
 #include <protocols/abinitio/abscript/StagePreparer.fwd.hh>
 
 #include <protocols/moves/MonteCarlo.fwd.hh>

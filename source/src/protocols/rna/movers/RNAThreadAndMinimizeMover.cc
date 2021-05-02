@@ -47,6 +47,8 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 //#include <core/pose/full_model_info/FullModelInfo.hh>
 
 // Protocols

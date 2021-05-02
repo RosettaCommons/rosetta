@@ -20,8 +20,10 @@
 #include <core/io/silent/SilentStructCreator.hh>
 
 // Project headers
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/chemical/ResidueType.hh>
 
 // Basic headers
 #include <basic/Tracer.hh>

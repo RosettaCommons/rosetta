@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 
 // option key includes
 #include <basic/options/option.hh>

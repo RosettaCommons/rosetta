@@ -53,7 +53,7 @@ AddResidueLabelMover::AddResidueLabelMover():
 
 AddResidueLabelMover::AddResidueLabelMover(
 	core::select::residue_selector::ResidueSelectorCOP selector,
-	std::string label ):
+	std::string const & label ):
 	protocols::moves::Mover(),
 	selector_( selector ),
 	label_( label )

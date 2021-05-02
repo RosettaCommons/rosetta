@@ -298,7 +298,7 @@ public:
 	}
 
 	/// @brief Reads a bunch of ss predicitons from files and plugs them into the picker
-	void read_ss_files(utility::vector1<std::string> sec_str_input);
+	void read_ss_files(utility::vector1<std::string> const & sec_str_input);
 
 	/// @brief Returns the query secondary structure as a string
 	inline std::string & get_query_ss_string(std::string prediction_name) {
@@ -314,7 +314,7 @@ public:
 	}
 
 	/// @brief Identifies if the ss file is psipred or talos, calls appropriate reader
-	void read_ss_file(std::string const &, std::string);
+	void read_ss_file(std::string const &, std::string const &);
 
 	/// @brief Reads spine-x phi, psi, and solvent accessibility predictions
 	void read_spine_x(std::string const & file_name);

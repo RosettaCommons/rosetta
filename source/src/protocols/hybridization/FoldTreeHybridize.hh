@@ -41,8 +41,6 @@
 #include <numeric/model_quality/rms.hh>
 #include <numeric/model_quality/maxsub.hh>
 
-#include <basic/Tracer.hh>
-
 // pairings
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/dssp/PairingsList.hh>

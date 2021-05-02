@@ -22,6 +22,7 @@
 
 // Core headers
 #include <core/id/SequenceMapping.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

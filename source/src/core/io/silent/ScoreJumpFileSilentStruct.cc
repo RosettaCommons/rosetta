@@ -66,7 +66,7 @@ ScoreJumpFileSilentStruct::ScoreJumpFileSilentStruct(
 
 void ScoreJumpFileSilentStruct::fill_struct(
 	core::pose::Pose const & pose,
-	std::string tag
+	std::string const & tag
 ) {
 	basic::ProfileThis doit( basic::SILENT_FILL_STRUCT );
 	energies_from_pose( pose );
@@ -205,14 +205,6 @@ ObjexxFCL::FArray2D< Real >
 ScoreJumpFileSilentStruct::get_CA_xyz() const {
 	tr.Error << "get_CA_xyz() stubbed out!" << std::endl;
 	return ObjexxFCL::FArray2D< Real > ( 3, 1 );
-}
-
-ScoreJumpFileSilentStruct & ScoreJumpFileSilentStruct::operator= (
-	ScoreJumpFileSilentStruct const &
-)
-{
-	utility_exit_with_message( "called ScoreJumpFileSilentStruct::operator=)" );
-	exit(0); //  just to keep the compiler happy
 }
 
 } // namespace silent

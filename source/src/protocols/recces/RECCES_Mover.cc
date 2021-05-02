@@ -23,6 +23,7 @@
 #include <protocols/recces/stdev_util.hh>
 #include <protocols/recces/util.hh>
 #include <core/id/TorsionID.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/BinarySilentStruct.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>

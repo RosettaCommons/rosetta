@@ -20,8 +20,11 @@
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/NamedAtomID.hh>
+#include <core/id/AtomID.hh>
+#include <core/id/DOF_ID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/scoring/ScoreFunction.hh>

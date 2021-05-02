@@ -57,7 +57,7 @@
 
 //Auto Headers
 #include <platform/types.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <protocols/moves/MoverStatistics.hh>
 #include <apps/pilot/will/will_util.ihh>
 #include <algorithm>

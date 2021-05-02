@@ -2,7 +2,6 @@
 #define INCLUDED_apps_pilot_hpark_sampling_movers_hh
 
 #include <apps/pilot/hpark/sampling_utils.hh>
-#include <apps/pilot/hpark/sampling_movers.hh>
 
 #include <protocols/normalmode/NormalModeRelaxMover.hh>
 #include <protocols/normalmode/NormalModeRelaxMover.fwd.hh>

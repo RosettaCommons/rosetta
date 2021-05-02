@@ -20,6 +20,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/PDBInfo.hh>

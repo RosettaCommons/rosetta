@@ -37,6 +37,7 @@
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/variant_util.hh>

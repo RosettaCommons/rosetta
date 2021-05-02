@@ -23,6 +23,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/ShortestPathInFoldTree.hh>
 #include <core/fragment/FrameList.hh>
@@ -48,6 +49,7 @@
 #include <string>
 #include <fstream>
 
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/fragment/SecondaryStructure.hh>

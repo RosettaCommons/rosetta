@@ -27,8 +27,6 @@
 
 #include <numeric/xyz.functions.hh>
 
-#include <basic/Tracer.hh>
-
 #include <set>
 
 namespace protocols {

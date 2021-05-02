@@ -69,22 +69,14 @@ ScoreTypeFilter::ScoreTypeFilter() :
 	scorefxn_() //Null pointer by default.
 {}
 
-/// @brief Copy constructor
-///
-ScoreTypeFilter::ScoreTypeFilter( ScoreTypeFilter const &src ) :
-	Filter( "ScoreType" ),
-	score_type_threshold_(src.score_type_threshold_),
-	score_type_( src.score_type_ ),
-	scorefxn_( src.scorefxn_->clone() ) //CLONE the scorefunction, don't copy it.
-{}
-
 /// @brief Constructor with parameters
 ///
-ScoreTypeFilter::ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold ) : Filter( "ScoreType" ) {
-	score_type_threshold_ = score_type_threshold;
-	score_type_ = score_type;
-	scorefxn_ = scorefxn->clone();
-}
+ScoreTypeFilter::ScoreTypeFilter( core::scoring::ScoreFunctionCOP scorefxn, core::scoring::ScoreType const score_type, core::Real const score_type_threshold ) :
+	Filter( "ScoreType" ),
+	score_type_threshold_( score_type_threshold ),
+	score_type_( score_type ),
+	scorefxn_( scorefxn->clone() )
+{}
 
 ScoreTypeFilter::~ScoreTypeFilter() = default;
 

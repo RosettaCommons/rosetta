@@ -28,6 +28,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
 

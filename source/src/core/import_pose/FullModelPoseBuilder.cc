@@ -34,6 +34,7 @@
 #include <core/io/pdb/RecordType.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/StructFileReaderOptions.hh>  // TODO: Rename after refactor.
 #include <core/io/pose_from_sfr/PoseFromSFRBuilder.hh>
 #include <core/io/mmcif/cif_reader.hh>

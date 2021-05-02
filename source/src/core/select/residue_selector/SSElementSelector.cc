@@ -21,7 +21,7 @@
 // Project headers
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/chains_util.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
@@ -149,7 +149,7 @@ utility::vector1<SSElementSelector::SSElement> SSElementSelector::parse_ss(core:
 	return(ss_elements_v2);
 }
 
-SSElementSelector::SSElement SSElementSelector::get_SSElement(utility::vector1<SSElementSelector::SSElement> ss_elements, int goal_position, char const type,std::string description) const {
+SSElementSelector::SSElement SSElementSelector::get_SSElement(utility::vector1<SSElementSelector::SSElement> const & ss_elements, int goal_position, char const type, std::string const & description) const {
 	int ss_ct=0;
 	Size location=0;
 	if ( goal_position>0 ) {

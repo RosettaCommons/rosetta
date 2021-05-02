@@ -24,6 +24,7 @@
 
 // Project headers
 #include <core/types.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>

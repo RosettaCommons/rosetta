@@ -26,6 +26,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <core/conformation/Conformation.hh>
 
 //Auto Headers
 #include <utility/vector0.hh>

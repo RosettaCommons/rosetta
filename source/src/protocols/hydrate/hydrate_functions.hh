@@ -45,7 +45,6 @@
 #include <core/types.hh>
 
 // Basic
-#include <basic/Tracer.hh>
 #include <basic/datacache/BasicDataCache.hh>
 
 // Utility headers

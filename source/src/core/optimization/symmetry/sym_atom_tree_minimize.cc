@@ -29,6 +29,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/MinimizationGraph.hh>
 #include <core/scoring/ScoreType.hh>

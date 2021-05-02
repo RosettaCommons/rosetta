@@ -18,7 +18,10 @@
 #include <protocols/magnesium/util.hh>
 #include <protocols/magnesium/params.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>

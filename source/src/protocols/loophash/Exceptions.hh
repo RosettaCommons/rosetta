@@ -32,7 +32,7 @@ namespace loophash {
 
 class EXCN_DB_IO_Failed: public utility::excn::Exception {
 public:
-	EXCN_DB_IO_Failed(char const *file, int line, std::string filename, std::string action ) :
+	EXCN_DB_IO_Failed(char const *file, int line, std::string const & filename, std::string const & action ) :
 		utility::excn::Exception(file, line, "Error in opening File='" + filename + "' for operation='" + action + "'" ),
 		filename_( filename ), action_( action ) {};
 
@@ -61,7 +61,7 @@ public:
 
 class EXCN_Wrong_DB_Format: public utility::excn::Exception {
 public:
-	EXCN_Wrong_DB_Format(char const *file, int line, std::string filename ):
+	EXCN_Wrong_DB_Format(char const *file, int line, std::string const & filename ):
 		utility::excn::Exception(file, line, filename + " does not have the correct format." ),
 		filename_( filename ) {};
 
@@ -71,7 +71,7 @@ private:
 
 class EXCN_bbdb_Merge_Failed: public utility::excn::Exception {
 public:
-	EXCN_bbdb_Merge_Failed(char const *file, int line, std::string reason ):
+	EXCN_bbdb_Merge_Failed(char const *file, int line, std::string const & reason ):
 		utility::excn::Exception(file, line, reason ) {};
 
 	EXCN_bbdb_Merge_Failed(char const *file, int line, bool /*masterlib_extra*/, bool /*secondlib_extra*/ ):

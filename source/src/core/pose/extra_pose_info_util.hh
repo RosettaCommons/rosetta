@@ -17,7 +17,6 @@
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>
-//#include <core/pose/util.tmpl.hh>
 #include <core/pose/MiniPose.fwd.hh>
 
 // Project headers

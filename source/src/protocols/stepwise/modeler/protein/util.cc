@@ -31,7 +31,9 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/rms_util.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <numeric/angle.functions.hh>
 #include <numeric/xyz.functions.hh>

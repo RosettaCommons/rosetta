@@ -40,7 +40,7 @@
 #include <basic/Tracer.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 namespace protocols {
 namespace minimization_packing {

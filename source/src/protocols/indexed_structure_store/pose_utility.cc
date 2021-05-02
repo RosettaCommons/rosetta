@@ -35,6 +35,8 @@
 #include <core/conformation/Conformation.hh>
 #include <core/id/types.hh>
 
+#include <basic/Tracer.hh>
+
 static basic::Tracer TR("core.indexed_structure_store.pose_utility");
 
 

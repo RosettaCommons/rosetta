@@ -168,7 +168,7 @@ void initialize_template_db_files(TCRseqInfo::tcrsegs const &atcr, TCRseqInfo::t
 	return;
 }
 
-std::set< std::string > create_ignore_list(std::string const query, std::string const blast_db, core::Real const &blast_cutoff) {
+std::set< std::string > create_ignore_list(std::string const & query, std::string const & blast_db, core::Real const &blast_cutoff) {
 	run_blast(query, blast_db);
 	std::string out_file = query+".blastp.out";
 	std::ifstream bpofile (out_file);

@@ -30,6 +30,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>

@@ -22,6 +22,7 @@
 #include <core/id/NamedAtomID.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/hbonds/HBondDatabase.hh>

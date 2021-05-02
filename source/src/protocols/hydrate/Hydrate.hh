@@ -31,7 +31,6 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/types.hh>
-#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iosfwd>

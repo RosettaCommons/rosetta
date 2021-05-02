@@ -37,7 +37,6 @@
 
 // Utility headers
 //#include <utility/io/util.hh>
-//#include <basic/Tracer.hh>
 
 #include <utility/VirtualBase.hh>
 

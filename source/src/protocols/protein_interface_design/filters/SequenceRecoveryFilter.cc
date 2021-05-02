@@ -11,6 +11,7 @@
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilter.hh>
 #include <protocols/protein_interface_design/filters/SequenceRecoveryFilterCreator.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <utility/tag/Tag.hh>
 #include <protocols/filters/Filter.hh>
 #include <basic/Tracer.hh>
@@ -29,6 +30,7 @@
 #include <protocols/protein_interface_design/design_utils.hh>
 #include <core/pose/util.hh>
 #include <core/pose/ref_pose.hh>
+#include <core/chemical/ResidueType.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
 // XSD XRW Includes

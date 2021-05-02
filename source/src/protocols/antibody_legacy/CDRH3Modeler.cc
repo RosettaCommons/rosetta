@@ -19,6 +19,7 @@
 #include <core/chemical/ChemicalManager.fwd.hh>
 
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>

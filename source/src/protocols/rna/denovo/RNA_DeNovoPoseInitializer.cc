@@ -34,6 +34,7 @@
 #include <core/pose/MiniPose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
@@ -42,6 +43,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>

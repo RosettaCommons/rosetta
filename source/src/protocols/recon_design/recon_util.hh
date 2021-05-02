@@ -23,8 +23,6 @@
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
-#include <basic/Tracer.hh>
-
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
 

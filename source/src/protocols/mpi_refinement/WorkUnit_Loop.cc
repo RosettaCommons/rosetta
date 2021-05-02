@@ -73,6 +73,8 @@
 // for KICCloser
 #include <protocols/relax/loop/LoopRelaxMover.hh>
 
+#include <basic/Tracer.hh>
+
 //Auto Headers
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>

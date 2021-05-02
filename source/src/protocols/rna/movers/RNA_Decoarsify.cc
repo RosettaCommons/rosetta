@@ -26,6 +26,7 @@
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/rna/util.hh>
 #include <core/id/AtomID.hh>
+#include <core/id/NamedAtomID.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 

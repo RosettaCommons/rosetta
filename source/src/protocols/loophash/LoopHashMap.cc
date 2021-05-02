@@ -27,6 +27,8 @@
 #include <core/kinematics/RT.hh>
 #include <core/pose/Pose.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/id/AtomID.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>

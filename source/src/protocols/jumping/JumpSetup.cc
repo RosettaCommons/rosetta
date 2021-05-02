@@ -107,6 +107,13 @@ JumpSetup::read_file( std::string fname ) {
 
 }
 
+JumpSample
+JumpSetup::clean_jumps( JumpSample const& js ) const
+{
+	tr.Error << "JumpSetup::clean_jumps() not implemented" << std::endl;
+	return js;
+}
+
 //* ----------------------- JumpSelector ----------------------------*
 
 JumpSelector::JumpSelector()
@@ -396,6 +403,12 @@ JumpSelector::select_random() const {
 	//  ++it;
 	// }
 	return it->jump_;
+}
+
+JumpSample
+JumpSelector::clean_jumps( JumpSample const& js ) const {
+	tr.Error << "JumpSelector::clean_jumps() is NOT IMPLEMENTED." << std::endl;
+	return js;
 }
 
 //JumpsFromConstraintForest::JumpsFromConstraintForest(

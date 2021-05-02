@@ -105,6 +105,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 //silent file stuff
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 

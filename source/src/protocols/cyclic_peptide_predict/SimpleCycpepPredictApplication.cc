@@ -54,6 +54,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/init_id_map.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <core/import_pose/import_pose.hh>

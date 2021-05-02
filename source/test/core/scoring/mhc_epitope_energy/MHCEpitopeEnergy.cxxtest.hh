@@ -42,6 +42,8 @@
 #include <core/pose/subpose_manipulation_util.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/conformation/Residue.hh>
+
 #include <basic/Tracer.hh>
 
 //Auto Headers

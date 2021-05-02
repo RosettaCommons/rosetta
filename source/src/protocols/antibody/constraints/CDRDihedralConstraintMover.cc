@@ -14,6 +14,7 @@
 #include <protocols/antibody/constraints/CDRDihedralConstraintMover.hh>
 #include <protocols/antibody/constraints/CDRDihedralConstraintMoverCreator.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/constraints/util.hh>

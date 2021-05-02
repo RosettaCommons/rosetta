@@ -37,7 +37,7 @@
 
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/AA.hh>
-// AUTO-REMOVED #include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/kinematics/MoveMap.hh>
 // AUTO-REMOVED #include <core/kinematics/FoldTree.hh>

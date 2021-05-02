@@ -19,9 +19,9 @@
 // Package headers
 #include <protocols/topology_broker/TopologyBroker.fwd.hh>
 #include <protocols/topology_broker/TopologyBroker.hh>
-#include <protocols/topology_broker/claims/SymmetryClaim.hh>
+#include <protocols/topology_broker/claims/SymmetryClaim.fwd.hh>
 #include <protocols/topology_broker/claims/DofClaim.hh>
-#include <protocols/topology_broker/claims/SequenceClaim.hh>
+#include <protocols/topology_broker/claims/SequenceClaim.fwd.hh>
 #include <protocols/topology_broker/weights/AbinitioMoverWeight.hh>
 #include <protocols/topology_broker/weights/ConstAbinitioMoverWeight.hh>
 #include <protocols/topology_broker/ClaimerMessage.fwd.hh>

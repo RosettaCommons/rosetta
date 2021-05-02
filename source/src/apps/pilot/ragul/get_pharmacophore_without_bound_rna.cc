@@ -63,6 +63,7 @@
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/kinematics/Stub.hh>
 #include <protocols/rigid/RigidBodyMover.hh>
 #include <core/scoring/constraints/CoordinateConstraint.hh>
 #include <core/conformation/Residue.hh>

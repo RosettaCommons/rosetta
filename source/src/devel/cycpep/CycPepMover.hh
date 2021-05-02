@@ -8,7 +8,6 @@
 #ifndef CYCPEPPROTOCOL_H_
 #define CYCPEPPROTOCOL_H_
 #include <numeric/constants.hh>
-#include <core/pose/util.hh>
 #include <core/pose/Pose.hh>
 #include <protocols/evaluation/RmsdEvaluator.hh>
 #include <core/conformation/util.hh>

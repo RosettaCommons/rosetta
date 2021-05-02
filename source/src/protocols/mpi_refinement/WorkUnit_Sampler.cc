@@ -52,6 +52,8 @@
 #include <utility/vector1.hh>
 #include <numeric/random/random.hh>
 
+#include <basic/Tracer.hh>
+
 #if defined(WIN32) || defined(__CYGWIN__)
 #include <ctime>
 #endif

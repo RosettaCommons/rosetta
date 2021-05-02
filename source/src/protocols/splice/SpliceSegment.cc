@@ -219,7 +219,7 @@ SpliceSegment::add_profile( string const & pdb_name,  SequenceProfileOP const pr
 }
 
 void
-SpliceSegment::read_pdb_profile_file( string const & Protein_family_path, string const segment){
+SpliceSegment::read_pdb_profile_file( string const & Protein_family_path, string const & segment){
 
 	//This is to get the path to the database
 	utility::io::izstream data;

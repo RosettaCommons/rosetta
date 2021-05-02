@@ -87,16 +87,6 @@ CompositeEnergyMetric::CompositeEnergyMetric( ResidueSelectorCOP selector, Score
 /// @brief Destructor (important for properly forward-declaring smart-pointer members)
 CompositeEnergyMetric::~CompositeEnergyMetric(){}
 
-////////////////////////////////////////////////////////////////////////////////
-/// @brief Copy constructor
-CompositeEnergyMetric::CompositeEnergyMetric( CompositeEnergyMetric const & src ):
-	core::simple_metrics::CompositeRealMetric( src )
-{
-	residue_selector_ = src.residue_selector_;
-	scorefxn_ = src.scorefxn_;
-	ref_pose_ = src.ref_pose_;
-}
-
 std::string
 CompositeEnergyMetric::name() const {
 	return name_static();

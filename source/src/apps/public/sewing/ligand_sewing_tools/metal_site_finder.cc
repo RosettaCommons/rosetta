@@ -21,6 +21,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/dssp/Dssp.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/AtomGraph.hh>
 #include <core/conformation/AtomGraphData.hh>
 #include <core/conformation/Residue.hh>

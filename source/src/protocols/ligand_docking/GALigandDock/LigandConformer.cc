@@ -21,6 +21,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <numeric/Quaternion.hh>
 #include <numeric/angle.functions.hh>
 #include <numeric/random/random.functions.hh>

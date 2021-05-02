@@ -47,7 +47,6 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
 
-#include <basic/Tracer.hh>
 #include <utility/exit.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tools/make_vector1.hh>

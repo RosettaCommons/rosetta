@@ -26,8 +26,6 @@
 #include <protocols/moves/MonteCarlo.fwd.hh>
 
 
-//#include <basic/Tracer.hh>
-
 // ObjexxFCL Headers
 
 // C++ Headers
@@ -48,7 +46,6 @@ class PDBDumpMover : public Mover
 {
 public:
 	//constructor
-	//PDBDumpMover(std::string name_in, basic::Tracer const & tr=core::io::pdb::TR_dump_pdb_dummy);
 	PDBDumpMover(std::string const & name_in);
 
 	//destructor
@@ -64,8 +61,6 @@ public:
 private:
 	std::string name_;
 	int num_;
-
-	//basic::Tracer tracer_;
 
 }; // class PDBDumpMover
 

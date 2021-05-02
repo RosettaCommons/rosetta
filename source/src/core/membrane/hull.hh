@@ -19,7 +19,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 // utility headers
-#include <basic/Tracer.hh>
 #include <core/types.hh>
 #include <numeric/xyzVector.hh>
 #include <numeric/util.hh>

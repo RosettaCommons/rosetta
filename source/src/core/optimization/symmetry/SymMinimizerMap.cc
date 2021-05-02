@@ -43,7 +43,7 @@
 #include <utility/options/BooleanVectorOption.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 namespace core {
 namespace optimization {

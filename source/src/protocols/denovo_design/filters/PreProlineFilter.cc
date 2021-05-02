@@ -25,6 +25,7 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/sequence/ABEGOManager.hh>
 
 // Basic Headers

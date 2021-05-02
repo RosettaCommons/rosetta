@@ -75,6 +75,7 @@
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
 #include <core/io/Remarks.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh> // for pdbinfo
 #include <core/pose/chains_util.hh>
 #include <core/pose/extra_pose_info_util.hh>

@@ -27,7 +27,10 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <utility/io/izstream.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/Energies.hh>

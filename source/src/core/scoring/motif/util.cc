@@ -30,6 +30,7 @@
 #include <core/pose/motif/reference_frames.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/pose/xyzStripeHashPose.hh>

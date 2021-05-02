@@ -13,8 +13,8 @@
 
 #include <core/scoring/motif/motif_hash_stuff.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/util.hh>
 #include <core/pose/xyzStripeHashPose.fwd.hh>
+#include <core/id/AtomID_Mask.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/fixedsizearray1.hh>
 #include <numeric/geometry/hashing/SixDHasher.hh>

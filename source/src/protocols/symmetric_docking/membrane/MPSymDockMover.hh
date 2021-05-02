@@ -42,7 +42,6 @@
 #include <utility/tag/Tag.hh>
 
 #include <basic/datacache/DataMap.hh>
-#include <basic/Tracer.hh>
 
 // C++ headers
 #include <iosfwd>

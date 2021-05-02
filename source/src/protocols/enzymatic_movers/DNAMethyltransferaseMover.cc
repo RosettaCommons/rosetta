@@ -20,7 +20,10 @@
 // Project headers
 #include <protocols/moves/mover_schemas.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 
 // Utility header

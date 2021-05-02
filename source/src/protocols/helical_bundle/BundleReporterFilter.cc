@@ -23,6 +23,7 @@
 #include <core/scoring/ScoreTypeManager.hh>
 #include <core/scoring/ScoreType.hh>
 #include <core/scoring/Energies.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.hh>

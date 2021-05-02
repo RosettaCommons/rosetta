@@ -28,6 +28,7 @@
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentStructFactory.hh>
+#include <core/io/silent/SilentFileData.hh>
 #include <core/io/pdb/build_pose_as_is.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>

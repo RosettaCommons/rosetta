@@ -28,11 +28,13 @@
 
 //Include Rosetta Core Stuff
 #include <core/types.hh>
+#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Residue.hh>
 
 //Include Rosetta numeric
 #include <numeric/xyz.functions.hh>

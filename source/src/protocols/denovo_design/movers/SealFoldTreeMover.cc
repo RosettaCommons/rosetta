@@ -27,6 +27,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/symmetry/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/kinematics/FoldTree.hh>
 
 // Basic/Utility headers

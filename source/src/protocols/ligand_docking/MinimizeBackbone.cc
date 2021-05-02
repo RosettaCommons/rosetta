@@ -19,6 +19,7 @@
 #include <protocols/ligand_docking/ligand_options/Interface.hh>
 #include <protocols/loops/Loop.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 
 //Project Headers

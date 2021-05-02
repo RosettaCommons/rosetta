@@ -13,6 +13,9 @@
 
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>
+#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <protocols/simple_moves/AddJobPairData.hh>
 #include <protocols/simple_moves/AddJobPairDataCreator.hh>

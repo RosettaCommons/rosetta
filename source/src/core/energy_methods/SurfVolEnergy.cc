@@ -42,7 +42,7 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 namespace core {
 namespace energy_methods {

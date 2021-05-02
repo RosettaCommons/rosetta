@@ -58,16 +58,6 @@ SecretionPredictionFilter::SecretionPredictionFilter():
 }
 
 
-// @brief copy constructor
-SecretionPredictionFilter::SecretionPredictionFilter( SecretionPredictionFilter const & rval ):
-	Super( rval ),
-	threshold_(rval.threshold_),
-	window_size_(rval.window_size_),
-	dG_ins_threshold_(rval.dG_ins_threshold_),
-	keep_(rval.keep_)
-{
-}
-
 // @brief destructor
 SecretionPredictionFilter::~SecretionPredictionFilter() = default;
 

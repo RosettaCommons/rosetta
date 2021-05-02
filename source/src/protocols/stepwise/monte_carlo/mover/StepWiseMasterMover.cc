@@ -28,10 +28,12 @@
 #include <protocols/magnesium/MgMonteCarlo.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
 #include <numeric/random/random.hh>

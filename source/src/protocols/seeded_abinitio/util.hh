@@ -32,7 +32,6 @@
 #include <ObjexxFCL/FArray.all.hh>
 
 #include <utility/vector1.hh>
-#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace seeded_abinitio {

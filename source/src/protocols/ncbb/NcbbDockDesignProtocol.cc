@@ -15,6 +15,7 @@
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoringManager.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

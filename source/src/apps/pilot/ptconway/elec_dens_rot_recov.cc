@@ -187,7 +187,8 @@ public:
 	{
 		using namespace std;
 
-		/*#ifdef USEMPI
+		/*
+#ifdef USEMPI
 		int myrank;
 		MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 		if (myrank == 0)
@@ -199,7 +200,8 @@ public:
 		else
 		cout << "slave" << endl;
 		//send lists here
-#endif*/
+#endif
+		*/
 
 		std::sort( output.begin(), output.end(), output_cmp );   // output_cmp defined outside of class
 

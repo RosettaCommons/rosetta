@@ -47,7 +47,7 @@ public:
 	~SpliceSegment() override;
 	void read_profile( std::string const & file_name, std::string const & segment_name ); /// read pssm
 	void read_many( std::string const & protein_family , std::string const & segmetn); /// read pssm
-	void read_pdb_profile_file(std::string const & s, std::string const );
+	void read_pdb_profile_file(std::string const & s, std::string const & );
 	void read_pdb_profile( std::string const & file_name ); /// read the pdb-profile match from a disk file
 	core::sequence::SequenceProfileOP get_profile( std::string const & segment_name ); // return the requested sequence profile
 	void add_pdb_profile_pair( std::string const & pdb, std::string const & profile_name ); /// add a sequence profile

@@ -11,9 +11,9 @@
 /// @author Christoffer Norn (ch.norn@gmail.com)
 
 #include <string>
-#include <core/pose/Pose.hh>
-#include <core/pose/util.hh>
-#include <core/scoring/ScoreFunction.hh>
+#include <core/types.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 
 namespace protocols {

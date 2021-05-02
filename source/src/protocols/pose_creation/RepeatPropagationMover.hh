@@ -28,7 +28,6 @@
 #include <utility/vector1.hh>
 
 //unit header
-#include <basic/Tracer.hh>
 #include <protocols/moves/Mover.hh>
 
 

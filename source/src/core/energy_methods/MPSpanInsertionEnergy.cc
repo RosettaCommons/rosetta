@@ -49,7 +49,7 @@
 #include <core/scoring/dssp/Dssp.hh>
 
 //Auto Headers
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 
 static basic::Tracer TR( "core.energy_methods.MPSpanInsertionEnergy" );
 

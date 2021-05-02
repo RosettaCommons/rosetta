@@ -18,6 +18,7 @@
 #include <protocols/canonical_sampling/SilentTrajectoryRecorderCreator.hh>
 
 // Other project headers or inline function headers
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <core/pose/Pose.hh>

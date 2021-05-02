@@ -61,11 +61,6 @@ NativeSelector::NativeSelector():
 	native_( nullptr )
 {}
 
-NativeSelector::NativeSelector( NativeSelector const & src ){
-	selector_ = src.selector_->clone();
-	native_ = src.native_;
-}
-
 NativeSelector::NativeSelector(
 	core::select::residue_selector::ResidueSelectorCOP inner_selector
 ):

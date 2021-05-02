@@ -50,6 +50,7 @@
 
 #include <utility/sort_predicates.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>

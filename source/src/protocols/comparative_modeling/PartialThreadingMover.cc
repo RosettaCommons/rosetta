@@ -26,6 +26,7 @@
 #include <core/id/SequenceMapping.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/extra_pose_info_util.hh>
 
 #include <core/pack/optimizeH.hh>

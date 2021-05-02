@@ -55,9 +55,6 @@ public:
 
 	DihedralDistanceMetric( core::select::residue_selector::ResidueSelectorCOP selector );
 
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	DihedralDistanceMetric( DihedralDistanceMetric const & src );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~DihedralDistanceMetric() override;
 

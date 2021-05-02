@@ -43,9 +43,6 @@ public:
 	/// @brief Default constructor
 	ConcatenatePosesMover();
 
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	ConcatenatePosesMover( ConcatenatePosesMover const & src );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~ConcatenatePosesMover() override;
 
@@ -81,7 +78,6 @@ public:
 		basic::datacache::DataMap & data
 	) override;
 
-	//ConcatenatePosesMover & operator=( ConcatenatePosesMover const & src );
 
 	/// @brief required in the context of the parser/scripting scheme
 	protocols::moves::MoverOP
@@ -98,7 +94,7 @@ public:
 	get_component_file() const;
 
 	void
-	set_component_file( std::string );
+	set_component_file( std::string const & );
 
 	static
 	std::string

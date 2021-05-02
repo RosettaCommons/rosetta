@@ -30,6 +30,7 @@
 
 #include <utility/vector1.hh>
 
+#include <basic/Tracer.hh>
 
 namespace protocols {
 namespace jobdist {

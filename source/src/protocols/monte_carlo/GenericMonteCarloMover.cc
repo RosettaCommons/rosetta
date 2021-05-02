@@ -38,6 +38,7 @@
 
 // Project Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>

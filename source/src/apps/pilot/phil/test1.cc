@@ -68,8 +68,9 @@
 #include <core/sequence/DerivedSequenceMapping.hh>
 #include <core/sequence/util.hh>
 #include <core/pose/Pose.hh>
+#include <core/pose/util.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/datacache/CacheableDataType.hh> // profiling
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>

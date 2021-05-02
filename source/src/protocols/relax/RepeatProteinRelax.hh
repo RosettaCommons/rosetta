@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 //unit header
-#include <basic/Tracer.hh>
 #include <protocols/relax/RelaxProtocolBase.hh>
 #include <protocols/moves/Mover.hh>
 

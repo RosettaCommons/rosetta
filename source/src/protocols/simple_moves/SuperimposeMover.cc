@@ -33,6 +33,7 @@
 #include <core/pose/datacache/cacheable_observers.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 
 // utility header
 #include <basic/Tracer.hh>

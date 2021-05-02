@@ -21,6 +21,7 @@
 #include <core/types.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/id/TorsionID.hh>
 #include <core/pose/Pose.hh>

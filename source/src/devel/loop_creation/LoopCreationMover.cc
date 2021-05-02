@@ -22,7 +22,9 @@
 
 //Core
 #include <core/pose/Pose.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/variant_util.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
 #include <core/chemical/VariantType.hh>

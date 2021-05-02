@@ -15,11 +15,12 @@
 #ifndef INCLUDED_basic_Emitter_hh
 #define INCLUDED_basic_Emitter_hh
 
-#include <basic/Tracer.hh>
 #include <utility/VirtualBase.hh>
 
 #include <cstddef>
 #include <iosfwd>
+#include <vector>
+#include <basic/Tracer.hh>
 
 namespace basic {
 

@@ -22,7 +22,7 @@
 
 
 // Package Headers
-#include <protocols/topology_broker/TopologyClaimer.hh> //for printing
+#include <protocols/topology_broker/TopologyClaimer.fwd.hh> //for printing
 
 // Project Headers
 #include <core/types.hh>

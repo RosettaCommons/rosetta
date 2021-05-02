@@ -94,17 +94,17 @@ public:
 	void set_use_ellipsoidal_randomization(bool use_ellipsoidal_randomization){
 		use_ellipsoidal_randomization_ = use_ellipsoidal_randomization;
 	}
-	void set_dock_pert(utility::vector1< core::Real > dock_pert){
+	void set_dock_pert(utility::vector1< core::Real > const & dock_pert){
 		dock_pert_ = dock_pert;
 		if_dock_pert_ = true;
 	}
-	void set_tilt(utility::vector1< core::Real > tilt){
+	void set_tilt(utility::vector1< core::Real > const & tilt){
 		tilt_ = tilt;
 	}
-	void set_tilt1_center(std::string tilt_center){
+	void set_tilt1_center(std::string const & tilt_center){
 		tilt1_center_ = tilt_center;
 	}
-	void set_tilt2_center(std::string tilt_center){
+	void set_tilt2_center(std::string const & tilt_center){
 		tilt2_center_ = tilt_center;
 	}
 	void set_uniform_trans(core::Real uniform_trans){

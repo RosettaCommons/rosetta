@@ -63,12 +63,6 @@ RRComparerAutomorphicRMSD::RRComparerAutomorphicRMSD() :
 	recovery_threshold_( .05 )
 {}
 
-RRComparerAutomorphicRMSD::RRComparerAutomorphicRMSD( RRComparerAutomorphicRMSD const & src ) :
-	RRComparer(),
-	include_backbone_atoms_( src.include_backbone_atoms_ ),
-	recovery_threshold_( src.recovery_threshold_ )
-{}
-
 RRComparerAutomorphicRMSD::~RRComparerAutomorphicRMSD() = default;
 
 bool

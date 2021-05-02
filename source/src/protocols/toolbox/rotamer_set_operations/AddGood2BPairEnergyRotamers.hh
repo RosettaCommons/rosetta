@@ -57,7 +57,6 @@ public:
 		bool drop_rots_above_cutoff
 	);
 
-	AddGood2BPairEnergyRotamers( AddGood2BPairEnergyRotamers const & src );
 	~AddGood2BPairEnergyRotamers() override;
 
 	core::pack::rotamer_set::RotamerSetOperationOP
@@ -97,7 +96,7 @@ private:
 	core::Size ex_level_;
 	utility::vector1< core::Size > target_seqpos_;
 	core::Real score_cutoff_;
-	bool drop_rots_above_cutoff_;
+	//bool drop_rots_above_cutoff_; // Unused??
 	bool debug_;
 
 	bool disabled_;

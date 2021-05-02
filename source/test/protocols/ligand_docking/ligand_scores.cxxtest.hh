@@ -17,6 +17,8 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pose/util.hh>
 
+#include <basic/Tracer.hh>
+
 #include <protocols/ligand_docking/ligand_scores.hh>
 
 #include <utility/vector1.hh>

@@ -97,7 +97,7 @@ RNA_SilentStruct::RNA_SilentStruct(
 // }
 
 void
-RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string tag ) {
+RNA_SilentStruct::fill_struct( core::pose::Pose const & pose, std::string const & tag ) {
 	decoy_tag( tag );
 
 	energies_from_pose( pose );

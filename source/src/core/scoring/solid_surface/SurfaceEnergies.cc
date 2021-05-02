@@ -24,6 +24,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/pose/init_id_map.hh>
 
 #include <core/scoring/ScoreFunctionInfo.hh>
 

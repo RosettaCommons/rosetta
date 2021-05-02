@@ -40,7 +40,7 @@
 #include <core/conformation/parametric/Parameter.hh>
 #include <core/conformation/parametric/RealValuedParameter.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <protocols/helical_bundle/util.hh>
 #include <utility/pointer/memory.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>

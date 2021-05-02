@@ -31,7 +31,7 @@
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 
 // core headers
-//#include <core/pose/util.tmpl.hh>
+//#include <core/pose/init_id_map.hh>
 #include <core/conformation/Residue.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/scoring/Energies.hh>

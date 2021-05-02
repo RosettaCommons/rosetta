@@ -20,7 +20,7 @@
 #include <core/scoring/rms_util.tmpl.hh>
 #include <protocols/idealize/IdealizeMover.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/antibody.OptionKeys.gen.hh>

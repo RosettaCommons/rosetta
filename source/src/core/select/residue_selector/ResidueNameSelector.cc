@@ -23,6 +23,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Package headers
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
@@ -53,13 +54,6 @@ ResidueNameSelector::ResidueNameSelector():
 	res_name3_str_("")
 {
 }
-
-/// @brief Copy constructor
-///
-ResidueNameSelector::ResidueNameSelector( ResidueNameSelector const &src) :
-	res_name_str_( src.res_name_str_ ),
-	res_name3_str_( src.res_name3_str_ )
-{}
 
 ResidueNameSelector::ResidueNameSelector( std::string const & res_name_str ):
 	res_name_str_( res_name_str ),

@@ -86,9 +86,6 @@ public:// constructor/destructor
 	// @brief default constructor
 	SecretionPredictionFilter();
 
-	// @brief copy constructor
-	SecretionPredictionFilter( SecretionPredictionFilter const & rval );
-
 	~SecretionPredictionFilter() override;
 
 

@@ -15,10 +15,13 @@
 #include <protocols/simple_filters/RepeatParameterFilter.hh>
 #include <protocols/simple_filters/RepeatParameterFilterCreator.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/chemical/ResidueType.hh>
 
 #include <numeric/xyzVector.hh>
 #include <numeric/xyzMatrix.hh>

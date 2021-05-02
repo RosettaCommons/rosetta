@@ -20,8 +20,10 @@
 #include <protocols/grafting/simple_movers/DeleteRegionMover.hh>
 
 //Core Headers
+#include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
+#include <core/conformation/Residue.hh>
 
 //Basic/Utility/Numeric Headers
 #include <basic/Tracer.hh>

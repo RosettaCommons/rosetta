@@ -29,7 +29,7 @@ namespace simple_moves {
 class AddResidueLabelMover : public protocols::moves::Mover {
 public:
 	AddResidueLabelMover();
-	AddResidueLabelMover(core::select::residue_selector::ResidueSelectorCOP, std::string);
+	AddResidueLabelMover(core::select::residue_selector::ResidueSelectorCOP, std::string const &);
 	~AddResidueLabelMover() override;
 
 	void apply( core::pose::Pose & pose ) override;

@@ -37,7 +37,7 @@
 #include <devel/init.hh>
 #include <core/io/pdb/pdb_writer.hh>
 #include <core/pose/variant_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/pose/annotated_sequence.hh>
 
 #include <core/import_pose/pose_stream/SilentFilePoseInputStream.hh>

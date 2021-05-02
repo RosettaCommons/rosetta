@@ -17,8 +17,10 @@
 #include <protocols/pockets/PocketGrid.hh>
 #include <protocols/pockets/Fingerprint.hh>
 #include <protocols/pockets/FingerprintMultifunc.hh>
+#include <protocols/pockets/DarcParticleSwarmMinimizer.hh>
 #include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/conformation/Conformation.hh>
 
 //reqd minimization headers
 #include <protocols/simple_moves/ScoreMover.hh>

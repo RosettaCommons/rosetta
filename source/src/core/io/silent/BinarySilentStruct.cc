@@ -135,7 +135,7 @@ BinarySilentStruct::~BinarySilentStruct() = default;
 void
 BinarySilentStruct::fill_struct(
 	core::pose::Pose const & pose,
-	std::string tag
+	std::string const & tag
 ) {
 	Parent::fill_struct( pose, tag );
 

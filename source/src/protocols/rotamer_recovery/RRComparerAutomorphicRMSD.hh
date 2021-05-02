@@ -42,8 +42,6 @@ public: // constructors destructors
 
 	~RRComparerAutomorphicRMSD() override;
 
-	RRComparerAutomorphicRMSD( RRComparerAutomorphicRMSD const & );
-
 public: // public interface
 
 

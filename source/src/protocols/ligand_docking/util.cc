@@ -18,6 +18,7 @@
 #include <protocols/rigid/RigidBodyMover.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/types.hh>
 #include <core/pose/util.hh>

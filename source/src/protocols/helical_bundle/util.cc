@@ -36,7 +36,7 @@
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/scoring/rms_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyz.functions.hh>
 

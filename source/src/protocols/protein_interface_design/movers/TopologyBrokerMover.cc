@@ -19,6 +19,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>
@@ -33,6 +34,7 @@
 
 //Auto Headers
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/id/types.hh>
 #include <core/kinematics/Jump.hh>
 #include <protocols/calc_taskop_movers/DesignRepackMover.hh>

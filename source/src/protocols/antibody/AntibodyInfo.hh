@@ -21,8 +21,8 @@
 #include <protocols/antibody/AntibodyNumberingParser.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnumManager.hh>
-#include <protocols/antibody/clusters/CDRClusterSet.hh>
-#include <protocols/antibody/clusters/CDRCluster.hh>
+#include <protocols/antibody/clusters/CDRClusterSet.fwd.hh>
+#include <protocols/antibody/clusters/CDRCluster.fwd.hh>
 
 // Rosetta Headers
 #include <protocols/loops/Loop.hh>

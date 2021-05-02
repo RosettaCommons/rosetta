@@ -28,6 +28,7 @@
 
 #include <core/io/silent/silent.fwd.hh>
 #include <core/io/silent/SilentFileData.hh>
+#include <core/io/silent/SilentStruct.hh>
 
 #include <devel/init.hh>
 #include <utility/excn/Exceptions.hh>

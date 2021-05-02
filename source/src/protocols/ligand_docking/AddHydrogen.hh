@@ -21,15 +21,12 @@
 #include <core/pose/Pose.fwd.hh>
 //#include <core/conformation/Residue.hh>
 #include <protocols/moves/Mover.hh>
-#include <basic/Tracer.hh>
 
 #include <utility/vector1.hh>
 
 
 namespace protocols {
 namespace ligand_docking {
-
-static basic::Tracer add_hydrogen_tracer( "protocols.ligand_docking.AddHydrogen", basic::t_debug );
 
 /// @brief
 ///

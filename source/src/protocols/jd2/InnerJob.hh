@@ -29,6 +29,7 @@
 
 //utility headers
 #include <utility/VirtualBase.hh>
+#include <utility/pointer/deep_copy.hh>
 #include <core/types.hh>
 
 //C++ headers
@@ -57,10 +58,6 @@ public:
 	/// @brief ctor.  Note that it takes only the input tag and max nstruct,
 	/// pose instantiation is deferred until the pose is needed
 	InnerJob( core::pose::PoseCOP, std::string const & input_tag, core::Size nstruct_max ); // move-constructing the string
-
-	/// @brief Copy constructor.
-	///
-	InnerJob( InnerJob const &src );
 
 	~InnerJob() override;
 
@@ -138,7 +135,7 @@ private:
 	std::string const input_tag_;
 	std::string optional_output_name_;
 	core::Size const nstruct_max_;
-	core::pose::PoseCOP pose_;
+	utility::pointer::DeepCopyOP< core::pose::Pose const > pose_;
 	bool bad_;
 }; // InnerJob
 

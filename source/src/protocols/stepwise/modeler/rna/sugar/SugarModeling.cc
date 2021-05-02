@@ -70,25 +70,6 @@ SugarModeling::SugarModeling():
 	pose_list.clear(); //pose_data_list
 }
 
-SugarModeling &
-SugarModeling::operator = ( SugarModeling const & src )
-{
-	sample_sugar = src.sample_sugar;
-	moving_res = src.moving_res;
-	reference_res = src.reference_res;
-	is_prepend = src.is_prepend;
-	bulge_res = src.bulge_res;
-	bulge_suite = src.bulge_suite;
-	five_prime_chain_break = src.five_prime_chain_break;
-	moving_res_pucker_state = src.moving_res_pucker_state;
-	bulge_res_pucker_state = src.bulge_res_pucker_state;
-	moving_res_base_state = src.moving_res_base_state;
-	bulge_res_base_state = src.bulge_res_base_state;
-	pose_list = src.pose_list;
-
-	return *this;
-}
-
 SugarModeling::~SugarModeling()= default;
 
 

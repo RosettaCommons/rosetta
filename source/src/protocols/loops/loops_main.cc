@@ -42,7 +42,7 @@
 #include <core/pose/symmetry/util.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/rms_util.hh>

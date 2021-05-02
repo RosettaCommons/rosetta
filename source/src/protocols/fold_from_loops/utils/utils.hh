@@ -24,7 +24,6 @@
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 
 // Basic/Utility headers
-#include <basic/Tracer.hh>
 #include <utility/vector1.hh>
 
 #include <string>

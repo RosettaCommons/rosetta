@@ -28,6 +28,7 @@
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/moves/MoverStatus.hh>
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 
 // added by Rebecca Alford - fixes the build?
 #include <core/conformation/ppo_torsion_bin.hh>

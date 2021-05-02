@@ -47,9 +47,6 @@ public:
 	void
 	set_base_and_pucker_state( core::pose::Pose const & pose, working_parameters::StepWiseWorkingParametersCOP const & WP );
 
-	SugarModeling &
-	operator = ( SugarModeling const & src );
-
 public:
 
 	bool sample_sugar;

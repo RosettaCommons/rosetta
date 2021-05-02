@@ -22,6 +22,7 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/id/TorsionID.hh>

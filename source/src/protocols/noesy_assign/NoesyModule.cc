@@ -54,6 +54,7 @@
 
 #include <ObjexxFCL/string.functions.hh>
 //Auto Headers
+#include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>
 #include <protocols/noesy_assign/CrossPeakList.impl.hh>

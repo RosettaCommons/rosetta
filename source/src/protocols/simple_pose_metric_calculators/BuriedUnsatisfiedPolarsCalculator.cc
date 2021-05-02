@@ -55,7 +55,7 @@
 #include <core/select/residue_selector/LayerSelector.hh>
 #include <core/scoring/sasa.hh>
 #include <core/scoring/packing/surf_vol.hh>
-#include <core/pose/util.tmpl.hh>
+#include <core/pose/init_id_map.hh>
 #include <core/chemical/AtomType.hh>
 
 // Utility headers

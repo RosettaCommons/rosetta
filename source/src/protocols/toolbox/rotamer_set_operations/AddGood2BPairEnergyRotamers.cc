@@ -16,6 +16,7 @@
 
 //Project headers
 
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/io/pdb/pdb_writer.hh>
@@ -49,21 +50,14 @@ AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers(
 	core::Size ex_level,
 	utility::vector1< core::Size > const & target_seqpos,
 	Real score_cutoff,
-	bool drop_rots_above_cutoff
+	bool /*drop_rots_above_cutoff*/
 ) : parent(),
 	seqpos_(seqpos), ex_level_(ex_level),
 	target_seqpos_(target_seqpos), score_cutoff_(score_cutoff),
-	drop_rots_above_cutoff_(drop_rots_above_cutoff), debug_(false),
+	/*drop_rots_above_cutoff_(drop_rots_above_cutoff), */
+	debug_(false),
 	disabled_(false)
 {}
-
-AddGood2BPairEnergyRotamers::AddGood2BPairEnergyRotamers( AddGood2BPairEnergyRotamers const & src )
-: parent( src ),
-	seqpos_(src.seqpos_), ex_level_(src.ex_level_),
-	target_seqpos_(src.target_seqpos_), score_cutoff_(src.score_cutoff_),
-	drop_rots_above_cutoff_(src.drop_rots_above_cutoff_), debug_(src.debug_), disabled_(false)
-{}
-
 
 AddGood2BPairEnergyRotamers::~AddGood2BPairEnergyRotamers()= default;
 

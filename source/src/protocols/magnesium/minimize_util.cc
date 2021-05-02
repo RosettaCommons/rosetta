@@ -17,7 +17,9 @@
 #include <protocols/magnesium/util.hh>
 #include <protocols/magnesium/MgMinimizer.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/import_pose/import_pose.hh>

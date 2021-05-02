@@ -51,9 +51,6 @@ public:
 		select::residue_selector::ResidueSelectorCOP selector,
 		scoring::ScoreFunctionCOP scorefxn);
 
-	/// @brief Copy constructor (not needed unless you need deep copies)
-	CompositeEnergyMetric( CompositeEnergyMetric const & src );
-
 	/// @brief Destructor (important for properly forward-declaring smart-pointer members)
 	~CompositeEnergyMetric() override;
 
