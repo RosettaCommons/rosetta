@@ -23,6 +23,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/optimization/ParticleSwarmMinimizer.hh>
 #include <core/types.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/xyzMatrix.hh>
