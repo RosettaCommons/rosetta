@@ -334,6 +334,9 @@ get_residues_from_chains(core::pose::Pose const & pose, utility::vector1<core::S
 ///
 bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string const & chain );
 
+/// @brief Utility function for get_hash_from_chain() - get hash for an isolated position.
+core::Size get_hash_from_pos(PointPosition const & pos);
+
 /// @brief Get a value representing the position of all the atoms for residues with the given chain letter
 ///
 /// See the documentation of Pose::num_chains() for details about chain numbers, chain letters and jumps.

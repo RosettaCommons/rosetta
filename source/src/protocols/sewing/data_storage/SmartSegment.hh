@@ -25,6 +25,9 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <core/chemical/Atom.hh>
+
+#include <set>
+
 namespace protocols {
 namespace sewing {
 namespace data_storage {

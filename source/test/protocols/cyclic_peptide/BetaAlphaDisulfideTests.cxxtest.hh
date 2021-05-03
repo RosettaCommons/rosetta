@@ -29,6 +29,7 @@
 // Protocol Headers
 #include <basic/Tracer.hh>
 #include <protocols/simple_moves/MutateResidue.hh>
+#include <numeric/xyz.functions.hh>
 
 #define EXPECTEDDIST 2.01
 #define DISTTHRESH 0.05

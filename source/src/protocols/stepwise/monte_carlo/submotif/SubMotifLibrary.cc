@@ -34,6 +34,7 @@
 #include <core/pose/extra_pose_info_util.hh>
 #include <basic/database/open.hh>
 #include <utility>
+#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 #include <utility/io/izstream.hh>
 #include <basic/Tracer.hh>

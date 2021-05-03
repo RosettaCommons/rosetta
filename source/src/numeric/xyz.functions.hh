@@ -214,6 +214,74 @@ inverse( xyzMatrix< T > const & a ) {
 
 // Angles
 
+/// @brief Angle between two vectors (in radians on [ 0, pi ])
+template <typename U>
+inline
+U
+angle_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : U( 0 ) );
+}
+
+
+/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+inline
+U
+angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return angle_of( a - b, c - b );
+}
+
+
+/// @brief Cosine of angle between two vectors
+template <typename U>
+inline
+U
+cos_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	U const mag = a.length() * b.length();
+	return ( mag > U( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : U( 1 ) );
+}
+
+
+/// @brief Cosine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c.
+template <typename U>
+inline
+U
+cos_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return cos_of( a - b, c - b );
+}
+
+
+/// @brief Sine of angle between two vectors
+template <typename U>
+inline
+U
+sin_of( xyzVector<U> const & a, xyzVector<U> const & b )
+{
+	return std::sqrt( U( 1 ) - square( cos_of( a, b ) ) );
+}
+
+
+/// @brief Sine of angle formed by three consecutive points
+/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
+///        in other words, the positive angle about b from a to c
+template <typename U>
+inline
+U
+sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
+{
+	return sin_of( a - b, c - b );
+}
+
+
 
 /// @brief Plane angle in radians: angle value passed
 /// @note  Given thre positions in a chain ( p1, p2, p3 ), calculates the plane

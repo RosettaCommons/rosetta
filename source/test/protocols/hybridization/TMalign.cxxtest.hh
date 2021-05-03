@@ -33,6 +33,7 @@
 //utility
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyzMatrix.io.hh>
 
 // TMalign headers
 #include <protocols/hybridization/TMalign.hh>
@@ -129,7 +130,7 @@ public:
 		TS_ASSERT( std::abs( testvector.dot( tm_align.get_t() ) - 3 ) < 0.05);
 
 		TR.Debug << " U matrix" << std::endl;
-		tm_align.get_u().show(TR); // << std::endl;
+		TR.Debug << tm_align.get_u() << std::endl;
 
 		//
 

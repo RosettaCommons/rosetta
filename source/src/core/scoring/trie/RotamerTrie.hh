@@ -59,6 +59,8 @@
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray2D.fwd.hh>
 
+#include <iostream>
+
 #ifdef    SERIALIZATION
 #include <cereal/access.fwd.hpp>
 #endif // SERIALIZATION

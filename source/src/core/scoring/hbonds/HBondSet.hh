@@ -511,7 +511,7 @@ public:
 	void show(std::ostream & out) const;
 
 	// PyRosetta friendly version
-	void show() const { show(std::cout); };
+	void show() const;
 
 
 	/// @brief Print nicely formated summary of the hbonds and their geometry in the pose.
@@ -536,7 +536,7 @@ public:
 	void show(
 		pose::Pose const & pose,
 		Size const residue,
-		bool const print_header=true) const { show(pose, residue, print_header, std::cout); }
+		bool const print_header=true) const;
 
 protected:
 	/// @brief allow the NPDHBondSet to store the npd weights in the hbond objects

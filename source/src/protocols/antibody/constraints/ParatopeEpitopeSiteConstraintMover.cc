@@ -36,6 +36,7 @@
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
 #include <utility>
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

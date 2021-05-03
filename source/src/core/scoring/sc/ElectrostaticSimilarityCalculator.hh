@@ -27,6 +27,7 @@
 #include <core/scoring/PoissonBoltzmannPotential.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
+#include <utility/vector0.hh>
 
 namespace core {
 namespace scoring {

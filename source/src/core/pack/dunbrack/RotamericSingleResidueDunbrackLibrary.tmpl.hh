@@ -73,7 +73,6 @@
 
 // Utility Headers
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/LexicographicalIterator.hh>
 #include <utility/fixedsizearray1.hh>
 #include <utility/vector1.hh>

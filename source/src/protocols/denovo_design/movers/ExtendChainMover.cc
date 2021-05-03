@@ -36,6 +36,8 @@
 #include <basic/Tracer.hh>
 
 //Utility Headers
+#include <utility/string_util.hh>
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>

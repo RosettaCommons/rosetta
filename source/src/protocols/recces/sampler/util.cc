@@ -30,6 +30,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/pose/Pose.hh>
 
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "protocols.recces.sampler.util" );

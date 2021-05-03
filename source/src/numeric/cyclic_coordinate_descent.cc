@@ -15,6 +15,7 @@
 
 #include <numeric/cyclic_coordinate_descent.hh>
 #include <numeric/xyzVector.hh>
+#include <utility/string_util.hh>
 #include <numeric/conversions.hh>
 
 namespace numeric {
@@ -67,7 +68,7 @@ void ccd_angle(
 	Real bb( 0.0 );
 	Real cc( 0.0 );
 
-	Size n_overlap_positions( min( F.size(), M.size() ) );
+	Size n_overlap_positions( std::min( F.size(), M.size() ) );
 
 	// For each position to overlap, calculate the variables required for computing the best angle, alpha.
 	for ( Size i = 1; i <= n_overlap_positions; ++i ) {

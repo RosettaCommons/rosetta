@@ -59,6 +59,7 @@
 // #include <string>
 // #include <map>
 #include <list>
+#include <iostream>
 
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray1D.hh>

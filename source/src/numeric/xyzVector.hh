@@ -29,11 +29,10 @@
 // Package headers
 #include <numeric/xyzMatrix.fwd.hh>
 #include <numeric/xyz.functions.fwd.hh>
-#include <numeric/trig.functions.hh>
 #include <platform/types.hh>
+#include <utility/numbers.hh>
 
 // C++ headers
-#include <stdexcept>
 #include <utility/assert.hh>
 #include <cmath>
 #ifdef GL_GRAPHICS
@@ -41,15 +40,10 @@
 #endif
 
 #include <ObjexxFCL/FArrayTraits.hh>
-#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
-
-// Boost Headers
-#include <boost/functional/hash.hpp>
 
 // C++ headers
 #include <cstdlib>
-#include <iosfwd>
 
 #ifdef PYROSETTA
 	#include <numeric/xyz.functions.hh>
@@ -375,18 +369,8 @@ public: // Methods
 	std::string
 	to_string() const
 	{
-		return "(" + utility::to_string(x_) + ", " + utility::to_string(y_) + ", " + utility::to_string(z_) + ")";
+		return "(" + std::to_string(x_) + ", " + std::to_string(y_) + ", " + std::to_string(z_) + ")";
 	}
-
-
-	/// @brief Show
-	inline
-	void
-	show(std::ostream & output=std::cout) const
-	{
-		output << "(" << x_ << ", " << y_ << ", " << z_ << ")";
-	}
-
 
 	/// @brief Clear
 	inline
@@ -1263,53 +1247,6 @@ public: // Methods
 	center( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c, xyzVector<U> const & d, xyzVector<U> & m );
 
 
-	/// @brief Angle between two vectors (in radians on [ 0, pi ])
-	template <typename U>
-	friend
-	U
-	angle_of( xyzVector const & a, xyzVector const & b );
-
-
-	/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
-	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-	///        in other words, the positive angle about b from a to c
-	template <typename U>
-	friend
-	U
-	angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c );
-
-
-	/// @brief Cosine of angle between two vectors
-	template <typename U>
-	friend
-	U
-	cos_of( xyzVector const & a, xyzVector const & b );
-
-
-	/// @brief Cosine of angle formed by three consecutive points
-	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-	///        in other words, the positive angle about b from a to c.
-	template <typename U>
-	friend
-	U
-	cos_of( xyzVector const & a, xyzVector const & b, xyzVector const & c );
-
-
-	/// @brief Sine of angle between two vectors
-	template <typename U>
-	friend
-	U
-	sin_of( xyzVector<U> const & a, xyzVector<U> const & b );
-
-
-	/// @brief Sine of angle formed by three consecutive points
-	/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-	///        in other words, the positive angle about b from a to c
-	template <typename U>
-	friend
-	U
-	sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c );
-
 	// AMW: for md code
 	// TODO: figure out what this is in fundamental vector operations
 	template <typename U>
@@ -1525,30 +1462,6 @@ public: // Properties: value assignment
 
 
 public: // Indexers
-
-	/// @brief xyzVector.at: 0-based index with bounds checking
-	inline
-	Value const &
-	at(int const i) const
-	{
-		if ( !((i >= 0) && (i < 3)) ) {
-			throw std::out_of_range ("numeric::xyzVector::at");
-		}
-
-		return ( i == 0 ? x_ : ( i == 1 ? y_ : z_ ) );
-	}
-
-	/// @brief xyzVector.at: 0-based index with bounds checking
-	inline
-	Value &
-	at(int const i)
-	{
-		if ( !((i >= 0) && (i < 3)) ) {
-			throw std::out_of_range ("numeric::xyzVector::at");
-		}
-
-		return ( i == 0 ? x_ : ( i == 1 ? y_ : z_ ) );
-	}
 
 	/// @brief xyzVector[ i ] const: 0-based index
 	inline
@@ -1839,10 +1752,6 @@ public: // Comparison
 		return ( length_squared() <= v.length_squared() );
 	}
 
-	/// @brief Hashing of coords using boost::hash
-	template <typename U>
-	friend platform::Size hash_value(xyzVector<U> const & v);
-
 private: // Methods
 
 
@@ -1866,18 +1775,6 @@ private: // Fields
 
 
 }; // xyzVector
-
-
-//// @brief Hashing of coords using boost::hash
-template< typename T >
-platform::Size hash_value(xyzVector< T >  const & v)
-{
-	std::size_t hash = 0;
-	boost::hash_combine(hash, v.x_);
-	boost::hash_combine(hash, v.y_);
-	boost::hash_combine(hash, v.z_);
-	return hash;
-}
 
 
 /// @brief xyzVector + xyzVector
@@ -2100,42 +1997,6 @@ center( xyzVector< T > const & a, xyzVector< T > const & b, xyzVector< T > const
 template< typename T >
 void
 center( xyzVector< T > const & a, xyzVector< T > const & b, xyzVector< T > const & c, xyzVector< T > const & d, xyzVector< T > & m );
-
-
-/// @brief Angle between two vectors (in radians on [ 0, pi ])
-template< typename T >
-T
-angle_of( xyzVector< T > const & a, xyzVector< T > const & b );
-
-
-/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
-template< typename T >
-T
-angle_of( xyzVector< T > const & a, xyzVector< T > const & b, xyzVector< T > const & c );
-
-
-/// @brief Cosine of angle between two vectors
-template< typename T >
-T
-cos_of( xyzVector< T > const & a, xyzVector< T > const & b );
-
-
-/// @brief Cosine of angle formed by three consecutive points
-template< typename T >
-T
-cos_of( xyzVector< T > const & a, xyzVector< T > const & b, xyzVector< T > const & c );
-
-
-/// @brief Sine of angle between two vectors
-template< typename T >
-T
-sin_of( xyzVector< T > const & a, xyzVector< T > const & b );
-
-
-/// @brief Sine of angle formed by three consecutive points
-template< typename T >
-T
-sin_of( xyzVector< T > const & a, xyzVector< T > const & b, xyzVector< T > const & c );
 
 
 /// @brief xyzVector == xyzVector
@@ -2402,74 +2263,6 @@ update_5way_operation(
 
 	);
 }
-
-/// @brief Angle between two vectors (in radians on [ 0, pi ])
-template <typename U>
-inline
-U
-angle_of( xyzVector<U> const & a, xyzVector<U> const & b )
-{
-	U const mag = a.length() * b.length();
-	return ( mag > U( 0 ) ? std::acos( sin_cos_range( a.dot( b ) / mag ) ) : U( 0 ) );
-}
-
-
-/// @brief Angle formed by three consecutive points (in radians on [ 0, pi ])
-/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-///        in other words, the positive angle about b from a to c
-template <typename U>
-inline
-U
-angle_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
-{
-	return angle_of( a - b, c - b );
-}
-
-
-/// @brief Cosine of angle between two vectors
-template <typename U>
-inline
-U
-cos_of( xyzVector<U> const & a, xyzVector<U> const & b )
-{
-	U const mag = a.length() * b.length();
-	return ( mag > U( 0 ) ? sin_cos_range( a.dot( b ) / mag ) : U( 1 ) );
-}
-
-
-/// @brief Cosine of angle formed by three consecutive points
-/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-///        in other words, the positive angle about b from a to c.
-template <typename U>
-inline
-U
-cos_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
-{
-	return cos_of( a - b, c - b );
-}
-
-
-/// @brief Sine of angle between two vectors
-template <typename U>
-inline
-U
-sin_of( xyzVector<U> const & a, xyzVector<U> const & b )
-{
-	return std::sqrt( U( 1 ) - square( cos_of( a, b ) ) );
-}
-
-
-/// @brief Sine of angle formed by three consecutive points
-/// @note  For points a, b, c, the angle is the angle between the vectors a - b  and c - b
-///        in other words, the positive angle about b from a to c
-template <typename U>
-inline
-U
-sin_of( xyzVector<U> const & a, xyzVector<U> const & b, xyzVector<U> const & c )
-{
-	return sin_of( a - b, c - b );
-}
-
 
 /// @brief xyzVector with min coordinates of two xyzVectors
 template <typename U>

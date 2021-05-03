@@ -28,6 +28,7 @@
 
 // Numeric
 #include <numeric/conversions.hh>
+#include <numeric/trig.functions.hh>
 
 // utility
 #include <utility/io/izstream.hh>

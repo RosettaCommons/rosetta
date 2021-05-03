@@ -43,7 +43,6 @@
 
 // Utility headers
 #include <utility/heap.hh>
-#include <utility/string_util.hh>
 
 // C++ headers
 #include <list>

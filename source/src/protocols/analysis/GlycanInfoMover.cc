@@ -28,6 +28,7 @@
 
 // Basic/Utility headers
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/excn/Exceptions.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>

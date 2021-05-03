@@ -21,7 +21,6 @@
 #include <utility/numbers.hh>
 
 #include <utility/exit.hh>
-//#include <utility/string_util.hh>
 #include <core/types.hh>
 
 #include <set>

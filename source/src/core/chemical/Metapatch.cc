@@ -30,6 +30,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 

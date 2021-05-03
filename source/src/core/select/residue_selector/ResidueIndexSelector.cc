@@ -168,12 +168,12 @@ ResidueIndexSelector::set_index( std::string const &index_str )
 
 void
 ResidueIndexSelector::set_index( core::Size index ){
-	set_index( utility::to_string(index));
+	set_index( std::to_string(index));
 }
 
 void
 ResidueIndexSelector::set_index_range(core::Size start, core::Size end){
-	std::string range = utility::to_string(start)+"-"+utility::to_string(end);
+	std::string range = std::to_string(start)+"-"+std::to_string(end);
 	set_index(range);
 }
 

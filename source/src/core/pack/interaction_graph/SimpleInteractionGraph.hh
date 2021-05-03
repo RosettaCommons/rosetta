@@ -40,6 +40,8 @@
 #include <utility/graph/Graph.hh>
 #include <utility/vector1.hh>
 
+#include <list>
+
 //#define OFFROT_PRINT_WEIGHTS_EVERY_LOOP
 
 namespace core {

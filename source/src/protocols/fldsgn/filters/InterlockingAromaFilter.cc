@@ -29,6 +29,7 @@
 
 // Utility headers
 #include <basic/Tracer.hh>
+#include <numeric/numeric.functions.hh>
 
 // Parser headers
 #include <protocols/filters/Filter.hh>

@@ -48,6 +48,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility Headers
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/io/izstream.hh>
 

@@ -23,7 +23,6 @@
 #include <boost/unordered/unordered_map.hpp>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <protocols/moves/Mover.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.fwd.hh>

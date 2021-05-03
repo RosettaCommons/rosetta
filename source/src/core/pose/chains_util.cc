@@ -643,6 +643,14 @@ bool res_in_chain( core::pose::Pose const & pose, core::Size resnum, std::string
 	return pdb_info->chain( resnum ) == chain[0];
 }
 
+core::Size get_hash_from_pos(PointPosition const & pos) {
+	core::Size hash = 0;
+	boost::hash_combine(hash, pos.x() );
+	boost::hash_combine(hash, pos.y() );
+	boost::hash_combine(hash, pos.z() );
+	return hash;
+}
+
 core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose, std::string const & extra_label)
 {
 	PDBInfoCOP pdb_info( pose.pdb_info() );
@@ -660,8 +668,8 @@ core::Size get_hash_from_chain(char const & chain, core::pose::Pose const & pose
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
 		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
-			PointPosition current_xyz = pose.conformation().xyz(atom_id);
-			boost::hash_combine(hash,current_xyz);
+			PointPosition const & current_xyz = pose.conformation().xyz(atom_id);
+			boost::hash_combine(hash, get_hash_from_pos(current_xyz) );
 		}
 	}
 	if ( ! extra_label.empty() ) {
@@ -688,8 +696,8 @@ core::Size get_hash_excluding_chain(char const & chain, core::pose::Pose const &
 		core::Size natoms = pose.conformation().residue(res_num).natoms();
 		for ( core::Size atom_num = 1; atom_num <= natoms; ++atom_num ) {
 			id::AtomID atom_id(atom_num,res_num);
-			PointPosition current_xyz = pose.conformation().xyz(atom_id);
-			boost::hash_combine(hash,current_xyz);
+			PointPosition const & current_xyz = pose.conformation().xyz(atom_id);
+			boost::hash_combine(hash, get_hash_from_pos(current_xyz) );
 		}
 	}
 	if ( ! extra_label.empty() ) {

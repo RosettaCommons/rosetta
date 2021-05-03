@@ -44,6 +44,8 @@
 #include <core/conformation/symmetry/SymmetryInfo.fwd.hh>
 #include <core/conformation/symmetry/SymmetricConformation.fwd.hh>
 
+#include <map>
+
 namespace core {
 namespace pack {
 namespace guidance_scoreterms {

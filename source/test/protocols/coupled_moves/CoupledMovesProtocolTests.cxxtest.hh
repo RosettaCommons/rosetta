@@ -30,6 +30,7 @@
 #include <protocols/coupled_moves/CoupledMovesProtocol.hh>
 #include <protocols/coupled_moves/CoupledMovesProtocolCreator.hh>
 
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 
 // Test headers

@@ -31,6 +31,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <set>
+#include <map>
 
 namespace core {
 namespace scoring {

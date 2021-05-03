@@ -32,6 +32,7 @@
 #include <core/pose/full_model_info/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <utility>
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <utility/tag/Tag.hh>

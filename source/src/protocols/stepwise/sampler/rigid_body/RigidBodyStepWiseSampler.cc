@@ -338,7 +338,7 @@ RigidBodyStepWiseSampler::get_residue_at_origin( core::Size const seqpos ){ retu
 /// @brief Name of the class
 std::string
 RigidBodyStepWiseSampler::get_name() const {
-	return "RigidBodyStepWiseSampler residue:" + utility::to_string(moving_res_);
+	return "RigidBodyStepWiseSampler residue:" + std::to_string(moving_res_);
 }
 
 

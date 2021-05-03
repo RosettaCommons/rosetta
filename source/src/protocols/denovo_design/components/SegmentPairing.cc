@@ -28,6 +28,7 @@
 #include <utility>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <utility/string_util.hh>
 
 // Boost headers
 

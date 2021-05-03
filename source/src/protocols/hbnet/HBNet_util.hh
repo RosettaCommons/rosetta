@@ -19,7 +19,6 @@
 #include <protocols/hbnet/HBNet.fwd.hh>
 
 #include <utility/exit.hh>
-#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/graph/Graph.hh>
 

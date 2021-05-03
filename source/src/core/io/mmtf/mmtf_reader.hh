@@ -27,7 +27,6 @@
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueConnection.hh>
-#include <utility/string_util.hh>
 #include <iosfwd>
 #include <numeric/random/random.hh>
 

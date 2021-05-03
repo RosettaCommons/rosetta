@@ -32,6 +32,7 @@ static basic::Tracer TR( "protocols.splice.RBInMover" );
 //#include <sstream>
 #include <core/pose/util.hh>
 #include <algorithm>
+#include <utility/stream_util.hh>
 #include <utility/io/izstream.hh>
 #include <protocols/protein_interface_design/movers/SetAtomTree.hh>
 #include <boost/algorithm/string.hpp>

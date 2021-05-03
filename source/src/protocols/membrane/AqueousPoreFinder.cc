@@ -42,6 +42,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
+#include <utility/string_util.hh>
 
 #include <utility/io/ozstream.hh>
 #include <utility/file/file_sys_util.hh>

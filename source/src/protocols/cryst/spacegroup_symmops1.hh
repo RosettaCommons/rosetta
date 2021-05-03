@@ -21,6 +21,8 @@
 #include <core/types.hh>
 #include <core/kinematics/RT.fwd.hh>
 
+#include <utility/vector1.hh>
+
 // Rosetta numeric includes:
 #include <numeric/xyzVector.hh>
 

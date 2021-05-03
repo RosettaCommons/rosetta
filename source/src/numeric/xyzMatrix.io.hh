@@ -23,7 +23,9 @@
 
 // C++ headers
 #include <iosfwd>
-
+#include <iomanip>
+#include <ostream>
+#include <istream>
 
 namespace numeric {
 

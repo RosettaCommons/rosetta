@@ -193,7 +193,10 @@ public:
 	// Other functions.
 
 	/// @brief  Generate string representation of chemical::Atom for debugging purposes.
-	void show( std::ostream & out=std::cout ) const;
+	void show( std::ostream & out ) const;
+
+	/// @brief  Generate string representation of chemical::Atom to std::cout for debugging purposes.
+	void show() const;
 
 	// data
 private:

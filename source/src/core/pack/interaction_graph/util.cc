@@ -28,6 +28,7 @@
 #include <core/io/silent/SilentFileOptions.hh>
 
 // Utility Headers
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 
 

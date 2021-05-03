@@ -15,6 +15,8 @@
 // Unit header
 #include <core/conformation/Atom.hh>
 
+#include <iostream>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -30,6 +32,13 @@ void
 Atom::show( std::ostream & output ) const
 {
 	output << xyz_.x() << ", " << xyz_.y() << ", " << xyz_.z();
+}
+
+void
+Atom::show() const
+{
+	// Separate function to avoid putting iostream in the header
+	show(std::cout);
 }
 
 #ifdef     SERIALIZATION

@@ -691,5 +691,17 @@ public: // tests
 		}
 	}
 
+	/// @brief boost::hash tests
+	void test_xyzVector_HashOperations() {
+		using namespace core::pose;
+		numeric::xyzVector_float v( 1.0, 2.0, 3.0 );
+		numeric::xyzVector_float w( 1.0, 2.0, 3.0 );
+		numeric::xyzVector_float x( 2.0, 2.0, 3.0 );
+
+		TS_ASSERT(get_hash_from_pos(v) == get_hash_from_pos(w));
+		TS_ASSERT(get_hash_from_pos(v) != get_hash_from_pos(x));
+
+	}
+
 }; // class PoseUtilTests
 

@@ -33,7 +33,6 @@
 #include <utility/exit.hh>
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/string_util.hh>
 
 //// C++ headers
 #include <string>
@@ -140,7 +139,7 @@ public:
 		} else if ( i==4 ) {
 			return info2_->fold_label_resonance();
 		};
-		utility_exit_with_message( "Cannot pick folder for value "+ utility::to_string(i) );
+		utility_exit_with_message( "Cannot pick folder for value "+ std::to_string(i) );
 		return UNFOLDED_; //to make compiler happy
 	}
 
@@ -158,7 +157,7 @@ public:
 		} else if ( i==4 ) {
 			return info2_->fold_label_resonance()( freq );
 		};
-		utility_exit_with_message( "Cannot pick fold_resonance for dim "+ utility::to_string(i) );
+		utility_exit_with_message( "Cannot pick fold_resonance for dim "+ std::to_string(i) );
 		return 0.0; //to make compiler happy
 	}
 	//  virtual void read_from_stream( std::istream& );
@@ -293,7 +292,7 @@ public:
 		} else if ( d == 4 ) {
 			return info1_->label_tolerance();
 		}
-		utility_exit_with_message( "Cannot pick tolerance for value "+ utility::to_string(d) );
+		utility_exit_with_message( "Cannot pick tolerance for value "+ std::to_string(d) );
 		return 0.0;
 	}
 

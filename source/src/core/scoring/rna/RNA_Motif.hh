@@ -190,12 +190,8 @@ private:
 
 };
 
-inline
 std::ostream &
-operator << ( std::ostream & out, RNA_Motif const & s ) {
-	out << to_string( s.type_ ) << ' ' << s.residues_;
-	return out;
-}
+operator << ( std::ostream & out, RNA_Motif const & s );
 
 ///////////////////////////////////////////////////////////////////
 inline
@@ -291,23 +287,8 @@ check_stack( Size const i, Size const j,
 }
 
 // @brief output for RNA_Motif
-inline
 void
-output_rna_motif( pose::Pose const & pose,
-	RNA_Motif const & motif )
-{
-	if ( rna_motif_bonus.count( motif.type() ) == 0 ) return;
-	if ( rna_motif_bonus.find( motif.type() )->second >= 0.0  ) return;
-	std::cout << ObjexxFCL::right_string_of( to_string( motif.type() ), 20 ) << ": ";
-	for ( auto const & res : motif ) {
-		std::cout << ' ' << ObjexxFCL::right_string_of( pose.residue( res ).annotated_name(), 6 ) <<
-			"-" << pose.pdb_info()->chain( res ) << ":";
-		if ( pose.pdb_info()->segmentID( res ).size() > 0 &&
-				pose.pdb_info()->segmentID( res ) != "    " ) std::cout << pose.pdb_info()->segmentID( res ) << ":";
-		std::cout << ObjexxFCL::left_string_of( pose.pdb_info()->number( res ), 4 );
-	}
-	std::cout << std::endl;
-}
+output_rna_motif( pose::Pose const & pose, RNA_Motif const & motif );
 
 // @brief output for RNA_Motifs (with detailed residue names, etc.)
 inline

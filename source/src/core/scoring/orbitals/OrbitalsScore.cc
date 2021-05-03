@@ -35,6 +35,7 @@
 #include <utility/vector1.hh>
 
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
 #include <core/id/types.hh>

@@ -27,6 +27,7 @@
 #include <core/id/SequenceMapping.hh>
 
 // Utility headers
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>
 

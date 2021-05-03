@@ -28,6 +28,7 @@
 #include <core/id/AtomID.hh>
 #include <core/id/NamedAtomID.hh>
 #include <core/chemical/AA.hh>
+#include <utility/stream_util.hh>
 #include <basic/Tracer.hh>
 #include <utility>
 

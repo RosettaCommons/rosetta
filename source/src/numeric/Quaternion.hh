@@ -400,7 +400,7 @@ public: // Methods
 	std::string
 	to_string() const
 	{
-		return "(" + utility::to_string(w_) + ", " + utility::to_string(x_) + ", " + utility::to_string(y_) + ", " + utility::to_string(z_) + ")";
+		return "(" + std::to_string(w_) + ", " + std::to_string(x_) + ", " + std::to_string(y_) + ", " + std::to_string(z_) + ")";
 	}
 
 

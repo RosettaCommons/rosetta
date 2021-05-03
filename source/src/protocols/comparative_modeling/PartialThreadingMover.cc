@@ -35,6 +35,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/ScoreFunction.hh>
 
+#include <utility/string_util.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.hh>
 #include <basic/datacache/DataMap.fwd.hh>

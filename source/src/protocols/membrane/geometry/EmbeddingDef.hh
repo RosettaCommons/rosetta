@@ -31,6 +31,7 @@
 
 // C++ Headers
 #include <cstdlib>
+#include <iostream>
 
 namespace protocols {
 namespace membrane {

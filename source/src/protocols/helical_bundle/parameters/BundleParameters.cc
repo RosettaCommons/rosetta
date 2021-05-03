@@ -33,6 +33,7 @@
 // Numeric headers
 
 // Utility Headers
+#include <utility/stream_util.hh>
 #include <utility/assert.hh>
 #include <utility/py/PyAssert.hh>
 #include <utility/vector1.hh>

@@ -39,6 +39,7 @@
 #include <utility/excn/Exceptions.hh>
 
 #include <utility/io/ozstream.hh>
+#include <utility/string_util.hh>
 #include <utility/file/file_sys_util.hh>
 
 // C++ Headers

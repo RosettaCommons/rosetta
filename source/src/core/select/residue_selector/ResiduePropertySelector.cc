@@ -28,6 +28,7 @@
 #include <core/pose/Pose.hh>
 
 // Utility Headers
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/util.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

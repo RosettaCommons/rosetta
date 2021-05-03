@@ -432,7 +432,6 @@ void HBond::show(pose::Pose const & pose, bool const print_header) const
 	show(pose, print_header, t);
 }
 
-
 std::ostream &
 operator<< ( std::ostream & out, const HBond & hbond ){
 	hbond.show( out );
@@ -974,16 +973,28 @@ operator<< ( std::ostream & out, const HBondSet & hbond_set ){
 
 void
 HBondSet::show(
-	std::ostream & out/*=std::cout*/
+	std::ostream & out
 ) const {
 	for ( core::Size i=1; i<=nhbonds(); ++i ) {
 		out << hbond(i);
 	}
 }
 
+// PyRosetta friendly version
+void HBondSet::show() const { show(std::cout); }
+
 void HBondSet::show(pose::Pose const & pose, bool const print_header) const
 {
 	show(pose, print_header, t);
+}
+
+void
+HBondSet::show(
+	pose::Pose const & pose,
+	Size const residue,
+	bool const print_header) const
+{
+	show(pose, residue, print_header, std::cout);
 }
 
 

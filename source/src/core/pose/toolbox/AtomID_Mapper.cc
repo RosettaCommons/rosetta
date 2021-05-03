@@ -26,6 +26,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/methods/chainbreak_util.hh>
 
+#include <utility/string_util.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR( "core.pose.toolbox.AtomID_Mapper" );

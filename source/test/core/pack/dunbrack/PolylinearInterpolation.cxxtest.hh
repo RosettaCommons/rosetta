@@ -48,6 +48,7 @@
 #include <numeric/conversions.hh>
 #include <numeric/angle.functions.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/stream_util.hh>
 
 static basic::Tracer TR("PolylinearInterpolationTests");
 

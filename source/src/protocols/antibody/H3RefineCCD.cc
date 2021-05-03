@@ -57,6 +57,7 @@
 #include <protocols/minimization_packing/RotamerTrialsMover.hh>
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
 
+#include <numeric/numeric.functions.hh>
 
 static basic::Tracer TR( "protocols.antibody.H3RefineCCD" );
 

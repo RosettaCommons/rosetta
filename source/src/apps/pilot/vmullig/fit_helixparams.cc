@@ -29,6 +29,7 @@
 #include <utility/excn/Exceptions.hh>
 #include <basic/Tracer.hh>
 #include <core/pose/PDBInfo.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
 //Application-specific includes

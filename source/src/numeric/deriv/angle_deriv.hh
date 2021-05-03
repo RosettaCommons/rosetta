@@ -18,6 +18,7 @@
 
 #include <numeric/xyzVector.hh>
 #include <numeric/conversions.hh>
+#include <numeric/trig.functions.hh>
 #include <utility/assert.hh>
 
 namespace numeric {

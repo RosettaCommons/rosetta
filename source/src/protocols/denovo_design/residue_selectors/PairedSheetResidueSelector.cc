@@ -34,6 +34,7 @@
 #include <basic/datacache/DataMap.hh>
 
 // Utility Headers
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

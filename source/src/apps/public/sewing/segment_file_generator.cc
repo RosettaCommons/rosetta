@@ -338,7 +338,7 @@ write_segments_to_file( protocols::sewing::hashing::SegmentVectorOP seg_vec, uti
 			}
 			*file << std::endl;
 			for ( core::conformation::Atom out_atom : out_residue->get_atom_vector() ) {
-				*file << "ATOM " << out_atom.xyz().at(0) << " " << out_atom.xyz().at(1) << " " << out_atom.xyz().at(2) << std::endl;
+				*file << "ATOM " << out_atom.xyz()[0] << " " << out_atom.xyz()[1] << " " << out_atom.xyz()[2] << std::endl;
 			}
 		}
 	}

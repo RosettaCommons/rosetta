@@ -33,6 +33,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
+#include <map>
+
 namespace protocols {
 namespace denovo_design {
 namespace architects {

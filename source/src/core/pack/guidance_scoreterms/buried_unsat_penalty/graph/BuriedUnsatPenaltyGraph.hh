@@ -34,6 +34,8 @@
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/BuriedUnsatPenaltyTests.fwd.hh>
 #include <core/pack/guidance_scoreterms/buried_unsat_penalty/graph/BuriedUnsatPenaltyGraphTests.fwd.hh>
 
+#include <map>
+
 namespace core {
 namespace pack {
 namespace guidance_scoreterms {

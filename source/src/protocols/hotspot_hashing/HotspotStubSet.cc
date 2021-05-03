@@ -71,6 +71,7 @@
 
 
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
 // Utility headers

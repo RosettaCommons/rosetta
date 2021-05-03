@@ -18,6 +18,7 @@
 #include <basic/Tracer.hh>
 
 // Utility headers:
+#include <utility/string_util.hh>
 #include <utility/pointer/memory.hh>
 #include <utility/io/izstream.hh>
 

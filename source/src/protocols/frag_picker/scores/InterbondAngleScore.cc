@@ -28,6 +28,7 @@
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <utility/io/izstream.hh>
 #include <numeric/NumericTraits.hh>
 

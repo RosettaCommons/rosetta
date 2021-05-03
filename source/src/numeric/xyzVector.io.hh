@@ -23,7 +23,8 @@
 
 // C++ headers
 #include <iosfwd>
-
+#include <iomanip>
+#include <sstream>
 
 namespace numeric {
 

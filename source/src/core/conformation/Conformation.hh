@@ -18,7 +18,7 @@
 
 // Unit headers
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Residue.hh>
 
 // Package headers
 #include <core/conformation/signals/ConnectionEvent.fwd.hh>
@@ -36,7 +36,9 @@
 #endif
 
 // Project headers
+#include <core/chemical/AA.hh>
 #include <core/chemical/ResidueType.fwd.hh>
+#include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/chemical/CacheableResidueTypeSets.hh>
 #include <core/chemical/PoseResidueTypeSet.fwd.hh>
 
@@ -60,7 +62,7 @@
 #include <core/conformation/membrane/MembraneInfo.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSet.fwd.hh>
 #include <core/conformation/carbohydrates/GlycanTreeSetObserver.fwd.hh>
-#include <core/conformation/parametric/ParametersSet.hh> //THIS SHOULD CHANGE TO ParametersSet.fwd.hh.
+#include <core/conformation/parametric/ParametersSet.fwd.hh>
 #include <core/conformation/parametric/Parameters.fwd.hh>
 #include <core/conformation/ConformationTests.fwd.hh> //Forward declaration of unit test class needed for friendship
 
@@ -70,6 +72,10 @@
 #include <utility/signals/Link.fwd.hh>
 #include <utility/signals/PausableSignalHub.hh>
 #include <utility/vector1.fwd.hh>
+
+#include <basic/datacache/BasicDataCache.fwd.hh>
+
+#include <numeric/xyzMatrix.fwd.hh>
 
 #include <boost/iterator/indirect_iterator.hpp>
 

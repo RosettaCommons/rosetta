@@ -60,6 +60,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 //Numeric Headers
 #include <numeric/random/random.hh>

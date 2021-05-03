@@ -34,6 +34,7 @@
 // Utility headers
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
+#include <numeric/numeric.functions.hh>
 
 //// C++ headers
 #include <cmath>

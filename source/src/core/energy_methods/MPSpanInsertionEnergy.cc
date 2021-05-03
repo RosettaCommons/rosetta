@@ -33,6 +33,7 @@
 
 //utility headers
 #include <utility/exit.hh>
+#include <utility/string_util.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
 #include <core/conformation/membrane/SpanningTopology.hh>
 #include <core/conformation/membrane/Span.hh>

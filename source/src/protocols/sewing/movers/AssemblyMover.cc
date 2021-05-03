@@ -184,7 +184,7 @@ AssemblyMover::add_motif_scorers_to_score_file( core::pose::Pose & pose, data_st
 	core::Real latest_score = score( assembly ); //Makes sure all the scores are up to date
 	for ( scoring::AssemblyScorerOP scorer : assembly_scorers_ ) {
 		//core::pose::setPoseExtraScore( pose, scorer->get_name(), scorer->get_last_score() );
-		core::pose::setPoseExtraScore( pose, scorer->get_name() + "_" + utility::to_string( counter ), scorer->get_last_score() );
+		core::pose::setPoseExtraScore( pose, scorer->get_name() + "_" + std::to_string( counter ), scorer->get_last_score() );
 		++counter;
 	}
 	core::pose::setPoseExtraScore( pose, "nres", pose.total_residue() );

@@ -137,7 +137,7 @@ ResidueAlternativeStepWiseSampler::get_residue_at_origin_with_matching_type( Res
 /// @brief Name of the class
 std::string
 ResidueAlternativeStepWiseSampler::get_name() const {
-	return "ResidueAlternative residue:" + utility::to_string( representative_seqpos_ );
+	return "ResidueAlternative residue:" + std::to_string( representative_seqpos_ );
 }
 
 } //copy_dofs

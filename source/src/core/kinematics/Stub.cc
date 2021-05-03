@@ -18,6 +18,7 @@
 
 #include <numeric/conversions.hh>
 
+#include <iostream>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

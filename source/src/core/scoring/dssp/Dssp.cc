@@ -41,6 +41,7 @@
 
 // numeric headers
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 
 //// C++ headers
 #include <cstdlib>

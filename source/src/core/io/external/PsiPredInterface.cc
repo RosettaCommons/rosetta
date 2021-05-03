@@ -25,6 +25,7 @@
 // utility headers
 #include <basic/Tracer.hh>
 #include <utility>
+#include <utility/string_util.hh>
 #include <utility/io/izstream.hh>
 
 #include <utility/file/file_sys_util.hh> //file_exists()

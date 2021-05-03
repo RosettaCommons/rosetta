@@ -25,6 +25,7 @@
 
 // Numeric headers
 #include <numeric/xyzVector.hh>
+#include <iosfwd>
 
 namespace core {
 namespace conformation {
@@ -67,7 +68,10 @@ public:
 
 
 	/// @brief  Generate string representation of conformation::Atom for debugging purposes.
-	void show( std::ostream & output=std::cout ) const;
+	void show( std::ostream & output ) const;
+
+	/// @brief  Generate string representation of conformation::Atom to std::cout for debugging purposes.
+	void show() const;
 
 
 	/// @brief set the atom type number

@@ -28,6 +28,7 @@
 #include <utility/VirtualBase.hh>
 
 #include <list>
+#include <iostream>
 
 #if defined(WIN32)  // required, because Windows uses rad1 and rad2 as keywords
 #undef rad1

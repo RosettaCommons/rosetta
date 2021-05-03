@@ -28,6 +28,7 @@
 
 // Basic/Utility Headers
 #include <basic/Tracer.hh>
+#include <utility/stream_util.hh>
 
 // Boost headers
 #include <boost/assign.hpp>

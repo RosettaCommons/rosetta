@@ -49,6 +49,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <protocols/task_operations/ThreadSequenceOperation.hh>
 
+#include <numeric/numeric.functions.hh>
 #include <utility/vector0.hh>
 #include <map>
 #include <cmath>

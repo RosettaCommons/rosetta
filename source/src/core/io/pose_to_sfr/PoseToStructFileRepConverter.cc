@@ -38,6 +38,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/carbohydrates/util.hh>
 #include <core/conformation/membrane/MembraneInfo.hh>
+#include <core/conformation/parametric/ParametersSet.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>
 #include <core/pose/Pose.hh>

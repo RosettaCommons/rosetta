@@ -68,6 +68,7 @@
 #include <basic/options/keys/in.OptionKeys.gen.hh>
 #include <basic/options/keys/backrub.OptionKeys.gen.hh>
 
+#include <numeric/trig.functions.hh>
 #include <core/id/TorsionID_Range.hh>
 #include <core/kinematics/tree/Atom.hh>
 #include <utility/vector0.hh>

@@ -17,7 +17,6 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <basic/datacache/DataMap.fwd.hh>
-#include <utility/string_util.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/loops/Loops.hh>

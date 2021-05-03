@@ -28,6 +28,7 @@
 
 
 // Utility headers
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 

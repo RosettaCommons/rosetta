@@ -32,6 +32,7 @@
 
 // Utility headers
 #include <utility/numbers.hh>
+#include <utility/string_util.hh>
 
 // C++ headers
 #include <map>

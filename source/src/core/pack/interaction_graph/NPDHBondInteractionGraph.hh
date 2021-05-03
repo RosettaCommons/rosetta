@@ -48,7 +48,6 @@
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>  // needed to get arg_max - DO NOT AUTO-REMOVE!
 #include <utility/exit.hh>
-#include <utility/string_util.hh> // needed to get trim - DO NOT AUTOREMOVE!
 #include <utility/graph/Graph.hh>
 
 //ObjexxFCL Headers

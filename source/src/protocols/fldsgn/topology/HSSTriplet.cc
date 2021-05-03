@@ -21,6 +21,7 @@
 #include <utility/string_util.hh>
 #include <boost/lexical_cast.hpp>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 
 #include <utility/vector1.hh>

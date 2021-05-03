@@ -33,6 +33,7 @@
 // Utility headers
 #include <basic/Tracer.hh>
 #include <utility/file/file_sys_util.hh>
+#include <utility/string_util.hh>
 
 
 static basic::Tracer TR( "core.scoring.sc.ElectrostaticSimilarityCalculator" );

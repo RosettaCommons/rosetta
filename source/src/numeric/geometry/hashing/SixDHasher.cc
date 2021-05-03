@@ -17,6 +17,8 @@
 #include <numeric/geometry/hashing/SixDHasher.hh>
 //#include <basic/Tracer.hh>
 
+#include <iostream>
+
 namespace numeric {
 namespace geometry {
 namespace hashing {

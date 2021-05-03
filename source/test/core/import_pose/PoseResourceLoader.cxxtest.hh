@@ -28,6 +28,7 @@
 #include <basic/resource_manager/ResourceManager.hh>
 
 // Utility headers
+#include <utility/string_util.hh>
 #include <utility/excn/Exceptions.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>

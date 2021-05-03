@@ -24,7 +24,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/pose_creation/SliceToMiniProteinMover.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 

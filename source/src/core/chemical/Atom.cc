@@ -158,6 +158,11 @@ Atom::is_fake() const {
 }
 
 void
+Atom::show() const {
+	show(std::cout); // Separate function to avoid iostream in header.
+}
+
+void
 Atom::show( std::ostream & out ) const
 {
 	using namespace std;

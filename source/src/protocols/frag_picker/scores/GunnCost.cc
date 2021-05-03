@@ -26,6 +26,7 @@
 // Utility headers
 #include <utility/vector1.fwd.hh>
 #include <numeric/numeric.functions.hh>
+#include <numeric/trig.functions.hh>
 #include <numeric/xyzVector.hh>
 
 //// C++ headers

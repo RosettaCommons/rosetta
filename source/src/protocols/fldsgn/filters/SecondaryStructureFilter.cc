@@ -43,6 +43,7 @@
 // Parser headers
 #include <protocols/filters/Filter.hh>
 #include <utility>
+#include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 
 #include <utility/vector0.hh>

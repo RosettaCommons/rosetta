@@ -30,6 +30,7 @@
 // Utility headers
 #include <basic/datacache/DataMap.hh>
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>

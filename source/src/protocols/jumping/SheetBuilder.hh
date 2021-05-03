@@ -41,6 +41,7 @@
 #include <utility/vector1.hh>
 #include <ObjexxFCL/FArray2A.fwd.hh>
 
+#include <iostream>
 
 //// C++ headers
 //#include <cstdlib>

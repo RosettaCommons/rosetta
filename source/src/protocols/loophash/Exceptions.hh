@@ -19,7 +19,6 @@
 
 // Utility Headers
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // C/C++
 #include <string>
@@ -44,7 +43,7 @@ private:
 class EXCN_Invalid_Hashmap: public utility::excn::Exception {
 public:
 	EXCN_Invalid_Hashmap(char const *file, int line, core::Size size ) :
-		utility::excn::Exception(file, line, "Invalid hashmap of size " + utility::to_string( size ) + " requested." )
+		utility::excn::Exception(file, line, "Invalid hashmap of size " + std::to_string( size ) + " requested." )
 		// size_( size )
 	{};
 

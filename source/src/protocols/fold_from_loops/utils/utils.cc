@@ -39,9 +39,11 @@
 // Basic/Utility headers
 #include <basic/Tracer.hh>
 #include <utility/vector1.hh>
+#include <utility/stream_util.hh>
 
 #include <iterator>
 #include <algorithm>
+#include <iomanip>
 
 namespace protocols {
 namespace fold_from_loops {

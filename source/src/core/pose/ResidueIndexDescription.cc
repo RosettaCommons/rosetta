@@ -52,7 +52,7 @@ std::string RID_Source::source_string() const {
 
 std::string
 RID_FileSource::source_string() const {
-	return  "line " + utility::to_string( linenum_ ) + " of the file named " + fname_;
+	return  "line " + std::to_string( linenum_ ) + " of the file named " + fname_;
 }
 
 ResidueIndexDescription::~ResidueIndexDescription() = default;
@@ -93,7 +93,7 @@ ResidueIndexDescriptionPoseNum::resolve_index(
 	// If no_error is set, too-big numbers should be returned, rather than the zero from do_error().
 	if ( pose_index_ > pose.size() && !no_error ) {
 		return do_error( no_error, "Residue index description " + source_string() + "exceeds the number of residues in the Pose: Asked for residue " +
-			utility::to_string( pose_index_ ) + " pose has only " + utility::to_string( pose.size() ) + " residues." );
+			std::to_string( pose_index_ ) + " pose has only " + std::to_string( pose.size() ) + " residues." );
 	}
 	return pose_index_;
 }
@@ -118,11 +118,11 @@ ResidueIndexDescriptionPDB::resolve_index(
 {
 	pose::PDBInfoCOP info = pose.pdb_info();
 	if ( info == nullptr ) {
-		return do_error( no_error, "Cannot parse PDB residue " + source_string() + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " because the pose doesn't have PDB information");
+		return do_error( no_error, "Cannot parse PDB residue " + source_string() + std::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " because the pose doesn't have PDB information");
 	}
 	core::Size resid = pose.pdb_info()->pdb2pose().find( chain_, resindex_, insertion_code_ );
 	if ( resid == 0 ) {
-		return do_error( no_error, "PDB residue " + source_string() + utility::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " is not present in the input Pose." );
+		return do_error( no_error, "PDB residue " + source_string() + std::to_string( resindex_ ) + insertion_code_ + ' ' + "on chain " + chain_ + " is not present in the input Pose." );
 	}
 	return resid;
 }

@@ -57,6 +57,7 @@
 #include <basic/options/keys/hotspot.OptionKeys.gen.hh>
 #include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <basic/Tracer.hh>
 

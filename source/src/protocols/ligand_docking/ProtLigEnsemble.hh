@@ -51,7 +51,6 @@
 #include <vector>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -70,10 +69,10 @@ public:
 	bool has_bind;
 	bool wild_type;
 
-	std::string print_mut_string(){return (utility::to_string(mut_resid)+ "_" + utility::to_string(mut_target));};
+	std::string print_mut_string(){return (std::to_string(mut_resid)+ "_" + std::to_string(mut_target));};
 	std::string print_string(){
-		if ( wild_type ) { return ("WT_" + utility::to_string(lig_chain));}
-		return (print_mut_string() + "_" + utility::to_string(lig_chain));
+		if ( wild_type ) { return ("WT_" + std::to_string(lig_chain));}
+		return (print_mut_string() + "_" + std::to_string(lig_chain));
 	};
 
 	ProtLigPair_info(): mut_resid(0), mut_target(0), lig_chain(0), bind_data(0), has_bind(false), wild_type(false){};

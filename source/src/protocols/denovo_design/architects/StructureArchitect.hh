@@ -31,7 +31,6 @@
 // Basic/Utility headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/string_util.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 

@@ -24,7 +24,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/pose_creation/MergePDBMover.fwd.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 #include <core/pack/task/TaskFactory.hh>
 
@@ -55,7 +54,7 @@ public:
 
 		std::string name(){
 
-			std::string name_str = utility::to_string<core::Size>(start_overlap_pose) + "_" + utility::to_string<core::Size>(end_overlap_pose) + "_" + utility::to_string<core::Size>(start_overlap_xmlPose) + "_" + utility::to_string<core::Size>(end_overlap_xmlPose);
+			std::string name_str = std::to_string(start_overlap_pose) + "_" + std::to_string(end_overlap_pose) + "_" + std::to_string(start_overlap_xmlPose) + "_" + std::to_string(end_overlap_xmlPose);
 			return(name_str);
 		}
 

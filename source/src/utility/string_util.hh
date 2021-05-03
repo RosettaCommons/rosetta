@@ -50,6 +50,7 @@ using ObjexxFCL::uppercased;
 using ObjexxFCL::lowercased;
 using ObjexxFCL::stripped_whitespace;
 
+/// @note: If your type is int/Size/Real, you're probably better off with std::to_string()
 template <class T>
 inline std::string
 to_string (const T & t)

@@ -47,6 +47,7 @@
 #include <numeric/histograms/TwoDHistogram.hh>
 #include <core/conformation/Residue.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <core/chemical/orbitals/OrbitalType.hh>
 #include <core/pose/PDBInfo.hh>
 

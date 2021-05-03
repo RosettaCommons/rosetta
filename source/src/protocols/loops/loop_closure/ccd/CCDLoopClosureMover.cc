@@ -41,6 +41,7 @@
 #include <numeric/cyclic_coordinate_descent.hh>
 #include <numeric/conversions.hh>
 #include <numeric/random/random.hh>
+#include <numeric/numeric.functions.hh>
 
 // Basic header
 #include <basic/prof.hh>

@@ -45,6 +45,7 @@
 #include <core/id/types.hh>
 #include <utility/vector0_bool.hh>
 
+#include <deque>
 
 #ifdef    SERIALIZATION
 // Cereal headers

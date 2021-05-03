@@ -58,6 +58,7 @@
 #include <utility/vector1.hh>
 #include <utility/graph/ring_detection.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/string_util.hh>
 
 // External headers
 #include <ObjexxFCL/FArray2D.hh>

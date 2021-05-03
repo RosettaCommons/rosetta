@@ -26,7 +26,6 @@
 #include <utility/options/VectorOption.hh>
 #include <utility/Bound.hh>
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 
 // ObjexxFCL headers
 #include <ObjexxFCL/string.functions.hh>

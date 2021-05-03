@@ -206,7 +206,7 @@ void RNA_SugarStepWiseSampler::apply( pose::Pose & pose, core::Size const i ) {
 /// @brief Name of the class
 std::string
 RNA_SugarStepWiseSampler::get_name() const {
-	return "RNA_SugarStepWiseSampler residue:" + utility::to_string(rsd_id_);
+	return "RNA_SugarStepWiseSampler residue:" + std::to_string(rsd_id_);
 }
 //////////////////////////////////////////////////////////////////
 } //rna

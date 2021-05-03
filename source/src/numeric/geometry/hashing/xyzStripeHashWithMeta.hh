@@ -16,6 +16,8 @@
 #include <numeric/xyzVector.hh>
 //#include <ObjexxFCL/format.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/exit.hh>
+#include <numeric/util.hh>
 
 namespace numeric {
 namespace geometry {

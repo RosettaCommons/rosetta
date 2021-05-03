@@ -31,7 +31,6 @@
 #include <utility/vector1.hh>
 
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 
 #ifdef    SERIALIZATION
@@ -134,9 +133,9 @@ public:
 		if ( seqpos > allow_scoring_.size() ) {
 			throw CREATE_EXCEPTION(utility::excn::RangeError,
 				"tried to get Membrane score for residue " +
-				utility::to_string(seqpos) +
+				std::to_string(seqpos) +
 				" but spanfile only specifies " +
-				utility::to_string(allow_scoring_.size())+
+				std::to_string(allow_scoring_.size())+
 				" residues. Check your spanfile.");
 			return false; //so the compiler is ok with it
 		}

@@ -40,7 +40,6 @@
 
 #include <utility/vector1.hh>
 #include <utility/tag/Tag.fwd.hh>
-#include <utility/string_util.hh>
 
 class FastRelaxTests;
 

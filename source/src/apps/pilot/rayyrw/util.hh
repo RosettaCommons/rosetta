@@ -10,7 +10,6 @@
 #include <utility/vector1.hh>
 #include <utility/file/FileName.hh>
 #include <utility/file/file_sys_util.hh>
-#include <utility/string_util.hh>
 #include <utility/exit.hh>
 
 #include <basic/Tracer.hh>

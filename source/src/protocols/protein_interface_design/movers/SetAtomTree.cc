@@ -38,6 +38,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pose/selection.hh>
+#include <utility/stream_util.hh>
 #include <utility/vector0.hh>
 #include <protocols/simple_moves/CutChainMover.hh>
 #include <protocols/rigid/RB_geometry.hh>

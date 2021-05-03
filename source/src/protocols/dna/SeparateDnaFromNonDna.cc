@@ -26,6 +26,7 @@
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/moves/mover_schemas.hh>
 
+#include <iomanip>
 
 namespace protocols {
 namespace dna {

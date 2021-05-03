@@ -28,7 +28,6 @@
 #include <utility/io/izstream.fwd.hh>
 #include <utility/io/ozstream.fwd.hh>
 #include <utility/excn/Exceptions.hh>
-#include <utility/string_util.hh>
 
 // Numeric Headers
 #include <numeric/numeric.functions.hh>
@@ -303,7 +302,7 @@ public:
 		//debug_assert( -180.0 <= chi && chi <= 180.0 );
 		if ( !(-180.0 <= chi && chi <= 180.0 ) ) {
 			throw CREATE_EXCEPTION(utility::excn::RangeError,
-				"chi angle must be between -180 and 180: "+utility::to_string(chi));
+				"chi angle must be between -180 and 180: "+std::to_string(chi));
 		}
 
 		if ( aa_ == chemical::aa_pro || aa_ == chemical::aa_dpr /*D-proline*/ || aa_ == chemical::aa_b3p || aa_ == chemical::ou3_pro  ) {

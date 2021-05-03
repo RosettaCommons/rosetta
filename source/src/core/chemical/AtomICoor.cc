@@ -33,6 +33,7 @@
 #include <numeric/NumericTraits.hh>
 
 // C++ headers
+#include <set>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

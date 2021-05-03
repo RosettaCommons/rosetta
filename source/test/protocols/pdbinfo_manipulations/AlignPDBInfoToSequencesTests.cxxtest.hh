@@ -33,6 +33,7 @@
 #include <basic/Tracer.hh>
 #include <utility/json_utilities.hh>
 #include <utility/io/izstream.hh>
+#include <utility/stream_util.hh>
 
 static basic::Tracer TR("AlignPDBInfoToSequencesTests");
 

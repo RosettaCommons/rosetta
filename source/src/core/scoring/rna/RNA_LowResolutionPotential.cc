@@ -46,6 +46,7 @@
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzMatrix.hh>
+#include <numeric/trig.functions.hh>
 #include <numeric/interpolation/periodic_range/full/interpolation.hh>
 
 // C++

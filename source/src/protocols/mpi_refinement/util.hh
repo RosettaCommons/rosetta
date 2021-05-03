@@ -54,7 +54,6 @@
 #include <numeric/random/random.hh>
 
 #include <utility/vector1.hh>
-#include <utility/string_util.hh>
 #include <boost/algorithm/string.hpp>
 
 namespace protocols {

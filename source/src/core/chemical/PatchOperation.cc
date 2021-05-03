@@ -2583,7 +2583,7 @@ AddConnectAndTrackingVirt::apply( MutableResidueType & rsd ) const {
 		if ( count == 1 ) {
 			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		} else {
-			res_varname = "MP-" + atom_ + "-METAL_CONNECT" + utility::to_string( count );
+			res_varname = "MP-" + atom_ + "-METAL_CONNECT" + std::to_string( count );
 			if ( !rsd.properties().has_custom_variant_types() || ! rsd.has_variant_type( res_varname ) ) break;
 		}
 	}

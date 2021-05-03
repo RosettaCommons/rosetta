@@ -18,7 +18,9 @@
 #include <numeric/types.hh>
 
 #include <iosfwd>
+#include <sstream>
 #include <string>
+
 namespace numeric
 {
 

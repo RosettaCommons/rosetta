@@ -136,7 +136,7 @@ CstInfoMover::add_info_for_csts( core::scoring::constraints::ConstraintCOPs cons
 		core::Real score( cst->score( pose ) );
 
 		// Add the values to the pose extra scores
-		std::string newtag( tag + "_" + utility::to_string( ii ) );
+		std::string newtag( tag + "_" + std::to_string( ii ) );
 		TR << "# Constraint for '" << newtag << "' is:" << std::endl;
 		cst->show_def( TR, pose );
 		TR << std::endl; // Space for multi-constraints

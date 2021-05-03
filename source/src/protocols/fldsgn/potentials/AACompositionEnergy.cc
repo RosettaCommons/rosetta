@@ -26,6 +26,7 @@
 
 #include <utility>
 #include <utility/vector1.hh>
+#include <numeric/numeric.functions.hh>
 
 
 namespace protocols {

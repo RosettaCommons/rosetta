@@ -36,6 +36,8 @@
 #include <utility/thread/ReadWriteMutex.hh>
 #endif
 
+#include <map>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

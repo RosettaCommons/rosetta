@@ -43,6 +43,8 @@
 #include <cereal/types/string.hpp>
 #endif // SERIALIZATION
 
+#include <iostream>
+
 namespace core {
 namespace chemical {
 

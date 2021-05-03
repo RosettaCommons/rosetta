@@ -33,6 +33,7 @@
 // Unit Headers
 #include <utility/vector1.hh>
 #include <boost/unordered_map.hpp>
+#include <map>
 
 namespace core {
 namespace scoring {

@@ -44,6 +44,7 @@
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
 

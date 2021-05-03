@@ -32,7 +32,9 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <protocols/moves/SimulatedTempering.hh>
 #include <basic/Tracer.hh>
+#include <utility/stream_util.hh>
 #include <utility>
+#include <iomanip>
 
 static basic::Tracer TR( "protocols.recces.RECCES_Mover" );
 

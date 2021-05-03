@@ -160,7 +160,7 @@ public:
 		std::vector<core::Size> chains_to_move = {1, 2, 5, 8}; // test a subset of chains for faster run
 
 		for ( auto & outer_chain : chains_to_move ) {
-			test_8mer_pose_->dump_pdb("8mer_bound_" + utility::to_string( outer_chain ) + ".pdb");
+			test_8mer_pose_->dump_pdb("8mer_bound_" + std::to_string( outer_chain ) + ".pdb");
 
 			// Test that all chains start off bound to all other chains
 			for ( auto & all_chain : all_chains ) {
@@ -191,7 +191,7 @@ public:
 				}
 			}
 
-			test_8mer_pose_->dump_pdb("8mer_unbound_" + utility::to_string( outer_chain ) + ".pdb");
+			test_8mer_pose_->dump_pdb("8mer_unbound_" + std::to_string( outer_chain ) + ".pdb");
 
 			// Run only necessary bits of setUp each time through the for loop
 			test_instantiation_ = utility::pointer::make_shared< protocols::features::InterfaceDdGMover >();

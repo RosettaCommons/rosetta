@@ -48,6 +48,7 @@ Chain2Chain2Chain2
 
 #include <numeric/conversions.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/xyz.functions.hh>
 
 #include <utility/exit.hh>
 #include <utility/file/FileName.hh>

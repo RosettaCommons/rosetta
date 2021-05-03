@@ -38,6 +38,7 @@
 #include <basic/Tracer.hh>
 #include <basic/citation_manager/CitationCollection.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.hh>
+#include <utility/string_util.hh>
 #include <utility/stream_util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

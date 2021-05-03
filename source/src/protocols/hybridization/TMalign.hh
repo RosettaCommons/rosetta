@@ -19,6 +19,7 @@
 #include <numeric/xyzMatrix.hh>
 #include <core/id/AtomID_Map.hh>
 
+#include <list>
 
 namespace protocols {
 namespace hybridization {

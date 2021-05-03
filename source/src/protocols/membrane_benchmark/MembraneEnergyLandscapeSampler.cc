@@ -56,6 +56,7 @@
 
 #include <numeric/conversions.hh>
 #include <numeric/constants.hh>
+#include <numeric/xyzVector.io.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/down_cast.hh>
 
@@ -236,7 +237,7 @@ MembraneEnergyLandscapeSampler::apply( core::pose::Pose & pose ) {
 		for ( core::Real normal_angle = 0; normal_angle <= 360; normal_angle += rotation_delta ) {
 
 			// Verify the membrane information
-			pose.conformation().membrane_info()->membrane_center( pose.conformation() ).show();
+			TR << "Membrane center: " << pose.conformation().membrane_info()->membrane_center( pose.conformation() ) << std::endl;
 
 			// Make a copy of the pose to avoid rounding errors
 			using namespace core::conformation::membrane;

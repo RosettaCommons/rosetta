@@ -26,6 +26,7 @@
 #include <protocols/match/Hit.hh>
 #include <utility/vector1.hh>
 #include <set>
+#include <iostream>
 
 namespace protocols {
 namespace match {

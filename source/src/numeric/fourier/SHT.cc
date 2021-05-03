@@ -17,6 +17,7 @@
 
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
+#include <numeric/numeric.functions.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
 #include <cstdlib>
@@ -28,6 +29,7 @@
 #endif
 
 #include <algorithm>
+#include <iostream>
 
 namespace numeric {
 namespace fourier {

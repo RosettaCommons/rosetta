@@ -39,6 +39,7 @@
 #include <map>
 
 #include <numeric/conversions.hh>
+#include <numeric/xyz.functions.hh>
 #include <utility/vector1.hh>
 
 //Auto Headers

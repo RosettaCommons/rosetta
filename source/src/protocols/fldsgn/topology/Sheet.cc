@@ -39,6 +39,7 @@
 #include <core/pose/init_id_map.hh>
 
 #include <numeric/NumericTraits.hh>
+#include <numeric/xyz.functions.hh>
 
 static basic::Tracer TR( "protocols.topology.Sheet" );
 

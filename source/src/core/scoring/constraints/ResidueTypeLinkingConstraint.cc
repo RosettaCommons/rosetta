@@ -26,6 +26,7 @@
 #include <core/scoring/EnergyMap.hh>
 #include <core/scoring/func/XYZ_Func.hh>
 #include <utility>
+#include <utility/stream_util.hh>
 #include <utility/vector1.hh>
 #include <utility/pointer/memory.hh>
 

@@ -21,6 +21,7 @@
 
 // Project Headers
 #include <core/types.hh>
+#include <utility/vector1.hh>
 
 // STL Headers
 #include <iosfwd>

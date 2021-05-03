@@ -6,11 +6,14 @@
 // (c) The Rosetta software is developed by the contributing members of the Rosetta Commons.
 // (c) For more information, see http://www.rosettacommons.org. Questions about this can be
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
+
 /// @file   core/kinematics/util.cc
 /// @brief  Kinematics utility functions
 /// @author Phil Bradley
+
 // Unit headers
 #include <core/kinematics/util.hh>
+
 // Package headers
 #include <core/kinematics/AtomTree.hh>
 #include <core/kinematics/FoldTree.hh>
@@ -22,12 +25,16 @@
 #include <basic/Tracer.hh>
 #include <utility>
 #include <utility/excn/Exceptions.hh>
+
 // Numeric headers
 #include <numeric/random/random.hh>
+
 // C++ headers
 #include <utility/assert.hh>
 #include <utility/vector1.hh>
 #include <ObjexxFCL/format.hh>
+#include <iostream>
+
 namespace core {
 namespace kinematics {
 using namespace id;
@@ -283,7 +290,7 @@ get_foldtree_which_partitions( FoldTree const & fold_tree, utility::vector1< boo
 			}
 			// TODO: XXX
 		} else {
-			utility_exit_with_message( "Don't know how to handle edge of type " + utility::to_string( edge.label() ) );
+			utility_exit_with_message( "Don't know how to handle edge of type " + std::to_string( edge.label() ) );
 		}
 	}
 

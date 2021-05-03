@@ -64,6 +64,7 @@
 #include <core/pose/variant_util.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>
+#include <numeric/numeric.functions.hh>
 
 static basic::Tracer TR( "protocols.antibody.GraftMover" );
 static basic::Tracer TRO( "protocols.antibody.GraftOneMover" );

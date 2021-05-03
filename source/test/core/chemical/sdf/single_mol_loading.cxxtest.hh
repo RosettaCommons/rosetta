@@ -32,6 +32,7 @@
 
 // Utility headers
 #include <utility/io/izstream.hh>
+#include <utility/string_util.hh>
 
 // ObjexxFCL headers
 

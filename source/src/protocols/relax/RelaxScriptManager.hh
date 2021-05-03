@@ -29,6 +29,7 @@
 #include <utility/SingletonBase.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
+#include <utility/string_util.hh>
 
 // C++ header
 #include <map>

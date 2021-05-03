@@ -209,9 +209,9 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 	for ( core::Size res1 = 1; res1 <= pose.size(); ++res1 ) {
 		std::string res1name("");
 		if ( pdb_numbering_ ) {
-			res1name = utility::to_string( pose.residue_type( res1 ).name1() ) + "_" + utility::to_string( pose.pdb_info()->chain( res1 ) ) + utility::to_string( pose.pdb_info()->number( res1 ) );
+			res1name = std::to_string( pose.residue_type( res1 ).name1() ) + "_" + std::to_string( pose.pdb_info()->chain( res1 ) ) + std::to_string( pose.pdb_info()->number( res1 ) );
 		} else {
-			res1name = utility::to_string( pose.residue_type( res1 ).name1()) + utility::to_string( res1 );
+			res1name = std::to_string( pose.residue_type( res1 ).name1()) + std::to_string( res1 );
 		}
 		std::map< core::Size, EnergyMap > upper_interactions;
 
@@ -246,9 +246,9 @@ ScoreCutoffFilter::output_residue_pair_energies( std::ostream & ostr, core::pose
 			EnergyMap const & this_emap( map_it->second );
 			std::string res2name("");
 			if ( pdb_numbering_ ) {
-				res2name = utility::to_string( pose.residue_type( res2 ).name1() ) + "_" + utility::to_string( pose.pdb_info()->chain( res2 ) ) + utility::to_string( pose.pdb_info()->number( res2 ) );
+				res2name = std::to_string( pose.residue_type( res2 ).name1() ) + "_" + std::to_string( pose.pdb_info()->chain( res2 ) ) + std::to_string( pose.pdb_info()->number( res2 ) );
 			} else {
-				res2name = pose.residue_type( res2 ).name1() + utility::to_string( res2 );
+				res2name = pose.residue_type( res2 ).name1() + std::to_string( res2 );
 			}
 
 			ostr << "ResResE " << ObjexxFCL::format::A( field_width, res1name ) << " " << ObjexxFCL::format::A( field_width, res2name ) << " ";

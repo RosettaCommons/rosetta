@@ -38,6 +38,7 @@
 
 // Basic headers
 #include <basic/Tracer.hh>
+#include <utility/string_util.hh>
 
 static basic::Tracer TR("core.io.pose_from_sfr.PoseFromSFRBuilder.cxxtest");
 
