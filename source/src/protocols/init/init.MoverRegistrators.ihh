@@ -229,6 +229,7 @@ static MoverRegistrator< forge::remodel::RemodelMoverCreator > reg_RemodelMoverC
 static MoverRegistrator< generalized_kinematic_closure::GeneralizedKICCreator > reg_GeneralizedKICCreator;
 
 static MoverRegistrator< glycopeptide_docking::GlycopeptideDockingProtocolCreator > reg_GlycopeptideDockingProtocolCreator;
+static MoverRegistrator< glycan_docking::GlycanDockProtocolCreator > reg_GlycanDockProtocolCreator;
 
 static MoverRegistrator< grafting::AnchoredGraftMoverCreator > reg_AnchoredGraftMoverCreator;
 static MoverRegistrator< grafting::CCDEndsGraftMoverCreator > reg_CCDEndsGraftMoverCreator;

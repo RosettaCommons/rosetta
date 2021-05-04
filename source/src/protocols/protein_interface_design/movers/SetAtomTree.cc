@@ -73,6 +73,7 @@ SetAtomTree::SetAtomTree() :
 	simple_ft_( false ),
 	two_parts_chain1_( false ),
 	jump_( 1 ),
+	partners_( "_" ),
 	resnum_( "" ),
 	connect_to_( "" ),
 	anchor_res_( "" ),
@@ -124,6 +125,7 @@ SetAtomTree::parse_my_tag( TagCOP const tag, basic::datacache::DataMap & )
 		return;
 	}
 	docking_ft_ = tag->getOption< bool >("docking_ft", false );
+	partners_ = tag->getOption< std::string >("partners", "_" );
 	simple_ft( tag->getOption< bool >( "simple_ft", false ) );
 	jump_ = tag->getOption< core::Size >( "jump", 1);
 	if ( docking_ft_ ) return;
@@ -300,10 +302,10 @@ SetAtomTree::apply( core::pose::Pose & pose )
 		docking::DockJumps jumps;
 		jumps.clear();
 		jumps.push_back( jump_ );
-		std::string const partners( "_" );
-		protocols::docking::setup_foldtree( pose, partners, jumps );
-		TR<<"Setting up docking foldtree over jump "<<jump_<<'\n';
-		TR<<"Docking foldtree: "<<pose.fold_tree()<<std::endl;
+		protocols::docking::setup_foldtree( pose, partners_, jumps );
+		TR << "Setting up docking foldtree over " << partners_ <<
+			" using Jump number " << jump_ << '\n';
+		TR << "Docking foldtree: " << pose.fold_tree() << std::endl;
 		if ( update_residue_variants_ ) add_cutpoint_variants( pose );
 		return;
 	}
@@ -496,6 +498,7 @@ void SetAtomTree::provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd )
 
 		+ XMLSchemaAttribute( "fold_tree_file", xs_string, "Foldtree may be read in from a file, if desired" )
 		+ XMLSchemaAttribute::attribute_w_default( "docking_ft", xsct_rosetta_bool, "Use a classic docking foldtree", "0" )
+		+ XMLSchemaAttribute::attribute_w_default( "partners", xs_string, "Chain IDs of docking partners across which to make the 'docking_ft' (e.g. A_X)", "_" )
 		+ XMLSchemaAttribute::attribute_w_default( "simple_ft", xsct_rosetta_bool, "Impose the simplest possible foldtree", "0" )
 		+ XMLSchemaAttribute::attribute_w_default( "jump", xsct_non_negative_integer, "If the docking foldtree is desired, over which jump should it apply?", "1" )
 

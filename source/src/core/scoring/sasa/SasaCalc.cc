@@ -215,6 +215,7 @@ SasaCalc::calculate(const pose::Pose& pose) {
 	//Figure out which radii to use.
 	SasaRadii radii_set;
 	if ( include_hydrogens_ ) {
+		// default sasa::include_hydrogens_explicitly flag is true
 		radii_set = explicit_radii_set_;
 	} else {
 		radii_set = implicit_radii_set_;

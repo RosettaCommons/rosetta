@@ -101,9 +101,11 @@ sources = {
 		"minirosetta_graphics",
 	],
 	"public/carbohydrates": [
-		"dock_glycans",
+		"dock_glycans", # replaced by GlycanDock
+	    	"GlycanDock",
 		"glycan_info",
 		"glycan_clash_check",
+		"pose_from_saccharide_sequence",
 	],
 	"public/clustering": [
 		"calibur",

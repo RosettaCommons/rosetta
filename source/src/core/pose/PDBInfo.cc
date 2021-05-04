@@ -452,13 +452,15 @@ PDBInfo::tag( Size const res ) const
 /// @param[in] res pose residue number
 /// @return pdb string containing chainID and number
 PDBInfo::String
-PDBInfo::pose2pdb( Size const res ) const
+PDBInfo::pose2pdb(
+	Size const res,
+	std::string const & conn /* " " */ ) const
 {
 	PyAssert((res > 0) && (res <= residue_rec_.size()), "PDBInfo::pose2pdb( Size const res ): res is not in this PDBInfo!" );
 	std::stringstream pdb_num, pdb_chain;
 	pdb_chain << residue_rec_[res].chainID;
 	pdb_num << residue_rec_[res].resSeq;
-	return pdb_num.str() + " " + pdb_chain.str() + " ";
+	return pdb_num.str() + conn + pdb_chain.str() + " ";
 }
 
 int

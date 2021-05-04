@@ -723,7 +723,7 @@ public: // single residue accessors
 	///     PDBInfo
 	///     PDBInfo.pdb2pose
 	String
-	pose2pdb( Size const res ) const;
+	pose2pdb( Size const res, std::string const & conn = " " ) const;
 
 	/// @brief Returns the total number of (chain letter) chains in the pose
 	///

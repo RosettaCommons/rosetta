@@ -214,6 +214,7 @@
 #include <protocols/generalized_kinematic_closure/GeneralizedKICCreator.hh>
 
 #include <protocols/glycopeptide_docking/GlycopeptideDockingProtocolCreator.hh>
+#include <protocols/glycan_docking/GlycanDockProtocolCreator.hh>
 
 #include <protocols/grafting/AnchoredGraftMoverCreator.hh>
 #include <protocols/grafting/CCDEndsGraftMoverCreator.hh>

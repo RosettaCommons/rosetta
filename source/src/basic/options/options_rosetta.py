@@ -2290,6 +2290,10 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 			default='default.table',
 			legal=['default.table', 'original.table', 'core/chemical/carbohydrates/test_linkage_data_table.tsv']
 			),
+    Option('saccharide_sequence', 'String',
+      desc='Input saccharide sequence to build.',
+      ),
+
         #### Glycosylation Options ####
         Option_Group('glycopeptide_docking',
             Option('residue_to_glycosylate', 'String',
@@ -2381,6 +2385,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
         ), # glycopeptide_docking
 
 
+
 		#### Glycan Relax Options #####
 		Option_Group('glycan_sampler',
 			Option('glycan_sampler_test', 'Boolean',
@@ -2431,6 +2436,84 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 				)
 
 		), # - glycan_sampler
+
+
+		#### Glycan Dock Options #####
+		Option_Group('glycan_dock',
+			Option('n_repeats', 'Integer',
+				desc = 'Number of times to run the GlycanDock protocol on a protein-glycoligand system if the final docked structure does not pass the quality filter (< 0 Rosetta interaction energy). Default = 1',
+				default = '1'
+				),
+			Option('refine_only', 'Boolean',
+				desc='Perform refinement of the input putative complex only. Skips Stage 1 (conformational initialization via a random perturbation) and, during Stage 2, do not perform large perturbations in glycosidic torsion angle space. Default = false',
+				default = 'false'
+				),
+			Option('prepack_only', 'Boolean',
+				desc='Perform Stage 0 pre-packing of the input putative complex only. Separates the glycoligand from its protein receptor and optimizes all sidechain rotamer conformations. Default = false',
+				default = 'false'
+				),
+			Option('rand_glycan_jump_res', 'Boolean',
+				desc='Use a random, non-branch-point residue in the glycoligand as the Jump residue for the docking FoldTree. Default = true. False = docking FoldTree in which the residue closest to the center-of-mass of the glycoligand serves as the Jump residue',
+				default = 'true'
+				),
+			Option('stage1_rotate_glycan_about_com', 'Boolean',
+				desc='During Stage 1 conformation initialization, rotate the glycoligand about its center-of-mass in uniform 3D space. Default = false. Recommended to set to true if confidence of the glycoligand\'s rigid-body orientation in the putative binding site is low.',
+				default = 'false'
+				),
+			Option('stage1_perturb_glycan_com_trans_mag', 'Real',
+				desc='During Stage 1 conformation initialization, this is the magnitude for performing a random translational Gaussian perturbation on the glycoligand\'s center-of-mass. Default = 0.5 (Angstroms)',
+				default = '0.5'
+				),
+			Option('stage1_perturb_glycan_com_rot_mag', 'Real',
+				desc='During Stage 1 conformation initialization, this is the magnitude for performing a random rotational Gaussian perturbation on the glycoligand\'s center-of-mass. Default = 7.5 (degrees)',
+				default = '7.5'
+				),
+			Option('stage1_torsion_uniform_pert_mag', 'Real',
+				desc='During Stage 1 conformation initialization, the magnitude used to perform a uniform perturbation on each phi, psi, and omega glycosidic torsion angle. Default = 12.5 (degrees). stage1_use_LinkageConformerMover must be false.',
+				default = '12.5'
+				),
+			Option('mc_kt', 'Real',
+				desc='During Stage 2 docking and refinement, the value of kT used to accept or reject moves based on the Metropolis criterion. Default = 0.6',
+				default = '0.6'
+				),
+			Option('n_rigid_body_rounds', 'Integer',
+				desc='During Stage 2 docking and refinement, the number of rigid-body sampling rounds to perform each cycle. Default = 8',
+				default = '8'
+				),
+			Option('slide_glycan_into_contact', 'Boolean',
+				desc='During Stage 2 docking and refinement, occasionally slide the glycoligand toward the center-of-mass of the protein center. Helps ensure the glycoligand does not drift away from the protein receptor surface during docking. Default = true. Note: if the protein receptor has multiple chain IDs, its center-of-mass may cause the glycoligand to drift far from its starting location. Recommendation is to make the protein receptor one chain ID (e.g., chain A), or set this to false.',
+				default = 'true'
+				),
+			Option('stage2_trans_mag', 'Real',
+				desc='During Stage 2 docking and refinement, this is the magnitude for performing a translational Gaussian perturbation on the glycoligand\'s center-of-mass. The perturbation is accepted or rejected based on the Metropolis criterion. Default = 0.5 (Angstroms)',
+				default = '0.5'
+				),
+			Option('stage2_rot_mag', 'Real',
+				desc='During Stage 2 docking and refinement, this is the magnitude for performing a rotational Gaussian perturbation on the glycoligand\'s center-of-mass. The perturbation is accepted or rejected based on the Metropolis criterion. Default = 7.5 (degrees)',
+				default = '7.5'
+				),
+			Option('n_torsion_rounds', 'Integer',
+				desc='During Stage 2 docking and refinement, the number of glycosidic torsion angle sampling rounds to perform each cycle. Default = 8',
+				default = '8'
+				),
+			Option('full_packing_frequency', 'Integer',
+				desc='During Stage 2 docking and refinement, the frequency at which a full packing operation via the PackRotamersMover should be applied. Default = 8. Should be a factor of n_rigid_body_rounds and n_torsion_rounds. When not performing a full packing operation, the faster EnergyCutRotamerTrialsMover is applied.',
+				default = '8'
+				),
+			Option('interface_packing_distance', 'Real',
+				desc='During Stage 2 docking and refinement, the distance used to define protein-glycoligand interface residues for packing. Default = 16 (Angstroms). Used for the RestrictToInterface task operation.',
+				default = '16'
+				),
+			Option('ramp_scorefxn', 'Boolean',
+				desc='During Stage 2 docking and refinement, ramp the fa_atr and fa_rep score terms. fa_atr is set high and fa_rep is set low, and then ramped to their starting weights incrementally over the course of n_cycles. Default = true. Used to promote sampling by not strictly enforcing rigid sterics in the early stages of the protocol.',
+				default = 'true'
+				),
+			Option('watch_in_pymol', 'Boolean',
+				desc='Watch the GlycanDock protocol in PyMOL? Sends the Pose at specific, hard-coded steps to PyMOL. Default = false. Used as an alternative to -show_simulation_in_pymol.',
+				default = 'false'
+				),
+
+		), # - glycan_dock
 
 
 		##### Glycan Clash Check Options ######

@@ -1350,6 +1350,7 @@ void InterfaceAnalyzerMover::calc_hbond_sasaE( core::pose::Pose & pose ) {
 	// TR << "]" << std::endl;
 
 	//EM options for bb-bb hbond output
+	TR << "Making hbond ScoreFunction with bb-bb energy method options" << std::endl;
 	core::scoring::ScoreFunctionOP new_sf = scoring::get_score_function();
 	scoring::methods::EnergyMethodOptions energymethodoptions( new_sf->energy_method_options() );
 	energymethodoptions.hbond_options().decompose_bb_hb_into_pair_energies( true );
