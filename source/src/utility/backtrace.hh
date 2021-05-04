@@ -36,6 +36,10 @@
 #define MY__has_include( x ) 1
 #endif
 
+#ifdef __clang_analyzer__
+#include <utility/cxx_versioning_macros.hh> // For NORETURN_ATTR
+#endif
+
 /// @brief Function for unit testing only -- if an assertion failure is hit, throw an exception
 /// instead of exiting.  Don't let me catch you calling this function from anywhere besides a
 /// unit test.  Punishment will be swift.

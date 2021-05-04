@@ -51,6 +51,7 @@
 #include <string>
 #include <iosfwd>
 #include <chrono>
+#include <functional>
 
 namespace protocols {
 namespace jd3 {
