@@ -21,6 +21,7 @@
 
 // Bin transition calculator headers:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 // Project Headers
@@ -36,6 +37,8 @@
 #include <utility/tag/Tag.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <basic/Tracer.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/UnpublishedModuleInfo.hh>
 
 #include <utility/vector1.hh>
 #include <utility/string_util.hh>
@@ -57,14 +60,7 @@ static basic::Tracer TR( "protocols.simple_moves.bin_transitions.PerturbByBins" 
 /// @brief Default constructor
 ///
 PerturbByBins::PerturbByBins() : //TODO: initialize variables here!
-	protocols::moves::Mover("PerturbByBins"),
-	start_res_(0),
-	end_res_(0),
-	binfile_("ABBA"),
-	binfile_loaded_(false),
-	bin_transition_calculator_( new core::scoring::bin_transitions::BinTransitionCalculator ),
-	repeats_(1),
-	must_switch_bins_(false)
+	protocols::moves::Mover("PerturbByBins")
 {}
 
 /// @brief Copy constructor.
@@ -74,7 +70,6 @@ PerturbByBins::PerturbByBins( PerturbByBins const &src ) :
 	start_res_(src.start_res_),
 	end_res_(src.end_res_),
 	binfile_(src.binfile_),
-	binfile_loaded_(src.binfile_loaded_),
 	bin_transition_calculator_( src.bin_transition_calculator_->clone() ), //CLONE this object.
 	repeats_(src.repeats_),
 	must_switch_bins_(src.must_switch_bins_)
@@ -89,7 +84,7 @@ PerturbByBins::~PerturbByBins() = default;
 ///
 void PerturbByBins::apply( core::pose::Pose & pose ) {
 	//Check whether we've loaded bin transitions.
-	if ( !bin_transition_calculator_->bin_params_loaded() ) {
+	if ( bin_transition_calculator_ == nullptr || !bin_transition_calculator_->bin_params_loaded() ) {
 		utility_exit_with_message(
 			"In protocols::simple_moves::bin_transitions::PerturbByBins::apply(): Bin transition probability parameters must be loaded before calling the apply() function!");
 	}
@@ -125,8 +120,6 @@ void PerturbByBins::apply( core::pose::Pose & pose ) {
 	//Final housekeeping:
 	pose.update_residue_neighbors();
 	if ( TR.visible() ) TR.flush();
-
-	return;
 } //apply()
 
 /// @brief Parse XML for RosettaScripts.
@@ -152,22 +145,32 @@ void PerturbByBins::parse_my_tag( utility::tag::TagCOP tag,
 	set_must_switch_bins( tag->getOption< bool >("must_switch_bins", false) );
 
 	if ( TR.visible() ) TR.flush();
-
-	return;
 } //parse_my_tag()
+
+/// @brief Provide citations to the passed CitationCollectionList
+void PerturbByBins::provide_citation_info(
+	basic::citation_manager::CitationCollectionList & citations
+) const {
+	using namespace basic::citation_manager;
+	citations.add(
+		utility::pointer::make_shared<UnpublishedModuleInfo>(
+		mover_name(), CitedModuleType::Mover,
+		"Vikram K. Mulligan", "Systems Biology, Center for Computational Biology, Flatiron Institute",
+		"vmulligan@flatironinstitute.org", "Created the BinTransitionCalculator framework and the PerturbByBins mover."
+		)
+	);
+}
 
 /// @brief Set the bin transition probability file.
 ///
 void PerturbByBins::set_binfile_and_load( std::string const &name ) {
-	if ( binfile_loaded_==true ) {
+	if ( bin_transition_calculator_ != nullptr ) {
 		utility_exit_with_message(
 			"In protocols::simple_moves::bin_transitions::PerturbByBins::set_binfile_and_load(): The bin params file was already loaded!  This operation cannot be repeated.");
 	}
 	binfile_=name;
 	if ( TR.visible() ) TR << "Set bin params file name to \"" << binfile_ << "\"." << std::endl;
-	bin_transition_calculator_->load_bin_params(binfile_);
-	binfile_loaded_=true;
-	return;
+	bin_transition_calculator_ = core::scoring::bin_transitions::BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator( binfile_ );
 } //set_binfile_and_load()
 
 /// @brief Set the residue ranges.  If set to (0,0), the
@@ -187,7 +190,6 @@ void PerturbByBins::set_residue_range( core::Size const start, core::Size const 
 		if ( end_res_!=0 ) TR << end_res_; else TR << "[end of pose-1]";
 		TR << std::endl;
 	}
-	return;
 } //set_residue_range
 
 /// @brief Set the number of repeats.
@@ -208,7 +210,6 @@ void PerturbByBins::set_repeats( core::Size const repeats_in ) {
 			TR << "Setting number of repeats to " << repeats_ << "." << std::endl;
 		}
 	}
-	return;
 } //set_repeats()
 
 /// @brief Sets whether the residue that is being perturbed can stay within its own bin (in which case new mainchain
@@ -220,7 +221,6 @@ void PerturbByBins::set_must_switch_bins( bool const val ) {
 		else TR << "Perturbations set so that the residue being switched has some probability of staying within the bin in which it started (in which case its mainchain torsions are chosen randomly within the bin)." << std::endl;
 		TR.flush();
 	}
-	return;
 } //set_must_switch_bins()
 
 std::string PerturbByBins::get_name() const {

@@ -107,6 +107,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide citations to the passed CitationCollectionList
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 
 private:
 	///////////////////////
@@ -115,23 +118,21 @@ private:
 
 	/// @brief Start of residue range.
 	///
-	core::Size start_res_;
+	core::Size start_res_ = 0;
 
 	/// @brief End of residue range.
 	///
-	core::Size end_res_;
+	core::Size end_res_ = 0;
 
 	/// @brief Bin transition probability data file.
 	///
-	std::string binfile_;
+	std::string binfile_ = "ABBA";
 
-	/// @brief Has the bin transition probability file been loaded already?
-	/// @details This mover is not made to be re-used.  Probability file should only be loaded once.
-	bool binfile_loaded_;
 
 	/// @brief Owning pointer to the BinTransitionCalculator object used by this mover.
-	/// @details Object created when the InitializeByBins mover is created.
-	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+	/// @details Nullptr until a bin file is specified; then uses the BinTransitionCalculatorManager to
+	/// get a BinTranitionCalculator.
+	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
 
 	///////////////////////
 	// PRIVATE FUNCTIONS //

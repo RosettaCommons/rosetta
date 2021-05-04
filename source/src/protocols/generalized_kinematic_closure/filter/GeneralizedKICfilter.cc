@@ -48,6 +48,7 @@
 #include <numeric/conversions.hh>
 
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
 
@@ -94,7 +95,7 @@ GeneralizedKICfilter::GeneralizedKICfilter( GeneralizedKICfilter const &src ):
 	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_)
 	//TODO -- make sure above data are copied properly when duplicating this mover.
 {
-	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
+	if ( src.bin_transition_calculator_ != nullptr ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
 /// @brief Destructor for GeneralizedKICfilter mover.
@@ -289,18 +290,10 @@ void GeneralizedKICfilter::load_bin_params(
 ) {
 	using namespace core::scoring::bin_transitions;
 
-	//Create the object, if it doesn't exist.
-	if ( !bin_transition_calculator_ ) {
-		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
-		bin_transition_calculator_=utility::pointer::make_shared< BinTransitionCalculator >();
-	}
-
-	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
-	bin_transition_calculator_->load_bin_params(bin_params_file);
-
+	//Create the object and load bin params:
+	if ( TR.visible() ) TR << "Creating BinTransitionCalculator and loading bin paramaters from file \"" << bin_params_file << "\"" << std::endl;
+	bin_transition_calculator_ = BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator( bin_params_file );
 	if ( TR.visible() ) TR.flush();
-
-	return;
 }
 
 /// @brief Apply this filter to ONE of the kinematic closure solutions produced by the bridgeObjects function,

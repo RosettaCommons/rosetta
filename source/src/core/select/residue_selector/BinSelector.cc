@@ -25,6 +25,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 
 // Utility Headers
 #include <utility/tag/Tag.hh>
@@ -57,7 +58,7 @@ using namespace core::select::residue_selector;
 ///
 BinSelector::BinSelector() :
 	initialized_(false),
-	bin_transition_calculator_( new core::scoring::bin_transitions::BinTransitionCalculator() ),
+	bin_transition_calculator_(),
 	select_only_alpha_aas_(true),
 	bin_name_(""),
 	bin_params_file_name_("ABEGO")
@@ -68,7 +69,7 @@ BinSelector::BinSelector() :
 ///
 BinSelector::BinSelector( BinSelector const &src ) :
 	initialized_( src.initialized_ ),
-	bin_transition_calculator_( src.bin_transition_calculator_->clone() ),
+	bin_transition_calculator_( src.bin_transition_calculator_ == nullptr ? nullptr : src.bin_transition_calculator_->clone() ),
 	select_only_alpha_aas_(src.select_only_alpha_aas_),
 	bin_name_( src.bin_name_ ),
 	bin_params_file_name_( src.bin_params_file_name_ )
@@ -97,8 +98,10 @@ ResidueSubset
 BinSelector::apply(
 	core::pose::Pose const & pose
 ) const {
-	runtime_assert_string_msg( initialized() && bin_transition_calculator_->bin_params_loaded(),
-		"Error in core::select::residue_selector::BinSelector::apply(): The parameters for the BinTransitionCalculator have not been loaded." );
+	runtime_assert_string_msg(
+		initialized() && bin_transition_calculator_ != nullptr && bin_transition_calculator_->bin_params_loaded(),
+		"Error in core::select::residue_selector::BinSelector::apply(): The parameters for the BinTransitionCalculator have not been loaded."
+	);
 	core::Size const nres( pose.size() ); //Number of residues in the pose
 	ResidueSubset outvect( nres, false ); //Output vector, initialized to a vector of "false".
 	for ( core::Size i=1; i<=nres; ++i ) {
@@ -157,48 +160,19 @@ BinSelector::parse_my_tag(
 /// @details Must be called before apply() function.
 void
 BinSelector::initialize_and_check() {
-	if ( initialized() || bin_transition_calculator_->bin_params_loaded() ) {
+	if ( initialized() || bin_transition_calculator_ != nullptr ) {
 		utility_exit_with_message(
 			"Error in core::select::residue_selector::BinSelector::initialize_and_check(): The bin params file was already loaded!  This operation cannot be repeated.");
 	}
-	bin_transition_calculator_->load_bin_params( bin_params_file_name() );
+	bin_transition_calculator_ = core::scoring::bin_transitions::BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator( bin_params_file_name() );
 
-	runtime_assert_string_msg( bin_transition_calculator_->bin_definition_exists( bin_name() ),
-		"Error in core::select::residue_selector::BinSelector::initialize_and_check(): The bin params file defines no bin named " + bin_name() + "." );
+	runtime_assert_string_msg(
+		bin_transition_calculator_->bin_definition_exists( bin_name() ),
+		"Error in core::select::residue_selector::BinSelector::initialize_and_check(): The bin params file defines no bin named " + bin_name() + "."
+	);
 
 	if ( TR.visible() ) {
 		TR << "Loaded bin parameters file \"" << bin_params_file_name() << "\" and set bin to select to \"" << bin_name() << "\".";
-		if ( select_only_alpha_aas() ) {
-			TR << "  Only selecting alpha-amino acids." << std::endl;
-		} else {
-			TR << "  Selecting all polymeric types in the specified bin." << std::endl;
-		}
-	}
-
-	//Set that we've initialized this BinSelector.
-	initialized_=true;
-
-	return;
-}
-
-/// @brief Load the bin params file baed on a file contents string (instead of loading directly
-/// from disk) and check that settings are consistent.
-/// @details Must be called as an alternative to initialize_and_check() before apply() function.
-void
-BinSelector::initialize_from_file_contents_and_check (
-	std::string const &filecontents
-) {
-	if ( initialized() || bin_transition_calculator_->bin_params_loaded() ) {
-		utility_exit_with_message(
-			"Error in core::select::residue_selector::BinSelector::initialize_from_file_contents_and_check(): The bin params file was already loaded!  This operation cannot be repeated.");
-	}
-	bin_transition_calculator_->load_bin_params_from_file_contents( filecontents );
-
-	runtime_assert_string_msg( bin_transition_calculator_->bin_definition_exists( bin_name() ),
-		"Error in core::select::residue_selector::BinSelector::initialize_from_file_contents_and_check(): The bin params file defines no bin named " + bin_name() + "." );
-
-	if ( TR.visible() ) {
-		TR << "Loaded bin parameters from file contents and set bin to select to \"" << bin_name() << "\".";
 		if ( select_only_alpha_aas() ) {
 			TR << "  Only selecting alpha-amino acids." << std::endl;
 		} else {
@@ -295,7 +269,7 @@ void
 core::select::residue_selector::BinSelector::save( Archive & arc ) const {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( CEREAL_NVP( initialized_ ) ); // bool
-	arc(  CEREAL_NVP( bin_transition_calculator_ ) ); // core::scoring::bin_transitions::BinTransitionCalculatorOP
+	arc( CEREAL_NVP( bin_transition_calculator_ ) ); // core::scoring::bin_transitions::BinTransitionCalculatorOP
 	arc( CEREAL_NVP( select_only_alpha_aas_ ) ); //bool
 	arc( CEREAL_NVP( bin_name_ ) ); //std::string
 	arc( CEREAL_NVP( bin_params_file_name_ ) ); //std::string
@@ -307,7 +281,12 @@ void
 core::select::residue_selector::BinSelector::load( Archive & arc ) {
 	arc( cereal::base_class< core::select::residue_selector::ResidueSelector >( this ) );
 	arc( initialized_ ); // bool
-	arc( bin_transition_calculator_ ); // core::scoring::bin_transitions::BinTransitionCalculatorOP
+
+	// A little workaround for the COP:
+	core::scoring::bin_transitions::BinTransitionCalculatorOP calctemp;
+	arc( calctemp );
+	bin_transition_calculator_ = calctemp; // core::scoring::bin_transitions::BinTransitionCalculatorCOP
+
 	arc( select_only_alpha_aas_ ); //bool
 	arc( bin_name_ ); //std::string
 	arc( bin_params_file_name_ ); //std::string

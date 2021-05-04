@@ -29,12 +29,17 @@
 cd %(workdir)s
 
 [ -x %(bin)s/simple_cycpep_predict.%(binext)s ] || exit 1
-mpirun -np 4 %(bin)s/simple_cycpep_predict.%(binext)s %(additional_flags)s @flags1_mpi -database %(database)s -testing:INTEGRATION_TEST
+mpirun -np 4 %(bin)s/simple_cycpep_predict.%(binext)s %(additional_flags)s @flags1_mpi -database %(database)s -testing:INTEGRATION_TEST -jran 11111112
 
 test "${PIPESTATUS[0]}" != '0' && exit 1 || true  # Check if the first executable in pipe line return error and exit with error code if so
 
 # Filter out the ignore_list items from the MPI logs.
 bash ../../clean_mpi_logs.sh
+
+# The following should ensure that at least one structure was written to the silent file:
+numfiles=`grep "BINARY SILENTFILE" out_mpi.silent | wc -l`
+echo "$numfiles structures were produced." >num_structs.txt
+test `echo $numfiles` != '0' && true || exit 1
 
 #
 # After that, do whatever you want.

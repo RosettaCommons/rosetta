@@ -115,12 +115,6 @@ public:
 	/// @details Must be called before apply() function.
 	void initialize_and_check();
 
-	/// @brief Load the bin params file baed on a file contents string (instead of loading directly
-	/// from disk) and check that settings are consistent.
-	/// @details Must be called as an alternative to initialize_and_check() before apply() function.
-	void initialize_from_file_contents_and_check( std::string const &filecontents );
-
-
 private: //Private functions
 
 	/// @brief Has the initialize_and_check() function been called?
@@ -131,17 +125,16 @@ private: //Private variables
 
 	/// @brief Has the initialize_and_check() function been called?
 	/// @details Must be called before calling apply().
-	bool initialized_;
+	bool initialized_ = false;
 
 	/// @brief A BinTransitionCalculatorOP pointing at a BinTransitionCalculator object.
-	/// @details Object created with the BinSelector; initialized by parse_my_tag() or
-	/// initialize_bin_transition_calculator() functions.
-	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+	/// @details Object initialized by parse_my_tag() or initialize_bin_transition_calculator() functions.
+	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
 
 	/// @brief Should we only select alpha-amino acids?
 	/// @details Default true.  If false, then all polymeric residues are potentially selected (if
 	/// they're in the correct bin).
-	bool select_only_alpha_aas_;
+	bool select_only_alpha_aas_ = true;
 
 	/// @brief The name of the bin that the residues that we will select will be in.
 	///

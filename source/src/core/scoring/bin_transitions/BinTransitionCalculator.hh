@@ -18,6 +18,7 @@
 
 //BinTransitionCalculator owning pointers header:
 #include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
@@ -39,10 +40,32 @@ namespace scoring {
 namespace bin_transitions {
 
 class BinTransitionCalculator : public utility::VirtualBase {
-public: //Constructors and destructors:
+
+	friend class BinTransitionCalculatorManager; //Only this class can initialize new BinTransitionCalculators.
+
+public:
+
+#ifdef SERIALIZATION
 	/// @brief Default constructor for BinTransitionCalculator
-	///
+	/// @details Explicitly deleted, except for serialization build.
 	BinTransitionCalculator();
+#else
+	/// @brief Default constructor for BinTransitionCalculator
+	/// @details Explicitly deleted, except for serialization build.
+	BinTransitionCalculator() = delete;
+#endif
+
+private:
+
+	/// @brief Initialization constructor.
+	/// @details Private so that only the BinTransitionCalculatorManager can initialize new BinTransitionCalculators.
+	/// Requires an initialization file.
+	/// @note Triggers read from disk, but the BinTransitionCalculatorManager creates one intance for each unique
+	/// bin transition file and caches it, returning clones of the cached object to anything that requests the same
+	/// bin transition file.
+	BinTransitionCalculator( std::string const & bin_transition_file );
+
+public:
 
 	/// @brief Copy constructor for BinTransitionCalculator
 	///
@@ -63,15 +86,13 @@ public: //Public functions -- information:
 	/// @details If verbose is true, the full sub-bin information is printed, too.
 	std::string summarize_stored_data( bool const verbose ) const;
 
-public: //Public functions -- calculators and initializers:
+public: //Private functions -- initializers:
 
 	/// @brief Set the bin params file, and load all the bin params and transition probabilities.
-	///
+	/// @details Triggers read from disk!
 	void load_bin_params( std::string const &filename );
 
-	/// @brief Loads all bin params from a string representing file contents.
-	/// @details Provided as an alternative to direct load from disk.
-	void load_bin_params_from_file_contents( std::string const &filecontents);
+public: //Public functions -- calculators
 
 	/// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 	/// and the index of the bin within that object.
@@ -323,7 +344,7 @@ private: //Private variables:
 
 	/// @brief Has a bin params file been loaded?
 	/// @details Default false; set to true by the load_bin_params() function.
-	bool bin_params_loaded_;
+	bool bin_params_loaded_ = false;
 
 	/// @brief The filename for the bin params file that defines the bins and their transition probabilities.
 	///

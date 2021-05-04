@@ -251,7 +251,7 @@ private:
 	/// @brief A BinTransitionCalculatorOP.  This will be null by default,
 	/// and will only point to a BinTransitionCalculator object in the case
 	/// of those perturbers that use torsion bin transition probabilities.
-	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
 
 	/// @brief The effect of this perturber.  See the perturber_effect enum type
 	/// for more information.

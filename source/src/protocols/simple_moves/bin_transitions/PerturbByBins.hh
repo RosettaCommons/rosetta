@@ -137,6 +137,8 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide citations to the passed CitationCollectionList
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
 
 private:
 	///////////////////////
@@ -145,34 +147,29 @@ private:
 
 	/// @brief Start of residue range.
 	///
-	core::Size start_res_;
+	core::Size start_res_ = 0;
 
 	/// @brief End of residue range.
 	///
-	core::Size end_res_;
+	core::Size end_res_ = 0;
 
 	/// @brief Bin transition probability data file.
-	///
-	std::string binfile_;
-
-	/// @brief Has the bin transition probability file been loaded already?
-	/// @details This mover is not made to be re-used.  Probability file should only be loaded once.
-	bool binfile_loaded_;
+	/// @details Defaults to "ABBA".
+	std::string binfile_ = "ABBA";
 
 	/// @brief Owning pointer to the BinTransitionCalculator object used by this mover.
-	/// @details Object created when the PerturbByBins mover is created.
-	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
 
 	/// @brief How many times will this be applied?
 	/// @details A value of 1 means that a single residue in the range will randomly be selected and
 	/// flipped to another bin (with probabilities based on its neighbours and the bin transition
 	/// probabilities.  Higher values mean that this operation will be repeated.  Defaults to 1.
-	core::Size repeats_;
+	core::Size repeats_ = 1;
 
 	/// @brief Can the residue that is being perturbed stay within its own bin (in which case new mainchain
 	/// torsions are drawn from within the bin), or must it jump to a different bin?  Default false (i.e.
 	/// need not switch bins).
-	bool must_switch_bins_;
+	bool must_switch_bins_ = false;
 
 	///////////////////////
 	// PRIVATE FUNCTIONS //

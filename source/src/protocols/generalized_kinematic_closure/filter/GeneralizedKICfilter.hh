@@ -222,7 +222,7 @@ private:
 	/// @brief A BinTransitionCalculatorOP.  This will be null by default,
 	/// and will only point to a BinTransitionCalculator object in the case
 	/// of those filters that use torsion bin transition probabilities.
-	core::scoring::bin_transitions::BinTransitionCalculatorOP bin_transition_calculator_;
+	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
 
 	/// @brief A parameter specifically for the backbone_bin filter.  The bin
 	/// that the residue must lie within.

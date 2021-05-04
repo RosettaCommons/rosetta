@@ -48,13 +48,27 @@ namespace bin_transitions {
 
 static basic::Tracer TR( "core.scoring.bin_transitions.BinTransitionCalculator" );
 
+#ifdef SERIALIZATION
 /// @brief Default constructor for BinTransitionCalculator
-///
-BinTransitionCalculator::BinTransitionCalculator(): //TODO -- initialize variables here:
-	bin_params_loaded_(false),
-	bin_params_file_(""),
-	bin_transition_data_()
+/// @details Explicitly deleted, except for serialization build.
+BinTransitionCalculator::BinTransitionCalculator() :
+	utility::VirtualBase()
 {}
+#endif
+
+/// @brief Initialization constructor.
+/// @details Private so that only the BinTransitionCalculatorManager can initialize new BinTransitionCalculators.
+/// Requires an initialization file.
+BinTransitionCalculator::BinTransitionCalculator(
+	std::string const & bin_transition_file
+):
+	utility::VirtualBase(),
+	bin_params_loaded_(false), //Will be set to true by the load_bin_params() function call below.
+	bin_params_file_(bin_transition_file),
+	bin_transition_data_()
+{
+	load_bin_params(bin_transition_file);
+}
 
 /// @brief Copy constructor for BinTransitionCalculator
 ///
@@ -128,41 +142,6 @@ void BinTransitionCalculator::load_bin_params( std::string const &filename ) {
 
 	bin_params_loaded_=true;
 } //load_bin_params()
-
-/// @brief Loads all bin params from a string representing file contents.
-/// @details Provided as an alternative to direct load from disk.
-void
-BinTransitionCalculator::load_bin_params_from_file_contents (
-	std::string const &filecontents
-) {
-	//Check that this object has not already been initialized.
-	runtime_assert_string_msg( !bin_params_loaded(), "In core::scoring::bin_transitions::BinTransitionCalculator::load_bin_params_from_file_contents(): A bin params file was already loaded by this object!  BinTransitionCalculator objects are intended to be single-use (as far as bin params are concerned)." );
-
-	//Split input into lines:
-	std::istringstream infile(filecontents);
-	std::string curline;
-	utility::vector1< std::string > lines;
-	while ( getline(infile, curline) ) {
-		if ( TR.Debug.visible() ) TR.Debug << curline << std::endl;
-		if ( curline.size() < 1 ) continue; //Ignore blank lines.
-		//Find and process comments:
-		std::string::size_type pound = curline.find('#', 0);
-		if ( pound == std::string::npos ) {
-			lines.push_back( curline );
-		} else {
-			lines.push_back(curline.substr(0, pound));
-		}
-	}
-
-	parse_lines( lines );
-
-	if ( TR.visible() ) {
-		TR << "Finished loading bin parameters from file." << std::endl;
-		TR.flush();
-	}
-
-	bin_params_loaded_ = true;
-}
 
 /// @brief Given a bin name and a residue, find a BinTransitionsData object describing that residue,
 /// and the index of the bin within that object.

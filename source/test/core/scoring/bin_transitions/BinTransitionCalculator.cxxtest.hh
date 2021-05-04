@@ -17,8 +17,8 @@
 #include <test/UTracer.hh>
 
 // BinTransitionCalculator headers:
-#include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
@@ -60,9 +60,8 @@ public:
 	{
 		using namespace core::scoring::bin_transitions;
 
-		BinTransitionCalculatorOP bt( new BinTransitionCalculator );
+		BinTransitionCalculatorCOP bt( BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator("ABBA") );
 
-		bt->load_bin_params( "ABBA" );
 		std::string summary(bt->summarize_stored_data(false)); //Get a summary.
 		if ( TR.visible() ) {
 			TR << summary << std::endl; //Write out the summary.
@@ -78,7 +77,7 @@ public:
 		using namespace core::scoring::bin_transitions;
 		using namespace std;
 
-		BinTransitionDataOP btd( new BinTransitionData);
+		BinTransitionDataOP btd( utility::pointer::make_shared< BinTransitionData >() );
 		std::ostringstream outstream;
 
 		core::Real curbin_val(2.0);
@@ -150,8 +149,7 @@ public:
 		using namespace core::scoring::bin_transitions;
 		using namespace std;
 
-		BinTransitionCalculatorOP bt( new BinTransitionCalculator );
-		bt->load_bin_params( "ABBA" );
+		BinTransitionCalculatorCOP bt( BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator("ABBA") );
 
 		//A->A
 		core::pose::PoseOP temppose = pose_->clone();

@@ -371,7 +371,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication(
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
 	comp_file_contents_D_beta_(""),
-	abba_bins_(""),
+	abba_bins_binfile_("ABBA.bin_params"),
 	do_not_count_adjacent_res_hbonds_(true),
 	angle_relax_rounds_(0),
 	angle_length_relax_rounds_(0),
@@ -503,7 +503,7 @@ SimpleCycpepPredictApplication::SimpleCycpepPredictApplication( SimpleCycpepPred
 	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
 	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
-	abba_bins_(src.abba_bins_),
+	abba_bins_binfile_(src.abba_bins_binfile_),
 	do_not_count_adjacent_res_hbonds_(src.do_not_count_adjacent_res_hbonds_),
 	angle_relax_rounds_(src.angle_relax_rounds_),
 	angle_length_relax_rounds_(src.angle_length_relax_rounds_),
@@ -653,8 +653,6 @@ SimpleCycpepPredictApplication::initialize_from_options(
 			D_beta_comp_file_exists_=true;
 			TR << "Loaded " << option[basic::options::OptionKeys::cyclic_peptide::D_beta_comp_file]() << "." << std::endl;
 		}
-		read_file_into_string( abba_bins_, "protocol_data/generalizedKIC/bin_params/ABBA.bin_params", true );
-		TR << "Loaded ABBA.bin_params." << std::endl;
 	}
 
 	//Get the native, if it exists:
@@ -1095,13 +1093,12 @@ SimpleCycpepPredictApplication::set_D_beta_compfile_contents(
 	D_beta_comp_file_exists_=true;
 }
 
-/// @brief Allows external code to set the ABBA bin parameters without having to read the
-/// bin params file directly from disk.
+/// @brief Set the bin transitions file.
 void
-SimpleCycpepPredictApplication::set_abba_bins_binfile_contents(
-	std::string const &contents_in
+SimpleCycpepPredictApplication::set_abba_bins_binfile(
+	std::string const &binfile_in
 ) {
-	abba_bins_ = contents_in;
+	abba_bins_binfile_ = binfile_in;
 }
 
 /// @brief Set the frequency with which we sample cis proline.
@@ -1713,7 +1710,7 @@ SimpleCycpepPredictApplication::run() const {
 		runtime_assert(cyclic_offset < resnames_copy.size() ); //Should be true.
 
 		//Create the pose:
-		core::pose::PoseOP pose( new core::pose::Pose );
+		core::pose::PoseOP pose( utility::pointer::make_shared< core::pose::Pose >() );
 		build_polymer(pose, resnames_copy);
 
 		//Add disulfide variants, if we're doing disulfide cyclization.
@@ -1724,7 +1721,7 @@ SimpleCycpepPredictApplication::run() const {
 		}
 
 		//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-		protocols::cyclic_peptide::DeclareBondOP termini( new protocols::cyclic_peptide::DeclareBond );
+		protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
 		set_up_cyclization_mover( termini, pose ); //Handles the cyclization appropriately, contingent on the cyclization type.
 		termini->apply(*pose);
 
@@ -1787,11 +1784,11 @@ SimpleCycpepPredictApplication::run() const {
 
 		//If we're filtering by symmetry, do so here a final time:
 		if ( required_symmetry_repeats_ > 1 ) {
-			protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter3( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+			protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter3( utility::pointer::make_shared< protocols::cyclic_peptide::CycpepSymmetryFilter >() );
 			symmfilter3->set_symm_repeats( required_symmetry_repeats_ );
 			symmfilter3->set_mirror_symm( required_symmetry_mirroring_ );
 			symmfilter3->set_angle_threshold( required_symmetry_angle_threshold_ );
-			core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP iselector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			std::stringstream pep_indices("");
 			pep_indices << "1-" << sequence_length();
 			iselector->set_index( pep_indices.str() );
@@ -1973,7 +1970,7 @@ SimpleCycpepPredictApplication::check_loop_length(
 		//Create a temporary pose for analysis.  We need this because the check is based
 		//on disulfide-forming residue types.  This is slightly inefficient, but it only
 		//happens once:
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
+		core::pose::PoseOP temp_pose( utility::pointer::make_shared< core::pose::Pose >() );
 		build_polymer(temp_pose, resnames);
 		core::Size const firstdisulf( find_first_disulf_res( temp_pose  ) );
 		core::Size const lastdisulf( find_last_disulf_res( temp_pose  ) );
@@ -1983,7 +1980,7 @@ SimpleCycpepPredictApplication::check_loop_length(
 		);
 	} else if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		//Create a temporary pose for analysis.
-		core::pose::PoseOP temp_pose( new core::pose::Pose );
+		core::pose::PoseOP temp_pose( utility::pointer::make_shared< core::pose::Pose >() );
 		build_polymer(temp_pose, resnames);
 		core::Size firstres, lastres;
 		find_first_and_last_isopeptide_residues( temp_pose, firstres, lastres );
@@ -2103,7 +2100,7 @@ SimpleCycpepPredictApplication::do_final_fastrelax(
 	bool const length_min,
 	bool const cartesian_min
 ) const {
-	protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn, 1) );
+	protocols::relax::FastRelaxOP frlx( utility::pointer::make_shared< protocols::relax::FastRelax >(sfxn, 1) );
 	if ( cartesian_min ) {
 		frlx->cartesian(true);
 	} else {
@@ -2116,7 +2113,7 @@ SimpleCycpepPredictApplication::do_final_fastrelax(
 	}
 
 	//Mover to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP final_termini( new protocols::cyclic_peptide::DeclareBond );
+	protocols::cyclic_peptide::DeclareBondOP final_termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
 	set_up_cyclization_mover( final_termini, pose );
 
 	(*sfxn)(*pose);
@@ -2191,7 +2188,7 @@ SimpleCycpepPredictApplication::add_n_methylation(
 	TR << "Adding N-methylation" << std::endl;
 	protocols::simple_moves::ModifyVariantTypeMover add_nmethyl;
 	add_nmethyl.set_additional_type_to_add("N_METHYLATION");
-	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
+	core::select::residue_selector::ResidueIndexSelectorOP selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 	for ( core::Size i=1, imax=n_methyl_positions_.size(); i<=imax; ++i ) {
 		runtime_assert_string_msg( n_methyl_positions_[i] > 0  && n_methyl_positions_[i] <= nres, "Error in simple_cycpep_predict app: The N-methylation position indices must be within the pose!" );
 		int permuted_position( static_cast<int>(n_methyl_positions_[i]) - static_cast<int>(cyclic_offset) );
@@ -2605,7 +2602,7 @@ SimpleCycpepPredictApplication::set_up_native (
 	}
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP termini( new protocols::cyclic_peptide::DeclareBond );
+	protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
 	set_up_cyclization_mover( termini, native_pose, true, last_res );
 	termini->apply(*native_pose);
 }
@@ -2690,23 +2687,23 @@ SimpleCycpepPredictApplication::add_amide_bond_cyclic_constraints (
 	TR << "4.\tRes=" << atom_d.rsd() << "\tAtom=" << pose->residue(atom_d.rsd()).atom_name(atom_d.atomno()) << std::endl;
 
 	{//Peptide bond length constraint:
-		FuncOP harmfunc1( new HarmonicFunc( SimpleCycpepPredictApplication_PEPBOND_LENGTH, 0.01) );
-		ConstraintCOP distconst1( new AtomPairConstraint ( atom_b, atom_c, harmfunc1 ) );
+		FuncOP harmfunc1( utility::pointer::make_shared< HarmonicFunc >( SimpleCycpepPredictApplication_PEPBOND_LENGTH, 0.01) );
+		ConstraintCOP distconst1( utility::pointer::make_shared< AtomPairConstraint >( atom_b, atom_c, harmfunc1 ) );
 		pose->add_constraint (distconst1);
 	}
 
 	{ //Peptide dihedral angle constraints:
 		// (TODO -- change these if we sample a trans-proline.)
-		FuncOP circharmfunc1( new CircularHarmonicFunc( numeric::constants::d::pi, 0.02) );
-		ConstraintCOP dihedconst1( new DihedralConstraint ( atom_a, atom_b, atom_c, atom_d, circharmfunc1) );
+		FuncOP circharmfunc1( utility::pointer::make_shared< CircularHarmonicFunc >( numeric::constants::d::pi, 0.02) );
+		ConstraintCOP dihedconst1( utility::pointer::make_shared< DihedralConstraint >( atom_a, atom_b, atom_c, atom_d, circharmfunc1) );
 		pose->add_constraint (dihedconst1);
 	}
 
 	{ //Peptide bond angle constraints:
-		FuncOP circharmfunc2a( new CircularHarmonicFunc( SimpleCycpepPredictApplication_PEPBOND_C_ANGLE, 0.02) );
-		FuncOP circharmfunc2b( new CircularHarmonicFunc( SimpleCycpepPredictApplication_PEPBOND_N_ANGLE, 0.02) );
-		ConstraintCOP angleconst1( new AngleConstraint ( atom_a, atom_b, atom_c, circharmfunc2a) );
-		ConstraintCOP angleconst2( new AngleConstraint ( atom_b, atom_c, atom_d, circharmfunc2b) );
+		FuncOP circharmfunc2a( utility::pointer::make_shared< CircularHarmonicFunc >( SimpleCycpepPredictApplication_PEPBOND_C_ANGLE, 0.02) );
+		FuncOP circharmfunc2b( utility::pointer::make_shared< CircularHarmonicFunc >( SimpleCycpepPredictApplication_PEPBOND_N_ANGLE, 0.02) );
+		ConstraintCOP angleconst1( utility::pointer::make_shared< AngleConstraint >( atom_a, atom_b, atom_c, circharmfunc2a) );
+		ConstraintCOP angleconst2( utility::pointer::make_shared< AngleConstraint >( atom_b, atom_c, atom_d, circharmfunc2b) );
 		pose->add_constraint (angleconst1);
 		pose->add_constraint (angleconst2);
 	}
@@ -3164,10 +3161,10 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( middle_loop_res > nres ) { middle_loop_res -= nres; }
 
 	//Create the pre-selection mover and set options.
-	protocols::rosetta_scripts::ParsedProtocolOP pp( new protocols::rosetta_scripts::ParsedProtocol );
+	protocols::rosetta_scripts::ParsedProtocolOP pp( utility::pointer::make_shared< protocols::rosetta_scripts::ParsedProtocol >() );
 
 	//Update O and H atoms at the cyclization point:
-	protocols::cyclic_peptide::DeclareBondOP update_OH( new protocols::cyclic_peptide::DeclareBond );
+	protocols::cyclic_peptide::DeclareBondOP update_OH( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
 	set_up_cyclization_mover( update_OH, pose );
 	if ( cyclization_type() == SCPA_n_to_c_amide_bond || cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
 		pp->add_step( update_OH, "Update_cyclization_point_polymer_dependent_atoms_1", nullptr );
@@ -3178,7 +3175,7 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Filter out poses with oversaturated hydrogen bond acceptors.
 	if ( filter_oversaturated_hbond_acceptors_ ) {
-		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat1( utility::pointer::make_shared< protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter >() );
 		oversat1->set_scorefxn( sfxn_default );
 		oversat1->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_step( nullptr, "Oversaturated_Hbond_Acceptors", oversat1 );
@@ -3186,11 +3183,11 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//If we're filtering by symmetry, do so here:
 	if ( required_symmetry_repeats_ > 1 ) {
-		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter1( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter1( utility::pointer::make_shared< protocols::cyclic_peptide::CycpepSymmetryFilter >() );
 		symmfilter1->set_symm_repeats( required_symmetry_repeats_ );
 		symmfilter1->set_mirror_symm( required_symmetry_mirroring_ );
 		symmfilter1->set_angle_threshold( required_symmetry_angle_threshold_ );
-		core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+		core::select::residue_selector::ResidueIndexSelectorOP iselector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 		std::stringstream pep_indices("");
 		pep_indices << "1-" << sequence_length();
 		iselector->set_index( pep_indices.str() );
@@ -3231,9 +3228,9 @@ SimpleCycpepPredictApplication::genkic_close(
 				cys_indices << current_position( tbmb_positions_[i][j], cyclic_offset, nres );
 				if ( j<3 ) cys_indices << ",";
 			}
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			index_selector->set_index( cys_indices.str() );
-			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			threelinker->set_residue_selector(index_selector);
 			threelinker->set_linker_name("TBMB");
 			threelinker->set_behaviour( true, true, true, false );
@@ -3255,9 +3252,9 @@ SimpleCycpepPredictApplication::genkic_close(
 				tma_indices << current_position( tma_positions_[i][j], cyclic_offset, nres );
 				if ( j<3 ) tma_indices << ",";
 			}
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			index_selector->set_index( tma_indices.str() );
-			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP threelinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			threelinker->set_residue_selector(index_selector);
 			threelinker->set_linker_name("TMA");
 			threelinker->set_behaviour( true, true, true, false );
@@ -3274,9 +3271,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( trigonal_pyramidal_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(trigonal_pyramidal_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 3 > const & resnums( trigonal_pyramidal_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=3; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("trigonal_pyramidal_metal");
 			metallinker->set_metal_type(trigonal_pyramidal_metal_positions_[i].second);
@@ -3294,9 +3291,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( trigonal_planar_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(trigonal_planar_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 3 > const & resnums( trigonal_planar_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=3; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("trigonal_planar_metal");
 			metallinker->set_metal_type(trigonal_planar_metal_positions_[i].second);
@@ -3314,9 +3311,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( square_pyramidal_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(square_pyramidal_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 5 > const & resnums( square_pyramidal_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=5; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("square_pyramidal_metal");
 			metallinker->set_metal_type(square_pyramidal_metal_positions_[i].second);
@@ -3334,9 +3331,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( square_planar_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(square_planar_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 4 > const & resnums( square_planar_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=4; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("square_planar_metal");
 			metallinker->set_metal_type(square_planar_metal_positions_[i].second);
@@ -3354,9 +3351,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( tetrahedral_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(tetrahedral_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 4 > const & resnums( tetrahedral_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=4; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("tetrahedral_metal");
 			metallinker->set_metal_type(tetrahedral_metal_positions_[i].second);
@@ -3374,9 +3371,9 @@ SimpleCycpepPredictApplication::genkic_close(
 	if ( octahedral_metal_positions_.size() > 0 ) {
 		for ( core::Size i(1), imax(octahedral_metal_positions_.size()); i<=imax; ++i ) {
 			utility::fixedsizearray1< core::Size, 6 > const & resnums( octahedral_metal_positions_[i].first );
-			core::select::residue_selector::ResidueIndexSelectorOP index_selector( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP index_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			for ( core::Size j(1); j<=6; ++j ) index_selector->append_index( current_position( resnums[j], cyclic_offset, nres ) );
-			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( new protocols::cyclic_peptide::CrosslinkerMover );
+			protocols::cyclic_peptide::CrosslinkerMoverOP metallinker( utility::pointer::make_shared< protocols::cyclic_peptide::CrosslinkerMover >() );
 			metallinker->set_residue_selector(index_selector);
 			metallinker->set_linker_name("octahedral_metal");
 			metallinker->set_metal_type(octahedral_metal_positions_[i].second);
@@ -3393,16 +3390,16 @@ SimpleCycpepPredictApplication::genkic_close(
 	core::Size disulf_count(0);
 	//If we're considering disulfides, add the TryDisulfPermutations mover and a filter to the ParsedProtocol:
 	if ( try_all_disulfides_ ) {
-		protocols::cyclic_peptide::TryDisulfPermutationsOP trydisulf( new protocols::cyclic_peptide::TryDisulfPermutations ); //Default settings should be fine.
+		protocols::cyclic_peptide::TryDisulfPermutationsOP trydisulf( utility::pointer::make_shared< protocols::cyclic_peptide::TryDisulfPermutations >() ); //Default settings should be fine.
 		core::Size disulf_res_count(0);
 		core::Size const first_disulf_res( cyclization_type() == SCPA_terminal_disulfide ? find_first_disulf_res( pose ) : 0 );
 		core::Size const last_disulf_res( cyclization_type() == SCPA_terminal_disulfide ? find_last_disulf_res( pose ) : 0 );
 		if ( cyclization_type() == SCPA_terminal_disulfide ) {
-			core::select::residue_selector::ResidueIndexSelectorOP sel( new core::select::residue_selector::ResidueIndexSelector );
+			core::select::residue_selector::ResidueIndexSelectorOP sel( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 			std::stringstream indices;
 			indices << first_disulf_res << "," << last_disulf_res ;
 			sel->set_index( indices.str() );
-			core::select::residue_selector::NotResidueSelectorOP notsel( new core::select::residue_selector::NotResidueSelector );
+			core::select::residue_selector::NotResidueSelectorOP notsel( utility::pointer::make_shared< core::select::residue_selector::NotResidueSelector >() );
 			notsel->set_residue_selector(sel);
 			trydisulf->set_selector( notsel );
 		}
@@ -3410,93 +3407,97 @@ SimpleCycpepPredictApplication::genkic_close(
 			if ( pose->residue(ir).type().get_disulfide_atom_name() != "NONE" ) ++disulf_res_count; //Count disulfide-forming residues in the pose.
 		}
 		disulf_count = disulf_res_count / 2; //Div operator -- gives correct number of disulfides even in odd disulfide-forming residue case.
-		protocols::score_filters::ScoreTypeFilterOP disulf_filter1( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
+		protocols::score_filters::ScoreTypeFilterOP disulf_filter1( utility::pointer::make_shared< protocols::score_filters::ScoreTypeFilter >( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_prerelax_ * static_cast<core::Real>(disulf_count) ) );
 		pp->add_step( trydisulf, "Try_Disulfide_Permutations", disulf_filter1 );
 	}
 
 	//Add the FastRelax with high hbond weight to the pre-selection parsed protocol.
 	if ( design_peptide_ ) {
 		if ( L_alpha_comp_file_exists_ ) {
-			protocols::aa_composition::AddCompositionConstraintMoverOP L_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
-			core::select::residue_selector::BinSelectorOP select_L_alpha( new core::select::residue_selector::BinSelector );
+			protocols::aa_composition::AddCompositionConstraintMoverOP L_alpha_cst( utility::pointer::make_shared< protocols::aa_composition::AddCompositionConstraintMover >() );
+			core::select::residue_selector::BinSelectorOP select_L_alpha( utility::pointer::make_shared< core::select::residue_selector::BinSelector >() );
 			select_L_alpha->set_bin_name("A");
-			select_L_alpha->initialize_from_file_contents_and_check( abba_bins_ );
+			select_L_alpha->set_bin_params_file_name(abba_bins_binfile_);
+			select_L_alpha->initialize_and_check();
 			L_alpha_cst->create_constraint_from_file_contents( comp_file_contents_L_alpha_ );
 			L_alpha_cst->add_residue_selector( select_L_alpha );
 			pp->add_step( L_alpha_cst, "Add_L_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( D_alpha_comp_file_exists_ ) {
-			protocols::aa_composition::AddCompositionConstraintMoverOP D_alpha_cst( new protocols::aa_composition::AddCompositionConstraintMover );
-			core::select::residue_selector::BinSelectorOP select_D_alpha( new core::select::residue_selector::BinSelector );
+			protocols::aa_composition::AddCompositionConstraintMoverOP D_alpha_cst( utility::pointer::make_shared< protocols::aa_composition::AddCompositionConstraintMover >() );
+			core::select::residue_selector::BinSelectorOP select_D_alpha( utility::pointer::make_shared< core::select::residue_selector::BinSelector >() );
 			select_D_alpha->set_bin_name("Aprime");
-			select_D_alpha->initialize_from_file_contents_and_check( abba_bins_ );
+			select_D_alpha->set_bin_params_file_name(abba_bins_binfile_);
+			select_D_alpha->initialize_and_check();
 			D_alpha_cst->create_constraint_from_file_contents( comp_file_contents_D_alpha_ );
 			D_alpha_cst->add_residue_selector( select_D_alpha );
 			pp->add_step( D_alpha_cst, "Add_D_Alpha_AACompositionConstraints", nullptr );
 		}
 		if ( L_beta_comp_file_exists_ ) {
-			protocols::aa_composition::AddCompositionConstraintMoverOP L_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
-			core::select::residue_selector::BinSelectorOP select_L_beta( new core::select::residue_selector::BinSelector );
+			protocols::aa_composition::AddCompositionConstraintMoverOP L_beta_cst( utility::pointer::make_shared< protocols::aa_composition::AddCompositionConstraintMover >() );
+			core::select::residue_selector::BinSelectorOP select_L_beta( utility::pointer::make_shared< core::select::residue_selector::BinSelector >() );
 			select_L_beta->set_bin_name("B");
-			select_L_beta->initialize_from_file_contents_and_check( abba_bins_ );
+			select_L_beta->set_bin_params_file_name(abba_bins_binfile_);
+			select_L_beta->initialize_and_check();
 			L_beta_cst->create_constraint_from_file_contents( comp_file_contents_L_beta_ );
 			L_beta_cst->add_residue_selector( select_L_beta );
 			pp->add_step( L_beta_cst, "Add_L_Beta_AACompositionConstraints", nullptr );
 		}
 		if ( D_beta_comp_file_exists_ ) {
-			protocols::aa_composition::AddCompositionConstraintMoverOP D_beta_cst( new protocols::aa_composition::AddCompositionConstraintMover );
-			core::select::residue_selector::BinSelectorOP select_D_beta( new core::select::residue_selector::BinSelector );
+			protocols::aa_composition::AddCompositionConstraintMoverOP D_beta_cst( utility::pointer::make_shared< protocols::aa_composition::AddCompositionConstraintMover >() );
+			core::select::residue_selector::BinSelectorOP select_D_beta( utility::pointer::make_shared< core::select::residue_selector::BinSelector >() );
 			select_D_beta->set_bin_name("Bprime");
-			select_D_beta->initialize_from_file_contents_and_check( abba_bins_ );
+			select_D_beta->set_bin_params_file_name(abba_bins_binfile_);
+			select_D_beta->initialize_and_check();
 			D_beta_cst->create_constraint_from_file_contents( comp_file_contents_D_beta_ );
 			D_beta_cst->add_residue_selector( select_D_beta );
 			pp->add_step( D_beta_cst, "Add_D_Beta_AACompositionConstraints", nullptr );
 		}
 
 		if ( fast_relax_rounds_ > 0 ) {
-			protocols::denovo_design::movers::FastDesignOP fdes( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond, fast_relax_rounds_) );
+			protocols::denovo_design::movers::FastDesignOP fdes( utility::pointer::make_shared< protocols::denovo_design::movers::FastDesign >(sfxn_highhbond, fast_relax_rounds_) );
 			set_up_design_taskoperations( fdes, cyclic_offset, pose->size(), pose );
 			pp->add_step( fdes, "High_Hbond_FastDesign", nullptr );
 		}
 		if ( angle_relax_rounds() > 0 ) {
-			protocols::denovo_design::movers::FastDesignOP fdes2( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_relax_rounds()) );
+			protocols::denovo_design::movers::FastDesignOP fdes2( utility::pointer::make_shared< protocols::denovo_design::movers::FastDesign >(sfxn_highhbond_cart, angle_relax_rounds()) );
 			fdes2->minimize_bond_angles(true);
 			set_up_design_taskoperations( fdes2, cyclic_offset, pose->size(), pose );
 			pp->add_step( fdes2, "High_Hbond_FastDesign_angle_relax", nullptr );
 		}
 		if ( angle_length_relax_rounds() > 0 ) {
-			protocols::denovo_design::movers::FastDesignOP fdes3( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, angle_length_relax_rounds()) );
+			protocols::denovo_design::movers::FastDesignOP fdes3( utility::pointer::make_shared< protocols::denovo_design::movers::FastDesign >(sfxn_highhbond_cart, angle_length_relax_rounds()) );
 			fdes3->minimize_bond_angles(true);
 			fdes3->minimize_bond_lengths(true);
 			set_up_design_taskoperations( fdes3, cyclic_offset, pose->size(), pose );
 			pp->add_step( fdes3, "High_Hbond_FastDesign_angle_length_relax", nullptr );
 		}
 		if ( cartesian_relax_rounds() > 0 ) {
-			protocols::denovo_design::movers::FastDesignOP fdes4( new protocols::denovo_design::movers::FastDesign(sfxn_highhbond_cart, cartesian_relax_rounds()) );
+			protocols::denovo_design::movers::FastDesignOP fdes4( utility::pointer::make_shared< protocols::denovo_design::movers::FastDesign >(sfxn_highhbond_cart, cartesian_relax_rounds()) );
 			fdes4->cartesian(true);
 			set_up_design_taskoperations( fdes4, cyclic_offset, pose->size(), pose );
 			pp->add_step( fdes4, "High_Hbond_FastDesign_Cartesian_relax", nullptr );
 		}
 
-		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( new protocols::aa_composition::ClearCompositionConstraintsMover );
+		protocols::aa_composition::ClearCompositionConstraintsMoverOP clear_aacomp_cst( utility::pointer::make_shared< protocols::aa_composition::ClearCompositionConstraintsMover >() );
 		pp->add_step( clear_aacomp_cst, "Clear_AACompositionConstraints", nullptr );
 	} else {
 		if ( fast_relax_rounds_ > 0 ) {
-			protocols::relax::FastRelaxOP frlx( new protocols::relax::FastRelax(sfxn_highhbond, fast_relax_rounds_) );
+			protocols::relax::FastRelaxOP frlx( utility::pointer::make_shared< protocols::relax::FastRelax >(sfxn_highhbond, fast_relax_rounds_) );
 			pp->add_step( frlx, "High_Hbond_FastRelax", nullptr );
 		}
 		if ( angle_relax_rounds() > 0 ) {
-			protocols::relax::FastRelaxOP frlx2( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_relax_rounds() ) );
+			protocols::relax::FastRelaxOP frlx2( utility::pointer::make_shared< protocols::relax::FastRelax >(sfxn_highhbond_cart, angle_relax_rounds() ) );
 			frlx2->minimize_bond_angles(true);
 			pp->add_step( frlx2, "High_Hbond_FastRelax_angles", nullptr );
 		}
 		if ( angle_length_relax_rounds() > 0 ) {
-			protocols::relax::FastRelaxOP frlx3( new protocols::relax::FastRelax(sfxn_highhbond_cart, angle_length_relax_rounds() ) );
+			protocols::relax::FastRelaxOP frlx3( utility::pointer::make_shared< protocols::relax::FastRelax >(sfxn_highhbond_cart, angle_length_relax_rounds() ) );
 			frlx3->minimize_bond_angles(true);
 			pp->add_step( frlx3, "High_Hbond_FastRelax_angles_bondlengths", nullptr );
 		}
 		if ( cartesian_relax_rounds() > 0 ) {
-			protocols::relax::FastRelaxOP frlx4( new protocols::relax::FastRelax(sfxn_highhbond_cart, cartesian_relax_rounds() ) );
+			protocols::relax::FastRelaxOP frlx4( utility::pointer::make_shared< protocols::relax::FastRelax >(sfxn_highhbond_cart, cartesian_relax_rounds() ) );
 			frlx4->minimize_bond_angles(true);
 			pp->add_step( frlx4, "High_Hbond_FastRelax_Cartesian", nullptr );
 		}
@@ -3509,12 +3510,12 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//Add more stringent disulfide filtering post-relax:
 	if ( try_all_disulfides_ ) {
-		protocols::score_filters::ScoreTypeFilterOP disulf_filter2( new protocols::score_filters::ScoreTypeFilter( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
+		protocols::score_filters::ScoreTypeFilterOP disulf_filter2( utility::pointer::make_shared< protocols::score_filters::ScoreTypeFilter >( sfxn_highhbond, core::scoring::dslf_fa13, disulf_energy_cutoff_postrelax_ * static_cast<core::Real>(disulf_count) ) );
 		pp->add_step( nullptr, "Postrelax_disulfide_filter", disulf_filter2 );
 	}
 
 	if ( filter_oversaturated_hbond_acceptors_ ) {
-		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( new protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter );
+		protocols::cyclic_peptide::OversaturatedHbondAcceptorFilterOP oversat2( utility::pointer::make_shared< protocols::cyclic_peptide::OversaturatedHbondAcceptorFilter >() );
 		oversat2->set_scorefxn( sfxn_default );
 		oversat2->set_hbond_energy_cutoff( oversaturated_hbond_cutoff_energy_ );
 		pp->add_step( nullptr, "Postrelax_Oversaturated_Hbond_Acceptors", oversat2 );
@@ -3522,11 +3523,11 @@ SimpleCycpepPredictApplication::genkic_close(
 
 	//If we're filtering by symmetry, do so again here:
 	if ( required_symmetry_repeats_ > 1 ) {
-		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter2( new protocols::cyclic_peptide::CycpepSymmetryFilter );
+		protocols::cyclic_peptide::CycpepSymmetryFilterOP symmfilter2( utility::pointer::make_shared< protocols::cyclic_peptide::CycpepSymmetryFilter >() );
 		symmfilter2->set_symm_repeats( required_symmetry_repeats_ );
 		symmfilter2->set_mirror_symm( required_symmetry_mirroring_ );
 		symmfilter2->set_angle_threshold( required_symmetry_angle_threshold_ );
-		core::select::residue_selector::ResidueIndexSelectorOP iselector( new core::select::residue_selector::ResidueIndexSelector );
+		core::select::residue_selector::ResidueIndexSelectorOP iselector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 		std::stringstream pep_indices("");
 		pep_indices << "1-" << sequence_length();
 		iselector->set_index( pep_indices.str() );
@@ -3535,7 +3536,7 @@ SimpleCycpepPredictApplication::genkic_close(
 	}
 
 	//Create the mover and set options:
-	GeneralizedKICOP genkic( new GeneralizedKIC );
+	GeneralizedKICOP genkic( utility::pointer::make_shared< GeneralizedKIC >() );
 	genkic->set_selector_type( lowest_energy_selector );
 	genkic->set_closure_attempts( genkic_closure_attempts_ );
 	genkic->set_min_solution_count( genkic_min_solution_count_ );
@@ -3860,17 +3861,17 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 		TR.Debug << "D-resfile:\n" << D_resfile.str() << std::endl;
 	}
 
-	core::pack::task::operation::ReadResfileOP L_resfile_taskop( new core::pack::task::operation::ReadResfile );
-	core::pack::task::operation::ReadResfileOP D_resfile_taskop( new core::pack::task::operation::ReadResfile );
+	core::pack::task::operation::ReadResfileOP L_resfile_taskop( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
+	core::pack::task::operation::ReadResfileOP D_resfile_taskop( utility::pointer::make_shared< core::pack::task::operation::ReadResfile >() );
 
 	L_resfile_taskop->set_cached_resfile( L_resfile.str() );
 	D_resfile_taskop->set_cached_resfile( D_resfile.str() );
 
 
-	core::select::residue_selector::PhiSelectorOP neg_phi_selector( new core::select::residue_selector::PhiSelector );
+	core::select::residue_selector::PhiSelectorOP neg_phi_selector( utility::pointer::make_shared< core::select::residue_selector::PhiSelector >() );
 	neg_phi_selector->set_select_positive_phi(false);
 	L_resfile_taskop->set_residue_selector( neg_phi_selector );
-	core::select::residue_selector::PhiSelectorOP pos_phi_selector( new core::select::residue_selector::PhiSelector );
+	core::select::residue_selector::PhiSelectorOP pos_phi_selector( utility::pointer::make_shared< core::select::residue_selector::PhiSelector >() );
 	pos_phi_selector->set_select_positive_phi(true);
 	D_resfile_taskop->set_residue_selector( pos_phi_selector );
 
@@ -3879,7 +3880,7 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 
 	//Prohibit design at isopeptide cyclization positions:
 	if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_cterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
-		core::select::residue_selector::ResidueIndexSelectorOP linker_selector( new core::select::residue_selector::ResidueIndexSelector );
+		core::select::residue_selector::ResidueIndexSelectorOP linker_selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 		core::Size firstres, lastres;
 		find_first_and_last_isopeptide_residues(pose, firstres, lastres);
 		if ( cyclization_type() == SCPA_nterm_isopeptide_lariat || cyclization_type() == SCPA_sidechain_isopeptide ) {
@@ -3889,8 +3890,8 @@ SimpleCycpepPredictApplication::set_up_design_taskoperations(
 			linker_selector->append_index( firstres );
 		}
 
-		core::pack::task::operation::RestrictToRepackingRLTOP restrict_repacking( new core::pack::task::operation::RestrictToRepackingRLT );
-		core::pack::task::operation::OperateOnResidueSubsetOP op_on_subset( new core::pack::task::operation::OperateOnResidueSubset( restrict_repacking, linker_selector ) );
+		core::pack::task::operation::RestrictToRepackingRLTOP restrict_repacking( utility::pointer::make_shared< core::pack::task::operation::RestrictToRepackingRLT >() );
+		core::pack::task::operation::OperateOnResidueSubsetOP op_on_subset( utility::pointer::make_shared< core::pack::task::operation::OperateOnResidueSubset >( restrict_repacking, linker_selector ) );
 		tf->push_back(op_on_subset);
 	}
 
@@ -4023,7 +4024,7 @@ SimpleCycpepPredictApplication::depermute (
 	//Break the old disulfides:
 	break_disulfides( pose, old_disulfides );
 
-	core::pose::PoseOP newpose( new core::pose::Pose );
+	core::pose::PoseOP newpose( utility::pointer::make_shared< core::pose::Pose >() );
 
 	for ( core::Size ir=old_first_res_index; ir<=nres; ++ir ) {
 		if ( ir == old_first_res_index ) {
@@ -4097,7 +4098,7 @@ SimpleCycpepPredictApplication::depermute (
 	}
 
 	//Mover to cyclize the polymer and to update terminal peptide bond O and H atoms:
-	protocols::cyclic_peptide::DeclareBondOP termini( new protocols::cyclic_peptide::DeclareBond );
+	protocols::cyclic_peptide::DeclareBondOP termini( utility::pointer::make_shared< protocols::cyclic_peptide::DeclareBond >() );
 	set_up_cyclization_mover( termini, newpose );
 	termini->apply(*newpose);
 
@@ -4501,7 +4502,7 @@ SimpleCycpepPredictApplication::set_up_terminal_disulfide_variants(
 
 	protocols::simple_moves::ModifyVariantTypeMover add_disulf_var;
 	add_disulf_var.set_additional_type_to_add("DISULFIDE");
-	core::select::residue_selector::ResidueIndexSelectorOP selector( new core::select::residue_selector::ResidueIndexSelector );
+	core::select::residue_selector::ResidueIndexSelectorOP selector( utility::pointer::make_shared< core::select::residue_selector::ResidueIndexSelector >() );
 	core::Size const first_disulf( find_first_disulf_res(pose) ), last_disulf( find_last_disulf_res(pose) );
 	runtime_assert_string_msg( first_disulf != 0 && last_disulf > first_disulf, errmsg + "Indices " + std::to_string(first_disulf) + " and " + std::to_string(last_disulf) + " are invalid for a disulfide bonded pair." );
 	selector->append_index( first_disulf );

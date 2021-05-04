@@ -71,8 +71,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI():
 	comp_file_contents_L_alpha_(""),
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
-	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	comp_file_contents_D_beta_("")
 {
 	register_with_citation_manager(); //Defined in util.hh/util.cc.
 }
@@ -111,8 +110,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_L_alpha_(""),
 	comp_file_contents_D_alpha_(""),
 	comp_file_contents_L_beta_(""),
-	comp_file_contents_D_beta_(""),
-	abba_bins_("")
+	comp_file_contents_D_beta_("")
 {
 	register_with_citation_manager(); //Defined in util.hh/util.cc.
 }
@@ -131,8 +129,7 @@ SimpleCycpepPredictApplication_MPI::SimpleCycpepPredictApplication_MPI(
 	comp_file_contents_L_alpha_(src.comp_file_contents_L_alpha_),
 	comp_file_contents_D_alpha_(src.comp_file_contents_D_alpha_),
 	comp_file_contents_L_beta_(src.comp_file_contents_L_beta_),
-	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_),
-	abba_bins_(src.abba_bins_)
+	comp_file_contents_D_beta_(src.comp_file_contents_D_beta_)
 {}
 
 /// @brief Destructor.
@@ -162,8 +159,8 @@ using namespace basic::options;
 		if( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position].user() ) {
 			read_peptide_design_file( option[basic::options::OptionKeys::cyclic_peptide::allowed_residues_by_position](), allowed_canonicals_, allowed_noncanonicals_ );
 		}
-		read_file_into_string( abba_bins_, "protocol_data/generalizedKIC/bin_params/ABBA.bin_params", true /*from database*/);
-		if(TR.Debug.visible()) TR.Debug << "Director read protocol_data/generalizedKIC/bin_params/ABBA.bin_params from disk." << std::endl;
+
+		//if(TR.Debug.visible()) TR.Debug << "Director read protocol_data/generalizedKIC/bin_params/ABBA.bin_params from disk." << std::endl;
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) {
 			read_file_into_string( comp_file_contents_L_alpha_, option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file](), false /*not from database*/);
 			L_alpha_comp_file_exists_=true;
@@ -195,7 +192,6 @@ using namespace basic::options;
 	broadcast_string_from_director( comp_file_contents_D_alpha_ );
 	broadcast_string_from_director( comp_file_contents_L_beta_ );
 	broadcast_string_from_director( comp_file_contents_D_beta_ );
-	broadcast_string_from_director( abba_bins_ );
 
 	if( !i_am_director() ) {
 		if( option[basic::options::OptionKeys::cyclic_peptide::L_alpha_comp_file].user() ) L_alpha_comp_file_exists_=true;
@@ -223,7 +219,6 @@ using namespace basic::options;
 		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_D_alpha_ (" << ( D_alpha_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_D_alpha_ << "\n";
 		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_L_beta_ (" << ( L_beta_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_L_beta_ << "\n";
 		//TR.Debug << "\nProc " << MPI_rank_ << " comp_file_contents_D_beta_ (" << ( D_beta_comp_file_exists_ ? "provided" : "not provided" )  << "):\n" << comp_file_contents_D_beta_ << "\n";
-		//TR.Debug << "\nProc " << MPI_rank_ << " abba_bins_:\n" << abba_bins_ << "\n";
 		TR.Debug << std::endl;
 		TR.Debug.flush();
 	}
@@ -256,7 +251,7 @@ SimpleCycpepPredictApplication_MPI::derived_worker_carry_out_n_jobs(
 	if( D_alpha_comp_file_exists_ ) predict_app->set_D_alpha_compfile_contents( comp_file_contents_D_alpha_ );
 	if( L_beta_comp_file_exists_ ) predict_app->set_L_beta_compfile_contents( comp_file_contents_L_beta_ );
 	if( D_beta_comp_file_exists_ ) predict_app->set_D_beta_compfile_contents( comp_file_contents_D_beta_ );
-	predict_app->set_abba_bins_binfile_contents( abba_bins_);
+	predict_app->set_abba_bins_binfile("ABBA.bin_params");
 
 	predict_app->run();
 }

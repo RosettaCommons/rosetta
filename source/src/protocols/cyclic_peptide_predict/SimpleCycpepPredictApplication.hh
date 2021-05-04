@@ -164,9 +164,8 @@ public:
 	///
 	void set_D_beta_compfile_contents( std::string const &contents_in );
 
-	/// @brief Allows external code to set the ABBA bin parameters without having to read the
-	/// bin params file directly from disk.
-	void set_abba_bins_binfile_contents( std::string const &contents_in );
+	/// @brief Set the bin transitions file.
+	void set_abba_bins_binfile( std::string const &binfile_in );
 
 	/// @brief Set the frequency with which we sample cis proline.
 	/// @details Implicitly sets sample_cis_pro_ to "true" if freq_in is not 0.0, "false" if it is.
@@ -1003,9 +1002,8 @@ private:
 	/// @details Cached to prevent repeated read from disk.
 	std::string comp_file_contents_D_beta_;
 
-	/// @brief Storage for a bin definition file.
-	/// @details Cached to prevent repeated read from disk.
-	std::string abba_bins_;
+	/// @brief Filename for the bin transitions data.
+	std::string abba_bins_binfile_ = "ABBA.bin_params";
 
 	/// @brief Prevent counting of hydrogen bonds to adjacent residues?
 	/// @details Default true.

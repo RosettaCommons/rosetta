@@ -26,6 +26,7 @@
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.hh>
+#include <core/scoring/bin_transitions/BinTransitionCalculatorManager.hh>
 #include <core/scoring/Ramachandran.hh>
 #include <core/scoring/RamaPrePro.hh>
 #include <core/scoring/ScoringManager.hh>
@@ -89,7 +90,7 @@ GeneralizedKICperturber::GeneralizedKICperturber():
 GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const &src ):
 	utility::VirtualBase(),
 	bbgmover_( ), //Cloned later
-	bin_transition_calculator_( ), //Cloned later
+	bin_transition_calculator_(), //Cloned later
 	effect_(src.effect_),
 	inputvalues_real_(src.inputvalues_real_),
 	residues_(src.residues_),
@@ -100,8 +101,8 @@ GeneralizedKICperturber::GeneralizedKICperturber( GeneralizedKICperturber const 
 	attach_boinc_ghost_observer_(src.attach_boinc_ghost_observer_),
 	custom_rama_table_( src.custom_rama_table_ )
 {
-	if ( src.bbgmover_ ) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
-	if ( src.bin_transition_calculator_ ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
+	if ( src.bbgmover_ != nullptr ) bbgmover_ = utility::pointer::dynamic_pointer_cast< protocols::simple_moves::BBGaussianMover >(src.bbgmover_->clone());
+	if ( src.bin_transition_calculator_ != nullptr ) bin_transition_calculator_ = utility::pointer::dynamic_pointer_cast< core::scoring::bin_transitions::BinTransitionCalculator >(src.bin_transition_calculator_->clone());
 }
 
 /// @brief Destructor for GeneralizedKICperturber mover.
@@ -225,16 +226,8 @@ void GeneralizedKICperturber::load_bin_params( std::string const &bin_params_fil
 {
 	using namespace core::scoring::bin_transitions;
 
-	//Create the object, if it doesn't exist.
-	if ( !bin_transition_calculator_ ) {
-		if ( TR.visible() ) TR << "Creating BinTransitionCalculator." << std::endl;
-		bin_transition_calculator_=utility::pointer::make_shared< BinTransitionCalculator >();
-	}
-
-	if ( TR.visible() ) TR << "Loading bin_params file " << bin_params_file << "." << std::endl;
-	bin_transition_calculator_->load_bin_params(bin_params_file);
-
-	return;
+	if ( TR.visible() ) TR << "Creating BinTransitionCalculator and loading bin parameters file \"" << bin_params_file << "\"." << std::endl;
+	bin_transition_calculator_ = BinTransitionCalculatorManager::get_instance()->get_bin_transition_calculator( bin_params_file );
 }
 
 /// @brief Applies the perturbation to the vectors of desired torsions, desired angles, and desired bond lengths.
