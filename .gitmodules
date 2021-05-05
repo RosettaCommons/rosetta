@@ -326,4 +326,4 @@
 ############################
 [submodule "database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule"]
 	path = database/protocol_data/tensorflow_graphs/tensorflow_graph_repo_submodule
-	url = git@github.com:RosettaCommons/tensorflow_graphs.git
+	url = ../tensorflow_graphs.git
