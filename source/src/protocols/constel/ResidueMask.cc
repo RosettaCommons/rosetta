@@ -13,6 +13,7 @@
 
 #include "ResidueMask.hh"
 #include "Primitives.hh"
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <basic/Tracer.hh>
 #include <utility/excn/Exceptions.hh>

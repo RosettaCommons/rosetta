@@ -30,7 +30,6 @@
 #include <utility/vector1.hh>
 
 //Auto Headers
-#include <core/conformation/Residue.hh>
 #include <core/kinematics/Jump.hh>
 
 

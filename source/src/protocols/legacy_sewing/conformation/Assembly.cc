@@ -32,7 +32,9 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 
+#include <core/conformation/Residue.hh>
 #include <core/conformation/Residue.functions.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/ResidueTypeSet.hh>

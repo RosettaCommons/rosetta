@@ -14,7 +14,8 @@
 #define Incl_prot_neig_Neighborhood_hh
 
 #include <utility/VirtualBase.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 

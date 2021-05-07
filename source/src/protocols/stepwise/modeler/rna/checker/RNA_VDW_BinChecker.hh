@@ -24,10 +24,10 @@
 
 
 
-#include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
+#include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_Grid.hh>
@@ -38,7 +38,7 @@
 #include <map>
 #include <core/chemical/AA.hh>
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <set>
 #include <iosfwd>
 typedef  numeric::xyzMatrix< core::Real > Matrix;

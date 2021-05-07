@@ -15,7 +15,9 @@
 #define INCLUDED_protocols_protein_interface_design_filters_RmsdFilter_hh
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <protocols/filters/Filter.hh>

@@ -19,7 +19,7 @@
 #include <protocols/mpi_refinement/MultiObjective.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>

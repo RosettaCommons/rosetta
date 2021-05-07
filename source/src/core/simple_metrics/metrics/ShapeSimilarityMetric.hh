@@ -25,7 +25,7 @@
 
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/sc/ShapeSimilarityCalculator.hh>
 #include <core/types.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>

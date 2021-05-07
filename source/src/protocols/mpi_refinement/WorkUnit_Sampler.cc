@@ -19,6 +19,7 @@
 
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/pose/Pose.hh>
 
 #include <core/io/silent/SilentFileData.hh>
 #include <core/io/silent/SilentFileOptions.hh>

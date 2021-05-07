@@ -28,6 +28,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragmentIO.hh>
 
+#include <core/conformation/Conformation.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 

@@ -32,7 +32,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1.hh>

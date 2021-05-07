@@ -15,6 +15,7 @@
 
 #include <protocols/antibody/AntibodyInfo.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <basic/datacache/BasicDataCache.hh>

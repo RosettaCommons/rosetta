@@ -30,7 +30,7 @@
 
 // Project headers
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/simple_metrics/SimpleMetric.hh>

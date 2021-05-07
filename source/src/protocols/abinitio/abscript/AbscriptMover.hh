@@ -32,7 +32,7 @@
 
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32
 #include <basic/datacache/WriteableCacheableMap.hh>

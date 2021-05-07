@@ -22,7 +22,7 @@
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/file/FileName.hh>
 #include <basic/database/open.hh>
 #include <core/sequence/MatrixScoringScheme.hh>

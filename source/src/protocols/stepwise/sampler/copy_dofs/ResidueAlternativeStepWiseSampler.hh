@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampler/copy_dofs/CopyDofStepWiseSampler.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeSet.fwd.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSampler.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 namespace protocols {

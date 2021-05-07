@@ -23,7 +23,7 @@
 #include <protocols/sewing/hashing/hasher_data.hh>
 #include <protocols/sewing/hashing/BasisMapGenerator.hh>
 #include <protocols/sewing/hashing/Hasher.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>

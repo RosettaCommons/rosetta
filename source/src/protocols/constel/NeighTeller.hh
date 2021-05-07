@@ -14,8 +14,8 @@
 #ifndef Included_NeighTeller_HH
 #define Included_NeighTeller_HH
 
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/scoring/EnergyMap.hh>

@@ -29,7 +29,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <protocols/filters/Filter.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers

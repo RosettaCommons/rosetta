@@ -14,6 +14,7 @@
 #include <protocols/simple_moves/bb_sampler/SmallBBSampler.hh>
 #include <protocols/simple_moves/bb_sampler/BBDihedralSampler.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <numeric/random/random.hh>

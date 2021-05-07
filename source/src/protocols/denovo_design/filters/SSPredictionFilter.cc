@@ -24,6 +24,7 @@
 #include <core/io/external/PsiPredInterface.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/dssp/Dssp.hh>
 #include <protocols/parser/BluePrint.hh>
 #include <protocols/ss_prediction/SS_predictor.hh>

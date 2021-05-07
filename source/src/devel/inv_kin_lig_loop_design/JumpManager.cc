@@ -25,6 +25,7 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
 
 #include <numeric/random/random.hh>
 

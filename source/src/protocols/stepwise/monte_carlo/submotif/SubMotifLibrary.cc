@@ -24,6 +24,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ResidueTypeFinder.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Residue.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>

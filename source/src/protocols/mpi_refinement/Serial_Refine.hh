@@ -19,7 +19,7 @@
 #include <protocols/mpi_refinement/MultiObjective.hh>
 #include <protocols/mpi_refinement/Scheduler.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 #include <core/io/silent/SilentStruct.fwd.hh>

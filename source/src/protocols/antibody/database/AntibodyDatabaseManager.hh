@@ -24,7 +24,7 @@
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/features/FeaturesReporter.fwd.hh>
 //Core Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //C++ Headers
 #include <cppdb/frontend.h>

@@ -18,7 +18,7 @@
 // Package headers
 #include <core/types.hh>
 #include <core/select/residue_selector/util.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>

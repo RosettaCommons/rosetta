@@ -18,7 +18,7 @@
 #include <vector>
 #include <map>
 #include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/Tag.fwd.hh>
 

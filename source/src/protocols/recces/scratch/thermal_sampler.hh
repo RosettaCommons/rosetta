@@ -15,7 +15,7 @@
 
 // libRosetta headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
 

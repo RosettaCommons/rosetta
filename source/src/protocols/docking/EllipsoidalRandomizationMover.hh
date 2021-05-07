@@ -16,7 +16,7 @@
 // Unit Headers
 #include <protocols/docking/EllipsoidalRandomizationMover.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <protocols/moves/Mover.hh>
 

@@ -30,7 +30,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/sequence/Sequence.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/kinematics/Jump.hh>

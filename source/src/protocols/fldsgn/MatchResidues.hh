@@ -22,6 +22,7 @@
 #include <protocols/moves/Mover.fwd.hh>
 
 // Project Headers
+#include <core/types.hh>
 #include <core/pose/Pose.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>

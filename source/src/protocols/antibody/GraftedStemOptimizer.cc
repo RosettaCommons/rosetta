@@ -19,6 +19,7 @@
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/MoveMap.hh>
+#include <core/pose/Pose.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/select/util.hh>
 #include <core/conformation/util.hh> //idealize

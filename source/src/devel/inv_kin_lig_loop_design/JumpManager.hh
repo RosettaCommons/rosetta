@@ -16,7 +16,7 @@
 #define DEVEL_INVKINLIGLOOPDESIGN_JUMPMANAGER_HH
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/Jump.hh>
 #include <devel/inv_kin_lig_loop_design/Loop.hh>
 

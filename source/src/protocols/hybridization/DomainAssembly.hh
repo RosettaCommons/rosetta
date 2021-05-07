@@ -14,11 +14,11 @@
 
 // libRosetta headers
 #include <protocols/loops/loops_main.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>

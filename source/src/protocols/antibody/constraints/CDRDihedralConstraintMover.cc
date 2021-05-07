@@ -22,6 +22,7 @@
 
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/scoring/constraints/Constraint.hh>
 #include <core/scoring/constraints/ConstraintIO.hh>

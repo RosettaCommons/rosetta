@@ -18,6 +18,8 @@
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <protocols/antibody/clusters/util.hh>
 
+#include <core/pose/Pose.hh>
+
 #include <utility/io/izstream.hh>
 #include <utility/vector1.hh>
 #include <utility/vector1.functions.hh>

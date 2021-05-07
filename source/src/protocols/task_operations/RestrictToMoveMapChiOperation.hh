@@ -23,7 +23,7 @@
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/tag/Tag.hh>

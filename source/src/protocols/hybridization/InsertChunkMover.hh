@@ -20,7 +20,6 @@
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/Frame.hh>
 #include <core/fragment/FrameIterator.hh>
-#include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 
 #include <protocols/moves/Mover.hh>

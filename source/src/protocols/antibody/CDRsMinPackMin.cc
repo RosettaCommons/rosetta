@@ -23,6 +23,7 @@
 #include <core/pack/task/TaskFactory.hh>
 
 #include <protocols/simple_task_operations/RestrictToInterface.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

@@ -14,7 +14,7 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/MPIBPool_ConvergenceCheck.fwd.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
 

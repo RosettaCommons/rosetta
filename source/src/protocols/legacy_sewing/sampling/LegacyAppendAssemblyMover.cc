@@ -31,6 +31,8 @@
 #include <core/pack/task/operation/TaskOperationCreators.hh>
 #include <core/pack/task/TaskFactory.hh>
 
+#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 #include <core/scoring/AtomVDW.hh>

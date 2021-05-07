@@ -23,7 +23,7 @@
 #include <core/scoring/methods/ContextDependentTwoBodyEnergy.hh>
 
 // Project Headers
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/membrane/SpanningTopology.fwd.hh>
 
 // Package headers

@@ -19,6 +19,7 @@
 #include <core/types.hh>
 #include <core/scoring/AtomVDW.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <core/pose/Pose.hh>
 
 #include <core/conformation/Residue.hh>
 

@@ -11,7 +11,7 @@
 #define INCLUDED_protocols_ncbb_SecStructFinder_hh
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>

@@ -12,7 +12,7 @@
 
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>

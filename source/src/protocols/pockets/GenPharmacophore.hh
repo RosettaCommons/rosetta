@@ -15,10 +15,10 @@
 #define INCLUDED_protocols_pockets_GenPharmacophore_hh
 
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/VirtualBase.hh>
 #include <iosfwd>
 #include <string>

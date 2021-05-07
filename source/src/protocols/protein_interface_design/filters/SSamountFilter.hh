@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_protein_interface_design_filters_SSamountFilter_hh
 
 //Include Rosetta Core Stuff
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 //Include Rosetta protocols

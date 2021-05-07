@@ -26,6 +26,7 @@
 #include <core/scoring/constraints/ResidueTypeConstraint.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/Energies.hh>
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/pack/rotamer_set/AddResiduesRotamerSetOperation.hh>

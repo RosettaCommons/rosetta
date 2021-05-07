@@ -21,6 +21,7 @@
 
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/loops/Loops.hh>
 #include <protocols/loops/loops_main.hh>

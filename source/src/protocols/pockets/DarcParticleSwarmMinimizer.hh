@@ -22,7 +22,7 @@
 #include <protocols/pockets/PocketGrid.hh>
 #include <core/optimization/Multifunc.hh>
 #include <core/optimization/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
 #include <basic/gpu/GPU.hh>
 

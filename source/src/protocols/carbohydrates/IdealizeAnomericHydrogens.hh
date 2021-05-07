@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/id/types.hh>
 
 #include <protocols/filters/Filter.fwd.hh>

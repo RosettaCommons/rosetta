@@ -19,7 +19,7 @@
 #include <protocols/ligand_docking/GALigandDock/GridScorer.hh>
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/scoring/func/SumFunc.hh>
 #include <core/scoring/func/TopOutFunc.hh>

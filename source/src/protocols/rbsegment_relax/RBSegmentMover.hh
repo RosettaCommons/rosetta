@@ -18,7 +18,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 
 #include <protocols/rbsegment_relax/RBSegment.hh>

@@ -28,7 +28,6 @@
 
 // Project headers
 #include <core/scoring/EnvPairPotential.hh>
-#include <core/conformation/Residue.hh>
 
 // Package headers
 #include <core/pose/Pose.fwd.hh>

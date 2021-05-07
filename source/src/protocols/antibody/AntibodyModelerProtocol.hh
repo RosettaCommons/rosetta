@@ -20,7 +20,7 @@
 
 #include <utility/vector1.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>

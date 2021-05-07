@@ -19,7 +19,9 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
+#include <core/pose/Pose.hh>
 
 //Utility headers
 #include <basic/Tracer.hh>

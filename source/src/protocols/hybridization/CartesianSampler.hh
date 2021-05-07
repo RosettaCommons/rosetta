@@ -21,6 +21,7 @@
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
+#include <core/pose/Pose.hh>
 #include <core/util/kinematics_util.hh>
 #include <core/fragment/FragData.hh>
 #include <core/fragment/FragSet.hh>

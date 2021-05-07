@@ -20,8 +20,8 @@
 #include <map>
 
 //Core
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 //Numeric

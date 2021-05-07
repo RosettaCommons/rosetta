@@ -21,7 +21,7 @@
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/AntibodyEnumManager.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

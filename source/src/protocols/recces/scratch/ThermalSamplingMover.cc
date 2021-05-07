@@ -36,6 +36,7 @@
 #include <basic/options/option_macros.hh>
 #include <basic/database/open.hh>
 #include <protocols/viewer/viewers.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>

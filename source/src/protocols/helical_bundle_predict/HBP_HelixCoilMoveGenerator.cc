@@ -16,6 +16,7 @@
 #include <protocols/helical_bundle_predict/HBP_HelixCoilMoveGenerator.hh>
 
 // Core headers:
+#include <core/pose/Pose.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/conformation/Residue.hh>

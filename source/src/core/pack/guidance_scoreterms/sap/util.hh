@@ -22,7 +22,7 @@
 // Package headers
 #include <core/id/AtomID_Map.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack_basic/RotamerSetsBase.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 

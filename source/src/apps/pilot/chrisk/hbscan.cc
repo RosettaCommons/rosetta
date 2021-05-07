@@ -23,6 +23,7 @@
 #include <core/chemical/util.hh>
 
 #include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AA.hh>
 #include <core/chemical/ResidueTypeSet.hh>

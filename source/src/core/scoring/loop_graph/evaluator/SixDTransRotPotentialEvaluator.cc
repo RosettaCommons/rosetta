@@ -21,6 +21,7 @@
 #include <core/kinematics/Jump.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
+#include <core/chemical/ResidueType.hh>
 #include <numeric/xyzVector.io.hh>
 #include <numeric/xyz.functions.hh>
 #include <numeric/constants.hh>

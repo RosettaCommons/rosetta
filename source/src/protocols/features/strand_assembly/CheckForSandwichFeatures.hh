@@ -143,16 +143,16 @@ check_PA(
 bool
 check_strand_too_closeness (
 	core::pose::Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	core::Real min_inter_sheet_dis_CA_CA_);
 
 
 core::Real
 check_sw_by_dis(
 	core::pose::Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	bool antiparalell,
 	core::Real min_sheet_dis_,
 	core::Real max_sheet_dis_);
@@ -250,8 +250,8 @@ determine_heading_direction_by_vector
 core::Size
 find_sheet (
 	core::pose::Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	bool antiparalell, // if false, try to find a sheet in parallel way
 	core::Real min_CA_CA_dis_,
 	core::Real max_CA_CA_dis_,
@@ -297,8 +297,8 @@ get_avg_dis_CA_CA(
 core::Real
 get_avg_dis_strands(
 	core::pose::Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j);
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j);
 
 std::vector<core::Size>
 get_central_residues_in_other_sheet(
@@ -333,8 +333,8 @@ get_chain_B_resNum(
 core::Real
 get_closest_distance_between_strands(
 	core::pose::Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j);
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j);
 
 
 std::pair<core::Size, core::Size>

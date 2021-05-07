@@ -20,6 +20,7 @@
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>
 #include <map>
 #include <core/pose/Pose.hh>
+#include <utility/VirtualBase.hh>
 #include <iostream>
 
 

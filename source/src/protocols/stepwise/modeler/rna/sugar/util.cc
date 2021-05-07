@@ -27,6 +27,7 @@
 #include <core/scoring/ScoreType.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/copydofs/util.hh>

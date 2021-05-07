@@ -20,7 +20,7 @@
 #include <protocols/environment/ClientMover.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // C++ Headers
 

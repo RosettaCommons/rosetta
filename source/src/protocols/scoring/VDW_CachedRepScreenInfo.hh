@@ -21,7 +21,7 @@
 #include <protocols/scoring/VDW_CachedRepScreenInfo.fwd.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.hh>
 #include <core/pose/rna/VDW_Grid.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>

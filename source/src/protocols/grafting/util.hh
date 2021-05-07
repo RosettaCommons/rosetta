@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_grafting_util_hh
 #define INCLUDED_protocols_grafting_util_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 

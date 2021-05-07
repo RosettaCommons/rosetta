@@ -20,6 +20,7 @@
 #include <protocols/antibody/database/AntibodyDatabaseManager.hh>
 #include <protocols/antibody/design/NativeAntibodySeq.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/pose/util.hh>
 #include <core/pose/chains_util.hh>

@@ -25,7 +25,7 @@
 #include <protocols/match/downstream/DownstreamBuilder.fwd.hh>
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/ShortRangeTwoBodyEnergy.fwd.hh>

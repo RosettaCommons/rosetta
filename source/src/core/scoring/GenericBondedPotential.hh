@@ -20,7 +20,7 @@
 
 // Package headers
 #include <core/chemical/Bond.fwd.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 

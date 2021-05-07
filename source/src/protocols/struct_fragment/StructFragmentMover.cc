@@ -30,6 +30,7 @@
 // Project Headers
 #include <basic/datacache/DataMap.fwd.hh>
 #include <basic/datacache/DataMapObj.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/scoring/sasa.hh>

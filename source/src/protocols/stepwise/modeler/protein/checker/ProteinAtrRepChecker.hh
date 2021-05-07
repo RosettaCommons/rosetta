@@ -19,7 +19,8 @@
 #include <utility/VirtualBase.hh>
 #include <protocols/stepwise/modeler/protein/checker/ProteinAtrRepChecker.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 namespace protocols {
 namespace stepwise {

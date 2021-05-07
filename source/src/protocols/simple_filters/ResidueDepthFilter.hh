@@ -22,8 +22,9 @@
 #include <basic/datacache/DataMap.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/chemical/AA.hh>
 #include <utility/VirtualBase.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 

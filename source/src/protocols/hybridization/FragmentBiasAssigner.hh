@@ -16,7 +16,7 @@
 
 #include <core/kinematics/FoldTree.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/scoring/ScoreFunction.hh>

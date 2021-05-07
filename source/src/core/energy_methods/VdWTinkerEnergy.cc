@@ -35,6 +35,7 @@
 #include <core/pose/datacache/CacheableDataType.hh>
 #include <core/conformation/RotamerSetBase.hh>
 #include <core/conformation/RotamerSetCacheableDataType.hh>
+#include <core/conformation/Residue.hh>
 
 #include <numeric/xyz.io.hh>
 

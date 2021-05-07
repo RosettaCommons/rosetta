@@ -28,6 +28,7 @@
 #include <core/types.hh>
 
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/pack/pack_rotamers.hh>
 #include <core/pack/task/PackerTask.hh>

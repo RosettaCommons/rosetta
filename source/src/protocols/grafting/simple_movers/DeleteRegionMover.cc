@@ -23,6 +23,7 @@
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/selection.hh>
 #include <core/select/residue_selector/ResidueIndexSelector.hh>

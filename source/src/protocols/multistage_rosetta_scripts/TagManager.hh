@@ -25,7 +25,7 @@
 #include <protocols/jd3/LarvalJob.fwd.hh>
 #include <protocols/jd3/strong_types.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/DataMap.hh>
 

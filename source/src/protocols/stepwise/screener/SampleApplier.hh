@@ -19,7 +19,7 @@
 #include <protocols/stepwise/screener/StepWiseScreener.hh>
 #include <protocols/stepwise/screener/SampleApplier.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace stepwise {

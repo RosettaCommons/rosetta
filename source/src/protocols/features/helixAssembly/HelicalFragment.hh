@@ -20,7 +20,7 @@
 
 //Core
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //Utility
 #include <utility/vector1.fwd.hh>

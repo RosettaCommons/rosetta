@@ -28,7 +28,7 @@
 // Core headers
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 
 #include <basic/datacache/DataMap.fwd.hh>

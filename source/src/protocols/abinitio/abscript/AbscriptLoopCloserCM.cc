@@ -23,6 +23,7 @@
 #include <core/environment/DofPassport.hh>
 
 // Project headers
+#include <core/conformation/Conformation.hh>
 #include <core/fragment/FragmentIO.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/kinematics/MoveMap.hh>

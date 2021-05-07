@@ -17,7 +17,7 @@
 // Unit headers
 #include <protocols/simple_moves/SuperimposeMover.fwd.hh>
 #include <protocols/moves/Mover.hh> // we need to store a pose
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <utility/vector1.hh>
 

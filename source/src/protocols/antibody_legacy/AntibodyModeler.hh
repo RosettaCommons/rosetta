@@ -23,7 +23,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 

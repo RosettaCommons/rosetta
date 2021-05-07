@@ -21,7 +21,7 @@
 // Core
 #include <core/chemical/AA.hh>
 #include <core/pack/rotamer_set/RotamerCouplings.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueMatcher.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueTypeSet.hh>
@@ -33,7 +33,7 @@
 #include <core/pack/rotamer_set/WaterAnchorInfo.hh>
 #include <core/pack/rotamer_set/WaterPackingInfo.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh> //yumeng 03/20/13
 #include <core/kinematics/FoldTree.hh>
 

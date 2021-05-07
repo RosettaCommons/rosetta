@@ -18,7 +18,7 @@
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/TCRloopRefine.hh>
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/sequence/ScoringScheme.hh>
 
 namespace protocols {

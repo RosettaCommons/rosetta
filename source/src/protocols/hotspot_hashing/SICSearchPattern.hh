@@ -25,7 +25,7 @@
 
 #include <core/types.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 #include <core/kinematics/Stub.hh>

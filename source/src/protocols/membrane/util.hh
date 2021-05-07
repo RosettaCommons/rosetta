@@ -50,7 +50,7 @@
 
 #include <core/kinematics/FoldTree.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers

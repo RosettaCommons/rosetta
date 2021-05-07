@@ -23,7 +23,7 @@
 #include <basic/datacache/CacheableData.hh>
 #include <core/scoring/DerivVectorPair.hh>
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 //#include <core/pack/task/PackerTask.fwd.hh>
 //#include <core/pack/rotamer_set/RotamerSet.fwd.hh>

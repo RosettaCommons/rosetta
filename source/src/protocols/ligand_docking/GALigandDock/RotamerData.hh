@@ -17,9 +17,9 @@
 
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/lkball/LK_BallInfo.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <numeric/Quaternion.hh>
 #include <utility/vector0.hh>
 #include <utility/vector1.hh>

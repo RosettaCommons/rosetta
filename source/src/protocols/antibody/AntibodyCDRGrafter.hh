@@ -22,7 +22,7 @@
 #include <protocols/grafting/CCDEndsGraftMover.hh>
 #include <protocols/grafting/AnchoredGraftMover.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/moves/Mover.hh>

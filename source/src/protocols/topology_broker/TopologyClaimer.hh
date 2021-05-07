@@ -32,7 +32,7 @@
 #include <core/fragment/FragSet.hh>
 #include <protocols/abinitio/FragmentSampler.fwd.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>

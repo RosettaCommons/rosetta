@@ -18,12 +18,15 @@
 
 #include <utility/VirtualBase.hh>
 #include <core/pose/rna/VDW_RepScreenInfo.fwd.hh>
-#include <core/pose/Pose.hh> // Full header inclusion needed for PyRosetta?
+#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <string>
 #include <core/id/AtomID_Map.hh>
 
+#ifdef PYROSETTA
+#include <core/pose/Pose.hh>
+#endif
 
 #ifdef    SERIALIZATION
 // Cereal headers

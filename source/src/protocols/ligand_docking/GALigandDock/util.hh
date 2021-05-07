@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_ligand_docking_GALigandDock_util_hh
 #define INCLUDED_protocols_ligand_docking_GALigandDock_util_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {

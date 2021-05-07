@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_relax_LocalRelax_hh
 #define INCLUDED_protocols_relax_LocalRelax_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/MoveMap.hh>

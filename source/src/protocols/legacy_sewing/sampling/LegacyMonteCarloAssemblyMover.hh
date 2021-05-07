@@ -21,7 +21,7 @@
 #include <protocols/legacy_sewing/sampling/LegacyAssemblyMover.hh>
 
 //Protocol headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

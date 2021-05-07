@@ -22,7 +22,7 @@
 #include <protocols/legacy_sewing/conformation/Model.hh>
 
 //Protocol headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

@@ -29,6 +29,8 @@
 #include <protocols/environment/DofUnlock.hh>
 #include <protocols/environment/EnvExcn.hh>
 
+#include <core/conformation/Conformation.hh>
+
 #include <core/environment/DofPassport.hh>
 #include <core/environment/LocalPosition.hh>
 

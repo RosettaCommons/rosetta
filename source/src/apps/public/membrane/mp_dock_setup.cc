@@ -21,7 +21,7 @@
 
 // Project headers
 #include <protocols/docking/membrane/MPDockingSetupMover.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 
 // Package headers
 #include <basic/Tracer.hh>

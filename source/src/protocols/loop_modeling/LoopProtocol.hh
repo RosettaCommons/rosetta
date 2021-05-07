@@ -19,7 +19,7 @@
 #include <protocols/loop_modeling/LoopModelerTests.fwd.hh> //For friendship
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

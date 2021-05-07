@@ -26,7 +26,7 @@
 
 // Project headers
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>

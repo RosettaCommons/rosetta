@@ -24,7 +24,7 @@
 #include <core/fragment/FragSet.hh>
 #endif
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <protocols/antibody_legacy/AntibodyClass.hh>

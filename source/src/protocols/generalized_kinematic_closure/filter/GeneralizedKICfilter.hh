@@ -27,10 +27,11 @@
 
 //// Project Headers
 #include <utility/vector1.hh>
+#include <utility/VirtualBase.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/bin_transitions/BinTransitionCalculator.fwd.hh>
 
 #include <set>

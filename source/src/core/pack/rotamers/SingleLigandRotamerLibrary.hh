@@ -21,7 +21,7 @@
 #include <core/pack/rotamers/SingleResidueRotamerLibrary.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <utility/vector1.hh>
 

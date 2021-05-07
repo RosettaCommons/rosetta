@@ -124,7 +124,7 @@
 
 #include <core/chemical/mainchain_potential/MainchainScoreTable.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-
+#include <core/chemical/AA.hh>
 
 // C++ headers
 #include <map>

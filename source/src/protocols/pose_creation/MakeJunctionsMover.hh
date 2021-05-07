@@ -19,7 +19,6 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/pose_creation/MakeJunctionsMover.fwd.hh>
 
-#include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 

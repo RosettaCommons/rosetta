@@ -19,7 +19,7 @@
 #include <protocols/moves/Mover.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <core/sequence/SequenceAlignment.hh>
 #include <core/fragment/FragSet.hh>

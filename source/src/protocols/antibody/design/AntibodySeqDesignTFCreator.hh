@@ -28,7 +28,7 @@
 #include <protocols/loops/Loops.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>

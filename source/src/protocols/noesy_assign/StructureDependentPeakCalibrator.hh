@@ -26,7 +26,7 @@
 #include <core/types.hh>
 #include <core/id/NamedAtomID.fwd.hh>
 #include <core/scoring/constraints/Constraint.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/VirtualBase.hh>

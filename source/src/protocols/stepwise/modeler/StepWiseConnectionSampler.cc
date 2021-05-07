@@ -80,6 +80,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/chemical/rna/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>

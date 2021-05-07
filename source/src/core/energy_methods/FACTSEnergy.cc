@@ -25,6 +25,7 @@
 #include <core/scoring/ContextGraphTypes.hh>
 #include <core/scoring/DenseEnergyContainer.hh>
 #include <core/chemical/AtomType.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/pose/Pose.hh>
 #include <core/id/AtomID.fwd.hh>

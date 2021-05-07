@@ -33,6 +33,7 @@
 // Utility Headers
 #include <core/scoring/Energies.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/pose/Pose.hh>
 #include <regex>
 
 static basic::Tracer TR( "protocols.tcr.TCRloopRefine" );

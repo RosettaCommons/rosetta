@@ -19,8 +19,9 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/RotamerSetBase.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/RestypeDestructionEvent.fwd.hh>
 #include <basic/datacache/CacheableData.hh>
 
@@ -28,6 +29,9 @@
 #include <utility/vector1.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
+#include <numeric/xyzVector.hh>
+
+#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers

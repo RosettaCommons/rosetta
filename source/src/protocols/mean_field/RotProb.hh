@@ -23,7 +23,7 @@
 
 // Project headers
 #include <core/chemical/AA.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
 //#include <utility/VirtualBase.fwd.hh>
@@ -34,6 +34,7 @@
 
 // C++ headers
 #include <iosfwd>
+#include <iostream>
 
 namespace protocols {
 namespace mean_field {

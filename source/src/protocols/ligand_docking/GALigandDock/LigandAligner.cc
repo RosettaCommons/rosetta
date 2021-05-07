@@ -38,6 +38,7 @@
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 #include <core/util/SwitchResidueTypeSet.hh>
 #include <core/conformation/residue_datacache.hh>
+#include <core/conformation/Residue.hh>
 #include <core/chemical/ChemicalManager.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueGraphTypes.hh>

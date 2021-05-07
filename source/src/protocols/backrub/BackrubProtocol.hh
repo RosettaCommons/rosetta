@@ -27,7 +27,7 @@
 #include <protocols/simple_moves/sidechain_moves/SidechainMover.fwd.hh>
 
 //Core
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperation.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

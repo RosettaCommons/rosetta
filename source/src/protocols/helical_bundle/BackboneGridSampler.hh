@@ -37,7 +37,7 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <basic/citation_manager/UnpublishedModuleInfo.fwd.hh>
 #include <basic/citation_manager/CitationCollection.fwd.hh>
 

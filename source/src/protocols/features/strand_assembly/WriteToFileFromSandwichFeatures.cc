@@ -17,6 +17,10 @@
 //Devel
 #include <protocols/features/strand_assembly/WriteToFileFromSandwichFeatures.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+
 #include <fstream>
 
 namespace protocols {
@@ -97,7 +101,7 @@ get_vector_of_loop_AA_distribution (
 //prepare_to_write_number_of_electrostatic_interactions_of_residues_to_files
 core::Size
 prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files(
-	string tag,
+	string const & tag,
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
@@ -505,12 +509,12 @@ write_heading_direction_of_all_AA_in_a_strand_to_a_file(
 
 core::Size
 write_number_of_electrostatic_interactions_of_residues_to_files(
-	string tag,
+	string const & tag,
 	StructureID struct_id,
 	sessionOP db_session,
 	Pose const & pose,
-	string dssp_code,
-	string heading_direction,
+	string const & dssp_code,
+	string const & heading_direction,
 	Real distance_cutoff_for_electrostatic_interactions_,
 	Real CB_b_factor_cutoff_for_electrostatic_interactions_,
 	core::Size min_primary_seq_distance_diff_for_electrostatic_interactions_)

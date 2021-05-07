@@ -23,7 +23,6 @@
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 
 // Utility headers
 #include <utility/tag/Tag.fwd.hh>

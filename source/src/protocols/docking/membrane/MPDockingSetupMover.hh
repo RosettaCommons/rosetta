@@ -29,7 +29,7 @@
 //#include <protocols/membrane/AddMembraneMover.fwd.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 // Utility Headers

@@ -27,7 +27,6 @@
 #include <core/scoring/hbonds/graph/HBondGraph.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/hbonds/hbonds.hh>
 #include <core/scoring/hbonds/HBondSet.hh>
 #include <core/scoring/TenANeighborGraph.hh>

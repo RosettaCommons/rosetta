@@ -20,7 +20,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/chemical/ResidueConnection.hh>
 #include <core/chemical/ResidueTypeSet.hh>

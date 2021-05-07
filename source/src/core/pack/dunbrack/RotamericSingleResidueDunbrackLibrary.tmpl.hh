@@ -63,9 +63,10 @@
 #include <core/types.hh>
 #include <core/chemical/rings/RingConformer.hh>
 #include <core/chemical/rings/RingConformerSet.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/chemical/rotamers/NCAARotamerLibrarySpecification.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
 
 #include <core/scoring/ScoreFunction.fwd.hh>

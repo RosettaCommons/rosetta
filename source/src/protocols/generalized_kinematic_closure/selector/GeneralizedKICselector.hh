@@ -30,8 +30,8 @@
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 
 #include <set>

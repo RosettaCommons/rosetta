@@ -21,14 +21,16 @@
 #include <core/chemical/AA.hh>
 
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.fwd.hh>
 #include <core/kinematics/DomainMap.fwd.hh>
 
-
 #include <core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh>
 
+#include <numeric/xyzMatrix.fwd.hh>
+
+#include <cmath>
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////

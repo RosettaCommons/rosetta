@@ -27,6 +27,8 @@ typedef utility::pointer::shared_ptr< BinTransitionCalculator const > BinTransit
 typedef utility::vector1<BinTransitionCalculatorOP> BinTransitionCalculatorOPs;
 typedef utility::vector1<BinTransitionCalculatorCOP> BinTransitionCalculatorCOPs;
 
+BinTransitionCalculatorOP deep_copy( BinTransitionCalculator const & );
+
 } //namespare bin_transitions
 } //namespace scoring
 } //namespace core

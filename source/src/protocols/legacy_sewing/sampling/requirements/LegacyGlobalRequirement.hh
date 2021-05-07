@@ -27,7 +27,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <basic/datacache/DataMap.hh>
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace legacy_sewing  {

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_seeded_abinitio_SeedFoldTree_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.hh>

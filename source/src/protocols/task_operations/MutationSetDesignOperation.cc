@@ -13,6 +13,8 @@
 
 #include <protocols/task_operations/MutationSetDesignOperation.hh>
 
+#include <core/pose/Pose.hh>
+
 // Numeric Includes
 #include <numeric/random/random.hh>
 #include <numeric/random/WeightedSampler.hh>

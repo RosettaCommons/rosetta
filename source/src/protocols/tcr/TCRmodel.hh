@@ -20,7 +20,7 @@
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <iosfwd>
 #include <protocols/antibody/grafting/antibody_sequence.hh>

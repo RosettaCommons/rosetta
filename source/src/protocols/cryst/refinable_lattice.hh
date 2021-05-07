@@ -24,7 +24,7 @@
 #include <core/optimization/CartesianMinimizer.hh>
 #include <core/optimization/symmetry/SymAtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pose/symmetry/util.hh>
@@ -34,7 +34,6 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/scoring/electron_density/util.hh>

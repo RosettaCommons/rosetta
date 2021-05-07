@@ -21,7 +21,7 @@
 // Package headers
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/io/external/PsiPredInterface.fwd.hh>
 #include <protocols/filters/Filter.hh>
 #include <protocols/filters/FilterCreator.hh>

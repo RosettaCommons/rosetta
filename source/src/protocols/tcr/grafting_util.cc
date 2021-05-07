@@ -17,6 +17,7 @@
 #include <protocols/tcr/util.hh>
 #include <core/import_pose/import_pose.hh>
 #include <protocols/antibody/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <protocols/grafting/CCDEndsGraftMover.hh>

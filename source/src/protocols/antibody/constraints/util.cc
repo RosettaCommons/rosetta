@@ -21,6 +21,7 @@
 #include <core/scoring/constraints/DihedralConstraint.hh>
 #include <core/scoring/func/CircularHarmonicFunc.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/antibody/AntibodyInfo.hh>
 

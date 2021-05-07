@@ -30,6 +30,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
+#include <core/conformation/Residue.hh>
 // #include <core/kinematics/MoveMap.hh>
 // #include <core/fragment/FragSet.hh>
 // #include <protocols/simple_moves/FragmentMover.hh>

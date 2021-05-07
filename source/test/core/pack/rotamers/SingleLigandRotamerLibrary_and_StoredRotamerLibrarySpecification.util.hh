@@ -17,6 +17,8 @@
 
 // Test headers
 #include <core/pack/rotamers/SingleLigandRotamerLibrary.hh> //for NamePosMap
+#include <numeric/xyzVector.hh>
+
 #include <cxxtest/TestSuite.h>
 
 //typedef std::map< std::string, core::Vector > NamePosMap;

@@ -14,6 +14,7 @@
 #include <protocols/grafting/simple_movers/ReplaceRegionMover.hh>
 #include <protocols/grafting/simple_movers/ReplaceRegionMoverCreator.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 
 #include <protocols/moves/Mover.hh>

@@ -28,6 +28,7 @@
 #include <core/fragment/FragSet.hh>
 #include <core/fragment/FrameIterator.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/rosetta_scripts/util.hh>
 

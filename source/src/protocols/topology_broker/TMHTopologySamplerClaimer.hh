@@ -30,7 +30,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/scoring/MembranePotential.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <ObjexxFCL/FArray1D.hh>

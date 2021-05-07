@@ -23,6 +23,7 @@
 #include <core/types.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
+#include <core/pose/Pose.hh>
 
 //External
 #include <boost/uuid/uuid.hpp>

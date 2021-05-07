@@ -28,6 +28,7 @@
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/annotated_sequence.hh>

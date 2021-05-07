@@ -20,7 +20,7 @@
 #include <protocols/moves/Mover.hh>
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 

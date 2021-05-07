@@ -21,7 +21,7 @@
 
 #include <protocols/antibody_legacy/LHRepulsiveRampLegacy.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <protocols/moves/Mover.hh>
 #include <protocols/moves/MoverContainer.fwd.hh>

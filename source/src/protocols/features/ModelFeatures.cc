@@ -21,6 +21,7 @@
 #include <core/pose/metrics/CalculatorFactory.hh>
 #include <core/pose/metrics/PoseMetricCalculatorBase.fwd.hh>
 #include <core/select/util/interface_vector_calculate.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <utility/graph/Graph.hh>
 #include <core/scoring/EnergyGraph.hh>

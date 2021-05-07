@@ -24,7 +24,7 @@
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/hbonds/HBondOptions.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

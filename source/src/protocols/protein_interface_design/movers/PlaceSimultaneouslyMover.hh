@@ -15,12 +15,13 @@
 #define INCLUDED_protocols_protein_interface_design_movers_PlaceSimultaneouslyMover_hh
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/tag/Tag.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <protocols/filters/Filter.fwd.hh>
+#include <core/pose/Pose.hh>
 
 // C++ headers
 

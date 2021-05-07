@@ -26,7 +26,7 @@
 // Project Headers
 #include <basic/datacache/DataMap.hh>
 #include <core/id/SequenceMapping.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/func/Func.fwd.hh>
 #include <protocols/filters/Filter.hh>
 

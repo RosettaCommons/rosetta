@@ -25,8 +25,8 @@
 //Other headers:
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #ifdef SERIALIZATION
 // Cereal headers

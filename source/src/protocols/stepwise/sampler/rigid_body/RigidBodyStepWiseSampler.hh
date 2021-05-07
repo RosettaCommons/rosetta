@@ -22,7 +22,7 @@
 #include <core/id/AtomID.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {

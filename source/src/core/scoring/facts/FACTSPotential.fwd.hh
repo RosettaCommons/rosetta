@@ -16,7 +16,6 @@
 #define INCLUDED_core_scoring_facts_FACTSPotential_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/chemical/ResidueType.hh>
 
 namespace core {
 namespace scoring {

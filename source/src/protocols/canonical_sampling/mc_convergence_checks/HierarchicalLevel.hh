@@ -10,7 +10,7 @@
 #ifndef INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HierarchicalLevel_hh
 #define INCLUDED_protocols_canonical_sampling_mc_convergence_checks_HierarchicalLevel_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <core/types.hh>

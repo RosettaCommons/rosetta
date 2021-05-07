@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/select/residue_selector/util.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/select/residue_selector/ResidueSelectorFactory.hh>
 
 // Basic headers

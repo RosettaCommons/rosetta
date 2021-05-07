@@ -16,7 +16,8 @@
 #ifndef INCLUDED_protocols_interface_UTIL_HH
 #define INCLUDED_protocols_interface_UTIL_HH
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/types.hh>
 
 namespace protocols {
 namespace interface {

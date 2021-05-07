@@ -43,7 +43,7 @@
 #include <numeric/xyzVector.hh>
 #include <numeric/constants.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <set>
 

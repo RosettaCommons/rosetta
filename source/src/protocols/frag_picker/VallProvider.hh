@@ -26,7 +26,7 @@
 
 // mini headers
 #include <core/sequence/SequenceProfile.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 namespace protocols {

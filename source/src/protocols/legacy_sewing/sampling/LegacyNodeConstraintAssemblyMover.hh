@@ -29,7 +29,7 @@
 #include <protocols/moves/Mover.hh>
 #include <protocols/filters/Filter.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 

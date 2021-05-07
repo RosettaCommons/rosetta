@@ -27,6 +27,7 @@
 #include <protocols/moves/mover_schemas.hh>
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/full_model_info/FullModelInfo.hh>
 #include <core/pose/full_model_info/util.hh>

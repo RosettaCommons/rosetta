@@ -25,7 +25,6 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/simple_moves/FragmentMover.fwd.hh>
 #include <protocols/symmetry/SetupNCSMover.hh>

@@ -14,6 +14,10 @@
 //Devel
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {

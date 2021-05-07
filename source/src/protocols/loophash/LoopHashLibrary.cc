@@ -21,6 +21,7 @@
 #include <core/kinematics/Edge.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/import_pose/pose_stream/MetaPoseInputStream.hh>
+#include <core/pose/Pose.hh>
 
 #include <core/kinematics/FoldTree.hh>
 #include <basic/options/option.hh>

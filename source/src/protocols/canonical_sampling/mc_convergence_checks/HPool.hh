@@ -20,7 +20,7 @@
 #include <ObjexxFCL/FArray3D.hh>
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/canonical_sampling/mc_convergence_checks/HPool.fwd.hh>
 #include <deque>

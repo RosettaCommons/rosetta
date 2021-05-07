@@ -14,7 +14,7 @@
 #ifndef INCLUDED_ResidueMask_hh
 #define INCLUDED_ResidueMask_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>

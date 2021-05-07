@@ -19,6 +19,7 @@
 
 // Project Headers
 #include <core/chemical/AA.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 //#include <core/io/database/open.hh>
 //#include <basic/options/option.hh>

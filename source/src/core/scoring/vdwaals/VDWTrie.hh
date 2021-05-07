@@ -28,7 +28,7 @@
 
 
 // Project headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

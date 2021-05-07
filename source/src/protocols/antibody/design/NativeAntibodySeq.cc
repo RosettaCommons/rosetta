@@ -15,6 +15,7 @@
 #include <protocols/antibody/design/NativeAntibodySeq.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/design/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 
 #include <core/pose/datacache/CacheableDataType.hh>

@@ -16,8 +16,8 @@
 
 // Unit headers
 #include <protocols/hotspot_hashing/HotspotStub.fwd.hh>
-#include <core/conformation/Residue.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/filters/Filter.hh>
 
 // Utility Headers

@@ -25,7 +25,7 @@
 
 // Project headers
 #include <core/select/residue_selector/ResidueSelector.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/RT.hh> // for ::iterator
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>

@@ -33,7 +33,7 @@ get_vector_of_loop_AA_distribution(
 
 core::Size
 prepare_and_write_number_of_electrostatic_interactions_of_residues_to_files (
-	std::string tag,
+	std::string const & tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
@@ -96,12 +96,12 @@ write_heading_direction_of_all_AA_in_a_strand_to_a_file(
 
 core::Size
 write_number_of_electrostatic_interactions_of_residues_to_files (
-	std::string tag,
+	std::string const & tag,
 	StructureID struct_id,
 	utility::sql_database::sessionOP db_session,
 	core::pose::Pose const & pose,
-	std::string dssp_code,
-	std::string heading_direction,
+	std::string const & dssp_code,
+	std::string const & heading_direction,
 	core::Real distance_cutoff_for_electrostatic_interactions_,
 	core::Real CB_b_factor_cutoff_for_electrostatic_interactions_,
 	core::Size min_primary_seq_distance_diff_for_electrostatic_interactions_);

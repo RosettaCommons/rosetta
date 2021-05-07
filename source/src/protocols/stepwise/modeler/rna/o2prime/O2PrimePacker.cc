@@ -18,6 +18,7 @@
 #include <protocols/stepwise/modeler/rna/util.hh>
 #include <protocols/stepwise/modeler/scoring_util.hh>
 #include <protocols/minimization_packing/GreenPacker.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pack/rotamer_trials.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/pack/task/TaskFactory.hh>

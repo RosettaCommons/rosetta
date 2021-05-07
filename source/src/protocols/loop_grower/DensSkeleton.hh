@@ -34,7 +34,7 @@
 #include <basic/database/open.hh>
 
 #include <core/conformation/symmetry/util.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/scoring/electron_density/util.hh>
 #include <core/scoring/electron_density/ElectronDensity.hh>

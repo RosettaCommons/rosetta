@@ -35,6 +35,7 @@
 #include <core/kinematics/tree/Atom.hh>
 
 #include <core/chemical/ResidueTypeSet.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/Atom.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>

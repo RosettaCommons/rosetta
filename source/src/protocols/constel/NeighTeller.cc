@@ -16,6 +16,8 @@
 #include <basic/Tracer.hh>
 #include <core/scoring/util.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <iomanip>
 #include <list>
 

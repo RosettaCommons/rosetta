@@ -15,6 +15,7 @@
 #include <core/scoring/EnergyGraph.hh>
 #include <utility/graph/Graph.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <numeric/xyzVector.hh>
 #include <basic/Tracer.hh>
 

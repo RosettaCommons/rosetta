@@ -30,6 +30,8 @@
 
 #include <core/chemical/AtomICoor.hh>
 
+#include <core/conformation/Residue.hh>
+
 // Project Headers
 #include <core/types.hh>
 

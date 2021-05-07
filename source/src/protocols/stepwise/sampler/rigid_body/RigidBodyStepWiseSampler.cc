@@ -20,6 +20,7 @@
 #include <protocols/stepwise/modeler/util.hh>
 #include <core/id/AtomID.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/kinematics/Stub.hh>
 #include <core/kinematics/Jump.hh>
 #include <core/kinematics/AtomTree.hh>

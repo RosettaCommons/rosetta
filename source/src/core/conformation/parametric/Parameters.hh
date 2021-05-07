@@ -21,7 +21,7 @@
 #include <core/conformation/parametric/Parameter.fwd.hh>
 
 // Package headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Project headers
 #include <core/types.hh>

@@ -17,7 +17,7 @@
 
 //Core
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 //Utility
 #include <utility/vector1.hh>
@@ -35,7 +35,7 @@
 //to find "beta-sheet" backbone H-bonded strands
 #include <protocols/features/strand_assembly/CheckForSandwichFeatures.hh>
 #include <core/import_pose/import_pose.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/file/file_sys_util.hh>
 
 namespace protocols {

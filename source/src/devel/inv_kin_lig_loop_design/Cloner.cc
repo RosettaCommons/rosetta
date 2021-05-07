@@ -31,6 +31,7 @@
 #include <core/kinematics/FoldTree.hh>
 #include <core/kinematics/Stub.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/variant_util.hh>
 #include <core/pose/extra_pose_info_util.hh>
 

@@ -17,6 +17,7 @@
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>
 #include <basic/Tracer.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/chemical/AA.hh>
 #include <numeric/random/WeightedSampler.hh>
 #include <numeric/random/random.hh>

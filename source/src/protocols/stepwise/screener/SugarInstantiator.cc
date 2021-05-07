@@ -18,6 +18,7 @@
 #include <protocols/stepwise/modeler/rna/sugar/SugarVirtualizeMover.hh>
 #include <protocols/stepwise/modeler/rna/sugar/util.hh>
 #include <core/pose/rna/util.hh>
+#include <core/pose/Pose.hh>
 #include <protocols/moves/CompositionMover.hh>
 #include <core/conformation/Residue.hh>
 #include <basic/Tracer.hh>

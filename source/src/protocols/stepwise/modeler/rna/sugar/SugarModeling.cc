@@ -21,6 +21,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/chemical/rna/util.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/types.hh>
 
 #include <ObjexxFCL/format.hh>

@@ -19,7 +19,7 @@
 #include <protocols/features/RotamerFeatures.fwd.hh>
 #include <basic/database/schema_generator/Schema.hh>
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pack/dunbrack/RotamerLibrary.hh>
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.hh>
 #include <core/pack/dunbrack/RotamericSingleResidueDunbrackLibrary.hh>

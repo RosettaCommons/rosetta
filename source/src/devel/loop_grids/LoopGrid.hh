@@ -17,6 +17,7 @@
 
 // Unit headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <protocols/loops/Loop.hh>
 
 //#include <protocols/match/LoopGrid.fwd.hh>

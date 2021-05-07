@@ -88,8 +88,6 @@ void LoopmodelWrapper::apply(core::pose::Pose & pose) {
 	using namespace basic::options;
 	using namespace basic::options::OptionKeys;
 	using namespace core::scoring;
-	using namespace core::scoring::constraints;
-	using namespace core::chemical;
 	using namespace core::id;
 	using namespace jobdist;
 

@@ -13,6 +13,7 @@
 #include <core/pose/Pose.hh>
 #include <utility/libsvm/Svm_rosetta.hh>
 #include <utility/libsvm/Svm_rosetta.fwd.hh>
+#include <core/types.hh>
 
 namespace protocols {
 namespace helix_capper {

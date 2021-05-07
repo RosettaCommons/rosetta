@@ -22,7 +22,7 @@
 // Project headers
 #include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
-#include <core/pose/Pose.fwd.hh>
+#include <core/pose/Pose.hh>
 #include <core/simple_metrics/util.hh>
 #include <core/simple_metrics/PerResidueRealMetric.hh>
 

@@ -25,6 +25,7 @@
 #include <protocols/loops/Loops.fwd.hh>
 #include <protocols/simple_task_operations/RestrictToLoopsAndNeighbors.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pack/task/operation/NoRepackDisulfides.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/operation/ResLvlTaskOperations.hh>

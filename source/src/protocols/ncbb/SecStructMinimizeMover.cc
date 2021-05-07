@@ -29,6 +29,7 @@
 #include <core/optimization/MinimizerOptions.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/minimization_packing/MinMover.hh>
 

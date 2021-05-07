@@ -10,7 +10,7 @@
 #ifndef INCLUDED_protocols_loop_build_LoopBuildMover_hh
 #define INCLUDED_protocols_loop_build_LoopBuildMover_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/relax/loop/LoopRelaxMover.hh>
 #include <protocols/loop_build/LoopBuildMover.fwd.hh>

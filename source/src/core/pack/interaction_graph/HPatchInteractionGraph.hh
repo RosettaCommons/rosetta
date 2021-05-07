@@ -19,7 +19,7 @@
 //Rosetta Headers
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 #include <core/conformation/Residue.hh>
 
@@ -34,7 +34,7 @@
 #include <core/pack/rotamer_set/RotamerSet.hh>
 #include <core/pack/rotamer_set/RotamerSets.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 //#include <core/scoring/sasa.hh>
 #include <core/scoring/sasa/util.hh>

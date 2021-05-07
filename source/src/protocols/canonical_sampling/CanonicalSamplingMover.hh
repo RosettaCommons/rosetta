@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_canonical_sampling_CanonicalSamplingMover_HH
 
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 

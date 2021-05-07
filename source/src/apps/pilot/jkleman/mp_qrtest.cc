@@ -60,6 +60,7 @@
 #include <basic/options/keys/mp.OptionKeys.gen.hh>
 #include <basic/datacache/DataMap.hh>
 #include <utility/string_util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/scoring/rms_util.hh>
 #include <protocols/membrane/util.hh>

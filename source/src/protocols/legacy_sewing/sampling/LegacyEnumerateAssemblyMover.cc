@@ -22,6 +22,8 @@
 #include <protocols/legacy_sewing/sampling/requirements/LegacyRequirementSet.hh>
 #include <protocols/legacy_sewing/scoring/LegacyAssemblyScorer.hh>
 
+#include <core/pose/Pose.hh>
+
 //Utility headers
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

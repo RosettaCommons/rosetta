@@ -22,6 +22,8 @@
 
 // project headers
 #include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/pack/task/TaskFactory.hh>

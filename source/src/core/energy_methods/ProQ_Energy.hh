@@ -23,7 +23,7 @@
 #include <core/scoring/ProQPotential.hh>
 #include <core/scoring/MembraneTopology.hh>
 #include <core/sequence/SequenceProfile.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/dssp/Dssp.hh>
 
 // Project headers

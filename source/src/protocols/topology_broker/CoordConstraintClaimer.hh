@@ -26,7 +26,7 @@
 #include <core/scoring/constraints/ConstraintSet.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/Loops.hh>
 
 // ObjexxFCL Headers

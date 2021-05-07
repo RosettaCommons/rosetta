@@ -30,7 +30,7 @@
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/io/silent/SilentStruct.hh>
@@ -38,6 +38,7 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <numeric/xyzVector.hh>
 
 // C++ Headers
 #include <string>

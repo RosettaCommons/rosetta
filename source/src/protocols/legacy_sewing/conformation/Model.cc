@@ -28,6 +28,7 @@
 #include <core/scoring/TenANeighborGraph.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/VariantType.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/conformation/ResidueFactory.hh>
 #include <utility/sql_database/DatabaseSessionManager.hh>
 #include <basic/database/sql_utils.hh>

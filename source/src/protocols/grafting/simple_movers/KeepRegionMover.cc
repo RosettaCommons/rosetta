@@ -16,6 +16,7 @@
 #include <protocols/grafting/simple_movers/KeepRegionMoverCreator.hh>
 
 #include <core/pose/selection.hh>
+#include <core/pose/Pose.hh>
 #include <protocols/grafting/util.hh>
 #include <protocols/rosetta_scripts/util.hh>
 

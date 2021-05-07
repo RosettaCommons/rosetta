@@ -23,7 +23,7 @@
 // Package headers
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/TorsionID.hh>
 

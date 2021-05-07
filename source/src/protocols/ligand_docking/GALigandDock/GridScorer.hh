@@ -20,8 +20,8 @@
 #include <protocols/ligand_docking/GALigandDock/RotamerData.hh>
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/scoring/hbonds/HBEvalTuple.hh>
 #include <core/scoring/hbonds/hbonds.hh>

@@ -17,8 +17,10 @@
 
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/chemical/ResidueType.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.hh>
+#include <core/kinematics/FoldTree.fwd.hh>
 #include <core/id/TorsionID.hh>
 #include <numeric/Quaternion.hh>
 #include <utility/vector0.hh>

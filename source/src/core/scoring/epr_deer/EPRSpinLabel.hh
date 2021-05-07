@@ -21,7 +21,7 @@
 #include <core/scoring/epr_deer/EPRSpinLabel.fwd.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/AtomVDW.fwd.hh>
 #include <core/types.hh>
 

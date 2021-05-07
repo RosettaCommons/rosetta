@@ -20,7 +20,7 @@
 
 
 #include <core/pack/task/TaskFactory.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>

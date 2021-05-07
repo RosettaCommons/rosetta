@@ -14,6 +14,7 @@
 #include <protocols/grafting/simple_movers/InsertPoseIntoPoseMover.hh>
 #include <protocols/grafting/simple_movers/InsertPoseIntoPoseMoverCreator.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/pose/selection.hh>
 
 #include <protocols/moves/Mover.hh>

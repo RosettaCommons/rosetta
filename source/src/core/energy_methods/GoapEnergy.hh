@@ -23,6 +23,7 @@
 #include <core/scoring/methods/ContextIndependentTwoBodyEnergy.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/EnergyMap.fwd.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 // Project headers
 #include <core/pose/Pose.fwd.hh>

@@ -18,7 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/rms_util.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/conformation/symmetry/SymmetricConformation.hh>

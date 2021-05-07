@@ -18,6 +18,7 @@
 //Core headers
 #include <core/types.hh>
 
+#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ChemicalManager.hh>
 
 #include <core/pose/motif/reference_frames.hh>

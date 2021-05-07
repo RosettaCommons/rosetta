@@ -25,6 +25,7 @@
 // Project headers
 #include <core/pose/Pose.hh>
 #include <core/id/TorsionID.hh>
+#include <core/conformation/Residue.hh>
 
 // Utility headers
 #include <numeric/conversions.hh>

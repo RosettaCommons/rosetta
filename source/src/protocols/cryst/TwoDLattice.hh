@@ -34,7 +34,7 @@
 #include <core/chemical/util.hh>
 #include <core/conformation/Residue.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 #include <core/scoring/electron_density/util.hh>

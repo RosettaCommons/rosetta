@@ -19,10 +19,10 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/util.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/ResidueFactory.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

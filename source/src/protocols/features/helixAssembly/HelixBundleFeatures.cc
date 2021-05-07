@@ -16,6 +16,7 @@
 #include <core/conformation/Residue.hh>
 #include <core/conformation/Atom.hh>
 #include <core/scoring/sasa.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 //Devel

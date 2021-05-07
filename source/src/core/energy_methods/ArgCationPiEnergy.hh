@@ -24,7 +24,7 @@
 #include <core/scoring/methods/EnergyMethodCreator.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
 
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>

@@ -20,7 +20,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/clusters/CDRClusterEnum.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 

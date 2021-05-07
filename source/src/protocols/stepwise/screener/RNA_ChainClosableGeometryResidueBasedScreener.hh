@@ -19,7 +19,8 @@
 #include <protocols/stepwise/screener/StepWiseResiduePairScreener.hh>
 #include <protocols/stepwise/screener/RNA_ChainClosableGeometryResidueBasedScreener.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_ChainClosableGeometryChecker.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <numeric/xyzVector.hh>
 
 namespace protocols {
 namespace stepwise {

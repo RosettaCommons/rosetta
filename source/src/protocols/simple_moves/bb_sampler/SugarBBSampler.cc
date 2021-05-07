@@ -17,6 +17,7 @@
 #include <core/scoring/carbohydrates/CHIEnergyFunction.hh>
 #include <core/scoring/carbohydrates/OmegaPreferencesFunction.hh>
 #include <core/scoring/carbohydrates/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/carbohydrates/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>

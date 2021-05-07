@@ -20,6 +20,8 @@
 
 //see if necessary
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
+
 //probably necessary
 #include <core/pose/motif/reference_frames.hh>
 //secondary structure

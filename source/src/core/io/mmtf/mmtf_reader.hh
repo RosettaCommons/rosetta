@@ -21,9 +21,9 @@
 #include <core/io/pdb/pdb_reader.hh>  // TODO: Pull out pseudo-duplicated code and move to sfr_storage.cc.
 
 // When you move PDBReader and PoseUnbuilder, take these.
-#include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
-#include <core/conformation/Conformation.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/Patch.hh>
 #include <core/chemical/ResidueConnection.hh>

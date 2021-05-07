@@ -17,6 +17,8 @@
 #include <protocols/frag_picker/FragmentCandidate.hh>
 #include <protocols/frag_picker/FragmentPicker.hh>
 
+#include <core/pose/Pose.hh>
+
 // option key includes
 #include <basic/options/option.hh>
 #include <basic/options/keys/OptionKeys.hh>

@@ -22,7 +22,6 @@
 #include <core/types.hh>
 #include <basic/MetricValue.fwd.hh>
 #include <core/id/AtomID_Map.hh>
-#include <core/conformation/Residue.hh>
 
 #include <utility/vector1.hh>
 #include <numeric/xyzVector.hh>

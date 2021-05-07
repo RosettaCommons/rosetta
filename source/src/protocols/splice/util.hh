@@ -21,7 +21,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/vector1.fwd.hh>
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <utility/vector1.hh>
 #include <protocols/splice/SampleRotamersFromPDB.fwd.hh>
 

@@ -27,6 +27,7 @@
 #include <core/scoring/func/HarmonicFunc.fwd.hh>
 #include <core/scoring/constraints/AtomPairConstraint.hh>
 #include <core/scoring/constraints/ConstraintSet.hh>
+#include <core/conformation/Residue.hh>
 
 
 //#include <core/pack/task/PackerTask.hh>

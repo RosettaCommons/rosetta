@@ -36,7 +36,7 @@
 #include <utility/fixedsizearray1.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <core/id/AtomID.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 // Basic Headers
 #include <basic/citation_manager/CitationCollection.fwd.hh>

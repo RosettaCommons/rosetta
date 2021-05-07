@@ -20,7 +20,7 @@
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <protocols/sewing/data_storage/SmartSegment.hh>
 #include <protocols/sewing/data_storage/SmartSewingResidue.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 // Utility headers
 #include <core/types.hh>
 #include <utility/pointer/owning_ptr.hh>

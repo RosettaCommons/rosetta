@@ -24,6 +24,7 @@
 #include <protocols/topology_broker/TopologyBroker.hh>
 #include <protocols/topology_broker/util.hh>
 
+#include <core/pose/Pose.hh>
 #include <core/scoring/ScoreFunctionFactory.hh> // get_score_function
 #include <core/scoring/constraints/util.hh>
 #include <core/scoring/electron_density/util.hh>

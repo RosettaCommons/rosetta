@@ -24,6 +24,7 @@
 #include <basic/Tracer.hh>
 #include <basic/database/open.hh>
 #include <utility/string_util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/import_pose/import_pose.hh>

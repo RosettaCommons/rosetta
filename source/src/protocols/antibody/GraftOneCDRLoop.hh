@@ -19,7 +19,7 @@
 #include <protocols/antibody/GraftOneCDRLoop.fwd.hh>
 
 #include <protocols/moves/Mover.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/antibody/AntibodyInfo.hh>
 #include <protocols/antibody/Ab_TemplateInfo.fwd.hh>

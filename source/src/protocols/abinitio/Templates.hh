@@ -28,6 +28,7 @@
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>
 #include <core/scoring/dssp/PairingsList.fwd.hh>
 #include <core/fragment/SecondaryStructure.fwd.hh>
+
 #ifdef __clang__
 #include <core/pose/Pose.hh>
 #include <core/fragment/SecondaryStructure.hh>

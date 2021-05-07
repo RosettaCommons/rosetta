@@ -15,6 +15,7 @@
 
 #include <core/scoring/rna/chemical_shift/RNA_CS_Util.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_RingCurrent.hh>
+#include <core/conformation/Residue.hh>
 #include <ObjexxFCL/format.hh>
 #include <numeric/xyzMatrix.hh>
 //////////////////////////////////////////////////////////////////////////////////

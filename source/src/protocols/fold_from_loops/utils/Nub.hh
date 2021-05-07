@@ -19,7 +19,7 @@
 
 // Core headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
 #include <core/id/SequenceMapping.hh>
 #include <core/select/residue_selector/ResidueRanges.fwd.hh>

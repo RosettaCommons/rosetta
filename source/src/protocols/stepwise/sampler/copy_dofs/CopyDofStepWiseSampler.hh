@@ -19,7 +19,7 @@
 #include <protocols/stepwise/sampler/StepWiseSamplerSized.hh>
 #include <protocols/stepwise/sampler/copy_dofs/CopyDofStepWiseSampler.fwd.hh>
 #include <protocols/simple_moves/CopyDofMover.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #ifdef WIN32
 #include <protocols/simple_moves/CopyDofMover.hh>

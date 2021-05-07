@@ -39,6 +39,7 @@
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/util.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/datacache/CacheableDataType.hh>
 
 #include <basic/datacache/BasicDataCache.hh>

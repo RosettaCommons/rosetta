@@ -41,6 +41,7 @@
 //Core headers
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
 #include <core/scoring/constraints/ConstraintSet.fwd.hh>

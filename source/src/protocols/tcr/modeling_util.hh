@@ -20,7 +20,7 @@
 #include <protocols/tcr/TCRseqInfo.fwd.hh>
 #include <protocols/tcr/util.hh>
 #include <utility/VirtualBase.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/loops/loops_main.hh>
 
 namespace protocols {

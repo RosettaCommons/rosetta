@@ -35,6 +35,7 @@
 #include <utility/vector1.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 
 static basic::Tracer TR( "protocols.antibody.RefineBetaBarrel" );

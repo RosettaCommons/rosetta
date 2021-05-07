@@ -20,6 +20,7 @@
 #include <string>
 #include <protocols/tcr/TCRseqInfo.hh>
 #include <protocols/tcr/TCRmodel.hh>
+#include <core/pose/Pose.hh>
 #include <devel/init.hh>
 #include <basic/Tracer.hh>
 #include <basic/options/option.hh>

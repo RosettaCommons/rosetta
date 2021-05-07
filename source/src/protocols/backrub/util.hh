@@ -19,7 +19,7 @@
 #include <core/kinematics/MoveMap.fwd.hh>
 #include <core/pack/task/PackerTask.hh>
 #include <core/kinematics/FoldTree.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace backrub {

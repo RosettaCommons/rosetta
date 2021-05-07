@@ -15,6 +15,9 @@
 //#include <protocols/features/strand_assembly/SandwichFeatures.hh>
 #include <protocols/features/strand_assembly/WriteToDBFromSandwichFeatures.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
+
 namespace protocols {
 namespace features {
 namespace strand_assembly {
@@ -832,8 +835,8 @@ check_PA( // parallel & anti-parallel
 bool
 check_strand_too_closeness(
 	Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	Real min_inter_sheet_dis_CA_CA_)
 {
 	// check anti-parallel sheet distance
@@ -857,8 +860,8 @@ check_strand_too_closeness(
 Real
 check_sw_by_dis(
 	Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	bool antiparallel, // if false, find parallel way
 	Real min_sheet_dis_,
 	Real max_sheet_dis_
@@ -1685,8 +1688,8 @@ get_full_strands(
 Size
 find_sheet(
 	Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j,
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j,
 	bool antiparallel, // if 'false', find a sheet in parallel way
 	Real min_CA_CA_dis_,
 	Real max_CA_CA_dis_,
@@ -2097,8 +2100,8 @@ get_avg_dis_CA_CA(
 Real
 get_avg_dis_strands(
 	Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j)
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j)
 {
 	if ( strand_i.get_start() == strand_j.get_start() ) { // strand_i and strand_j are same!
 		return 0.0;
@@ -2294,8 +2297,8 @@ get_chain_B_resNum(
 Real
 get_closest_distance_between_strands(
 	Pose const & pose,
-	SandwichFragment strand_i,
-	SandwichFragment strand_j)
+	SandwichFragment const & strand_i,
+	SandwichFragment const & strand_j)
 {
 	if ( strand_i.get_start() == strand_j.get_start() ) { // strand_i and strand_j are same!
 		return 0.0;

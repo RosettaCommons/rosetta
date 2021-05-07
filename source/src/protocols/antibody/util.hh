@@ -18,7 +18,6 @@
 
 //Core Headers
 
-#include <core/pose/Pose.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>

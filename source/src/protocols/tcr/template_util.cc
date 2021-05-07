@@ -15,6 +15,7 @@
 #include <basic/Tracer.hh>
 #include <protocols/tcr/grafting_util.hh>
 #include <core/import_pose/import_pose.hh>
+#include <core/pose/Pose.hh>
 #include <basic/options/option.hh>
 #include <basic/options/keys/tcrmodel.OptionKeys.gen.hh>
 #include <set>

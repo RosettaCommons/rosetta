@@ -22,7 +22,7 @@
 #include <core/optimization/ParticleSwarmMinimizer.fwd.hh>
 #include <core/types.hh>
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <numeric/constants.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/vector1_bool.hh>

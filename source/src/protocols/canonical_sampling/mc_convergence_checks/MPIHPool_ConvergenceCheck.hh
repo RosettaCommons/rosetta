@@ -15,7 +15,7 @@
 #include <protocols/canonical_sampling/mc_convergence_checks/HierarchicalLevel.fwd.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/Pool_ConvergenceCheck.hh>
 #include <protocols/canonical_sampling/mc_convergence_checks/pool_util.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 
 #include <core/io/silent/SilentStruct.hh>

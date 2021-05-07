@@ -9,7 +9,7 @@
 
 // Pose
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/io/silent/SilentStruct.hh>

@@ -22,8 +22,8 @@
 //Other headers:
 #include <utility/exit.hh>
 #include <utility/excn/Exceptions.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 //Ramachandran -- needed for sampling
 #include <core/scoring/Ramachandran.hh>
@@ -83,10 +83,6 @@ public: //Constructors and destructors:
 	/// @brief Default constructor for BinTransitionData
 	///
 	BinTransitionData();
-
-	/// @brief Copy constructor for BinTransitionData
-	///
-	BinTransitionData( BinTransitionData const &src );
 
 	/// @brief Default destructor for BinTransitionData
 	///
@@ -484,7 +480,7 @@ public: //Public functions -- setters:
 
 	/// @brief Set the name of bin n for residue i.
 	/// @details This requires that the number of bins has already been set.
-	void set_binname_i( core::Size const bin, std::string const name ) {
+	void set_binname_i( core::Size const bin, std::string const & name ) {
 		runtime_assert_string_msg( matrix_initialized(), "In core::scoring::bin_transitions::BinTransitionData::set_binname_i(): This function requires that the set_n_bins() function be called first." );
 		runtime_assert_string_msg( bin<=n_bins_i(), "In core::scoring::bin_transitions::BinTransitionData::set_binname_i(): The specified bin is greater than the number of bins for residue i." );
 		binnames_i_[bin] = name;
@@ -493,7 +489,7 @@ public: //Public functions -- setters:
 
 	/// @brief Set the name of bin n for residue i+1.
 	/// @details This requires that the number of bins has already been set.
-	void set_binname_iplus1( core::Size const bin, std::string const name ) {
+	void set_binname_iplus1( core::Size const bin, std::string const & name ) {
 		runtime_assert_string_msg( matrix_initialized(), "In core::scoring::bin_transitions::BinTransitionData::set_binname_iplus1(): This function requires that the set_n_bins() function be called first." );
 		runtime_assert_string_msg( bin<=n_bins_iplus1(), "In core::scoring::bin_transitions::BinTransitionData::set_binname_iplus1(): The specified bin is greater than the number of bins for residue i+1." );
 		binnames_iplus1_[bin] = name;

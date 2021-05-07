@@ -18,7 +18,7 @@
 
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 //// C++ headers
 #include <string>

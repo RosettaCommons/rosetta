@@ -65,17 +65,6 @@ BinSelector::BinSelector() :
 	//TODO -- initialize all vars here.
 {}
 
-/// @brief Copy constructor.
-///
-BinSelector::BinSelector( BinSelector const &src ) :
-	initialized_( src.initialized_ ),
-	bin_transition_calculator_( src.bin_transition_calculator_ == nullptr ? nullptr : src.bin_transition_calculator_->clone() ),
-	select_only_alpha_aas_(src.select_only_alpha_aas_),
-	bin_name_( src.bin_name_ ),
-	bin_params_file_name_( src.bin_params_file_name_ )
-	//TODO -- initialize all vars here.
-{}
-
 /// @brief Destructor.
 ///
 BinSelector::~BinSelector() = default;

@@ -17,6 +17,7 @@
 #include <core/id/types.hh>
 
 #include <core/select/residue_selector/ChainSelector.hh>
+#include <core/conformation/Residue.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
 #include <core/kinematics/Jump.hh>

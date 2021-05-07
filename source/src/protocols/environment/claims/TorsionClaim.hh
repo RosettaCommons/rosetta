@@ -28,7 +28,7 @@
 #include <core/environment/LocalPosition.hh>
 #include <core/environment/FoldTreeSketch.hh>
 
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 // Project Headers
 #include <core/select/residue_selector/ResidueSelector.hh>

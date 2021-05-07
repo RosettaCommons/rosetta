@@ -19,7 +19,7 @@
 #include <protocols/relax/RepeatProteinRelax.fwd.hh>
 
 #include <core/conformation/symmetry/SymmetryInfo.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility Headers
 #include <core/scoring/ScoreFunction.hh>

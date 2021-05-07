@@ -19,9 +19,10 @@
 #include <protocols/simple_moves/bb_sampler/BBDihedralSampler.fwd.hh>
 
 #include <core/id/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
+#include <utility/VirtualBase.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 

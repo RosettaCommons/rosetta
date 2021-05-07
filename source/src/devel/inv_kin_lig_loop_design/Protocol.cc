@@ -30,6 +30,7 @@
 #include <core/kinematics/MoveMap.hh>
 #include <core/optimization/AtomTreeMinimizer.hh>
 #include <core/optimization/MinimizerOptions.hh>
+#include <core/pose/Pose.hh>
 
 #include <protocols/moves/MonteCarlo.hh>
 #include <protocols/loops/Loop.hh>

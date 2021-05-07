@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_antibody_constraints_UTIL_HH
 #define INCLUDED_protocols_antibody_constraints_UTIL_HH
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/constraints/Constraint.fwd.hh>
 
 #include <protocols/antibody/AntibodyInfo.fwd.hh>

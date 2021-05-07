@@ -20,7 +20,7 @@
 
 // Project headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>

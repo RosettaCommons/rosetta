@@ -23,6 +23,8 @@
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreFunctionFactory.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/symmetry/util.hh>
 #include <core/pack/make_symmetric_task.hh>
 #include <core/pack/packer_neighbors.hh>

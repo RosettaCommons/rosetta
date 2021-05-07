@@ -23,7 +23,7 @@
 
 //Core
 #include <core/types.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Atom.hh>
 
 //Devel

@@ -31,7 +31,7 @@
 #include <protocols/moves/Mover.hh>
 
 // Package Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 #include <protocols/rosetta_scripts/util.hh>

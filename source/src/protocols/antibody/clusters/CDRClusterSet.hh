@@ -22,7 +22,7 @@
 #include <protocols/antibody/AntibodyEnum.hh>
 #include <protocols/antibody/AntibodyInfo.fwd.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <basic/datacache/CacheableData.hh>
 

@@ -20,7 +20,7 @@
 #include <core/chemical/AA.hh>
 #include <core/pack/task/operation/TaskOperation.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <map>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 //#include <core/pose/PDBInfo.hh>

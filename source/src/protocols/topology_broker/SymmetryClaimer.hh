@@ -24,7 +24,7 @@
 
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 // ObjexxFCL Headers
 

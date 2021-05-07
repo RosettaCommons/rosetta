@@ -21,7 +21,7 @@
 #include <core/io/StructFileRepOptions.fwd.hh>
 
 // Project header
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/io/mmtf/util.hh>
 
 #include <iosfwd>

@@ -15,9 +15,9 @@
 #ifndef INCLUDED_protocols_hybridization_util_hh
 #define INCLUDED_protocols_hybridization_util_hh
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/fragment/FragSet.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>

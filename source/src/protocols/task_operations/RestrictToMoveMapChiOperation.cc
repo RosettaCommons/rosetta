@@ -15,6 +15,7 @@
 #include <protocols/rosetta_scripts/util.hh>
 #include <core/pack/task/operation/TaskOperations.hh>
 #include <core/pack/task/PackerTask.hh>
+#include <core/pose/Pose.hh>
 #include <core/conformation/Conformation.hh>
 #include <core/conformation/Residue.hh>
 #include <core/kinematics/MoveMap.hh>

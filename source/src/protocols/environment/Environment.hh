@@ -34,7 +34,6 @@
 // Project headers
 #include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Conformation.fwd.hh>
-#include <core/conformation/Conformation.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/VirtualBase.hh>
 

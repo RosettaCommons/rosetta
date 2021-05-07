@@ -38,7 +38,7 @@
 #include <numeric/angle.functions.hh> // Need this to prevent the compiling error: 'principal_angle_degrees' is not a member of 'numeric' Oct 14, 2009
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <set>
 
 

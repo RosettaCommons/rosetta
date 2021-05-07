@@ -35,10 +35,10 @@
 #include <vector>
 
 //Core
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/Atom.hh>
-#include <core/conformation/Conformation.hh>
-#include <core/pose/Pose.hh> // for dssp application
+#include <core/conformation/Conformation.fwd.hh>
+#include <core/pose/Pose.fwd.hh> // for dssp application
 #include <core/pose/PDBInfo.hh> // maybe for PDBInfoCOP
 #include <core/scoring/dssp/Dssp.hh>
 #include <core/scoring/Energies.hh>

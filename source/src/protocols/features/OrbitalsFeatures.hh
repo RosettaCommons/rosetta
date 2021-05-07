@@ -17,7 +17,7 @@
 // Unit Headers
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/features/OrbitalsFeatures.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <numeric/xyzVector.hh>
 // Project Headers
 #include <core/pose/Pose.fwd.hh>

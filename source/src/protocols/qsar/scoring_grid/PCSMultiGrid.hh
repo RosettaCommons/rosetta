@@ -22,7 +22,7 @@
 
 // Package headers
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/conformation/UltraLightResidue.fwd.hh>
 #include <protocols/qsar/qsarMap.fwd.hh>

@@ -19,9 +19,9 @@
 #include <core/types.hh>
 #include <core/scoring/nmr/NMRSpinlabel.hh>
 #include <core/pack/task/PackerTask.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 namespace protocols {
 namespace nmr {

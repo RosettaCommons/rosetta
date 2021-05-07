@@ -18,7 +18,7 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
 #include <basic/datacache/DataMap.hh>

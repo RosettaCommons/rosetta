@@ -15,6 +15,8 @@
 #include <protocols/sewing/requirements/ClashRequirementCreator.hh>
 #include <protocols/sewing/requirements/AssemblyRequirementFactory.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
+#include <core/conformation/Residue.hh>
+#include <core/pose/Pose.hh>
 #include <basic/Tracer.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/tag/XMLSchemaGeneration.hh>

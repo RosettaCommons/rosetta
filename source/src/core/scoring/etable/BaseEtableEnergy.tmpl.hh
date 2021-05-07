@@ -61,7 +61,7 @@
 #include <core/scoring/etable/etrie/TrieCountPairGeneric.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/Energies.hh>
 #include <core/kinematics/MinimizerMapBase.hh>
 #include <core/conformation/RotamerSetBase.hh>

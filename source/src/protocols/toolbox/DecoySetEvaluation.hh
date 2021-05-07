@@ -26,7 +26,7 @@
 #include <core/io/silent/SilentFileData.fwd.hh>
 
 #include <utility/vector1.hh>
-
+#include <utility/VirtualBase.hh>
 
 namespace protocols {
 namespace toolbox {

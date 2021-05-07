@@ -21,7 +21,7 @@
 #include <protocols/loop_modeling/utilities/PrepareForFullatom.fwd.hh>
 
 // Core headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 
 // Protocols headers

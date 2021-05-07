@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_hbnet_NetworkState_hh
 #define INCLUDED_protocols_hbnet_NetworkState_hh
 
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/scoring/hbonds/graph/HBondInfo.hh>
 #include <core/scoring/hbonds/graph/AtomInfo.hh>
 #include <core/scoring/hbonds/graph/HBondGraph.hh>

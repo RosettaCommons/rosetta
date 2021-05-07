@@ -17,7 +17,7 @@
 
 // Package headers
 #include <core/pose/Pose.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/optimization/types.hh>
 #include <core/optimization/Multifunc.hh>
 #include <protocols/pockets/PocketGrid.hh>

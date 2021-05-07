@@ -26,7 +26,6 @@
 #include <protocols/sewing/scoring/AssemblyScorer.hh>
 #include <protocols/sewing/requirements/AssemblyRequirement.hh>
 #include <protocols/sewing/hashing/ModelFileReader.hh>
-#include <core/pose/Pose.hh>
 // Protocol headers
 #include <protocols/filters/Filter.fwd.hh>
 

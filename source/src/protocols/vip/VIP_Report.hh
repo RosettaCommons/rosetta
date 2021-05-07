@@ -14,7 +14,10 @@
 #ifndef INCLUDED_protocols_vip_VIP_Report_HH
 #define INCLUDED_protocols_vip_VIP_Report_HH
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/conformation/Residue.fwd.hh>
+#include <core/types.hh>
+#include <utility/vector1.hh>
 
 namespace protocols {
 namespace vip {

@@ -16,7 +16,8 @@
 #define INCLUDED_protocols_ligand_docking_GALigandDock_EntropyEstimator_hh
 
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <map>
 
 namespace protocols {

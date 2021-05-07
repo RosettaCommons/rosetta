@@ -18,6 +18,7 @@
 
 // Rosetta headers
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/pack/task/TaskFactory.fwd.hh>

@@ -19,6 +19,7 @@
 
 #include <core/pose/Pose.hh>
 #include <core/pose/annotated_sequence.hh>
+#include <core/conformation/Residue.hh>
 
 #include <core/select/residue_selector/ResidueIndexSelector.hh>
 

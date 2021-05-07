@@ -26,6 +26,7 @@
 #include <core/scoring/rms_util.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/kinematics/FoldTree.hh>
+#include <core/conformation/Residue.hh>
 #include <core/conformation/util.hh>
 #include <core/chemical/ResidueTypeSet.hh>
 #include <core/chemical/ChemicalManager.hh>

@@ -23,7 +23,7 @@
 #include <protocols/canonical_sampling/ThermodynamicMover.hh>
 
 // Project headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
 

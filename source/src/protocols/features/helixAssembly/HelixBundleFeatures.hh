@@ -21,6 +21,9 @@
 #include <protocols/features/FeaturesReporter.hh>
 #include <protocols/simple_filters/InterfaceSasaFilter.hh>
 
+//Core
+#include <core/scoring/ScoreFunction.fwd.hh>
+
 //Devel
 #include <protocols/features/helixAssembly/HelicalFragment.hh>
 

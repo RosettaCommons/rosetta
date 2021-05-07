@@ -21,6 +21,7 @@
 #include <core/chemical/ChemicalManager.hh>
 #include <core/chemical/AtomType.hh>
 #include <core/chemical/AtomTypeSet.hh>
+#include <core/pose/Pose.hh>
 
 #include <core/kinematics/Stub.hh>
 

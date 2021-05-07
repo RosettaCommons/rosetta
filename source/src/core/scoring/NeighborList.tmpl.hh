@@ -25,7 +25,7 @@
 #include <core/scoring/etable/count_pair/CountPairFunction.hh>
 
 // Project headers
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 #include <core/pose/Pose.hh>
 #include <core/pose/util.hh>
 #include <core/pose/init_id_map.hh>

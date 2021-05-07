@@ -26,7 +26,6 @@
 #include <core/scoring/methods/WholeStructureEnergy.hh>
 #include <core/conformation/Residue.fwd.hh>
 #include <core/chemical/ResidueType.fwd.hh>
-#include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueProperties.hh>
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 #include <core/pose/Pose.fwd.hh>

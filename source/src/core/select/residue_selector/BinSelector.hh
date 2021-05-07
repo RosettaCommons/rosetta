@@ -27,6 +27,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/vector1.hh>
+#include <utility/pointer/deep_copy.hh>
 
 // C++ headers
 #include <set>
@@ -48,10 +49,6 @@ public:
 	/// @brief Constructor.
 	///
 	BinSelector();
-
-	/// @brief Copy constructor.
-	///
-	BinSelector( BinSelector const &src );
 
 	/// @brief Destructor.
 	///
@@ -129,7 +126,7 @@ private: //Private variables
 
 	/// @brief A BinTransitionCalculatorOP pointing at a BinTransitionCalculator object.
 	/// @details Object initialized by parse_my_tag() or initialize_bin_transition_calculator() functions.
-	core::scoring::bin_transitions::BinTransitionCalculatorCOP bin_transition_calculator_;
+	utility::pointer::DeepCopyOP< core::scoring::bin_transitions::BinTransitionCalculator const > bin_transition_calculator_;
 
 	/// @brief Should we only select alpha-amino acids?
 	/// @details Default true.  If false, then all polymeric residues are potentially selected (if

@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/kinematics/MoveMap.hh>
 #include <core/scoring/ScoreFunction.hh>
 

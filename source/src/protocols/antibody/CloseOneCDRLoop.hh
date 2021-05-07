@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_antibody_CloseOneCDRLoop_hh
 
 #include <protocols/antibody/CloseOneCDRLoop.fwd.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <protocols/moves/Mover.hh>
 
 #include <core/kinematics/MoveMap.fwd.hh>

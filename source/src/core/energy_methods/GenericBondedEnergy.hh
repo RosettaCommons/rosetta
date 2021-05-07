@@ -21,7 +21,7 @@
 // Package headers
 #include <core/scoring/methods/ContextIndependentLRTwoBodyEnergy.hh>
 #include <core/scoring/GenericBondedPotential.hh>
-#include <core/chemical/ResidueType.hh>
+#include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>

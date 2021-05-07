@@ -23,7 +23,7 @@
 #include <protocols/moves/MoverContainer.fwd.hh>
 #include <protocols/loops/Loop.hh>
 #include <protocols/loops/Loops.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/fragment/FragSet.hh>
 #include <core/scoring/ScoreFunction.hh>

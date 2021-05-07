@@ -16,6 +16,7 @@
 
 #include <protocols/wum/WorkUnitBase.hh>
 #include <core/pose/Pose.hh>
+#include <core/scoring/ScoreFunction.fwd.hh>
 
 #include <utility/vector1.hh>
 

@@ -34,6 +34,7 @@
 #include <core/kinematics/RT.hh>
 #include <core/kinematics/Stub.hh>
 #include <numeric/HomogeneousTransform.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/io/Remarks.hh>
 

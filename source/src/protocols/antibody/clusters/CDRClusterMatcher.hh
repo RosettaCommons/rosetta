@@ -18,7 +18,7 @@
 #include <protocols/antibody/clusters/CDRCluster.hh>
 #include <protocols/antibody/AntibodyEnum.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <utility/vector1.hh>
 

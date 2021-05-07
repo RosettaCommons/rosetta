@@ -33,7 +33,7 @@
 // Project headers
 #include <basic/datacache/WriteableCacheableMap.fwd.hh>
 
-#include <core/conformation/Conformation.hh>
+#include <core/conformation/Conformation.fwd.hh>
 
 #include <core/pose/Pose.hh>
 

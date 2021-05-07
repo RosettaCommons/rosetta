@@ -16,6 +16,7 @@
 #include <protocols/stepwise/sampler/rigid_body/RigidBodyStepWiseSamplerWithResidueAlternatives.hh>
 #include <protocols/stepwise/sampler/copy_dofs/ResidueAlternativeStepWiseSamplerComb.hh>
 #include <core/pose/Pose.hh>
+#include <core/conformation/Residue.hh>
 
 #include <basic/Tracer.hh>
 #include <utility>

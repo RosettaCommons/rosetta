@@ -23,7 +23,7 @@
 #include <protocols/membrane/util.hh>
 
 // Project Headers
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 
 namespace protocols {

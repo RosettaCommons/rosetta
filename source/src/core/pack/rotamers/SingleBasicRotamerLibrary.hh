@@ -22,7 +22,7 @@
 #include <core/pack/dunbrack/RotamerLibraryScratchSpace.fwd.hh>
 
 // Project Headers
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 namespace core {
 namespace pack {

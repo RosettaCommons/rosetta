@@ -23,7 +23,7 @@
 #include <core/scoring/epr_deer/DEERIO.fwd.hh>
 #include <core/scoring/epr_deer/EPRSpinLabel.hh>
 #include <core/types.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <numeric/xyzVector.hh>
 #include <utility/fixedsizearray1.hh>
 #include <iosfwd>

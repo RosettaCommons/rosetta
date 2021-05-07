@@ -14,10 +14,10 @@
 #include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.hh>
 #include <core/pose/selection.hh>
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.hh>
 #include <core/scoring/ScoreType.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 
 #include <core/io/silent/SilentStruct.hh>
 #include <core/io/silent/BinarySilentStruct.hh>

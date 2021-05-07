@@ -22,7 +22,7 @@
 #include <protocols/antibody/design/CDRGraftDesignOptions.hh>
 #include <protocols/loops/Loops.hh>
 
-#include <core/pose/Pose.hh>
+#include <core/pose/Pose.fwd.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <core/pack/task/operation/TaskOperations.fwd.hh>

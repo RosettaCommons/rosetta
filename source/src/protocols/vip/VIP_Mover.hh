@@ -11,6 +11,7 @@
 #define INCLUDED_protocols_vip_VIP_Mover_HH
 
 #include <protocols/vip/VIP_Report.hh>
+#include <core/pose/Pose.hh>
 
 namespace protocols {
 namespace vip {

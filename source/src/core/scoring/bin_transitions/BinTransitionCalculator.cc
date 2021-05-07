@@ -18,6 +18,9 @@
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 #include <core/scoring/bin_transitions/BinTransitionData.fwd.hh>
 
+#include <core/conformation/Residue.hh>
+#include <core/conformation/Conformation.hh>
+
 // File I/O
 #include <basic/database/open.hh>
 #include <utility/io/ozstream.hh>
@@ -1170,6 +1173,10 @@ std::string BinTransitionCalculator::summarize_stored_data( bool const verbose )
 
 } //summarize_stored_data
 
+BinTransitionCalculatorOP
+deep_copy( BinTransitionCalculator const & src ) {
+	return src.clone();
+}
 
 } //namespace bin_transitions
 }//namespace scoring

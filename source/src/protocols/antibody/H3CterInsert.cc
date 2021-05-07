@@ -28,6 +28,7 @@
 #include <utility/exit.hh>
 #include <utility/io/izstream.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <core/pose/Pose.hh>
 #include <core/fragment/BBTorsionSRFD.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <protocols/antibody/AntibodyInfo.hh>

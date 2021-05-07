@@ -43,6 +43,7 @@
 #include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <core/chemical/ChemicalManager.hh>
+#include <core/chemical/ResidueType.hh>
 #include <core/pose/rna/util.hh>
 #include <core/pose/util.hh>
 #include <core/pose/extra_pose_info_util.hh>

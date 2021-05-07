@@ -25,7 +25,7 @@
 #include <protocols/stepwise/modeler/rna/checker/RNA_BaseCentroidChecker.fwd.hh>
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.hh>     //Feb 02, 2012: Need this to pass rosetta_tools/python_cc_reader/test_all_headers_compile.py
 #include <protocols/stepwise/modeler/rna/checker/RNA_VDW_BinChecker.fwd.hh>
-#include <core/conformation/Residue.hh>
+#include <core/conformation/Residue.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/ScoreFunction.fwd.hh>

@@ -16,6 +16,8 @@
 // Unit Headers
 #include <core/scoring/bin_transitions/BinTransitionData.hh>
 
+#include <core/conformation/Residue.hh>
+
 // File I/O
 #include <basic/database/open.hh>
 #include <utility/io/ozstream.hh>
@@ -84,43 +86,6 @@ BinTransitionData::BinTransitionData(): //TODO -- initialize variables here:
 	bin_i_cdf_given_iplus1_()
 {}
 
-/// @brief Copy constructor for BinTransitionData
-///
-BinTransitionData::BinTransitionData( BinTransitionData const &src ): //TODO -- copy variables here:
-	utility::VirtualBase(),
-	n_mainchain_torsions_i_(src.n_mainchain_torsions_i_),
-	n_mainchain_torsions_iplus1_(src.n_mainchain_torsions_iplus1_),
-	n_bins_i_(src.n_bins_i_),
-	binranges_i_( src.binranges_i_ ),
-	binnames_i_(src.binnames_i_),
-	n_bins_iplus1_(src.n_bins_iplus1_),
-	binranges_iplus1_( src.binranges_iplus1_ ),
-	binnames_iplus1_(src.binnames_iplus1_),
-	matrix_initialized_(src.matrix_initialized_),
-	matrix_finalized_(src.matrix_finalized_),
-	probability_matrix_(src.probability_matrix_),
-	properties_i_( src.properties_i_ ),
-	prohibited_properties_i_( src.prohibited_properties_i_ ),
-	properties_iplus1_( src.properties_iplus1_ ),
-	prohibited_properties_iplus1_( src.prohibited_properties_iplus1_ ),
-	res_identities_i_( src.res_identities_i_ ),
-	prohibited_res_identities_i_( src.prohibited_res_identities_i_ ),
-	res_identities_iplus1_( src.res_identities_iplus1_ ),
-	prohibited_res_identities_iplus1_( src.prohibited_res_identities_iplus1_ ),
-	binsums_i_( src.binsums_i_ ),
-	binsums_iplus1_( src.binsums_iplus1_ ),
-	total_counts_( src.total_counts_ ),
-	binsums_i_cdf_( src.binsums_i_cdf_ ),
-	binsums_iplus1_cdf_( src.binsums_iplus1_cdf_ ),
-	subbin_type_i_( src.subbin_type_i_ ),
-	subbin_type_iplus1_( src.subbin_type_iplus1_ ),
-	subbin_cdf_i_( src.subbin_cdf_i_ ),
-	subbin_ranges_i_( src.subbin_ranges_i_ ),
-	subbin_cdf_iplus1_( src.subbin_cdf_iplus1_ ),
-	subbin_ranges_iplus1_( src.subbin_ranges_iplus1_ ),
-	bin_iplus1_cdf_given_i_( src.bin_iplus1_cdf_given_i_ ),
-	bin_i_cdf_given_iplus1_( src.bin_i_cdf_given_iplus1_ )
-{}
 
 /// @brief Default destructor for BinTransitionData
 ///

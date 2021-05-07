@@ -12,6 +12,7 @@
 /// @author Jared Adolf-Bryfogle (jadolfbr@gmail.com)
 
 #include <protocols/antibody/clusters/CDRCluster.hh>
+#include <core/pose/Pose.hh>
 #include <core/pose/PDBInfo.hh>
 #include <cmath>
 #include <numeric/NumericTraits.hh>
