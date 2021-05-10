@@ -24,6 +24,8 @@ imp.load_source(__name__, '/'.join(__file__.split('/')[:-1]) +  '/__init__.py') 
 
 _api_version_ = '1.0'  # api version
 
+_merge_size_failure_threshold_bytes_ = 1024 * 64
+
 
 def run_serialization_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
     jobs = config['cpu_count']
@@ -669,12 +671,59 @@ def run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hp
     return retval
 
 
+
+# from Rocco tools/coding_util/find_size_of_branch.py
+def pprint_size(size):
+    if size < 1024:
+        return str(size)+"B"
+    size //= 1024
+    if size < 1024:
+        return str(size)+"KiB"
+    size //= 1024
+    if size < 1024:
+        return str(size)+"MiB"
+    size //= 1024
+    return str(size)+"GiB"
+
+
+def run_merge_size_test(rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
+    merge_size_json_path = f'{working_dir}/find_size_of_branch.json'
+
+    add_on = \
+        ( f' --branch {config["merge_head"]}' if config["merge_head"] else '' ) + \
+        ( f' --ref {config["merge_base"]}' if config["merge_base"] else '' )
+
+    output = execute('Running...', f'{rosetta_dir}/tools/coding_util/find_size_of_branch.py --size 0 --verbose --diff --json {merge_size_json_path}{add_on}', return_='output')
+
+    with open(f'{working_dir}/find_size_of_branch.output', 'w') as f: f.write(output)
+
+    with open(merge_size_json_path) as f: merge_size = json.load(f)
+
+    total = merge_size['compressed_diff_size']
+
+    if total < _merge_size_failure_threshold_bytes_:
+        state = _S_passed_
+        prefix = f'Reported merge size: {pprint_size(total)}. This value is below {pprint_size(_merge_size_failure_threshold_bytes_)}, - test passed!'
+
+    elif total < _merge_size_failure_threshold_bytes_ * 16:
+        state = _S_failed_
+        prefix = f'Reported merge size: {pprint_size(total)}. This value is above threshold: {pprint_size(_merge_size_failure_threshold_bytes_)}, - test failed!'
+
+    else:
+        state = _S_script_failed_
+        prefix = f'Reported merge size: {pprint_size(total)}. This value is WAY ABOVE threshold: {pprint_size(_merge_size_failure_threshold_bytes_)}, - marking test as script-failed!'
+
+    return {_StateKey_ : state,  _ResultsKey_ : {},  _LogKey_ : prefix + '\n\n' + output }
+
+
+
 def run(test, rosetta_dir, working_dir, platform, config, hpc_driver=None, verbose=False, debug=False):
-    if   test == 'serialization':  return run_serialization_test (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'clang_analysis': return run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'clang_tidy':     return run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'cppcheck':       return run_cppcheck_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'beautification': return run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
-    elif test == 'beautify':       return run_beautify_test      (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    if   test == 'serialization':        return run_serialization_test (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'clang_analysis':       return run_clang_analysis_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'clang_tidy':           return run_clang_tidy_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'cppcheck':             return run_cppcheck_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautification':       return run_beautification_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'beautify':             return run_beautify_test      (rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     elif test == 'submodule_regression': return run_submodule_regression_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
+    elif test == 'merge_size':           return run_merge_size_test(rosetta_dir, working_dir, platform, config, hpc_driver=hpc_driver, verbose=verbose, debug=debug)
     else: raise BenchmarkError('Build script does not support TestSuite-like run!')

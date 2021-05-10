@@ -108,7 +108,8 @@ def setup_from_options(options):
 
     else: config['prefix'] = os.path.abspath( config['results_root'] + '/prefix')
 
-
+    config['merge_head'] = options.merge_head
+    config['merge_base'] = options.merge_base
 
     if options.skip_compile is not None: config['skip_compile'] = options.skip_compile
 
@@ -355,6 +356,9 @@ def main(args):
 
     parser.add_argument("--setup", default=None, help="Specify JSON file with setup information. When this option supplied all other config and commandline options is ignored and auto-detection disable. Test, platform info will be gathered from provided JSON file. This option is designed to be used in daemon mode." )
 
+    parser.add_argument("--merge-head", default='HEAD', help="Specify SHA1/branch-name that will be used for `merge-head` value when simulating PR testing" )
+
+    parser.add_argument("--merge-base", default='origin/master', help="Specify SHA1/branch-name that will be used for `merge-base` value when simulating PR testing" )
 
     parser.add_argument('args', nargs=argparse.REMAINDER)
 
