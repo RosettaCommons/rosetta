@@ -60,6 +60,7 @@ SET(LINK_STATIC_LIBS
     ${CMAKE_CURRENT_SOURCE_DIR}/libcppdb-static.a
     ${CMAKE_CURRENT_SOURCE_DIR}/libcifparse.a
     ${CMAKE_CURRENT_SOURCE_DIR}/liblibxml2.a
+    ${CMAKE_CURRENT_SOURCE_DIR}/librdkit.a
     -lz)
 
 # trailing static needed so mpicc actually uses static ompi libs
@@ -93,7 +94,7 @@ FOREACH(BINARY ${BINARIES})
 	TARGET_LINK_LIBRARIES(${BINARY_NAME} "${LINK_ALL_LIBS}" )
 	SET_TARGET_PROPERTIES(${BINARY_NAME} PROPERTIES COMPILE_FLAGS "${COMPILE_FLAGS}")
 	SET_TARGET_PROPERTIES(${BINARY_NAME} PROPERTIES LINK_FLAGS "${LINK_FLAGS}")
-	ADD_DEPENDENCIES(${BINARY_NAME} ObjexxFCL cifparse libxml2 utility numeric
+	ADD_DEPENDENCIES(${BINARY_NAME} rdkit ObjexxFCL cifparse libxml2 utility numeric
 		basic core.1 core.2 core.3 core.4 core.5 core.6 protocols.1 protocols_a.2
 		protocols_b.2 protocols.3 protocols.4 protocols_a.5 protocols_b.5 protocols_c.5
 		protocols_d.5 protocols_e.5 protocols_f.5 protocols_g.5 protocols_h.5
