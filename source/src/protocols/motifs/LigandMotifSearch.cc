@@ -558,9 +558,13 @@ LigandMotifSearch::incorporate_motifs(
 		core::Size motif_percent=0;
 		core::Size next_motif_percent = motif_percent_chunk;
 
-		core::Size  trip_atom_1;
-		core::Size  trip_atom_2;
-		core::Size  trip_atom_3;
+		// These variables were generating compiler warnings about being used uninitialized so I am seting them to zero here.
+		// The variable names get reused in a different scope in this same function further down.
+		// I am not exactally sure waht's going on. -Doug Renfrew 2021-05-12
+		core::Size  trip_atom_1(0);
+		core::Size  trip_atom_2(0);
+		core::Size  trip_atom_3(0);
+
 		// Map of all of the very best residues for each amino acid type, to make sure I don't add 2,000 Args and only 2 Tyrs
 		std::map< std::string, std::map< Real, MotifHitOP > > best_mhits_all;
 

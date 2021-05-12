@@ -98,7 +98,7 @@ BiasEnergy::Histogram<T>& BiasEnergy::Histogram<T>::operator=( Histogram<T> cons
 }
 
 template< typename T>
-BiasEnergy::Histogram<T>::~Histogram() {
+BiasEnergy::Histogram<T>::~Histogram<T>() {
 	delete [] data_;
 	delete [] recv_buf_;
 }
