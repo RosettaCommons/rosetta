@@ -89,7 +89,8 @@ NumberHBondsCalculator::NumberHBondsCalculator() :
 	atom_Hbonds_( /* NULL */ ),
 	residue_Hbonds_( /* NULL */ ),
 	ref_residue_total_energies_( /* NULL */ ),
-	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] )
+	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] ),
+	cumul_hbonds_( true )
 	//hbond_set_( /* NULL */ ),
 	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
@@ -103,7 +104,8 @@ NumberHBondsCalculator::NumberHBondsCalculator( bool const generous, std::set< c
 	atom_Hbonds_( /* NULL */ ),
 	residue_Hbonds_( /* NULL */ ),
 	ref_residue_total_energies_( /* NULL */ ),
-	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] )
+	max_hb_energy_( basic::options::option[ basic::options::OptionKeys::score::hb_max_energy ] ),
+	cumul_hbonds_( true )
 	//hbond_set_( /* NULL */ ),
 	//hb_database_( core::scoring::hbonds::HBondDatabase::get_database( choose_hbond_parameter_set() ) )
 {}
@@ -229,6 +231,9 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 
 			if ( residue_Hbonds_[i] == 0 ) {
 				atom_Hbonds_.set( atid, 0 );
+				for ( Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
+					atom_Hbonds_.set( core::id::AtomID(hcount, i ), 0 );
+				}
 				continue;
 			}
 
@@ -236,7 +241,7 @@ NumberHBondsCalculator::recompute( Pose const & this_pose )
 				core::Size hbonds_this_donor(0);
 				// count donated hbonds
 				for ( core::Size hcount = rsd.type().attached_H_begin( at ); hcount<= rsd.type().attached_H_end( at ); hcount++ ) {
-					hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
+					if ( cumul_hbonds_ ) hbonds_this_donor = hbonds_this_donor + hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size();
 					// sboyken added; want to store Hpol as +1 in atom map if makes an h-bond
 					//    the !use_generous_hbonds_ results in giving us all h-bonds, which we want for generous case
 					atom_Hbonds_.set( core::id::AtomID(hcount, i ), hb_set->atom_hbonds( core::id::AtomID (hcount, i ), !use_generous_hbonds_ /* include_only_allowed */ ).size() );
@@ -425,6 +430,7 @@ protocols::simple_pose_metric_calculators::NumberHBondsCalculator::save( Archive
 	arc( CEREAL_NVP( ref_residue_total_energies_ ) ); // utility::vector1<core::Real>
 	arc( CEREAL_NVP( special_region_ ) ); // std::set<core::Size>
 	arc( CEREAL_NVP( max_hb_energy_ ) ); // core::Real
+	arc( CEREAL_NVP( cumul_hbonds_ ) ); // bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -443,6 +449,7 @@ protocols::simple_pose_metric_calculators::NumberHBondsCalculator::load( Archive
 	arc( ref_residue_total_energies_ ); // utility::vector1<core::Real>
 	arc( special_region_ ); // std::set<core::Size>
 	arc( max_hb_energy_ ); // core::Real
+	arc( cumul_hbonds_ ); // bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::simple_pose_metric_calculators::NumberHBondsCalculator );

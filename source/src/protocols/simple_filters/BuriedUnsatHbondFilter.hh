@@ -97,6 +97,7 @@ public:
 	void set_report_sc_heavy_atom_unsats( bool report_sc_heavy_atom_unsats ){ report_sc_heavy_atom_unsats_ = report_sc_heavy_atom_unsats; };
 	void set_report_bb_heavy_atom_unsats( bool report_bb_heavy_atom_unsats ){ report_bb_heavy_atom_unsats_ = report_bb_heavy_atom_unsats; };
 	void set_report_nonheavy_unsats( bool report_nonheavy_unsats ){ report_nonheavy_unsats_ = report_nonheavy_unsats; };
+	void set_report_heavy_acceptors_and_hpols( bool report_heavy_acceptors_and_hpols ){ report_heavy_acceptors_and_hpols_ = report_heavy_acceptors_and_hpols; };
 	void set_atomic_depth_deeper_than( bool atomic_depth_deeper_than ) { atomic_depth_deeper_than_ = atomic_depth_deeper_than; };
 	void set_atomic_depth_poly_leu( bool atomic_depth_poly_leu ) { atomic_depth_poly_leu_ = atomic_depth_poly_leu; };
 
@@ -182,6 +183,7 @@ private:
 	bool report_sc_heavy_atom_unsats_;
 	bool report_bb_heavy_atom_unsats_;
 	bool report_nonheavy_unsats_;
+	bool report_heavy_acceptors_and_hpols_;
 	bool atomic_depth_deeper_than_;
 	bool atomic_depth_poly_leu_;
 	core::Real max_hbond_energy_;

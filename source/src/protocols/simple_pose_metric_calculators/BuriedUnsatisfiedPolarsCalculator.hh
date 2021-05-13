@@ -81,13 +81,16 @@ public:
 		bool const legacy,
 		bool const vsasa,
 		bool const use_sc_neighbors,
-		bool const skip_surface_res
+		bool const skip_surface_res,
+		bool const include_donors = true,
+		bool const include_acceptor_hs = false,
+		bool const cumul_hbonds = true
 	);
 
 
 	///@brief copy constructor implicit in clone call
 	core::pose::metrics::PoseMetricCalculatorOP clone() const override {
-		return utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >( name_of_sasa_calc_, name_of_hbond_calc_, special_region_, burial_cutoff_, probe_radius_, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, vsasa_, use_sc_neighbors_, skip_surface_res_ ); };
+		return utility::pointer::make_shared< BuriedUnsatisfiedPolarsCalculator >( *this ); };
 
 	std::string const & name_of_hbond_calc() const { return name_of_hbond_calc_; }
 	std::string const & name_of_sasa_calc() const { return name_of_sasa_calc_; }
@@ -144,6 +147,9 @@ private:
 	bool vsasa_;
 	bool use_sc_neighbors_;
 	bool skip_surface_res_;
+	bool include_donors_;
+	bool include_acceptor_hs_;
+	bool cumul_hbonds_;
 
 #ifdef    SERIALIZATION
 protected:

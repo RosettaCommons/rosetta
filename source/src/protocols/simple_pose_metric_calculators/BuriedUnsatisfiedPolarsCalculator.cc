@@ -124,7 +124,10 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
 	use_sc_neighbors_( false ),
-	skip_surface_res_( false )
+	skip_surface_res_( false ),
+	include_donors_( true ),
+	include_acceptor_hs_( false ),
+	cumul_hbonds_( true )
 {
 	if ( burial_cutoff < 0.0 ) {
 		burial_cutoff_ = ( vsasa_ ) ? basic::options::option[basic::options::OptionKeys::bunsat_calc2::sasa_burial_cutoff] : basic::options::option[basic::options::OptionKeys::pose_metrics::atomic_burial_cutoff];
@@ -163,7 +166,10 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
 	use_sc_neighbors_( false ),
-	skip_surface_res_( false )
+	skip_surface_res_( false ),
+	include_donors_( true ),
+	include_acceptor_hs_( false ),
+	cumul_hbonds_( true )
 {
 	set_special_region( special_region );
 	if ( burial_cutoff < 0.0 ) {
@@ -174,6 +180,7 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	residue_bur_unsat_polars_.clear();
 	assert_calculators();
 }
+
 
 BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	std::string const & sasa_calc,
@@ -187,12 +194,14 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	bool const legacy,
 	bool const vsasa,
 	bool const use_sc_neighbors,
-	bool const skip_surface_res
+	bool const skip_surface_res,
+	bool const include_donors,
+	bool const include_acceptor_hs,
+	bool const cumul_hbonds
 ) : all_bur_unsat_polars_(0),
 	bb_heavy_unsats_(0),
 	all_heavy_unsats_(0),
 	countable_nonheavy_unsats_(0),
-	//special_region_bur_unsat_polars_(0),
 	name_of_hbond_calc_( hbond_calc ),
 	name_of_sasa_calc_( sasa_calc ),
 	special_region_( special_region ),
@@ -205,7 +214,10 @@ BuriedUnsatisfiedPolarsCalculator::BuriedUnsatisfiedPolarsCalculator(
 	legacy_counting_( legacy ),
 	vsasa_( vsasa ),
 	use_sc_neighbors_( use_sc_neighbors ),
-	skip_surface_res_( skip_surface_res )
+	skip_surface_res_( skip_surface_res ),
+	include_donors_( include_donors ),
+	include_acceptor_hs_( include_acceptor_hs ),
+	cumul_hbonds_( cumul_hbonds )
 {
 	// params explicitly defined so no need to check
 	atom_bur_unsat_.clear();
@@ -225,6 +237,8 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 			name_of_hbond_calc_ += "_max_hb_" + boost::str(boost::format("%.3f")%max_hbond_energy_);
 		}
 
+		name_of_hbond_calc_ += "_cumul_hbonds_" + boost::str(boost::format("%i")%cumul_hbonds_);
+
 		if ( !CalculatorFactory::Instance().check_calculator_exists( name_of_hbond_calc_ ) ) {
 			utility::pointer::shared_ptr<NumberHBondsCalculator> calc = utility::pointer::make_shared<NumberHBondsCalculator>( generous_hbonds_ );
 
@@ -232,6 +246,7 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 				calc->set_max_hb_energy( max_hbond_energy_ );
 			}
 
+			if ( ! cumul_hbonds_ ) calc->set_cumul_hbonds( false );
 			CalculatorFactory::Instance().register_calculator( name_of_hbond_calc_, calc );
 		}
 	}
@@ -419,7 +434,7 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 							}
 						}
 
-						if ( h_unsat == h_count ) { // every Hpol attached to N donor is unsat, so heavy-atom N is unsat
+						if ( include_donors_ && h_unsat == h_count ) { // every Hpol attached to N donor is unsat, so heavy-atom N is unsat
 							this_atom_bur_unsat = true;
 							all_heavy_unsats_++;
 							all_bur_unsat_polars_++;
@@ -437,6 +452,18 @@ BuriedUnsatisfiedPolarsCalculator::recompute( Pose const & this_pose )
 							residue_bur_unsat_polars_[ resnum ]++;
 							if ( this_pose.residue( resnum ).atom_is_backbone( at ) ) {
 								bb_heavy_unsats_++;
+							}
+						}
+
+						if ( include_acceptor_hs_ ) {
+							for ( core::Size hatm = this_pose.residue(resnum).attached_H_begin(at); hatm <= this_pose.residue(resnum).attached_H_end(at); ++hatm ) {
+								core::id::AtomID const hatm_id( hatm, resnum);
+
+								if ( atom_hbonds.value().has( hatm_id ) && atom_hbonds.value()[ hatm_id ] == 0 ) {
+									countable_nonheavy_unsats_++;
+									all_bur_unsat_polars_++;
+									atom_bur_unsat_.set( hatm_id, true );
+								}
 							}
 						}
 					}
@@ -535,6 +562,9 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::sa
 	arc( CEREAL_NVP( vsasa_ ) ); // bool
 	arc( CEREAL_NVP( use_sc_neighbors_ ) ); // bool
 	arc( CEREAL_NVP( skip_surface_res_ ) ); // bool
+	arc( CEREAL_NVP( include_donors_ ) ); // bool
+	arc( CEREAL_NVP( include_acceptor_hs_) ); // bool
+	arc( CEREAL_NVP( cumul_hbonds_ ) ); // bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -561,6 +591,9 @@ protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator::lo
 	arc( vsasa_ ); // bool
 	arc( use_sc_neighbors_ ); // bool
 	arc( skip_surface_res_ ); // bool
+	arc( include_donors_ ); // bool
+	arc( include_acceptor_hs_ ); // bool
+	arc( cumul_hbonds_ ); // bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( protocols::simple_pose_metric_calculators::BuriedUnsatisfiedPolarsCalculator );

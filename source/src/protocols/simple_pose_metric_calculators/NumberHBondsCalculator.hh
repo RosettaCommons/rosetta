@@ -70,6 +70,7 @@ public:
 	utility::vector1< core::Size > get_residue_hbonds(){ return residue_Hbonds_; };
 	//core::scoring::hbonds::HBondSetCOP get_hbond_set() { return hbond_set_; };
 	void set_max_hb_energy( core::Real energy ) { max_hb_energy_ = energy; }
+	void set_cumul_hbonds( bool cumul_hbonds ) { cumul_hbonds_ = cumul_hbonds; }
 
 protected:
 
@@ -92,7 +93,6 @@ protected:
 	);
 
 private:
-
 	bool use_generous_hbonds_;
 	std::set< core::Size > special_region_;
 	core::Size all_Hbonds_;
@@ -101,6 +101,7 @@ private:
 	utility::vector1< core::Size > residue_Hbonds_;
 	utility::vector1< core::Real > ref_residue_total_energies_; //holds the calculated energies to prevent unnecessary recalculation
 	core::Real max_hb_energy_;
+	bool cumul_hbonds_;
 	//core::scoring::hbonds::HBondSetOP hbond_set_;
 	//core::scoring::hbonds::HBondDatabaseCOP hb_database_;
 

@@ -86,6 +86,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter() :
 	report_sc_heavy_atom_unsats_( false ),
 	report_bb_heavy_atom_unsats_( false ),
 	report_nonheavy_unsats_( false ),
+	report_heavy_acceptors_and_hpols_( false ),
 	atomic_depth_deeper_than_( true ),
 	atomic_depth_poly_leu_( true ),
 	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
@@ -144,6 +145,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( core::Size const upper_threshold
 	report_sc_heavy_atom_unsats_( false ),
 	report_bb_heavy_atom_unsats_( false ),
 	report_nonheavy_unsats_( false ),
+	report_heavy_acceptors_and_hpols_( false ),
 	atomic_depth_deeper_than_( true ),
 	atomic_depth_poly_leu_( true ),
 	max_hbond_energy_( basic::options::option[basic::options::OptionKeys::score::hb_max_energy] ),
@@ -194,6 +196,7 @@ BuriedUnsatHbondFilter::BuriedUnsatHbondFilter( BuriedUnsatHbondFilter const & r
 	report_sc_heavy_atom_unsats_( rval.report_sc_heavy_atom_unsats_ ),
 	report_bb_heavy_atom_unsats_( rval.report_bb_heavy_atom_unsats_ ),
 	report_nonheavy_unsats_( rval.report_nonheavy_unsats_ ),
+	report_heavy_acceptors_and_hpols_( rval.report_heavy_acceptors_and_hpols_ ),
 	atomic_depth_deeper_than_( rval.atomic_depth_deeper_than_ ),
 	atomic_depth_poly_leu_( rval.atomic_depth_poly_leu_ ),
 	max_hbond_energy_( rval.max_hbond_energy_ ),
@@ -300,12 +303,13 @@ BuriedUnsatHbondFilter::parse_my_tag(
 	report_sc_heavy_atom_unsats_ = tag->getOption<bool>( "report_sc_heavy_atom_unsats", false );
 	report_bb_heavy_atom_unsats_ = tag->getOption<bool>( "report_bb_heavy_atom_unsats", false );
 	report_nonheavy_unsats_ = tag->getOption<bool>( "report_nonheavy_unsats", false );
+	report_heavy_acceptors_and_hpols_ = tag->getOption<bool>( "report_heavy_acceptors_and_hpols", false );
 
-	if ( use_reporter_behavior_ && !report_all_heavy_atom_unsats_ && !report_sc_heavy_atom_unsats_ && !report_bb_heavy_atom_unsats_ && !report_nonheavy_unsats_ && !report_all_unsats_ ) {
+	if ( use_reporter_behavior_ && !report_all_heavy_atom_unsats_ && !report_sc_heavy_atom_unsats_ && !report_bb_heavy_atom_unsats_ && !report_nonheavy_unsats_ && !report_all_unsats_ && !report_heavy_acceptors_and_hpols_ ) {
 		buried_unsat_hbond_filter_tracer << " WARNING! use_reporter_behavior=true, need to set one behavior to true; will use default report_all_heavy_atom_unsats: " << std::endl;
 		report_all_heavy_atom_unsats_ = true;
 	}
-	if ( use_reporter_behavior_ && ( report_sc_heavy_atom_unsats_ || report_bb_heavy_atom_unsats_ || report_nonheavy_unsats_ || report_all_unsats_ ) ) {
+	if ( use_reporter_behavior_ && ( report_sc_heavy_atom_unsats_ || report_bb_heavy_atom_unsats_ || report_nonheavy_unsats_ || report_all_unsats_ || report_heavy_acceptors_and_hpols_ ) ) {
 		report_all_heavy_atom_unsats_ = false;
 	}
 
@@ -356,7 +360,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 	} else if ( use_hbnet_behavior_ ) {
 		buried_unsat_hbond_filter_tracer << "    USING HBNet BEHAVIOR: no heavy-atom donor/acc unsats allowed (will return 9999); if no heavy unsats, counts Hpol buried unsats" << std::endl;
 	} else if ( use_reporter_behavior_ ) {
-		if ( report_all_unsats_ || report_sc_heavy_atom_unsats_ ||  report_bb_heavy_atom_unsats_ || report_nonheavy_unsats_ ) {
+		if ( report_all_unsats_ || report_sc_heavy_atom_unsats_ ||  report_bb_heavy_atom_unsats_ || report_nonheavy_unsats_ || report_heavy_acceptors_and_hpols_ ) {
 			buried_unsat_hbond_filter_tracer << "    USER HAS SPECIFIED CUSTOM REPORTING BEHAVIOR FOR # UNSATS" << std::endl;
 		} else {
 			buried_unsat_hbond_filter_tracer << "    USING DEFAULT BEHAVIOR: filter will report total number of heavy-atom donor/acceptor buried unsats" << std::endl;
@@ -457,7 +461,7 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 	std::string name_of_hbond_calc = ( generous_hbonds_ ) ? "default" : "legacy";
 
-	BuriedUnsatisfiedPolarsCalculator calc_bound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_ );
+	BuriedUnsatisfiedPolarsCalculator calc_bound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, burial_cutoff_, probe_radius_, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_, !report_heavy_acceptors_and_hpols_, report_heavy_acceptors_and_hpols_, !report_heavy_acceptors_and_hpols_ );
 	basic::MetricValue< core::Size > mv_all_heavy, mv_bb_heavy, mv_countable_nonheavy, mv_all_unsat;
 	basic::MetricValue< core::id::AtomID_Map< bool > > mv_unsat_map;
 	basic::MetricValue< core::id::AtomID_Map< bool > > mv_unbound_unsat_map;
@@ -530,8 +534,8 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 
 		core::Real use_probe_radius_apo = probe_radius_apo_ >= 0 ? probe_radius_apo_ : probe_radius_;
 		core::Real use_burial_cutoff_apo = burial_cutoff_apo_ >= 0 ? burial_cutoff_apo_ : burial_cutoff_;
-		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, use_burial_cutoff_apo, use_probe_radius_apo, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, false );
 
+		BuriedUnsatisfiedPolarsCalculator calc_unbound( name_of_sasa_calc_, name_of_hbond_calc, atoms_to_calculate, use_burial_cutoff_apo, use_probe_radius_apo, residue_surface_cutoff_, max_hbond_energy_, generous_hbonds_, legacy_counting_, use_vsasa_, use_sc_neighbors_, ignore_surface_res_, !report_heavy_acceptors_and_hpols_, report_heavy_acceptors_and_hpols_, !report_heavy_acceptors_and_hpols_ );
 		calc_unbound.get("atom_bur_unsat", mv_unbound_unsat_map, unbound);
 
 
@@ -617,6 +621,9 @@ BuriedUnsatHbondFilter::compute( core::pose::Pose const & pose ) const {
 		}
 		if ( report_all_unsats_ ) {
 			return core::Real(all_unsats);
+		}
+		if ( report_heavy_acceptors_and_hpols_ ) {
+			return core::Real(all_heavy_atom_unsats) +  core::Real(countable_nonheavy_unsats);
 		}
 		// If all of the report options are false, return the default all_heavy_atom_unsat (as per documentation).
 		// This should never happen in rosetta_scripts, but might happen in PyRosetta/C++.
@@ -729,6 +736,7 @@ void BuriedUnsatHbondFilter::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		+ XMLSchemaAttribute::attribute_w_default( "report_sc_heavy_atom_unsats",xsct_rosetta_bool,"report side chain heavy atom unsats","false")
 		+ XMLSchemaAttribute::attribute_w_default( "report_bb_heavy_atom_unsats",xsct_rosetta_bool,"report back bone heavy atom unsats","false")
 		+ XMLSchemaAttribute::attribute_w_default( "report_nonheavy_unsats",xsct_rosetta_bool,"report non heavy atom unsats","false")
+		+ XMLSchemaAttribute::attribute_w_default( "report_heavy_acceptors_and_hpols",xsct_rosetta_bool,"report heavy atom acceptors and hpols","false")
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_deeper_than",xsct_rosetta_bool, "If true, only atoms deeper than atomic_depth_selection are included. If false, only atoms less deep than atomic_depth_selection are included.", "true" )
 		+ XMLSchemaAttribute::attribute_w_default( "atomic_depth_poly_leu",xsct_rosetta_bool, "Convert pose to poly-leu before calculating depth? Gives stable, sequence independent values that align with approximate_buried_unsat_penalty.", "true" )
 		+ XMLSchemaAttribute( "sym_dof_names" , xs_string , "For multicomponent symmetry: what jump(s) used for ddG-like separation. (From Dr. Bale: For multicomponent systems, one can simply pass the names of the sym_dofs that control the master jumps. For one component systems, jump can still be used.)  IF YOU DEFIN THIS OPTION, Will use ddG-style separation for the calulation; if you do not want this, pass a residue selector instead of defining symdofs." );
