@@ -34,5 +34,7 @@
 
 #include <protocols/drug_design/RDKitMetricCreator.hh>
 
+#include <protocols/filters/FilterValueMetricCreator.hh>
+
 #include <protocols/quantum_annealing/InteractionGraphSummaryMetricCreator.hh> //Added by VKM, 5 September 2018.
 

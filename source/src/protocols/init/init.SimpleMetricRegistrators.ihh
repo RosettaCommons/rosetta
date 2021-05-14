@@ -107,6 +107,8 @@ static SimpleMetricRegistrator< protocols::cyclic_peptide::PeptideInternalHbonds
 
 static SimpleMetricRegistrator< protocols::drug_design::RDKitMetricCreator > reg_RDKitMetricCreator;
 
+static SimpleMetricRegistrator< protocols::filters::FilterValueMetricCreator > reg_FilterValueMetricCreator;
+
 // Added by VKM, 5 Sept. 2018:
 static SimpleMetricRegistrator< protocols::quantum_annealing::InteractionGraphSummaryMetricCreator > reg_InteractionGraphSummaryMetricCreator;
 

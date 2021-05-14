@@ -90,7 +90,8 @@ FilterValueMetric::parse_my_tag(
 {
 	SimpleMetric::parse_base_tag( tag );
 
-	filter_ = protocols::rosetta_scripts::parse_filter( "filter", data );
+	std::string const filter_name = tag->getOption< std::string >( "filter" );
+	filter_ = protocols::rosetta_scripts::parse_filter( filter_name, data );
 }
 
 void

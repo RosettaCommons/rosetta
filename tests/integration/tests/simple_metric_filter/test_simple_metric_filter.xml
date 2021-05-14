@@ -28,6 +28,9 @@
 		<SimpleMetricFilter name="rmsd_filter" metric="rmsd" cutoff="0.5" comparison_type="lt" />
 
 	</FILTERS>
+	<SIMPLE_METRICS>
+		<FilterValueMetric name="rmsd_filter_metric" filter="rmsd_filter"/>
+	</SIMPLE_METRICS>
 	<PROTOCOLS>
 		<Add mover_name="min_mover" />
 		<Add filter_name="sasa_filter" />
@@ -35,5 +38,6 @@
 		<Add filter_name="composite_all" />
 		<Add filter_name="ss_filter" />
 		<Add filter_name="rmsd_filter" />
+		<Add metrics="rmsd_filter_metric" />
 	</PROTOCOLS>
 </ROSETTASCRIPTS>
