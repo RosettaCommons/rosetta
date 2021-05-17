@@ -107,10 +107,30 @@ DihedralConstraintGenerator::set_sd_degree(core::Real sd){
 }
 
 void
-DihedralConstraintGenerator::set_custom_dihedral( utility::vector1< core::id::AtomID > const & custom_torsion ){
+DihedralConstraintGenerator::set_custom_dihedral( utility::vector1< core::id::AtomID > const & custom_torsion ) {
 	assert( custom_torsion.size() == 4 );
-
 	custom_torsion_ = custom_torsion;
+}
+
+void
+DihedralConstraintGenerator::set_use_custom_dihedral_angle( bool const use_custom_dihedral_angle ) {
+	use_custom_dihedral_angle_ = use_custom_dihedral_angle;
+}
+
+bool
+DihedralConstraintGenerator::get_use_custom_dihedral_angle() const {
+	return use_custom_dihedral_angle_;
+}
+
+void
+DihedralConstraintGenerator::set_dihedral_angle( core::Real const dihedral_angle ) {
+	use_custom_dihedral_angle_ = true;
+	dihedral_angle_ = dihedral_angle;
+}
+
+core::Real
+DihedralConstraintGenerator::get_dihedral_angle() const {
+	return dihedral_angle_;
 }
 
 core::scoring::constraints::ConstraintCOPs
@@ -119,7 +139,7 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 
 	utility::vector1< ConstraintCOP > constraints;
 
-	core::Real sd_rad = numeric::conversions::radians( sd_ );
+	core::Real const sd_rad = numeric::conversions::radians( sd_ );
 	core::Real current_torsion_angle = 0;
 
 	utility::vector1< AtomID > local_custom_torsion = custom_torsion_;
@@ -131,15 +151,20 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 	if ( local_custom_torsion.size() != 0 ) {
 
 		TR << "Using a Custom Torsion" << std::endl;
-		numeric::xyzVector< core::Real>  atom1_xyz = pose.residue(local_custom_torsion[1].rsd()).xyz( local_custom_torsion[1].atomno());
-		numeric::xyzVector< core::Real>  atom2_xyz = pose.residue(local_custom_torsion[2].rsd()).xyz( local_custom_torsion[2].atomno());
-		numeric::xyzVector< core::Real>  atom3_xyz = pose.residue(local_custom_torsion[3].rsd()).xyz( local_custom_torsion[3].atomno());
-		numeric::xyzVector< core::Real>  atom4_xyz = pose.residue(local_custom_torsion[4].rsd()).xyz( local_custom_torsion[4].atomno());
+		numeric::xyzVector< core::Real> const atom1_xyz = pose.residue(local_custom_torsion[1].rsd()).xyz( local_custom_torsion[1].atomno());
+		numeric::xyzVector< core::Real> const atom2_xyz = pose.residue(local_custom_torsion[2].rsd()).xyz( local_custom_torsion[2].atomno());
+		numeric::xyzVector< core::Real> const atom3_xyz = pose.residue(local_custom_torsion[3].rsd()).xyz( local_custom_torsion[3].atomno());
+		numeric::xyzVector< core::Real> const atom4_xyz = pose.residue(local_custom_torsion[4].rsd()).xyz( local_custom_torsion[4].atomno());
 
 		current_torsion_angle = numeric::dihedral_degrees(atom1_xyz, atom2_xyz, atom3_xyz, atom4_xyz);
+		if ( use_custom_dihedral_angle_ ) {
+			TR.Warning << "Cannot use dihedral angle derivied parsed dihedral_atoms/dihedral_residues"
+				<< " in addition to setting dihedral_angle. Defaulting to use the parsed angles from"
+				<< " the user defined residues/atoms." << std::endl;
+		}
 
-		core::Real current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle);
-		CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc(current_torsion_angle_radians, sd_rad) );
+		core::Real const current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle );
+		CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc( current_torsion_angle_radians, sd_rad) );
 		DihedralConstraintOP cst( new DihedralConstraint(local_custom_torsion[1], local_custom_torsion[2], local_custom_torsion[3], local_custom_torsion[4], circ_func) );
 
 		constraints.push_back(cst);
@@ -154,10 +179,11 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 		if ( pose.residue_type( i ).is_carbohydrate() ) {
 			utility::vector1< AtomID > ref_atoms = core::conformation::carbohydrates::get_reference_atoms( torsion_, pose.conformation(), i);
 
-			current_torsion_angle = core::conformation::carbohydrates::get_glycosidic_torsion( torsion_, pose.conformation(), i );
+			if ( use_custom_dihedral_angle_ ) current_torsion_angle = dihedral_angle_;
+			else current_torsion_angle = core::conformation::carbohydrates::get_glycosidic_torsion( torsion_, pose.conformation(), i );
 
-			core::Real current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle);
-			CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc(current_torsion_angle_radians, sd_rad) );
+			core::Real const current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle );
+			CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc( current_torsion_angle_radians, sd_rad) );
 			DihedralConstraintOP cst( new DihedralConstraint(ref_atoms[1], ref_atoms[2], ref_atoms[3], ref_atoms[4], circ_func) );
 
 			constraints.push_back(cst);
@@ -169,11 +195,12 @@ DihedralConstraintGenerator::apply( core::pose::Pose const & pose) const
 			AtomID atm4;
 
 			TorsionID torsion_id = TorsionID(i, BB, core::Size( torsion_ ));
-			bool fail = pose.conformation().get_torsion_angle_atom_ids(torsion_id, atm1, atm2, atm3, atm4);
+			bool const fail = pose.conformation().get_torsion_angle_atom_ids(torsion_id, atm1, atm2, atm3, atm4);
 			if ( ! fail ) {
 				TR.Debug << "Applying dihedral constraints to residue " << i << std::endl;
 
-				current_torsion_angle = pose.conformation().torsion_angle(atm1, atm2, atm3, atm4);
+				if ( use_custom_dihedral_angle_ ) current_torsion_angle = numeric::conversions::radians( dihedral_angle_ );
+				else current_torsion_angle = pose.conformation().torsion_angle(atm1, atm2, atm3, atm4);
 
 				//core::Real current_torsion_angle_radians = numeric::conversions::radians( current_torsion_angle); Already in radians
 				CircularHarmonicFuncOP circ_func( new core::scoring::func::CircularHarmonicFunc(current_torsion_angle, sd_rad) );
@@ -198,27 +225,33 @@ DihedralConstraintGenerator::parse_tag( utility::tag::TagCOP tag, basic::datacac
 	}
 
 	if ( tag->hasOption( "dihedral_atoms") ) {
-		parsed_atoms_ = tag->getOption< std::string >( "dihedral_atoms ");
+		parsed_atoms_ = tag->getOption< std::string >( "dihedral_atoms");
 		parsed_custom_torsion_ = true;
 	}
-	if ( tag->hasOption(" dihedral_resnums") ) {
-		parsed_resnums_ = tag->getOption< std::string >( "dihedral_resnums ");
+	if ( tag->hasOption("dihedral_resnums") ) {
+		parsed_resnums_ = tag->getOption< std::string >( "dihedral_resnums");
 		parsed_custom_torsion_ = true;
+	}
+
+	if ( tag->hasOption("dihedral_angle") ) {
+		set_dihedral_angle( tag->getOption< core::Real >( "dihedral_angle") );
 	}
 
 	//Input error checking.
 	if ( parsed_custom_torsion_ ) {
 		if ( (parsed_atoms_ == "") || ( parsed_resnums_ == "") ) {
-			utility_exit_with_message(" If setting a custom dihedral angle, both dihedral_atoms and dihedral_resnums must be set!");
+			utility_exit_with_message(" If setting a custom dihedral angle from atoms/residues, both dihedral_atoms and dihedral_resnums must be set!");
 		} else if ( tag->hasOption("dihedral") ) {
-			utility_exit_with_message(" Custom dihedral angle with a set dihedral cannot be done.  Choose one or the other.");
+			utility_exit_with_message(" Custom dihedral angle from atoms/residues with a set dihedral cannot be done.  Choose one or the other.");
 		} else if ( tag->hasOption("residue_selector") ) {
-			utility_exit_with_message("Custom dihedral angle not currently compatible with a residue selector. ");
+			utility_exit_with_message("Custom dihedral angle from atoms/residues not currently compatible with a residue selector. ");
+		}
+		if ( tag->hasOption("dihedral_angle_") && ( (parsed_atoms_ == "") || ( parsed_resnums_ == "") ) ) {
+			utility_exit_with_message("Custom dihedral angle from atoms/residues cannot be used with defined dihedral_angle. ");
 		}
 	}
 
 	if ( tag->hasOption( "residue_selector") ) {
-
 		ResidueSelectorCOP selector = parse_residue_selector( tag, data );
 		if ( selector ) set_residue_selector( selector );
 	}
@@ -240,6 +273,7 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 
 	attlist + XMLSchemaAttribute("sd", xsct_real, "The standard deviation used for the CircularHarmonic Func.  Default is 16 degrees, THis which was found by taking the mean SD of all dihedral angles of either PHI or PSI for each North (Antibody) CDR Cluster (CDRs are the main antibody loops).  This is a fairly tight constraint and allows a bit of movement while not changing overall struture much.");
 
+	attlist + XMLSchemaAttribute("dihedral_angle", xs_string, "The desired dihedral angle - must be in degrees.");
 
 	attlist + XMLSchemaAttribute("dihedral_atoms", xs_string, "Comma-separated list of atom names.  FOUR atoms used for calculation of a custom dihedral.  Must also pass dihedral_residues.");
 
@@ -251,7 +285,8 @@ DihedralConstraintGenerator::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		"A cst generator that creates Dihedral constraints for specified residues using a residue selector.\n"
 		" Uses CircularHarmonic constraints, since CircularGaussian func does not exist. \n"
 		" By default, works on Protein and carbohydrate BackBone dihedrals (see dihedral option), however CUSTOM ARBITRARY DIHEDRALS can be set. \n"
-		"  See the dihedral_atoms and dihedral_residues tags to set a custom dihedral.\n\n"
+		"  See the dihedral_atoms and dihedral_residues tags to set a custom dihedral. Alternatively you can set any ARBITRARY DIHEDRAL\n"
+		" with the 'dihedral_angle' option (this option is in degrees). \n\n"
 		" Will only work on ONE type of dihedral angle to allow complete customization.";
 
 	protocols::rosetta_scripts::attributes_for_parse_residue_selector( attlist );
@@ -321,7 +356,7 @@ parse_torsion_type( std::string const & dih){
 	} else if ( local_dih == "omega" ) {
 		return omega_dihedral;
 	} else if ( local_dih == "omega2" ) {
-		return omega2_dihedral ;
+		return omega2_dihedral;
 	} else if ( local_dih == "omega3" ) {
 		return omega3_dihedral;
 	} else {

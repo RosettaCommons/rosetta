@@ -35,12 +35,14 @@
 
 // Core Headers
 #include <core/pose/Pose.hh>
+#include <core/conformation/Conformation.hh>
 #include <core/import_pose/import_pose.hh>
 #include <core/id/types.hh>
 
 // Utility, etc Headers
 #include <basic/Tracer.hh>
 #include <numeric/util.hh>
+#include <numeric/conversions.hh>
 
 
 static basic::Tracer TR("DihedralConstraintGeneratorTests");
@@ -170,6 +172,23 @@ public:
 		TS_ASSERT_DELTA(manual_single_cst[1]->score( pose_ ), parsed_cst[1]->score( pose_ ), .000001);
 
 
+		{  // various tests for custom angle
+			core::Real const random_number(322.);
+			TS_ASSERT_EQUALS(generator->get_use_custom_dihedral_angle(), false);
+			generator->set_dihedral_angle( random_number );
+			TS_ASSERT_DELTA(generator->get_dihedral_angle(), random_number, .000001);
+			TS_ASSERT_EQUALS(generator->get_use_custom_dihedral_angle(), true);
+		}
+		{
+			// core::Real const random_number(322.);
+			DihedralConstraintGeneratorOP generator2 = utility::pointer::make_shared< DihedralConstraintGenerator >();
+			generator2->set_torsion_type( core::id::phi_dihedral );
+			generator2->set_residue_selector( subset_selector );
+			core::Real const angle_deg(pose_.conformation().torsion_angle(C_0, N_1, CA_1, C_1));
+			generator2->set_dihedral_angle( numeric::conversions::degrees( angle_deg ) );
+			utility::vector1< ConstraintCOP > parsed_cst2( generator2->apply(pose_) );
+			TS_ASSERT_DELTA(parsed_cst2[1]->get_func().func(angle_deg), 0.0, 0.00001);
+		}
 
 
 	}

@@ -81,13 +81,28 @@ public:
 	set_custom_dihedral(utility::vector1< core::id::AtomID > const & ids );
 
 	///@brief Set the standard deviation for the dihedral constraint.  Default is 16.0.
-	/// THis which was found by taking the mean SD of all dihedral angles of either
-	/// PHI or PSI for each North CDR Cluster.  THis is a fairly tight constraint and allows a bit of movement while not changing overall struture much.
+	/// This which was found by taking the mean SD of all dihedral angles of either
+	/// PHI or PSI for each North CDR Cluster.  This is a fairly tight constraint and allows a bit of movement while not changing overall struture much.
 	///
 	///@details
 	/// Set this in Degrees.
 	void
 	set_sd_degree( core::Real sd_degree );
+
+	void
+	set_use_custom_dihedral_angle( bool use_custom_dihedral_angle );
+
+	bool
+	get_use_custom_dihedral_angle() const;
+
+	///@brief Set the desired dihedral angle in degrees.  This is not compatible if you use_custom_dihedral_angle
+	///  set_custom_dihedral.  If you do call this function in addition to setting a custom dihedral, no constraints
+	///  will be applied and an error will be returned.
+	void
+	set_dihedral_angle( core::Real dihedral_angle );
+
+	core::Real
+	get_dihedral_angle() const;
 
 protected:
 
@@ -98,12 +113,14 @@ private:
 
 	core::id::MainchainTorsionType torsion_;
 
-	core::Real sd_ = 16.0; //From SD of dihedrals within CDR Clusters.  THis is very conservative.
+	core::Real sd_ = 16.0; //  From SD of dihedrals within CDR Clusters.  This is very conservative.
+	core::Real dihedral_angle_ = 0.0;
 
 	core::select::residue_selector::ResidueSelectorCOP selector_ = nullptr;
 	std::string parsed_resnums_ = "";
 	std::string parsed_atoms_ = "";
 	bool parsed_custom_torsion_ = false;
+	bool use_custom_dihedral_angle_ = false;
 
 	utility::vector1< core::id::AtomID > custom_torsion_;
 
