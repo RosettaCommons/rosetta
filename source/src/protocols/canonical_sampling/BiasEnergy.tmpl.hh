@@ -97,11 +97,20 @@ BiasEnergy::Histogram<T>& BiasEnergy::Histogram<T>::operator=( Histogram<T> cons
 	return *this;
 }
 
+// Strict reading of the ISO C++ standard says the dtor name needs to match but Intel doesn't like the "<T>"
+#if defined(__ICC) || defined(__INTEL_COMPILER)
+template< typename T>
+BiasEnergy::Histogram<T>::~Histogram() {
+	delete [] data_;
+	delete [] recv_buf_;
+}
+#else
 template< typename T>
 BiasEnergy::Histogram<T>::~Histogram<T>() {
 	delete [] data_;
 	delete [] recv_buf_;
 }
+#endif
 
 #ifdef USEMPI
 
