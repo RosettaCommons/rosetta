@@ -101,6 +101,7 @@ public:
 		NMR_RDC_DATA, // a core::scoring::nmr::rdc::RDCData; stores residual dipolar coupling data of the paramagnetic NMR framework (implemented in 2016)
 		NMR_PRE_DATA, // a core::scoring::nmr::pre::PREData; stores paramagnetic relaxation enhancement data of the paramagnetic NMR framework (implemented in 2016)
 		EPR_DEER_DATA, // Used for storing experimental double electron-electron resonance (DEER) data
+		DEPC_MS_SASA_POSE_INFO, // Used for storing SASA of each residue
 
 
 		// Old, unused terms

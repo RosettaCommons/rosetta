@@ -90,6 +90,7 @@ sources = {
 		"CovalentLabelingFAEnergy",
 		"CustomAtomPairEnergy",
 		"D2H_SA_Energy",
+		"DEPC_MS_Energy",
 		"DirectReadoutEnergy",
 		"DistanceChainbreakEnergy",
 		"DNA_BaseEnergy",

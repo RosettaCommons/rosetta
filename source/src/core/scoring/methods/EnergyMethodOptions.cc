@@ -88,6 +88,7 @@ EnergyMethodOptions::EnergyMethodOptions( utility::options::OptionCollection con
 	covalent_labeling_input_( "" ),
 	covalent_labeling_fa_input_( "" ),
 	hrf_dynamics_input_( "" ),
+	depc_ms_input_( "" ),
 	exclude_protein_protein_fa_elec_(false), // rosetta++ defaulted to true!
 	exclude_RNA_RNA_fa_elec_(false),
 	exclude_RNA_protein_fa_elec_(false),
@@ -226,6 +227,7 @@ EnergyMethodOptions::operator = (EnergyMethodOptions const & src) {
 		covalent_labeling_input_ = src.covalent_labeling_input_;
 		covalent_labeling_fa_input_ = src.covalent_labeling_fa_input_;
 		hrf_dynamics_input_ = src.hrf_dynamics_input_;
+		depc_ms_input_ = src.depc_ms_input_;
 		exclude_protein_protein_fa_elec_ = src.exclude_protein_protein_fa_elec_;
 		exclude_RNA_RNA_fa_elec_ = src.exclude_RNA_RNA_fa_elec_;
 		exclude_RNA_protein_fa_elec_ = src.exclude_RNA_protein_fa_elec_;
@@ -356,6 +358,7 @@ void EnergyMethodOptions::initialize_from_options( utility::options::OptionColle
 	covalent_labeling_input_ = ( options[ basic::options::OptionKeys::score::covalent_labeling_input ].user() ? std::string(options[ basic::options::OptionKeys::score::covalent_labeling_input ]()) : std::string("") );
 	covalent_labeling_fa_input_ = ( options[ basic::options::OptionKeys::score::covalent_labeling_fa_input ].user() ? std::string(options[ basic::options::OptionKeys::score::covalent_labeling_fa_input ]()) : std::string("") );
 	hrf_dynamics_input_ = ( options[ basic::options::OptionKeys::score::hrf_dynamics_input ].user() ? std::string(options[ basic::options::OptionKeys::score::hrf_dynamics_input ]()) : std::string("") );
+	depc_ms_input_ = ( options [ basic::options::OptionKeys::score::depc_ms_input ].user() ? std::string(options[ basic::options::OptionKeys::score::depc_ms_input ]()) : std::string("") );
 	elec_max_dis_ = options[basic::options::OptionKeys::score::elec_max_dis ]();
 	elec_min_dis_ = options[basic::options::OptionKeys::score::elec_min_dis ]();
 	elec_die_ = options[ basic::options::OptionKeys::score::elec_die ]();
@@ -488,6 +491,7 @@ EnergyMethodOptions::list_options_read( utility::options::OptionKeyList & read_o
 		+ basic::options::OptionKeys::score::elec_group_file
 		+ basic::options::OptionKeys::score::covalent_labeling_input
 		+ basic::options::OptionKeys::score::covalent_labeling_fa_input
+		+ basic::options::OptionKeys::score::depc_ms_input
 		+ basic::options::OptionKeys::score::elec_max_dis
 		+ basic::options::OptionKeys::score::elec_min_dis
 		+ basic::options::OptionKeys::score::elec_r_option
@@ -644,6 +648,16 @@ EnergyMethodOptions::hrf_dynamics_input() const {
 void
 EnergyMethodOptions::hrf_dynamics_input( std::string const & setting ) {
 	hrf_dynamics_input_ = setting;
+}
+
+std::string
+EnergyMethodOptions::depc_ms_input() const {
+	return depc_ms_input_;
+}
+
+void
+EnergyMethodOptions::depc_ms_input( std::string const & setting ) {
+	depc_ms_input_ = setting;
 }
 
 bool
@@ -1793,6 +1807,7 @@ operator==( EnergyMethodOptions const & a, EnergyMethodOptions const & b ) {
 		( a.covalent_labeling_input_ == b.covalent_labeling_input_ ) &&
 		( a.covalent_labeling_fa_input_ == b.covalent_labeling_fa_input_ ) &&
 		( a.hrf_dynamics_input_ == b.hrf_dynamics_input_ ) &&
+		( a.depc_ms_input_ == b.depc_ms_input_ ) &&
 		( a.exclude_protein_protein_fa_elec_ == b.exclude_protein_protein_fa_elec_ ) &&
 		( a.exclude_RNA_RNA_fa_elec_ == b.exclude_RNA_RNA_fa_elec_ ) &&
 		( a.exclude_RNA_protein_fa_elec_ == b.exclude_RNA_protein_fa_elec_ ) &&
@@ -1946,6 +1961,7 @@ EnergyMethodOptions::show( std::ostream & out ) const {
 	out << "EnergyMethodOptions::show: covalent_labeling_input: " << covalent_labeling_input_ << std::endl;
 	out << "EnergyMethodOptions::show: covalent_labeling_fa_input: " << covalent_labeling_fa_input_ << std::endl;
 	out << "EnergyMethodOptions::show: hrf_dynamics_input: " << hrf_dynamics_input_ << std::endl;
+	out << "EnergyMethodOptions::show: depc_ms_input: " << depc_ms_input_ << std::endl;
 	out << "EnergyMethodOptions::show: exclude_protein_protein_fa_elec: "
 		<< (exclude_protein_protein_fa_elec_ ? "true" : "false") << std::endl;
 	out << "EnergyMethodOptions::show: exclude_RNA_RNA_fa_elec: "
@@ -2146,6 +2162,9 @@ EnergyMethodOptions::insert_score_function_method_options_rows(
 	option_keys.push_back("hrf_dynamics_input");
 	option_values.push_back(hrf_dynamics_input_);
 
+	option_keys.push_back("depc_ms_input");
+	option_values.push_back(depc_ms_input_);
+
 	option_keys.push_back("exclude_protein_protein_fa_elec");
 	option_values.push_back(exclude_protein_protein_fa_elec_ ? "1" : "0");
 
@@ -2308,6 +2327,7 @@ core::scoring::methods::EnergyMethodOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( covalent_labeling_input_ ) ); // std::string
 	arc( CEREAL_NVP( covalent_labeling_fa_input_ ) ); // std::string
 	arc( CEREAL_NVP( hrf_dynamics_input_ ) ); //std::string
+	arc( CEREAL_NVP( depc_ms_input_ ) ); // std::string
 	arc( CEREAL_NVP( exclude_protein_protein_fa_elec_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_RNA_RNA_fa_elec_ ) ); // _Bool
 	arc( CEREAL_NVP( exclude_RNA_protein_fa_elec_ ) ); // _Bool
@@ -2433,6 +2453,7 @@ core::scoring::methods::EnergyMethodOptions::load( Archive & arc ) {
 	arc( covalent_labeling_input_ ); // std::string
 	arc( covalent_labeling_fa_input_ ); // std::string
 	arc( hrf_dynamics_input_ ); //std::string
+	arc( depc_ms_input_ ); // std::string
 	arc( exclude_protein_protein_fa_elec_ ); // _Bool
 	arc( exclude_RNA_RNA_fa_elec_ ); // _Bool
 	arc( exclude_RNA_protein_fa_elec_ ); // _Bool

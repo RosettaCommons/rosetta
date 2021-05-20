@@ -268,6 +268,12 @@ public:
 	void
 	hrf_dynamics_input( std::string const & setting );
 
+	std::string
+	depc_ms_input() const;
+
+	void
+	depc_ms_input( std::string const & setting );
+
 	/// @brief The maximum (all atom) distance at which fa_elec is non-zero
 	core::Real
 	elec_max_dis() const;
@@ -1085,6 +1091,7 @@ private:
 	std::string covalent_labeling_input_;
 	std::string covalent_labeling_fa_input_;
 	std::string hrf_dynamics_input_;
+	std::string depc_ms_input_;
 	bool exclude_protein_protein_fa_elec_;
 	bool exclude_RNA_RNA_fa_elec_;
 	bool exclude_RNA_protein_fa_elec_;
