@@ -104,13 +104,13 @@ CoordinateConstraint::type() const {
 /// @details Invoke the copy constructor, which will perform a deep copy by cloning the func object
 ConstraintOP
 CoordinateConstraint::clone() const {
-	return ConstraintOP( new CoordinateConstraint( *this ) );
+	return ConstraintOP( utility::pointer::make_shared< CoordinateConstraint >( *this ) );
 }
 
 ConstraintOP
 CoordinateConstraint::clone( core::scoring::func::FuncOP newfunc ) const
 {
-	return ConstraintOP( new CoordinateConstraint( atom_, fixed_atom_, xyz_target_, newfunc, score_type() ));
+	return ConstraintOP( utility::pointer::make_shared< CoordinateConstraint >( atom_, fixed_atom_, xyz_target_, newfunc, score_type() ));
 }
 
 

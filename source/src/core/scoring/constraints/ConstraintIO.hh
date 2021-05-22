@@ -43,16 +43,20 @@ public:
 	friend class utility::SingletonBase< ConstraintIO >;
 
 public:
+
 	static ConstraintSetOP read_constraints(
 		std::string const & filename,
 		ConstraintSetOP cst_set,
 		pose::Pose const& pose,
-		bool const force_pdb_info_mapping = false );
+		bool const force_pdb_info_mapping = false
+	);
+
 	static ConstraintSetOP read_constraints(
 		std::istream & data,
 		ConstraintSetOP cst_set,
 		pose::Pose const& pose,
-		bool const force_pdb_info_mapping = false );
+		bool const force_pdb_info_mapping = false
+	);
 
 	static void write_constraints( std::ostream&, ConstraintSet const& cst_set, core::pose::Pose const& );
 	static void write_constraints( std::string const& filename, ConstraintSet const& cst_set, core::pose::Pose const& );

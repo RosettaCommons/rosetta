@@ -1,0 +1,39 @@
+core.init: command: ROSETTA/source/bin/rosetta_scripts.default.macosclangdebug -database ROSETTA/database -testing:INTEGRATION_TEST -info ConstraintsMetric
+basic.random.init_random_generator: Constant seed mode, seed=1111111 seed_offset=0 real_seed=1111111
+basic.random.init_random_generator: RandomGenerator:init: Normal mode, seed=1111111 RG_type=mt19937
+protocols.RosettaScripts.util: 
+The rosetta_scripts application was used with the -parser:info flag.
+Writing options for the indicated movers/filters/task operations/residue selectors/simple metrics/constraint generators/packer palettes:
+--------------------------------------------------------------------------------
+INFORMATION ABOUT SIMPLE METRIC "ConstraintsMetric":
+
+DESCRIPTION:
+
+A metric that summarizes all constraints in a pose or sub-region of a pose defined by a residue selector, and dumps the summary in a format matching the (non-enzdes) constraints file format.
+
+USAGE:
+
+<ConstraintsMetric custom_type=(string) residue_selector=(string) name=(string)>
+</ConstraintsMetric>
+
+OPTIONS:
+
+"ConstraintsMetric" tag:
+
+	custom_type (string):  Allows multiple configured SimpleMetrics of a single type to be called in a single RunSimpleMetrics and SimpleMetricFeatures. 
+ The custom_type name will be added to the data tag in the scorefile or features database.
+
+	residue_selector (string):  Selector specifying subset of pose.  Constraints that involve selected residues (including those that involve some residues that are not selected) will be written out.  If a residue selector is not provided, all constraints will be written out. The name of a previously declared residue selector or a logical expression of AND, NOT (!), OR, parentheses, and the names of previously declared residue selectors. Any capitalization of AND, NOT, and OR is accepted. An exclamation mark can be used instead of NOT. Boolean operators have their traditional priorities: NOT then AND then OR. For example, if selectors s1, s2, and s3 have been declared, you could write: 's1 or s2 and not s3' which would select a particular residue if that residue were selected by s1 or if it were selected by s2 but not by s3.
+
+	name (string):  The name given to this instance.
+
+
+
+References and author information for the ConstraintsMetric simple metric:
+
+ConstraintsMetric SimpleMetric's author(s):
+Vikram K. Mulligan, Systems Biology, Center for Computational Biology, Flatiron Institute <vmulligan@flatironinstitute.org>  (Wrote the ConstraintsMetric.)
+
+--------------------------------------------------------------------------------
+
+The rosetta_scripts application will now exit.

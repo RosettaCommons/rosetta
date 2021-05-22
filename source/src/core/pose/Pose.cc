@@ -1692,7 +1692,7 @@ PoseOP
 Pose::split_by_chain(Size const chain_id) const
 {
 
-	core::pose::PoseOP chain_pose( new Pose(*this) );
+	core::pose::PoseOP chain_pose( utility::pointer::make_shared< Pose >(*this) );
 	Size chain_begin, chain_end, delete_begin, delete_end;
 
 	chain_begin = chain_pose->conformation().chain_begin( chain_id );

@@ -30,7 +30,8 @@
 
 --namespace--
 
-///@brief --brief--
+/// @brief --brief--
+/// @author --name-- (--email--)
 class --class-- : public core::simple_metrics::StringMetric{
 
 public:
@@ -49,11 +50,10 @@ public:
 	/// Metric Methods ///
 	/////////////////////
 
-	///Defined in RealMetric:
-	///
+	// Defined in StringMetric; ordinarily, need not be overridden.
+	//
 	/// @brief Calculate the metric and add it to the pose as a score.
-	///           labeled as prefix+metric+suffix.
-	///
+	///           labelled as prefix+metric+suffix.
 	/// @details Score is added through setExtraScorePose and is output
 	///            into the score tables/file at pose output.
 	//void

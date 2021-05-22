@@ -8,8 +8,11 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief Assigns a ConstraintSet to a pose. Reads and creats ConstraintSet from file via command line option -constraints::cst_file, unless a ConstraintSet is supplied via the constructor or the constraint_set() method.
+/// @brief Assigns a ConstraintSet to a pose. Reads and creats ConstraintSet from file via command line option -constraints::cst_file,
+/// unless a ConstraintSet is supplied via the constructor or the constraint_set() method.
 /// @author ashworth
+/// @author Setters/getters added by Vikram K. Mulligan (vmulligan@flatironinstitute.org) to allow configuration
+/// from C++ or Python code.
 
 #ifndef INCLUDED_protocols_constraint_movers_ConstraintSetMover_hh
 #define INCLUDED_protocols_constraint_movers_ConstraintSetMover_hh
@@ -66,7 +69,18 @@ public:
 	void add_constraints( bool const a ){ add_constraints_ = a; }
 	bool add_constraints() const { return add_constraints_; }
 
+	/// @brief Set the (centroid) constraint file name.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_cst_file( std::string const & file_name );
+
+	/// @brief Set the (full-atom) constraint file name.
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	void set_cst_fa_file( std::string const & file_name );
+
+	/// @brief Set the constraint map file name.
 	void set_cst_map_file( std::string const & file_name );
+
+	/// @brief Set the constraint map file from previously loaded file contents in memory.
 	void set_cst_map_file_contents( std::string const & file_contents );
 
 	std::string

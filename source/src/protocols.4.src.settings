@@ -22,6 +22,7 @@ sources = {
 		"PolarGroupBurialPyMolStringMetric",
 	],
 	"protocols/analysis/simple_metrics": [
+		"ConstraintsMetric",
 		"RunSimpleMetricsMover",
 		"SequenceRecoveryMetric",
 	],

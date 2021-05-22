@@ -1,0 +1,23 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15_cst" weights="ref2015_cst.wts" />
+	</SCOREFXNS>
+	<RESIDUE_SELECTORS>
+		<Index name="select_first_ten" resnums="1-10" />
+	</RESIDUE_SELECTORS>
+	<SIMPLE_METRICS>
+		<ConstraintsMetric name="metric1" custom_type="FULL_" />
+		<ConstraintsMetric name="metric2" custom_type="PARTIAL_" residue_selector="select_first_ten" />
+	</SIMPLE_METRICS>
+	<MOVERS>
+		<AddConstraintsToCurrentConformationMover name="add_csts"
+			use_distance_cst="false" coord_dev="1.35" cst_weight="1.19"
+			CA_only="true"
+		/>
+	</MOVERS>
+	<PROTOCOLS>
+		<Add mover="add_csts" />
+		<Add metrics="%%whichmetric%%" />
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15_cst" />
+</ROSETTASCRIPTS>

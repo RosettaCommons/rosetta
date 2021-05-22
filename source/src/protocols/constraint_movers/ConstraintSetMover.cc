@@ -8,8 +8,11 @@
 // (c) addressed to University of Washington CoMotion, email: license@uw.edu.
 
 /// @file
-/// @brief Assigns a ConstraintSet to a pose. Reads and creats ConstraintSet from file via command line option -constraints::cst_file, unless a ConstraintSet is supplied via the constructor or the constraint_set() method.
+/// @brief Assigns a ConstraintSet to a pose. Reads and creats ConstraintSet from file via command line option
+/// -constraints::cst_file, unless a ConstraintSet is supplied via the constructor or the constraint_set() method.
 /// @author ashworth
+/// @author Setters/getters added by Vikram K. Mulligan (vmulligan@flatironinstitute.org) to allow configuration
+/// from C++ or Python code.
 
 #include <protocols/constraint_movers/ConstraintSetMover.hh>
 #include <protocols/constraint_movers/ConstraintSetMoverCreator.hh>
@@ -119,7 +122,7 @@ ConstraintSetMover::apply( Pose & pose )
 		}
 		if ( !constraint_set_high_res_ && pose.is_fullatom() ) {
 			// uninitialized filename not tolerated, in order to avoid potential confusion
-			if ( cst_file_.empty() ) {
+			if ( cst_fa_file_.empty() ) {
 				// We catch this error later if file_to_input_map_ is used
 				if ( file_to_input_map_.empty() ) utility_exit_with_message("Can\'t read constraints from empty file!");
 			} else if ( cst_fa_file_ == "none" ) constraint_set_high_res_ = utility::pointer::make_shared< ConstraintSet >();
@@ -177,7 +180,25 @@ ConstraintSetMover::apply( Pose & pose )
 	}
 }
 
+/// @brief Set the (centroid) constraint file name.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ConstraintSetMover::set_cst_file(
+	std::string const & file_name
+) {
+	cst_file_ = file_name;
+}
 
+/// @brief Set the (full-atom) constraint file name.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+void
+ConstraintSetMover::set_cst_fa_file(
+	std::string const & file_name
+) {
+	cst_fa_file_ = file_name;
+}
+
+/// @brief Set the constraint map file name.
 void ConstraintSetMover::set_cst_map_file( std::string const & file_name ) {
 	std::string contents;
 	utility::io::izstream in_file( file_name );
@@ -189,6 +210,7 @@ void ConstraintSetMover::set_cst_map_file( std::string const & file_name ) {
 	set_cst_map_file_contents( contents );
 }
 
+/// @brief Set the constraint map file from previously loaded file contents in memory.
 void ConstraintSetMover::set_cst_map_file_contents( std::string const & file_contents ) {
 
 	std::stringstream ss( file_contents );
@@ -239,8 +261,8 @@ ConstraintSetMover::parse_my_tag(
 	basic::datacache::DataMap & data
 )
 {
-	if ( tag->hasOption("cst_file") ) cst_file_ = tag->getOption<std::string>("cst_file");
-	if ( tag->hasOption("cst_fa_file") ) cst_fa_file_ = tag->getOption<std::string>("cst_fa_file");
+	if ( tag->hasOption("cst_file") ) set_cst_file( tag->getOption<std::string>("cst_file") );
+	if ( tag->hasOption("cst_fa_file") ) set_cst_fa_file( tag->getOption<std::string>("cst_fa_file") );
 	else cst_fa_file_=cst_file_;
 	add_constraints( tag->getOption< bool >( "add_constraints", false ) );
 	TR << "of type ConstraintSetMover with constraint file: " << cst_file_ << std::endl;

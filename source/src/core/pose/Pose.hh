@@ -2140,7 +2140,7 @@ Pose::set_const_data(
 	std::string const & name,
 	Pose const & original
 ) {
-	PoseOP pose_ptr( new Pose );
+	PoseOP pose_ptr( utility::pointer::make_shared< Pose >() );
 	pose_ptr->detached_copy( original );
 	store_const_data( category, name, pose_ptr );
 }
