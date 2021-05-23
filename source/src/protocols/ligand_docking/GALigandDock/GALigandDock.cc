@@ -406,8 +406,6 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 	bool finalbbscmin = (final_exact_minimize_.substr(0,4) == "bbsc");
 	bool finalscmin = (final_exact_minimize_.substr(0,2) == "sc");
 	//bool dualrelax = (finalbbscmin && final_exact_minimize_.length() > 8 && final_exact_minimize_.substr(5,9) == "dual");
-
-	utility::vector1< core::Real > dEs;
 	for ( core::Size i=1; i<=genes.size(); ++i ) {
 		core::pose::PoseOP pose_tmp( new core::pose::Pose );
 		genes[i].to_pose( pose_tmp );
@@ -491,14 +489,13 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		// report ligand-only energy
 		core::Real ligscore = calculate_free_ligand_score( *pose_tmp, gene_initial.ligand_ids() );
 		core::Real recscore = calculate_free_receptor_score( *pose_tmp, gene_initial.ligand_ids(), movable_scs, true );
-		core::Real dE( score - recscore - ligscore );
+
 		std::string ligandname = pose_tmp->residue(gene_initial.ligand_ids()[1]).name();
 		for ( core::Size ires=2; ires <= gene_initial.ligand_ids().size(); ++ires ) {
 			ligandname += "-"+pose_tmp->residue(gene_initial.ligand_ids()[ires]).name();
 		}
 		outputs.push( *pose_tmp, score, rms, ligscore, recscore, i, ligandname );
 
-		dEs.push_back( dE );
 	}
 
 	// lowest energy; use output class function instead of overrided one
@@ -510,16 +507,16 @@ GALigandDock::run_docking( LigandConformer const &gene_initial,
 		if ( runmode_ == "VSX" ) entropy_estimator.set_niter( 1000 );
 		core::Real TdS = entropy_estimator.apply( *pose ); //comes out in energy unit; sign is opposite
 
-		std::sort( dEs.begin(), dEs.end() ); // default comparator
-		core::Real mindE = dEs[1];
-
-		core::Real dG = mindE + TdS;
+		core::Real dH;
+		std::string ligandname;
+		core::pose::getPoseExtraScore( *pose, "dH", dH);
+		core::pose::getPoseExtraScore( *pose, "ligandname", ligandname);
+		core::Real dG = dH + TdS;
 
 		TR << "Estimated Binding Free Energy (arbitrary energy unit, just for relative ranking)" << std::endl;
-		TR << "dH: " << std::setw(6) << mindE << std::endl;
+		TR << "dH: " << std::setw(6) << dH << std::endl;
 		TR << "-T*dS: " << std::setw(6) << TdS << std::endl;
-		TR << "Ligand typename: "<< gene_initial.ligand_typename() << " dG (dH-T*dS): " << dG << std::endl;
-		core::pose::setPoseExtraScore( *pose, "dH", mindE );
+		TR << "Ligandname: "<< ligandname << " dG (dH-T*dS): " << dG << std::endl;
 		core::pose::setPoseExtraScore( *pose, "-TdS", TdS );
 		core::pose::setPoseExtraScore( *pose, "dG", dG );
 		//core::pose::setPoseExtraScore( *pose, "ligandname", pose->residue(lig_resno).name() );

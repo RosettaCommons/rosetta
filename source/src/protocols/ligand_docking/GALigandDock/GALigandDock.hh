@@ -117,6 +117,7 @@ public:
 		core::pose::setPoseExtraScore( *retval, "ligscore", ligscore );
 		core::pose::setPoseExtraScore( *retval, "recscore", recscore );
 		core::pose::setPoseExtraScore( *retval, "ranking_prerelax", ranking_prerelax );
+		core::pose::setPoseExtraScore( *retval, "dH", E-recscore-ligscore );
 
 		return retval;
 	}
