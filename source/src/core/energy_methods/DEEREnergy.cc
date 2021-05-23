@@ -250,8 +250,6 @@ DEEREnergy::setup_for_derivatives(
 	total_scores[ -1 ] = iter_over_labels( pose, -1 );
 	total_scores[  1 ] = iter_over_labels( pose,  1 );
 
-	TR << "Starting derivative calculation" << std::endl;
-
 	// Iterate over all data
 	for ( Size i = 1; i <= get_const_deer_data( pose )->size(); ++i ) {
 		auto const & residues = get_const_deer_data( pose )->at( i )->residues();
@@ -330,13 +328,13 @@ DEEREnergy::eval_atom_derivative(
 	}
 
 	// Add F1 force
-	if ( !get_const_deer_data( pose )->has_f1_force( id.rsd() ) ) {
+	if ( get_const_deer_data( pose )->has_f1_force( id.rsd() ) ) {
 		F1 += emap[ scoring::ScoreType::epr_deer_score ]
 			* get_const_deer_data( pose )->f1_force( id.rsd() );
 	}
 
 	// Add F2 force
-	if ( !get_const_deer_data( pose )->has_f2_force( id.rsd() ) ) {
+	if ( get_const_deer_data( pose )->has_f2_force( id.rsd() ) ) {
 		F2 += emap[ scoring::ScoreType::epr_deer_score ]
 			* get_const_deer_data( pose )->f2_force( id.rsd() );
 	}
