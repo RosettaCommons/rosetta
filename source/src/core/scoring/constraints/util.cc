@@ -235,7 +235,7 @@ std::string get_cst_fa_file_option(
 	utility::vector1< std::string> cst_files
 		= options[ OptionKeys::constraints::cst_fa_file ]();
 	core::Size choice=1;
-	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 2,cst_files.size() ) );
+	if ( cst_files.size() > 1 ) choice=core::Size( numeric::random::rg().random_range( 1,cst_files.size() ) );
 	tr.Info << "Constraint choice: " << cst_files[choice] << std::endl;
 	return cst_files[choice];
 }
