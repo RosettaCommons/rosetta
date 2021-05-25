@@ -361,9 +361,6 @@ EXAMPLES For Running Demos/Tutorials
     print("Python3: `" + globalparams.get("python3","") +"`")
     print("\n")
 
-    verify_python_version(globalparams.get("python2",""), 2)
-    verify_python_version(globalparams.get("python3",""), 3)
-
     #All tests are in a subdirectory.  We set these up here.
     test_subdir = "tests"
     demo_subdir = "public"
@@ -1040,9 +1037,17 @@ def generateIntegrationTestGlobalSubstitutionParameters():
         print("ERROR: Unrecognized Python version!")
         sys.exit(-1)
 
-    if python2 == "" or python3 == "":
-        print("ERROR: Unable to find Python executables")
-        sys.exit(-1)
+    if python2 == "":
+        print("ERROR: Unable to find Python2 executable -- some integration tests may fail on that basis alone.")
+        python2 = "PYTHON2_NOT_FOUND"
+    else:
+        verify_python_version(python2, 2)
+   
+    if python3 == "":
+        print("ERROR: Unable to find Python3 executable -- some integration tests may fail on that basis alone.")
+        python3 = "PYTHON3_NOT_FOUND"
+    else:
+        verify_python_version(python3, 3)
 
     minidir = Options.mini_home
     database = Options.database
