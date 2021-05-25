@@ -109,7 +109,9 @@ public:
 
 	utility::vector1<core::Real> const & get_potential_vect() const;
 
-	/// @brief initialize this SplineFunc from the given izstream.
+	/// @brief Initialize this SplineFunc from the given izstream.
+	/// @details Triggers read from disk UNLESS the first entry (filename) is "NONE" (upper or lower case or any mixture).
+	/// In that case, the spline is read from the rest of the line.
 	void read_data( std::istream &in ) override;
 
 	/// @brief Returns the value of this SplineFunc evaluated at distance x.

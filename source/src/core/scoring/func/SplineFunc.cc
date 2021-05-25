@@ -253,7 +253,9 @@ utility::vector1<core::Real> const & SplineFunc::get_potential_vect() const
 	return potential_vect_;
 }
 
-// Read in data (e.g., experimental distance), weight, and histogram filename.  Bind filename to stream.
+/// @brief Initialize this SplineFunc from the given izstream.
+/// @details Triggers read from disk UNLESS the first entry (filename) is "NONE" (upper or lower case or any mixture).
+/// In that case, the spline is read from the rest of the line.
 void SplineFunc::read_data( std::istream &in )
 {
 	// If constraints::epr_distance specified, read in histogram from database
@@ -264,8 +266,17 @@ void SplineFunc::read_data( std::istream &in )
 		// Else, read in potential specified in constraints file
 		in >> KB_description_ >> filename_ >> exp_val_ >> weight_ >> bin_size_;
 	}
+	numeric::interpolation::spline::SplineGenerator common_spline(
+		utility::upper(filename_) == "NONE" ?
+		//If filename is "NONE" (or any case variant), then read the spline from the rest of the line.
+		//The line must be: [Constraint setup] [Desc.] NONE [Exp. val.] [Weight] [Bin size] xaxis [x1] [x2] [x3] ... [xn] yaxis [y1] [y2] [y3] ... [yn]
+		//Optionally, it may include lb_function [cutoff] [slope] [intercept] or ub_function [cutoff] [slope] [intercept].
+		numeric::interpolation::spline_from_stream( in, bin_size_ )
+		:
+		//If filename is not "NONE" (or any case variant), then read the spline from a histogram on disk:
+		numeric::interpolation::spline_from_file( filename_, bin_size_ )
+	);
 
-	numeric::interpolation::spline::SplineGenerator common_spline(numeric::interpolation::spline_from_file(filename_,bin_size_));
 	interpolator_ = common_spline.get_interpolator();
 	lower_bound_x_ = common_spline.get_lbx();
 	//std::cout << "now in SplineFunc..." << std::endl;
@@ -376,9 +387,30 @@ core::Real SplineFunc::dfunc( core::Real const x) const
 /// @brief show the definition of this SplineFunc to the specified output stream.
 void SplineFunc::show_definition( std::ostream &out ) const
 {
-	out << "SPLINEFUNC:" << "\t" << "filename: " << filename_ << "\t" << "Description: " << KB_description_ << "\t"
-		<< "exp_val: " << exp_val_ << "\t" << "weight: " << weight_ << "\t" << "bin_size: " << bin_size_ << "\t"
-		<< "bins_vect: " << bins_vect_ << "\t" << "potential_vect: " << potential_vect_ << std::endl;
+	out << "SPLINE" << "\t" << KB_description_ << "\t" << "None" << "\t" << exp_val_ << "\t" << weight_ << "\t" << bin_size_;
+	out << "\tx_axis";
+	for ( core::Real const & entry : bins_vect_ ) {
+		out << "\t" << entry;
+	}
+	out << "\ty_axis";
+	for ( core::Real const & entry : potential_vect_ ) {
+		out << "\t" << entry;
+	}
+
+	if ( interpolator_ != nullptr ) {
+		if ( interpolator_->has_lb_function() ) {
+			out << "\t" << "lb_function" << "\t" << interpolator_->get_lb_function_cutoff();
+			out << "\t" << interpolator_->get_lb_function_slope();
+			out << "\t" << interpolator_->get_lb_function_intercept();
+		}
+		if ( interpolator_->has_ub_function() ) {
+			out << "\t" << "ub_function" << "\t" << interpolator_->get_ub_function_cutoff();
+			out << "\t" << interpolator_->get_ub_function_slope();
+			out << "\t" << interpolator_->get_ub_function_intercept();
+		}
+	}
+
+	out << std::endl;
 }
 
 /// @brief show some sort of stringified representation of the violations for this constraint.

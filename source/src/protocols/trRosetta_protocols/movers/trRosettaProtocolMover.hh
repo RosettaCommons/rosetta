@@ -180,6 +180,12 @@ public: //Setters
 	/// @note Read from disk of MSA file is deferred to apply time.
 	void set_msa_file( std::string const & filename );
 
+	/// @brief Set a filename to which trRosetta constraints will be written.  If this is set to "", then
+	/// constraints are not written.  If only_write_constraints is set to true, the prediction phase is skipped.
+	/// @details Triggers disk write!  Not for production runs!  If only_write_constraints is true and filename is
+	/// empty, an error is thrown.
+	void set_write_constraints_to_file( std::string const & filename, bool const only_write_constraints=false );
+
 	/// @brief Set whether we are using the constraint generator to set
 	/// distance constraints.
 	void set_use_distance_constraints( bool const setting );
@@ -268,6 +274,14 @@ public: //Getters
 
 	/// @brief Get the multiple sequence alignment filename.
 	inline std::string const & msa_file() const { return msa_file_; }
+
+	/// @brief Get the filename to which we are writing constraints.
+	/// @details Empty if no writes.
+	inline std::string const & write_constraints_to_file() const { return write_constraints_to_file_; }
+
+	/// @brief Get whether we are skipping the prediction phase in favour of ONLY writing
+	/// trRosetta constraints to disk.
+	inline bool only_write_constraints() const { return only_write_constraints_; }
 
 	/// @brief Get whether we are using the constraint generator to set
 	/// distance constraints.
@@ -395,6 +409,14 @@ private: // methods
 		core::Size const min_seqsep,
 		core::Size const max_seqsep,
 		bool const skip_glycine_positions = false
+	) const;
+
+	/// @brief Write all constraints to the file specified by
+	/// write_constraints_to_file().  Throws if this is empty.
+	void
+	write_trRosetta_constraints_to_disk(
+		core::pose::Pose const & pose,
+		utility::vector1< core::scoring::constraints::ConstraintCOP > const & csts
 	) const;
 
 	/// @brief Given a constraint, determine if it is an AtomPairConstraint, an
@@ -594,6 +616,14 @@ private: // data
 
 	/// @brief Filename for the multiple sequence alignment file.
 	std::string msa_file_;
+
+	/// @brief File for dumping trRosetta constraints to disk.  Default empty string (not used).
+	std::string write_constraints_to_file_;
+
+	/// @brief If write_constraints_to_file_ is not empty, should we skip the prediction phase and ONLY
+	/// write constraints to disk?  Default false.  Results in error if write_constraints_to_file_ is not
+	/// set.
+	bool only_write_constraints_ = false;
 
 	/// @brief A constraint generator for adding trRosetta constraints to the pose.
 	mutable protocols::trRosetta_protocols::constraint_generators::trRosettaConstraintGeneratorOP constraint_generator_;

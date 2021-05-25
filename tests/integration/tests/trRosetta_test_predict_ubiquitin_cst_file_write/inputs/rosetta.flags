@@ -1,0 +1,12 @@
+-trRosetta:write_constraints_to_file output.cst
+-trRosetta:msa_file inputs/1r6j_msa.a3m
+-trRosetta:mutate_gly_to_ala false
+-trRosetta::backbone_randomization_mode ramachandran
+-in:file:native inputs/1r6j.pdb
+-in:file:fasta inputs/1r6j.fasta
+-trRosetta:distance_constraint_weight 0.1
+-trRosetta:omega_constraint_weight 0.1
+-trRosetta:theta_constraint_weight 0.1
+-trRosetta:phi_constraint_weight 0.1
+-mute all
+-unmute apps basic.citation_manager protocols.relax protocols.trRosetta protocols.trRosetta_protocols basic.tensorflow_manager core.simple_metrics

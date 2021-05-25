@@ -21,6 +21,7 @@
 #include <tuple>
 
 #include <boost/algorithm/string/trim.hpp>                  // for trim
+#include <utility/vector1.hh>
 
 
 namespace numeric {
@@ -31,7 +32,7 @@ namespace interpolation {
 spline::SplineGenerator make_spline(
 	utility::vector1<platform::Real> const & bins_vect,
 	utility::vector1<platform::Real> const & potential_vect,
-	platform::Real const & bin_size,
+	platform::Real const bin_size,
 	utility::vector1<std::tuple<std::string, platform::Real, platform::Real, platform::Real>> const & boundary_functions
 ) {
 
@@ -78,7 +79,7 @@ spline::SplineGenerator make_spline(
 ///The first field of one line should be "x_axis", the next fields should be the x values of the points for the spline
 ///The first field of the other line should be "y_axis", the next fields should be the y values for the points on the spline
 ///For an example, see "scoring/constraints/epr_distance_potential.histogram"
-spline::SplineGenerator spline_from_file(std::string const &  filename, platform::Real const & bin_size)
+spline::SplineGenerator spline_from_file(std::string const &  filename, platform::Real const bin_size)
 {
 	utility::io::izstream potential_file;
 	potential_file.open(filename.c_str());
@@ -123,6 +124,81 @@ spline::SplineGenerator spline_from_file(std::string const &  filename, platform
 	}
 
 	return make_spline(bins_vect, potential_vect, bin_size, boundary_functions);
+}
+
+/// @brief A little helper enum to determine what I'm reading
+/// right now in the spline_from_stream() function.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+enum class SplineFromStreamMode {
+	none = 0,
+	x_axis,
+	y_axis,
+	lb_or_ub_function
+};
+
+/// @brief Initialize a SplineGenerator from a std::istream.  Note: only reads from the currenet line of the istream.
+/// @details Assumes that the stream contains only the following:
+/// "x_axis" followed by N values -- mandatory.
+/// "y_axis" followed by N values -- mandatory.  N must match "xaxis".
+/// "lb_function" [cutoff] [slope] [intercept] -- optional.
+/// "ub_function" [cutoff] [slope] [intercept] -- optional.
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+spline::SplineGenerator
+spline_from_stream(
+	std::istream & iss,
+	platform::Real const bin_size
+) {
+	std::string curline;
+	std::getline( iss, curline );
+	iss.unget(); //Go back one character, to before the carriage return.
+	std::istringstream ss( curline );
+
+	std::string const errmsg( "Could not parse spline definition \"" + curline + "\"." );
+	SplineFromStreamMode mode = SplineFromStreamMode::none;
+	utility::vector1<platform::Real > xpoints, ypoints;
+	utility::vector1<std::tuple<std::string, platform::Real, platform::Real, platform::Real>> boundary_functions;
+
+	do {
+		std::string buffer;
+		ss >> buffer;
+		if ( buffer == "x_axis" ) {
+			mode = SplineFromStreamMode::x_axis;
+			continue;
+		} else if ( buffer == "y_axis" ) {
+			mode = SplineFromStreamMode::y_axis;
+			continue;
+		} else if ( buffer == "lb_function" || buffer == "ub_function" ) {
+			mode = SplineFromStreamMode::lb_or_ub_function;
+			platform::Real cutoff, slope, intercept;
+			ss >> cutoff;
+			runtime_assert_string_msg( !(ss.bad() || ss.fail() || ss.eof()), errmsg + "  Failed when trying to get cutoff for " + buffer + "." );
+			ss >> slope;
+			runtime_assert_string_msg( !(ss.bad() || ss.fail() || ss.eof()), errmsg + "  Failed when trying to get slope for " + buffer + "." );
+			ss >> intercept;
+			runtime_assert_string_msg( !(ss.bad() || ss.fail()), errmsg + "  Failed when trying to get intercept for " + buffer + "." );
+			boundary_functions.push_back( std::make_tuple( buffer, cutoff, slope, intercept ) );
+			mode = SplineFromStreamMode::none;
+			continue;
+		}
+		//Parse entries in x- or y-axis lines.
+		runtime_assert_string_msg( mode == SplineFromStreamMode::x_axis || mode == SplineFromStreamMode::y_axis, errmsg + "  Unrecognized entry \"" + buffer + "\"." );
+		std::istringstream ssentry( buffer );
+		platform::Real val;
+		ssentry >> val;
+		runtime_assert_string_msg( !(ssentry.bad() || ssentry.fail()), errmsg + "  Could not parse \"" + buffer + "\" as a floating-point number." );
+		if ( mode == SplineFromStreamMode::x_axis ) {
+			xpoints.push_back(val);
+		} else {
+			debug_assert( mode == SplineFromStreamMode::y_axis ); //Should be guaranteed true.
+			ypoints.push_back(val);
+		}
+	} while( !ss.eof() );
+
+	runtime_assert_string_msg( xpoints.size() > 0, errmsg + "  No x_axis values were found." );
+	runtime_assert_string_msg( ypoints.size() > 0, errmsg + "  No y_axis values were found." );
+	runtime_assert_string_msg( xpoints.size() == ypoints.size(), errmsg + "  Mismatch in number of x_axis and y_axis values." );
+
+	return make_spline(xpoints, ypoints, bin_size, boundary_functions);
 }
 
 }

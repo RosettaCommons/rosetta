@@ -69,14 +69,44 @@ bool Interpolator::has_ub_function() const
 	return has_ub_function_;
 }
 
-Real Interpolator::get_lb_function_cutoff() const
+numeric::Real
+Interpolator::get_lb_function_cutoff() const
 {
 	return lb_cutoff_;
 }
 
-Real Interpolator::get_ub_function_cutoff() const
+numeric::Real
+Interpolator::get_ub_function_cutoff() const
 {
 	return ub_cutoff_;
+}
+
+/// @brief get the lower bound slope
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+numeric::Real
+Interpolator::get_lb_function_slope() const {
+	return lb_slope_;
+}
+
+/// @brief get the upper bound slope
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+numeric::Real
+Interpolator::get_ub_function_slope() const {
+	return ub_slope_;
+}
+
+/// @brief get the lower bound intercept
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+numeric::Real
+Interpolator::get_lb_function_intercept() const {
+	return lb_intercept_;
+}
+
+/// @brief get the upper bound intercept
+/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+numeric::Real
+Interpolator::get_ub_function_intercept() const {
+	return ub_intercept_;
 }
 
 void Interpolator::compute_lb_function_solution(Real x, Real & y) const

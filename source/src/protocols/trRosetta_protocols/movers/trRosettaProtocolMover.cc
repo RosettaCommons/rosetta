@@ -64,6 +64,7 @@
 #include <basic/tensorflow_manager/util.hh>
 #include <utility/tag/Tag.hh>
 #include <utility/pointer/memory.hh>
+#include <utility/io/ozstream.hh>
 
 // Numeric headers
 #include <numeric/random/random.hh>
@@ -142,6 +143,9 @@ trRosettaProtocolMover::register_options( bool const only_constraint_generator_o
 	option.add_relevant( basic::options::OptionKeys::trRosetta::phi_constraint_weight );
 
 	if ( !only_constraint_generator_options ) {
+		option.add_relevant( basic::options::OptionKeys::trRosetta::write_constraints_to_file );
+		option.add_relevant( basic::options::OptionKeys::trRosetta::only_write_constraints );
+
 		option.add_relevant( basic::options::OptionKeys::trRosetta::backbone_randomization_mode );
 		option.add_relevant( basic::options::OptionKeys::trRosetta::backbone_minimization_mode );
 
@@ -257,6 +261,12 @@ trRosettaProtocolMover::apply(
 		"at the commandline with the -trRosetta:msa_file option, from XML with the msa_file option, "
 		"or from C++ or Python code with the trRosettaProtocolMover::set_msa_file() method."
 	);
+	if( only_write_constraints() ) {
+		runtime_assert_string_msg(
+			!write_constraints_to_file().empty(),
+			errmsg + "The only_write_constraints option was used, but the filename to write to is not specified!"
+		);
+	}
 
 	//Get the sequence:
 	if ( sequence().empty() ) {
@@ -306,48 +316,57 @@ trRosettaProtocolMover::apply(
 		generate_trRosetta_constraints( pose )
 	);
 
-	// Do the actual minimization protocol:
-	TR << "Performing centroid-mode backbone optimization protocol \"" << get_backbone_minimization_mode_name() << "\"." << std::endl;
-	switch( backbone_minimization_mode_ ) {
-	case trRosettaProtocolBackboneMinimizationMode::classic0 :
-		perform_classic0_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
-		break;
-	case trRosettaProtocolBackboneMinimizationMode::classic1 :
-		perform_classic1_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
-		break;
-	case trRosettaProtocolBackboneMinimizationMode::classic2 :
-		perform_classic2_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
-		break;
-	default :
-		utility_exit_with_message(errmsg + "Unknown minimization mode specified!");
-	};
-
-	store_constraints_score(pose, "after_centroid_phase");
-	store_rmsd( pose, get_native_pose(), "after_centroid_phase" );
-
-	if ( mutate_gly_to_ala() ) {
-		remove_trRosetta_constraints(trRosetta_constraints, pose);
-		do_mutate_ala_to_gly( glycine_selector, pose );
-	}
-	(*sfxn1_)(pose);
-
-	timing_metric_centroid.apply( "time_for_centroid_phase_in_minutes", pose );
-
-	if ( fullatom_refinement() ) {
-		core::simple_metrics::metrics::TimingProfileMetric timing_metric_fullatom;
-		TR << "Carrying out fullatom refinement." << std::endl;
-		convert_to_fullatom(pose);
-		trRosetta_constraints = generate_trRosetta_constraints( pose, 0.1 );
-		add_constraints_to_pose( pose, trRosetta_constraints, 1, pose.total_residue() );
-		do_fullatom_refinement(pose);
-		store_constraints_score(pose, "after_fullatom_refinement");
-		store_rmsd( pose, get_native_pose(), "after_fullatom_refinement" );
-		remove_trRosetta_constraints( trRosetta_constraints, pose );
-		(*sfxn_fullatom_)(pose);
-		timing_metric_fullatom.apply( "time_for_fullatom_phase_in_minutes", pose );
+	// If we're dumping the constraints, do it here:
+	if( !write_constraints_to_file().empty() ) {
+		write_trRosetta_constraints_to_disk( pose, trRosetta_constraints );
 	}
 
-	TR << "Completed trRosetta structure prediction protocol." << std::endl;
+	if( !only_write_constraints() ) {
+		// Do the actual minimization protocol:
+		TR << "Performing centroid-mode backbone optimization protocol \"" << get_backbone_minimization_mode_name() << "\"." << std::endl;
+		switch( backbone_minimization_mode_ ) {
+		case trRosettaProtocolBackboneMinimizationMode::classic0 :
+			perform_classic0_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
+			break;
+		case trRosettaProtocolBackboneMinimizationMode::classic1 :
+			perform_classic1_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
+			break;
+		case trRosettaProtocolBackboneMinimizationMode::classic2 :
+			perform_classic2_minimization_protocol( pose, trRosetta_constraints, repeat_minmover0, minmover1, minmover3 );
+			break;
+		default :
+			utility_exit_with_message(errmsg + "Unknown minimization mode specified!");
+		};
+
+		store_constraints_score(pose, "after_centroid_phase");
+		store_rmsd( pose, get_native_pose(), "after_centroid_phase" );
+
+		if ( mutate_gly_to_ala() ) {
+			remove_trRosetta_constraints(trRosetta_constraints, pose);
+			do_mutate_ala_to_gly( glycine_selector, pose );
+		}
+		(*sfxn1_)(pose);
+
+		timing_metric_centroid.apply( "time_for_centroid_phase_in_minutes", pose );
+
+		if ( fullatom_refinement() ) {
+			core::simple_metrics::metrics::TimingProfileMetric timing_metric_fullatom;
+			TR << "Carrying out fullatom refinement." << std::endl;
+			convert_to_fullatom(pose);
+			trRosetta_constraints = generate_trRosetta_constraints( pose, 0.1 );
+			add_constraints_to_pose( pose, trRosetta_constraints, 1, pose.total_residue() );
+			do_fullatom_refinement(pose);
+			store_constraints_score(pose, "after_fullatom_refinement");
+			store_rmsd( pose, get_native_pose(), "after_fullatom_refinement" );
+			remove_trRosetta_constraints( trRosetta_constraints, pose );
+			(*sfxn_fullatom_)(pose);
+			timing_metric_fullatom.apply( "time_for_fullatom_phase_in_minutes", pose );
+		}
+
+		TR << "Completed trRosetta structure prediction protocol." << std::endl;
+	} else  {
+		TR << "Completed trRosetta constraint generation and disk write to " << write_constraints_to_file() << "." << std::endl;
+	}
 	TR.flush();
 #else // !USE_TENSORFLOW
 	utility_exit_with_message(
@@ -391,6 +410,10 @@ trRosettaProtocolMover::parse_my_tag(
 	set_fasta_file( tag->getOption<std::string>("fasta_file", fasta_file()) );
 	set_sequence( tag->getOption<std::string>("sequence", sequence()) );
 	set_msa_file( tag->getOption<std::string>("msa_file", msa_file()) );
+	set_write_constraints_to_file(
+		tag->getOption< std::string >("write_constraints_to_file", ""),
+		tag->getOption< bool >("only_write_constraints", false)
+	);
 	set_use_distance_constraints( tag->getOption<bool>("use_distance_constraints", use_distance_constraints()));
 	set_use_omega_constraints( tag->getOption<bool>("use_omega_constraints", use_omega_constraints()));
 	set_use_theta_constraints( tag->getOption<bool>("use_theta_constraints", use_theta_constraints()));
@@ -456,6 +479,22 @@ void trRosettaProtocolMover::provide_xml_schema( utility::tag::XMLSchemaDefiniti
 		"Dashes indicate gap sequences, and lowercase characters will be removed "
 		"(and flanking regions ligated).  If not provided, the commandline option "
 		"-trRosetta:msa_file will be used.  One or the other is required.", "" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "write_constraints_to_file", xs_string,
+		"A file to which trRosetta constraints will be written.  Ordinarily, these are "
+		"not written to disk, but this option permits this.  Note that this triggers "
+		"direct disk writes by this mover.  This can be dangerous in a multi-process "
+		"or multi-threaded context, or in a large production environment.  Not intended "
+		"for nstruct greater than 1.  If the filename is left as an empty string, no disk "
+		"write occurs.  Empty by default, unless set otherwise in command-line options.",
+		"" )
+
+		+ XMLSchemaAttribute::attribute_w_default( "only_write_constraints", xsct_rosetta_bool,
+		"If set to true, this mover ONLY generates trRosetta constraints and writes them to disk. "
+		"That is, this option allows the actual structure prediction steps to be skipped. "
+		"If used, the 'write_constraints_to_file' option must be set.  False by default, unless set "
+		"otherwise in command-line options.",
+		"false" )
 
 		+ XMLSchemaAttribute::attribute_w_default( "use_distance_constraints", xsct_rosetta_bool,
 		"Set whether inter-residue distance constraints generated by the trRosetta neural "
@@ -672,6 +711,22 @@ trRosettaProtocolMover::set_msa_file(
 ) {
 	msa_file_ = filename;
 	constraint_generator_ = nullptr;
+}
+
+/// @brief Set a filename to which trRosetta constraints will be written.  If this is set to "", then
+/// constraints are not written.  If only_write_constraints is set to true, the prediction phase is skipped.
+/// @details Triggers disk write!  Not for production runs!  If only_write_constraints is true and filename is
+/// empty, an error is thrown.
+void 
+trRosettaProtocolMover::set_write_constraints_to_file(
+	std::string const & filename,
+	bool const only_write_constraints
+) {
+	if( only_write_constraints ) {
+		runtime_assert_string_msg( !filename.empty(), "Error in trRosettaProtocolMover::set_write_constraints_to_file(): If the only_write_constraints option is used, then the filename cannot be empty!" );
+	}
+	write_constraints_to_file_ = filename;
+	only_write_constraints_ = only_write_constraints;
 }
 
 /// @brief Set whether we are using the constraint generator to set
@@ -1012,6 +1067,12 @@ trRosettaProtocolMover::init_from_options(
 	// Set the MSA file.  May be overridden later.
 	set_msa_file( opts[basic::options::OptionKeys::trRosetta::msa_file]() );
 
+	// Set whether we're writing constraints to a file by default.
+	set_write_constraints_to_file(
+		opts[basic::options::OptionKeys::trRosetta::write_constraints_to_file](),
+		opts[basic::options::OptionKeys::trRosetta::only_write_constraints]()
+	);
+
 	// Set the FASTA file. May be overriden later.
 	if ( opts[basic::options::OptionKeys::in::file::fasta].user() ) {
 		runtime_assert_string_msg( opts[basic::options::OptionKeys::in::file::fasta].size() == 1, errmsg + "Please pass exactly one FASTA file with the -in:file:fasta commandline option." );
@@ -1147,6 +1208,29 @@ trRosettaProtocolMover::add_constraints_to_pose(
 			pose.add_constraint( cst );
 		}
 	}
+}
+
+/// @brief Write all constraints to the file specified by
+/// write_constraints_to_file().  Throws if this is empty.
+void
+trRosettaProtocolMover::write_trRosetta_constraints_to_disk(
+	core::pose::Pose const & pose,
+	utility::vector1< core::scoring::constraints::ConstraintCOP > const & csts
+) const {
+	runtime_assert( !write_constraints_to_file().empty() ); //Should be guaranteed not to be the case.
+
+	//Remove empty lines:
+	utility::io::ozstream output;
+	output.open( write_constraints_to_file() );
+	for( auto const & cst : csts ) {
+		cst->show_def( output, pose );
+	}
+	runtime_assert_string_msg(
+		output.good(),
+		"Error in trRosettaProtocolMover::write_trRosetta_constraints_to_disk(): write of file " + write_constraints_to_file() + " failed!"
+	);
+
+	TR << "Finished writing trRosetta constraints to " + write_constraints_to_file() + "." << std::endl;
 }
 
 /// @brief Given a constraint, determine if it is an AtomPairConstraint, an

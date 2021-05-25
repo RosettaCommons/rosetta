@@ -166,7 +166,7 @@ ConstraintOP ConstraintIO::parse_atom_pair_constraint(
 		aFunc->show_definition( tr.Debug ); tr.Debug<<std::endl;
 	}
 
-	ConstraintOP cst_op( new AtomPairConstraint( atom1, atom2, aFunc ) );
+	ConstraintOP cst_op( utility::pointer::make_shared< AtomPairConstraint >( atom1, atom2, aFunc ) );
 	return cst_op;
 } // parse_atom_pair_constraint
 
@@ -283,7 +283,7 @@ ConstraintOP ConstraintIO::parse_coordinate_constraint(
 	}
 
 	Vector transform( x, y, z );
-	ConstraintOP cst_op( new CoordinateConstraint( atom1, atom2, transform, aFunc ) );
+	ConstraintOP cst_op( utility::pointer::make_shared< CoordinateConstraint >( atom1, atom2, transform, aFunc ) );
 	return cst_op;
 } // parse_coordinate_constraint
 
@@ -495,12 +495,11 @@ ConstraintIO::read_constraints_new(
 	Size count_constraints(0);
 	while ( data.good() ) { // check if we reach the end of file or not
 		// read in each constraint and add it constraint_set
-		ConstraintOP cst_op;
-		cst_op = read_individual_constraint_new( data, pose, get_func_factory(), force_pdb_info_mapping );
-		if ( cst_op ) {
+		ConstraintOP cst_op( read_individual_constraint_new( data, pose, get_func_factory(), force_pdb_info_mapping ) );
+		if ( cst_op != nullptr ) {
 			++count_constraints;
 			cset->add_constraint( cst_op );
-		} else if ( ! data.eof() ) { // not end of line
+		} else if ( !data.eof() ) { // not end of line
 			tr.Error << "reading constraints from file" << std::endl;
 			using namespace basic::options;
 			using namespace basic::options::OptionKeys;
@@ -529,7 +528,7 @@ ConstraintIO::read_individual_constraint_new(
 	std::string error_msg("");
 	// bool error_seen( false );
 
-	if ( cst_op ) {
+	if ( cst_op != nullptr ) {
 		//  try {
 		cst_op->read_def( data, pose, func_factory );
 		// } catch (utility::excn::Exception &excn  ) {

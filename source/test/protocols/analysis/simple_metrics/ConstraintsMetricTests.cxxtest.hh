@@ -103,7 +103,11 @@ public:
 			}
 
 			{ //Just compare strings next:
-				if ( line1_split[i] != line2_split[i] ) return failure( line1, line2 );
+				if ( utility::upper(line1_split[i]) == "NONE" ) {
+					if ( utility::upper(line2_split[i]) != "NONE" ) return failure( line1, line2 );
+				} else {
+					if ( line1_split[i] != line2_split[i] ) return failure( line1, line2 );
+				}
 			}
 		}
 
@@ -133,20 +137,22 @@ public:
 	/// Check whether the output from the metric is the same as the original constraints file.
 	void test_read_and_summarize() {
 		std::string const file_contents( utility::file_contents( "protocols/analysis/simple_metrics/trp_cage_constraints.cst" ) );
+		utility::vector1< std::string > input_lines( utility::string_split( file_contents, '\n' ) );
 		TR << "Read input file:\n" << file_contents << std::endl;
+		TR << "Detected " << input_lines.size() << " input lines (including 1 blank)." << std::endl;
 		core::pose::Pose pose( fullatom_pose_from_string( trp_cage_ideal() ) );
 		protocols::constraint_movers::ConstraintSetMover cst_adder;
 		cst_adder.set_cst_fa_file( "protocols/analysis/simple_metrics/trp_cage_constraints.cst" );
 		cst_adder.apply( pose );
-		TS_ASSERT( pose.constraint_set()->get_all_constraints().size() > 0 );
+		TS_ASSERT( pose.constraint_set()->get_all_constraints().size() == input_lines.size() - 1 );
 
 		//Apply the metric:
 		protocols::analysis::simple_metrics::ConstraintsMetric cst_metric;
 		std::string const metric_output( cst_metric.calculate(pose) );
 		TR << "Metric output was:\n" << metric_output << std::endl;
 
-		utility::vector1< std::string > input_lines( utility::string_split( file_contents, '\n' ) );
 		utility::vector1< std::string > output_lines( utility::string_split( metric_output, '\n' ) );
+		TR << "Detected " << output_lines.size() << " output lines (including 2 blank)." << std::endl;
 		remove_empty( input_lines );
 		remove_empty( output_lines );
 

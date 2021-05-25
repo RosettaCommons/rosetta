@@ -61,6 +61,20 @@ public:
 	/// @brief get the upper bound cutoff
 	numeric::Real get_ub_function_cutoff() const;
 
+	/// @brief get the lower bound slope
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	numeric::Real get_lb_function_slope() const;
+	/// @brief get the upper bound slope
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	numeric::Real get_ub_function_slope() const;
+
+	/// @brief get the lower bound intercept
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	numeric::Real get_lb_function_intercept() const;
+	/// @brief get the upper bound intercept
+	/// @author Vikram K. Mulligan (vmulligan@flatironinstitute.org).
+	numeric::Real get_ub_function_intercept() const;
+
 	/// @brief compute the y value of the lower bound function given an x value
 	void compute_lb_function_solution(numeric::Real x, numeric::Real & y) const;
 
