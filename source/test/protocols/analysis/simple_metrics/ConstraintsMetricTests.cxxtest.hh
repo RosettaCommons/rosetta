@@ -109,16 +109,16 @@ public:
 
 		return true;
 	}
-	
+
 	/// @brief Remove empty strings from a list of strings.
 	void remove_empty(
 		utility::vector1< std::string > & list
 	) {
 		TR << "----------" << std::endl;
-		for( utility::vector1<std::string>::iterator it(list.begin()); it != list.end(); ) {
+		for ( utility::vector1<std::string>::iterator it(list.begin()); it != list.end(); ) {
 			(*it) = utility::strip_whitespace( *it );
 			TR << "Processing " << *it;
-			if( it->empty() ) {
+			if ( it->empty() ) {
 				TR << "\t-- REMOVED" << std::endl;
 				it = list.erase( it );
 			} else {
