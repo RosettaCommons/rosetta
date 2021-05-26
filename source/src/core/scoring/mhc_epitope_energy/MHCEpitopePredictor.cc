@@ -15,6 +15,15 @@
 
 // Unit headers
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+
+/// @brief Provide citations to the passed CitationCollectionList
+/// @details The default Predictor does not add citation info.
+/// Derived classes can add specific citation information, which will be automatically during setup by MHCEpitopeEnergySetup.
+void
+core::scoring::mhc_epitope_energy::MHCEpitopePredictor::provide_citation_info(basic::citation_manager::CitationCollectionList & ) const {
+	// Do nothing
+}
 
 #ifdef    SERIALIZATION
 // Utility serialization headers

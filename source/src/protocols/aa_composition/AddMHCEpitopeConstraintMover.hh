@@ -98,6 +98,9 @@ public:
 	void
 	provide_xml_schema( utility::tag::XMLSchemaDefinition & xsd );
 
+	/// @brief Provide the citation for this mover.
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
+
 
 private:
 	//Private member variables:

@@ -30,6 +30,8 @@
 #include <core/scoring/aa_composition_energy/SequenceConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/select/residue_selector/ResidueSelector.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // Options system
 #include <basic/options/option.hh>
@@ -351,6 +353,26 @@ void
 MHCEpitopeEnergy::finalize_after_minimizing( pose::Pose & /*pose*/ ) const {
 	TR.Debug << "Re-enabling MHCEpitopeEnergy following minimization." << std::endl;
 	disabled_ = false;
+}
+
+/// @brief Provides the citation for this energy method.
+void
+MHCEpitopeEnergy::provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const {
+	using namespace basic::citation_manager;
+
+	// Create a citation collection for this module:
+	CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"MHCEpitopeEnergy",
+		CitedModuleType::EnergyMethod
+		)
+	);
+
+	// Add the relevant citation from the CitationManager to the collection
+	collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1021/acs.jcim.1c00056" ) );
+
+	// Add the collection to the CitationCollectionList
+	citations.add( collection );
 }
 
 /// @brief Given a pose, pull out the core::scoring::mhc_epitope_energy::MHCEpitopeEnergySetup objects stored in SequenceConstraints in the pose and

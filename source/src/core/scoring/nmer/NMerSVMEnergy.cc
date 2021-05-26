@@ -30,6 +30,8 @@
 #include <core/scoring/ScoringManager.hh>
 #include <basic/database/open.hh>
 #include <utility/file/file_sys_util.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 // C++ Headers
 #include <string>
@@ -641,6 +643,27 @@ NMerSVMEnergy::version() const
 {
 	return 1; // Initial versioning
 }
+
+/// @brief Provides the citation for this energy method.
+void
+NMerSVMEnergy::provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const {
+	using namespace basic::citation_manager;
+
+	// Create a citation collection for this module:
+	CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		"NMerSVMEnergy",
+		CitedModuleType::EnergyMethod
+		)
+	);
+
+	// Add the relevant citation from the CitationManager to the collection
+	collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1073/pnas.1321126111" ) );
+
+	// Add the collection to the CitationCollectionList
+	citations.add( collection );
+}
+
 } // methods
 } // scoring
 } // core

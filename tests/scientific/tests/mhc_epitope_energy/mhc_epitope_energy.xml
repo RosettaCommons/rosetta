@@ -19,6 +19,11 @@ design) and sidechain minimization.  The only unusual thing about this is that w
 resfile task operation to restrict design space based on a PSI-BLAST-derived PSSM.
 
 There are a whole pile of filters and simple metrics that are there for post-design analysis.
+
+The following manuscript describes this benchmark:
+Yachnin BJ, Mulligan VK, Khare SD, and Bailey-Kellogg C.  (2021).  MHCEpitopeEnergy, a flexible Rosetta-based
+biotherapeutic deimmunization platform.  J Chem Inf Model 61(5):2368-2382.  doi: 10.1021/acs.jcim.1c00056.
+
   <SCOREFXNS>
 	<ScoreFunction name="ref" weights="ref2015.wts"/>
 	<ScoreFunction name="ref_deimm_aacomp" weights="ref2015_cst.wts">

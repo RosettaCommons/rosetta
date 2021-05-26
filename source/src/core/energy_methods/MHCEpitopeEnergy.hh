@@ -126,6 +126,9 @@ public:
 	/// @brief Re-enable this energy after minimization.
 	void finalize_after_minimizing( pose::Pose & pose ) const override;
 
+	/// @brief Provide the citation for this energy method.
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
+
 private:
 
 	/******************

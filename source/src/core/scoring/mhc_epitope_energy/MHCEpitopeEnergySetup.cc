@@ -27,6 +27,8 @@
 #include <core/pose/Pose.hh>
 #include <core/scoring/nmer/NMerSVMEnergy.hh>
 #include <core/scoring/methods/EnergyMethodOptions.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+#include <basic/citation_manager/CitationManager.hh>
 
 // Options system
 #include <basic/options/option.hh>
@@ -440,6 +442,11 @@ void MHCEpitopeEnergySetup::setup_predictor( utility::vector1 < std::string > co
 
 		predictor_ = utility::pointer::make_shared<MHCEpitopePredictorSVM>(svm);
 	}
+
+	// Add Predictor citations to the CitationManager
+	basic::citation_manager::CitationCollectionList citations;
+	predictor_->provide_citation_info(citations);
+	basic::citation_manager::CitationManager::get_instance()->add_citations(citations);
 
 	TR << "Parsing complete.  MHC setup settings: " << std::endl;
 	TR << report();

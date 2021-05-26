@@ -40,6 +40,10 @@ public:
 	/// @brief Accessor for the svm_ (NMerSVMEnergy object) being used by the Predictor for scoring.
 	core::scoring::methods::NMerSVMEnergyOP get_svm() const {return svm_;}
 
+	/// @brief Provide citations for NMer.
+	/// @details Add the appropriate citation information to the CitationManager
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 private:
 	core::scoring::methods::NMerSVMEnergyOP svm_; // delegate scoring
 

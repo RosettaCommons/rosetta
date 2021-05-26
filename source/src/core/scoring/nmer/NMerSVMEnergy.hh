@@ -170,6 +170,9 @@ public:
 	void add_encoded_termini( std::string const &, core::Size const, utility::vector1< core::Real > & ) const;
 	void add_pssm_features( std::string const &, core::Size const, utility::vector1< core::Real > & ) const;
 
+	/// @brief Provide the citation for this EnergyMethod
+	void provide_citation_info( basic::citation_manager::CitationCollectionList & ) const override;
+
 private:
 	utility::vector1< utility::libsvm::Svm_rosettaCOP > all_nmer_svms_;
 	utility::vector1< utility::vector1< core::Real > > all_nmer_svms_ranks_;

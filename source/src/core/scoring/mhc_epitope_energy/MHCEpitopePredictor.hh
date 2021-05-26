@@ -16,6 +16,7 @@
 #define INCLUDED_core_scoring_mhc_epitope_energy_MHCEpitopePredictor_hh
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictor.fwd.hh>
+#include <basic/citation_manager/CitationCollectionBase.fwd.hh>
 #include <core/chemical/AA.hh>
 #include <utility/vector1.hh>
 #include <core/types.hh>
@@ -52,6 +53,11 @@ public:
 	core::Size get_peptide_length() const { return peptide_length_; }
 
 	core::Size get_overhang_length() const { return overhang_length_; }
+
+	/// @brief Provide citations to the passed CitationCollectionList
+	/// @details The default Predictor does not add citation info.
+	/// Derived classes can add specific citation information, which will be automatically during setup by MHCEpitopeEnergySetup.
+	virtual void provide_citation_info(basic::citation_manager::CitationCollectionList & ) const;
 
 private:
 	/// @brief The length required by this predictor for peptides

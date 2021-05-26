@@ -73,6 +73,31 @@
     [END_DOI]
 [END_CITATION]
 
+# This is not a Rosetta citation, but is used by MHCEpitopeEnergy
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Harpreet" "Singh" "H"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "G P S" "Raghava" "GPS"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2001
+    [END_YEAR]
+    [BEGIN_TITLE]
+        ProPred: prediction of HLA-DR binding sites
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Bioinformatics
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        17(12):1236-1237
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1093/bioinformatics/17.12.1236
+    [END_DOI]
+[END_CITATION]
+
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
         "Srivatsan" "Raman" "S"
@@ -443,6 +468,37 @@
     [END_VOLUME_ISSUE_PAGES]
     [BEGIN_DOI]
         10.1371/journal.pone.0070661
+    [END_DOI]
+[END_CITATION]
+
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Indigo" "King" "I"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Esteban N" "Garza" "EN"
+        "Ronit" "Mazor" "R"
+        "Jonathan L" "Linehan" "JL"
+        "Ira" "Pastan" I"
+        "Marion" "Pepper" "M"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "David" "Baker" "D"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2014
+    [END_YEAR]
+    [BEGIN_TITLE]
+        Removing T-cell epitopes with computational protein design
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Proc Natl Acad Sci USA
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        111(23):8577-8582
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1073/pnas.1321126111
     [END_DOI]
 [END_CITATION]
 
@@ -965,6 +1021,40 @@
     [END_DOI]
 [END_CITATION]
 
+# This is not a Rosetta citation, but is used by MHCEpitopeEnergy
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Randi" "Vita" "R"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Swapnil" "Mahajan" "S"
+        "James A" "Overton" JA"
+        "Sandeep Kumar" "Dhanda" "SK"
+        "Sheridan" "Martini" "S"
+        "Jason R" "Cantrell" "JR"
+        "Daniel K" "Wheeler" "DK"
+        "Alessandro" "Sette" "A"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Bjoern" "Peters" "B"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2018
+    [END_YEAR]
+    [BEGIN_TITLE]
+        The Immune Epitope Database (IEDB): 2018 update
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        Nucleic Acids Res
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        47(D1):D339-D343
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1093/nar/gky1006
+    [END_DOI]
+[END_CITATION]
+
 [BEGIN_CITATION]
     [BEGIN_PRIMARY_AUTHORS]
         "Andrew M" "Watkins" "AM"
@@ -1137,3 +1227,30 @@
     [END_DOI]
 [END_CITATION]
 
+[BEGIN_CITATION]
+    [BEGIN_PRIMARY_AUTHORS]
+        "Brahm J" "Yachnin" "BJ"
+    [END_PRIMARY_AUTHORS]
+    [BEGIN_COAUTHORS]
+        "Vikram Khipple" "Mulligan" "VK"
+        "Sagar D" "Khare" "SD"
+    [END_COAUTHORS]
+    [BEGIN_SENIOR_AUTHORS]
+        "Chris" "Bailey-Kellogg" "C"
+    [END_SENIOR_AUTHORS]
+    [BEGIN_YEAR]
+        2021
+    [END_YEAR]
+    [BEGIN_TITLE]
+        MHCEpitopeEnergy, a flexible Rosetta-based biotherapeutic deimmunization platform
+    [END_TITLE]
+    [BEGIN_JOURNAL]
+        J Chem Inf Model
+    [END_JOURNAL]
+    [BEGIN_VOLUME_ISSUE_PAGES]
+        61(5):2368-2382
+    [END_VOLUME_ISSUE_PAGES]
+    [BEGIN_DOI]
+        10.1021/acs.jcim.1c00056
+    [END_DOI]
+[END_CITATION]

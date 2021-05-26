@@ -22,6 +22,8 @@
 #include <cppdb/frontend.h>
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorExternal.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -125,6 +127,28 @@ void MHCEpitopePredictorExternal::connect(std::string const & filename)
 catch (std::exception const &e) {
 	utility_exit_with_message("Unable to open valid database " + db_filename + ": " + e.what());
 }
+}
+
+/// @brief Provide citations for IEDB.
+/// @details If IEDB is being used, add the appropriate citation information
+void MHCEpitopePredictorExternal::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	if ( utility::endswith(filename_, "iedb_data.db" ) ) {
+		using namespace basic::citation_manager;
+
+		// Create a citation collection for this module:
+		CitationCollectionOP collection(
+			utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+			"MHCEpitopePredictorExternal",
+			"MHCEpitopePredictor"
+			)
+		);
+
+		// Add the relevant citation from the CitationManager to the collection
+		collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1093/nar/gky1006" ) );
+
+		// Add the collection to the CitationCollectionList
+		citations.add( collection );
+	}
 }
 
 }//ns mhc_epitope_energy

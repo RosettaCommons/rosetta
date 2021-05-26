@@ -25,6 +25,8 @@
 #include <core/select/residue_selector/util.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeConstraint.hh>
 #include <core/scoring/mhc_epitope_energy/MHCEpitopeEnergySetup.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 //Auto Headers
 
@@ -208,6 +210,24 @@ void AddMHCEpitopeConstraintMoverCreator::provide_xml_schema( utility::tag::XMLS
 	AddMHCEpitopeConstraintMover::provide_xml_schema( xsd );
 }
 
+/// @brief Provide the citation for this mover.
+void AddMHCEpitopeConstraintMover::provide_citation_info(basic::citation_manager::CitationCollectionList & citations) const {
+	using namespace basic::citation_manager;
+
+	// Create a citation collection for this module:
+	CitationCollectionOP collection(
+		utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+		get_name(),
+		CitedModuleType::Mover
+		)
+	);
+
+	// Add the relevant citation from the CitationManager to the collection
+	collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1021/acs.jcim.1c00056" ) );
+
+	// Add the collection to the CitationCollectionList
+	citations.add( collection );
+}
 
 } // aa_composition
 } // protocols

@@ -26,6 +26,10 @@ a lot of Asp and Glu substitutions).  While this protocol favours native residue
 and residue_type_constraints weights is warranted.  Other sequence restrictions, for example using NetCharge
 or AAComposition design guidance terms, could also be used here.
 
+The following manuscript is relevant to this test:
+Yachnin BJ, Mulligan VK, Khare SD, and Bailey-Kellogg C.  (2021).  MHCEpitopeEnergy, a flexible Rosetta-based
+biotherapeutic deimmunization platform.  J Chem Inf Model 61(5):2368-2382.  doi: 10.1021/acs.jcim.1c00056.
+
 	<SCOREFXNS>
 		<ScoreFunction name="ref_deimm" weights="ref2015.wts">
 		  <Reweight scoretype="mhc_epitope" weight="2"/>

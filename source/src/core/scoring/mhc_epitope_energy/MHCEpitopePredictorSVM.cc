@@ -78,6 +78,13 @@ core::Real MHCEpitopePredictorSVM::score(std::string const &pep)
 	return rsd_energy_avg;
 }
 
+/// @brief Provide citations for NMer.
+/// @details Add the appropriate citation information to the CitationManager
+void MHCEpitopePredictorSVM::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const
+{
+	svm_->provide_citation_info(citations);
+}
+
 }//ns mhc_epitope_energy
 }//ns scoring
 }//ns core

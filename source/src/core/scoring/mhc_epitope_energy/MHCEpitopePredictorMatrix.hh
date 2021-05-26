@@ -92,6 +92,10 @@ public:
 	/// @brief Gets the threshold for what is considered to be an epitope -- top thresh% of peptides in this implementation
 	core::Real get_thresh() { return thresh_; }
 
+	/// @brief Provide citations for ProPred.
+	/// @details If ProPred is being used, add the appropriate citation information
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 private:
 	/// @brief The name of the filename containing the matrices.
 	std::string filename_="";

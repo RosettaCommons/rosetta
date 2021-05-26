@@ -76,6 +76,10 @@ private:
 	/// @brief The score for a peptide not in the database
 	core::Size unseen_score_ = 100;
 
+	/// @brief Provide citations for IEDB.
+	/// @details If IEDB is being used, add the appropriate citation information
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 #ifdef    SERIALIZATION
 public:
 	template< class Archive > void save( Archive & arc ) const;

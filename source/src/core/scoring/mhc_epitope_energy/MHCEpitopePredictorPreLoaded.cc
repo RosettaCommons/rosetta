@@ -27,6 +27,9 @@
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorPreLoaded.hh>
 #include <sys/stat.h> // For getting file size with stat().  If we move to C++17, should switch to std::filesystem::file_size() function
 
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
+
 #ifdef    SERIALIZATION
 // Utility serialization headers
 #include <utility/serialization/serialization.hh>
@@ -163,6 +166,28 @@ core::Real MHCEpitopePredictorPreLoaded::score(std::string const &pep)
 
 	if ( scores_.count(pep)==0 ) return unseen_score_;
 	return scores_[pep];
+}
+
+/// @brief Provide citations for IEDB.
+/// @details If IEDB is being used, add the appropriate citation information
+void MHCEpitopePredictorPreLoaded::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	if ( utility::endswith(filename_, "iedb_data.db" ) ) {
+		using namespace basic::citation_manager;
+
+		// Create a citation collection for this module:
+		CitationCollectionOP collection(
+			utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+			"MHCEpitopePredictorPreLoaded",
+			"MHCEpitopePredictor"
+			)
+		);
+
+		// Add the relevant citation from the CitationManager to the collection
+		collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1093/nar/gky1006" ) );
+
+		// Add the collection to the CitationCollectionList
+		citations.add( collection );
+	}
 }
 
 }//ns mhc_epitope_energy

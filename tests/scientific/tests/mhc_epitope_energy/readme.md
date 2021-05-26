@@ -10,7 +10,8 @@ Protein de-immunization, involving the removal of T-cell epitopes that can trigg
 ## BENCHMARK DATASET
 The benchmark dataset includes 50 proteins, which were originally selected for a similar study (Choi et al. (2013) Structure-based Redesign of Proteins for Minimal T-cell Epitope Content. J. Comp. Chem. 34:879-891.), in which a different Rosetta scoreterm (described in the aforementioned paper, but never merged) was used for computational de-immunization. Our scientific test aims to mirror this study using the new (as of 2019) Rosetta implementation of packer-compatible ProPred-based de-immunization.
 
-A manuscript describing this protocol and benchmark is currently (Febuary 2020) in preparation.
+The following manuscript describes this benchmark:
+Yachnin BJ, Mulligan VK, Khare SD, and Bailey-Kellogg C.  (2021).  MHCEpitopeEnergy, a flexible Rosetta-based biotherapeutic deimmunization platform.  J Chem Inf Model 61(5):2368-2382.  doi: 10.1021/acs.jcim.1c00056.
 
 The input PDB files were downloaded from the PDB and relaxed using fast_relax with coordinate constraints using the ref2015 scorefunction. The resfiles were derived from PSI-BLAST PSSMs, generated using the online PSI-BLAST tools (version 2.8.1). The default PSI-BLAST settings were used, and three iterations of PSI-BLAST were performed to obtain the PSSM. Resfiles were generated using the mhc_gen_db.py tool located in tools/mhc_energy_tools using the PSSMs as input, as follows:
 mhc_gen_db.py --propred --pssm PDB_NAME.pssm --pssm_thresh 1 --res_out PDB_NAME_thresh1.res --pdb PDB_NAME.pdb --firstres NUMBER_OF_FIRST_RESIDUE_IN_PDB

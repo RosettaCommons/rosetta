@@ -24,6 +24,8 @@
 
 #include <core/scoring/mhc_epitope_energy/MHCEpitopePredictorMatrix.hh>
 #include <core/scoring/ScoringManager.hh>
+#include <basic/citation_manager/CitationManager.hh>
+#include <basic/citation_manager/CitationCollection.hh>
 
 #ifdef    SERIALIZATION
 // Utility serialization headers
@@ -228,6 +230,28 @@ void MHCEpitopePredictorMatrix::set_thresh(core::Real thresh) {
 		}
 	}
 	thresh_ = thresh;
+}
+
+/// @brief Provide citations for ProPred.
+/// @details If ProPred is being used, add the appropriate citation information
+void MHCEpitopePredictorMatrix::provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const {
+	if ( propred_ ) {
+		using namespace basic::citation_manager;
+
+		// Create a citation collection for this module:
+		CitationCollectionOP collection(
+			utility::pointer::make_shared< basic::citation_manager::CitationCollection >(
+			"MHCEpitopePredictorMatrix",
+			"MHCEpitopePredictor"
+			)
+		);
+
+		// Add the relevant citation from the CitationManager to the collection
+		collection->add_citation( CitationManager::get_instance()->get_citation_by_doi("10.1093/bioinformatics/17.12.1236" ) );
+
+		// Add the collection to the CitationCollectionList
+		citations.add( collection );
+	}
 }
 
 }//ns mhc_epitope_energy

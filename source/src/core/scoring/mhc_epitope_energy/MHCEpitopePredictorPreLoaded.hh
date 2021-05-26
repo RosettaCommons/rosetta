@@ -64,6 +64,10 @@ public:
 	/// @brief Check for the size of a file and print a warning if appropriate.
 	static void check_file_size ( std::string const &filename, core::Size const warn_threshold );
 
+	/// @brief Provide citations for IEDB.
+	/// @details If IEDB is being used, add the appropriate citation information
+	void provide_citation_info(basic::citation_manager::CitationCollectionList & citations ) const override;
+
 private:
 	/// @brief peptide->score
 	std::map< std::string, core::Real > scores_;
