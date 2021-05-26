@@ -53,12 +53,12 @@ namespace energy_methods {
 
 // In order to speed up code - save residue SASA vector in pose data
 struct CacheableSasaVector : public basic::datacache::CacheableData {
-	CacheableSasaVector( utility::vector1< core::Real > sasa_to_cache ):
+	CacheableSasaVector( utility::vector1< core::Real > const & sasa_to_cache ):
 		sasa( sasa_to_cache )
 	{}
 
 	basic::datacache::CacheableDataOP
-	clone() const {
+	clone() const override {
 		return utility::pointer::make_shared< CacheableSasaVector >(*this);
 	}
 
@@ -136,7 +136,7 @@ DEPC_MS_Energy::residue_energy(
 
 	basic::datacache::CacheableDataCOP dat( pose.data().get_const_ptr( core::pose::datacache::CacheableDataType::DEPC_MS_SASA_POSE_INFO ) );
 	CacheableSasaVectorCOP cached_sasa = utility::pointer::dynamic_pointer_cast<CacheableSasaVector const>( dat );
-	utility::vector1< core::Real > sasa = cached_sasa->sasa;
+	utility::vector1< core::Real > const & sasa = cached_sasa->sasa;
 
 	for ( core::Size j=1; j <= input_res_.size(); j++ ) {
 		char res_id = residue.type().name1();
@@ -205,8 +205,8 @@ void DEPC_MS_Energy::init_from_file() {
 	std::string line;
 
 	while ( getline( input, line ) ) {
-		if ( line.substr(0,1) == "#" ) continue;
 		if ( line.empty() ) continue;
+		if ( line.substr(0,1) == "#" ) continue;
 		std::istringstream ss(line);
 		core::Size resi;
 		char label;
@@ -226,8 +226,8 @@ void DEPC_MS_Energy::init_from_file() {
 
 void DEPC_MS_Energy::prepare_for_scoring( pose::Pose & pose ) const {
 	pose.update_residue_neighbors();
-	CacheableSasaVector cacheable_sasa( core::scoring::sasa::rel_per_res_sc_sasa( pose ) ); // get relative per residue SASA - SASA vector goes over all residues
-	pose.data().set( core::pose::datacache::CacheableDataType::DEPC_MS_SASA_POSE_INFO, utility::pointer::make_shared< CacheableSasaVector >( cacheable_sasa ) );
+	utility::pointer::shared_ptr<CacheableSasaVector> cacheable_sasa_op( utility::pointer::make_shared<CacheableSasaVector >( core::scoring::sasa::rel_per_res_sc_sasa( pose ) ) ); // get relative per residue SASA - SASA vector goes over all residues
+	pose.data().set( core::pose::datacache::CacheableDataType::DEPC_MS_SASA_POSE_INFO, cacheable_sasa_op );
 }
 
 } //energy_methods
