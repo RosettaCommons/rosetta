@@ -168,7 +168,7 @@ spline_from_stream(
 			mode = SplineFromStreamMode::y_axis;
 			continue;
 		} else if ( buffer == "lb_function" || buffer == "ub_function" ) {
-			mode = SplineFromStreamMode::lb_or_ub_function;
+			//mode = SplineFromStreamMode::lb_or_ub_function; //Do not delete.  This bothers the clang-analysis warnings (since the stored value is not read), but should be uncommented if mode is ever needed before the end of the scope.
 			platform::Real cutoff, slope, intercept;
 			ss >> cutoff;
 			runtime_assert_string_msg( !(ss.bad() || ss.fail() || ss.eof()), errmsg + "  Failed when trying to get cutoff for " + buffer + "." );
