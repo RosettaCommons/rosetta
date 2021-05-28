@@ -110,6 +110,7 @@ public:
 		return memb_dsolv2_;
 	}
 
+
 	/// @brief Returns the maximum lj radius for any non-hydrogen
 	/// atom as defined by the atom-type-set used to create this Etable.
 	virtual
@@ -169,6 +170,43 @@ public:
 		return memb_lk_dgrefce_;
 	}
 
+	//hw
+	utility::vector1< Real > const &
+	lk_dgfree() const
+	{
+		return lk_dgfree_;
+	}
+
+	utility::vector1< Real > const &
+	memb_lk_dgfree() const
+	{
+		return memb_lk_dgfree_;
+	}
+
+	utility::vector1< Real > const &
+	lj_radius() const
+	{
+		return lj_radius_;
+	}
+
+	utility::vector1< Real > const &
+	lk_volume() const
+	{
+		return lk_volume_;
+	}
+
+	utility::vector1< Real > const &
+	lk_lambda() const
+	{
+		return lk_lambda_;
+	}
+
+	Real
+	lj_sigma( int const i, int const j ) const
+	{
+		return lj_sigma_(i,j);
+	}
+
 public: // Interfaces for convenient IO
 
 	void
@@ -184,6 +222,7 @@ public: // Interfaces for convenient IO
 		std::string const & label,
 		std::istream & in
 	) override;
+
 
 
 private: // methods
@@ -228,6 +267,8 @@ private: // methods
 		Real & memb_dsolvE2
 	);
 
+
+
 private: // data
 
 	Real max_non_hydrogen_lj_radius_;
@@ -238,8 +279,11 @@ private: // data
 	utility::vector1< Real > lk_volume_;
 	utility::vector1< Real > lk_lambda_;
 	utility::vector1< Real > memb_lk_dgfree_;
+
+
 	ObjexxFCL::FArray1D< Real > lk_dgrefce_;
 	ObjexxFCL::FArray1D< Real > memb_lk_dgrefce_;
+
 
 	ObjexxFCL::FArray3D< Real > solv1_;
 	ObjexxFCL::FArray3D< Real > solv2_;
@@ -249,6 +293,8 @@ private: // data
 	ObjexxFCL::FArray3D< Real > memb_solv2_;
 	ObjexxFCL::FArray3D< Real > memb_dsolv1_;
 	ObjexxFCL::FArray3D< Real > memb_dsolv2_;
+
+	ObjexxFCL::FArray2D< Real > lj_sigma_;
 
 };
 

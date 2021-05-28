@@ -3470,6 +3470,7 @@ EX_SIX_QUARTER_STEP_STDDEVS   7          +/- 0.25, 0.5, 0.75, 1, 1.25 & 1.5 sd; 
 		Option_Group( 'scoring',
 			Option( 'hbond', 'Boolean',
 					desc="Hydrogen bonding energy correction for membrane proteins", default="false"),
+			Option( 'analytic_membetable_evaluation', 'Boolean', desc="If true, membrane solvation energies will be calculated analytically, instead of ahead of time and stored in memb_etable", default="true"),
 		),
 
 		# Setup Options

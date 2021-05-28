@@ -590,6 +590,9 @@ EnergyMethodOptions::analytic_etable_evaluation() const { return etable_options_
 void
 EnergyMethodOptions::analytic_etable_evaluation( bool setting ) { etable_options_->analytic_etable_evaluation = setting; }
 
+bool
+EnergyMethodOptions::analytic_membetable_evaluation() const { return etable_options_->analytic_membetable_evaluation; }
+
 string const &
 EnergyMethodOptions::unfolded_energies_type() const {
 	return unfolded_energies_type_;

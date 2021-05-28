@@ -10,7 +10,6 @@
 /// @file  core/energy_methods/FaMPEnvEnergy.hh
 ///
 /// @brief  LK-Type Membrane Environment Energy
-/// @details Last Modified: 5/13/14
 ///
 /// @author  Patrick Barth (Original)
 /// @author  Rebecca Alford (rfalford12@gmail.com)

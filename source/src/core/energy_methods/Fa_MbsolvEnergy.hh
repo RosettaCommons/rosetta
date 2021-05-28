@@ -43,7 +43,7 @@ public:
 	typedef ContextDependentTwoBodyEnergy  parent;
 public:
 
-	Fa_MbsolvEnergy( core::scoring::etable::Etable const & etable_in, core::scoring::etable::MembEtable const & memb_etable_in );
+	Fa_MbsolvEnergy( core::scoring::etable::Etable const & etable_in, core::scoring::etable::MembEtable const & memb_etable_in, bool const analytic_membetable_evaluation );
 
 
 	/// clone
@@ -146,6 +146,48 @@ private:
 		Real const & f2
 	) const;
 
+	void
+	solvationE(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		core::Real dis2,
+		core::Real & solvE1,
+		core::Real & solvE2,
+		core::Real & membsolvE1,
+		core::Real & membsolvE2
+	) const;
+
+	core::Real
+	solv(
+		int atom1type,
+		int atom2type,
+		core::Real dis
+	) const;
+
+	core::Real
+	solv_piece(
+		int atom1type,
+		core::Real d
+	) const;
+
+	//solvation partial derivative wrt distance from atom i and j
+	void
+	dsolvationE(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		core::Real dis2,
+		core::Real & dsolvE1,
+		core::Real & dsolvE2,
+		core::Real & dmembsolvE1,
+		core::Real & dmembsolvE2
+	) const;
+
+	core::Real
+	solv_deriv(
+		conformation::Atom const & atom,
+		core::Real dis
+	) const;
+
 	// void
 	// distribute_pseudo_base_atom_derivatives( pose::Pose const & pose ) const;
 
@@ -156,7 +198,7 @@ private:
 private:
 	core::scoring::etable::Etable const & etable_; // shouldn't this be a pointer? Reference count information is (dangerously) lost when
 	//a reference is taken, instead of a smart pointer.  There's the potential for a dangling reference with this.
-	//etable::MembEtable const & memb_etable_;
+	core::scoring::etable::MembEtable const & memb_etable_;
 
 	/// these guys are taken from the etable
 	ObjexxFCL::FArray3D< Real > const & solv1_;
@@ -172,12 +214,23 @@ private:
 	ObjexxFCL::FArray3D< Real > const & memb_dsolv2_;
 	//ObjexxFCL::FArray3D< Real > const & memb_dsolv_;
 
+	utility::vector1< Real > const & lk_dgfree_;
+	utility::vector1< Real > const & memb_lk_dgfree_;
+	utility::vector1< Real > const & lj_radius_;
+	utility::vector1< Real > const & lk_volume_;
+	utility::vector1< Real > const & lk_lambda_;
+
+
 	Real const safe_max_dis2_;
 	Real const get_bins_per_A2_;
 
 	bool const verbose_;
 
+	Real max_dis_;
+	Real max_normal_dis_;
+
 	core::scoring::Membrane_FAPotential const & potential_;
+	bool const analytic_etable_evaluation_;
 
 	/// Used soley when calculating derivatives
 	/// Could/should be moved into the Pose's cachable data.

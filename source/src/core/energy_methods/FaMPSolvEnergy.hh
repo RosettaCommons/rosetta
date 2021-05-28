@@ -10,7 +10,6 @@
 /// @file  core/energy_methods/FaMPSolvEnergy.hh
 ///
 /// @brief  LK-Type Membrane Solvation Energy
-/// @details Last Modified: 5/13/14
 ///
 /// @author  Patrick Barth (Original)
 /// @author  Rebecca Alford (rfalford12@gmail.com)
@@ -37,6 +36,8 @@
 // Utility headers
 #include <utility/vector1.hh>
 
+//#include <ObjexxFCL/FArray1D.hh>
+#include <ObjexxFCL/FArray2D.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 
 // C++ Headers
@@ -57,7 +58,8 @@ public:
 	/// @brief Construct MP Solv energy from standard and membrane etable
 	FaMPSolvEnergy(
 		core::scoring::etable::EtableCAP etable_in,
-		core::scoring::etable::MembEtableCAP memb_etable_in
+		core::scoring::etable::MembEtableCAP memb_etable_in,
+		bool const analytic_membetable_evaluation
 	);
 
 
@@ -150,7 +152,6 @@ private: // helper methods
 		conformation::Atom const & atom1,
 		conformation::Atom const & atom2,
 		Real const & d2,
-		Real & deriv,
 		Real const & f1,
 		Real const & f2,
 		bool & debug
@@ -176,13 +177,73 @@ private: // helper methods
 	init( pose::Pose & pose ) const;
 
 	/// @brief Helper Method - Compute Fa Proj
-	core::Real
+	Real
 	compute_fa_proj(
-		core::Real z_position,
-		core::Real thickness,
-		core::Real steepness
+		Real z_position,
+		Real thickness,
+		Real steepness
 	) const;
 
+	Real
+	compute_fa_deriv(
+		Real z_position,
+		Real thickness,
+		Real steepness
+	) const;
+
+	Vector
+	compute_fa_proj_coord(
+		Real z_position,
+		Vector const & xyz,
+		Vector const & center,
+		Vector const & normal
+	) const;
+
+	//solvation component of full atom membrane solvation energy of atom i and j in water and chex
+	void
+	solvationE(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real dis2,
+		Real & solvE1,
+		Real & solvE2,
+		Real & membsolvE1,
+		Real & membsolvE2
+	) const;
+
+	//solvation function used in solvationE that is independent of membrane depth of atom
+	Real
+	solv(
+		int atom1type,
+		int atom2type,
+		Real dis
+	) const;
+
+
+	//A portion of the solvation calculated in solv that is only dependent on one atom
+	Real
+	solv_piece(
+		int atom1type,
+		Real d
+	) const;
+
+	//solvation partial derivative wrt distance from atom i and j
+	void
+	dsolvationE(
+		conformation::Atom const & atom1,
+		conformation::Atom const & atom2,
+		Real dis2,
+		Real & dsolvE1,
+		Real & dsolvE2,
+		Real & dmembsolvE1,
+		Real & dmembsolvE2
+	) const;
+
+	Real
+	solv_deriv(
+		conformation::Atom const & atom,
+		Real dis
+	) const;
 
 	/// @brief Allocate memory for derivatives
 	void setup_for_fullatom( pose::Pose & pose ) const;
@@ -206,18 +267,33 @@ private: // data
 	ObjexxFCL::FArray3D< Real > const & memb_dsolv1_;
 	ObjexxFCL::FArray3D< Real > const & memb_dsolv2_;
 
+	//Store energies and parameters from etable
+	//from Lazaridis 2003 https://doi.org/10.1002/prot.10410
+	utility::vector1< Real > const & lk_dgfree_;
+	utility::vector1< Real > const & memb_lk_dgfree_;
+	utility::vector1< Real > const & lj_radius_;
+	utility::vector1< Real > const & lk_volume_;
+	utility::vector1< Real > const & lk_lambda_;
+
+
 	Real const safe_max_dis2_;
 	Real const get_bins_per_A2_;
 
+	Real max_dis_;
+	Real max_normal_dis_;
+	bool const analytic_etable_evaluation_;
 	//bool const verbose_;
 
-	// Used only when cmputing derivatives.
+	// Used only when computing derivatives.
 	mutable Real fa_weight_;
 
 	// Arrays used for computing derivatives
 	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_;
 	mutable utility::vector1 < utility::vector1 < Real > > fa_z_position_;
 
+
+	mutable utility::vector1 < utility::vector1 < Vector > > fa_proj_coord_;
+	mutable utility::vector1 < utility::vector1 < Real > > fa_proj_deriv_;
 };
 
 } // scoring

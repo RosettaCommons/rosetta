@@ -10,7 +10,6 @@
 /// @file  core/energy_methods/FaMPSolvEnergy.cc
 ///
 /// @brief  LK-Type Membrane Solvation Energy
-/// @details Last Modified: 5/13/14
 ///
 /// @author  Patrick Barth (Original)
 /// @author  Rebecca Alford (rfalford12@gmail.com)
@@ -50,8 +49,13 @@
 #include <core/conformation/Residue.hh>
 #include <core/id/AtomID.hh>
 
+#include <core/chemical/AtomType.hh>
+
+#include <basic/options/option.hh>
+
 // Utility headers
 #include <utility/vector1.hh>
+#include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray3D.hh>
 #include <numeric/xyzVector.hh>
 
@@ -71,7 +75,8 @@ FaMPSolvEnergyCreator::create_energy_method(
 
 	return utility::pointer::make_shared< FaMPSolvEnergy >(
 		( core::scoring::ScoringManager::get_instance()->etable( options ) ),
-		( core::scoring::ScoringManager::get_instance()->memb_etable( options.etable_type() ))
+		( core::scoring::ScoringManager::get_instance()->memb_etable( options.etable_type() )),
+		options.analytic_membetable_evaluation()
 	);
 }
 
@@ -87,7 +92,8 @@ FaMPSolvEnergyCreator::score_types_for_method() const {
 /// @brief Construct MP Solv energy from standard and membrane etable
 FaMPSolvEnergy::FaMPSolvEnergy(
 	core::scoring::etable::EtableCAP etable_in,
-	core::scoring::etable::MembEtableCAP memb_etable_in
+	core::scoring::etable::MembEtableCAP memb_etable_in,
+	bool const analytic_membetable_evaluation
 ) :
 	parent( utility::pointer::make_shared< FaMPSolvEnergyCreator >() ),
 	etable_( etable_in ),
@@ -102,8 +108,18 @@ FaMPSolvEnergy::FaMPSolvEnergy(
 	memb_solv2_( memb_etable_in.lock()->memb_solv2() ),
 	memb_dsolv1_( memb_etable_in.lock()->memb_dsolv1() ),
 	memb_dsolv2_( memb_etable_in.lock()->memb_dsolv2() ),
+	//added to calculate fampsolv here instead of binning
+	lk_dgfree_( memb_etable_in.lock()->lk_dgfree() ),
+	memb_lk_dgfree_( memb_etable_in.lock()->memb_lk_dgfree() ),
+	lj_radius_( memb_etable_in.lock()->lj_radius() ),
+	lk_volume_( memb_etable_in.lock()->lk_volume() ),
+	lk_lambda_( memb_etable_in.lock()->lk_lambda() ),
+	//
 	safe_max_dis2_( etable_in.lock()->get_safe_max_dis2() ),
-	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() )
+	get_bins_per_A2_( etable_in.lock()->get_bins_per_A2() ),
+	max_dis_(etable_.lock()->max_dis()),
+	max_normal_dis_( max_dis_ - 1.5 ),
+	analytic_etable_evaluation_(analytic_membetable_evaluation)
 	//verbose_( false )
 {
 	// core::scoring::etable::MembEtableCOP memb_etable( memb_etable_in );
@@ -156,7 +172,6 @@ FaMPSolvEnergy::eval_atom_derivative(
 	core::scoring::Energies const & energies( pose.energies() );
 	core::scoring::EnergyGraph const & energy_graph( energies.energy_graph() );
 
-
 	for ( utility::graph::Graph::EdgeListConstIter
 			iter  = energy_graph.get_node( i )->const_edge_list_begin(),
 			itere = energy_graph.get_node( i )->const_edge_list_end();
@@ -184,10 +199,9 @@ FaMPSolvEnergy::eval_atom_derivative(
 			Real cp_weight = 1.0; Size path_dist(0);
 
 			if ( ! cpfxn->count(m, n, cp_weight, path_dist ) ) continue;
-
-			// Grab proj from both atoms
-			core::Real proj_m = fa_proj_[ rsd1.seqpos() ][ m ];
-			core::Real proj_n = fa_proj_[ rsd2.seqpos() ][ n ];
+			// Grab projection on xy plane from both atoms
+			Real proj_m = fa_proj_[ rsd1.seqpos() ][ m ];
+			Real proj_n = fa_proj_[ rsd2.seqpos() ][ n ];
 
 			Vector const heavy_atom_j( rsd2.xyz( n ) );
 			Vector const d_ij = heavy_atom_j - heavy_atom_i;
@@ -195,20 +209,69 @@ FaMPSolvEnergy::eval_atom_derivative(
 			//Vector const d_ij_norm = d_ij.normalized();
 
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
-
 			Vector f1( 0.0 ), f2( 0.0 );
 
 			Real const dE_dR_over_r
 				( eval_dE_dR_over_r( rsd1.atom(m), rsd2.atom(n), weights, f1, f2, proj_m, proj_n ) );
-			if ( dE_dR_over_r == 0.0 ) continue;
+
+			//now calculate f1 and f2 with respect to distance from membrane center
+			//need to end up with F1 = f1d*dE/dd + f1z*dE/dz
+			//                    F2 = f2d*dE/dd + f2z*dE/dz
+			//F1 and F2 are defined in H. Abe, W. Braun, T. Noguti, N. Go, Computers & Chemistry 1984
+
+			//needed for derivative with respect to distance from membrane center
+			Real solvE1( 0.0 ), solvE2( 0.0 ), membsolvE1( 0.0 ), membsolvE2( 0.0 );
+			solvationE( rsd1.atom(m), rsd2.atom(n), d2, solvE1, solvE2, membsolvE1, membsolvE2);
+
+			//derivative with respect to distance from membrane center of atom m
+			Real dE_dZ_i = fa_proj_deriv_[rsd1.seqpos() ][ m ] * (solvE1 - membsolvE1 );
+
+			// projection of atom onto membrane plane, this is reference atom for this part
+			Vector fa_proj_coord_i = fa_proj_coord_[ rsd1.seqpos() ][ m ];
+
+			// Extracellular
+			// .............................................................................
+			//               * <- atom(m)
+			//                  |
+			//               |
+			// -----Membrane Center--------Origin->*-------* <-fa_proj_coord------------------
+			//
+			//
+			//
+			// .............................................................................
+			// Intracelluar
+
+
+			Vector f1_iz( 0.0 ), f2_iz( 0.0 );
+
+			Vector const d_iz = heavy_atom_i - fa_proj_coord_i;
+			Real const d_iz_norm = d_iz.length();
+			if ( d_iz_norm != Real(0.0) ) {
+				Real const invd_iz = 1.0 / d_iz_norm;
+				f2_iz = d_iz * invd_iz;
+				f1_iz = heavy_atom_i.cross(fa_proj_coord_i);
+				f1_iz *= invd_iz;
+			}
+
+			Real const invd_iz = 1.0 / d_iz_norm;
+			f2_iz = d_iz * invd_iz;
+			f1_iz = heavy_atom_i.cross(fa_proj_coord_i);
+			f1_iz *= invd_iz;
+
+
+			if ( dE_dR_over_r == 0.0 && dE_dZ_i == 0.0 ) continue;
 
 			if ( same_res ) {
-				F1 += 0.5 * dE_dR_over_r * cp_weight * f1;
-				F2 += 0.5 * dE_dR_over_r * cp_weight * f2;
+				F1 += 0.5 * fa_weight_ * cp_weight * ( (dE_dR_over_r * f1) + (dE_dZ_i * f1_iz) );
+				F2 += 0.5 * fa_weight_ * cp_weight * ( (dE_dR_over_r * f2) + (dE_dZ_i * f2_iz) );
+
 			} else {
-				F1 += dE_dR_over_r * cp_weight * f1;
-				F2 += dE_dR_over_r * cp_weight * f2;
+				F1 += fa_weight_ * cp_weight * ( (dE_dR_over_r  * f1) + (dE_dZ_i * f1_iz) );
+				F2 += fa_weight_ * cp_weight * ( (dE_dR_over_r * f2) + (dE_dZ_i * f2_iz) );
+
 			}
+
+
 		}
 	}
 }
@@ -308,8 +371,8 @@ FaMPSolvEnergy::get_residue_pair_energy(
 			if ( ! cpfxn->count( i, j, cp_weight, path_dist ) ) continue;
 
 			// Grab proj from both atoms
-			core::Real proj_i = fa_proj_[ rsd1.seqpos() ][ i ];
-			core::Real proj_j = fa_proj_[ rsd2.seqpos() ][ j ];
+			Real proj_i = fa_proj_[ rsd1.seqpos() ][ i ];
+			Real proj_j = fa_proj_[ rsd2.seqpos() ][ j ];
 
 			Vector const heavy_atom_j( rsd2.xyz( j ) );
 
@@ -318,10 +381,9 @@ FaMPSolvEnergy::get_residue_pair_energy(
 
 			if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) continue;
 
-			Real dummy_deriv( 0.0 );
 			bool debug( false );
 
-			score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, dummy_deriv, proj_i, proj_j, debug );
+			score = cp_weight * eval_lk( rsd1.atom( i ), rsd2.atom( j ), d2, proj_i, proj_j, debug );
 			if ( same_res ) score *= 0.5;
 
 			fa_mbsolv_score += score;
@@ -335,57 +397,55 @@ FaMPSolvEnergy::eval_lk(
 	conformation::Atom const & atom1,
 	conformation::Atom const & atom2,
 	Real const & d2,
-	Real & deriv,
 	Real const & f1,
 	Real const & f2,
 	bool &
 ) const {
 
+
 	if ( ( d2 >= safe_max_dis2_) || ( d2 == Real(0.0) ) ) return 0.0;
 
 	// Initialize Variables
-	Real temp_score( 0.0 );
-	deriv = 0.0;
-	bool const eval_deriv( true );
+	Real score( 0.0 );
 
-	Real const d2_bin = d2 * get_bins_per_A2_;
-	int disbin = static_cast< int >( d2_bin ) + 1;
-	Real frac = d2_bin - ( disbin - 1 );
+	if ( !analytic_etable_evaluation_ ) {
 
-	int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
-	int const l2 = l1 + 1;
 
-	// Membrane specific solvation
-	// solvation of atom1 based on its distance from the membrane center on the membrane normal
-	Real e11 = f1 * solv1_[ l1 ] + (1 - f1) * memb_solv1_[ l1 ];
-	Real e12 = f1 * solv1_[ l2 ] + (1 - f1) * memb_solv1_[ l2 ];
+		Real const d2_bin = d2 * get_bins_per_A2_;
+		int disbin = static_cast< int >( d2_bin ) + 1;
+		Real frac = d2_bin - ( disbin - 1 );
+		int const l1 = solv1_.index( disbin, atom2.type(), atom1.type() );
+		int const l2 = l1 + 1;
 
-	//pba solvation of atom2 based on its distance from the membrane center on the membrane normal
-	Real e21 = f2 * solv2_[ l1 ] + (1 - f2) * memb_solv2_[ l1 ];
-	Real e22 = f2 * solv2_[ l2 ] + (1 - f2) * memb_solv2_[ l2 ];
+		// Membrane specific solvation
+		// solvation of atom1 based on its distance from the membrane center on the membrane normal
+		Real e11 = f1 * solv1_[ l1 ] + (1 - f1) * memb_solv1_[ l1 ];
+		Real e12 = f1 * solv1_[ l2 ] + (1 - f1) * memb_solv1_[ l2 ];
 
-	Real e1 = e11 + e21;
-	Real e2 = e12 + e22;
+		//pba solvation of atom2 based on its distance from the membrane center on the membrane normal
+		Real e21 = f2 * solv2_[ l1 ] + (1 - f2) * memb_solv2_[ l1 ];
+		Real e22 = f2 * solv2_[ l2 ] + (1 - f2) * memb_solv2_[ l2 ];
 
-	temp_score = e1 + frac * ( e2 - e1 );
+		Real e1 = e11 + e21;
+		Real e2 = e12 + e22;
 
-	// Always evaluate derivatives
-	if ( eval_deriv ) {
+		score = e1 + frac * ( e2 - e1 );
 
-		e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
-		e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
-		e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
-		e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
-		e1 = e11 + e21;
-		e2 = e12 + e22;
+	} else {
+		Real solve1(0.0), solve2(0.0), solvE1( 0.0 ), solvE2( 0.0 ), membsolvE1( 0.0 ), membsolvE2( 0.0 );
+		solvationE( atom1, atom2, d2, solvE1, solvE2, membsolvE1, membsolvE2);
 
-		deriv = e1 + frac * ( e2 - e1 );
-		deriv = deriv / std::sqrt( d2 );
+		solve1 = f1 * solvE1 + (1 - f1) * membsolvE1;
+		solve2 = f2 * solvE2 + (1 - f2) * membsolvE2;
+		score = solve1 + solve2;
 	}
-	return temp_score;
+
+	return score;
 }
 
 /// @brief Compute Change in Energy over distance (for minimization)
+//F1 and F2 are vectors needed for the derivatives
+//f1 and f2 are the values for the membrane transition function for atom i and j
 Real
 FaMPSolvEnergy::eval_dE_dR_over_r(
 	conformation::Atom const & atom1,
@@ -399,28 +459,42 @@ FaMPSolvEnergy::eval_dE_dR_over_r(
 
 	F1 = atom1.xyz().cross( atom2.xyz() );
 	F2 = atom1.xyz() - atom2.xyz();
-	Real d2 = atom1.xyz().distance_squared( atom2.xyz() );
 
+	Real d2 = atom1.xyz().distance_squared( atom2.xyz() );
 	if ( ( d2 >= safe_max_dis2_ ) || ( d2 == Real(0.0) ) ) return 0.0;
 
-	// bin by distance:
-	Real const d2_bin = d2 * get_bins_per_A2_;
-	int disbin = static_cast< int >( d2_bin ) + 1;
-	Real frac = d2_bin - ( disbin - 1 );
+	Real deriv;
 
-	int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
-		l2 = l1 + 1;
+	if ( !analytic_etable_evaluation_ ) {
+		// bin by distance:
+		Real const d2_bin = d2 * get_bins_per_A2_;
+		int disbin = static_cast< int >( d2_bin ) + 1;
+		Real frac = d2_bin - ( disbin - 1 );
 
-	Real e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
-	Real e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
-	Real e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
-	Real e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
-	Real e1 = e11 + e21;
-	Real e2 = e12 + e22;
+		int const l1 = dsolv1_.index( disbin, atom1.type(), atom2.type()),
+			l2 = l1 + 1;
+		//f1 is transition function for atom i
+		//f2 is transition function for atom j
+		Real e11 = f1 * dsolv1_[ l1 ] + (1 - f1) * memb_dsolv1_[ l1 ];
+		Real e12 = f1 * dsolv1_[ l2 ] + (1 - f1) * memb_dsolv1_[ l2 ];
+		Real e21 = f2 * dsolv2_[ l1 ] + (1 - f2) * memb_dsolv2_[ l1 ];
+		Real e22 = f2 * dsolv2_[ l2 ] + (1 - f2) * memb_dsolv2_[ l2 ];
+		Real e1 = e11 + e21;
+		Real e2 = e12 + e22;
 
-	Real deriv = fa_weight_ * ( e1 + frac * ( e2 - e1 ) );
+		deriv = ( e1 + frac * ( e2 - e1 ) );
+	} else {
+
+		Real dsolve1( 0.0 ), dsolve2( 0.0 ), dmembsolve1( 0.0 ), dmembsolve2( 0.0 );
+		dsolvationE( atom1, atom2, d2, dsolve1, dsolve2, dmembsolve1, dmembsolve2 );
+		Real de1 = f1 * dsolve1 + (1 - f1) * dmembsolve1;
+		Real de2 = f2 * dsolve2 + (1 - f2) * dmembsolve2;
+		deriv = de1 + de2;
+
+	}
 
 	return deriv / std::sqrt( d2 );
+	//divides by the distance to incorporate 1/|rb - ra|, instead of dividing F1 and F2 by distance
 }
 
 /// @brief Versioning
@@ -435,8 +509,13 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 	// Alloc appropriate Farrays
 	setup_for_fullatom( pose );
 
-	core::Real thickness = pose.conformation().membrane_info()->membrane_thickness();
-	core::Real steepness = pose.conformation().membrane_info()->membrane_steepness();
+	core::conformation::Conformation const & conf( pose.conformation() );
+
+	Real thickness = conf.membrane_info()->membrane_thickness();
+	Real steepness = conf.membrane_info()->membrane_steepness();
+
+	Vector center = conf.membrane_info()->membrane_center(conf);
+	Vector normal = conf.membrane_info()->membrane_normal(conf);
 
 	// For convenience - grab nres
 	Real nres = pose.size();
@@ -451,36 +530,313 @@ FaMPSolvEnergy::init( pose::Pose & pose ) const {
 
 			// Compute Fa Projection
 			fa_proj_[i][j] = compute_fa_proj( fa_z_position_[i][j], thickness, steepness );
+
+
+			fa_proj_deriv_[i][j] = compute_fa_deriv( fa_z_position_[i][j], thickness, steepness );
+
+			fa_proj_coord_[i][j] = compute_fa_proj_coord( fa_z_position_[i][j], xyz, center, normal );
+
 		}
 	}
 }
 
 /// @brief Helper Method - Compute Fa Proj
-core::Real
+Real
 FaMPSolvEnergy::compute_fa_proj(
-	core::Real z_position,
-	core::Real thickness,
-	core::Real steepness
+	Real z_position,
+	Real thickness,
+	Real steepness
 ) const {
 
-	Real internal_product(0), z(0), zn(0);
-	internal_product = std::abs( z_position );
-	z = internal_product;
-	z /= thickness;
-	zn = std::pow( z, steepness );
+	Real z = std::abs( z_position )/thickness;
+	Real zn = std::pow( z, steepness );
 	Real result = zn/(1 + zn);
 
 	return result;
+}
+
+/// @brief Helper Method - Compute Fa Derivatives
+Real
+FaMPSolvEnergy::compute_fa_deriv(
+	Real z_position,
+	Real thickness,
+	Real steepness
+) const {
+
+	Real z = std::abs( z_position )/thickness;
+	Real zn = std::pow( z, steepness );
+	Real znm1 = std::pow( z, steepness-1 );
+	Real deriv = steepness * znm1 * std::pow((1+zn),-2);
+
+	return ( deriv /= thickness );
+}
+
+/// @brief Helper Method - Compute Fa Proj coordinate
+Vector
+FaMPSolvEnergy::compute_fa_proj_coord(
+	Real z_position,
+	Vector const & xyz,
+	Vector const & center,
+	Vector const & normal
+) const {
+	Vector proj_i = center + z_position * normal;
+	Vector i_ip = proj_i - xyz;
+	return ( center - i_ip );
+}
+
+//solvation of atom i and j in water and chex
+void
+FaMPSolvEnergy::solvationE(
+	conformation::Atom const & atom1,
+	conformation::Atom const & atom2,
+	Real dis2,
+	Real &solvE1,
+	Real &solvE2,
+	Real &membsolvE1,
+	Real &membsolvE2
+) const {
+	Real solv1, solv2;
+	core::scoring::etable::EtableCOP etable = etable_.lock();
+	core::scoring::etable::MembEtableCOP memb_etable = memb_etable_.lock();
+	Real min_dis2 = etable->min_dis2(); //If distance is less than min_dis then make distance=min_dis
+	//If distance is greater than max dis + epsilon then we don't need to calucate solvation
+	Real max_dis2 = etable->max_dis2();
+	Real epsilon = etable->epsilon();
+
+
+	if ( dis2 > max_dis2 + epsilon ) {
+		return;
+	}
+	if ( dis2 < min_dis2 ) {
+		dis2 = min_dis2;
+	}
+
+	//distance between atom i and j
+	Real dis = std::sqrt(dis2);
+
+
+	//pulling sigma from MembEtable
+	Real lk_min_dis2sigma = etable->lk_min_dis2sigma();
+	Real sigma = memb_etable->lj_sigma(atom1.type(), atom2.type());
+
+	Real thresh_dis = lk_min_dis2sigma * sigma;
+
+	Real thresh_dis_min = thresh_dis/2.0;
+
+
+	//If dis > max_dis solvation = 0 and <thresh_dis_min score should be
+	//what it is at thresh_dis_min. A cubic spline is used to ensure that the function remains continuously differentiable.
+	if ( dis > max_normal_dis_ && dis < max_dis_ ) {
+
+		Real start_damping = max_normal_dis_;
+		Real t = (dis - start_damping) / (max_dis_ - start_damping);
+		//pk1 is the value of solvation for atom1 at the max_normal dis
+		//mk1 is the derivative at max_normal_dis
+		//pk2 and mk2 are the same excpet for atom2
+		//the value of solvation and derivative at max_dis  for atom 1 and 2 are 0
+		//so those terms drop out
+		Real pk1 = solv( atom1.type(), atom2.type(), start_damping );
+		Real mk1 = solv_deriv( atom1, start_damping ) * pk1;
+
+		Real pk2 = solv( atom2.type(), atom1.type(), start_damping );
+		Real mk2 = solv_deriv( atom2, start_damping ) * pk2;
+
+		Real a1 = mk1*(max_dis_ - start_damping) - ( -pk1 );
+		Real b1 = -pk1;
+
+		Real a2 = mk2*(max_dis_ - start_damping) - ( -pk2 );
+		Real b2 = -pk2;
+
+		solv1 = (1-t)*pk1 + t*(1-t)*((1-t)*a1 + t*b1);
+		solv2 = (1-t)*pk2 + t*(1-t)*((1-t)*a2 + t*b2);
+
+	} else if ( dis < thresh_dis && dis > thresh_dis_min ) {
+		Real t = ( dis - thresh_dis_min ) / ( thresh_dis - thresh_dis_min );
+		//pk11 is the value of solvation at thresh_dis_min for atom 1
+		//pk12 is the value of solvation at thresh_dis for atom 1
+		//mk12 is the value of the derivative at thresh_dis for atom 1
+		//the value of the slope at thresh_dis_min is 0
+		//pk21, pk22, mk22 are the same except it is for atom2
+
+		Real pk11 = solv( atom1.type(), atom2.type(), thresh_dis_min );
+		Real pk12 = solv( atom1.type(), atom2.type(), thresh_dis );
+		Real mk12 = solv_deriv( atom1, thresh_dis ) * pk12;
+
+		Real pk21 = solv( atom2.type(), atom1.type(), thresh_dis_min );
+		Real pk22 = solv( atom2.type(), atom1.type(), thresh_dis );
+		Real mk22 = solv_deriv( atom2, thresh_dis ) * pk22;
+
+		solv1 = ( 2*std::pow(t,3) - 3*std::pow(t,2) + 1 )*pk11 + (-2*std::pow(t,3) + 3*std::pow(t,2))*pk12 + ( std::pow(t,3) - std::pow(t,2) )*( thresh_dis - thresh_dis_min )*mk12;
+		solv2 = ( 2*std::pow(t,3) - 3*std::pow(t,2) + 1 )*pk21 + (-2*std::pow(t,3) + 3*std::pow(t,2))*pk22 + ( std::pow(t,3) - std::pow(t,2) )*( thresh_dis - thresh_dis_min )*mk22;
+
+	} else if ( dis <= thresh_dis_min ) {
+		//constant value of solvation at distance less than thresh_dis_min
+		solv1 = solv( atom1.type(), atom2.type(), thresh_dis_min );
+		solv2 = solv( atom2.type(), atom1.type(), thresh_dis_min );
+
+	} else if ( dis >= max_dis_ ) {
+		//solvaiton at distance greater than max_dis is 0
+		solv1 = 0;
+		solv2 = 0;
+	} else {
+		//the solvation for distances between thresh_dis and max_normal_dis
+		solv1 = solv( atom1.type(), atom2.type(), dis );
+		solv2 = solv( atom2.type(), atom1.type(), dis );
+	}
+
+	solvE1 = lk_dgfree_[ atom1.type() ] * solv1;
+	solvE2 = lk_dgfree_[ atom2.type() ] * solv2;
+	membsolvE1 = memb_lk_dgfree_[ atom1.type() ] * solv1;
+	membsolvE2 = memb_lk_dgfree_[ atom2.type() ] * solv2;
+
+}
+
+//solvation function used in solvationE that is independent of membrane depth of atom
+Real
+FaMPSolvEnergy::solv(
+	int atom1type,
+	int atom2type,
+	Real dis
+) const {
+	Real const k = { -0.089793561062583294 }; //inv_neg2_tms_pi_sqrt_pi
+	//k is a combination of the constant terms in the equation from P. Barth, J. Schonbrun, D. Baker PNAS 2007 equation 2 in the SI Materials and Methods.
+	return k * lk_volume_[ atom2type ] * solv_piece( atom1type, dis );
+}
+
+//A portion of the solvation calculated in solv that is only dependent on one atom
+Real
+FaMPSolvEnergy::solv_piece(
+	int atom_type,
+	Real d
+) const {
+	Real lambda = lk_lambda_[ atom_type ];
+	Real denom = d * d * lambda;
+	Real dis_rad = d - lj_radius_[ atom_type ];
+	Real dis_rad_lambda = dis_rad/lambda;
+	Real expo = dis_rad_lambda * dis_rad_lambda;
+	Real solv = std::exp(-expo) / denom;
+	return solv;
+}
+
+//solvation partial derivative wrt distance from atom i and j
+void
+FaMPSolvEnergy::dsolvationE(
+	conformation::Atom const & atom1,
+	conformation::Atom const & atom2,
+	Real dis2,
+	Real &dsolvE1,
+	Real &dsolvE2,
+	Real &dmembsolvE1,
+	Real &dmembsolvE2
+) const {
+	core::scoring::etable::EtableCOP etable = etable_.lock();
+	core::scoring::etable::MembEtableCOP memb_etable = memb_etable_.lock();
+	Real min_dis2 = etable->min_dis2();
+	Real max_dis2 = etable->max_dis2();
+	Real epsilon = etable->epsilon();
+
+
+	if ( dis2 > max_dis2 + epsilon ) {
+		return;
+	}
+	if ( dis2 < min_dis2 ) {
+		dis2 = min_dis2;
+	}
+
+	Real dis = std::sqrt(dis2);
+
+	//see comments above in SolvationE for notes on sigma and thresh_dis
+	Real lk_min_dis2sigma = etable->lk_min_dis2sigma();
+	Real sigma = memb_etable->lj_sigma(atom1.type(), atom2.type());
+
+
+	Real thresh_dis = lk_min_dis2sigma * sigma;
+	Real thresh_dis_min = thresh_dis/2.0;
+
+	if ( dis > max_normal_dis_ && dis < max_dis_ ) {
+		Real start_damping = max_normal_dis_;
+		Real t = (dis - start_damping) / (max_dis_ - start_damping);
+
+		Real pk1 = solv( atom1.type(), atom2.type(), start_damping );
+		Real mk1 = solv_deriv( atom1, start_damping ) * pk1;
+
+		Real pk2 = solv( atom2.type(), atom1.type(), start_damping );
+		Real mk2 = solv_deriv( atom2, start_damping ) * pk2;
+
+		Real a1 = mk1*(max_dis_ - start_damping) - ( -pk1 );
+		Real b1 = -pk1;
+
+		Real a2 = mk2*(max_dis_ - start_damping) - ( -pk2 );
+		Real b2 = -pk2;
+
+		Real deriv1 = (-pk1 + (1 - 2*t)*((1-t)*a1 + t*b1) + (t - t*t)*(-a1 + b1))*(1/(max_dis_ - start_damping));
+		Real deriv2 = (-pk2 + (1 - 2*t)*((1-t)*a2 + t*b2) + (t - t*t)*(-a2 + b2))*(1/(max_dis_ - start_damping));
+
+		dsolvE1 = lk_dgfree_[ atom1.type() ] * deriv1;
+		dsolvE2 = lk_dgfree_[ atom2.type() ] * deriv2;
+		dmembsolvE1 = memb_lk_dgfree_[ atom1.type() ] * deriv1;
+		dmembsolvE2 = memb_lk_dgfree_[ atom2.type() ] * deriv2;
+
+	} else if ( dis < thresh_dis && dis > thresh_dis_min ) {
+		Real t = ( dis - thresh_dis_min ) / ( thresh_dis - thresh_dis_min );
+
+		Real pk11 = solv( atom1.type(), atom2.type(), thresh_dis_min );
+		Real pk12 = solv( atom1.type(), atom2.type(), thresh_dis );
+		Real mk12 = solv_deriv( atom1, thresh_dis ) * pk12;
+
+		Real pk21 = solv( atom2.type(), atom1.type(), thresh_dis_min );
+		Real pk22 = solv( atom2.type(), atom1.type(), thresh_dis );
+		Real mk22 = solv_deriv( atom2, thresh_dis ) * pk22;
+
+		Real deriv1 = (( 6*std::pow(t,2) - 6*t )*pk11 + ( -6*std::pow(t,2) + 6*t )*pk12 + ( 3*std::pow(t,2) - 2*t )*( thresh_dis - thresh_dis_min )*mk12 )*(1/(thresh_dis-thresh_dis_min));
+		Real deriv2 = (( 6*std::pow(t,2) - 6*t )*pk21 + ( -6*std::pow(t,2) + 6*t )*pk22 + ( 3*std::pow(t,2) - 2*t )*( thresh_dis - thresh_dis_min )*mk22 )*(1/(thresh_dis-thresh_dis_min));
+
+		dsolvE1 = lk_dgfree_[ atom1.type() ] * deriv1;
+		dsolvE2 = lk_dgfree_[ atom2.type() ] * deriv2;
+		dmembsolvE1 = memb_lk_dgfree_[ atom1.type() ] * deriv1;
+		dmembsolvE2 = memb_lk_dgfree_[ atom2.type() ] * deriv2;
+
+
+	} else if ( dis <= thresh_dis_min || dis >= max_dis_ ) {
+		dsolvE1 = 0.0;
+		dsolvE1 = 0.0;
+		dmembsolvE1 = 0.0;
+		dmembsolvE1 = 0.0;
+
+	} else {
+		Real solv1 = solv( atom1.type(), atom2.type(), dis );
+		Real solv2 = solv( atom2.type(), atom1.type(), dis );
+
+		Real deriv1 = solv_deriv( atom1, dis );
+		Real deriv2 = solv_deriv( atom2, dis );
+
+		dsolvE1 = lk_dgfree_[ atom1.type() ] * solv1 * deriv1;
+		dsolvE2 = lk_dgfree_[ atom2.type() ] * solv2 * deriv2;
+		dmembsolvE1 = memb_lk_dgfree_[ atom1.type() ] * solv1 * deriv1;
+		dmembsolvE2 = memb_lk_dgfree_[ atom2.type() ] * solv2 * deriv2;
+
+	}
+}
+
+Real
+FaMPSolvEnergy::solv_deriv(
+	conformation::Atom const & atom,
+	Real dis
+) const {
+	Real deriv = -2.0 * (((dis - lj_radius_[ atom.type() ]) * ( 1/std::pow(lk_lambda_[ atom.type() ], 2) )) + (1/dis));
+	return deriv;
 }
 
 /// @brief Setup Data Members for Fullatom Info
 void
 FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
-	core::Real nres = pose.size();
+	Real nres = pose.size();
 
-	fa_z_position_.resize( (core::Size)nres );
-	fa_proj_.resize( (core::Size)nres );
+	fa_z_position_.resize( (Size)nres );
+	fa_proj_.resize( (Size)nres );
+	fa_proj_coord_.resize( (Size)nres );
+	fa_proj_deriv_.resize( (Size)nres );
 
 	static Size const MAX_AMINOACID_SIZE = 15;
 
@@ -490,10 +846,15 @@ FaMPSolvEnergy::setup_for_fullatom( pose::Pose & pose ) const {
 
 		fa_z_position_[i].resize( max_size );
 		fa_proj_[i].resize( max_size );
+		fa_proj_coord_[i].resize( max_size );
+		fa_proj_deriv_[i].resize( max_size );
 
 		for ( Size j = 1; j <= max_size; ++j ) {
 			fa_z_position_[i][j] = 0.0;
 			fa_proj_[i][j] = 0.0;
+			fa_proj_coord_[i][j].assign(0.0,0.0,0.0);
+			fa_proj_deriv_[i][j] = 0.0;
+
 		}
 	}
 }

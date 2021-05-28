@@ -567,7 +567,11 @@ sources = {
     "MPHelicality",
     "MPResidueLipophilicity",
     "MPSpanAngle",
-    "MPSpanInsertion"
+    "MPSpanInsertion",
+    "FaMPEnv",
+    "FaMPSolv",
+    "FaMbsolv",
+    "FaMbenv"
   ],
   "scoring/mhc_epitope_energy" : [
 	"MHCEpitopeConstraint",

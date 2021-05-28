@@ -199,6 +199,7 @@ public:
 	bool analytic_etable_evaluation() const;
 	void analytic_etable_evaluation( bool setting );
 
+	bool analytic_membetable_evaluation() const;
 
 	std::string const &
 	unfolded_energies_type() const;

@@ -94,6 +94,7 @@ public:
 	Real lj_hbond_hdis;
 	bool enlarge_h_lj_wdepth;
 	bool fa_hatr;
+	bool analytic_membetable_evaluation;
 
 private:
 

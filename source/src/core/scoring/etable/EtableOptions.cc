@@ -28,7 +28,7 @@
 // option key includes
 #include <basic/options/keys/score.OptionKeys.gen.hh>
 #include <basic/options/keys/corrections.OptionKeys.gen.hh>
-
+#include <basic/options/keys/mp.OptionKeys.gen.hh>
 
 #ifdef SERIALIZATION
 // Utility serialization headers
@@ -64,7 +64,8 @@ EtableOptions::EtableOptions( utility::options::OptionCollection const & options
 	lj_hbond_OH_donor_dis(/*3.0*/2.6),
 	lj_hbond_hdis(/*1.95*/1.75),
 	enlarge_h_lj_wdepth(false),
-	fa_hatr(/*false*/true)
+	fa_hatr(/*false*/true),
+	analytic_membetable_evaluation( true )
 {
 	initialize_from_options( options );
 }
@@ -95,6 +96,7 @@ EtableOptions::operator=( EtableOptions const & src )
 		lj_hbond_hdis = src.lj_hbond_hdis;
 		enlarge_h_lj_wdepth = src.enlarge_h_lj_wdepth;
 		fa_hatr = src.fa_hatr;
+		analytic_membetable_evaluation = src.analytic_membetable_evaluation;
 	}
 	return *this;
 }
@@ -107,6 +109,9 @@ operator < ( EtableOptions const & a, EtableOptions const & b )
 
 	if      ( a.analytic_etable_evaluation < b.analytic_etable_evaluation ) { return true; }
 	else if ( a.analytic_etable_evaluation != b.analytic_etable_evaluation ) { return false; }
+
+	if      ( a.analytic_membetable_evaluation < b.analytic_membetable_evaluation ) { return true; }
+	else if ( a.analytic_membetable_evaluation != b.analytic_membetable_evaluation ) { return false; }
 
 	if      ( a.max_dis < b.max_dis )  { return true;  }
 	else if ( a.max_dis != b.max_dis ) { return false; }
@@ -145,6 +150,7 @@ operator==( EtableOptions const & a, EtableOptions const & b )
 {
 	return ((a.etable_type == b.etable_type ) &&
 		(a.analytic_etable_evaluation == b.analytic_etable_evaluation ) &&
+		(a.analytic_membetable_evaluation == b.analytic_membetable_evaluation ) &&
 		( a.max_dis == b.max_dis ) &&
 		( a.bins_per_A2 == b.bins_per_A2 ) &&
 		( a.Wradius == b.Wradius ) &&
@@ -232,6 +238,7 @@ EtableOptions::initialize_from_options( utility::options::OptionCollection const
 	lj_hbond_OH_donor_dis = options[ corrections::score::lj_hbond_OH_donor_dis ];
 	lj_hbond_hdis = options[ corrections::score::lj_hbond_hdis ];
 	fa_hatr = options[ score::fa_Hatr ];
+	analytic_membetable_evaluation = options[ mp::scoring::analytic_membetable_evaluation ];
 }
 
 void
@@ -242,6 +249,7 @@ EtableOptions::list_options_read( utility::options::OptionKeyList & options_read
 		+ corrections::score::lj_hbond_hdis
 		+ corrections::score::lj_hbond_OH_donor_dis
 		+ score::analytic_etable_evaluation
+		+ mp::scoring::analytic_membetable_evaluation
 		+ score::fa_max_dis
 		+ score::no_smooth_etables
 		+ score::no_lk_polar_desolvation
@@ -272,6 +280,7 @@ core::scoring::etable::EtableOptions::save( Archive & arc ) const {
 	arc( CEREAL_NVP( lj_hbond_hdis ) ); // Real
 	arc( CEREAL_NVP( enlarge_h_lj_wdepth ) ); // _Bool
 	arc( CEREAL_NVP( fa_hatr ) ); // _Bool
+	arc( CEREAL_NVP( analytic_membetable_evaluation ) ); //-Bool
 }
 
 /// @brief Automatically generated deserialization method
@@ -290,6 +299,7 @@ core::scoring::etable::EtableOptions::load( Archive & arc ) {
 	arc( lj_hbond_hdis ); // Real
 	arc( enlarge_h_lj_wdepth ); // _Bool
 	arc( fa_hatr ); // _Bool
+	arc( analytic_membetable_evaluation ); // _Bool
 }
 
 SAVE_AND_LOAD_SERIALIZABLE( core::scoring::etable::EtableOptions );

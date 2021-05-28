@@ -6129,6 +6129,7 @@
 [core/scoring/etable/EtableOptions.cc:51]: (warning) Member variable 'EtableOptions::fa_hatr' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/etable/EtableOptions.cc:51]: (warning) Member variable 'EtableOptions::no_lk_polar_desolvation' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/etable/EtableOptions.cc:51]: (warning) Member variable 'EtableOptions::proline_N_is_lk_nonpolar' is not initialized in the constructor. [uninitMemberVar]
+[core/scoring/etable/EtableOptions.cc:51]: (warning) Member variable 'EtableOptions::analytic_membetable_evaluation' is not initialized in the constructor. [uninitMemberVar]
 [core/scoring/facts/FACTSPose.hh:44]: (warning) The class 'FACTSPoseInfo' has 'copy constructor' but lack of 'operator='. [copyCtorAndEqOperator]
 [core/scoring/facts/FACTSResidue.hh:287]: (warning) The class 'FACTSRotamerSetInfo' has 'copy constructor' but lack of 'operator='. [copyCtorAndEqOperator]
 [core/scoring/fiber_diffraction/FiberDiffraction.cc:163]: (performance) Function parameter 'layer_lines' should be passed by reference. [passedByValue]
