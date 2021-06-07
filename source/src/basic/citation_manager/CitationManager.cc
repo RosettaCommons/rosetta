@@ -179,7 +179,7 @@ CitationManager::get_citation_by_doi(
 	try {
 		return doi_rosetta_citation_map_.at( doi );
 	} catch( std::out_of_range const & err) {
-		utility_exit_with_message( "Error in CitationManager::get_citation_by_doi(): The DOI \"" + doi + "\" was requested, but this is not associated with any paper in the Rosetta database.  Has it been added to database/citations/rosetta_citations.txt?" );
+		utility_exit_with_message( "Error in CitationManager::get_citation_by_doi(): The DOI \"" + doi + "\" was requested, but this is not associated with any paper in the Rosetta database.  Has it been added to database/citations/rosetta_citations.txt?\n(Note that this error can arise if the Rosetta database is out of sync with the binaries compiled from the source code.  If you recently pulled or checked out a different version of Rosetta, you might resolve this error by recompiling, if you forgot to do so.)" );
 	}
 }
 
