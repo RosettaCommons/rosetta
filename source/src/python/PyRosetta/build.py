@@ -591,7 +591,7 @@ def generate_bindings(rosetta_source_path):
 
 
     all_includes, serialization_instantiation = [], []
-    for path in 'ObjexxFCL utility numeric basic core protocols'.split():
+    for path in 'ObjexxFCL utility numeric basic core protocols'.split()[:-Options.skip_namespaces]:
         for dir_name, _, files in os.walk(rosetta_source_path + '/src/' + path):
             for f in sorted(files):
                 if not is_dir_banned(dir_name):
@@ -635,8 +635,18 @@ def generate_bindings(rosetta_source_path):
     defines  = ''.join( [' -D'+d for d in get_defines()] ) + ' -DPYROSETTA_BINDER'
 
     if Platform == 'macos':
-        includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
-        if int( platform.mac_ver()[0].split('.')[1] ) > 13 : includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
+        if tuple( map(int, platform.mac_ver()[0].split('.') ) ) < (11, 4):
+            includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1'
+            includes += ' -isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include'
+        else:
+            # includes += ' -isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk'
+            # includes += ' -isystem /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include'
+            # includes += ' -isystem /Library/Developer/CommandLineTools/usr/lib/clang/12.0.5/include'
+            # includes += ' -isystem /Library/Developer/CommandLineTools/usr/include/c++/v1'
+            # includes += ' -isystem `xcrun --show-sdk-path`/usr/include/c++/v1'
+            # includes += ' -isystem `xcrun --show-sdk-path`/usr/include'
+            includes += ' -isysroot `xcrun --show-sdk-path`'
+
 
     if Options.binder_options:      include  += ' ' + Options.binder_options
     if Options.binder_llvm_options: includes += ' ' + Options.binder_llvm_options
@@ -827,6 +837,9 @@ def main(args):
     parser.add_argument('--no-zmq', dest='zmq', action="store_false", help='Disable building and linking of ZeroMQ library')
 
     parser.add_argument('--version', help='Supply JSON version file to be used for during package creation and documentation building. File must be in the same format as standard Rosetta .release.json used to mark release versions. If no file is supplied script will fallback to use main/.version.json.')
+
+    parser.add_argument('-n', '--skip-namespaces', default=-16777216, type=int, help="EXPERIMENTAL: Specify number of high-level Rosetta namespaces to skip during generation phase. This allow one to bypass bindings generations for higher level libraries (like protocols, core etc )Default is 0, - do not skip any namespaces.")
+
 
     #parser.add_argument('--build-suffix', default=None, help='Specify build suffix that will be be used when creating build directories. Default is None, - use either $HOSTNAME or value provided in local .hostname file.')
 

@@ -16,6 +16,7 @@
 #include <core/chemical/sdf/MolFileIOReader.fwd.hh>
 #include <core/chemical/sdf/MolFileIOData.fwd.hh>
 #include <core/chemical/MutableResidueType.fwd.hh>
+
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
@@ -45,6 +46,7 @@ public:
 private:
 };
 
+
 /// @brief Convert the vector of MolFileIOMolecules into a single residue type,
 /// using multiple entries as rotamers
 /// Can return a null pointer if there's something wrong with the underlying data
@@ -98,6 +100,18 @@ utility::vector1< MutableResidueTypeOP > convert_to_ResidueTypes( std::string co
 	AtomTypeSetCOP atom_types,
 	ElementSetCOP element_types,
 	MMAtomTypeSetCOP mm_atom_types);
+
+
+
+#ifdef PYROSETTA
+inline void __PyRosetta_instantiate_vector1_MutableResidueType_and_MolFileIOMolecule_types(
+	utility::vector1< MutableResidueTypeOP >,
+	utility::vector1< MolFileIOMoleculeOP >
+)
+{}
+// struct __PyRosetta_instantiate_vector1_MutableResidueTypeOP {	utility::vector1< MutableResidueTypeOP > v; };
+
+#endif
 
 
 }

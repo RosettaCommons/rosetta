@@ -377,28 +377,21 @@ def get_required_pyrosetta_python_packages_for_testing(platform):
 
         IMPORTANT: there should be no spaces between package name and version number
     '''
-    packages = '\
-    attrs>=19.3.0        \
-    billiard>=3.6.3.0    \
-    blosc>=1.8.3         \
-    cloudpickle>=1.4.1   \
-    dask>=2.16.0         \
-    dask-jobqueue>=0.7.0 \
-    distributed>=2.16.0  \
-    gitpython>=3.1.1     \
-    jupyter>=1.0.0       \
-    numpy>=1.17.3        \
-    pandas>=0.25.2       \
-    scipy>=1.4.1         \
-    traitlets>=4.3.3     \
-    '
     # not available in standard Conda channels:
     #    blosc==1.8.3         \
     #    py3Dmol>=0.8.0       \
 
-    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
+    python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
 
-    #if conda: packages = [ p.replace('blosc', 'python-blosc').replace('>=', ' >=').replace('==', ' ==') for p in packages ]
+
+    if python_version < (3, 9):
+        packages = 'attrs>=19.3.0 billiard>=3.6.3.0 cloudpickle>=1.4.1 dask>=2.16.0 dask-jobqueue>=0.7.0 distributed>=2.16.0 gitpython>=3.1.1 jupyter>=1.0.0 traitlets>=4.3.3 blosc>=1.8.3 numpy>=1.17.3 pandas>=0.25.2 scipy>=1.4.1'
+
+    else:
+        packages = 'numpy>=1.19.2'
+
+
+    packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
 
     for p in packages: assert '=' in p
 
@@ -414,20 +407,27 @@ def get_required_pyrosetta_python_packages_for_release_package(platform, conda):
 
         IMPORTANT: there should be no spaces between package name and version number
     '''
-    packages = '\
-    blosc>=1.8.3         \
-    cloudpickle>=1.4.1   \
-    dask>=2.16.0         \
-    dask-jobqueue>=0.7.0 \
-    distributed>=2.16.0  \
-    jupyter>=1.0.0       \
-    numpy>=1.17.3        \
-    pandas>=0.25.2       \
-    scipy>=1.4.1         \
-    traitlets>=4.3.3     \
-    '
+
+    python_version = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+
+    if python_version < (3, 9):
+        packages = '\
+        blosc>=1.8.3         \
+        cloudpickle>=1.4.1   \
+        dask>=2.16.0         \
+        dask-jobqueue>=0.7.0 \
+        distributed>=2.16.0  \
+        jupyter>=1.0.0       \
+        numpy>=1.17.3        \
+        pandas>=0.25.2       \
+        scipy>=1.4.1         \
+        traitlets>=4.3.3     \
+        '
+    else:
+        packages = 'numpy>=1.19.2'
 
     if conda: packages = packages.replace('blosc', 'python-blosc')
+
     packages = packages.split() if 'serialization' in platform['extras'] and platform.get('python', '3.6')[:2] != '2.' else []
     for p in packages: assert '=' in p
     return packages

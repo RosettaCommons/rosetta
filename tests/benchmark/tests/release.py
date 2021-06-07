@@ -658,6 +658,8 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
 
             execute( f'Creating PyRosetta4 distribution package...', f'{build_command_line} -sd --create-package {package_dir}' )
 
+            python_version_as_tuple = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+
             recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
 
             recipe = dict(
@@ -667,20 +669,19 @@ def native_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfo
                 ),
                 requirements = dict(
                     build = [f'python =={platform["python"]}'],
-                    host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
+                    host  = [f'python =={platform["python"]}', 'setuptools', 'zlib'],
                     #run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
                     run   = [f'python =={platform["python"]}', 'zlib', ] + get_required_pyrosetta_python_packages_for_release_package(platform, conda=True),
                 ),
 
-                # technically there is no need to re-run tests here, since we just have run a full PyRosetta test suite
-                test = dict(
-                    requires = [f'python =={platform["python"]}'],
-                    commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'],
-                ),
-
                 about = dict( home ='http://www.pyrosetta.org' ),
             )
-            #if platform['os'] != 'mac': recipe['test'] = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] )
+
+            if python_version_as_tuple < (3, 9):
+                recipe['test'] = dict(
+                    requires = [f'python =={platform["python"]}'],
+                    commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke']
+                )
 
             with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
 
@@ -855,6 +856,8 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
     version_file = working_dir + '/version.json'
     version = generate_version_information(rosetta_dir, branch=config['branch'], revision=config['revision'], package=release_name, url='http://www.pyrosetta.org', file_name=version_file)  # date=datetime.datetime.now(), avoid setting date and instead use date from Git commit
 
+    python_version_as_tuple = tuple( map(int, platform.get('python', '3.6').split('.') ) )
+
     recipe_dir = working_dir + '/recipe';  os.makedirs(recipe_dir)
 
     recipe = dict(
@@ -867,9 +870,12 @@ def conda_libc_py_rosetta4_conda_release(kind, rosetta_dir, working_dir, platfor
             host  = [f'python =={platform["python"]}', 'setuptools', 'numpy', 'zlib'],
             run   = [f'python =={platform["python"]}', "{{ pin_compatible('numpy') }}", 'zlib', 'pandas >=0.18', 'scipy >=1.0', 'traitlets', 'python-blosc'],
         ),
-        test = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] ),
+
         about = dict( home ='http://www.pyrosetta.org' ),
     )
+
+    if python_version_as_tuple < (3, 9): recipe['test'] = dict( commands = ['python -m unittest pyrosetta.tests.distributed.test_smoke'] )
+
     with open( recipe_dir + '/meta.yaml', 'w' ) as f: json.dump(recipe, f, sort_keys=True, indent=2)
 
     package_dir = working_dir + '/' + release_name
