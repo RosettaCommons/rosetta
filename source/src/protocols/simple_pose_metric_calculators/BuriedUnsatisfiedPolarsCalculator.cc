@@ -251,7 +251,7 @@ BuriedUnsatisfiedPolarsCalculator::assert_calculators()
 		}
 	}
 	if ( name_of_sasa_calc_ == "dalphaball" ) {
-		if ( basic::options::option[ basic::options::OptionKeys::holes::dalphaball ]() == std::string("") ) {
+		if ( ! basic::options::option[ basic::options::OptionKeys::holes::dalphaball ].user() ) {
 			user_fixable_issue_exit( "Error! You must set -holes:dalphaball to use dalphaball_sasa!!" );
 		}
 	} else if ( name_of_sasa_calc_ != "nondefault" && !CalculatorFactory::Instance().check_calculator_exists( name_of_sasa_calc_ ) ) {
