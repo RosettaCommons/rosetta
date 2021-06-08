@@ -143,6 +143,24 @@ public:
 		assert( orthonormal() );
 	}
 
+
+	bool
+	is_close( HomogeneousTransform< T > const & other ) {
+		return
+			abs(xx_ - other.xx_) < 1e-6 &&
+			abs(xy_ - other.xy_) < 1e-6 &&
+			abs(xz_ - other.xz_) < 1e-6 &&
+			abs(yx_ - other.yx_) < 1e-6 &&
+			abs(yy_ - other.yy_) < 1e-6 &&
+			abs(yz_ - other.yz_) < 1e-6 &&
+			abs(zx_ - other.zx_) < 1e-6 &&
+			abs(zy_ - other.zy_) < 1e-6 &&
+			abs(zz_ - other.zz_) < 1e-6 &&
+			abs(px_ - other.px_) < 1e-6 &&
+			abs(py_ - other.py_) < 1e-6 &&
+			abs(pz_ - other.pz_) < 1e-6 ;
+	}
+
 public:
 	//Accessors
 

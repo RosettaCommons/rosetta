@@ -530,7 +530,7 @@ SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
 
 // Get the transformation controlling resid i
 numeric::HomogeneousTransform< core::Real >
-SymmetricConformation::get_transformation( core::Size resid, bool input_is_subunit_id /*=false*/ ) {
+SymmetricConformation::get_transformation( core::Size resid, bool input_is_subunit_id /*=false*/ )  const {
 	if ( Tsymm_.size() == 0 ) {
 		recalculate_transforms( );
 	}
@@ -718,7 +718,7 @@ SymmetricConformation::apply_transform_Rx_plus_v(
 
 // @brief invalidate current Tsymm settings
 void
-SymmetricConformation::clear_Tsymm( ) {
+SymmetricConformation::clear_Tsymm( ) const {
 	Tsymm_.clear();
 }
 
@@ -731,7 +731,7 @@ SymmetricConformation::invert_Tsymm( char sub, core::Size subunit ) {
 
 // @brief recalculate the Tsymm_ transforms using the current pose
 void
-SymmetricConformation::recalculate_transforms( ) {
+SymmetricConformation::recalculate_transforms( ) const {
 	using namespace numeric;
 
 	// clear current xforms
