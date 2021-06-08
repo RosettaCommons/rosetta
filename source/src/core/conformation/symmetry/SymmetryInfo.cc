@@ -15,17 +15,14 @@
 #include <core/conformation/symmetry/SymmetryInfo.hh>
 
 // Package headers
-#include <core/conformation/Conformation.hh>
-#include <core/conformation/symmetry/SymmetricConformation.hh>
 #include <core/conformation/symmetry/SymmData.hh>
 #include <core/conformation/symmetry/SymDof.hh>
-#include <core/conformation/symmetry/util.hh>
 #include <core/id/types.hh>
 #include <core/id/DOF_ID.hh>
 #include <core/id/TorsionID.hh>
 #include <core/id/AtomID.hh>
 
-#include <numeric/HomogeneousTransform.hh>
+#include <core/conformation/Conformation.hh>
 
 // Utility headers
 #include <utility/exit.hh>
@@ -1104,34 +1101,23 @@ SymmetryInfo::jump_follows( Size const seqpos ) const
 }
 
 std::vector < std::pair < Size, Size > >
-SymmetryInfo::map_symmetric_res_pairs( Size res1, Size res2, const Conformation & conf ) const
-{
-	std::vector < std::pair < Size, Size > > res_pairs;
-
-	if ( core::conformation::symmetry::is_symmetric( conf ) ) {
-
-		const SymmetricConformation & sym_conf(dynamic_cast< const SymmetricConformation & >(conf));
-
-		numeric::HomogeneousTransform< core::Real > base_transform = sym_conf.get_transformation(res1).inverse() * sym_conf.get_transformation(res2);
-
-		TR.Debug << "map_symmetric_res_pairs:" << std::endl;
-		TR.Debug << "BASE  - S" << subunit_index(res1) << "R" << get_asymmetric_seqpos(res1) << ":S" << subunit_index(res2) << "R" << get_asymmetric_seqpos(res2) << std::endl;
-
-		for ( Size ii = 1; ii <= subunits(); ii++ ) {
-			Size clone1 = equivalent_residue_on_subunit( ii, res1 );
-			for ( Size jj = 1; jj <= subunits(); jj++ ) {
-				Size clone2 = equivalent_residue_on_subunit( jj, res2 );
-
-				numeric::HomogeneousTransform< core::Real > transform = sym_conf.get_transformation(clone1).inverse() * sym_conf.get_transformation(clone2);
-				if (transform.is_close(base_transform) && (clone1 != res1 || clone2 != res2)) {
-					TR.Debug << "CLONE - S" << ii << "R" << get_asymmetric_seqpos(clone1) << ":S" << jj << "R" << get_asymmetric_seqpos(clone2) << std::endl;
-					res_pairs.emplace_back(clone1, clone2);
-				}
-			}
+SymmetryInfo::map_symmetric_res_pairs( Size res1, Size res2 )
+const {
+	std::vector < std::pair < Size, Size > > map;
+	int delta ( res2 - res1 );
+	int mapped_res;
+	for ( unsigned long clone : bb_clones( res1 ) ) {
+		if ( clone + delta > num_total_residues() ) {
+			mapped_res = (clone + delta)%num_total_residues();
+		} else {
+			mapped_res = clone + delta;
 		}
+		if ( mapped_res < 0 ) {
+			mapped_res += num_independent_residues();
+		}
+		map.emplace_back( clone, mapped_res );
 	}
-
-	return res_pairs;
+	return map;
 }
 
 bool

@@ -172,7 +172,7 @@ public:
 
 	/// @brief Get the transformation controlling resid i
 	numeric::HomogeneousTransform< core::Real >
-	get_transformation( core::Size resid, bool input_is_subunit_id=false ) const;
+	get_transformation( core::Size resid, bool input_is_subunit_id=false );
 
 	/// @brief Remap coordinate X from resid i's frame to resid j's frame
 	virtual
@@ -188,7 +188,7 @@ public:
 	// @brief force recomputation of Tsymm_'s from the current conformation
 	virtual
 	void
-	recalculate_transforms( ) const;
+	recalculate_transforms( );
 
 	/// @brief Symmetric set_xyz
 	void
@@ -295,7 +295,7 @@ protected:
 
 	// @brief invalidate current Tsymm settings
 	void
-	clear_Tsymm( ) const;
+	clear_Tsymm( );
 
 	// @brief  invert one of the Tsymm transforms about Z
 	void
@@ -314,7 +314,7 @@ private:
 	//   computed when needed, invalidated when a jump changes
 	// multicomp: store transforms for each component (indexed by character)
 	//std::map< char, utility::vector1< numeric::HomogeneousTransform< core::Real > > > Tsymm_;
-	mutable std::map< char, utility::vector1<SymmetryTransform> > Tsymm_;
+	std::map< char, utility::vector1<SymmetryTransform> > Tsymm_;
 
 #ifdef    SERIALIZATION
 public:

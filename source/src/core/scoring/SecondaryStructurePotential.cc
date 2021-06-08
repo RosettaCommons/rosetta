@@ -698,7 +698,7 @@ SecondaryStructurePotential::sspair(
 								// We need to have all possible dimer pairs present for the sheet detection to work. The energy graph does not contain all residues, only the ones in the scoring subunit and edges to the scoring subunit. So we need to add dimer pairongs for no-scoring subunits to make the list complete.
 
 								// Map a residue pair to all other symmetric pairs and store in a vector of pairs
-								std::vector < std::pair < Size, Size > > symm_ss_pairs (symm_info->map_symmetric_res_pairs( SS_resnum_ss1, SS_resnum_ss2, pose.conformation() ) );
+								std::vector < std::pair < Size, Size > > symm_ss_pairs (symm_info->map_symmetric_res_pairs( SS_resnum_ss1, SS_resnum_ss2 ) );
 								std::vector< std::pair < Size, Size > >::const_iterator it_begin = symm_ss_pairs.begin();
 								std::vector< std::pair < Size, Size > >::const_iterator it_end = symm_ss_pairs.end();
 								std::vector< std::pair < Size, Size > >::const_iterator it;
@@ -754,7 +754,7 @@ SecondaryStructurePotential::sspair(
 						// We need to have all possible dimer pairs present for the sheet detection to work. The energy graph does not contain all residues, only the ones in the scoring subunit and edges to the scoring subunit. So we need to add dimer neighbors for no-scoring subunits to make the list complete.
 
 
-						std::vector < std::pair < Size, Size > > symm_ss_pairs (symm_info->map_symmetric_res_pairs( SS_resnum_ss1, SS_resnum_ss2, pose.conformation() ) );
+						std::vector < std::pair < Size, Size > > symm_ss_pairs (symm_info->map_symmetric_res_pairs( SS_resnum_ss1, SS_resnum_ss2 ) );
 						std::vector< std::pair < Size, Size > >::const_iterator it_begin = symm_ss_pairs.begin();
 						std::vector< std::pair < Size, Size > >::const_iterator it_end = symm_ss_pairs.end();
 						std::vector< std::pair < Size, Size > >::const_iterator it;
