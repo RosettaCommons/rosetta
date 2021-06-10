@@ -236,7 +236,6 @@ MembEtable::make_pairenergy_table()
 			damping_thresh_dis2 = max_dis2() - ( dif * dif );
 			auto damping_disbins = static_cast< int >( damping_thresh_dis2*get_bins_per_A2() );
 			normal_disbins = etable_disbins()-damping_disbins;
-			normal_disbins = etable_disbins();
 		} else {
 			normal_disbins = etable_disbins();
 		}
