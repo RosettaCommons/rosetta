@@ -163,6 +163,10 @@ class OptionClass:
                           help="Rename atom names",
                           action="store_true" 
                           )
+        parser.add_option("--comment_bonds",
+                          dest="comment_bonds",
+                          help="Add bonds order from MOL2 as comment"
+                          )
 
         if len(argv) < 2:
             parser.print_help()

@@ -544,7 +544,10 @@ class MoleculeClass:
             extra = ''
             if self.in_same_ring(bond.atm1,bond.atm2) > 0:
                 extra = ' RING'
-            out.write('BOND_TYPE %-4s %-4s %1d%s\n'%(atm1.name,atm2.name,border,extra))
+            if self.option.opt.comment_bonds:
+                out.write('BOND_TYPE %-4s %-4s %1d%s #ORGBND%1d\n'%(atm1.name,atm2.name,border,extra,bond.order))
+            else:
+                out.write('BOND_TYPE %-4s %-4s %1d%s\n'%(atm1.name,atm2.name,border,extra))
 
         #VIRTUAL BONDS
         if self.option.opt.report_puckering_chi:
