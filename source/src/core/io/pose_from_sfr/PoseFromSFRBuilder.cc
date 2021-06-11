@@ -1099,9 +1099,16 @@ void PoseFromSFRBuilder::refine_pose( pose::Pose & pose )
 					} else {
 						// Try to find connectable variants.
 
-						// First: if either atom is a hydrogen, GTFO.
-						if ( pose.residue_type( ii ).atom_is_hydrogen( pose.residue_type( ii ).atom_index( my_atom ) ) ) continue;
-						if ( pose.residue_type( partner ).atom_is_hydrogen( pose.residue_type( partner ).atom_index( partner_atom ) ) ) continue;
+						// First: if either atom is a hydrogen, continue.
+						if ( pose.residue_type( ii ).atom_is_hydrogen( pose.residue_type( ii ).atom_index( my_atom ) ) ) { continue; }
+						if ( pose.residue_type( partner ).atom_is_hydrogen( pose.residue_type( partner ).atom_index( partner_atom ) ) ) { continue; }
+
+						// Likewise, if residue is a carbohydrate, continue.
+						if ( pose.residue_type( ii ).is_carbohydrate() ) {
+							TR.Warning << "Carbohydrate residue " << ii << " not properly linked. ";
+							TR.Warning << "A patch file for branching from the parent might be missing." << std::endl;
+							continue;
+						}
 
 						// the type of the desired variant residue
 						chemical::ResidueTypeSetCOP rsd_set( pose.residue_type_set_for_pose( pose.residue_type( ii ).mode() ) );
