@@ -15,9 +15,9 @@
 #ifndef INCLUDED_utility_options_keys_OptionKeyList_fwd_hh
 #define INCLUDED_utility_options_keys_OptionKeyList_fwd_hh
 
-#include <list>
 #include <utility/options/keys/OptionKey.fwd.hh>
 #include <utility/keys/VariantKey.fwd.hh>
+#include <list>
 
 namespace utility {
 namespace options {

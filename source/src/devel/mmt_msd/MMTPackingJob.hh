@@ -28,6 +28,7 @@
 
 // C++ headers
 #include <list>
+#include <string>
 
 namespace devel {
 namespace mmt_msd {

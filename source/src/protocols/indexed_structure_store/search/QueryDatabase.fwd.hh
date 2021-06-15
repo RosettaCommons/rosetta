@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_indexed_structure_store_search_QueryDatabase_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 namespace protocols { namespace indexed_structure_store { namespace search {
 

@@ -16,7 +16,6 @@
 #define INCLUDED_core_chemical_rdkit_RDKit_fwd_hh
 
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers

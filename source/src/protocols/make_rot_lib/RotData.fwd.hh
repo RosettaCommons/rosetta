@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_make_rot_lib_rotdata_fwd_hh
 #define INCLUDED_protocols_make_rot_lib_rotdata_fwd_hh
 
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace make_rot_lib {

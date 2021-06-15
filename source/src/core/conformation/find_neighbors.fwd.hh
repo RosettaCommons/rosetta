@@ -22,24 +22,8 @@
 #include <core/types.hh>
 
 
-// Numeric headers
-
-// ObjexxFCL headers
-//#include <ObjexxFCL/KeyFArray1D.hh>
-//#include <ObjexxFCL/KeyFArray2D.hh>
-
-// Utility headers
-//#include <utility/pointer/access_ptr.hh>
-
-// boost headers
-
-// C++ headers
-#include <utility/assert.hh>
-#include <limits>
-#include <vector>
-
 #include <utility/graph/UpperEdgeGraph.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <numeric/xyzTriple.fwd.hh>
 

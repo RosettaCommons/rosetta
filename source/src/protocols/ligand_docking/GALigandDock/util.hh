@@ -17,6 +17,7 @@
 
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
+#include <string>
 
 namespace protocols {
 namespace ligand_docking {

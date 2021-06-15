@@ -21,6 +21,8 @@
 // Package headers
 #include <protocols/match/Hit.fwd.hh>
 
+#include <core/types.hh>
+
 //numeric headers
 #include <numeric/geometry/hashing/SixDHasher.hh>
 

@@ -40,7 +40,7 @@
 #include <utility/FixedSizeLexicographicalIterator.tmpl.hh>
 #include <utility/fixedsizearray1.hh>
 
-#include <iosfwd> //ostringstream
+#include <sstream> //ostringstream
 //#include <string>
 
 namespace apps {

@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_ScoringManager_fwd_hh
 
 // Unit headers
-#include <string> // doh
+#include <string>
 
 namespace core {
 namespace scoring {

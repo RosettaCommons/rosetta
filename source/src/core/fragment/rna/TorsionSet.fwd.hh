@@ -14,8 +14,6 @@
 #ifndef INCLUDED_core_fragment_rna_fragments_TorsionSet_FWD_HH
 #define INCLUDED_core_fragment_rna_fragments_TorsionSet_FWD_HH
 
-//#include <utility/pointer/owning_ptr.hh>
-
 namespace core {
 namespace fragment {
 namespace rna {

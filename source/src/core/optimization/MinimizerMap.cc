@@ -21,7 +21,6 @@
 #include <core/kinematics/AtomTree.hh>
 
 // Numeric headers
-// #include <numeric/all.fwd.hh>
 // #include <numeric/constants.hh>
 #include <numeric/conversions.hh>
 // #include <numeric/xyzMatrix.hh>

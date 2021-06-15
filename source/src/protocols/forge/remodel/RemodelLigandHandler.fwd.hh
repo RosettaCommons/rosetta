@@ -37,11 +37,11 @@ typedef utility::pointer::shared_ptr< RemodelLigandHandler const > RemodelLigand
 
 
 /// @brief RemodelLigandHandler access pointer
-typedef utility::pointer::shared_ptr< RemodelLigandHandler > RemodelLigandHandler_AP;
+typedef utility::pointer::weak_ptr< RemodelLigandHandler > RemodelLigandHandler_AP;
 
 
 /// @brief RemodelLigandHandler const access pointer
-typedef utility::pointer::shared_ptr< RemodelLigandHandler const > RemodelLigandHandler_CAP;
+typedef utility::pointer::weak_ptr< RemodelLigandHandler const > RemodelLigandHandler_CAP;
 
 
 } // namespace remodel

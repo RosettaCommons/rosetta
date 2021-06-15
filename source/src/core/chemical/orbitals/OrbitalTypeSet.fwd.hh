@@ -10,8 +10,8 @@
 #ifndef INCLUDED_core_chemical_orbitals_OrbitalTypeSet_fwd_hh
 #define INCLUDED_core_chemical_orbitals_OrbitalTypeSet_fwd_hh
 
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace chemical {

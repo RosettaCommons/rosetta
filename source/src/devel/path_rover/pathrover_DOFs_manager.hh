@@ -22,7 +22,6 @@
 //#include "pdb.h"
 //#include "score_data.h"
 //#include "symmetry_info.h"
-// #include <ObjexxFCL/ObjexxFCL.hh>
 
 #include <iosfwd>
 #include <map>

@@ -21,6 +21,8 @@
 //#include <protocols/match/SixDHasher.fwd.hh>
 #include <protocols/match/Hit.fwd.hh>
 
+#include <core/types.hh>
+
 // Numeric headers
 #include <numeric/xyzVector.hh>
 #include <numeric/geometry/BoundingBox.hh>

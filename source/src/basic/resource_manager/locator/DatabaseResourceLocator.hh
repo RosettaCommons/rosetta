@@ -27,6 +27,7 @@
 
 //C++ headers
 #include <iosfwd>
+#include <string>
 
 namespace basic {
 namespace resource_manager {

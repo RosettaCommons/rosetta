@@ -26,6 +26,7 @@
 
 // C++ headers
 #include <map>
+#include <string>
 
 #include <core/types.hh>
 #include <core/chemical/Element.fwd.hh>

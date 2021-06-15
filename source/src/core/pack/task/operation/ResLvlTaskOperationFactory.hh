@@ -29,6 +29,7 @@
 
 // C++ headers
 #include <map>
+#include <string>
 
 #ifdef PYROSETTA
 #include <utility/tag/Tag.hh>

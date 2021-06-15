@@ -16,7 +16,7 @@
 #ifndef INCLUDED_core_scoring_func_SquareWell2Func_fwd_hh
 #define INCLUDED_core_scoring_func_SquareWell2Func_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 

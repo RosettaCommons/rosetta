@@ -26,6 +26,7 @@
 #include <core/scoring/func/Func.fwd.hh>
 
 #include <list>
+#include <string>
 
 namespace protocols {
 namespace toolbox {

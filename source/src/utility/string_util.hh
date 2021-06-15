@@ -36,6 +36,7 @@
 #include <vector>
 #include <tuple>
 #include <typeinfo>
+#include <sstream>
 
 namespace utility {
 

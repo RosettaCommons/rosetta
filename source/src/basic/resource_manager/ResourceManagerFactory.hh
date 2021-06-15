@@ -19,6 +19,7 @@
 
 // package headers
 #include <basic/resource_manager/ResourceManagerCreator.fwd.hh>
+#include <basic/resource_manager/ResourceManager.fwd.hh>
 
 // Utility headers
 #include <utility/SingletonBase.hh>

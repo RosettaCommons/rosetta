@@ -27,6 +27,7 @@
 // Package headers
 #include <core/scoring/hbonds/HBEvalTuple.fwd.hh>
 #include <core/scoring/hbonds/HBondDatabase.fwd.hh>
+#include <core/scoring/hbonds/types.hh>
 
 // Project headers
 #include <core/conformation/Residue.fwd.hh>

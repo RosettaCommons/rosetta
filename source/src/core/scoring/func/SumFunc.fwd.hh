@@ -15,12 +15,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-// C++ Headers
-//#include <cstdlib>
-//#include <iosfwd>
-//#include <map>
-//#include <utility>
-
 namespace core {
 namespace scoring {
 namespace func {

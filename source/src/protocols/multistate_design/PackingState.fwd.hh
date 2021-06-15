@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_multistate_design_PackingState_fwd_hh
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace multistate_design {

@@ -44,7 +44,6 @@
 
 #include <ObjexxFCL/string.functions.hh>
 
-#include <numeric/model_quality/util.hh>
 #include <numeric/model_quality/rms.hh>
 
 using core::Size;
@@ -84,7 +83,6 @@ using utility::vector1;
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/ResidueType.hh>
 #include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/chemical/VariantType.fwd.hh>
 #include <core/chemical/VariantType.hh>
 #include <core/chemical/types.hh>
 //XRW_B_T1
@@ -259,10 +257,10 @@ using utility::vector1;
 #include <utility/options/keys/all.hh>
 #include <utility/VirtualBase.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/BufferedSignalHub.fwd.hh>
 #include <utility/signals/BufferedSignalHub.hh>
@@ -291,9 +289,7 @@ using utility::vector1;
 #include <ObjexxFCL/DimensionExpression.hh>
 #include <ObjexxFCL/DynamicIndexRange.fwd.hh>
 #include <ObjexxFCL/DynamicIndexRange.hh>
-#include <ObjexxFCL/FArray.all.fwd.hh>
 #include <ObjexxFCL/FArray.hh>
-#include <ObjexxFCL/FArray1.all.fwd.hh>
 #include <ObjexxFCL/FArray1.fwd.hh>
 #include <ObjexxFCL/FArray1.hh>
 #include <ObjexxFCL/FArray1A.fwd.hh>
@@ -302,7 +298,6 @@ using utility::vector1;
 #include <ObjexxFCL/FArray1D.hh>
 #include <ObjexxFCL/FArray1P.fwd.hh>
 #include <ObjexxFCL/FArray1P.hh>
-#include <ObjexxFCL/FArray2.all.fwd.hh>
 #include <ObjexxFCL/FArray2.fwd.hh>
 #include <ObjexxFCL/FArray2.hh>
 #include <ObjexxFCL/FArray2A.fwd.hh>
@@ -311,17 +306,14 @@ using utility::vector1;
 #include <ObjexxFCL/FArray2D.hh>
 #include <ObjexxFCL/FArray2P.fwd.hh>
 #include <ObjexxFCL/FArray2P.hh>
-#include <ObjexxFCL/FArray3.all.fwd.hh>
 #include <ObjexxFCL/FArray3.fwd.hh>
 #include <ObjexxFCL/FArray3A.fwd.hh>
 #include <ObjexxFCL/FArray3D.fwd.hh>
 #include <ObjexxFCL/FArray3P.fwd.hh>
-#include <ObjexxFCL/FArray4.all.fwd.hh>
 #include <ObjexxFCL/FArray4.fwd.hh>
 #include <ObjexxFCL/FArray4A.fwd.hh>
 #include <ObjexxFCL/FArray4D.fwd.hh>
 #include <ObjexxFCL/FArray4P.fwd.hh>
-#include <ObjexxFCL/FArray5.all.fwd.hh>
 #include <ObjexxFCL/FArray5.fwd.hh>
 #include <ObjexxFCL/FArray5A.fwd.hh>
 #include <ObjexxFCL/FArray5D.fwd.hh>
@@ -338,9 +330,6 @@ using utility::vector1;
 #include <ObjexxFCL/KeyFArray1D.fwd.hh>
 #include <ObjexxFCL/KeyFArray2D.fwd.hh>
 #include <ObjexxFCL/KeyFArray3D.fwd.hh>
-#include <ObjexxFCL/ObjexxFCL.Project.hh>
-#include <ObjexxFCL/ObjexxFCL.fwd.hh>
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include <ObjexxFCL/Observer.fwd.hh>
 #include <ObjexxFCL/Observer.hh>
 #include <ObjexxFCL/ObserverMulti.hh>
@@ -375,7 +364,7 @@ using utility::vector1;
 
 
 class SequenceCoords;
-typedef utility::pointer::owning_ptr< SequenceCoords > SequenceCoordsOP;
+typedef utility::pointer::shared_ptr< SequenceCoords > SequenceCoordsOP;
 
 class SequenceCoords : public core::sequence::Sequence {
 public:

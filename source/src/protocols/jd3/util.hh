@@ -30,6 +30,8 @@
 
 #include <basic/datacache/DataMap.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace jd3 {
 

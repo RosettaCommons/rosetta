@@ -18,7 +18,6 @@
 
 // Package headers
 #include <utility/keys/Key.fwd.hh>
-#include <utility/keys/KeyLookup.fwd.hh>
 #include <utility/keys/NoClient.fwd.hh>
 
 

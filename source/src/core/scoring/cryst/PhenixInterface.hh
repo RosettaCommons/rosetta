@@ -24,6 +24,7 @@
 #include <core/conformation/Residue.fwd.hh>
 
 // Utility headers
+#include <utility/vector1.hh>
 #include <utility/exit.hh>
 
 

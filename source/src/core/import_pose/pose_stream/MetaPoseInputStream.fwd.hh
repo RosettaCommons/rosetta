@@ -16,14 +16,6 @@
 #ifndef INCLUDED_core_import_pose_pose_stream_MetaPoseInputStream_FWD_HH
 #define INCLUDED_core_import_pose_pose_stream_MetaPoseInputStream_FWD_HH
 
-#include <core/types.hh>
-#include <core/chemical/ResidueTypeSet.fwd.hh>
-#include <core/pose/Pose.fwd.hh>
-
-#include <core/import_pose/pose_stream/PoseInputStream.hh>
-
-#include <utility/vector1.fwd.hh>
-
 
 namespace core {
 namespace import_pose {

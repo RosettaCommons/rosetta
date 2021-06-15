@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_environment_LocalPosition_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 // Package headers
 

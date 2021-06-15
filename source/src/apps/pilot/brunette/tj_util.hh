@@ -53,6 +53,7 @@
 
 #include <map>
 #include <iosfwd>
+#include <sstream>
 
 using utility::vector1;
 using namespace core::sequence;

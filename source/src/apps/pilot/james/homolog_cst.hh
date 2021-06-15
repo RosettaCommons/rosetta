@@ -38,6 +38,7 @@
 // C++ headers
 #include <iosfwd>
 #include <string>
+#include <sstream>
 
 // option key includes
 #include <basic/options/keys/constraints.OptionKeys.gen.hh>

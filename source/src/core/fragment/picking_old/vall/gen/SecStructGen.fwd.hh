@@ -15,8 +15,8 @@
 #define INCLUDED_core_fragment_picking_old_vall_gen_SecStructGen_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 
 namespace core {
@@ -39,11 +39,11 @@ typedef utility::pointer::shared_ptr< SecStructGen const > SecStructGenCOP;
 
 
 /// @brief SecStructGen access pointer
-typedef utility::pointer::shared_ptr< SecStructGen > SecStructGenAP;
+typedef utility::pointer::weak_ptr< SecStructGen > SecStructGenAP;
 
 
 /// @brief SecStructGen const access pointer
-typedef utility::pointer::shared_ptr< SecStructGen const > SecStructGenCAP;
+typedef utility::pointer::weak_ptr< SecStructGen const > SecStructGenCAP;
 
 
 } // namespace gen

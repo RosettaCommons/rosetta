@@ -20,6 +20,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <vector>
+#include <sstream>
 #include <basic/Tracer.hh>
 
 namespace basic {

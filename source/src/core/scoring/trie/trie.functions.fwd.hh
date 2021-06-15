@@ -23,7 +23,6 @@
 
 // Project Headers
 #include <core/conformation/Residue.fwd.hh>
-//#include <core/pack/rotamer_set/RotamerSet.fwd.hh>
 #include <core/types.hh>
 
 #include <utility/pointer/owning_ptr.hh>

@@ -13,7 +13,6 @@
 #ifndef INCLUDED_devel_path_rover_pathrover_partial_data_manager_hh
 #define INCLUDED_devel_path_rover_pathrover_partial_data_manager_hh
 
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include "pathways.h"
 #include <iosfwd>
 #include <map>

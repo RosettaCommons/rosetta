@@ -29,6 +29,7 @@
 #include <list>
 #include <algorithm>
 #include <map>
+#include <vector>
 
 namespace core {
 namespace select {

@@ -17,6 +17,7 @@
 
 // Project Headers
 #include <string>
+#include <sstream>
 #include <queue>
 
 //Include Rosetta utilities
@@ -44,7 +45,7 @@
 #include <protocols/moves/Mover.hh>
 
 //Include ObjexxFCL
-#include <ObjexxFCL/FArray.all.hh>
+#include <ObjexxFCL/FArray1.fwd.hh>
 
 // Unit headers
 

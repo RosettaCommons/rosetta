@@ -22,7 +22,7 @@
 #include <core/pose/Pose.fwd.hh>
 //utility headers
 #include <utility/VirtualBase.hh>
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 //c++ heades
 

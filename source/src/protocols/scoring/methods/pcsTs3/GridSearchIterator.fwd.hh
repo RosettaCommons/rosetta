@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_scoring_methods_pcsTs3_GridSearchIterator_fwd_hh
 #define INCLUDED_protocols_scoring_methods_pcsTs3_GridSearchIterator_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols{
 namespace scoring{

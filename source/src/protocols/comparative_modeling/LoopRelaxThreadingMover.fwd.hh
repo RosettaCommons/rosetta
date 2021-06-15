@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_comparative_modeling_LoopRelaxThreadingMover_fwd_hh
 #define INCLUDED_protocols_comparative_modeling_LoopRelaxThreadingMover_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace comparative_modeling {

@@ -18,6 +18,7 @@
 
 #include <basic/database/schema_generator/Column.fwd.hh>
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>
+#include <utility/vector1.hh>
 
 //C++ Header
 #include <iosfwd>

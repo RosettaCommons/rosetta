@@ -22,6 +22,7 @@
 #include <core/pose/full_model_info/FullModelInfo.fwd.hh>
 #include <core/pose/full_model_info/FullModelParameters.fwd.hh>
 #include <map>
+#include <string>
 
 namespace core {
 namespace pose {

@@ -27,6 +27,8 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
+#include <string>
+
 namespace core {
 namespace pose {
 

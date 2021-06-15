@@ -16,10 +16,8 @@
 // ObjexxFCL Headers
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.fwd.hh>
-
-#include <utility/vector1_bool.hh>
-
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.hh>
 
 // C++ Headers
 

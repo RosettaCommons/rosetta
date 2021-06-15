@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_normalmode_NormalModeMinimizer_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace normalmode {

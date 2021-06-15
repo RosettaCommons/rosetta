@@ -14,8 +14,6 @@
 #ifndef INCLUDED_core_scoring_hbonds_HBEvalTuple_FWD_HH
 #define INCLUDED_core_scoring_hbonds_HBEvalTuple_FWD_HH
 
-#include <core/scoring/hbonds/types.hh>
-
 namespace core {
 namespace scoring {
 namespace hbonds {

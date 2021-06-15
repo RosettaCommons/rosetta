@@ -16,6 +16,8 @@
 #define INCLUDED_protocols_rna_RNA_FragmentMover_HH
 
 // Unit headers
+#include <protocols/rna/denovo/movers/RNA_FragmentMover.fwd.hh>
+
 #include <core/fragment/rna/RNA_Fragments.fwd.hh>
 #include <core/fragment/rna/FullAtomRNA_Fragments.hh>
 #include <core/fragment/rna/RNA_FragmentHomologyExclusion.hh>

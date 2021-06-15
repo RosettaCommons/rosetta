@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_generalized_kinematic_closure_perturber_GeneralizedKICperturber_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace generalized_kinematic_closure {

@@ -17,12 +17,12 @@
 
 #ifdef PTR_STD
 
-#include <utility/pointer/std/owning_ptr.fwd.hh>
 #include <memory>
-#include <utility/pointer/std/owning_ptr.fwd.hh>
 
 namespace utility {
 namespace pointer {
+
+using std::shared_ptr;
 
 using std::dynamic_pointer_cast;
 using std::static_pointer_cast;

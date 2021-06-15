@@ -23,6 +23,7 @@
 #include <core/id/AtomID.fwd.hh>
 
 // Utility headers
+#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 // C++ headers

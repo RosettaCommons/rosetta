@@ -26,6 +26,7 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
 
 #include <utility/vector1.hh>
 

@@ -20,7 +20,7 @@
 #include <core/pose/copydofs/CopyDofsInfo.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
-#include <core/id/AtomID.fwd.hh>
+#include <core/id/AtomID.hh>
 #include <core/id/AtomID_Map.fwd.hh>
 
 namespace core {

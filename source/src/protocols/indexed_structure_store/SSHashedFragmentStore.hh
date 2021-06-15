@@ -24,6 +24,7 @@
 #include <numeric/types.hh>
 #include <map>
 #include <set>
+#include <vector>
 
 // Utility Headers
 #include <utility/SingletonBase.hh>

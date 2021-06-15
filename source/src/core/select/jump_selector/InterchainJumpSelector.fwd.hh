@@ -17,9 +17,6 @@
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Project Headers
-#include <core/select/jump_selector/JumpSelector.fwd.hh>
-
 namespace core {
 namespace select {
 namespace jump_selector {

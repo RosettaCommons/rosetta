@@ -30,6 +30,7 @@
 // C++ headers
 #include <set>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace denovo_design {

@@ -20,6 +20,7 @@
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <core/types.hh>
 
+#include <string>
 
 namespace protocols {
 namespace toolbox {

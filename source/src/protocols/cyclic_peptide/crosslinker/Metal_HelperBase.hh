@@ -30,9 +30,12 @@
 // Basic/Utility headers
 #include <utility/VirtualBase.hh>
 
+#include <string>
+
 namespace protocols {
 namespace cyclic_peptide {
 namespace crosslinker {
+
 
 /// @brief Metal types compatible with this helper.
 /// @details If you add to this list, you need to add entries to

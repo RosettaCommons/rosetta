@@ -21,6 +21,7 @@
 #include <platform/types.hh>                                   // for Real
 #include <utility/sql_database/DatabaseSessionManager.fwd.hh>  // for sessionOP
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 #include <basic/database/schema_generator/Column.fwd.hh>
 
 namespace basic {

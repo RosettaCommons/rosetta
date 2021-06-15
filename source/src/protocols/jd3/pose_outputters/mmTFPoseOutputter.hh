@@ -25,6 +25,8 @@
 //project headers
 #include <core/pose/Pose.fwd.hh>
 
+#include <string>
+
 #ifdef    SERIALIZATION
 // Cereal headers
 #include <cereal/types/polymorphic.fwd.hpp>

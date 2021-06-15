@@ -14,8 +14,7 @@
 #ifndef INCLUDED_protocols_rosetta_scripts_PoseSelector_fwd_hh
 #define INCLUDED_protocols_rosetta_scripts_PoseSelector_fwd_hh
 
-// Utility Headers
-#include <utility/VirtualBase.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace rosetta_scripts {

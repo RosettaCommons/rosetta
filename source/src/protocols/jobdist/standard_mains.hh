@@ -23,7 +23,7 @@
 
 #include <protocols/jobdist/Jobs.fwd.hh>
 #include <utility/vector1.hh>
-
+#include <map>
 
 namespace protocols {
 namespace jobdist {

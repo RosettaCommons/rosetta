@@ -14,7 +14,6 @@
 #define INCLUDED_core_chemical_rna_RNA_FittedTorsionInfo_fwd_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
 
 namespace core {
 namespace chemical {

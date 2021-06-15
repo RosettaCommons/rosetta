@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_task_operations_StoreCombinedStoredTasksMover_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <string>
 
 namespace protocols {
 namespace task_operations {

@@ -32,6 +32,7 @@
 
 // C++ Headers
 #include <string>
+#include <map>
 
 #include <utility/vector1.hh>
 // XSD XRW Includes

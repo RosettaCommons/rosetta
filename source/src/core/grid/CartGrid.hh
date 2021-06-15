@@ -33,7 +33,7 @@
 #include <ObjexxFCL/string.functions.hh>
 
 #include <algorithm>
-
+#include <sstream>
 
 namespace core {
 namespace grid {

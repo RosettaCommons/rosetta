@@ -14,8 +14,8 @@
 #define INCLUDED_protocols_denovo_design_Segment_fwd_hh
 
 // Utility headers
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/access_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {

@@ -15,15 +15,7 @@
 #ifndef INCLUDED_utility_tag_XMLSchemaValidation_FWD_HH
 #define INCLUDED_utility_tag_XMLSchemaValidation_FWD_HH
 
-// Utility headers
-#include <utility/VirtualBase.hh>
-
-// Boost headers
-
-// C++ headers
-//#include <list>
-//#include <vector>
-//#include <map>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
 namespace tag {

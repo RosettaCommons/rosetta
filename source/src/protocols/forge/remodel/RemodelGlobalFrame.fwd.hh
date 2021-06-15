@@ -37,11 +37,11 @@ typedef utility::pointer::shared_ptr< RemodelGlobalFrame const > RemodelGlobalFr
 
 
 /// @brief RemodelGlobalFrame access pointer
-typedef utility::pointer::shared_ptr< RemodelGlobalFrame > RemodelGlobalFrame_AP;
+typedef utility::pointer::weak_ptr< RemodelGlobalFrame > RemodelGlobalFrame_AP;
 
 
 /// @brief RemodelGlobalFrame const access pointer
-typedef utility::pointer::shared_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_CAP;
+typedef utility::pointer::weak_ptr< RemodelGlobalFrame const > RemodelGlobalFrame_CAP;
 
 
 } // namespace remodel

@@ -37,6 +37,7 @@
 
 #include <utility/vector1.hh>
 #include <cmath>
+#include <map>
 
 namespace protocols {
 namespace simple_filters {

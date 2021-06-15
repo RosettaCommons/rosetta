@@ -22,6 +22,8 @@
 #include <core/chemical/ResidueType.fwd.hh>
 #include <core/chemical/AA.hh>
 
+#include <utility/assert.hh>
+
 // C++ headers
 #include <iosfwd>
 

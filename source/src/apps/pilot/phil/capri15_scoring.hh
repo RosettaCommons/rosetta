@@ -115,6 +115,7 @@
 // C++ headers
 //#include <cstdlib>
 #include <iosfwd>
+#include <sstream>
 #include <string>
 #include <set>
 #include <cstdlib>

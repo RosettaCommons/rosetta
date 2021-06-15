@@ -22,9 +22,6 @@
 #define INCLUDED_core_io_sequence_comparation_DesignContrast_fwd_hh
 
 
-// C++ headers
-#include <iosfwd>
-
 namespace core {
 namespace io {
 namespace sequence_comparation {

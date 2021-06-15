@@ -16,8 +16,6 @@
 #define DEFAULT_DOF_STD_DEV 100 // std. dev for gaussian sampling of DOF values
 #define DEFAULT_UNI_MAX_DEV 180 // maximal range for uniform sampling of DOF values
 
-// ObjexxFCL Headers
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include <iosfwd>
 #include <string>
 

@@ -13,7 +13,7 @@
 #ifndef INCLUDED_PROTOCOLS_MOVES_CYCLICMOVER_FWD_HH
 #define INCLUDED_PROTOCOLS_MOVES_CYCLICMOVER_FWD_HH
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace moves {

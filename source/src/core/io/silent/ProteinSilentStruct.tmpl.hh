@@ -26,6 +26,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <sstream>
 #include <map>
 #include <iosfwd>
 

@@ -15,7 +15,6 @@
 #define INCLUDED_core_scoring_saxs_FormFactor_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace core {

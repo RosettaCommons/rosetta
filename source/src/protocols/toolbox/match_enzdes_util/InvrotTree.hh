@@ -32,7 +32,7 @@
 
 // C++ headers
 
-#include <utility/vector1.fwd.hh>
+#include <utility/vector1.hh>
 
 
 #if defined PYROSETTA || defined WIN32

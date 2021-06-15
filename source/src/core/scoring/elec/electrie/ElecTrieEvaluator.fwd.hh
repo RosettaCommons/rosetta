@@ -14,18 +14,6 @@
 #ifndef INCLUDED_core_scoring_elec_electrie_ElecTrieEvaluator_fwd_hh
 #define INCLUDED_core_scoring_elec_electrie_ElecTrieEvaluator_fwd_hh
 
-// Package Headers
-#include <core/scoring/elec/FA_ElecEnergy.fwd.hh>
-
-// Project Headers
-#include <core/types.hh>
-
-// STL Headers
-#include <iosfwd>
-
-// Numceric Headers
-#include <numeric/xyzVector.hh>
-
 namespace core {
 namespace scoring {
 namespace elec {

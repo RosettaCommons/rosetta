@@ -17,9 +17,6 @@
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Project Headers
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
-
 namespace protocols {
 namespace fold_from_loops {
 namespace selectors {

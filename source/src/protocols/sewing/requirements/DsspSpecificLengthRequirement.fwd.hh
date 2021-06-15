@@ -16,7 +16,6 @@
 #define INCLUDED_protocols_sewing_requirements_DsspSpecificLengthRequirement_fwd_hh
 
 // Utility headers
-#include <protocols/sewing/requirements/AssemblyRequirement.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 

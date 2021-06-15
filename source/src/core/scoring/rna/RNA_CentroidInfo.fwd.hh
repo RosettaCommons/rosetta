@@ -19,7 +19,6 @@
 
 // Utility headers
 
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 

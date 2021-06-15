@@ -31,7 +31,7 @@
 #endif // BOINC
 
 #include <protocols/jobdist/JobDistributors.fwd.hh>
-
+#include <protocols/jobdist/Jobs.fwd.hh>
 
 #include <core/types.hh>
 

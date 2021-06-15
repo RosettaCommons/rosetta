@@ -19,6 +19,8 @@
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <protocols/multistage_rosetta_scripts/cluster/ClusterMetric.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace multistage_rosetta_scripts {
 namespace cluster {

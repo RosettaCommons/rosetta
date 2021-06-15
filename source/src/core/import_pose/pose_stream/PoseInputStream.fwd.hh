@@ -14,7 +14,7 @@
 #ifndef INCLUDED_core_import_pose_pose_stream_PoseInputStream_FWD_HH
 #define INCLUDED_core_import_pose_pose_stream_PoseInputStream_FWD_HH
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace import_pose {

@@ -23,6 +23,7 @@
 
 // C++ headers
 #include <iosfwd>
+#include <string>
 
 namespace core {
 namespace conformation {

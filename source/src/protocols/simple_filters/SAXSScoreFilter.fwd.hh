@@ -16,7 +16,7 @@
 #define INCLUDED_protocols_simple_filters_SAXSScoreFilter_fwd_hh
 
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {

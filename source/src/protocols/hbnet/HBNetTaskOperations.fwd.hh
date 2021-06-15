@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_hbnet_HBNetTaskOperations_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 namespace protocols {
 namespace hbnet {

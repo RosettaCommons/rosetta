@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_multistate_design_SingleState_fwd_hh
 #define INCLUDED_protocols_multistate_design_SingleState_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {

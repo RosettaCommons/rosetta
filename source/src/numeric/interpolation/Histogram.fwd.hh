@@ -16,8 +16,8 @@
 #define INCLUDED_numeric_interpolation_Histogram_fwd_hh
 
 //Utility Headers
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace numeric {
 namespace interpolation {

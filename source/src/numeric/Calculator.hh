@@ -22,6 +22,7 @@
 
 #include <iosfwd>
 #include <map>
+#include <string>
 
 // IMPORTANT - Keep all the boost crazyness confined to the .cpp,
 //    so we limit the associated template madness to a single compilation unit.

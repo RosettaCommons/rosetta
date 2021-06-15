@@ -32,7 +32,7 @@
 #include <functional>
 
 #include <utility/vector1.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace fragment {

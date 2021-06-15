@@ -37,6 +37,7 @@
 
 // C++ headers
 #include <string>
+#include <sstream>
 
 namespace protocols {
 namespace loop_modeling {

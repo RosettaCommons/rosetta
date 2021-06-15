@@ -19,7 +19,7 @@
 #include <core/conformation/carbohydrates/GlycanTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 #include <core/types.hh>
 #include <core/conformation/carbohydrates/GlycanNode.fwd.hh>

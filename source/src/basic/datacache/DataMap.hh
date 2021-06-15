@@ -21,6 +21,7 @@
 #include <platform/types.hh>                          // for Size
 #include <iosfwd>                                    // for string, operator<<
 #include <string>                                     // for char_traits
+#include <sstream>
 #include <utility/excn/Exceptions.hh>                 // for EXCN_Msg_Exception
 #include <utility>                                    // for pair
 #include <utility/pointer/owning_ptr.hh>              // for dynamic_pointer_cast

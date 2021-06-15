@@ -18,7 +18,6 @@
 #define INCLUDED_core_energy_methods_DEEREnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/types.hh>
 
 namespace core {
 namespace energy_methods {

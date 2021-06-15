@@ -20,6 +20,7 @@
 #include <core/chemical/AtomTypeSet.fwd.hh>
 #include <core/chemical/ElementSet.fwd.hh>
 #include <core/chemical/MMAtomTypeSet.fwd.hh>
+#include <core/types.hh>
 
 #include <utility/vector1.hh>
 #include <utility/VirtualBase.hh>

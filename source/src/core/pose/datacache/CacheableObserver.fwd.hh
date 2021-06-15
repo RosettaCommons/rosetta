@@ -29,11 +29,11 @@ class CacheableObserver;
 
 
 /// @brief CacheableObserver const access pointer
-typedef utility::pointer::shared_ptr< CacheableObserver const > CacheableObserverCAP;
+typedef utility::pointer::weak_ptr< CacheableObserver const > CacheableObserverCAP;
 
 
 /// @brief CacheableObserver access pointer
-typedef utility::pointer::shared_ptr< CacheableObserver > CacheableObserverAP;
+typedef utility::pointer::weak_ptr< CacheableObserver > CacheableObserverAP;
 
 
 /// @brief CacheableObserver const owning pointer

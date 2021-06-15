@@ -47,12 +47,10 @@
 #include <core/kinematics/DomainMap.hh>
 #include <core/kinematics/FoldTree.hh>
 #include <utility/vector1.hh>
-#include <utility/io/all.fwd.hh>
 #include <utility/io/icstream.fwd.hh>
 #include <utility/io/ocstream.fwd.hh>
 #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/Quaternion.fwd.hh>
-#include <numeric/all.fwd.hh>
 
 
 using basic::Error;

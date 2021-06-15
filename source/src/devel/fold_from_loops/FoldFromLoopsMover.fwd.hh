@@ -8,7 +8,7 @@
 #ifndef FoldFromLoopsMover_FWD_HH_
 #define FoldFromLoopsMover_FWD_HH_
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace devel {
 namespace fold_from_loops {

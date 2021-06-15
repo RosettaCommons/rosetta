@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_indexed_structure_store_FragmentStore_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 namespace protocols
 {

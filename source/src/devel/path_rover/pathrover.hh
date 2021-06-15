@@ -24,7 +24,6 @@
 #include "pathrover_parameters.hh"
 #include "pathrover_partial_data_manager.hh"
 
-# #include <ObjexxFCL/ObjexxFCL.hh>
 # #include "loop_class.h"
 # #include "score_data.h"
 

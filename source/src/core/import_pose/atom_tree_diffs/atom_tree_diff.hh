@@ -25,6 +25,7 @@
 
 #include <core/scoring/ScoreFunction.fwd.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 #include <fstream>
 #include <map>

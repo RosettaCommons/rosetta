@@ -17,7 +17,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <core/types.hh>
 
-//Auto Headers
 namespace core {
 namespace scoring {
 

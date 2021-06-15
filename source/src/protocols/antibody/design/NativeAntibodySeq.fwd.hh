@@ -17,7 +17,6 @@
 
 // Utility headers
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 // C++ Headers
 namespace protocols {

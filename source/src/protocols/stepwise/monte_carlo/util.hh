@@ -21,6 +21,8 @@
 #include <core/io/silent/SilentStruct.fwd.hh>
 #include <protocols/stepwise/monte_carlo/mover/StepWiseMove.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace stepwise {
 namespace monte_carlo {

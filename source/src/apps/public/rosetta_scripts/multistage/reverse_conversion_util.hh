@@ -13,6 +13,7 @@
 
 #include <utility/tag/Tag.hh>
 #include <iosfwd>
+#include <sstream>
 
 inline
 void add_protocols(

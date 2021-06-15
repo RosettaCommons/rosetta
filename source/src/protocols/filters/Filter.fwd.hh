@@ -17,9 +17,7 @@
 
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <string>
-#include <map>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <utility/vector1.fwd.hh>
 

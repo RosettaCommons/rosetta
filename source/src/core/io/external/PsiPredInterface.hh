@@ -25,6 +25,7 @@
 // Utility headers
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

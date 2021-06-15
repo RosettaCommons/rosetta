@@ -11,17 +11,14 @@
 #ifndef INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
 #define INCLUDED_protocols_rna_RNA_FragmentMover_fwd_hh
 
-#include <core/types.hh>
-#include <protocols/rna/denovo/movers/RNA_FragmentMover.hh>
-
-#include <utility/vector1.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace rna {
 namespace denovo {
 namespace movers {
+
+class RNA_FragmentMover;
 
 typedef utility::pointer::shared_ptr< RNA_FragmentMover > RNA_FragmentMoverOP;
 

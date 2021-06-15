@@ -31,6 +31,7 @@
 #include <utility/vector1.fwd.hh>
 #include <utility/file/FileName.fwd.hh>
 #include <utility/options/keys/OptionKey.fwd.hh>
+#include <utility/options/keys/OptionKeyList.fwd.hh>
 
 #ifdef    SERIALIZATION
 // Cereal headers

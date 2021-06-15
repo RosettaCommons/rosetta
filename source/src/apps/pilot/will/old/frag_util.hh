@@ -14,6 +14,7 @@
 
 #include <string>
 #include <iosfwd>
+#include <sstream>
 
 void read_fragdata( core::fragment::FragDataCOPs & fds, std::istream & in ) {
 	using namespace core::fragment;

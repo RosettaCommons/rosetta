@@ -29,6 +29,7 @@
 #include <core/pose/Pose.fwd.hh>
 
 #include <utility/file/FileName.fwd.hh>
+#include <utility/vector1.hh>
 
 //project headers
 

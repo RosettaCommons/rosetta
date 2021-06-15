@@ -28,6 +28,7 @@
 
 // Utility Headers
 #include <iostream>
+#include <sstream>
 #include <utility/vector1.hh>
 #include <utility/exit.hh>
 

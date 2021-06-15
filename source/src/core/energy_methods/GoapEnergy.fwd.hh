@@ -16,7 +16,6 @@
 #define INCLUDED_core_energy_methods_GoapEnergy_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-
 #include <map>
 #include <string>
 

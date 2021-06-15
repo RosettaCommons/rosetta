@@ -22,7 +22,6 @@
 #include <protocols/filters/Filter.hh>
 
 //Include ObjexxFCL
-#include <ObjexxFCL/FArray.all.hh>
 
 //Include Rosetta utilities
 #include <utility/vector1.hh>

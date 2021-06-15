@@ -15,13 +15,8 @@
 #ifndef INCLUDED_core_pack_rotamer_set_RotamerCouplings_fwd_hh
 #define INCLUDED_core_pack_rotamer_set_RotamerCouplings_fwd_hh
 
-//#include <core/conformation/ResidueMatcher.fwd.hh>
-
 // utility headers
-//#include <utility/vector1.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility> // std::pair
 
 namespace core {
 namespace pack {

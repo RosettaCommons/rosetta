@@ -15,13 +15,7 @@
 #ifndef INCLUDED_core_chemical_AtomICoor_fwd_hh
 #define INCLUDED_core_chemical_AtomICoor_fwd_hh
 
-
-// Unit headers
-
-// Project headers
 #include <core/types.hh>
-
-// Utility headers
 
 // C++ headers
 #include <string>

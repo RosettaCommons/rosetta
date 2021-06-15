@@ -20,9 +20,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
-// C++ headers
-#include <set>
-
 // Forward
 namespace protocols {
 namespace denovo_design {

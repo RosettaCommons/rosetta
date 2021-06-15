@@ -15,11 +15,10 @@
 #define INCLUDED_protocols_frag_picker_FragmentCandidate_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <protocols/frag_picker/scores/FragmentScoreMap.fwd.hh>
 #include <utility/vector1.fwd.hh>
-#include <map>
+#include <utility>
 
 //Auto Headers
 namespace protocols {

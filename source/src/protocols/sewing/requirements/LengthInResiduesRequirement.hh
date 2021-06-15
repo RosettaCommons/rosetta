@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_sewing_requirements_LengthInResiduesRequirement_hh
 
 #include <protocols/sewing/requirements/LengthInResiduesRequirement.fwd.hh>
+#include <protocols/sewing/requirements/AssemblyRequirement.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <core/types.hh>
 // Utility headers

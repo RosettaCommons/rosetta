@@ -18,8 +18,6 @@
 #define INCLUDED_devel_path_rover_pathrover_algorithms_hh
 
 
-// ObjexxFCL Headers
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include "pathways.h"
 // #include "pathways_DOFs_manager.h"
 #include "pathways_planners.h"

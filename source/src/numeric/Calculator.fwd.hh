@@ -14,7 +14,6 @@
 #ifndef INCLUDED_numeric_Calculator_fwd_hh
 #define INCLUDED_numeric_Calculator_fwd_hh
 
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace numeric {

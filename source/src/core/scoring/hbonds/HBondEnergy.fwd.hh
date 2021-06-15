@@ -17,6 +17,7 @@
 #define INCLUDED_core_scoring_hbonds_HBondEnergy_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 namespace core {
 namespace scoring {
@@ -26,7 +27,7 @@ class HBondEnergy;
 
 typedef utility::pointer::shared_ptr< HBondEnergy > HBondEnergyOP;
 typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCOP;
-typedef utility::pointer::shared_ptr< HBondEnergy const > HBondEnergyCAP;
+typedef utility::pointer::weak_ptr< HBondEnergy const > HBondEnergyCAP;
 
 } // hbonds
 } // scoring

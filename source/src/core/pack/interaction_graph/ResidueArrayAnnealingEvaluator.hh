@@ -24,6 +24,7 @@
 
 // Utility Headers
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 
 // ObjexxFCL Headers
 #include <ObjexxFCL/FArray1D.hh>

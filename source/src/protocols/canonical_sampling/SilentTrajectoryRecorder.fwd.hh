@@ -12,23 +12,13 @@
 /// @brief  Forward declarations for class SilentTrajectoryRecorder.
 /// @author
 
-//  Note:   Uncomment lines beginning with "---" if you need
-//          smart pointers.
-
 
 #ifndef INCLUDED_protocols_canonical_sampling_SilentTrajectoryRecorder_fwd_hh
 #define INCLUDED_protocols_canonical_sampling_SilentTrajectoryRecorder_fwd_hh
 
 
 // External library headers
-// --- #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-
-// C++ headers
-
-
-// Operating system headers
 
 
 namespace protocols {
@@ -40,13 +30,7 @@ class SilentTrajectoryRecorder;
 
 
 // Typedefs
-//typedef utility::pointer::access_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderAP;
 typedef utility::pointer::shared_ptr< SilentTrajectoryRecorder > SilentTrajectoryRecorderOP;
-
-
-// Smart pointer required functions
-// --- void owning_ptr_acquire(SilentTrajectoryRecorder *);
-// --- void owning_ptr_release(SilentTrajectoryRecorder *);
 
 } // namespace canonical_sampling
 } // namespace protocols

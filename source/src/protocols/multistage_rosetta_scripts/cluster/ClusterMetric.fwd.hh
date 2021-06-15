@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_multistage_rosetta_scripts_cluster_ClusterMetric_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/tag/Tag.fwd.hh>
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

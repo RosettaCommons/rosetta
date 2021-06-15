@@ -28,7 +28,7 @@
 #include <iomanip>
 #include <iosfwd>
 #include <string>
-
+#include <sstream>
 
 namespace ObjexxFCL {
 

@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_genetic_algorithm_Entity_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 namespace protocols {

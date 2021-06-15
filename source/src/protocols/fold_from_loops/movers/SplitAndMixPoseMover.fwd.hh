@@ -15,7 +15,7 @@
 #ifndef INCLUDED_protocols_fold_from_loops_movers_SplitAndMixPoseMover_FWD_hh
 #define INCLUDED_protocols_fold_from_loops_movers_SplitAndMixPoseMover_FWD_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace fold_from_loops {

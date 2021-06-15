@@ -21,7 +21,7 @@
 #define INCLUDED_protocols_analysis_PeptideDeriverFilterCreator_fwd_hh
 
 // Project headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace peptide_deriver {

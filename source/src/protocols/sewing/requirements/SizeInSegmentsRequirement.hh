@@ -16,6 +16,7 @@
 #define INCLUDED_protocols_sewing_requirements_SizeInSegmentsRequirement_hh
 
 #include <protocols/sewing/requirements/SizeInSegmentsRequirement.fwd.hh>
+#include <protocols/sewing/requirements/AssemblyRequirement.hh>
 #include <protocols/sewing/data_storage/SmartAssembly.hh>
 #include <core/types.hh>
 // Utility headers

@@ -20,7 +20,7 @@
 #ifndef INCLUDED_utility_signals_LinkUnit_fwd_hh
 #define INCLUDED_utility_signals_LinkUnit_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace utility {
 namespace signals {

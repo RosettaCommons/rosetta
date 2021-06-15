@@ -11,8 +11,7 @@
 #define INCLUDED_protocols_loop_modeling_LoopMover_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace loop_modeling {

@@ -24,6 +24,7 @@
 
 // C/C++ headers
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace topology_broker {

@@ -21,6 +21,7 @@
 #include <basic/database/schema_generator/DbDataType.fwd.hh>   // for DbData...
 #include <platform/types.hh>                                   // for Size
 #include <utility/VirtualBase.hh>                   // for Refere...
+#include <string>
 
 namespace basic {
 namespace database {

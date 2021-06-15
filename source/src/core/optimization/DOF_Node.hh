@@ -24,6 +24,8 @@
 
 #include <core/types.hh> // Vector
 
+#include <sstream>
+
 // // Numeric headers
 #include <numeric/xyzVector.hh>
 

@@ -15,8 +15,8 @@
 #define INCLUDED_core_pose_datacache_cacheable_observers_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 
 namespace core {
@@ -26,8 +26,8 @@ namespace datacache {
 
 /// @brief forward declaration for LengthEventCollector
 class LengthEventCollector;
-typedef utility::pointer::shared_ptr< LengthEventCollector const > LengthEventCollectorCAP;
-typedef utility::pointer::shared_ptr< LengthEventCollector > LengthEventCollectorAP;
+typedef utility::pointer::weak_ptr< LengthEventCollector const > LengthEventCollectorCAP;
+typedef utility::pointer::weak_ptr< LengthEventCollector > LengthEventCollectorAP;
 typedef utility::pointer::shared_ptr< LengthEventCollector const > LengthEventCollectorCOP;
 typedef utility::pointer::shared_ptr< LengthEventCollector > LengthEventCollectorOP;
 

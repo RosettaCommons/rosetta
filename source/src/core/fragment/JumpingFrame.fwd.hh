@@ -17,7 +17,6 @@
 #define INCLUDED_core_fragment_JumpingFrame_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
 
 
 namespace core {

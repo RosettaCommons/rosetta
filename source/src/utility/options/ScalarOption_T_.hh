@@ -31,9 +31,11 @@
 
 // C++ headers
 #include <utility/assert.hh>
+#include <iosfwd>
 #include <cstdlib>
 #include <set>
-#include <iosfwd>
+#include <sstream>
+#include <string>
 
 #ifdef SERIALIZATION
 // Utility serialization headers

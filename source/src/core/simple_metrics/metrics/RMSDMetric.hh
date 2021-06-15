@@ -23,6 +23,7 @@
 #include <core/select/residue_selector/ResidueSelector.fwd.hh>
 
 // Utility headers
+#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 
 #include <map>

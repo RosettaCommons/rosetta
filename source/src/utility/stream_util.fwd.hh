@@ -17,7 +17,6 @@
 #include <utility/type_traits/has_insertion_operator.fwd.hh>
 
 #include <utility/vectorL.fwd.hh>
-#include <utility/vector0.fwd.hh>
 #include <utility/vector1.fwd.hh>
 
 #include <vector>

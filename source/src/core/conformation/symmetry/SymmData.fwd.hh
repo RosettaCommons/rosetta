@@ -15,7 +15,7 @@
 #define INCLUDED_core_conformation_symmetry_SymmData_fwd_hh
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // C++ headers
 

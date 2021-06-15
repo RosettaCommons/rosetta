@@ -39,7 +39,6 @@
 // #include <id.hh>
 
 // // Numeric headers
-// #include <numeric/all.fwd.hh>
 // #include <numeric/conversions.hh>
 // #include <numeric/xyzMatrix.hh>
 // #include <numeric/xyzVector.hh>
@@ -48,7 +47,6 @@
 // #include <ObjexxFCL/FArray1D.hh>
 
 // // Utility headers
-// #include <utility/io/all.fwd.hh>
 
 // // C++ headers
 // #include <algorithm>

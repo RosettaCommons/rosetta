@@ -16,7 +16,7 @@
 #ifndef INCLUDED_protocols_pose_creation_MakeJunctionsMover_FWD_HH
 #define INCLUDED_protocols_pose_creation_MakeJunctionsMover_FWD_HH
 
-#include <protocols/moves/MoverCreator.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace pose_creation {

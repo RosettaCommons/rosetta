@@ -29,7 +29,7 @@
 #include <limits>
 #include <iosfwd>
 #include <string>
-
+#include <sstream>
 
 namespace ObjexxFCL {
 namespace format {

@@ -25,6 +25,7 @@
 #include <core/types.hh>
 #include <numeric/MathVector.hh>
 #include <numeric/MathMatrix.hh>
+#include <utility/vector1.hh>
 #include <set>
 
 namespace core {

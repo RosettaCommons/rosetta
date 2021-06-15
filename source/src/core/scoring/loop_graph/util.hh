@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/types.hh>
 #include <core/scoring/loop_graph/evaluator/LoopClosePotentialEvaluator.fwd.hh>
+#include <string>
 
 namespace core {
 namespace scoring {

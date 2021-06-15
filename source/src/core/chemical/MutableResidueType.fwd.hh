@@ -15,14 +15,7 @@
 #ifndef INCLUDED_core_chemical_MutableResidueType_fwd_hh
 #define INCLUDED_core_chemical_MutableResidueType_fwd_hh
 
-
-// Unit headers
-
-// Project headers
-#include <core/types.hh>
-
 // Utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 // C++ headers

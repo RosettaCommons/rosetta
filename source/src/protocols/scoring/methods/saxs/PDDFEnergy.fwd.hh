@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_scoring_methods_saxs_PDDFEnergy_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {

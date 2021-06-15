@@ -32,6 +32,7 @@
 
 #include <core/pack/task/PackerTask.fwd.hh>
 #include <utility/vector1.hh>
+#include <map>
 
 #ifdef    SERIALIZATION
 // Cereal headers

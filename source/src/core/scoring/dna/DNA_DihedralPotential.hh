@@ -23,8 +23,8 @@
 #include <core/kinematics/Stub.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
-#include <utility/vector1.fwd.hh>
-#include <utility/vector0.fwd.hh>
+#include <utility/vector1.hh>
+#include <utility/vector0.hh>
 #include <utility/exit.hh>
 #include <numeric/xyzVector.fwd.hh>
 #include <numeric/xyzMatrix.fwd.hh>

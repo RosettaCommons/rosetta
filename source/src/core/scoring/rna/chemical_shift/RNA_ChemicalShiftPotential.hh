@@ -23,6 +23,7 @@
 #include <numeric/xyzVector.hh>
 
 #include <utility/VirtualBase.hh>
+#include <utility/vector1.hh>
 ///////////////////////////////////
 #include <core/chemical/AA.hh>
 #include <core/scoring/rna/chemical_shift/RNA_CS_Parameters.hh>

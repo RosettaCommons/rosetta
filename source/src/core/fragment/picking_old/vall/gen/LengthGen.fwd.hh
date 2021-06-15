@@ -15,8 +15,8 @@
 #define INCLUDED_core_fragment_picking_old_vall_gen_LengthGen_fwd_hh
 
 // utility headers
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/access_ptr.hh>
 
 
 namespace core {
@@ -39,11 +39,11 @@ typedef utility::pointer::shared_ptr< LengthGen const > LengthGenCOP;
 
 
 /// @brief LengthGen access pointer
-typedef utility::pointer::shared_ptr< LengthGen > LengthGenAP;
+typedef utility::pointer::weak_ptr< LengthGen > LengthGenAP;
 
 
 /// @brief LengthGen const access pointer
-typedef utility::pointer::shared_ptr< LengthGen const > LengthGenCAP;
+typedef utility::pointer::weak_ptr< LengthGen const > LengthGenCAP;
 
 
 } // namespace gen

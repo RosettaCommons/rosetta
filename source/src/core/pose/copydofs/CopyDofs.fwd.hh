@@ -17,11 +17,6 @@
 #define INCLUDED_core_pose_copydofs_CopyDofs_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/types.hh>
-#include <core/id/DOF_ID.hh>
-#include <core/id/AtomID.hh>
-#include <core/kinematics/Jump.hh>
-#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace pose {

@@ -26,6 +26,7 @@
 #include <core/pack/task/TaskFactory.fwd.hh>
 #include <utility/vector1.hh>
 #include <string>
+#include <map>
 
 // Unit headers
 

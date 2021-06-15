@@ -17,9 +17,6 @@
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Project Headers
-#include <core/select/residue_selector/ResidueSelector.fwd.hh>
-
 namespace core {
 namespace select {
 namespace residue_selector {

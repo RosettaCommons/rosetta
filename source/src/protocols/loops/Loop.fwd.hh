@@ -18,11 +18,8 @@
 // Unit header
 #include <utility/pointer/owning_ptr.hh>
 
-// Project header
-#include <core/types.hh>
-
 // Utility Header
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace loops {

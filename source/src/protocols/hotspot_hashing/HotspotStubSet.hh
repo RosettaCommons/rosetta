@@ -30,7 +30,7 @@
 // Utility Headers
 #include <core/types.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/exit.hh>
 
 // C++ Headers

@@ -37,12 +37,10 @@
 #include <core/import_pose/import_pose.hh>
 #include <core/kinematics/AtomPointer.hh>
 #include <core/kinematics/DomainMap.hh>
-#include <utility/io/all.fwd.hh>
 #include <utility/io/icstream.fwd.hh>
 #include <utility/io/ocstream.fwd.hh>
 #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/Quaternion.fwd.hh>
-#include <numeric/all.fwd.hh>
 #include <basic/Tracer.hh>
 
 static basic::Tracer TR("core.pose.PDBInfoTests");

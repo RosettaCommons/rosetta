@@ -55,6 +55,7 @@
 #include <map>
 #include <iosfwd>
 #include <set>
+#include <sstream>
 
 namespace protocols {
 namespace frag_picker {

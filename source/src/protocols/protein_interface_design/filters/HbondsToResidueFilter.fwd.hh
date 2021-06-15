@@ -17,8 +17,8 @@
 
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <utility/vector1.hh>
+#include <utility/pointer/owning_ptr.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace protein_interface_design {

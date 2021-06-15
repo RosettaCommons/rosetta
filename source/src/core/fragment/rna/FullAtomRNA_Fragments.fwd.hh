@@ -14,9 +14,6 @@
 #ifndef INCLUDED_core_fragment_rna_FullAtomRNA_Fragments_FWD_HH
 #define INCLUDED_core_fragment_rna_FullAtomRNA_Fragments_FWD_HH
 
-#include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.hh>
-
 namespace core {
 namespace fragment {
 namespace rna {

@@ -22,6 +22,7 @@
 
 #include <iosfwd>
 #include <stdio.h>
+#include <sstream>
 
 namespace myspace {
 

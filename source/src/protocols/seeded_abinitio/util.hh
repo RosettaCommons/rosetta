@@ -29,8 +29,6 @@
 #include <numeric/xyzMatrix.hh>
 #include <numeric/xyz.functions.hh>
 
-#include <ObjexxFCL/FArray.all.hh>
-
 #include <utility/vector1.hh>
 
 namespace protocols {

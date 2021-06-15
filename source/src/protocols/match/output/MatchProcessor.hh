@@ -27,6 +27,8 @@
 #include <protocols/match/output/MatchEvaluator.fwd.hh>
 #include <protocols/match/output/MatchScoreWriter.fwd.hh>
 
+#include <core/types.hh>
+
 // Utility headers
 #include <utility/VirtualBase.hh>
 

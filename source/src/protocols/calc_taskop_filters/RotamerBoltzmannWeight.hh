@@ -27,6 +27,7 @@
 #include <core/chemical/AA.hh>
 
 #include <utility/vector1.hh>
+#include <map>
 
 //Auto Headers
 // Unit headers

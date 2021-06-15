@@ -18,6 +18,7 @@
 
 // Utility Headers
 #include <core/types.hh>
+#include <utility/assert.hh>
 
 // C++ Headers
 #include <ostream>

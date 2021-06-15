@@ -32,6 +32,8 @@
 // Utility headers
 #include <utility/SingletonBase.hh>
 #include <utility/fixedsizearray1.hh>
+#include <utility/vector1.hh>
+
 #ifdef MULTI_THREADED
 #include <utility/thread/ReadWriteMutex.hh>
 #endif

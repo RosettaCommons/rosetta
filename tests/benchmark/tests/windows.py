@@ -49,7 +49,7 @@ def build_rosetta(mode, rosetta_dir, working_dir, platform, config, hpc_driver, 
 
     mode = dict(release='windows', debug='windows_debug')[mode]
 
-    command_line = f'{_activate_cl_} && cd {rosetta_dir}\\source && python ninja_build.py {mode} -remake -j'
+    command_line = f'{_activate_cl_} && cd {rosetta_dir}\\source && python ninja_build.py {mode} -k -remake -j'
 
     print('Compiling...', command_line)
     res, output = getstatusoutput( f'{command_line}{cpu_count}' )

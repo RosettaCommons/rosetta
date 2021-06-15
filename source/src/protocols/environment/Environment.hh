@@ -36,6 +36,7 @@
 #include <core/conformation/Conformation.fwd.hh>
 #include <core/kinematics/FoldTree.fwd.hh>
 #include <utility/VirtualBase.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 #include <string>

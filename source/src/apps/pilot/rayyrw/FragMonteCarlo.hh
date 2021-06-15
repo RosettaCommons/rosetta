@@ -2,6 +2,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <sstream>
 #include <map>
 #include <cmath>
 

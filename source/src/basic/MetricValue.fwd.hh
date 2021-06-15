@@ -17,13 +17,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#include <utility/down_cast.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
-#include <cassert>
-#include <iosfwd>
-
-
 namespace basic {
 
 class MetricValueBase;

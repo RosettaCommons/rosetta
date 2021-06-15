@@ -9,7 +9,7 @@
 
 /// @file   utility/ReplicateFilter.fwd.hh
 /// @brief  forward declaration for ReplicateFilter
-/// @author Rocco Moretti (rmoretti@u.washington.edu) 
+/// @author Rocco Moretti (rmoretti@u.washington.edu)
 
 
 #ifndef INCLUDED_protocols_filters_ReplicateFilter_fwd_hh
@@ -17,8 +17,7 @@
 
 
 // Utility headers
-#include <utility/pointer/access_ptr.fwd.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace filters {

@@ -13,7 +13,7 @@
 #ifndef INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
 #define INCLUDED_protocols_simple_moves_rational_mc_RationalMonteCarlo_FWD_HH
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_moves {

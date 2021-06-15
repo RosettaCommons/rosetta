@@ -30,6 +30,8 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/VirtualBase.hh>
 
+#include <string>
+
 namespace protocols {
 namespace sewing {
 namespace requirements {

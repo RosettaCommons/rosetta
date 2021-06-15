@@ -26,6 +26,7 @@
 
 // C/C++
 #include <map>
+#include <string>
 
 //Auto Headers
 namespace core {

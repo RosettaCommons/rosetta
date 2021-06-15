@@ -20,12 +20,6 @@
 // Unit headers
 #include <utility/pointer/owning_ptr.hh>
 
-// Project headers
-#include <utility/down_cast.hh>
-
-// C++ headers
-#include <utility/assert.hh>
-#include <iosfwd>
 #include <memory>
 
 namespace utility {

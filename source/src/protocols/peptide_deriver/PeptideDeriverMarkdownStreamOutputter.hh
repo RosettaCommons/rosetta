@@ -27,6 +27,7 @@
 
 // C++ headers
 #include <string>
+#include <sstream>
 
 namespace protocols {
 namespace peptide_deriver {

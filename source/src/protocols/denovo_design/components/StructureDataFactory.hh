@@ -30,6 +30,7 @@
 #include <basic/datacache/WriteableCacheableData.fwd.hh>
 #include <utility/SingletonBase.hh>
 #include <utility/excn/Exceptions.hh>
+#include <utility/vector1.hh>
 
 // C++ headers
 #include <map>

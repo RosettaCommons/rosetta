@@ -16,10 +16,6 @@
 #ifndef INCLUDED_core_io_pdb_Field_FWD_HH
 #define INCLUDED_core_io_pdb_Field_FWD_HH
 
-// C++ headers
-#include <map>
-#include <string>
-
 
 namespace core {
 namespace io {

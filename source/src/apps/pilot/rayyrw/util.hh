@@ -15,6 +15,7 @@
 #include <basic/Tracer.hh>
 #include <apps/pilot/rayyrw/rms_util.hh>
 
+#include <sstream>
 
 #ifndef apps_pilot_rayyrw_util_hh
 #define apps_pilot_rayyrw_util_hh

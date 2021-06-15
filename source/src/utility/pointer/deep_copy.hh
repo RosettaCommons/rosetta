@@ -44,7 +44,7 @@
 #ifndef INCLUDED_utility_pointer_deep_copy_hh
 #define INCLUDED_utility_pointer_deep_copy_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <cstddef>
 #include <type_traits>

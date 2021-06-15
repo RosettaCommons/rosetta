@@ -25,14 +25,12 @@
 #include <utility/down_cast.hh>
 #include <utility/vector1_bool.hh>
 #include <utility/VirtualBase.fwd.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <cassert>
 #include <cstddef>
 #include <iosfwd>
 #include <string>
-
+#include <sstream>
 
 namespace basic {
 

@@ -18,10 +18,9 @@
 #include <core/types.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
-#include <utility/vector1_bool.hh>
-
+#include <utility/vector1.hh>
 
 namespace core {
 namespace kinematics {

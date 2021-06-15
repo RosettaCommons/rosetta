@@ -121,10 +121,7 @@
 #include <utility/io/izstream.fwd.hh>
 #include <utility/VirtualBase.fwd.hh>
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/access_ptr.fwd.hh>
 #include <utility/pointer/access_ptr.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/signals/BufferedSignalHub.fwd.hh>
 #include <utility/signals/BufferedSignalHub.hh>

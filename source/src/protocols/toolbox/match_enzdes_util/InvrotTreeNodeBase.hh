@@ -33,6 +33,7 @@
 //c++ heades
 #include <list>
 #include <map>
+#include <vector>
 
 #ifdef PYROSETTA
 #include <protocols/toolbox/match_enzdes_util/AllowedSeqposForGeomCst.hh>

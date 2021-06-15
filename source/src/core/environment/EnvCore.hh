@@ -27,6 +27,7 @@
 
 // C++ Headers
 #include <iosfwd>
+#include <string>
 
 // ObjexxFCL Headers
 

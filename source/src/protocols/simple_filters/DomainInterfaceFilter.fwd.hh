@@ -16,11 +16,8 @@
 #ifndef INCLUDED_protocols_simple_filters_DomainInterfaceFilter_fwd_hh
 #define INCLUDED_protocols_simple_filters_DomainInterfaceFilter_fwd_hh
 
-// Unit headers
-#include <protocols/filters/Filter.fwd.hh>
-
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_filters {

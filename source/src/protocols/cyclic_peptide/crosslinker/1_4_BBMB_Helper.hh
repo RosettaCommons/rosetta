@@ -27,6 +27,8 @@
 // Basic/Utility headers
 #include <core/types.hh>
 
+#include <string>
+
 namespace protocols {
 namespace cyclic_peptide {
 namespace crosslinker {

@@ -15,7 +15,7 @@
 #define INCLUDED_core_scoring_bin_transitions_BinTransitionCalculator_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace scoring {

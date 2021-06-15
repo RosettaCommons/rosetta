@@ -15,7 +15,6 @@
 #define INCLUDED_core_pose_full_model_info_FullModelInfo_fwd_hh
 
 
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 

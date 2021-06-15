@@ -13,7 +13,7 @@
 #ifndef CORE_SCORING_CONSTRAINTS_USOGFUNC_FWD_HH_
 #define CORE_SCORING_CONSTRAINTS_USOGFUNC_FWD_HH_
 
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {

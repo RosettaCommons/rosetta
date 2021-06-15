@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_kinematic_closure_ClosureSolution_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace protocols {
 namespace kinematic_closure {

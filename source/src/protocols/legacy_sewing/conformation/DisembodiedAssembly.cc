@@ -50,7 +50,6 @@
 #include <numeric/xyzTransform.hh>
 
 #include <utility/LexicographicalIterator.hh>
-#include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/vector1.hh>
 
 //Numeric headers

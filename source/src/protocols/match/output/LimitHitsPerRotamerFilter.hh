@@ -22,6 +22,8 @@
 #include <protocols/match/output/MatchFilter.hh>
 #include <protocols/match/Hit.fwd.hh>
 
+#include <core/types.hh>
+
 // Utility headers
 
 // C++ headers

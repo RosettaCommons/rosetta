@@ -15,7 +15,6 @@
 #define INCLUDED_protocols_stepwise_monte_carlo_RNA_TorsionMover_fwd_hh
 
 
-#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
 
 

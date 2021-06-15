@@ -16,9 +16,6 @@
 #define INCLUDED_protocols_jumping_DisulfPairingsList_fwd_hh
 
 
-// Utility headers
-//#include <utility/pointer/access_ptr.fwd.hh>
-
 #include <utility/vector1.fwd.hh>
 
 

@@ -33,6 +33,7 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <string>
 
 #ifdef PYROSETTA
 #include <core/kinematics/FoldTree.hh>

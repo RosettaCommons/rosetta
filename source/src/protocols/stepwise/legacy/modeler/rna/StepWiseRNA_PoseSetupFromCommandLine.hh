@@ -22,6 +22,8 @@
 #include <core/types.hh>
 #include <core/pose/Pose.fwd.hh> // might remove after we move apply_chi_cst out.
 
+#include <string>
+
 namespace protocols {
 namespace stepwise {
 namespace legacy {

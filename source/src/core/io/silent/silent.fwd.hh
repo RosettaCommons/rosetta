@@ -19,9 +19,7 @@
 #include <utility/pointer/owning_ptr.hh>
 
 #include <map>
-#if WIN32
 #include <string>
-#endif
 
 #include <core/types.hh>
 #include <utility/vector1.fwd.hh>

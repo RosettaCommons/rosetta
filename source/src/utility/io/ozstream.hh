@@ -31,6 +31,7 @@
 #include <utility/file/gzip_util.hh>
 #if defined( USE_FILE_PROVIDER )
 #include <utility/inline_file_provider.hh>
+#include <sstream>
 #endif
 
 // Utility headers

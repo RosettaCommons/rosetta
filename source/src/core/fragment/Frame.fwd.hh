@@ -17,9 +17,6 @@
 #define INCLUDED_core_fragment_Frame_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/pointer/access_ptr.hh>
-
-//#include <utility/vector1.hh>
 
 namespace core {
 namespace fragment {

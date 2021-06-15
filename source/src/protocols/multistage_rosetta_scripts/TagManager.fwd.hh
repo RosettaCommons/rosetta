@@ -20,6 +20,7 @@
 #include <utility/tag/Tag.fwd.hh>
 #include <list>
 #include <map>
+#include <string>
 
 namespace protocols {
 namespace multistage_rosetta_scripts {

@@ -15,7 +15,7 @@
 #define INCLUDED_protocols_motifs_LigandMotifSearch_FWD_HH
 
 // Utility Headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace motifs {

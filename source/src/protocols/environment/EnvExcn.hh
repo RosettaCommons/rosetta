@@ -28,6 +28,7 @@
 
 // C++ Headers
 #include <string>
+#include <sstream>
 
 // ObjexxFCL Headers
 

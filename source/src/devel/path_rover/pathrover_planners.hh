@@ -17,8 +17,6 @@
 #define INCLUDED_devel_path_rover_pathrover_planners_hh
 
 
-// ObjexxFCL Headers
-#include <ObjexxFCL/ObjexxFCL.hh>
 #include <cstdio>
 #include <algorithm>
 #include <string>

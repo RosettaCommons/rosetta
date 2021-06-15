@@ -73,7 +73,6 @@
 #include <protocols/rosetta_scripts/util.hh>
 
 //Include ObjexxFCL
-#include <ObjexxFCL/FArray.all.hh>
 
 //Include my headers
 #include <protocols/motif_grafting/movers/MotifGraftMover.hh>

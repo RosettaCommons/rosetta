@@ -14,10 +14,7 @@
 #ifndef INCLUDED_protocols_flexpack_rotamer_set_FlexbbRotamerSet_fwd_hh
 #define INCLUDED_protocols_flexpack_rotamer_set_FlexbbRotamerSet_fwd_hh
 
-//#include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility/pointer/all.fwd.hh>
 
 namespace protocols {
 namespace flexpack {
@@ -27,7 +24,6 @@ class FlexbbRotamerSet;
 
 typedef utility::pointer::shared_ptr< FlexbbRotamerSet > FlexbbRotamerSetOP;
 typedef utility::pointer::shared_ptr< FlexbbRotamerSet const > FlexbbRotamerSetCOP;
-//typedef utility::pointer::access_ptr< FlexbbRotamerSet const > FlexbbRotamerSetCAP;
 
 
 } //namespace rotamer_set

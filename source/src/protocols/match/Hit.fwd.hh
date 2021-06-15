@@ -15,22 +15,15 @@
 #ifndef INCLUDED_protocols_match_Hit_fwd_hh
 #define INCLUDED_protocols_match_Hit_fwd_hh
 
-// Project headers
-#include <core/types.hh>
-
 // Numeric headers
 #include <numeric/kdtree/WrappedPrimitive.hh>
 #include <numeric/geometry/hashing/SixDHasher.fwd.hh>
 
 // Utility headers
-#include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.hh>
 #include <utility/vector1.fwd.hh>
 
 // C++ headers
 #include <list>
-
-#include <utility/fixedsizearray1.fwd.hh>
 
 
 namespace protocols {
@@ -51,8 +44,6 @@ typedef numeric::geometry::hashing::Real6 Real6;
 /// hit.first[ 3 ] == which external geometry generated this hit
 /// hit.first[ 4 ] == downstream conf id
 /// hit.second     == 6 DOFs describing the downstream conf's rigid body conformation.
-
-///typedef std::pair< Size4, Real6 > Hit;
 
 class Hit;
 

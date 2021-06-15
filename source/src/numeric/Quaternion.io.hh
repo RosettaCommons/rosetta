@@ -25,7 +25,7 @@
 #include <ostream>
 #include <istream>
 #include <iomanip>
-
+#include <sstream>
 
 namespace numeric {
 

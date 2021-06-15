@@ -22,7 +22,7 @@
 #define INCLUDED_protocols_simple_moves_DisulfideInsertionMoverCreator_fwd_hh
 
 // Project headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace simple_moves {

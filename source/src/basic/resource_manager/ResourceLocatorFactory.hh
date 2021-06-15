@@ -26,6 +26,7 @@
 
 //C++ headers
 #include <map>
+#include <string>
 
 namespace basic {
 namespace resource_manager {

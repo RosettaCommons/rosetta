@@ -16,19 +16,9 @@
 #define INCLUDED_core_chemical_ResidueTypeBase_fwd_hh
 
 
-// Unit headers
-
-// Project headers
-#include <core/types.hh>
-
 // Utility headers
 #include <utility/pointer/access_ptr.hh>
 #include <utility/pointer/owning_ptr.hh>
-
-//#include <utility/vector1.fwd.hh>
-
-
-// C++ headers
 
 namespace core {
 namespace chemical {

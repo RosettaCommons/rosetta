@@ -15,9 +15,7 @@
 #define INCLUDED_core_scoring_CenRotEnvPairPotential_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <core/types.hh>
 
-//Auto Headers
 namespace core {
 namespace scoring {
 

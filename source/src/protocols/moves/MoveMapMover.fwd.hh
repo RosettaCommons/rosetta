@@ -16,10 +16,6 @@
 
 #include <utility/pointer/owning_ptr.hh>
 
-#include <map>
-
-// Package headers
-
 namespace protocols {
 namespace moves {
 

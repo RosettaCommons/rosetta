@@ -28,7 +28,6 @@
 //Core headers
 
 //Utility headers
-#include <utility/pointer/owning_ptr.functions.hh>
 
 //C++ headers
 

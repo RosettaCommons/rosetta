@@ -21,6 +21,7 @@
 //package headers
 #include <protocols/toolbox/match_enzdes_util/EnzConstraintIO.fwd.hh>
 #include <protocols/toolbox/match_enzdes_util/InvrotTreeNodeBase.hh>
+#include <utility/vector1.hh>
 
 #ifdef PYROSETTA
 	#include <core/conformation/Residue.hh>

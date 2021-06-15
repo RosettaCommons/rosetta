@@ -40,6 +40,7 @@
 #include <utility/vector1.fwd.hh>
 
 #include <map>
+#include <string>
 
 class CifFile;
 class CifParser;

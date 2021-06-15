@@ -41,7 +41,7 @@
 #include <core/kinematics/FoldTree.fwd.hh>
 
 // Utility headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/excn/Exceptions.fwd.hh>
 
 // Basic/Utility headers

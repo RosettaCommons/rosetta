@@ -55,7 +55,7 @@
 #include <boost/format.hpp>
 
 //Include ObjexxFCL
-#include <ObjexxFCL/FArray.all.hh>
+
 // XSD XRW Includes
 #include <utility/tag/XMLSchemaGeneration.hh>
 #include <protocols/filters/filter_schemas.hh>

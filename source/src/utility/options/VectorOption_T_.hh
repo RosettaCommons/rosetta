@@ -35,6 +35,7 @@
 #include <cstdlib>
 #include <set>
 #include <iosfwd>
+#include <sstream>
 
 #ifdef SERIALIZATION
 #include <utility/vector1.srlz.hh>

@@ -19,7 +19,7 @@
 // Package headers
 
 // Project headers
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 // C++ Headers
 

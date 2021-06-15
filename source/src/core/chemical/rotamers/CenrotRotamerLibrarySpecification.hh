@@ -25,6 +25,7 @@
 // Basic headers
 
 // Utility Headers
+#include <utility/assert.hh>
 
 // C++ headers
 #include <string>

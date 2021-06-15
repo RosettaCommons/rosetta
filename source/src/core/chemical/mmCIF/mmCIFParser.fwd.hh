@@ -14,9 +14,10 @@
 #define INCLUDED_core_chemical_mmCIF_mmCIFParser_fwd_hh
 
 #include <utility/pointer/owning_ptr.hh>
-#include <cifparse/CifFile.h>
-#include <cifparse/CifParserBase.h>
-#include <cifparse/ISTable.h>
+
+class CifFile;
+
+class CifParser;
 
 namespace core {
 namespace chemical {

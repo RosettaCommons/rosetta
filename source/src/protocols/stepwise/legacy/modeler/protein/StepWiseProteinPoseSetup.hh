@@ -34,7 +34,7 @@
 #include <ObjexxFCL/FArray1D.hh>
 
 #include <utility/VirtualBase.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 #include <string>
 #include <map>

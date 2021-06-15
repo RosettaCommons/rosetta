@@ -32,6 +32,9 @@
 #include <protocols/filters/Filter.fwd.hh>
 #include <protocols/moves/Mover.fwd.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
+
+#include <string>
+
 namespace protocols {
 namespace sewing {
 namespace requirements {

@@ -17,7 +17,7 @@
 #define INCLUDED_core_pose_rna_BaseStack_FWD_HH
 
 #include <utility/pointer/owning_ptr.hh>
-#include <utility/vector1.hh>
+#include <utility/vector1.fwd.hh>
 
 namespace core {
 namespace pose {

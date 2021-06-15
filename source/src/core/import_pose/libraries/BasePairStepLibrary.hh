@@ -23,6 +23,7 @@
 #include <core/pose/Pose.fwd.hh>
 #include <core/pose/MiniPose.fwd.hh>
 #include <iosfwd>
+#include <string>
 
 namespace core {
 namespace import_pose {

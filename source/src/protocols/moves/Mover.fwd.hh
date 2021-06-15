@@ -17,8 +17,6 @@
 #include <utility/pointer/owning_ptr.hh>
 #include <utility/pointer/access_ptr.hh>
 
-#include <map>
-
 // Package headers
 
 namespace protocols {
@@ -29,9 +27,6 @@ typedef utility::pointer::shared_ptr< Mover > MoverOP;
 typedef utility::pointer::shared_ptr< Mover const > MoverCOP;
 typedef utility::pointer::weak_ptr< Mover > MoverAP;
 typedef utility::pointer::weak_ptr< Mover const > MoverCAP;
-
-typedef std::map< std::string, std::string > MoverCache;
-typedef utility::pointer::shared_ptr< MoverCache > MoverCacheOP;
 
 } // moves
 } // protocols

@@ -33,7 +33,6 @@
 #include <basic/options/keys/legacy_sewing.OptionKeys.gen.hh>
 #include <basic/options/keys/lh.OptionKeys.gen.hh>
 
-#include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/io/ozstream.hh>
 #include <utility/io/izstream.hh>
 #include <utility/string_util.hh>

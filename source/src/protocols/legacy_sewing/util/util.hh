@@ -22,7 +22,6 @@
 #include <core/pose/Pose.fwd.hh>
 
 //Utility
-#include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/vector1.hh>
 
 //Devel

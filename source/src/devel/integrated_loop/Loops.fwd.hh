@@ -13,19 +13,13 @@
 // Utility Headers
 #include <utility/pointer/owning_ptr.hh>
 
-// protocols header
-#include <protocols/loops/looprelax_protocols.hh>
-
-// C++ Headers
-#include <cstdlib>
-
 namespace protocols {
 namespace moves {
 
 class Loop;
 class LoopMover;
 
-typedef utility::pointer::owning_ptr< protocols::moves::Loop > LoopOP;
+typedef utility::pointer::shared_ptr< protocols::moves::Loop > LoopOP;
 
 } // ns moves
 } // ns protocols

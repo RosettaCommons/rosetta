@@ -18,9 +18,6 @@
 // utility headers
 #include <utility/pointer/owning_ptr.hh>
 
-// C++ headers
-#include <string>
-
 namespace protocols {
 namespace jd3 {
 namespace chunk_library_inputters {

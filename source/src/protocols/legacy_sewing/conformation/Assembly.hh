@@ -30,7 +30,6 @@
 #include <protocols/loops/Loop.fwd.hh>
 
 //Utility headers
-#include <utility/pointer/owning_ptr.functions.hh>
 #include <utility/VirtualBase.hh>
 #include <utility/vector1.hh>
 

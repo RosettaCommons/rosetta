@@ -53,7 +53,7 @@
 
 // Utility headers
 #include <utility/options/keys/OptionKey.hh>
-#include <utility/pointer/owning_ptr.fwd.hh>
+#include <utility/pointer/owning_ptr.hh>
 #include <utility/tag/Tag.hh>
 
 using namespace utility::tag;

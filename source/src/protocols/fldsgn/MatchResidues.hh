@@ -36,6 +36,7 @@
 // Boost headers
 #include <boost/tuple/tuple.hpp>
 
+#include <map>
 
 namespace protocols {
 namespace fldsgn {

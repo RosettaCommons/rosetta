@@ -13,13 +13,7 @@
 #ifndef INCLUDED_core_scoring_func_Func_fwd_hh
 #define INCLUDED_core_scoring_func_Func_fwd_hh
 
-#include <utility/pointer/owning_ptr.fwd.hh>
-
-// C++ Headers
-//#include <cstdlib>
-//#include <iosfwd>
-//#include <map>
-//#include <utility>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace core {
 namespace scoring {

@@ -19,6 +19,8 @@
 #include <protocols/recces/options/RECCES_Options.fwd.hh>
 #include <core/pose/Pose.fwd.hh>
 
+#include <string>
+
 namespace protocols {
 namespace recces {
 

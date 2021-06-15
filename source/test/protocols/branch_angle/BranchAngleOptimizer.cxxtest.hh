@@ -36,11 +36,9 @@
 // Numeric Headers
 #include <numeric/BodyPosition.fwd.hh>
 #include <numeric/Quaternion.fwd.hh>
-#include <numeric/all.fwd.hh>
 
 // Utility headers
 #include <utility/vector1.hh>
-#include <utility/io/all.fwd.hh>
 #include <utility/io/icstream.fwd.hh>
 #include <utility/io/ocstream.fwd.hh>
 

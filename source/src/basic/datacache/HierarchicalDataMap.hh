@@ -17,6 +17,8 @@
 // Utility headers
 #include <utility/excn/Exceptions.hh>
 
+#include <sstream>
+
 namespace basic {
 namespace datacache {
 

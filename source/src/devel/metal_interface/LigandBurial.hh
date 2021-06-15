@@ -23,6 +23,7 @@
 #include <iosfwd>
 #include <basic/MetricValue.hh>
 #include <set>
+#include <sstream>
 
 namespace devel {
 namespace metal_interface {

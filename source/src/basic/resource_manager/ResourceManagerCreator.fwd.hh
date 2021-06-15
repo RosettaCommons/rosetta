@@ -14,11 +14,7 @@
 #ifndef INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH
 #define INCLUDED_basic_resource_manager_ResourceManagerCreator_FWD_HH
 
-// package headers
-#include <basic/resource_manager/ResourceManager.fwd.hh>
-
-//C++ headers
-#include <string>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace basic {
 namespace resource_manager {

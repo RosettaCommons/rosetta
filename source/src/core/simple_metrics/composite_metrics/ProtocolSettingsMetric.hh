@@ -24,6 +24,7 @@
 
 
 // Utility headers
+#include <utility/vector1.hh>
 #include <utility/tag/XMLSchemaGeneration.fwd.hh>
 #include <utility/options/OptionCollection.fwd.hh>
 

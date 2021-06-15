@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_pose_creation_SliceToMiniProteinMover_fwd_hh
 #define INCLUDED_protocols_pose_creation_SliceToMiniProteinMover_fwd_hh
 
-#include <protocols/moves/MoverCreator.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace pose_creation {

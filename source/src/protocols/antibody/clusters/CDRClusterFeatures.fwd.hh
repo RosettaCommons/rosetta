@@ -14,7 +14,7 @@
 #ifndef INCLUDED_protocols_antibody_clusters_CDRClusterFeatures_fwd_hh
 #define INCLUDED_protocols_antibody_clusters_CDRClusterFeatures_fwd_hh
 
-#include  <utility/pointer/owning_ptr.hh>
+#include <utility/pointer/owning_ptr.hh>
 
 namespace protocols {
 namespace antibody {
