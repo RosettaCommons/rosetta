@@ -24,6 +24,7 @@
 #include <protocols/minimization_packing/MinMover.hh>
 #include <protocols/jd2/Job.hh>
 #include <protocols/jd2/JobDistributor.hh>
+#include <protocols/jd2/util.hh>
 
 #include <core/types.hh>
 #include <core/chemical/AA.hh>
@@ -174,9 +175,10 @@ public:  // Standard Rosetta methods
 
 		if ( ( seqpos < site_residue_position ) || ( seqpos + n_residues_right_of_site > n_res_pre_glycosylation ) ) {
 			cout << "  Sequon will not fit here." << endl;
-			minimizer_->score_function( sf_ );
+			minimizer_->score_function( sf_ );  // To make score header line same for all mutants.
 			minimizer_->max_iter( 1 );
-			minimizer_->apply ( pose );
+			minimizer_->apply ( pose );         
+			jd2::add_string_real_pair_to_current_job( "agly_score", ( *sf_ )( pose ) ); // To add aglycosylated score term.
 			return;
 		}
 
@@ -196,7 +198,7 @@ public:  // Standard Rosetta methods
 
 		packer_->apply( pose );
 		minimizer_->apply ( pose );
-
+		jd2::add_string_real_pair_to_current_job( "agly_score", ( *sf_ )( pose ) ); // To calculated aglycosylated score.
 
 		cout << "Glycosylating..." << endl;
 
@@ -307,6 +309,8 @@ private:  // Private methods
 		set_commandline_options();
 	}
 
+
+
 	// Copy all data members from <object_to_copy_from> to <object_to_copy_to>.
 	void
 	copy_data( GlycomutagenesisProtocol & object_to_copy_to, GlycomutagenesisProtocol const & object_to_copy_from )
@@ -335,13 +339,13 @@ private:  // Private methods
 	{
 		for ( core::uint i( seqpos - n_residues_left_of_site ); i <= seqpos + n_residues_right_of_site; ++i ) {
 
-			if ( pose.residue_type( i ).is_disulfide_bonded() ) {
-				Size res1_disulf_atom_num = pose.residue_type( i ).atom_index( pose.residue_type( i ).get_disulfide_atom_name() );
+			if ( pose.residue_type( i ).is_disulfide_bonded( ) ) {
+				Size res1_disulf_atom_num = pose.residue_type( i ).atom_index( pose.residue_type( i ).get_disulfide_atom_name( ) );
 				Size res1_disulf_partner_id = pose.residue_type( i ).residue_connection_id_for_atom( res1_disulf_atom_num );
 				Size res2_disulf_partner_num = pose.residue( i ).residue_connection_partner( res1_disulf_partner_id );
 				cout << "  Disulfide found! Breaking cysteine dimer: CYS[" << i << "]-CYS[" << res2_disulf_partner_num << "]" << endl;
-				change_cys_state( i, "CYS", pose.conformation() );
-				change_cys_state( res2_disulf_partner_num, "CYS", pose.conformation() );
+				change_cys_state( i, "CYS", pose.conformation( ) );
+				change_cys_state( res2_disulf_partner_num, "CYS", pose.conformation( ) );
 			}
 		}
 	}
