@@ -128,7 +128,7 @@ public:
 
 	// @brief force recomputation of Tsymm_'s from the current conformation
 	void
-	recalculate_transforms( ) override;
+	recalculate_transforms( ) const override;
 
 	~MirrorSymmetricConformation() override;
 

@@ -436,7 +436,7 @@ MirrorSymmetricConformation::fold_tree( FoldTree const & fold_tree_in ) {
 
 // recalculate the Tsymm_ transforms using the current pose
 void
-MirrorSymmetricConformation::recalculate_transforms( ) {
+MirrorSymmetricConformation::recalculate_transforms( ) const {
 	using namespace numeric;
 
 	SymmetricConformation::recalculate_transforms( );

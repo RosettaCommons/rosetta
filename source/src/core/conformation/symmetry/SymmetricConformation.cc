@@ -530,7 +530,7 @@ SymmetricConformation::get_upstream_vrt( Size seqpos ) const {
 
 // Get the transformation controlling resid i
 numeric::HomogeneousTransform< core::Real >
-SymmetricConformation::get_transformation( core::Size resid, bool input_is_subunit_id /*=false*/ ) {
+SymmetricConformation::get_transformation( core::Size resid, bool input_is_subunit_id /*=false*/ )  const {
 	if ( Tsymm_.size() == 0 ) {
 		recalculate_transforms( );
 	}
@@ -718,20 +718,20 @@ SymmetricConformation::apply_transform_Rx_plus_v(
 
 // @brief invalidate current Tsymm settings
 void
-SymmetricConformation::clear_Tsymm( ) {
+SymmetricConformation::clear_Tsymm( ) const {
 	Tsymm_.clear();
 }
 
 // @brief invert one transform about Z
 void
-SymmetricConformation::invert_Tsymm( char sub, core::Size subunit ) {
+SymmetricConformation::invert_Tsymm( char sub, core::Size subunit ) const {
 	Tsymm_[sub][subunit].set_mirror_z(true);
 }
 
 
 // @brief recalculate the Tsymm_ transforms using the current pose
 void
-SymmetricConformation::recalculate_transforms( ) {
+SymmetricConformation::recalculate_transforms( ) const {
 	using namespace numeric;
 
 	// clear current xforms
@@ -1468,7 +1468,7 @@ SymmetricConformation::update_noncanonical_connection(
 		return;
 	}
 
-	std::vector < std::pair < Size, Size > > res_pairs = symm_info_->map_symmetric_res_pairs( lower_seqpos, upper_seqpos);
+	std::vector < std::pair < Size, Size > > res_pairs = symm_info_->map_symmetric_res_pairs( lower_seqpos, upper_seqpos, *this);
 	res_pairs.push_back(std::make_pair(lower_seqpos, upper_seqpos));
 	for ( auto res_pair : res_pairs ) {
 		core::Size lower = res_pair.first;
