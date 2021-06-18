@@ -177,7 +177,7 @@ public:  // Standard Rosetta methods
 			cout << "  Sequon will not fit here." << endl;
 			minimizer_->score_function( sf_ );  // To make score header line same for all mutants.
 			minimizer_->max_iter( 1 );
-			minimizer_->apply ( pose );         
+			minimizer_->apply ( pose );
 			jd2::add_string_real_pair_to_current_job( "agly_score", ( *sf_ )( pose ) ); // To add aglycosylated score term.
 			return;
 		}
