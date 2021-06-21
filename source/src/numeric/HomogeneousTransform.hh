@@ -145,20 +145,20 @@ public:
 
 
 	bool
-	is_close( HomogeneousTransform< T > const & other ) {
+	is_close( HomogeneousTransform< T > const & other, platform::Real const threshold = 1.0e-6 ) {
 		return
-			abs(xx_ - other.xx_) < 1e-6 &&
-			abs(xy_ - other.xy_) < 1e-6 &&
-			abs(xz_ - other.xz_) < 1e-6 &&
-			abs(yx_ - other.yx_) < 1e-6 &&
-			abs(yy_ - other.yy_) < 1e-6 &&
-			abs(yz_ - other.yz_) < 1e-6 &&
-			abs(zx_ - other.zx_) < 1e-6 &&
-			abs(zy_ - other.zy_) < 1e-6 &&
-			abs(zz_ - other.zz_) < 1e-6 &&
-			abs(px_ - other.px_) < 1e-6 &&
-			abs(py_ - other.py_) < 1e-6 &&
-			abs(pz_ - other.pz_) < 1e-6 ;
+			std::abs(xx_ - other.xx_) < threshold &&
+			std::abs(xy_ - other.xy_) < threshold &&
+			std::abs(xz_ - other.xz_) < threshold &&
+			std::abs(yx_ - other.yx_) < threshold &&
+			std::abs(yy_ - other.yy_) < threshold &&
+			std::abs(yz_ - other.yz_) < threshold &&
+			std::abs(zx_ - other.zx_) < threshold &&
+			std::abs(zy_ - other.zy_) < threshold &&
+			std::abs(zz_ - other.zz_) < threshold &&
+			std::abs(px_ - other.px_) < threshold &&
+			std::abs(py_ - other.py_) < threshold &&
+			std::abs(pz_ - other.pz_) < threshold ;
 	}
 
 public:
