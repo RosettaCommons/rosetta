@@ -298,6 +298,7 @@ DockIntoDensityMover::get_spectrum( core::pose::Pose const& pose, utility::vecto
 	// now setting nRsteps_
 	core::Real const fracDens=fragDens_; // choose radius covering this fraction of density mass
 	core::Real running_total=0.0;
+	nRsteps_ = ngrid;
 	for ( int i=1; i<=(int)ngrid; ++i ) {
 		running_total += pose_1dspec_for_nrsteps[i] / massSum;
 		if ( running_total > fracDens ) {
@@ -468,8 +469,9 @@ DockIntoDensityMover::select_points( core::pose::Pose & pose ) {
 void
 DockIntoDensityMover::poseSphericalSamples(
 	core::pose::Pose const &pose,
-	ObjexxFCL::FArray3D< core::Real > & sigR)
-{
+	ObjexxFCL::FArray3D< core::Real > & sigR,
+	ObjexxFCL::FArray3D< core::Real > & epsR
+) {
 	using namespace core;
 
 	core::scoring::electron_density::ElectronDensity &density = core::scoring::electron_density::getDensityMap();
@@ -541,6 +543,9 @@ DockIntoDensityMover::poseSphericalSamples(
 	sigR.dimension( 2*B, 2*B, nRsteps );
 	sigR = 0.0;
 
+	epsR.dimension( 2*B, 2*B, nRsteps );
+	epsR = 0.0;
+
 	// for each atom
 	for ( int i=1; i<=nAtms; ++i ) {
 		core::Real k=all_K[i];
@@ -558,6 +563,7 @@ DockIntoDensityMover::poseSphericalSamples(
 					for ( core::Size t=1; t<=2*B; ++t ) {
 						for ( core::Size p=1; p<=2*B; ++p ) {
 							sigR(p,t,ridx) += atomH;
+							epsR(p,t,ridx) = 1.0;
 						}
 					}
 				}
@@ -585,7 +591,7 @@ DockIntoDensityMover::poseSphericalSamples(
 						if ( atomD < ATOM_MASK*ATOM_MASK ) {
 							core::Real atomH = C * exp(-k*atomD);
 							sigR(p,t,ridx) += (-6 * atomH);
-
+							epsR(p,t,ridx) = 1.0;
 						}
 					}
 				}
@@ -613,6 +619,7 @@ DockIntoDensityMover::poseSphericalSamples(
 								if ( atomD < ATOM_MASK*ATOM_MASK ) {
 									core::Real atomH = C * exp(-k*atomD);
 									sigR(p,t,ridx) += atomH;
+									epsR(p,t,ridx) = 1.0;
 								}
 							}
 						}
@@ -633,16 +640,13 @@ DockIntoDensityMover::poseSphericalSamples(
 						if ( atomD < ATOM_MASK*ATOM_MASK ) {
 							core::Real atomH = C * exp(-k*atomD);
 							sigR(p,t,ridx) += atomH;
+							epsR(p,t,ridx) = 1.0;
 						}
 					}
 				}
 			}
 		}
 	} // loop through each atom
-
-	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
-		core::scoring::electron_density::ElectronDensity(sigR, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigR.mrc" );
-	}
 }
 
 
@@ -670,26 +674,92 @@ DockIntoDensityMover::density_grid_search (
 
 	// get pose SPHARM
 	ObjexxFCL::FArray3D< core::Real > poseSig, poseCoefR, poseCoefI;
-	poseSphericalSamples( pose, poseSig );
-	SOFT.sharm_transform( poseSig, poseCoefR, poseCoefI );
-	SOFT.sph_standardize( poseCoefR, poseCoefI );
+	ObjexxFCL::FArray3D< core::Real > poseEps, poseEpsCoefR, poseEpsCoefI;
+	poseSphericalSamples( pose, poseSig, poseEps );
 
-	ObjexxFCL::FArray3D< core::Real > mapSig, mapCoefR, mapCoefI;
+	SOFT.sharm_transform( poseSig, poseCoefR, poseCoefI );
+	//poseEps = 1.0; // uncomment to turn off masking
+	SOFT.sharm_transform( poseEps, poseEpsCoefR, poseEpsCoefI );
+
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
+		core::scoring::electron_density::ElectronDensity(poseSig, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigR.mrc" );
+		core::scoring::electron_density::ElectronDensity(poseEps, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_epsR.mrc" );
+	}
+
+	SOFT.sharm_invTransform( poseSig, poseCoefR, poseCoefI );        // generate bandlimited signal
+	SOFT.sharm_invTransform( poseEps, poseEpsCoefR, poseEpsCoefI );  // generate bandlimited signal
+
+	// *** OPTIONAL 1 ***
+	// normalize poseEps to [0,1]
+	/*
+	core::Real minE = 1e6, maxE = -1e6;
+	for (core::Size j=0; j<4*B_*B_*nRsteps_; ++j) {
+	minE = std::min( minE, poseEps[j] );
+	maxE = std::max( maxE, poseEps[j] );
+	}
+	core::Real scale = 1.0/(maxE-minE);
+	for (core::Size j=0; j<4*B_*B_*nRsteps_; ++j) {
+	poseEps[j] = (poseEps[j]-minE) * scale;
+	}
+	for (core::Size j=0; j<nRsteps_; ++j) {
+	poseCoefR[B_*B_*j] = poseCoefR[B_*B_*j] - minE;
+	}
+	for (core::Size j=0; j<B_*B_*nRsteps_; ++j) {
+	poseCoefR[j] = (poseCoefR[j]) * scale;
+	poseCoefI[j] = (poseCoefI[j]) * scale;
+	}
+	*/
+
+	double sumRWt = 0.0, sumTwt = 0.0;
+	for ( core::Size r=0; r<nRsteps_; ++r ) {
+		sumRWt += 4.0 * numeric::square((r+1.0));
+	}
+	for ( core::Size t=0; t<2*B_; ++t ) {
+		sumTwt += std::sin( (t+0.5) * numeric::constants::d::pi / (2*B_) );
+	}
+
+	core::Real sumEps=0.0, sumSig=0.0, sumSig2=0.0;
+	for ( core::Size r=0; r<nRsteps_; ++r ) {
+		double thisRWt = 4.0 * numeric::square((r+1.0)) / sumRWt;
+		for ( core::Size t=0; t<2*B_; ++t ) {
+			double thisTWt = std::sin( (t+0.5) * numeric::constants::d::pi / (2*B_) ) / sumTwt;
+			for ( core::Size p=0; p<2*B_; ++p ) {
+				double thisWt = thisRWt*thisTWt/(2*B_);
+				sumEps += thisWt*poseEps(p+1,t+1,r+1);
+				sumSig += thisWt*poseEps(p+1,t+1,r+1)*poseSig(p+1,t+1,r+1);
+				sumSig2 += thisWt*poseEps(p+1,t+1,r+1)*poseSig(p+1,t+1,r+1)*poseSig(p+1,t+1,r+1);
+			}
+		}
+	}
+
+	if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
+		core::scoring::electron_density::ElectronDensity(poseSig, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_sigRbl.mrc" );
+		core::scoring::electron_density::ElectronDensity(poseEps, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC( "Pose_epsRbl.mrc" );
+	}
+
+	ObjexxFCL::FArray3D< core::Real > mapSig, mapCoefR, mapCoefI, map2Sig, map2CoefR, map2CoefI;
+	ObjexxFCL::FArray3D< core::Real > so3_correl, mask_correl, mask2_correl;
 	for ( core::Size i=1; i<=points_to_search_.size(); ++i ) {
 		// get cartesian coords of ths point
 		density.idx2cart( points_to_search_[i], posttrans );
 
 		density.mapSphericalSamples( mapSig, nRsteps_, delR_, B_, points_to_search_[i], laplacian_offset_ );
+		map2Sig = mapSig;
+		for ( core::Size j=0; j<4*B_*B_*nRsteps_; ++j ) {
+			map2Sig[j] *= mapSig[j];
+		}
+		if ( basic::options::option[ basic::options::OptionKeys::edensity::debug ]() ) {
+			core::scoring::electron_density::ElectronDensity(
+				mapSig, 1.0, numeric::xyzVector< core::Real >(0,0,0), false).writeMRC("Map"+utility::to_string(i)+"_sigR.mrc" );
+		}
+
+		// new version
 		SOFT.sharm_transform( mapSig, mapCoefR, mapCoefI );
-		SOFT.sph_standardize( mapCoefR, mapCoefI );
+		SOFT.sharm_transform( map2Sig, map2CoefR, map2CoefI );
 
-		// get correlation
-		ObjexxFCL::FArray3D< core::Real > so3_correlation;
-		SOFT.so3_correlate(so3_correlation, mapCoefR,mapCoefI,  poseCoefR,poseCoefI);
-
-
-		//core::Size nperRot = 25*std::max((core::Size)3, topNfilter_ / points_to_search_.size());
-		//core::Size nperRotCl = std::max((core::Size)3, topNfilter_ / points_to_search_.size());
+		SOFT.so3_correlate(so3_correl, mapCoefR,mapCoefI,  poseCoefR,poseCoefI);
+		SOFT.so3_correlate(mask_correl, mapCoefR,mapCoefI,  poseEpsCoefR,poseEpsCoefI);
+		SOFT.so3_correlate(mask2_correl, map2CoefR,map2CoefI,  poseEpsCoefR,poseEpsCoefI);
 
 		// we initially oversample since the set is so clustered
 		// no matter how many we want, don't take more than 1/8 of everything (which still might be a lot)
@@ -698,25 +768,23 @@ DockIntoDensityMover::density_grid_search (
 
 		RBfitResultDB local_results( nperRot );
 
-		if ( normscores_ ) {
-			core::Real correl_sum=0.0, correl_sum2=0.0;
-			for ( core::Size j=0; j<8*B_*B_*B_; ++j ) {
-				correl_sum += so3_correlation[j];
-				correl_sum2 += so3_correlation[j]*so3_correlation[j];
-			}
-			correl_sum /= 8*B_*B_*B_;
-			correl_sum2 = std::sqrt( correl_sum2/(8*B_*B_*B_) - correl_sum*correl_sum );
-			for ( core::Size j=0; j<8*B_*B_*B_; ++j ) {
-				so3_correlation[j] = (so3_correlation[j] - correl_sum) / correl_sum2;
+		for ( core::Size j=0; j<8*B_*B_*B_; ++j ) {
+			core::Real sumSigMap = so3_correl[j] / (4*numeric::constants::d::pi);
+			core::Real sumMap = mask_correl[j] / (4*numeric::constants::d::pi);
+			core::Real sumMap2 = mask2_correl[j] / (4*numeric::constants::d::pi);
+
+			double CC = (
+				(sumEps*sumSigMap - sumSig*sumMap) / (
+				std::sqrt( sumEps*sumSig2 - sumSig*sumSig )
+				* std::sqrt( sumEps*sumMap2 - sumMap*sumMap )
+				) );
+
+			if ( local_results.to_add_element( CC ) ) {
+				SOFT.idx_to_rot(j , rot);
+				local_results.add_element( RBfitResult( pose_idx, CC, rot, pretrans, posttrans ) );
 			}
 		}
 
-		for ( core::Size j=0; j<8*B_*B_*B_; ++j ) {
-			if ( local_results.to_add_element( so3_correlation[j] ) ) {
-				SOFT.idx_to_rot(j , rot);
-				local_results.add_element( RBfitResult( pose_idx, so3_correlation[j], rot, pretrans, posttrans ) );
-			}
-		}
 
 		do_filter( local_results );
 		while ( local_results.size() > nperRotCl ) local_results.pop();
@@ -812,7 +880,8 @@ DockIntoDensityMover::do_refinement (
 		for ( core::Size i=1; i<=root_edges.size(); ++i ) rbmm->set_jump ( root_edges[i].label() , true );
 
 		// Setup rigid-body min now!
-		protocols::minimization_packing::MinMoverOP rbmin( new protocols::minimization_packing::MinMover( rbmm, scorefxn_refine_rb, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
+		protocols::minimization_packing::MinMoverOP rbmin(
+			new protocols::minimization_packing::MinMover( rbmm, scorefxn_refine_rb, "lbfgs_armijo_nonmonotone", 1e-5, true ) );
 		rbmin->max_iter(200); // make a parameter?
 
 		core::Real scoreb = (*scorefxn_dens)(*posecopy), scorei=0;
@@ -844,13 +913,13 @@ DockIntoDensityMover::do_refinement (
 
 		core::Real rms=0.0;
 		if ( native_ ) {
-			rms = get_rms( RefinementResult(0.0,posecopy), RefinementResult( 0.0, native_ ), symminfo_ );
+			rms = get_rms( RefinementResult( 0.0,0.0,0.0, posecopy ), RefinementResult( 0.0,0.0,0.0, native_ ), symminfo_ );
 		}
 
 		TR << "[" << ntotal-results_in.size() << "/" << ntotal << "] " << scoreb << " : " << scorei << " : " << scoref << "  rms=" << rms << std::endl;
 
 		// store
-		results_out.add_element( RefinementResult( -scoref, posecopy ) );
+		results_out.add_element( RefinementResult( -scoref,-scoreb,sol_i.score_, posecopy ) );
 	}
 	TR << std::endl;
 }
@@ -865,64 +934,6 @@ DockIntoDensityMover::do_filter( RefinementResultDB & results ) {
 			results_sort.push_back( results.pop() );
 	utility::vector1< bool > selector(results_sort.size(), false);
 
-	// at this point, we renormalize scores based on scores of neighbors
-	// we should move this to a separate function but this prevents moving to a vector twice
-	core::Size neighbor_average=20;
-	if ( normscores_ && results_sort.size()>neighbor_average ) {
-		core::Real scoreSumAll=0, scoreSumAll2=0;
-		auto nneigh = (core::Size)neighbor_average;
-
-		utility::vector1< core::Real > newscores(results_sort.size(),0);
-		for ( core::Size i=1; i<=results_sort.size(); ++i ) {
-			numeric::xyzVector<core::Real> ctr_i = results_sort[i].center();
-			utility::vector1< core::Real > dist2s(results_sort.size(),0);
-
-			for ( core::Size j=1; j<=results_sort.size(); ++j ) {
-				numeric::xyzVector<core::Real> ctr_j = results_sort[j].center();
-				dist2s[j] = (ctr_i-ctr_j).length_squared();
-
-				if ( i==j ) dist2s[j]=1e6; // don't use self to normalize
-			}
-
-			utility::vector1< core::Real > dist2s_sort = dist2s;
-			std::nth_element (dist2s_sort.begin(), dist2s_sort.begin()+nneigh-1, dist2s_sort.end());
-			core::Real distCut = dist2s_sort[nneigh];
-
-			core::Real scoreSum=0, scoreSum2=0, N=0;
-			for ( core::Size j=1; j<=results_sort.size(); ++j ) {
-				if ( dist2s[j] < distCut ) {
-					core::Real score_j = results_sort[j].score_;
-					scoreSum += score_j;
-					scoreSum2 += score_j*score_j;
-					N += 1.0;
-				}
-			}
-			scoreSum /= N;
-			scoreSum2 = std::sqrt( scoreSum2/N - scoreSum*scoreSum );
-
-			scoreSumAll += results_sort[i].score_;
-			scoreSumAll2 += results_sort[i].score_*results_sort[i].score_;
-
-			// convert to a Z score
-			newscores[i] = (results_sort[i].score_ - scoreSum) / scoreSum2;
-		}
-
-		// maintain the mean and stdev for this residue, just use Zscores to rerank
-		scoreSumAll /= results_sort.size();
-		scoreSumAll2 = std::sqrt( scoreSumAll2/results_sort.size() - scoreSumAll*scoreSumAll );
-		for ( core::Size i=1; i<=results_sort.size(); ++i ) {
-			//TR << "rescore " << results_sort[i].score_ << " -> " << newscores[i] << std::endl;
-			core::Real score_new = newscores[i]*scoreSumAll2 + scoreSumAll;
-			results_sort[i].score_ = score_new;
-		}
-
-		// resort results
-		std::sort( results_sort.begin(), results_sort.end(), RefinementResultComparitor() );
-		std::reverse( results_sort.begin(), results_sort.end() );
-		TR << "scores in [" << results_sort[1].score_ << " , " << results_sort[results_sort.size()].score_ << "]" << std::endl;
-	}
-
-	//
 	for ( int i=results_sort.size(); i>=1; --i ) {
 		selector[i] = true;
 		for ( int j=i+1; j<=(int)results_sort.size() && selector[i]; ++j ) {
@@ -1127,12 +1138,13 @@ DockIntoDensityMover::apply_multi( utility::vector1< core::pose::PoseOP > & pose
 		if ( silent_.size() > 0 ) {
 			core::Real rms=0.0;
 			if ( native_ ) {
-				rms = get_rms( sol_i, RefinementResult( 0.0, native_ ), symminfo_ );
+				rms = get_rms( sol_i, RefinementResult( 0.0,0.0,0.0, native_ ), symminfo_ );
 			}
 
 			std::string silent_fn = base_name+"_"+utility::to_string( results_refine.size()+1 );
 			core::io::silent::BinarySilentStruct silent_stream( opts, *posecopy, silent_fn );
-			silent_stream.add_energy( "dens_rank", results_refine.size()+1 );
+			silent_stream.add_energy( "spharm_score", sol_i.spharm_score_ );
+			silent_stream.add_energy( "init_score", sol_i.prerefine_score_ );
 			silent_stream.add_energy( "dens_score", sol_i.score_ );
 			silent_stream.add_energy( "rms", rms );
 			silent_file_data.write_silent_struct( silent_stream, silent_ );

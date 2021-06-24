@@ -20,6 +20,8 @@
 #include <numeric/numeric.functions.hh>
 #include <ObjexxFCL/FArray3D.hh>
 
+#include <utility/excn/Exceptions.hh>
+
 #include <cstdlib>
 
 #ifdef WIN32
@@ -324,6 +326,7 @@ SO3coeffs::InvLegendre(
 	kiss_dct_cfg idctPlan ) {
 
 	for ( int i=0; i<2*bw; ++i ) {
+		scratch[i]=0.0;
 		result[i]=0.0;
 	}
 
@@ -352,7 +355,7 @@ SO3coeffs::InvLegendre(
 	for ( int j = 1 ; j < 2*bw ; j ++ ) scratch[j] *= cos_scale ;
 	scratch[0] /= sqrt(2.0 * ((double) bw));
 
-	kiss_dct( idctPlan, &scratch[0], &result[0]);
+	kiss_idct( idctPlan, &scratch[0], &result[0]);
 
 	if ( m % 2 ) {
 		for ( int j=0; j<(2*bw); j++ ) {
@@ -501,8 +504,7 @@ SHT::init(int B, int nR) {
 	}
 
 	if ( B%2 == 1 ) {
-		std::cerr << "Odd bandwidths unsupported!\n" << std::endl;
-		exit(1);
+		throw CREATE_EXCEPTION(utility::excn::Exception, "Odd SHT bandwidths unsupported!");
 	}
 
 	bw = B;
@@ -528,7 +530,7 @@ SHT::init(int B, int nR) {
 	// fft scratch space
 	p1 = new kiss_fft_state(2*bw,0);
 	fftPlan = new kiss_fftsplit_state (2*bw,0);
-	ifftPlan = new kiss_fftsplit_state (2*bw,0);
+	ifftPlan = new kiss_fftsplit_state (2*bw,0); // NOTE inv=0 DESPITE THE NAME
 	dctPlan = new kiss_dct_state (2*bw,0);
 	idctPlan = new kiss_dct_state (2*bw,1);
 }
@@ -613,7 +615,7 @@ void SHT::sph_standardize(
 
 	for ( int r_idx=1; r_idx<=R; ++r_idx ) {
 		// standardize
-		double thisRWt = numeric::constants::d::pi * ( 4.0 * square((double)r_idx) + 1.0/3.0 );
+		double thisRWt = numeric::constants::d::pi * ( 4.0 * square((double)r_idx) );
 
 		double sumCoef2 = 0.0;
 		for ( int i=1; i<=B; ++i ) {
@@ -662,7 +664,7 @@ void SHT::so3_correlate(
 	init (B,R);
 
 	double sumRWt = 0.0;
-	for ( int r_idx=1; r_idx<=nRsteps; ++r_idx ) {
+	for ( int r_idx=0; r_idx<nRsteps; ++r_idx ) {
 		sumRWt += 4.0 * square((r_idx+1.0));
 	}
 
@@ -1113,7 +1115,7 @@ SHT::setup_Pmls( ) {
 				//  if m odd, no need to do last row - all zeroes
 				if ( row == (bw-1) ) {
 					if ( m % 2 ) {
-						return;
+						break;
 					}
 				}
 
@@ -1149,6 +1151,7 @@ SHT::setup_Pmls( ) {
 			} //  closes row loop
 		}
 	}
+
 }
 
 
@@ -1219,7 +1222,6 @@ SHT::setup_Weights(  ) {
 		weights_[j+2*bw] = tmpsum * sin((double)(2*j+1)*scale);
 	}
 }
-
 
 // forward SH transform in one 2D shell
 void
@@ -1341,7 +1343,7 @@ SHT::inverseS2(
 	}
 
 	for ( int i=0; i<2*bw; ++i ) {
-		kiss_fft_split( ifftPlan, &ifourdata[i], &rfourdata[i], &idata[0], &rdata[2*bw*i], 1, 2*bw ); // idata ignored
+		kiss_fft_split( ifftPlan, &ifourdata[i], &rfourdata[i], &idata[0], &rdata[2*bw*i], 2*bw, 1 ); // idata ignored
 	}
 }
 

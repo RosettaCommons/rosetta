@@ -74,7 +74,7 @@ public:
 // stores the result of refinement
 class RefinementResult {
 public:
-	core::Real score_;
+	core::Real score_, prerefine_score_, spharm_score_;
 	core::pose::PoseOP pose_;
 
 	// code like this belongs in a .cc file, not a header file.
@@ -87,9 +87,13 @@ public:
 
 	RefinementResult(
 		core::Real score,
+		core::Real prerefine_score,
+		core::Real spharm_score,
 		core::pose::PoseOP pose_in
 	) {
 		score_ = score;
+		prerefine_score_ = prerefine_score;
+		spharm_score_ = spharm_score;
 		pose_ = pose_in;
 	}
 };
@@ -176,7 +180,7 @@ public:
 		topNtrans_(5000), topNfilter_(1000), topNfinal_(50), delR_(2),
 		dens_wt_(20.0), cluster_radius_(2.0),point_radius_(3),fragDens_(0.7), mindist_(3), laplacian_offset_(0), B_(16), nRsteps_(0), gridStep_(2),
 		center_on_middle_ca_(false), points_defined_(false), convolute_single_residue_(false), cluster_oversample_(2), max_rot_per_trans_(3),
-		do_refine_(true), min_backbone_(true), ncyc_(1), normscores_(false), passthrough_(false), native_com_(0,0,0) {}
+		do_refine_(true), min_backbone_(true), ncyc_(1), passthrough_(false), native_com_(0,0,0) {}
 
 	// set options
 	void setDelR( core::Real delR ) { delR_=delR; }
@@ -198,7 +202,6 @@ public:
 	void setTag( std::string tag ) { tag_=tag; } // output tag
 	void setFragDens( core::Real fragDens ) { fragDens_=fragDens; } // output tag
 	void setPassThrough( bool passthrough ) { passthrough_ = passthrough; }
-	void setNormScores(bool normscores) { normscores_ = normscores; }
 	void setClusterOversamp( core::Size cluster_oversample ) { cluster_oversample_=cluster_oversample; }
 	void setMaxRotPerTrans( core::Size max_rot_per_trans ) { max_rot_per_trans_=max_rot_per_trans; }
 	void setSymminfo( DensitySymmInfo const & symminfo ) { symminfo_=symminfo; }
@@ -236,11 +239,12 @@ public:
 	void
 	map_from_spectrum( utility::vector1< core::Real > const& pose_1dspec, ObjexxFCL::FArray3D< core::Real > &rot );
 
-	/// @brief  step 0: map pose to spherically sampled density
+	/// @brief  step 0: map pose to spherically sampled density + mask
 	void
 	poseSphericalSamples(
 		core::pose::Pose const &pose,
-		ObjexxFCL::FArray3D< core::Real > &sigR);
+		ObjexxFCL::FArray3D< core::Real > &sigR,
+		ObjexxFCL::FArray3D< core::Real > &epsR);
 
 	/// @brief  step 1: select points over which to search (saved in class variable)
 	void
@@ -319,7 +323,6 @@ private:
 
 	// points to search (can be input or chosen)
 	utility::vector1< numeric::xyzVector<core::Real> > points_to_search_;
-	bool normscores_;
 
 	// don't actually search, pass through input as if it resulted from a search
 	bool passthrough_;

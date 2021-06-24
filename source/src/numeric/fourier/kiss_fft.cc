@@ -368,7 +368,7 @@ void kiss_fftr(kiss_fftr_cfg st, const kiss_fft_scalar *timedata, kiss_fft_cpx *
 	kiss_fft_cpx fpnk,fpk,f1k,f2k,tw,tdc;
 
 	if ( st->substate()->inverse() ) {
-		std::cerr << "kiss fft usage error: improper alloc\n";
+		std::cerr << "kiss_fftr usage error: improper alloc\n";
 		exit(1);
 	}
 
@@ -409,7 +409,7 @@ void kiss_fftri(kiss_fftr_cfg st, const kiss_fft_cpx *freqdata, kiss_fft_scalar 
 	int k, ncfft;
 
 	if ( st->substate()->inverse() == 0 ) {
-		std::cerr << "kiss fft usage error: improper alloc\n";
+		std::cerr << "kiss_fftri usage error: improper alloc\n";
 		exit (1);
 	}
 
@@ -444,7 +444,7 @@ void kiss_dct(kiss_dct_cfg st, const kiss_fft_scalar *timedata, kiss_fft_scalar 
 	kiss_fft_cpx f1k,f2k;
 
 	if ( st->substate()->inverse() ) {
-		std::cerr << "kiss fft usage error: improper alloc\n";
+		std::cerr << "kiss_dct usage error: improper alloc\n";
 		exit(1);
 	}
 
@@ -482,7 +482,7 @@ void kiss_idct(kiss_dct_cfg st, const kiss_fft_scalar *freqdata, kiss_fft_scalar
 	kiss_fft_scalar x0 = freqdata[0];
 
 	if ( !st->substate()->inverse() ) {
-		std::cerr << "kiss fft usage error: improper alloc\n";
+		std::cerr << "kiss_idct usage error: improper alloc\n";
 		exit(1);
 	}
 

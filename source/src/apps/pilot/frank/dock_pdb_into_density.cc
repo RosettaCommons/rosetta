@@ -85,6 +85,7 @@ OPT_KEY( Integer, bw )
 OPT_KEY( Integer, n_to_search )
 OPT_KEY( Integer, n_filtered )
 OPT_KEY( Integer, n_output )
+OPT_KEY( Integer, n_rotpertrans )
 OPT_KEY( Integer, searchsep )
 OPT_KEY( Integer, movestep )
 OPT_KEY( Integer, ncyc )
@@ -109,6 +110,7 @@ int main(int argc, char* argv[]) {
 		NEW_OPT( searchsep, "min distance between search points", 3 );
 		NEW_OPT( n_filtered,  "how many solutions to take to refinement", 100 );
 		NEW_OPT( n_output, "how many solutions to output", 10 );
+		NEW_OPT( n_rotpertrans, "how many solutions to output", 10 );
 		NEW_OPT( movestep, "grid spacing over which to search", 1 );
 		NEW_OPT( ncyc, "Min cycles", 1 );
 		NEW_OPT( clust_radius, "Cluster radius", 3.0 );
@@ -134,7 +136,7 @@ int main(int argc, char* argv[]) {
 		dock->setFragDens(option[ frag_dens ]());
 		dock->setMinBackbone(option[ min_bb ]());
 		dock->setDoRefine(option[ min ]());
-		dock->setMaxRotPerTrans( 10 );
+		dock->setMaxRotPerTrans( option[ n_rotpertrans ]() );
 		dock->setPointRadius(option[ point_radius ]());
 		dock->setConvoluteSingleR( option[ convolute_single_residue ]());
 		dock->setLaplacianOffset( option[ laplacian_offset ]());

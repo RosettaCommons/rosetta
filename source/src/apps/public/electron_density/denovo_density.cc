@@ -122,7 +122,6 @@ OPT_KEY( Integer, movestep )
 OPT_KEY( Integer, ncyc )
 OPT_KEY( Boolean, min_pack_min )
 OPT_KEY( Boolean, min_bb )
-OPT_KEY( Boolean, norm_scores )
 OPT_KEY( Integer, bw )
 OPT_KEY( Integer, n_to_search )
 OPT_KEY( Integer, n_filtered )
@@ -549,7 +548,6 @@ void DockFragmentsMover::run() {
 	dock.setClusterRadius(option[ clust_radius ]());
 	dock.setPointRadius(option[ point_radius ]());
 	dock.setFragDens(option[ frag_dens ]());
-	dock.setNormScores(option[ norm_scores ]());
 	dock.setClusterOversamp(option[ clust_oversample ]());
 	dock.setConvoluteSingleR(option[ convolute_single_residue ]());
 
@@ -1591,7 +1589,6 @@ int main(int argc, char* argv[]) {
 		NEW_OPT( movestep,  "The grid stepsize for translational search", 2 );
 		NEW_OPT( ncyc, "Min cycles", 1 );
 		NEW_OPT( min_bb, "Allow backbone minimization?", false );
-		NEW_OPT( norm_scores, "Normalize scores over the map", false );
 		NEW_OPT( bw, "spharm bandwidth", 16 );
 		NEW_OPT( n_to_search, "how many translations to search", 4000 );
 		NEW_OPT( n_filtered,  "how many solutions to take to refinement", 2000 );
