@@ -1,7 +1,7 @@
 NAME ->5)-alpha-Murf       # ->5)-alpha-muramofuranosyl
 IO_STRING Mur Z            # Note lower case!
 TYPE POLYMER
-VARIANT C2_AMINO_SUGAR     # Muramic acid is a lactic acid derivative of D-glucosamine; @TODO we should add a property for lactic acid.
+VARIANT C2_AMINO_SUGAR O3_LACTYL_SUGAR    # Muramic acid is a lactic acid derivative of D-glucosamine
 AA UNK
 
 # Main-chain atoms:
