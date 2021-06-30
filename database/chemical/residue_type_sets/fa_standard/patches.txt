@@ -196,6 +196,10 @@ patches/carbohydrates/O2-lactylation.txt
 patches/carbohydrates/O3-lactylation.txt
 patches/carbohydrates/O4-lactylation.txt
 patches/carbohydrates/O6-lactylation.txt
+patches/carbohydrates/2-thiolation.txt
+patches/carbohydrates/3-thiolation.txt
+patches/carbohydrates/4-thiolation.txt
+patches/carbohydrates/6-thiolation.txt
 patches/carbohydrates/1-fluorination.txt
 patches/carbohydrates/2-fluorination.txt
 patches/carbohydrates/3-fluorination.txt

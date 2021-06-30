@@ -154,10 +154,9 @@ RESET_BOND_LENGTH  C6  1.526
 
 # Next, add the new atoms, including aliases.
 ADD_ATOM 1O6  OOC  OC  -0.64
-# For PDB code BDP & GU1, respectively
-ADD_ATOM_ALIAS 1O6   O6A  O37
 ADD_ATOM 2O6  OOC  OC  -0.64
 # For PDB code BDP & GU1, respectively
+ADD_ATOM_ALIAS 1O6   O6A  O37
 ADD_ATOM_ALIAS 2O6   O6B  O38
 
 ADD_BOND_TYPE  C6  1O6  CARBOXY
