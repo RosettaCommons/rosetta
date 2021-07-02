@@ -94,7 +94,7 @@ main( int argc, char *argv[] )
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, fluoro_sugar, free_14_mer,
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
-			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar,
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar, methyl_sugar,
 			thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
@@ -463,6 +463,15 @@ main( int argc, char *argv[] )
 		phosphorylated_sugar.pdb_info()->name( "Glcp6P" );
 
 		test_sugar( phosphorylated_sugar );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating methyl sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( methyl_sugar, "->4)-alpha-d-Glcp2Me", *residue_set );
+		methyl_sugar.pdb_info()->name( "Glcp2Me" );
+
+		test_sugar( methyl_sugar );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
