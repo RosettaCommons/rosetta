@@ -191,6 +191,10 @@ patches/carbohydrates/2-sulfamidation.txt
 patches/carbohydrates/omega-oxidation.txt
 patches/carbohydrates/2-reduction.txt
 patches/carbohydrates/4-reduction.txt
+patches/carbohydrates/2-propargylation.txt
+patches/carbohydrates/3-propargylation.txt
+patches/carbohydrates/4-propargylation.txt
+patches/carbohydrates/6-propargylation.txt
 patches/carbohydrates/O1-lactylation.txt
 patches/carbohydrates/O2-lactylation.txt
 patches/carbohydrates/O3-lactylation.txt

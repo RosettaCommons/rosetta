@@ -94,7 +94,8 @@ main( int argc, char *argv[] )
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, fluoro_sugar, free_14_mer,
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
-			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, pdb_code_pdb, bad_pdb, lactyl_sugar, ligand_sugar, thio_sugar, phosphorylated_sugar;
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar,
+			thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -429,12 +430,12 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing a .pdb file using PDB 3-letter codes, "
-			"including one that cannot have position 3 as the default main-chain connection:" << endl;
+		cout << "Creating a propargyl sugar from sequence: Glcp2Ppg:" << endl;
 
-		pose_from_file( pdb_code_pdb, PATH + "pdb_w_pdb_3_letter_codes.pdb", PDB_file );
+		make_pose_from_saccharide_sequence( propargyl_sugar, "Glcp2Ppg", *residue_set );
+		propargyl_sugar.pdb_info()->name( "ppg-sugar" );
 
-		test_sugar( pdb_code_pdb );
+		test_sugar( propargyl_sugar );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -447,7 +448,6 @@ main( int argc, char *argv[] )
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
-
 		cout << "Creating fluoro sugar from sequence:" << endl;
 
 		make_pose_from_saccharide_sequence( fluoro_sugar, "->3)-alpha-d-Glcp2F", *residue_set );
@@ -456,20 +456,13 @@ main( int argc, char *argv[] )
 		test_sugar( fluoro_sugar );
 
 
+		cout << "---------------------------------------------------------------------------------------------" << endl;
 		cout << "Creating phosphorylated sugar from sequence:" << endl;
 
 		make_pose_from_saccharide_sequence( phosphorylated_sugar, "->4)-alpha-d-Glcp6P", *residue_set );
 		phosphorylated_sugar.pdb_info()->name( "Glcp6P" );
 
 		test_sugar( phosphorylated_sugar );
-
-
-		cout << "---------------------------------------------------------------------------------------------" << endl;
-		cout << "Importing a .pdb file with bad LINK records:" << endl;
-
-		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
-
-		cout << ".pdb file with bad LINK records imported successfully." << endl;
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
@@ -489,6 +482,23 @@ main( int argc, char *argv[] )
 		ligand_sugar.pdb_info()->name( "D-Gly" );
 
 		test_sugar( ligand_sugar );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing a .pdb file using PDB 3-letter codes, "
+			"including one that cannot have position 3 as the default main-chain connection:" << endl;
+
+		pose_from_file( pdb_code_pdb, PATH + "pdb_w_pdb_3_letter_codes.pdb", PDB_file );
+
+		test_sugar( pdb_code_pdb );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Importing a .pdb file with bad LINK records:" << endl;
+
+		pose_from_file( bad_pdb, PATH + "pdb_w_bad_links.pdb", PDB_file );
+
+		cout << ".pdb file with bad LINK records imported successfully." << endl;
 
 	} catch ( utility::excn::Exception const & e ) {
 		e.display();
