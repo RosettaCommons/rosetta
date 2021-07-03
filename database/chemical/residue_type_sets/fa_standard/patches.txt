@@ -200,6 +200,7 @@ patches/carbohydrates/O2-lactylation.txt
 patches/carbohydrates/O3-lactylation.txt
 patches/carbohydrates/O4-lactylation.txt
 patches/carbohydrates/O6-lactylation.txt
+patches/carbohydrates/N5-glycolylation.txt
 patches/carbohydrates/O2-methylation.txt
 patches/carbohydrates/O3-methylation.txt
 patches/carbohydrates/O4-methylation.txt

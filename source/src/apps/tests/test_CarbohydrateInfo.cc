@@ -94,8 +94,8 @@ main( int argc, char *argv[] )
 		Pose maltotriose, isomaltose, lactose, amylopectin, glycopeptide, glucosamine, N_linked_14_mer, fluoro_sugar, free_14_mer,
 			O_linked, psicose, glucuronic_acid, neuraminate, bacillosamine, Murp, Rhof, Lex, SLex, GalCer, UDP_D_Glc,
 			target57, maltobiose, Me_glycoside, Me_glycoside_sequence, Me_glycoside_3mer, C_linked, Ac_sugar,
-			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar, methyl_sugar,
-			thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb;
+			ketopentofuranose, ketohexofuranose, Kdo, Kdn, whacky_sugar, propargyl_sugar, lactyl_sugar, ligand_sugar,
+			methyl_sugar, glycolylamino_sugar, thio_sugar, phosphorylated_sugar, pdb_code_pdb, bad_pdb;
 
 		ResidueTypeSetCOP residue_set( ChemicalManager::get_instance()->residue_type_set( "fa_standard" ) );
 
@@ -445,6 +445,15 @@ main( int argc, char *argv[] )
 		lactyl_sugar.pdb_info()->name( "Glcp3Lac" );
 
 		test_sugar( lactyl_sugar );
+
+
+		cout << "---------------------------------------------------------------------------------------------" << endl;
+		cout << "Creating glycolylamino sugar from sequence:" << endl;
+
+		make_pose_from_saccharide_sequence( glycolylamino_sugar, "->8)-alpha-Neup5Gc", *residue_set );
+		glycolylamino_sugar.pdb_info()->name( "Neup5Gc" );
+
+		test_sugar( glycolylamino_sugar );
 
 
 		cout << "---------------------------------------------------------------------------------------------" << endl;
